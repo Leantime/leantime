@@ -5,7 +5,6 @@
  *
  * @author Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
- * @package configuration
  * @license	GNU/GPL, see license.txt
  *
  */
