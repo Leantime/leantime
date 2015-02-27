@@ -1,0 +1,109 @@
+
+<ul class="UIAPIPlugin-toc">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#options">Arguments</a></li>
+</ul>
+<div class="UIAPIPlugin">
+  <h1>jQuery UI addClass</h1>
+  <div id="overview">
+    <h2 class="top-header">Overview</h2>
+    <div id="overview-main">
+        <div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/Effects/addClass?section=1" title="Edit section: addClass( class, [duration] )">edit</a>]</div><a name="addClass.28_class.2C_.5Bduration.5D_.29"></a><h3>addClass( class, <span class="optional">[</span>duration<span class="optional">]</span> )</h3>
+<p>Adds the specified class to each of the set of matched elements with an optional transition between the states.</p>
+    </div>
+    <div id="overview-dependencies">
+        <h3>Dependencies</h3>
+        <ul>
+<li>Effects Core</li>
+</ul>
+    </div>
+    <div id="overview-example">
+        <h3>Example</h3>
+        <div id="overview-example" class="example">
+<ul><li><a href="#demo"><span>Demo</span></a></li><li><a href="#source"><span>View Source</span></a></li></ul>
+<p><div id="demo" class="tabs-container" rel="100">
+Adds the class 'selected' to the matched elements with a one second transition.<br />
+</p>
+<pre>$(&quot;p&quot;).<a href="http://docs.jquery.com/Events/click" title="Events/click">click</a>(function () {
+      $(this).<strong class="selflink">addClass</strong>(&quot;selected&quot;, 1000);
+    });
+</pre>
+<p></div><div id="source" class="tabs-container">
+</p>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;http://ui.jquery.com/latest/ui/effects.core.js&quot;&gt;&lt;/script&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+  p { cursor: pointer; font-size: 1.2em; }
+  .selected { color:red; }
+&lt;/style&gt;
+  &lt;script&gt;
+  $(document).ready(function() {
+    $(&quot;p&quot;).<a href="http://docs.jquery.com/Events/click" title="Events/click">click</a>(function () {
+      $(this).<strong class="selflink">addClass</strong>(&quot;selected&quot;, 1000);
+    });
+  });
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body style="font-size:62.5%;"&gt;
+  &lt;p&gt;Click me to add a 'selected' class.&lt;/p&gt;
+&lt;p&gt;Click me to add a 'selected' class.&lt;/p&gt;
+&lt;p&gt;Click me to add a 'selected' class.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p></div>
+</p><p></div>
+    </div>
+  </div>
+  <div id="options">
+    <h2 class="top-header">Arguments</h2>
+    <ul class="options-list">
+      
+<li class="option" id="option-class">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-class">class</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">String</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>One CSS class to add to the elements.</p>
+  </div>
+</li>
+
+
+<li class="option" id="option-duration">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-duration">duration</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">String, Number</dd>
+      
+      <dt class="option-optional-label">Optional</dt>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>A string representing one of the three predefined speeds ("slow", "normal", or "fast") or the number of milliseconds to run the animation (e.g. 1000).</p>
+  </div>
+</li>
+
+    </ul>
+  </div>
+</div>
+
+</p><!-- 
+Pre-expand include size: 5228 bytes
+Post-expand include size: 6863 bytes
+Template argument size: 4285 bytes
+Maximum: 2097152 bytes
+-->
+
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:2606-1!1!0!!en!2 and timestamp 20110512142303 -->

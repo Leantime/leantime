@@ -1,0 +1,6 @@
+ License for Rmail
+ =================
+
+This software is covered by the PHPGuru License. You can read it, along with a few FAQs, here:
+
+  http://www.phpguru.org/static/license.html

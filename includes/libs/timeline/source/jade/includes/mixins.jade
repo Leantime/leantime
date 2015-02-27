@@ -1,0 +1,45 @@
+mixin brand(name, ext)
+	span.verite-brand #{name}
+		span.verite-brand-ext #{ext}
+
+mixin example(title, link, thumb, description)
+	// Example
+	div.span3
+		p 
+			a(href='#{link}', target='_blank')
+				img(src='#{thumb}').with-shadow
+		h3
+			a(href='#{link}', target='_blank') #{title}
+		p #{description}
+
+mixin faq-accordian(parent, id, question, answer)
+	div.accordion-group
+		div.accordion-heading
+			a.accordion-toggle(data-toggle='collapse', data-parent='#{parent}', href='##{id}')!= question
+		div(id='#{id}', style='height: 0px;').accordion-body.collapse
+			div.accordion-inner!= answer
+
+mixin timeline-embed(thesource)
+	// BEGIN Timeline Embed 
+	div#timeline-embed
+	script(type='text/javascript')
+		var timeline_config = {
+			width: "100%",
+			height: "100%",
+			source: '#{thesource}'
+		}
+	script(type='text/javascript', src='../compiled/js/storyjs-embed.js')
+	// END Timeline Embed
+
+mixin timeline-embed-debug(thesource)
+	// BEGIN Timeline Embed 
+	div#timeline-embed
+	script(type='text/javascript')
+		var timeline_config = {
+			width: "100%",
+			height: "100%",
+			debug: true,
+			source: '#{thesource}'
+		}
+	script(type='text/javascript', src='../compiled/js/storyjs-embed.js')
+	// END Timeline Embed

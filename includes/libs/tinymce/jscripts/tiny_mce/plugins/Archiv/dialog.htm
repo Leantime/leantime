@@ -1,0 +1,62 @@
+<!-- $Id: dialog.htm,v 1.4 2009/10/27 20:12:54 wvankuipers Exp $ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta name="author" content="Wouter van Kuipers (Archiv@pwnd.nl)" />
+	<meta name="copyright" content="&copy; 2008-2009 PWND licence: LGPL" />
+	<title>{#Archiv_dlg.Ftitle}</title>
+	<link href="css/smoothness/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" rev="stylesheet" />	
+	<link href="css/style.css" rel="stylesheet" type="text/css" rev="stylesheet" />	
+	<!--[if gt IE 6]> 
+	<link href="css/style_ie.css" rel="stylesheet" type="text/css" rev="stylesheet" />
+	<![endif]-->
+	<!--[if lte IE 6]>   
+	<script type="text/javascript">
+	document.title = 'Browser not supported!';
+	document.write('<h1>Only Internet Explorer 7 or above is suported!</h1>');
+	document.execCommand('Stop');
+	</script>
+	<![endif]-->
+</head>
+
+<body>
+	<div id="main">
+		<div id="fileTree">	
+			<div id="header_tree">{#Archiv_dlg.FtreeTitle}</div> 
+			
+			<div id="treeView"></div>		
+			<div id="addDirectoryControls">
+				<input type="button" name="btnAddDirectory" id="btnAddDirectory" value="{#Archiv_dlg.AddDirectory}" class="ui-state-default ui-corner-all" onclick="archiv.askDirectoryName();" />
+			</div>	
+		</div>
+		
+		<div id="splitter" onmousedown="archiv.startDrag(this)">
+			<div id="mover"></div>
+		</div>
+		
+		<div id="fileBrowser">
+			<div id="header_browser">
+				{#Archiv_dlg.ContentOf}: <div id="currentDirectory">/</div> 
+				<div id="removeDirectory"><span onclick="archiv.deleteDirectory($('#currentDirectory').text())">{#Archiv_dlg.RemoveDirectory}</span></div>
+			</div> 
+		    
+		    <div id="error" class="ui-state-default ui-corner-all"></div>
+			
+			<div id="fileHolder"></div>		
+		 
+			<div id="fileControls">
+					<span id="buttonPlaceholder" class="ui-state-default ui-corner-all"> <span id="spanButtonPlaceholder"></span> </span>
+					<span id="divFilesInQueue">{#Archiv_dlg.UploadQueue}: <span id="filesInQueue">0</span></span>
+			</div>
+		</div>	
+	</div>
+	
+	<div id="divFileProgressContainer" style="height:75px;position:absolute; right:5px; bottom:5px;"></div>
+	<div id="tooltip" class="ui-corner-top"></div>	
+	<div id="loader"></div>
+	<script type="text/javascript" src="php/fileLoader.php?file=javascript"></script>	
+</body>
+</html>

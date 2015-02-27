@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>OCF</name>
+ <channel>pear.php.net</channel>
+ <summary>Open Flash Charts interface library</summary>
+ <description>Open Flash Charts interface library</description>
+ <lead>
+  <name>John Glazebrook</name>
+  <user>open-flash-chart</user>
+  <email>open-flash-chart@teethgrinder.co.uk</email>
+  <active>yes</active>
+ </lead>
+ <date>2008-07-08</date>
+ <time>10:17:44</time>
+ <version>
+  <release>2.0.0</release>
+  <api>2.0.0</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>stable</api>
+ </stability>
+ <license>PHP</license>
+ <notes>Helper library for working with Open Flash Charts</notes>
+ <contents>
+  <dir baseinstalldir="OCF" name="/">
+   <dir name="examples">
+    <file name="3d-bar-chart.php" role="data" />
+    <file name="area-hollow.php" role="data" />
+    <file name="bar-chart.php" role="data" />
+    <file name="data-lines-2.php" role="data" />
+    <file name="data-lines.php" role="data" />
+    <file name="glass-bar-chart.php" role="data" />
+    <file name="horizontal-bar-chart.php" role="data" />
+    <file name="line-dot.php" role="data" />
+    <file name="line-hollow.php" role="data" />
+    <file name="pie-chart.php" role="data" />
+    <file name="scatter-chart.php" role="data" />
+    <file name="sketch-bar-chart.php" role="data" />
+    <file name="stacked-bar-chart.php" role="data" />
+   </dir> <!-- /examples -->
+   <dir name="lib">
+    <dir name="OFC">
+     <dir name="Charts">
+      <dir name="Area">
+       <file name="OFC_Charts_Area_Hollow.php" role="php" />
+      </dir> <!-- /lib/OFC/Charts/Area -->
+      <dir name="Bar">
+       <file name="OFC_Charts_Bar_3d.php" role="php" />
+       <file name="OFC_Charts_Bar_Base.php" role="php" />
+       <file name="OFC_Charts_Bar_Glass.php" role="php" />
+       <file name="OFC_Charts_Bar_Horizontal.php" role="php" />
+       <file name="OFC_Charts_Bar_Sketch.php" role="php" />
+       <file name="OFC_Charts_Bar_Stack.php" role="php" />
+      </dir> <!-- /lib/OFC/Charts/Bar -->
+      <dir name="Line">
+       <file name="OFC_Charts_Line_Base.php" role="php" />
+       <file name="OFC_Charts_Line_Dot.php" role="php" />
+       <file name="OFC_Charts_Line_Hollow.php" role="php" />
+      </dir> <!-- /lib/OFC/Charts/Line -->
+      <file name="OFC_Charts_Area.php" role="php" />
+      <file name="OFC_Charts_Bar.php" role="php" />
+      <file name="OFC_Charts_Base.php" role="php" />
+      <file name="OFC_Charts_Line.php" role="php" />
+      <file name="OFC_Charts_Pie.php" role="php" />
+      <file name="OFC_Charts_Scatter.php" role="php" />
+     </dir> <!-- /lib/OFC/Charts -->
+     <dir name="Elements">
+      <dir name="Axis">
+       <file name="OFC_Elements_Axis_X.php" role="php" />
+       <file name="OFC_Elements_Axis_X_Label.php" role="php" />
+       <file name="OFC_Elements_Axis_X_Label_Set.php" role="php" />
+       <file name="OFC_Elements_Axis_Y.php" role="php" />
+       <file name="OFC_Elements_Axis_Y_Right.php" role="php" />
+      </dir> <!-- /lib/OFC/Elements/Axis -->
+      <dir name="Legend">
+       <file name="OFC_Elements_Legend_X.php" role="php" />
+       <file name="OFC_Elements_Legend_Y.php" role="php" />
+      </dir> <!-- /lib/OFC/Elements/Legend -->
+      <file name="OFC_Elements_Axis.php" role="php" />
+      <file name="OFC_Elements_Base.php" role="php" />
+      <file name="OFC_Elements_Title.php" role="php" />
+     </dir> <!-- /lib/OFC/Elements -->
+     <file name="JSON.php" role="php" />
+     <file name="JSON_Format.php" role="php" />
+     <file name="OFC_Chart.php" role="php" />
+     <file name="OFC_Elements.php" role="php" />
+    </dir> <!-- /lib/OFC -->
+   </dir> <!-- /lib -->
+   <file name="build_package.php" role="data" />
+   <file name="open-flash-chart-object.php" role="php" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.9</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>2.0.0</release>
+    <api>2.0.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <date>2008-07-08</date>
+   <license>PHP</license>
+   <notes>Helper library for working with Open Flash Charts</notes>
+  </release>
+ </changelog>
+</package>

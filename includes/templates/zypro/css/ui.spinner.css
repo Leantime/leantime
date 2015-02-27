@@ -1,0 +1,8 @@
+.input-spinner { padding: 5px; }
+.ui-spinner {position: relative; border: 0px; }
+.ui-spinner-buttons {position: absolute}
+.ui-spinner-button {
+	overflow: hidden; border: 1px solid #bbb; border-left: 0; cursor: pointer; width: 20px; height: 10px;
+}
+.ui-spinner-up { background: url(../images/spinner.png) no-repeat -2px 1px; border-bottom: 0; }
+.ui-spinner-down { background: url(../images/spinner.png) no-repeat -2px -11px; }

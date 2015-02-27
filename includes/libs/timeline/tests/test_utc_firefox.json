@@ -1,0 +1,115 @@
+{
+    "timeline": {
+        "date": [
+            {
+                "asset": {
+                    "caption": "", 
+                    "media": "http://c8226405.myzen.co.uk/wp-content/uploads/2012/09/dummy4.jpg"
+                }, 
+                "headline": "1869", 
+                "startDate": "1869,9,10", 
+				"classname": "myuniqueclassnamegoeshere",
+                "text": "<p>Wm. Sugden and Sons Ltd started tailors shop in Cleckheaton</p>"
+            }, 
+            {
+                "asset": {
+                    "caption": "", 
+                    "media": "http://c8226405.myzen.co.uk/wp-content/uploads/2012/09/sewingmachine3.jpg"
+                }, 
+                "headline": "1896", 
+                "startDate": "1896,9,10,12,06", 
+                "text": "<p>Starts making shirts in the shop</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1899,9,10", 
+                "headline": "1899", 
+                "startDate": "1899,9,10", 
+                "text": "<p>Shirt business has out grown the shop so moves into a larger factory at Water Lane Mills</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1904,9,10", 
+                "headline": "1904", 
+                "startDate": "1904,9,10", 
+                "text": "<p>Another factory in Barnsley opens</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1911,9,10", 
+                "headline": "1911", 
+                "startDate": "1911,9,10", 
+                "text": "<p>Opens a factory in Wakefield to make workwear and army uniforms</p>"
+            }, 
+            {
+                "asset": {
+                    "caption": "", 
+                    "media": "http://c8226405.myzen.co.uk/wp-content/uploads/2012/09/green-shirt3.jpg"
+                }, 
+                "endDate": "1924,9,10", 
+                "headline": "1924", 
+                "startDate": "1924,9,10", 
+                "text": "<p>Moves to a larger factory in Wakefield as product range expands</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1930,9,10", 
+                "headline": "1920-1930", 
+                "startDate": "1920,9,10", 
+                "text": "<p>Acquire two weaving mills in Lancashire and make over five million shirts</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1950,9,10", 
+                "headline": "1950", 
+                "startDate": "1950,9,10", 
+                "text": "<p>Sets up factory in South Yorkshire to manufacture jeans</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1965,9,10", 
+                "headline": "1965", 
+                "startDate": "1965,9,10", 
+                "text": "<p>A bigger factory is needed to accommodate production</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1968,9,10", 
+                "headline": "1968", 
+                "startDate": "1968,9,10", 
+                "text": "<p>Merger with Donner family and Double Two brand</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1990,9,10", 
+                "headline": "1970-1990", 
+                "startDate": "1970,9,10", 
+                "text": "<p>Reputation for quality grows and Topflight brand of workwear is widely sold</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1990,9,10", 
+                "headline": "1990", 
+                "startDate": "1990,9,10", 
+                "text": "<p>Managed Services concept introduced under Threadneedle brand</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "1998,9,10", 
+                "headline": "1998", 
+                "startDate": "1998,9,10", 
+                "text": "<p>John Sugden retires, a new generation of the family takes over</p>"
+            }, 
+            {
+                "asset": null, 
+                "endDate": "2012,9,10", 
+                "headline": "Present", 
+                "startDate": "2012,9,10", 
+                "text": "<p>Although the business has been reshaped throughout the years, the business still remains a heritage brand and is still an important part of Wakefieldu2019s history</p>"
+            }
+        ], 
+        "headline": "", 
+        "text": "", 
+        "type": "default"
+    }
+}

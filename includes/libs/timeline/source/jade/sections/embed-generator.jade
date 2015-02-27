@@ -1,0 +1,181 @@
+// Embed Generator
+include ../includes/mixins
+section#embed.embed-form
+	div.container
+		h2 
+			mixin brand('Timeline', 'JS')
+			|  Embed Generator
+		p.lead On your site or blog in no time.
+		div.row
+			div.span7
+				form.form-horizontal
+					fieldset
+						// Required elements for embed
+						// Embed Source
+						div.control-group
+							label.control-label 
+								a(href='https://docs.google.com/a/digitalartwork.net/previewtemplate?id=0AppSVxABhnltdEhzQjQ4MlpOaldjTmZLclQxQWFTOUE&mode=public',target='_blank') Google Spreadsheet
+								|  or other data source URL
+							div.controls
+								input(type='text')#embed-source-url.span4
+								p.help-inline Make sure you've published it.
+						// Size
+						div.control-group
+							label.control-label Size
+							div.controls
+								div.input-prepend
+									span.add-on Width
+									input(type='text', value='900', placeholder='900')#embed-width.input-mini
+								div.input-prepend
+									span.add-on Height
+									input(type='text', value='650', placeholder='650')#embed-height.input-mini
+						// Optional elements for embed
+						div.well
+							h4 Optional
+							// Language
+							div.control-group
+								label.control-label Language
+								div.controls
+									select#embed-language
+										option(value='en') English
+										option(value='ar') Arabic (beta)
+										option(value='bg') Bulgarian
+										option(value='ca') Catalan
+										option(value='cz') Czech
+										option(value='da') Danish
+										option(value='de') German / Deutsch
+										option(value='el') Greek
+										option(value='es') Spanish
+										option(value='eu') Basque/ Euskara
+										option(value='fi') Finnish
+										option(value='fo') Faroese
+										option(value='fr') French
+										option(value='gl') Galician
+										option(value='hu') Hungarian
+										option(value='hy') Armenian
+										option(value='id') Indonesian
+										option(value='is') Icelandic
+										option(value='it') Italian
+										option(value='iw') Hebrew (beta)
+										option(value='ja') Japanese
+										option(value='ka') Georgian
+										option(value='ko') Korean
+										option(value='lv') Latvian
+										option(value='nl') Dutch
+										option(value='no') Norwegian
+										option(value='pl') Polish
+										option(value='pt-br') Brazilian Portuguese
+										option(value='pt') Portuguese
+										option(value='ru') Russian
+										option(value='sk') Slovak
+										option(value='sl') Slovenian
+										option(value='sr-cy') Serbian (Cyrillic)
+										option(value='sr') Serbian (Latin)
+										option(value='sv') Swedish
+										option(value='ta') Tamil
+										option(value='tl') Tagalog
+										option(value='tr') Turkish
+										option(value='zh-cn') Chinese
+										option(value='zh-tw') Taiwanese
+							// Map Type
+							div.control-group
+								label.control-label Map Type
+								div.controls
+									select#embed-maptype
+										option(value='toner') Stamen Maps: Toner
+										option(value='toner-lines') Stamen Maps: Toner Lines
+										option(value='toner-labels') Stamen Maps: Toner Labels
+										option(value='watercolor') Stamen Maps: Watercolor
+										option(value='sterrain') Stamen Maps: Terrain
+										option(value='ROADMAP') Google Maps: Roadmap
+										option(value='TERRAIN') Google Maps: Terrain
+										option(value='HYBRID') Google Maps: Hybrid
+										option(value='SATELLITE') Google Maps: Satellite
+									input(type='text',placeholder='Google Maps API Key')#embed-googlemapkey
+									p.help-block
+										| Due to recent changes to the Google Maps API, you need a 
+										a(href='https://developers.google.com/places/documentation/#Authentication', target='_blank') API Key
+										|  in order to use custom map types.
+							// Fonts
+							div.control-group
+								label.control-label Fonts
+								div.controls
+									select#embed-font
+										option(value='Bevan-PotanoSans') Bevan & Potano Sans
+										option(value='Merriweather-NewsCycle') Merriweather & News Cycle
+										option(value='NewsCycle-Merriweather') News Cycle & Merriweather
+										option(value='PoiretOne-Molengo') Poiret One & Molengo
+										option(value='Arvo-PTSans') Arvo & PT Sans
+										option(value='PTSerif-PTSans') PT Serif & PT Sans
+										option(value='DroidSerif-DroidSans') Droid Serif & Droid Sans
+										option(value='Lekton-Molengo') Lekton & Molengo
+										option(value='NixieOne-Ledger') Nixie One & Ledger
+										option(value='AbrilFatface-Average') Abril Fatface & Average
+										option(value='PlayfairDisplay-Muli') Playfair Display & Muli
+										option(value='Rancho-Gudea') Rancho & Gudea
+										option(value='BreeSerif-OpenSans') Bree Serif & Open Sans
+										option(value='SansitaOne-Kameron') Sansita One & Kameron
+										option(value='Pacifico-Arimo') Pacifico & Arimo
+										option(value='PT') PT Sans & PT Narrow & PT Serif
+
+							// Wordpress Plugin
+							div.control-group
+								label.control-label Misc
+								div.controls
+									label.checkbox
+										input#embed-wordpressplugin(type='checkbox', value='option1')
+										| Wordpress Plugin
+										span.help-inline Is the embed for the <a href="https://github.com/VeriteCo/Timeline-Wordpress-Plugin" target="_blank">Wordpress Plugin</a>?
+									// Start at End?
+									label.checkbox
+										input#embed-startatend(type='checkbox', value='option1')
+										| Start at the End?
+										span.help-inline The most recent event will be shown first.
+									// Hash Bookmarks
+									label.checkbox
+										input#embed-hashbookmark(type='checkbox', value='option1')
+										| Hash Bookmarks
+										span.help-inline On each slide change, a # will be added to the end of the url in the url bar. These urls are bookmarkable so you can share or return to the same place in the timeline
+									// Debug
+									label.checkbox
+										input#embed-debug(type='checkbox', value='option1')
+										| Debug
+										span.help-inline In debug mode, you will see console logs.
+
+							// Start Zoom Adjust
+							div.control-group
+								label.control-label Adjust the default calculated zoom level
+								div.controls
+									input#embed-startzoomadjust.input-mini(type='text', value='0', placeholder='0')
+									p.help-block This will tweak the default zoom level. Equivilent to pressing the zoom in or zoom out button the specified number of times. Negative numbers zoom out.
+							// Start at Slide
+							div.control-group
+								label.control-label Start at specific slide number?
+								div.controls
+									div.input-prepend
+										span.add-on Slide
+										input#embed-startatslide.input-mini(type='text', value='0', placeholder='0')
+									p.help-block You can tell TimelineJS to start at a specific slide number
+			// Embed Copy and Paste
+			div.span5
+				form.form-horizontal
+					fieldset
+						h4 Embed Code
+						p Copy this code and paste it where you want your 
+							mixin brand('Timeline', 'JS')
+							|  to appear.
+							br
+						textarea(readonly='readonly', style='width: 100%; height: 160px; min-height: 110px; max-height: 300px; resize: none; font-family: Menlo,Monaco,\'Courier New\',monospace; font-size: 11px;')#embed_code
+							| <iframe src='http://embed.verite.co/timeline/?source=0Agl_Dv6iEbDadHdKcHlHcTB5bzhvbF9iTWwyMmJHdkE&font=Bevan-PotanoSans&maptype=toner&width=600&height=600' width='600' height='600' frameborder='0'></iframe>
+				div(style='text-align:center;')
+					a(href='#preview-embed-iframe')#iframe-preview-button.btn.btn-primary Preview
+					| &nbsp;
+					a(href='#embed', target='_blank')#preview-embed-link.btn Link to Preview
+section.background-fabric
+	div.container
+		h2 Preview
+		div.row
+			div#preview-embed-iframe.span12
+		br
+		br
+

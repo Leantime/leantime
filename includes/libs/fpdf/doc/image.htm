@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Image</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>Image</h1>
+<code>Image(<b>string</b> file [, <b>float</b> x [, <b>float</b> y [, <b>float</b> w [, <b>float</b> h [, <b>string</b> type [, <b>mixed</b> link]]]]]])</code>
+<h2>Description</h2>
+Puts an image. The size it will take on the page can be specified in different ways:
+<ul>
+<li>explicit width and height (expressed in user unit)</li>
+<li>one explicit dimension, the other being calculated automatically in order to keep the original proportions</li>
+<li>no explicit dimension, in which case the image is put at 72 dpi</li>
+</ul>
+Supported formats are JPEG, PNG and GIF. The GD extension is required for GIF.
+<br>
+<br>
+For JPEGs, all flavors are allowed:
+<ul>
+<li>gray scales</li>
+<li>true colors (24 bits)</li>
+<li>CMYK (32 bits)</li>
+</ul>
+For PNGs, are allowed:
+<ul>
+<li>gray scales on at most 8 bits (256 levels)</li>
+<li>indexed colors</li>
+<li>true colors (24 bits)</li>
+</ul>
+but are not supported:
+<ul>
+<li>Interlacing</li>
+<li>Alpha channel</li>
+</ul>
+For GIFs: in case of an animated GIF, only the first frame is used.<br>
+<br>
+If a transparent color is defined, it is taken into account.<br>
+<br>
+The format can be specified explicitly or inferred from the file extension.<br>
+It is possible to put a link on the image.<br>
+<br>
+Remark: if an image is used several times, only one copy is embedded in the file.
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>file</code></dt>
+<dd>
+Path or URL of the image.
+</dd>
+<dt><code>x</code></dt>
+<dd>
+Abscissa of the upper-left corner. If not specified or equal to <code>null</code>, the current abscissa
+is used.
+</dd>
+<dt><code>y</code></dt>
+<dd>
+Ordinate of the upper-left corner. If not specified or equal to <code>null</code>, the current ordinate
+is used; moreover, a page break is triggered first if necessary (in case automatic page breaking is enabled)
+and, after the call, the current ordinate is moved to the bottom of the image.
+</dd>
+<dt><code>w</code></dt>
+<dd>
+Width of the image in the page. If not specified or equal to zero, it is automatically calculated.
+</dd>
+<dt><code>h</code></dt>
+<dd>
+Height of the image in the page. If not specified or equal to zero, it is automatically calculated.
+</dd>
+<dt><code>type</code></dt>
+<dd>
+Image format. Possible values are (case insensitive): <code>JPG</code>, <code>JPEG</code>, <code>PNG</code> and <code>GIF</code>.
+If not specified, the type is inferred from the file extension.
+</dd>
+<dt><code>link</code></dt>
+<dd>
+URL or identifier returned by AddLink().
+</dd>
+</dl>
+<h2>See also</h2>
+<a href="addlink.htm">AddLink()</a>.
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>

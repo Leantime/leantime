@@ -1,0 +1,42 @@
+!!! 5
+html(lang="en")
+
+	include includes/ascii
+
+	head
+		title TimelineJS Embed Generator
+		meta(charset='utf-8')
+		meta(name='description', content='Timeline JS Embed Generator')
+
+		// CSS
+		link(href='css/timeline-generator.css', rel='stylesheet')
+
+		// JavaScript
+		script(type='text/javascript', src='js/storyjs-embed-generator.js')
+		script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+		script
+			$(document).ready(function() {
+				updateEmbedCode();
+				$("#embed_code").click(function() { $(this).select(); });
+				$('#embed-width').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-wordpressplugin').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-font').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-height').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-maptype').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-googlemapkey').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-source-url').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-language').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-startatend').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-hashbookmark').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-startatslide').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-startzoomadjust').change(function(evt) { updateEmbedCode(evt); });
+				$('#embed-debug').change(function(evt) { updateEmbedCode(evt); });
+			});
+
+	body
+		include sections/embed-generator
+
+		// Footer
+		footer
+			div.container
+				p &copy; VéritéCo 2012

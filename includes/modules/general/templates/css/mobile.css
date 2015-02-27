@@ -1,0 +1,467 @@
+/*
+	reset	
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td
+	{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+body {
+	line-height: 1;
+}
+
+ol,ul {
+	list-style: none;
+}
+
+blockquote,q {
+	quotes: none;
+}
+
+blockquote:before,blockquote:after,q:before,q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+/*
+*/
+body {
+	font-size: 12px;
+	font-family:arial;
+}
+
+#login {
+	padding: 20px;
+}
+
+#login form {
+	margin: auto;
+	display: block;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+}
+
+#login form label {
+	display:block;
+}
+
+#login form input,
+#login form select {
+	padding:10px;
+	width:90%;
+}
+
+#login form select.languageSelect {
+}
+
+#login form input.width140 {
+}
+
+#login h1 {
+	font-size: 18px;
+	color: #990033;
+	font-weight: normal;
+	margin-bottom: 10px;
+}
+
+#login form legend {
+	
+}
+
+.sitename {
+	background: url(../img/logo.jpg) top left no-repeat;
+	height: 41px;
+	padding: 15px 10px 5px 0px;
+	text-align:right;
+	font-size: 22px;
+	font-weight: bold;
+	color: #fff;
+}
+
+
+
+
+
+
+
+#head {
+	background: url(../img/headBg.jpg) repeat-x top left;
+	height: 91px;
+	font-size: 14px;
+}
+
+
+#menu a,
+#menu a:link,
+#menu a:visited,
+a.link,
+a.link:link,
+a.link:visited {
+	display:block;
+	background:	url(jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
+		scroll 50% 50% #cccccc;
+	padding:10px;
+	font-size:16px;
+	text-decoration: none;
+	font-weight: bold;
+	margin-bottom: 10px;
+	border:1px solid #ccc;
+}
+
+#menu a:hover,#menu a:focus {
+	color: #990033;
+}
+
+
+
+
+fieldset {
+	border: 1px solid #ccc;
+}
+
+
+#content {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin: 10px;
+}
+
+#content #tabs {
+	width:97%;
+}
+
+#content h1 {
+	font-size: 18px;
+	color: #990033;
+	font-weight: normal;
+	margin-bottom: 10px;
+}
+
+#content a,
+#content a:link,
+#content a:visited,
+a,
+a:link,
+a:visited {
+	color: #990033;
+	text-decoration: none;
+}
+
+#content a:hover,#content a:focus {
+	text-decoration: underline;
+}
+
+#content p {
+	line-height: 1.6;
+}
+
+#content .allTickets {
+	width: 100%;
+	font-size: 12px;
+	clear: both;
+}
+
+#content .allTickets thead th {
+	background:
+		url(jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
+		scroll 50% 50% #cccccc;
+	height: 28px;
+	text-align: left;
+	padding: 8px 5px 0 4px;
+	border: 1px solid #aaa;
+}
+
+* html #content .allTickets thead th {
+	height: 18px;
+}
+
+*+html #content .allTickets thead th {
+	height: 18px;
+}
+
+#content .allTickets thead th.header {
+	cursor: pointer;
+}
+
+#content .allTickets thead th.headerSortUp {
+	background: #ccc url(../img/asc.gif) no-repeat center right;
+}
+
+#content .allTickets thead th.headerSortDown {
+	background: #ccc url(../img/desc.gif) no-repeat center right;
+}
+
+#content .allTickets td {
+	padding: 4px;
+	border: 1px solid #ccc;
+}
+
+#content .allTickets tr.odd {
+	background: #eee;
+}
+
+#content .allTickets tr.odd td {
+	background: #eee;
+}
+
+#content img {
+	
+	width:90%;
+	
+}
+
+#loader {
+	position: absolute;
+	z-index: 10000;
+	background: #ffffff url(../img/load.gif) no-repeat center center;
+	margin-top: 10%;
+	height: 24px;
+	width: 98%;
+	padding: 5px;
+	border: 1px solid #ccc;
+	display: none;
+	text-align: center;
+}
+
+fieldset {
+	position: relative;
+	padding: 10px;
+	margin-bottom: 10px;
+	overflow: visible;
+	
+}
+
+fieldset legend {
+	padding: 2px;
+	text-align: left;
+}
+
+* html fieldset {
+	
+}
+
+* html fieldset legend {
+	margin-bottom: 10px;
+	margin-left: -10px;
+}
+
+*+html fieldset legend {
+	margin-bottom: 10px;
+	margin-left: -10px;
+}
+
+fieldset.left {
+	
+}
+
+fieldset.leftSmall {
+	
+}
+
+hr {
+	border: none;
+	line-height: 0px;
+	font-size: 0px;
+	margin: 5px 0;
+	height: 1px;
+	color: #ccc;
+	background: #ccc;
+}
+
+label {
+	width: 100px;
+	display: block;
+	float: left;
+	margin-top: 0px;
+}
+
+textarea {
+	border: 1px inset #999;
+	border-style: inset;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+select {
+	border: 1px solid #ccc;
+	width: 200px;
+	z-index: 1;
+}
+
+input,textarea,select {
+	border: 1px solid #999;
+	margin-bottom: 5px;
+	padding: 0;
+	vertical-align: middle;
+}
+
+input.width140 {
+	width: 140px;
+}
+
+input.button {
+	background:
+		url(jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
+		scroll 50% 50% #cccccc;
+	cursor: pointer;
+	padding: 1px 5px;
+	margin: 0;
+	overflow: visible;
+	vertical-align: baseline;
+	outline: 0;
+	display: inline;
+}
+
+input.reload {
+	background: url(../img/reload_icon_grey.gif) no-repeat center center;
+	cursor: pointer;
+	padding: 1px;
+	border: none;
+	width: 21px;
+	height: 21px;
+}
+
+* html input.button {
+	margin-left: -10px;
+}
+
+*+html input.button {
+	margin-left: -10px;
+}
+
+/*Button f&uuml;r Pager auf der Startseite*/
+span.button {
+	cursor: pointer;
+	color: #990033;
+	margin-bottom: 5px;
+	display: inline;
+}
+
+input.pagedisplay {
+	width: 40px;
+	text-align: center;
+	border: none;
+}
+
+select.pagesize {
+	width: 50px;
+}
+
+input.pager {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #990033;
+}
+
+/*Graue schrift*/
+.grey {
+	color: #999;
+}
+
+/*Infobox f&uuml;r Mitteilungen*/
+.info {
+	display: block;
+	border: 1px solid #999;
+	background: #ccc;
+	padding: 20px;
+	margin-bottom: 10px;
+}
+
+/*nav ist die pagerleiste f&uuml;r das pagerplugin z.b. bei comments*/
+#nav a,#nav a:link,#nav a:visited {
+	margin-right: 5px;
+}
+
+#nav a.highlight,#nav a.highlight:link,#nav a.highlight:visited {
+	font-weight: bold;
+}
+
+.progressBar {
+	background: url(../img/progressBar.jpg) top left;
+	height: 20px;
+}
+
+.dontshow {
+	display: none;
+}
+
+div.right {
+	float: right;
+}
+
+/* colors of status */
+.new, .error {
+	color: red;
+}
+
+.finished {
+	color: green;
+}
+
+.approval {
+	color: green;
+}
+
+.edit, .seen, .taken {
+	color: yellow;
+}
+
+.versionContainer {
+	float: right;
+	color: #fff;
+	padding: 5px;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+
+
+td.red {
+	background: #ff0000;
+}
+
+td.green {
+	background: #00ff00;
+}
+
+fieldset.left ul li {
+	margin-bottom: 5px;
+	color: #ccc;
+}
+
+fieldset.left ul li strong {
+	color: #000;
+}
+
+.footerEdit {
+	padding: 15px;
+}
+}

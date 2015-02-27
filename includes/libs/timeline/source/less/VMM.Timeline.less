@@ -1,0 +1,119 @@
+/*!
+	TIMELINE CSS
+	
+	Designed and built by Zach Wise at VeriteCo
+	
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+*/
+
+/*	THEME DEFAULT
+----------------------------------------------------- */
+	//GFX
+	.base-sprite() {
+		background-image: url(timeline.png?v4.4);
+	}
+	.base-sprite2x() {
+		background-image: url(timeline@2x.png?v4.4);
+		background-size: 352px 260px; 
+	}
+	.loading-sprite() {
+		background-image: url(loading.gif?v3.4);
+	}
+	.loading-sprite2x() {
+		background-image: url(loading@2x.gif?v3.4);
+	}
+	
+	// COLORS
+	@color-base:					#FFF;
+	@color-line: 					#CCC;
+	@color-line-hover: 				#666;
+	@color-dark:					#000;
+	@color-dark-second: 			#333;
+	@color-dark-third: 				#666;
+	@color-dark-fourth: 			#999;
+	@color-dark-fifth: 				#E3E3E3;
+	@color-background-dark:			#E9E9E9;
+	
+	// COLOR THEME
+	@color-theme:					#08C;	//#FF3712; //#FF0000;
+	
+/*	BASE
+----------------------------------------------------- */
+
+// CSS CORE
+@import "Core/VMM.Core.less";
+
+// Timeline Specific
+@import "VMM.Timeline.TimeNav.less";
+
+
+/* MEDIA QUERIES
+================================================== */
+
+/* Mobile and iPhone
+================================================== */
+
+/* Non-Retina */
+@media screen and (-webkit-max-device-pixel-ratio: 1) {
+	
+}
+
+/* Retina */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 3/2), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
+
+}
+/* iPhone Portrait
+================================================== */
+@media screen and (max-device-width: 480px) and (orientation:portrait) {
+	.storyjs-embed.full-embed {
+		height:557px !important;
+		width:320px !important;
+		.vco-feature {
+			height:356px !important;
+		}
+	}
+} 
+/* iPhone Landscape
+================================================== */
+@media screen and (max-device-width: 480px) and (orientation:landscape) {
+	.storyjs-embed.full-embed {
+		height:409px !important;
+		width:480px !important;
+		.vco-feature {
+			height:208px !important;
+		}
+	}
+}
+
+/* iPad Portrait */
+@media screen and (min-device-width: 481px) and (orientation:portrait) {
+	
+}
+
+/* iPad Landscape */
+@media screen and (min-device-width: 481px) and (orientation:landscape) {
+	
+}
+
+@media (max-width: 480px) {
+
+	
+}
+
+
+/* Skinny
+================================================== */
+@media only screen and (max-width: 480px) {
+	.storyjs-embed.full-embed {
+		//max-width: 480px !important;
+	}
+	.vco-timeline {
+		//max-width: 480px !important;
+		.vco-slider {
+		
+		}
+	}
+}

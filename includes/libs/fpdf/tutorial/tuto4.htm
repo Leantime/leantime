@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Multi-columns</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>Multi-columns</h1>
+This example is a variant of the previous one showing how to lay the text across multiple
+columns.
+<div class="source">
+<pre><code>&lt;?php
+<span class="kw">require(</span><span class="str">'fpdf.php'</span><span class="kw">);
+
+class </span>PDF <span class="kw">extends </span>FPDF
+<span class="kw">{
+</span><span class="cmt">//Current column
+</span><span class="kw">var </span>$col<span class="kw">=</span>0<span class="kw">;
+</span><span class="cmt">//Ordinate of column start
+</span><span class="kw">var </span>$y0<span class="kw">;
+
+function </span>Header<span class="kw">()
+{
+    </span><span class="cmt">//Page header
+    </span><span class="kw">global </span>$title<span class="kw">;
+
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Arial'</span><span class="kw">,</span><span class="str">'B'</span><span class="kw">,</span>15<span class="kw">);
+    </span>$w<span class="kw">=</span>$<span class="kw">this-&gt;</span>GetStringWidth<span class="kw">(</span>$title<span class="kw">)+</span>6<span class="kw">;
+    </span>$<span class="kw">this-&gt;</span>SetX<span class="kw">((</span>210<span class="kw">-</span>$w<span class="kw">)/</span>2<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetDrawColor<span class="kw">(</span>0<span class="kw">,</span>80<span class="kw">,</span>180<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetFillColor<span class="kw">(</span>230<span class="kw">,</span>230<span class="kw">,</span>0<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetTextColor<span class="kw">(</span>220<span class="kw">,</span>50<span class="kw">,</span>50<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetLineWidth<span class="kw">(</span>1<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>$w<span class="kw">,</span>9<span class="kw">,</span>$title<span class="kw">,</span>1<span class="kw">,</span>1<span class="kw">,</span><span class="str">'C'</span><span class="kw">,</span>true<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Ln<span class="kw">(</span>10<span class="kw">);
+    </span><span class="cmt">//Save ordinate
+    </span>$<span class="kw">this-&gt;</span>y0<span class="kw">=</span>$<span class="kw">this-&gt;</span>GetY<span class="kw">();
+}
+
+function </span>Footer<span class="kw">()
+{
+    </span><span class="cmt">//Page footer
+    </span>$<span class="kw">this-&gt;</span>SetY<span class="kw">(-</span>15<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Arial'</span><span class="kw">,</span><span class="str">'I'</span><span class="kw">,</span>8<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetTextColor<span class="kw">(</span>128<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>0<span class="kw">,</span>10<span class="kw">,</span><span class="str">'Page '</span><span class="kw">.</span>$<span class="kw">this-&gt;</span>PageNo<span class="kw">(),</span>0<span class="kw">,</span>0<span class="kw">,</span><span class="str">'C'</span><span class="kw">);
+}
+
+function </span>SetCol<span class="kw">(</span>$col<span class="kw">)
+{
+    </span><span class="cmt">//Set position at a given column
+    </span>$<span class="kw">this-&gt;</span>col<span class="kw">=</span>$col<span class="kw">;
+    </span>$x<span class="kw">=</span>10<span class="kw">+</span>$col<span class="kw">*</span>65<span class="kw">;
+    </span>$<span class="kw">this-&gt;</span>SetLeftMargin<span class="kw">(</span>$x<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetX<span class="kw">(</span>$x<span class="kw">);
+}
+
+function </span>AcceptPageBreak<span class="kw">()
+{
+    </span><span class="cmt">//Method accepting or not automatic page break
+    </span><span class="kw">if(</span>$<span class="kw">this-&gt;</span>col<span class="kw">&lt;</span>2<span class="kw">)
+    {
+        </span><span class="cmt">//Go to next column
+        </span>$<span class="kw">this-&gt;</span>SetCol<span class="kw">(</span>$<span class="kw">this-&gt;</span>col<span class="kw">+</span>1<span class="kw">);
+        </span><span class="cmt">//Set ordinate to top
+        </span>$<span class="kw">this-&gt;</span>SetY<span class="kw">(</span>$<span class="kw">this-&gt;</span>y0<span class="kw">);
+        </span><span class="cmt">//Keep on page
+        </span><span class="kw">return </span>false<span class="kw">;
+    }
+    else
+    {
+        </span><span class="cmt">//Go back to first column
+        </span>$<span class="kw">this-&gt;</span>SetCol<span class="kw">(</span>0<span class="kw">);
+        </span><span class="cmt">//Page break
+        </span><span class="kw">return </span>true<span class="kw">;
+    }
+}
+
+function </span>ChapterTitle<span class="kw">(</span>$num<span class="kw">,</span>$label<span class="kw">)
+{
+    </span><span class="cmt">//Title
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Arial'</span><span class="kw">,</span><span class="str">''</span><span class="kw">,</span>12<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>SetFillColor<span class="kw">(</span>200<span class="kw">,</span>220<span class="kw">,</span>255<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>0<span class="kw">,</span>6<span class="kw">,</span><span class="str">"Chapter $num : $label"</span><span class="kw">,</span>0<span class="kw">,</span>1<span class="kw">,</span><span class="str">'L'</span><span class="kw">,</span>true<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Ln<span class="kw">(</span>4<span class="kw">);
+    </span><span class="cmt">//Save ordinate
+    </span>$<span class="kw">this-&gt;</span>y0<span class="kw">=</span>$<span class="kw">this-&gt;</span>GetY<span class="kw">();
+}
+
+function </span>ChapterBody<span class="kw">(</span>$file<span class="kw">)
+{
+    </span><span class="cmt">//Read text file
+    </span>$f<span class="kw">=</span>fopen<span class="kw">(</span>$file<span class="kw">,</span><span class="str">'r'</span><span class="kw">);
+    </span>$txt<span class="kw">=</span>fread<span class="kw">(</span>$f<span class="kw">,</span>filesize<span class="kw">(</span>$file<span class="kw">));
+    </span>fclose<span class="kw">(</span>$f<span class="kw">);
+    </span><span class="cmt">//Font
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Times'</span><span class="kw">,</span><span class="str">''</span><span class="kw">,</span>12<span class="kw">);
+    </span><span class="cmt">//Output text in a 6 cm width column
+    </span>$<span class="kw">this-&gt;</span>MultiCell<span class="kw">(</span>60<span class="kw">,</span>5<span class="kw">,</span>$txt<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Ln<span class="kw">();
+    </span><span class="cmt">//Mention
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">''</span><span class="kw">,</span><span class="str">'I'</span><span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>0<span class="kw">,</span>5<span class="kw">,</span><span class="str">'(end of excerpt)'</span><span class="kw">);
+    </span><span class="cmt">//Go back to first column
+    </span>$<span class="kw">this-&gt;</span>SetCol<span class="kw">(</span>0<span class="kw">);
+}
+
+function </span>PrintChapter<span class="kw">(</span>$num<span class="kw">,</span>$title<span class="kw">,</span>$file<span class="kw">)
+{
+    </span><span class="cmt">//Add chapter
+    </span>$<span class="kw">this-&gt;</span>AddPage<span class="kw">();
+    </span>$<span class="kw">this-&gt;</span>ChapterTitle<span class="kw">(</span>$num<span class="kw">,</span>$title<span class="kw">);
+    </span>$<span class="kw">this-&gt;</span>ChapterBody<span class="kw">(</span>$file<span class="kw">);
+}
+}
+
+</span>$pdf<span class="kw">=new </span>PDF<span class="kw">();
+</span>$title<span class="kw">=</span><span class="str">'20000 Leagues Under the Seas'</span><span class="kw">;
+</span>$pdf<span class="kw">-&gt;</span>SetTitle<span class="kw">(</span>$title<span class="kw">);
+</span>$pdf<span class="kw">-&gt;</span>SetAuthor<span class="kw">(</span><span class="str">'Jules Verne'</span><span class="kw">);
+</span>$pdf<span class="kw">-&gt;</span>PrintChapter<span class="kw">(</span>1<span class="kw">,</span><span class="str">'A RUNAWAY REEF'</span><span class="kw">,</span><span class="str">'20k_c1.txt'</span><span class="kw">);
+</span>$pdf<span class="kw">-&gt;</span>PrintChapter<span class="kw">(</span>2<span class="kw">,</span><span class="str">'THE PROS AND CONS'</span><span class="kw">,</span><span class="str">'20k_c2.txt'</span><span class="kw">);
+</span>$pdf<span class="kw">-&gt;</span>Output<span class="kw">();
+</span>?&gt;</code></pre>
+</div>
+<p class='demo'><a href='tuto4.php' target='_blank' class='demo'>[Demo]</a></p>
+The key method used is <a href='../doc/acceptpagebreak.htm'>AcceptPageBreak()</a>. It allows to accept or not an automatic page
+break. By refusing it and altering the margin and current position, the desired column layout
+is achieved.
+<br>
+For the rest, not many changes; two properties have been added to the class to save the current
+column number and the position where columns begin, and the MultiCell() call specifies a
+6 centimeter width.
+</body>
+</html>

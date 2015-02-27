@@ -1,0 +1,136 @@
+@CHARSET "ISO-8859-1";
+
+/**
+ * Archiv CSS file
+ * 
+ * @id: $Id: style.css,v 1.4 2009/10/27 20:15:55 wvankuipers Exp $
+ * @version 1.0
+ * @author Wouter van Kuipers (Archiv@pwnd.nl)
+ * @copyright 2008-2009 PWND
+ * @license LGPL 
+ * @see http://archiv.pwnd.nl
+ */
+ 
+ html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+body{ padding:0px; margin:0px; }
+
+#loader{ background-image:url(../img/ajax-loader.gif); width:31px; height:31px; position:absolute; top:50%; left:50%; margin-left:-15px; margin-right:-15px; z-index:9999; }
+
+/* Fixes scrolling dialog bug in Opera, Chrome and Safari */
+#dialog { overflow:hidden; }
+
+/* Fixes FF 2 delete file icon display bug */
+#fileBrowser .file .delete{ position:relative; margin:0px !important; padding:0px; }
+
+.transp80{ -moz-opacity:.80; }
+.transp95{ -moz-opacity:.95; }
+
+#treeView{ overflow:auto; width:100%; position:absolute; top:20px; bottom:30px; left:0px; padding:0px !important; }
+
+/** fileTree **/
+#fileTree { width:150px; position:absolute; left:0px; top:0px; padding-top:20px; bottom:0px; background-color:#F0F0EE; padding-left:5px;  }
+#fileTree *{ margin:0px; padding:0px; }
+#fileTree ul{ list-style-image:url(../img/folder.png); margin:0px; padding-left:30px; }
+#fileTree ul ul{ margin-left:-16px; }
+#fileTree li span{ cursor:pointer; text-decoration:none; padding:0px; margin:0px; margin-left:-32px; padding-left:32px; background-image:url(../img/dot2.gif); background-position:0px; background-repeat:no-repeat; display:block; height:18px; padding-top:5px; border-left:1px dotted black; }
+.last_directory{ background-image:url(../img/end.gif) !important; background-position:0px 0px !important;  border-left:none !important; }
+#fileTree #header_tree{ position:absolute; top:0px; left:0px; right:0px; border-bottom:1px solid #B5A69C; padding:3px; background-color:#EFEBE7; margin-right:-7px; }
+#fileTree #treeView{ padding:10px; }
+#fileTree #addDirectoryControls{ position:absolute; bottom:0px; left:0px; right:0px; border-top:1px solid #B5A69C; padding:3px; background-color:#EFEBE7; padding-right:5px; margin-right:-7px; }
+#fileTree input{ border:1px solid #B5A69C; background-color:white; }
+#fileTree #btnAddDirectory{ background-image:url(../img/folder_add.png); background-repeat:no-repeat; background-position:3px; width:100%; text-align:right; padding:3px; padding-left:25px; font-size:12px; cursor: pointer; color:black; }
+#edtDirectoryName{ width:100%; }
+#fileTree .selectedDirectory{ color:red; }
+
+/* SPLITTER */
+#splitter { border:1px solid #B5A69C; border-top:0px; border-bottom:0px; cursor:e-resize; background-color:#EFEBE7; width:5px; position:absolute; left:155px; top:19px; bottom:30px; }
+#splitter #mover{ height:18px; width:5px; position:absolute; top:50%; margin-top:-9px; background-image:url(smoothness/images/ui-icons_222222_256x240.png); background-position:-5px -224px; }
+
+/* FILEBROWSER */
+#fileBrowser { position:absolute; top:0px; padding-top:20px; bottom:0px; right:0px; left:162px; background-color:#F0F0EE; }
+#fileBrowser #header_browser{ position:absolute; top:0px; left:0px; right:0px; border-bottom:1px solid #B5A69C; padding:3px; background-color:#EFEBE7; }
+#fileBrowser #removeDirectory{ text-decoration:underline; cursor:pointer; text-align:right; position:absolute; right:10px; top:3px; background-image:url(../img/delete.png); background-repeat:no-repeat; padding-left:25px; line-height:15px; display:none; }
+#fileBrowser input{ border:1px solid #B5A69C; background-color:white; }
+#fileBrowser #fileControls{ position:absolute; bottom:0px; left:0px; right:0px; border-top:1px solid #B5A69C; padding:3px; padding-left:0px; background-color:#EFEBE7; }
+#fileBrowser #fileControls #buttonPlaceholder{ display:block; float:left; background-image:url(../img/insertfile.gif); background-repeat:no-repeat; background-position:left; border:1px solid #B5A69C; background-color:white; height:22px; text-align:right; }
+#fileBrowser #currentDirectory{ display:inline; font-weight:bold; }
+#fileBrowser #fileHolder{ position:absolute; top:20px; left:0px; right:0px; bottom:30px; overflow:auto; padding:5px; padding-top:0px; }
+#fileBrowser .file{ width:112px; height:132px; background:none; background-color:white !important; border:1px solid #B5A69C; float:left; margin:5px; cursor:pointer; text-align:center; font-size:9px; }
+#fileBrowser .file img{  margin:5px; border:1px solid #B5A69C; background-image:url(../img/fileBackground.jpg); display:block;  }
+#fileBrowser .file .delete{ width:16px; height:16px; float:right; background-image:url(../img/delete.png); margin-right:3px; }
+#fileBrowser #divFilesInQueue{ display:block; float:left; padding:3px; margin-top:2px; height:16px;  }
+#fileBrowser #error{width:300px; border:solid 1px #D42828; background:#F6CBCA; color:#D42828; padding:4px; margin:5px; position:absolute; left:50%; margin-left:-150px; text-align:center; font-weight:bold; background-image:url(../img/error.png); background-position:center left; background-repeat:no-repeat; display:none; z-index:10; }
+
+/**** SWFUpload ****/
+#divFileProgressContainer .progressWrapper { width: 200px; overflow: hidden; }
+#divFileProgressContainer .progressContainer { margin: 5px; padding: 4px; border: solid 1px #E8E8E8; background-color: #F7F7F7; overflow: hidden; }
+#divFileProgressContainer .red { border: solid 1px #B50000; background-color: #FFEBEB; }
+#divFileProgressContainer .green { border: solid 1px #DDF0DD; background-color: #EBFFEB; }
+#divFileProgressContainer .blue { border: solid 1px #CEE2F2; background-color: #F0F5FF; }
+#divFileProgressContainer .progressName { font-size: 8pt; font-weight: bold; color: #555555; width: 200px; height: 14px; text-align: left; white-space: nowrap; overflow: hidden; }
+#divFileProgressContainer .progressBarInProgress,
+#divFileProgressContainer .progressBarComplete,
+#divFileProgressContainer .progressBarError { font-size: 0px; width: 0%; height: 2px; background-color: blue; margin-top: 2px; }
+#divFileProgressContainer .progressBarComplete { width: 100%; background-color: green; visibility: hidden; }
+#divFileProgressContainer .progressBarError { width: 100%; background-color: red; visibility: hidden; }
+#divFileProgressContainer .progressBarStatus { margin-top: 2px; width: 200px; font-size: 7pt; font-family: Verdana; text-align: left; white-space: nowrap; }
+#divFileProgressContainer a.progressCancel,
+#divFileProgressContainer a.progressCancel:link,
+#divFileProgressContainer a.progressCancel:active,
+#divFileProgressContainer a.progressCancel:visited,
+#divFileProgressContainer #fileBrowser a.progressCancel:hover { font-size: 0px; display: block; height: 14px; width: 14px; background-image: url(../img/cancelbutton.gif); background-repeat: no-repeat; background-position: -14px 0px; float: right; }
+#divFileProgressContainer a.progressCancel:hover { background-position: 0px 0px; }
+
+#SWFUpload_Console{ position:absolute; bottom:30px; right:0px; width:500px; height:200px; border:1px solid black; z-index:11; }
+
+/*** TOOLTIPS ***/
+#tooltip{ position:absolute; bottom:35px; left:5px; z-index:10; padding:3px; border:1px solid black; background-color:white; display:none; }
+#tooltip .content th, #tooltip .content td{ height:8px; line-height:8px; padding:1px; text-align:left;}
+#tooltip .title{ border-bottom:1px solid #B5A69C; padding:2px; }
+#tooltip .bottom{ border-top:1px solid #B5A69C; padding:2px; text-align:right}

@@ -1,0 +1,48 @@
+/*!
+	TIMELINE CSS
+	
+	Designed and built by Zach Wise at VeriteCo
+	
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	
+*/
+
+/*	THEME DARK
+----------------------------------------------------- */
+	//GFX
+	.base-sprite() {
+		background-image: url(themes/timeline-dark.png?v3.4);
+	}
+	.base-sprite2x() {
+		background-image: url(themes/timeline-dark@2x.png?v4.3);
+	}
+	.loading-sprite() {
+		background-image: url(themes/loading.gif?v3.4);
+	}
+	.loading-sprite2x() {
+		background-image: url(themes/loading@2x.gif?v3.4);
+	}
+	
+	// COLORS
+	@color-base:					#1A1A1A;
+	@color-line: 					#333; //#414141;
+	@color-line-hover: 				#666;
+	@color-dark:					#FFF;
+	@color-dark-second: 			#AAA;
+	@color-dark-third: 				#AAA;
+	@color-dark-fourth: 			#999;
+	@color-dark-fifth: 				#E3E3E3;
+	@color-background-dark:			#262626;
+	// COLOR THEME
+	@color-theme:					#0BD4E3;
+	
+/*	BASE
+----------------------------------------------------- */
+
+// CSS CORE
+@import "../Core/VMM.Core.less";
+
+// Timeline Specific
+@import "../VMM.Timeline.TimeNav.less";

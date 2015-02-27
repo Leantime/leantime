@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>SetDisplayMode</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>SetDisplayMode</h1>
+<code>SetDisplayMode(<b>mixed</b> zoom [, <b>string</b> layout])</code>
+<h2>Description</h2>
+Defines the way the document is to be displayed by the viewer. The zoom level can be set: pages can be
+displayed entirely on screen, occupy the full width of the window, use real size, be scaled by a
+specific zooming factor or use viewer default (configured in the Preferences menu of Acrobat).
+The page layout can be specified too: single at once, continuous display, two columns or viewer
+default.
+<br>
+By default, documents use the full width mode with continuous display.
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>zoom</code></dt>
+<dd>
+The zoom to use. It can be one of the following string values:
+<ul>
+<li><code>fullpage</code>: displays the entire page on screen</li>
+<li><code>fullwidth</code>: uses maximum width of window</li>
+<li><code>real</code>: uses real size (equivalent to 100% zoom)</li>
+<li><code>default</code>: uses viewer default mode</li>
+</ul>
+or a number indicating the zooming factor to use.
+</dd>
+<dt><code>layout</code></dt>
+<dd>
+The page layout. Possible values are:
+<ul>
+<li><code>single</code>: displays one page at once</li>
+<li><code>continuous</code>: displays pages continuously</li>
+<li><code>two</code>: displays two pages on two columns</li>
+<li><code>default</code>: uses viewer default mode</li>
+</ul>
+Default value is <code>continuous</code>.
+</dd>
+</dl>
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>

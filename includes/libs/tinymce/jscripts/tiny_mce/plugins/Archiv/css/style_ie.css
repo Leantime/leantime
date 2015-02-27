@@ -1,0 +1,25 @@
+/**
+ * Archiv CSS file for IE browsers
+ * 
+ * @id: $Id: style_ie.css,v 1.4 2009/10/27 20:15:55 wvankuipers Exp $
+ * @version 1.0
+ * @author Wouter van Kuipers (Archiv@pwnd.nl)
+ * @copyright 2008-2009 PWND
+ * @license LGPL 
+ * @see http://archiv.pwnd.nl
+ */
+#addDirectoryControls{ padding-top:8px; background-color:red; }
+
+#fileTree{ width:160px; height:100%;}
+#fileTree li span { display:block; margin-left:0px; background-image:none; border:0px; margin-left:-30px; padding-left:5px; }
+#fileTree ul { list-style-position:inside; }
+#fileTree ul ul { margin-left:-15px; }
+#splitter{ position:absolute; top:0px; height:100%; width:5px; }
+#fileBrowser{ height: 100%; width: 100%; left:160px; padding-right:145px; }
+#addDirectoryControls{ width:100%; }
+#header_tree { width: 100%; }
+#header_browser { width:100%; }
+#fileControls{ width:100%; }
+
+.transp80{ filter:alpha(opacity=80); }
+.transp95{ filter:alpha(opacity=95); }

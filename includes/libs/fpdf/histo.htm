@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>History</title>
+<link type="text/css" rel="stylesheet" href="fpdf.css">
+<style type="text/css">
+dd {margin-top:1em; margin-bottom:1em}
+</style>
+</head>
+<body>
+<h1>History</h1>
+<dl>
+<dt><strong>v1.6</strong> (2008-08-03)</dt>
+<dd>
+- GIF image support.<br>
+- Images can now trigger page breaks.<br>
+- Possibility to have different page formats in a single document.<br>
+- Document properties (author, creator, keywords, subject and title) can now be specified in UTF-8.<br>
+- Fixed a bug: when a PNG was inserted through a URL, an error sometimes occurred.<br>
+- An automatic page break in Header() doesn't cause an infinite loop any more.<br>
+- Removed some warning messages appearing with recent PHP versions.<br>
+- Added HTTP headers to reduce problems with IE.<br>
+</dd>
+<dt><strong>v1.53</strong> (2004-12-31)</dt>
+<dd>
+- When the font subdirectory is in the same directory as fpdf.php, it is no longer necessary to define the FPDF_FONTPATH constant.<br>
+- The array $HTTP_SERVER_VARS is no longer used. It could cause trouble on PHP5-based configurations with the register_long_arrays option disabled.<br>
+- Fixed a problem related to Type1 font embedding which caused trouble to some PDF processors.<br>
+- The file name sent to the browser could not contain a space character.<br>
+- The Cell() method could not print the number 0 (you had to pass the string '0').<br>
+</dd>
+<dt><strong>v1.52</strong> (2003-12-30)</dt>
+<dd>
+- Image() now displays the image at 72 dpi if no dimension is given.<br>
+- Output() takes a string as second parameter to indicate destination.<br>
+- Open() is now called automatically by AddPage().<br>
+- Inserting remote JPEG images doesn't generate an error any longer.<br>
+- Decimal separator is forced to dot in the constructor.<br>
+- Added several encodings (Turkish, Thai, Hebrew, Ukrainian and Vietnamese).<br>
+- The last line of a right-aligned MultiCell() was not correctly aligned if it was terminated by a carriage return.<br>
+- No more error message about already sent headers when outputting the PDF to the standard output from the command line.<br>
+- The underlining was going too far for text containing characters \, ( or ).<br>
+- $HTTP_ENV_VARS has been replaced by $HTTP_SERVER_VARS.<br>
+</dd>
+<dt><strong>v1.51</strong> (2002-08-03)</dt>
+<dd>
+- Type1 font support.<br>
+- Added Baltic encoding.<br>
+- The class now works internally in points with the origin at the bottom in order to avoid two bugs occurring with Acrobat 5 :<br>&nbsp;&nbsp;* The line thickness was too large when printed under Windows 98 SE and ME.<br>&nbsp;&nbsp;* TrueType fonts didn't appear immediately inside the plug-in (a substitution font was used), one had to cause a window refresh to make them show up.<br>
+- It is no longer necessary to set the decimal separator as dot to produce valid documents.<br>
+- The clickable area in a cell was always on the left independently from the text alignment.<br>
+- JPEG images in CMYK mode appeared in inverted colors.<br>
+- Transparent PNG images in grayscale or true color mode were incorrectly handled.<br>
+- Adding new fonts now works correctly even with the magic_quotes_runtime option set to on.<br>
+</dd>
+<dt><strong>v1.5</strong> (2002-05-28)</dt>
+<dd>
+- TrueType font (AddFont()) and encoding support (Western and Eastern Europe, Cyrillic and Greek).<br>
+- Added Write() method.<br>
+- Added underlined style.<br>
+- Internal and external link support (AddLink(), SetLink(), Link()).<br>
+- Added right margin management and methods SetRightMargin(), SetTopMargin().<br>
+- Modification of SetDisplayMode() to select page layout.<br>
+- The border parameter of MultiCell() now lets choose borders to draw as Cell().<br>
+- When a document contains no page, Close() now calls AddPage() instead of causing a fatal error.<br>
+</dd>
+<dt><strong>v1.41</strong> (2002-03-13)</dt>
+<dd>
+- Fixed SetDisplayMode() which no longer worked (the PDF viewer used its default display).<br>
+</dd>
+<dt><strong>v1.4</strong> (2002-03-02)</dt>
+<dd>
+- PHP3 is no longer supported.<br>
+- Page compression (SetCompression()).<br>
+- Choice of page format and possibility to change orientation inside document.<br>
+- Added AcceptPageBreak() method.<br>
+- Ability to print the total number of pages (AliasNbPages()).<br>
+- Choice of cell borders to draw.<br>
+- New mode for Cell(): the current position can now move under the cell.<br>
+- Ability to include an image by specifying height only (width is calculated automatically).<br>
+- Fixed a bug: when a justified line triggered a page break, the footer inherited the corresponding word spacing.<br>
+</dd>
+<dt><strong>v1.31</strong> (2002-01-12)</dt>
+<dd>
+- Fixed a bug in drawing frame with MultiCell(): the last line always started from the left margin.<br>
+- Removed Expires HTTP header (gives trouble in some situations).<br>
+- Added Content-disposition HTTP header (seems to help in some situations).<br>
+</dd>
+<dt><strong>v1.3</strong> (2001-12-03)</dt>
+<dd>
+- Line break and text justification support (MultiCell()).<br>
+- Color support (SetDrawColor(), SetFillColor(), SetTextColor()). Possibility to draw filled rectangles and paint cell background.<br>
+- A cell whose width is declared null extends up to the right margin of the page.<br>
+- Line width is now retained from page to page and defaults to 0.2 mm.<br>
+- Added SetXY() method.<br>
+- Fixed a passing by reference done in a deprecated manner for PHP4.<br>
+</dd>
+<dt><strong>v1.2</strong> (2001-11-11)</dt>
+<dd>
+- Added font metric files and GetStringWidth() method.<br>
+- Centering and right-aligning text in cells.<br>
+- Display mode control (SetDisplayMode()).<br>
+- Added methods to set document properties (SetAuthor(), SetCreator(), SetKeywords(), SetSubject(), SetTitle()).<br>
+- Possibility to force PDF download by browser.<br>
+- Added SetX() and GetX() methods.<br>
+- During automatic page break, current abscissa is now retained.<br>
+</dd>
+<dt><strong>v1.11</strong> (2001-10-20)</dt>
+<dd>
+- PNG support doesn't require PHP4/zlib any more. Data are now put directly into PDF without any decompression/recompression stage.<br>
+- Image insertion now works correctly even with magic_quotes_runtime option set to on.<br>
+</dd>
+<dt><strong>v1.1</strong> (2001-10-07)</dt>
+<dd>
+- JPEG and PNG image support.<br>
+</dd>
+<dt><strong>v1.01</strong> (2001-10-03)</dt>
+<dd>
+- Fixed a bug involving page break: in case when Header() doesn't specify a font, the one from previous page was not restored and produced an incorrect document.<br>
+</dd>
+<dt><strong>v1.0</strong> (2001-09-17)</dt>
+<dd>
+- First version.<br>
+</dd>
+</dl>
+</body>
+</html>

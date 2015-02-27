@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>FPDF</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>FPDF</h1>
+<code>FPDF([<b>string</b> orientation [, <b>string</b> unit [, <b>mixed</b> format]]])</code>
+<h2>Description</h2>
+This is the class constructor. It allows to set up the page format, the orientation and the
+unit of measure used in all methods (except for font sizes).
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>orientation</code></dt>
+<dd>
+Default page orientation. Possible values are (case insensitive):
+<ul>
+<li><code>P</code> or <code>Portrait</code></li>
+<li><code>L</code> or <code>Landscape</code></li>
+</ul>
+Default value is <code>P</code>.
+</dd>
+<dt><code>unit</code></dt>
+<dd>
+User unit. Possible values are:
+<ul>
+<li><code>pt</code>: point</li>
+<li><code>mm</code>: millimeter</li>
+<li><code>cm</code>: centimeter</li>
+<li><code>in</code>: inch</li>
+</ul>
+A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This
+is a very common unit in typography; font sizes are expressed in that unit.
+<br>
+<br>
+Default value is <code>mm</code>.
+</dd>
+<dt><code>format</code></dt>
+<dd>
+The format used for pages. It can be either one of the following values (case insensitive):
+<ul>
+<li><code>A3</code></li>
+<li><code>A4</code></li>
+<li><code>A5</code></li>
+<li><code>Letter</code></li>
+<li><code>Legal</code></li>
+</ul>
+or an array containing the width and the height (expressed in the unit given by <code>unit</code>).<br>
+<br>
+Default value is <code>A4</code>.
+</dd>
+</dl>
+<h2>Example</h2>
+Example with a custom 100x150 mm page format:
+<div class="doc-source">
+<pre><code>$pdf = new FPDF('P', 'mm', array(100,150));</code></pre>
+</div>
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+/* ThemePixels */
+
+/* Reset */
+.themepixels, .themepixels div, .themepixels span, .themepixels a {vertical-align:baseline; text-align:left; position:absolute; border:0; padding:0; margin:0; background:transparent; font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; font-size:11px; color:#000; text-decoration:none; font-weight:normal; width:auto; height:auto; overflow:hidden; display:block}
+
+/* General */
+.themepixels {position:absolute; direction:ltr; -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0; box-shadow: 1px 1px 10px rgba(0,0,0,0.2); -webkit-box-shadow: 1px 1px 10px rgba(0,0,0,0.2); box-shadow: 1px 1px 10px rgba(0,0,0,0.2); }
+.themepixels .mceWrapper {position:static}
+.mceEventBlocker {position:fixed; left:0; top:0; background:url(img/horizontal.gif) no-repeat 0 -75px; width:100%; height:100%}
+.themepixels .mcePlaceHolder {border:1px solid #000; background:#888; top:0; left:0; opacity:0.5; -ms-filter:'alpha(opacity=50)'; filter:alpha(opacity=50)}
+.themepixels_modalBlocker {position:fixed; left:0; top:0; width:100%; height:100%; background:#FFF; opacity:0.6; -ms-filter:'alpha(opacity=60)'; filter:alpha(opacity=60); display:none}
+
+/* Top */
+.themepixels .mceTop, .themepixels .mceTop div {top:0; width:100%; height:30px}
+.themepixels .mceTop .mceLeft {width:6px; background:url(img/corners.gif)}
+.themepixels .mceTop .mceCenter {right:6px; width:100%; height:23px; background:url(img/horizontal.gif) 12px 0; clip:rect(auto auto auto 12px)}
+.themepixels .mceTop .mceRight {right:0; width:6px; height:23px; background:url(img/corners.gif) -12px 0}
+.themepixels .mceTop span {width:100%; text-align:center; vertical-align:middle; line-height:23px; font-weight:bold}
+.themepixels .mceFocus .mceTop .mceLeft {background:#333}
+.themepixels .mceFocus .mceTop .mceCenter {background:#333}
+.themepixels .mceFocus .mceTop .mceRight {background:#333}
+.themepixels .mceFocus .mceTop span {color:#FFF}
+
+/* Middle */
+.themepixels .mceMiddle, .themepixels .mceMiddle div {top:0}
+.themepixels .mceMiddle {width:100%; height:100%; clip:rect(23px auto auto auto)}
+.themepixels .mceMiddle .mceLeft {left:0; width:5px; height:100%; background:#fff; border-left: 1px solid #ccc; }
+.themepixels .mceMiddle span {top:23px; left:5px; width:100%; height:100%; background:#FFF}
+.themepixels .mceMiddle .mceRight {right:0; width:5px; height:100%; background:#fff; border-right: 1px solid #ccc; }
+
+/* Bottom */
+.themepixels .mceBottom, .themepixels .mceBottom div {height:6px}
+.themepixels .mceBottom {left:0; bottom:0; width:100%; border-bottom: 1px solid #ccc;}
+.themepixels .mceBottom div {top:0}
+.themepixels .mceBottom .mceLeft {left:0; width:5px; background:#fff; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+.themepixels .mceBottom .mceCenter {left:5px; width:100%; background:#fff; border-bottom: 1px solid #ccc;}
+.themepixels .mceBottom .mceRight {right:0; width:5px; background: #fff; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; }
+.themepixels .mceBottom span {display:none}
+.themepixels .mceStatusbar .mceBottom, .themepixels .mceStatusbar .mceBottom div {height:23px}
+.themepixels .mceStatusbar .mceBottom .mceLeft {background:url(img/corners.gif) -29px 0}
+.themepixels .mceStatusbar .mceBottom .mceCenter {background:url(img/horizontal.gif) 0 -52px}
+.themepixels .mceStatusbar .mceBottom .mceRight {background:url(img/corners.gif) -24px 0}
+.themepixels .mceStatusbar .mceBottom span {display:block; left:7px; font-family:Arial, Verdana; font-size:11px; line-height:23px}
+
+/* Actions */
+.themepixels a {width:29px; height:16px; top:3px;}
+.themepixels .mceClose {right:6px; background:url(img/buttons.gif) -87px 0}
+.themepixels .mceMin {display:none; right:68px; background:url(img/buttons.gif) 0 0}
+.themepixels .mceMed {display:none; right:37px; background:url(img/buttons.gif) -29px 0}
+.themepixels .mceMax {display:none; right:37px; background:url(img/buttons.gif) -58px 0}
+.themepixels .mceMove {display:none;width:100%;cursor:move;background:url(img/corners.gif) no-repeat -100px -100px}
+.themepixels .mceMovable .mceMove {display:block}
+.themepixels .mceFocus .mceClose {right:6px; background:url(img/buttons.gif) -87px -16px}
+.themepixels .mceFocus .mceMin {right:68px; background:url(img/buttons.gif) 0 -16px}
+.themepixels .mceFocus .mceMed {right:37px; background:url(img/buttons.gif) -29px -16px}
+.themepixels .mceFocus .mceMax {right:37px; background:url(img/buttons.gif) -58px -16px}
+.themepixels .mceFocus .mceClose:hover {right:6px; background:url(img/buttons.gif) -87px -32px}
+.themepixels .mceFocus .mceClose:hover {right:6px; background:url(img/buttons.gif) -87px -32px}
+.themepixels .mceFocus .mceMin:hover {right:68px; background:url(img/buttons.gif) 0 -32px}
+.themepixels .mceFocus .mceMed:hover {right:37px; background:url(img/buttons.gif) -29px -32px}
+.themepixels .mceFocus .mceMax:hover {right:37px; background:url(img/buttons.gif) -58px -32px}
+
+/* Resize */
+.themepixels .mceResize {top:auto; left:auto; display:none; width:5px; height:5px; background:url(img/horizontal.gif) no-repeat 0 -75px}
+.themepixels .mceResizable .mceResize {display:block}
+.themepixels .mceResizable .mceMin, .themepixels .mceMax {display:none}
+.themepixels .mceMinimizable .mceMin {display:block}
+.themepixels .mceMaximizable .mceMax {display:block}
+.themepixels .mceMaximized .mceMed {display:block}
+.themepixels .mceMaximized .mceMax {display:none}
+.themepixels a.mceResizeN {top:0; left:0; width:100%; cursor:n-resize}
+.themepixels a.mceResizeNW {top:0; left:0; cursor:nw-resize}
+.themepixels a.mceResizeNE {top:0; right:0; cursor:ne-resize}
+.themepixels a.mceResizeW {top:0; left:0; height:100%; cursor:w-resize;}
+.themepixels a.mceResizeE {top:0; right:0; height:100%; cursor:e-resize}
+.themepixels a.mceResizeS {bottom:0; left:0; width:100%; cursor:s-resize}
+.themepixels a.mceResizeSW {bottom:0; left:0; cursor:sw-resize}
+.themepixels a.mceResizeSE {bottom:0; right:0; cursor:se-resize}
+
+/* Alert/Confirm */
+.themepixels .mceButton {font-weight:bold; bottom:10px; width:80px; height:30px; background:url(img/button.gif); line-height:30px; vertical-align:middle; text-align:center; outline:0}
+.themepixels .mceMiddle .mceIcon {left:15px; top:35px; width:32px; height:32px}
+.themepixels .mceAlert .mceMiddle span, .themepixels .mceConfirm .mceMiddle span {background:transparent;left:60px; top:35px; width:320px; height:50px; overflow:auto; white-space:normal; color: #666;}
+.themepixels a:hover {font-weight:bold;}
+.themepixels .mceAlert .mceMiddle, .themepixels .mceConfirm .mceMiddle {background:#fff}
+.themepixels .mceAlert .mceOk {left:50%; top:auto; margin-left: -40px;border: 1px solid #f0882c; background: #fb9337; color: #fff;}
+.themepixels .mceAlert .mceIcon {background:url(img/alert.gif)}
+.themepixels .mceConfirm .mceOk {left:50%; top:auto; margin-left: -90px; border: 1px solid #f0882c; background: #fb9337; color: #fff;}
+.themepixels .mceConfirm .mceCancel {left:50%; top:auto;border: 1px solid #ccc; background: #eee; color: #666;}
+.themepixels .mceConfirm .mceOk, .themepixels .mceConfirm .mceCancel { -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px}
+.themepixels .mceConfirm .mceIcon {background:url(img/confirm.gif)}

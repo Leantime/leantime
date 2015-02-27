@@ -1,0 +1,481 @@
+
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\Tooltip.as
+package{import caurina.transitions.Tweener;import caurina.transitions.Equations;import flash.display.Sprite;import flash.text.TextField;import flash.text.TextFormat;import flash.filters.DropShadowFilter;import ChartObjects.*;public class Tooltip extends Sprite{private var title : TextField;private var text : TextField;public function Tooltip ();public function draw (p:ChartObjects.Point) : void;public function hide () : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\XAxisLabels.as
+package{import fl.controls.TextArea;import flash.display.Sprite;import flash.text.TextField;import flash.display.DisplayObject;public class XAxisLabels extends Sprite{public var labels : Array;internal function XAxisLabels (lv:Array, minmax:MinMax);public function add (label:String) : void;public function get () : String;internal function i () : Number;public function del () : void;public function show_label (label:String, name:String) : void;public function count () : Number;public function get_height () : Number;public function resize (sc:ScreenCoords, yPos:Number) : void;public function last_label_width () : Number;public function first_label_width () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\main.as
+package{import flash.events.Event;import flash.events.MouseEvent;import flash.display.Sprite;import org.flashdevelop.utils.FlashConnect;import flash.net.URLLoader;import flash.net.URLRequest;import flash.display.StageAlign;import flash.display.StageScaleMode;import labels.*;import ChartObjects.*;import string.Utils;import global.Global;public class main extends Sprite{private static var EMBEDDED_FONT : String;private var t : Title;private var x_labels : XAxisLabels;private var y_labels : YAxisLabels;private var x_axis : XAxis;private var x_legend : XLegend;private var y_axis : YAxis;private var y_legend : YLegend;private var minmax : MinMax;private var keys : Keys;private var obs : ObjectCollection;public var tool_tip_wrapper : String;private var sc : ScreenCoords;private var tooltip : Tooltip;public function main ();public function get_x_legend () : XLegend;private function set_the_stage () : void;private function mouseMove (event:Event) : void;private function activateHandler (event:Event) : void;private function resizeHandler (event:Event) : void;private function resize () : void;private function mouseOut (event:Event) : void;private function xmlLoaded (event:Event) : void;private function clean_data (data:String) : Array;public function format_y_axis_label (val:Number) : String;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\labels\BaseLabel.as
+package labels{import flash.display.Sprite;import flash.display.Stage;import flash.text.TextField;import flash.text.TextFieldType;import flash.text.TextFormat;import flash.text.StyleSheet;import flash.events.Event;import flash.text.TextFieldAutoSize;import org.flashdevelop.utils.FlashConnect;public class BaseLabel extends Sprite{public var text : String;protected var css : StyleSheet;protected var style : String;protected var tf : TextField;public function BaseLabel ();protected function build (text:String) : void;protected function tag_wrapper (text:String) : String;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\PointBar.as
+package ChartObjects{import flash.events.Event;import flash.events.MouseEvent;import flash.display.Sprite;public class PointBar extends ChartObjects.Point{public var _width : Number;public var bar_bottom : Number;public var colour : Number;public function PointBar (x:Number, y:Number, width:Number, bar_bottom:Number, colour:Number);private function mouseOver (event:Event) : void;public function resize (sc:ScreenCoords) : void;public function get_tip_pos () : Object;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\tr.as
+package{import org.flashdevelop.utils.FlashConnect;public class tr{public static function ace (o:Object) : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ScreenCoords.as
+package{import org.flashdevelop.utils.FlashConnect;public class ScreenCoords{public var top : Number;public var left : Number;public var right : Number;public var bottom : Number;public var width : Number;public var height : Number;public var tick_offset : Number;public var count : Number;private var minmax : MinMax;private var x_offset : Boolean;public function ScreenCoords (top:Number, left:Number, right:Number, bottom:Number, minmax:MinMax, x_left_label_width:Number, x_right_label_width:Number, count:Number, jiggle:Boolean, three_d:Boolean, x_offset:Boolean);public function jiggle (left:Number, right:Number, x_label_width:Number, count:Number) : Number;public function shrink_left (left:Number, right:Number, x_label_width:Number, count:Number) : Number;public function getYbottom (right_axis:Boolean = false) : Number;public function getY_old (i:Number, right_axis:Boolean) : Number;public function getY (i:Number, right_axis:Boolean = false) : Number;public function width_ () : Number;private function left_ () : Number;public function get_x_pos_of_val (i:Number) : Number;public function get_x_pos (i:Number) : Number;public function get_x_tick_pos (i:Number) : Number;public function make_point_2 (x:Number, y:Number, right_axis:Boolean) : Point;public function make_point_bar (x:Number, y:Number, right_axis:Boolean, group:Number, group_count:Number) : PointBar;public function make_point_candle (x:Number, high:Number, open:Number, close:Number, low:Number, right_axis:Boolean, group:Number, group_count:Number) : PointCandle;public function makePointHLC (x:Number, high:Number, close:Number, low:Number, right_axis:Boolean, group:Number, group_count:Number) : PointHLC;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\Line.as
+package ChartObjects{import flash.events.Event;import flash.events.MouseEvent;import ChartObjects.Point;import string.Utils;import global.Global;public class Line extends Base{public function Line (val:Array);private function make_highlight_dot () : void;public function make () : void;public function resize (sc:ScreenCoords) : void;public function highlight_value () : void;private function rollOver () : void;public function closest (x:Number, y:Number) : Object;public function make_dot (col:Number, bg:Number, tool_tip_title:String, tool_tip_value:String) : void;public function mouseOut (event:Event) : void;public function move_dot (val:ChartObjects.Point, mc:Object) : void;public function is_over (x:Number, y:Number) : Boolean;private function pulse (t:Object) : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\Factory.as
+package ChartObjects{public class Factory{public var styles : Array;private var attach_right : Array;public static function MakeChart (lv:Array, x_axis_labels:XAxisLabels) : ObjectCollection;private static function makeObject (lv:Array, name:String, c:Number) : Base;private function parseVal (val:String) : Array;public function _count_bars () : Number;private function is_right (y2lines:Array, line:Number) : Boolean;public function mouse_move (x:Number, y:Number) : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\BarGlassStyle.as
+package{internal class BarGlassStyle extends BarStyle{public var is_bar : Boolean;public var outline_colour : Number;public function BarGlassStyle (lv:Object, name:String);public function parse (val:String);private function glass (mc:MovieClip, val:PointBar);private function bg (mc:MovieClip, val:PointBar);public function draw_bar (val:PointBar, i:Number);}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\labels\_Verdana.as
+package labels{import flash.display.Sprite;public class _Verdana extends Sprite{public static var _Verdana : Class;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\labels\YLegend.as
+package labels{import org.flashdevelop.utils.FlashConnect;import flash.display.Sprite;import flash.display.Stage;import flash.text.*;import flash.events.Event;import flash.text.TextFieldAutoSize;import flash.display.Loader;import flash.events.Event;import flash.net.URLRequest;public class YLegend extends Sprite{private var right : Boolean;private var text : String;protected var css : StyleSheet;protected var style : String;protected var tf : TextField;private static var EMBEDDED_FONT : String;public function YLegend (lv:Array, right:Boolean);private function build (text:String) : void;/**
+*  * dynamic loading of fonts at run time: * 		private function loadFont(url:String):void {			var loader:Loader = new Loader();			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, fontLoaded);			loader.load(new URLRequest(url));		}				private function fontLoaded(event:Event):void {			var FontLibrary:Class = event.target.applicationDomain.getDefinition("_Verdana") as Class;			Font.registerFont(FontLibrary._Verdana);			this.build( this.tag_wrapper( this.text ) );		}
+*/
+protected function tag_wrapper (text:String) : String;public function resize () : void;public function get_width () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\NumberFormat.as
+package{public class NumberFormat{public static var DEFAULT_NUM_DECIMALS : Number;public var numDecimals : Number;public var isFixedNumDecimalsForced : Boolean;public var isDecimalSeparatorComma : Boolean;public var isThousandSeparatorDisabled : Boolean;private static var _instance : NumberFormat;private static var _instanceY2 : NumberFormat;public function NumberFormat (numDecimals:Number, isFixedNumDecimalsForced:Boolean, isDecimalSeparatorComma:Boolean, isThousandSeparatorDisabled:Boolean);public static function getInstance (lv:Array) : NumberFormat;public static function getInstanceY2 (lv:Array) : NumberFormat;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\YAxisLabels.as
+package{import flash.display.Sprite;import flash.text.TextField;import org.flashdevelop.utils.FlashConnect;public class YAxisLabels extends Sprite{public var labels : Array;private var steps : Number;private var right : Boolean;public function YAxisLabels (y_label_style:YLabelStyle, min:Number, max:Number, steps:Number, nr:Number, lv:Array);private function yAxisLabel (title:String, y_label_style:YLabelStyle) : TextField;public function resize (left:Number, box:ScreenCoords) : void;public function get_width () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\XAxis.as
+package{import flash.display.Sprite;import flash.geom.Matrix;import org.flashdevelop.utils.FlashConnect;public class XAxis extends Sprite{private var tick : Number;private var grid_colour : Number;private var axis_colour : Number;private var grid_count : Number;private var steps : Number;private var alt_axis_colour : Number;private var alt_axis_step : Number;private var three_d : Boolean;private var three_d_height : Number;internal function XAxis (tick:Number, lv:Array);public function set_grid_count (val:Number) : void;public function get_grid_count () : Number;public function resize (sc:ScreenCoords) : void;public function three_d_axis (sc:ScreenCoords) : void;public function two_d_axis (sc:ScreenCoords) : void;public function height_ () : Number;public function get_height () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\Parser.as
+package{public class Parser{public static function isEmptyValue (value:Object) : Boolean;public static function getStringValue (value:Object, defaultValue:String, isEmptyStringValid:Boolean) : String;public static function getNumberValue (value:Object, defaultValue:Number, isZeroValueValid:Boolean, isNegativeValueValid:Boolean) : Number;public static function getBooleanValue (value:Object, defaultValue:Boolean) : Boolean;public static function runTests () : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\Loading.as
+package{import flash.display.Sprite;public class Loading extends Sprite{public function Loading ();internal function done ();}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\string\Utils.as
+package string{public class Utils{public static var tooltip : String;public function Utils ();public static function get_colour (col:String) : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\InnerBackground.as
+package{import flash.display.Sprite;internal class InnerBackground extends Sprite{private var colour : Number;private var colour_2 : Number;private var angle : Number;internal function InnerBackground (lv:Array);internal function move (box:Box);}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\MinMax.as
+package{public class MinMax{public var y_min : Number;public var y_max : Number;public var y2_min : Number;public var y2_max : Number;public var x_min : Number;public var x_max : Number;public var has_x_range : Boolean;public function MinMax (lv:Array);public function range (right:Boolean) : Number;public function min (right:Boolean) : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\NumberUtils.as
+package{public class NumberUtils{public static function formatNumber (i:Number) : String;public static function formatNumberY2 (i:Number) : String;public static function format (i:Number, numDecimals:Number, isFixedNumDecimalsForced:Boolean, isDecimalSeparatorComma:Boolean, isThousandSeparatorDisabled:Boolean) : String;public static function toDecimalSeperatorComma (value:String) : String;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\Point.as
+package{public class Point{public var x : Number;public var y : Number;public var tooltip : String;public var is_tip : Boolean;public function Point (x:Number, y:Number);public function make_tooltip (tip:String, key:String, val:Number, x_legend:String, x_axis_label:String, tip_set:String) : void;public function get_tip_pos () : Object;public function toString () : String;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\PointBar.as
+package{public class PointBar extends Point{public var width : Number;public var bar_bottom : Number;public function PointBar (x:Number, y:Number, width:Number, bar_bottom:Number);public function get_tip_pos () : Object;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\PointCandle.as
+package{public class PointCandle extends Point{public var width : Number;public var bar_bottom : Number;public var high : Number;public var open : Number;public var close : Number;public var low : Number;public function PointCandle (x:Number, high:Number, open:Number, close:Number, low:Number, tooltip:Number, width:Number);public function make_tooltip (tip:String, key:String, val:Number, x_legend:String, x_axis_label:String, tip_set:String) : void;public function get_tip_pos () : Object;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\PointHLC.as
+package{public class PointHLC extends Point{public var width : Number;public var bar_bottom : Number;public var high : Number;public var close : Number;public var low : Number;public function PointHLC (x:Number, high:Number, close:Number, low:Number, tooltip:Number, width:Number);public function make_tooltip (tip:String, key:String, val:Number, x_legend:String, x_axis_label:String, tip_set:String) : void;public function get_tip_pos () : Object;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\YLabelStyle.as
+package{import string.Utils;public class YLabelStyle{public var size : Number;public var colour : Number;public var show_labels : Boolean;public var show_y2 : Boolean;public function YLabelStyle (lv:Array, nr:Number, parent:main);}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\YTicks.as
+package{public class YTicks{public var big : Number;public var small : Number;public var steps : Number;public function YTicks (lv:Array);}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\YAxis.as
+package{import flash.display.Sprite;import string.Utils;public class YAxis extends Sprite{private var _width : Number;private var ticks : YTicks;private var grid_colour : Number;private var axis_colour : Number;private var line_width : Number;private var min : Number;private var max : Number;private var steps : Number;private var right : Boolean;internal function YAxis (y_ticks:YTicks, lv:Array, min:Number, max:Number, steps:Number, nr:Number);public function resize (box:ScreenCoords) : void;private function _move_left (box:ScreenCoords) : void;private function _move_right (box:ScreenCoords) : void;public function get_width () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\labels\Title.as
+package labels{import flash.display.Sprite;import flash.display.Stage;import flash.text.TextField;import flash.text.TextFieldType;import flash.text.TextFormat;import flash.text.StyleSheet;import flash.events.Event;import flash.text.TextFieldAutoSize;import org.flashdevelop.utils.FlashConnect;public class Title extends BaseLabel{public var colour : Number;public var size : Number;private var top_padding : Number;public function Title (lv:Array);protected function tag_wrapper (text:String) : String;public function resize () : void;public function get_height () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\labels\XLegend.as
+package labels{import org.flashdevelop.utils.FlashConnect;public class XLegend extends BaseLabel{public function XLegend (lv:Array);protected function tag_wrapper (text:String) : String;public function resize () : void;public function get_height () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\Keys.as
+package{import flash.display.Sprite;import flash.text.TextField;import flash.text.TextFormat;import org.flashdevelop.utils.FlashConnect;public class Keys extends Sprite{private var _height : Number;public var left : Number;public var top : Number;private var count : Number;public function Keys (left:Number, top:Number, styles:Array);public function del () : void;private function make_key (st:Object, c:Number) : void;public function resize () : void;public function get_height () : Number;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\AuxFunctions.as
+/**
+* Generic, auxiliary functions * * @author		Zeh Fernando * @version		1.0.0
+*/
+internal class caurina.transitions.AuxFunctions{/**
+* Gets the R (xx0000) bits from a number	 *	 * @param		p_num				Number		Color number (ie, 0xffff00)	 * @return							Number		The R value
+*/
+public static function numberToR (p_num:Number) : Number;/**
+* Gets the G (00xx00) bits from a number	 *	 * @param		p_num				Number		Color number (ie, 0xffff00)	 * @return							Number		The G value
+*/
+public static function numberToG (p_num:Number) : Number;/**
+* Gets the B (0000xx) bits from a number	 *	 * @param		p_num				Number		Color number (ie, 0xffff00)	 * @return							Number		The B value
+*/
+public static function numberToB (p_num:Number) : Number;/**
+* Checks whether a string is on an array	 *	 * @param		p_string			String		String to search for	 * @param		p_array				Array		Array to be searched	 * @return							Boolean		Whether the array contains the string or not
+*/
+public static function isInArray (p_string:String, p_array:Array) : Boolean;/**
+* Returns the number of properties an object has	 *	 * @param		p_object			Object		Target object with a number of properties	 * @return							Number		Number of total properties the object has
+*/
+public static function getObjectLength (p_object:Object) : Number;/**
+Takes a variable number of objects as parameters and "adds" their properties, form left to right. If a latter object defines a property as null, it will be removed from the final object	* @param		args				Object(s)	A variable number of objects	* @return							Object		An object with the sum of all paremeters added as properties.
+*/
+public static function concatObjects () : Object;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\Equations.as
+import caurina.transitions.Tweener;/**
+Disclaimer for Robert Penner's Easing Equations license:TERMS OF USE - EASING EQUATIONSOpen source under the BSD License.Copyright � 2001 Robert PennerAll rights reserved.Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.    * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+internal class caurina.transitions.Equations{/**
+* There's no constructor.
+*/
+public function Equations ();/**
+* Registers all the equations to the Tweener class, so they can be found by the direct string parameters.	 * This method doesn't actually have to be used - equations can always be referenced by their full function	 * names. But "registering" them make them available as their shorthand string names.
+*/
+public static function init () : Void;/**
+* Easing equation function for a simple linear tweening, with no easing	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeNone (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quadratic (t^2) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInQuad (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quadratic (t^2) easing out: decelerating to zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutQuad (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quadratic (t^2) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutQuad (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quadratic (t^2) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInQuad (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a cubic (t^3) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInCubic (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a cubic (t^3) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutCubic (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a cubic (t^3) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutCubic (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a cubic (t^3) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInCubic (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quartic (t^4) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInQuart (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quartic (t^4) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutQuart (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quartic (t^4) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutQuart (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quartic (t^4) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInQuart (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quintic (t^5) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInQuint (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quintic (t^5) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutQuint (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quintic (t^5) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutQuint (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a quintic (t^5) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInQuint (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a sinusoidal (sin(t)) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInSine (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a sinusoidal (sin(t)) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutSine (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a sinusoidal (sin(t)) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutSine (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a sinusoidal (sin(t)) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInSine (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for an exponential (2^t) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInExpo (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for an exponential (2^t) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutExpo (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for an exponential (2^t) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutExpo (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for an exponential (2^t) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInExpo (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a circular (sqrt(1-t^2)) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInCirc (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a circular (sqrt(1-t^2)) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutCirc (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a circular (sqrt(1-t^2)) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutCirc (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a circular (sqrt(1-t^2)) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInCirc (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for an elastic (exponentially decaying sine wave) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		a					Number		Amplitude	 * @param		p					Number		Period	 * @return							Number		The correct value
+*/
+public static function easeInElastic (t:Number, b:Number, c:Number, d:Number, a:Number, p:Number) : Number;/**
+* Easing equation function for an elastic (exponentially decaying sine wave) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		a					Number		Amplitude	 * @param		p					Number		Period	 * @return							Number		The correct value
+*/
+public static function easeOutElastic (t:Number, b:Number, c:Number, d:Number, a:Number, p:Number) : Number;/**
+* Easing equation function for an elastic (exponentially decaying sine wave) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		a					Number		Amplitude	 * @param		p					Number		Period	 * @return							Number		The correct value
+*/
+public static function easeInOutElastic (t:Number, b:Number, c:Number, d:Number, a:Number, p:Number) : Number;/**
+* Easing equation function for an elastic (exponentially decaying sine wave) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		a					Number		Amplitude	 * @param		p					Number		Period	 * @return							Number		The correct value
+*/
+public static function easeOutInElastic (t:Number, b:Number, c:Number, d:Number, a:Number, p:Number) : Number;/**
+* Easing equation function for a back (overshooting cubic easing: (s+1)*t^3 - s*t^2) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		s					Number		Overshoot ammount: higher s means greater overshoot (0 produces cubic easing with no overshoot, and the default value of 1.70158 produces an overshoot of 10 percent)	 * @return							Number		The correct value
+*/
+public static function easeInBack (t:Number, b:Number, c:Number, d:Number, s:Number) : Number;/**
+* Easing equation function for a back (overshooting cubic easing: (s+1)*t^3 - s*t^2) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		s					Number		Overshoot ammount: higher s means greater overshoot (0 produces cubic easing with no overshoot, and the default value of 1.70158 produces an overshoot of 10 percent)	 * @return							Number		The correct value
+*/
+public static function easeOutBack (t:Number, b:Number, c:Number, d:Number, s:Number) : Number;/**
+* Easing equation function for a back (overshooting cubic easing: (s+1)*t^3 - s*t^2) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		s					Number		Overshoot ammount: higher s means greater overshoot (0 produces cubic easing with no overshoot, and the default value of 1.70158 produces an overshoot of 10 percent)	 * @return							Number		The correct value
+*/
+public static function easeInOutBack (t:Number, b:Number, c:Number, d:Number, s:Number) : Number;/**
+* Easing equation function for a back (overshooting cubic easing: (s+1)*t^3 - s*t^2) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @param		s					Number		Overshoot ammount: higher s means greater overshoot (0 produces cubic easing with no overshoot, and the default value of 1.70158 produces an overshoot of 10 percent)	 * @return							Number		The correct value
+*/
+public static function easeOutInBack (t:Number, b:Number, c:Number, d:Number, s:Number) : Number;/**
+* Easing equation function for a bounce (exponentially decaying parabolic bounce) easing in: accelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInBounce (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a bounce (exponentially decaying parabolic bounce) easing out: decelerating from zero velocity	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutBounce (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a bounce (exponentially decaying parabolic bounce) easing in/out: acceleration until halfway, then deceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeInOutBounce (t:Number, b:Number, c:Number, d:Number) : Number;/**
+* Easing equation function for a bounce (exponentially decaying parabolic bounce) easing out/in: deceleration until halfway, then acceleration	 *	 * @param		t					Number		Current time (in frames or seconds)	 * @param		b					Number		Starting value	 * @param		c					Number		Change needed in value	 * @param		d					Number		Expected easing duration (in frames or seconds)	 * @return							Number		The correct value
+*/
+public static function easeOutInBounce (t:Number, b:Number, c:Number, d:Number) : Number;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\PropertyInfoObj.as
+/**
+* PropertyInfoObj * An object containing the updating info for a given property (its starting value, and its final value) * * @author		Zeh Fernando * @version		1.0.0 * @private
+*/
+internal class caurina.transitions.PropertyInfoObj{public var valueStart : Number;public var valueComplete : Number;public var hasModifier : Boolean;public var modifierFunction : Function;public var modifierParameters : Array;/**
+* Initializes the basic PropertyInfoObj.	 * 	 * @param	p_valueStart		Number		Starting value of the tweening (null if not started yet)	 * @param	p_valueComplete		Number		Final (desired) property value
+*/
+internal function PropertyInfoObj (p_valueStart:Number, p_valueComplete:Number, p_modifierFunction:Function, p_modifierParameters:Array);/**
+* Clones this property info and returns the new PropertyInfoObj	 *	 * @param	omitEvents		Boolean			Whether or not events such as onStart (and its parameters) should be omitted	 * @return 					TweenListObj	A copy of this object
+*/
+public function clone () : PropertyInfoObj;/**
+* Returns this object described as a String.	 *	 * @return 					String		The description of this object.
+*/
+public function toString () : String;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\SpecialPropertiesDefault.as
+import caurina.transitions.Tweener;import caurina.transitions.AuxFunctions;import flash.filters.BitmapFilter;import flash.filters.BlurFilter;/**
+* SpecialPropertiesDefault * List of default special properties (normal and splitter properties) for the Tweener class * The function names are strange/inverted because it makes for easier debugging (alphabetic order). They're only for internal use (on this class) anyways. * * @author		Zeh Fernando, Nate Chatellier * @version		1.0.2
+*/
+internal class caurina.transitions.SpecialPropertiesDefault{/**
+* There's no constructor.
+*/
+public function SpecialPropertiesDefault ();/**
+* Registers all the special properties to the Tweener class, so the Tweener knows what to do with them.
+*/
+public static function init () : Void;/**
+* Splits the _color parameter into specific color variables	 *	 * @param		p_value				Number		The original _color value	 * @return							Array		An array containing the .name and .value of all new properties
+*/
+public static function _color_splitter (p_value:Number) : Array;/**
+* Splits the _colorTransform parameter into specific color variables	 *	 * @param		p_value				Number		The original _colorTransform value	 * @return							Array		An array containing the .name and .value of all new properties
+*/
+public static function _colorTransform_splitter (p_value:Object) : Array;public static function _scale_splitter (p_value:Number) : Array;/**
+* Splits the _filter, _blur, etc parameter into specific filter variables	 *	 * @param		p_value				BitmapFilter	A BitmapFilter instance	 * @return							Array			An array containing the .name and .value of all new properties
+*/
+public static function _filter_splitter (p_value:BitmapFilter) : Array;/**
+* Returns the current frame number from the movieclip timeline	 *	 * @param		p_obj				Object		MovieClip object	 * @return							Number		The current frame
+*/
+public static function _frame_get (p_obj:Object) : Number;/**
+* Sets the timeline frame	 *	 * @param		p_obj				Object		MovieClip object	 * @param		p_value				Number		New frame number
+*/
+public static function _frame_set (p_obj:Object, p_value:Number) : Void;/**
+* Returns the current sound volume	 *	 * @param		p_obj				Object		Sound object	 * @return							Number		The current volume
+*/
+public static function _sound_volume_get (p_obj:Object) : Number;/**
+* Sets the sound volume	 *	 * @param		p_obj				Object		Sound object	 * @param		p_value				Number		New volume
+*/
+public static function _sound_volume_set (p_obj:Object, p_value:Number) : Void;/**
+* Returns the current sound pan	 *	 * @param		p_obj				Object		Sound object	 * @return							Number		The current pan
+*/
+public static function _sound_pan_get (p_obj:Object) : Number;/**
+* Sets the sound volume	 *	 * @param		p_obj				Object		Sound object	 * @param		p_value				Number		New pan
+*/
+public static function _sound_pan_set (p_obj:Object, p_value:Number) : Void;/**
+* _color_*	 * Generic function for the ra/rb/ga/gb/ba/bb/aa/ab components of the colorTransform object
+*/
+public static function _color_property_get (p_obj:Object, p_parameters:Array) : Number;public static function _color_property_set (p_obj:Object, p_value:Number, p_parameters:Array) : Void;/**
+* Returns the current alpha	 *	 * @param		p_obj				Object		MovieClip or Textfield object	 * @return							Number		The current alpha
+*/
+public static function _autoAlpha_get (p_obj:Object) : Number;/**
+* Sets the current autoAlpha 	 *	 * @param		p_obj				Object		MovieClip or Textfield object	 * @param		p_value				Number		New alpha
+*/
+public static function _autoAlpha_set (p_obj:Object, p_value:Number) : Void;/**
+* (filters)	 * Generic function for the properties of filter objects
+*/
+public static function _filter_property_get (p_obj:Object, p_parameters:Array) : Number;public static function _filter_property_set (p_obj:Object, p_value:Number, p_parameters:Array) : Void;/**
+* Given the parameter object passed to this special property, return an array listing the properties that should be modified, and their parameters	 *	 * @param		p_obj				Object		Parameter passed to this property	 * @return							Array		Array listing name and parameter of each property
+*/
+public static function _bezier_modifier (p_obj:Object) : Array;/**
+* Given tweening specifications (beging, end, t), applies the property parameter to it, returning new t	 *	 * @param		b					Number		Beginning value of the property	 * @param		e					Number		Ending (desired) value of the property	 * @param		t					Number		Current t of this tweening (0-1), after applying the easing equation	 * @param		p					Array		Array of parameters passed to this specific property	 * @return							Number		New t, with the p parameters applied to it
+*/
+public static function _bezier_get (b:Number, e:Number, t:Number, p:Array) : Number;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\SpecialProperty.as
+/**
+* SpecialProperty * A kind of a getter/setter for special properties * * @author		Zeh Fernando * @version		1.0.1
+*/
+internal class caurina.transitions.SpecialProperty{private var parameters : Array;/**
+* Builds a new special property object.	 * 	 * @param		p_getFunction		Function	Reference to the function used to get the special property value	 * @param		p_setFunction		Function	Reference to the function used to set the special property value	 * @param		p_parameters		Array		Additional parameters that should be passed to the function when executing (so the same function can apply to different special properties)
+*/
+public function SpecialProperty (p_getFunction:Function, p_setFunction:Function, p_parameters:Array);/**
+* Empty shell for the function that gets the value.
+*/
+public function getValue (p_obj:Object, p_parameters:Array) : Number;/**
+* Empty shell for the function that sets the value.
+*/
+public function setValue (p_obj:Object, p_value:Number, p_parameters:Array) : Void;/**
+* Converts the instance to a string that can be used when trace()ing the object
+*/
+public function toString () : String;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\SpecialPropertyModifier.as
+/**
+* SpecialPropertyModifier * A special property which actually acts on other properties * * @author		Zeh Fernando * @version		1.0.0 * @private
+*/
+internal class caurina.transitions.SpecialPropertyModifier{public var modifyValues : Function;public var getValue : Function;/**
+* Builds a new special property modifier object.	 * 	 * @param		p_modifyFunction		Function		Function that returns the modifider parameters.
+*/
+public function SpecialPropertyModifier (p_modifyFunction:Function, p_getFunction:Function);/**
+* Converts the instance to a string that can be used when trace()ing the object
+*/
+public function toString () : String;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\SpecialPropertySplitter.as
+/**
+* SpecialPropertySplitter * A proxy setter for special properties * * @author		Zeh Fernando * @version		1.0.0
+*/
+internal class caurina.transitions.SpecialPropertySplitter{public var parameters : Array;/**
+* Builds a new splitter special propery object.	 * 	 * @param		p_splitFunction		Function	Reference to the function used to split a value
+*/
+public function SpecialPropertySplitter (p_splitFunction:Function, p_parameters:Array);/**
+* Empty shell for the function that receives the value (usually just a Number), and splits it in new property names and values	 * Must return an array containing .name and .value
+*/
+public function splitValues (p_value:Object, p_parameters:Array) : Array;/**
+* Converts the instance to a string that can be used when trace()ing the object
+*/
+public function toString () : String;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\Tweener.as
+import caurina.transitions.Equations;import caurina.transitions.AuxFunctions;import caurina.transitions.SpecialPropertiesDefault;import caurina.transitions.SpecialProperty;import caurina.transitions.SpecialPropertyModifier;import caurina.transitions.SpecialPropertySplitter;import caurina.transitions.TweenListObj;import caurina.transitions.PropertyInfoObj;/**
+Licensed under the MIT LicenseCopyright (c) 2006-2007 Zeh Fernando and Nate ChatellierPermission is hereby granted, free of charge, to any person obtaining a copy ofthis software and associated documentation files (the "Software"), to deal inthe Software without restriction, including without limitation the rights touse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies ofthe Software, and to permit persons to whom the Software is furnished to do so,subject to the following conditions:The above copyright notice and this permission notice shall be included in allcopies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS ORIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESSFOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS ORCOPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHERIN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR INCONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.http://code.google.com/p/tweener/http://code.google.com/p/tweener/wiki/License
+*/
+internal class caurina.transitions.Tweener{private static var _engineExists : Boolean;private static var _inited : Boolean;private static var _currentTime : Number;private static var _tweenList : Array;private static var _timeScale : Number;private static var _transitionList : Object;private static var _specialPropertyList : Object;private static var _specialPropertyModifierList : Object;private static var _specialPropertySplitterList : Object;/**
+* There's no constructor.
+*/
+public function Tweener ();/**
+* Adds a new tweening	 *	 * @param		(first-n param)		Object				Object that should be tweened: a movieclip, textfield, etc.. OR an array of objects	 * @param		(last param)		Object				Object containing the specified parameters in any order, as well as the properties that should be tweened and their values	 * @param		.time				Number				Time in seconds or frames for the tweening to take (defaults 2)	 * @param		.delay				Number				Delay time (defaults 0)	 * @param		.useFrames			Boolean				Whether to use frames instead of seconds for time control (defaults false)	 * @param		.transition			String/Function		Type of transition equation... (defaults to "easeoutexpo")	 * @param		.onStart			Function			* Direct property, See the TweenListObj class	 * @param		.onUpdate			Function			* Direct property, See the TweenListObj class	 * @param		.onComplete			Function			* Direct property, See the TweenListObj class	 * @param		.onOverwrite		Function			* Direct property, See the TweenListObj class	 * @param		.onStartParams		Array				* Direct property, See the TweenListObj class	 * @param		.onUpdateParams		Array				* Direct property, See the TweenListObj class	 * @param		.onCompleteParams	Array				* Direct property, See the TweenListObj class	 * @param		.onOverwriteParams	Array				* Direct property, See the TweenListObj class	 * @param		.rounded			Boolean				* Direct property, See the TweenListObj class	 * @param		.skipUpdates		Number				* Direct property, See the TweenListObj class	 * @return							Boolean				TRUE if the tween was successfully added, FALSE if otherwise
+*/
+public static function addTween () : Boolean;/**
+* Adds a new *caller* tweening	 *	 * @param		(first-n param)		Object				Object that should be tweened: a movieclip, textfield, etc.. OR an array of objects	 * @param		(last param)		Object				Object containing the specified parameters in any order, as well as the properties that should be tweened and their values	 * @param		.time				Number				Time in seconds or frames for the tweening to take (defaults 2)	 * @param		.delay				Number				Delay time (defaults 0)	 * @param		.count				Number				Number of times this caller should be called	 * @param		.transition			String/Function		Type of transition equation... (defaults to "easeoutexpo")	 * @param		.onStart			Function			Event called when tween starts	 * @param		.onUpdate			Function			Event called when tween updates	 * @param		.onComplete			Function			Event called when tween ends	 * @param		.waitFrames			Boolean				Whether to wait (or not) one frame for each call	 * @return							Boolean				TRUE if the tween was successfully added, FALSE if otherwise
+*/
+public static function addCaller () : Boolean;/**
+* Remove an specified tweening of a specified object the tweening list, if it conflicts with the given time	 *	 * @param		p_scope				Object						List of objects affected	 * @param		p_properties		Object 						List of properties affected (PropertyInfoObj instances)	 * @param		p_timeStart			Number						Time when the new tween starts	 * @param		p_timeComplete		Number						Time when the new tween ends	 * @return							Boolean						Whether or not it actually deleted something
+*/
+public static function removeTweensByTime (p_scope:Object, p_properties:Object, p_timeStart:Number, p_timeComplete:Number) : Boolean;/**
+* Remove tweenings from a given object from the tweening list	 *	 * @param		p_tween				Object		Object that must have its tweens removed	 * @param		(2nd-last params)	Object		Property(ies) that must be removed	 * @return							Boolean		Whether or not it successfully removed this tweening
+*/
+public static function removeTweens (p_scope:Object) : Boolean;/**
+* Remove all tweenings from the engine	 *	 * @return							Boolean		Whether or not it successfully removed a tweening
+*/
+public static function removeAllTweens () : Boolean;/**
+* Pause tweenings from a given object	 *	 * @param		p_scope				Object		Object that must have its tweens paused	 * @param		(2nd-last params)	Object		Property(ies) that must be paused	 * @return							Boolean		Whether or not it successfully paused something
+*/
+public static function pauseTweens (p_scope:Object) : Boolean;/**
+* Pause all tweenings on the engine	 *	 * @return							Boolean		Whether or not it successfully paused a tweening
+*/
+public static function pauseAllTweens () : Boolean;/**
+* Resume tweenings from a given object	 *	 * @param		p_scope				Object		Object that must have its tweens resumed	 * @param		(2nd-last params)	Object		Property(ies) that must be resumed	 * @return							Boolean		Whether or not it successfully resumed something
+*/
+public static function resumeTweens (p_scope:Object) : Boolean;/**
+* Resume all tweenings on the engine	 *	 * @return							Boolean		Whether or not it successfully resumed a tweening
+*/
+public static function resumeAllTweens () : Boolean;/**
+* Do some generic action on specific tweenings (pause, resume, remove, more?)	 *	 * @param		p_function			Function	Function to run on the tweenings that match	 * @param		p_scope				Object		Object that must have its tweens affected by the function	 * @param		p_properties		Array		Array of strings that must be affected	 * @return							Boolean		Whether or not it successfully affected something
+*/
+private static function affectTweens (p_affectFunction:Function, p_scope:Object, p_properties:Array) : Boolean;/**
+* Splits a tweening in two	 *	 * @param		p_tween				Number		Object that must have its tweens split	 * @param		p_properties		Array		Array of strings containing the list of properties that must be separated	 * @return							Number		The index number of the new tween
+*/
+public static function splitTweens (p_tween:Number, p_properties:Array) : Number;/**
+* Updates all existing tweenings	 *	 * @return							Boolean		FALSE if no update was made because there's no tweening (even delayed ones)
+*/
+private static function updateTweens () : Boolean;/**
+* Remove an specific tweening from the tweening list	 *	 * @param		p_tween				Number		Index of the tween to be removed on the tweenings list	 * @return							Boolean		Whether or not it successfully removed this tweening
+*/
+public static function removeTweenByIndex (p_tween:Number, p_finalRemoval:Boolean) : Boolean;/**
+* Pauses an specific tween	 *	 * @param		p_tween				Number		Index of the tween to be paused	 * @return							Boolean		Whether or not it successfully paused this tweening
+*/
+public static function pauseTweenByIndex (p_tween:Number) : Boolean;/**
+* Resumes an specific tween	 *	 * @param		p_tween				Number		Index of the tween to be resumed	 * @return							Boolean		Whether or not it successfully resumed this tweening
+*/
+public static function resumeTweenByIndex (p_tween:Number) : Boolean;/**
+* Updates an specific tween	 *	 * @param		i					Number		Index (from the tween list) of the tween that should be updated	 * @return							Boolean		FALSE if it's already finished and should be deleted, TRUE if otherwise
+*/
+private static function updateTweenByIndex (i:Number) : Boolean;/**
+* Initiates the Tweener. Should only be ran once
+*/
+private static function init () : Void;/**
+* Adds a new function to the available transition list "shortcuts"	 *	 * @param		p_name				String		Shorthand transition name	 * @param		p_function			Function	The proper equation function
+*/
+public static function registerTransition (p_name:String, p_function:Function) : Void;/**
+* Adds a new special property to the available special property list.	 *	 * @param		p_name				Name of the "special" property.	 * @param		p_getFunction		Function that gets the value.	 * @param		p_setFunction		Function that sets the value.
+*/
+public static function registerSpecialProperty (p_name:String, p_getFunction:Function, p_setFunction:Function, p_parameters:Array) : Void;/**
+* Adds a new special property modifier to the available modifier list.	 *	 * @param		p_name				Name of the "special" property modifier.	 * @param		p_modifyFunction	Function that modifies the value.	 * @param		p_getFunction		Function that gets the value.
+*/
+public static function registerSpecialPropertyModifier (p_name:String, p_modifyFunction:Function, p_getFunction:Function) : Void;/**
+* Adds a new special property splitter to the available splitter list.	 *	 * @param		p_name				Name of the "special" property splitter.	 * @param		p_splitFunction		Function that splits the value.
+*/
+public static function registerSpecialPropertySplitter (p_name:String, p_splitFunction:Function, p_parameters:Array) : Void;/**
+* Starts the Tweener class engine. It is supposed to be running every time a tween exists
+*/
+private static function startEngine () : Void;/**
+* Stops the Tweener class engine
+*/
+private static function stopEngine () : Void;/**
+* Gets a property value from an object	 *	 * @param		p_obj				Object		Any given object	 * @param		p_prop				String		The property name	 * @return							Number		The value
+*/
+private static function getPropertyValue (p_obj:Object, p_prop:String) : Number;/**
+* Sets the value of an object property	 *	 * @param		p_obj				Object		Any given object	 * @param		p_prop				String		The property name	 * @param		p_value				Number		The new value
+*/
+private static function setPropertyValue (p_obj:Object, p_prop:String, p_value:Number) : Void;/**
+* Updates the time to enforce time grid-based updates
+*/
+public static function updateTime () : Void;/**
+* Ran once every frame. It's the main engine, updates all existing tweenings.
+*/
+public static function onEnterFrame () : Void;/**
+* Sets the new time scale.	 *	 * @param		p_time				Number		New time scale (0.5 = slow, 1 = normal, 2 = 2x fast forward, etc)
+*/
+public static function setTimeScale (p_time:Number) : Void;/**
+* Finds whether or not an object has any tweening	 *	 * @param		p_scope				Object		Target object	 * @return							Boolean		Whether or not there's a tweening occuring on this object (paused, delayed, or active)
+*/
+public static function isTweening (p_scope:Object) : Boolean;/**
+* Return an array containing a list of the properties being tweened for this object	 *	 * @param		p_scope				Object		Target object	 * @return							Array		List of strings with properties being tweened (including delayed or paused)
+*/
+public static function getTweens (p_scope:Object) : Array;/**
+* Return the number of properties being tweened for this object	 *	 * @param		p_scope				Object		Target object	 * @return							Number		Total count of properties being tweened (including delayed or paused)
+*/
+public static function getTweenCount (p_scope:Object) : Number;/**
+Handles errors when Tweener executes any callbacks (onStart, onUpdate, etc)    *  If the TweenListObj specifies an <code>onError</code> callback it well get called, passing the <code>Error</code> object and the current scope as parameters. If no <code>onError</code> callback is specified, it will trace a stackTrace.
+*/
+private static function handleError (pTweening:Object, pError:Error, pCallBackName:String) : Void;/**
+* Return the current tweener version	 *	 * @return							String		The number of the current Tweener version
+*/
+public static function getVersion () : String;/**
+* Return the name for the controller movieclip	 *	 * @return							String		The number of the current Tweener version
+*/
+public static function getControllerName () : String;public static function debug_getList () : String;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\caurina\transitions\TweenListObj.as
+import caurina.transitions.AuxFunctions;/**
+* The tween list object. Stores all of the properties and information that pertain to individual tweens. * * @author		Nate Chatellier, Zeh Fernando * @version		1.0.4
+*/
+internal class caurina.transitions.TweenListObj{public var scope : Object;public var properties : Object;public var auxProperties : Object;public var timeStart : Number;public var timeComplete : Number;public var useFrames : Boolean;public var transition : Function;public var onStart : Function;public var onUpdate : Function;public var onComplete : Function;public var onOverwrite : Function;public var onError : Function;public var onStartParams : Array;public var onUpdateParams : Array;public var onCompleteParams : Array;public var onOverwriteParams : Array;public var rounded : Boolean;public var isPaused : Boolean;public var timePaused : Number;public var isCaller : Boolean;public var count : Number;public var timesCalled : Number;public var waitFrames : Boolean;public var skipUpdates : Number;public var updatesSkipped : Number;public var hasStarted : Boolean;/**
+* Initializes the basic TweenListObj	 * 	 * @param	p_scope				Object		Object affected by this tweening	 * @param	p_timeStart			Number		Time when this tweening should start	 * @param	p_timeComplete		Number		Time when this tweening should end	 * @param	p_useFrames			Boolean		Whether or not to use frames instead of time	 * @param	p_transition		Function	Equation to control the transition animation
+*/
+internal function TweenListObj (p_scope:Object, p_timeStart:Number, p_timeComplete:Number, p_useFrames:Boolean, p_transition:Function);/**
+* Clones this tweening and returns the new TweenListObj	 *	 * @param	omitEvents		Boolean			Whether or not events such as onStart (and its parameters) should be omitted	 * @return 					TweenListObj	A copy of this object
+*/
+public function clone (omitEvents:Boolean) : TweenListObj;/**
+* Returns this object described as a String.	 *	 * @return 					String		The description of this object.
+*/
+public function toString () : String;/**
+* Checks if p_obj "inherits" properties from other objects, as set by the "base" property. Will create a new object, leaving others intact.	 * o_bj.base can be an object or an array of objects. Properties are collected from the first to the last element of the "base" filed, with higher	 * indexes overwritting smaller ones. Does not modify any of the passed objects, but makes a shallow copy of all properties.	 *	 * @param		p_obj		Object				Object that should be tweened: a movieclip, textfield, etc.. OR an array of objects	 * @return					Object				A new object with all properties from the p_obj and p_obj.base.
+*/
+public static function makePropertiesChain (p_obj:Object) : Object;}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\Base.as
+package ChartObjects{import flash.display.Sprite;import org.flashdevelop.utils.FlashConnect;public class Base extends Sprite{public var key : String;public var font_size : Number;public var colour : Number;public var line_width : Number;public var circle_size : Number;public var is_bar : Boolean;public var values : Array;public var ExPoints : Array;private var links : Array;internal var tooltips : Array;public function Base ();public function set_values (v:Array) : void;public function add (val:String, tool_tip:String) : void;public function del () : void;public function get_length () : Number;public function resize (sc:ScreenCoords) : void;public function draw (val:String, mc:Object) : void;public function highlight_value () : void;public function closest (x:Number, y:Number) : Object;public function set_links (links:String) : void;public function set_tooltips (tooltips:String) : void;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\ObjectCollection.as
+package ChartObjects{public class ObjectCollection{public var sets : Array;public function ObjectCollection ();public function add (set:Base) : void;public function length () : Number;public function resize (sc:ScreenCoords) : void;public function mouse_move (x:Number, y:Number) : ChartObjects.Point;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\Point.as
+package ChartObjects{import flash.display.Sprite;public class Point extends Sprite{public var _x : Number;public var _y : Number;public var screen_x : Number;public var screen_y : Number;public var tooltip : String;public var is_tip : Boolean;public function Point (x:Number, y:Number);public function screen_pos (x:Number, y:Number) : void;public function set_tip (b:Boolean) : void;public function make_tooltip (tip:String, key:String, val:Number, x_legend:String, x_axis_label:String, tip_set:String) : void;public function get_tip_pos () : Object;public function toString () : String;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\ChartObjects\Bar.as
+package ChartObjects{import ChartObjects.PointBar;import string.Utils;import global.Global;public class Bar extends Base{public function Bar (lv:Object);public function parse_bar (val:String) : void;/**
+private function set_mcs( count:Number )		{			// delete the old movie clips			// this should be in the deconstructor...			if( this.bar_mcs!=undefined )			{				for( var i:Number=0; i<this.bar_mcs.length; i++ )				{					_root.removeMovieClip( this.bar_mcs[i]._name );				}			}						// make an empty array to hold each bar MovieClip:			this.bar_mcs = new Array(count);						for( var i:Number=0; i < count; i++ )			{				var mc:MovieClip = _root.createEmptyMovieClip( this.name+'_'+i, _root.getNextHighestDepth() );				mc._is_over = false;								// add the MovieClip to our array:				this.bar_mcs[i] = mc;			}		}
+*/
+private function parse_list (val:String) : Array;/**
+public function is_over( x:Number, y:Number )		{			for( var i:Number=0; i < this.bar_mcs.length; i++ )			{				var tmp:MovieClip = this.bar_mcs[i];				if( tmp.hitTest(x,y) )				{					if( !tmp._is_over )					{						tmp._is_over = true;												if( this.links[i] != undefined )						{							// tell _root that the mouse is over us,							// and if it is clicked do this link							_root.is_over( this.links[i] );						}						var t:Tween = new Tween(this.bar_mcs[i], "_alpha", Elastic.easeOut, this.bar_mcs[i]._alpha_original, 100, 60, false);					}				}				else				{					if( tmp._is_over )					{						tmp._is_over = false;						_root.is_out();						var t:Tween = new Tween(this.bar_mcs[i], "_alpha", Elastic.easeOut, 100, this.bar_mcs[i]._alpha_original, 60, false);					}				}			}		}
+*/
+public function make () : void;public function resize (sc:ScreenCoords) : void;/**
++-----+			|  B  |			|     |   +-----+			|     |   |  C  |			|     |   |     |			+-----+---+-----+			   1   2
+*/
+public function closest (x:Number, y:Number) : Object;}}
+#file-cache C:\Users\John\Documents\flex\open-flash-chart\global\Global.as
+package global{public class Global{private static var instance : Global;private static var allowInstantiation : Boolean;public var x_labels : XAxisLabels;public function Global ();public static function getInstance () : Global;}}

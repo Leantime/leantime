@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shamcey - Metro Style Admin Template</title>
+<link rel="stylesheet" href="css/style.default.css" type="text/css" />
+<link rel="stylesheet" href="prettify/prettify.css" type="text/css" />
+
+<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-migrate-1.1.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.9.2.min.js"></script>
+<script type="text/javascript" src="prettify/prettify.js"></script>
+<script type="text/javascript" src="js/modernizr.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="js/jquery.alerts.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/custom.js"></script>
+<script type="text/javascript" src="js/elements.js"></script>
+</head>
+
+<body>
+
+<div class="mainwrapper">
+    
+    <div class="header">
+        <div class="logo">
+            <a href="dashboard.html"><img src="images/logo.png" alt="" /></a>
+        </div>
+        <div class="headerinner">
+            <ul class="headmenu">
+                <li class="odd">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="count">4</span>
+                        <span class="head-icon head-message"></span>
+                        <span class="headmenu-label">Messages</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-header">Messages</li>
+                        <li><a href=""><span class="icon-envelope"></span> New message from <strong>Jack</strong> <small class="muted"> - 19 hours ago</small></a></li>
+                        <li><a href=""><span class="icon-envelope"></span> New message from <strong>Daniel</strong> <small class="muted"> - 2 days ago</small></a></li>
+                        <li><a href=""><span class="icon-envelope"></span> New message from <strong>Jane</strong> <small class="muted"> - 3 days ago</small></a></li>
+                        <li><a href=""><span class="icon-envelope"></span> New message from <strong>Tanya</strong> <small class="muted"> - 1 week ago</small></a></li>
+                        <li><a href=""><span class="icon-envelope"></span> New message from <strong>Lee</strong> <small class="muted"> - 1 week ago</small></a></li>
+                        <li class="viewmore"><a href="messages.html">View More Messages</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#">
+                    <span class="count">10</span>
+                    <span class="head-icon head-users"></span>
+                    <span class="headmenu-label">New Users</span>
+                    </a>
+                    <ul class="dropdown-menu newusers">
+                        <li class="nav-header">New Users</li>
+                        <li>
+                            <a href="">
+                                <img src="images/photos/thumb1.png" alt="" class="userthumb" />
+                                <strong>Draniem Daamul</strong>
+                                <small>April 20, 2013</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <img src="images/photos/thumb2.png" alt="" class="userthumb" />
+                                <strong>Shamcey Sindilmaca</strong>
+                                <small>April 19, 2013</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <img src="images/photos/thumb3.png" alt="" class="userthumb" />
+                                <strong>Nusja Paul Nawancali</strong>
+                                <small>April 19, 2013</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <img src="images/photos/thumb4.png" alt="" class="userthumb" />
+                                <strong>Rose Cerona</strong>
+                                <small>April 18, 2013</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <img src="images/photos/thumb5.png" alt="" class="userthumb" />
+                                <strong>John Doe</strong>
+                                <small>April 16, 2013</small>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="odd">
+                    <a class="dropdown-toggle" data-toggle="dropdown" data-target="#">
+                    <span class="count">1</span>
+                    <span class="head-icon head-bar"></span>
+                    <span class="headmenu-label">Statistics</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-header">Statistics</li>
+                        <li><a href=""><span class="icon-align-left"></span> New Reports from <strong>Products</strong> <small class="muted"> - 19 hours ago</small></a></li>
+                        <li><a href=""><span class="icon-align-left"></span> New Statistics from <strong>Users</strong> <small class="muted"> - 2 days ago</small></a></li>
+                        <li><a href=""><span class="icon-align-left"></span> New Statistics from <strong>Comments</strong> <small class="muted"> - 3 days ago</small></a></li>
+                        <li><a href=""><span class="icon-align-left"></span> Most Popular in <strong>Products</strong> <small class="muted"> - 1 week ago</small></a></li>
+                        <li><a href=""><span class="icon-align-left"></span> Most Viewed in <strong>Blog</strong> <small class="muted"> - 1 week ago</small></a></li>
+                        <li class="viewmore"><a href="charts.html">View More Statistics</a></li>
+                    </ul>
+                </li>
+                <li class="right">
+                    <div class="userloggedinfo">
+                        <img src="images/photos/thumb1.png" alt="" />
+                        <div class="userinfo">
+                            <h5>Juan Dela Cruz <small>- juan@themepixels.com</small></h5>
+                            <ul>
+                                <li><a href="editprofile.html">Edit Profile</a></li>
+                                <li><a href="">Account Settings</a></li>
+                                <li><a href="index.html">Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul><!--headmenu-->
+        </div>
+    </div>
+    
+    <div class="leftpanel">
+        
+        <div class="leftmenu">        
+            <ul class="nav nav-tabs nav-stacked">
+            	<li class="nav-header">Navigation</li>
+                <li><a href="dashboard.html"><span class="iconfa-laptop"></span> Dashboard</a></li>
+                <li><a href="buttons.html"><span class="iconfa-hand-up"></span> Buttons &amp; Icons</a></li>
+                <li class="dropdown"><a href=""><span class="iconfa-pencil"></span> Forms</a>
+                    <ul>
+                    	<li><a href="forms.html">Form Styles</a></li>
+                        <li><a href="wizards.html">Wizard Form</a></li>
+                        <li><a href="wysiwyg.html">WYSIWYG</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown active"><a href=""><span class="iconfa-briefcase"></span> UI Elements &amp; Widgets</a>
+                    <ul style="display: block;">
+                    	<li class="active"><a href="elements.html">Theme Components</a></li>
+                        <li><a href="bootstrap.html">Bootstrap Components</a></li>
+                        <li><a href="boxes.html">Headers &amp; Boxes</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown"><a href=""><span class="iconfa-th-list"></span> Tables</a>
+                    <ul>
+                    	<li><a href="table-static.html">Static Table</a></li>
+                        <li><a href="table-dynamic.html">Dynamic Table</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="media.html"><span class="iconfa-picture"></span> Media Manager</a></li>
+                <li><a href="typography.html"><span class="iconfa-font"></span> Typography</a></li>
+                <li><a href="charts.html"><span class="iconfa-signal"></span> Graph &amp; Charts</a></li>
+                <li><a href="messages.html"><span class="iconfa-envelope"></span> Messages</a></li>
+                <li><a href="calendar.html"><span class="iconfa-calendar"></span> Calendar</a></li>
+                <li class="dropdown"><a href=""><span class="iconfa-book"></span> Other Pages</a>
+                    <ul>
+                    	<li><a href="404.html">404 Error Page</a></li>
+                        <li><a href="editprofile.html">Edit Profile</a></li>
+                        <li><a href="invoice.html">Invoice Page</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!--leftmenu-->
+        
+    </div><!-- leftpanel -->
+    
+    <div class="rightpanel">
+        
+        <ul class="breadcrumbs">
+            <li><a href="dashboard.html"><i class="iconfa-home"></i></a> <span class="separator"></span></li>
+            <li><a href="dashboard.html">UI Elements &amp; Widgets</a> <span class="separator"></span></li>
+            <li>Theme Components</li>
+            
+            <li class="right">
+                <a href="" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-tint"></i> Color Skins</a>
+                <ul class="dropdown-menu pull-right skin-color">
+                    <li><a href="default">Default</a></li>
+                    <li><a href="navyblue">Navy Blue</a></li>
+                    <li><a href="palegreen">Pale Green</a></li>
+                    <li><a href="red">Red</a></li>
+                    <li><a href="green">Green</a></li>
+                    <li><a href="brown">Brown</a></li>
+                </ul>
+            </li>
+        </ul>
+        
+        <div class="pageheader">
+            <form action="results.html" method="post" class="searchbar">
+                <input type="text" name="keyword" placeholder="To search type and hit enter..." />
+            </form>
+            <div class="pageicon"><span class="iconfa-briefcase"></span></div>
+            <div class="pagetitle">
+                <h5>UI Elements &amp; Widgets</h5>
+                <h1>Theme Components</h1>
+            </div>
+        </div><!--pageheader-->
+        
+        <div class="maincontent">
+            <div class="maincontentinner">
+                
+                <div class="row-fluid">
+                    <div class="span6">
+                        <h4 class="subtitle2">Growl Notifications</h4>
+                        <br />
+                        <a id="growl" class="btn"><small>Basic growl</small></a> &nbsp;
+                   	<a id="growl2" class="btn"><small>Long live growl message</small></a>
+                        
+                        <br /><br />
+                        <h4 class="subtitle2">Alert Boxes</h4>
+                        <br />
+                        <a class="btn alertboxbutton"><small>Basic Alert</small></a> &nbsp;
+                        <a class="btn confirmbutton"><small>Confirm Box</small></a> &nbsp;
+                        <a class="btn promptbutton"><small>Prompt Box</small></a> &nbsp;
+                        <a class="btn alerthtmlbutton"><small>Dialog with HTML support</small></a>
+                        
+                        <br /><br />
+                        
+                        <a class="btn btn-danger alertdanger"><small>Alert Danger</small></a> &nbsp;
+                        <a class="btn btn-warning alertwarning"><small>Alert Warning</small></a> &nbsp;
+                        <a class="btn btn-success alertsuccess"><small>Alert Success</small></a> &nbsp;
+                        <a class="btn btn-info alertinfo"><small>Alert Info</small></a> &nbsp;
+                        <a class="btn btn-inverse alertinverse"><small>Alert Inverse</small></a> &nbsp;
+                        
+                    </div><!--span6-->
+                    
+                    <div class="span6">
+                        <h4 class="subtitle2">Ajax Loaders</h4>
+                        <br />
+                        <div class="loaders">
+                            <img src="images/loaders/loader1.gif" alt="" />
+                            <img src="images/loaders/loader2.gif" alt="" />
+                            <img src="images/loaders/loader3.gif" alt="" />
+                            <img src="images/loaders/loader4.gif" alt="" />
+                            <img src="images/loaders/loader8.gif" alt="" />
+                            <img src="images/loaders/loader9.gif" alt="" />
+                            <img src="images/loaders/loader5.gif" alt="" />
+                            <img src="images/loaders/loader6.gif" alt="" />
+                            <img src="images/loaders/loader7.gif" alt="" />
+                            <img src="images/loaders/loader10.gif" alt="" />
+                            <img src="images/loaders/loader11.gif" alt="" />
+                            <img src="images/loaders/loader12.gif" alt="" />
+                            <img src="images/loaders/loader13.gif" alt="" />
+                            <img src="images/loaders/loader14.gif" alt="" />
+                            <img src="images/loaders/loader15.gif" alt="" />
+                            <img src="images/loaders/loader16.gif" alt="" />
+                            <img src="images/loaders/loader17.gif" alt="" />
+                            <img src="images/loaders/loader18.gif" alt="" />
+                            <img src="images/loaders/loader19.gif" alt="" />
+                            <img src="images/loaders/loader20.gif" alt="" />
+                            <img src="images/loaders/loader21.gif" alt="" />
+                            <img src="images/loaders/loader22.gif" alt="" />
+                            <img src="images/loaders/loader23.gif" alt="" />
+                            <img src="images/loaders/loader24.gif" alt="" />
+                            <img src="images/loaders/loader25.gif" alt="" />
+                            <img src="images/loaders/loader26.gif" alt="" />
+                            <img src="images/loaders/loader27.gif" alt="" />
+                            <img src="images/loaders/loader28.gif" alt="" />
+                            <img src="images/loaders/loader29.gif" alt="" />
+                            <img src="images/loaders/loader30.gif" alt="" />                            
+                        </div><!--loaders-->
+                    </div><!--span6-->
+                </div><!--row-fluid-->
+                
+                <br />
+                
+                <div class="row-fluid">
+                    <div class="span12">
+                        <h4 class="subtitle2">Sliders</h4>
+                        <br />
+                        <div class="pargroup">
+                            <div class="par">
+                                <h6>Normal Slider</h6>
+                                <div id="slider"></div>
+                            </div>
+                            <div class="par">
+                                <h6>Snap To Increments</h6>
+                                <p class="pull-right">Withdrawal: <strong><span id="amount" class="color333"></span></strong></p>
+                                <div id="slider2"></div>
+                            </div>
+                            
+                            <div class="par">
+                                <h6>Range Slider</h6>
+                                <p class="pull-right">Price Range: <strong><span id="amount2" class="color333"></span></strong></p>
+                                <div id="slider3"></div>
+                            </div>
+                                    
+                            <div class="par">
+                                <h6>Fixed Minimum</h6>
+                                <p class="pull-right">Maximum price: <strong><span id="amount4" class="color069"></span></strong></p>
+                                <div id="slider4"></div>
+                            </div>
+                                    
+                            <div class="par">
+                                <h6>Fixed Maximum</h6>
+                                <p class="pull-right">Maximum price: <strong><span id="amount5" class="color333"></span></strong></p>
+                                <div id="slider5"></div>
+                            </div>
+                        </div><!--pargroup-->
+                                
+                    </div><!--span12-->
+                    
+                </div><!--row-fluid-->
+                
+                <br />
+                <h4 class="subtitle2">Tabbed Widgets</h4>
+                <br />
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="tabbedwidget">
+                            <ul>
+                                <li><a href="#tabs-1">Tab 1</a></li>
+                                <li><a href="#tabs-2">Tab 2</a></li>
+                                <li><a href="#tabs-3">Tab 3</a></li>
+                            </ul>
+                            <div id="tabs-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="tabs-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="tabs-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="tabbedwidget tab-primary">
+                            <ul>
+                                <li><a href="#a-1">Tab 1</a></li>
+                                <li><a href="#a-2">Tab 2</a></li>
+                                <li><a href="#a-3">Tab 3</a></li>
+                            </ul>
+                            <div id="a-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="a-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="a-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-primary&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        <div class="tabbedwidget tab-danger">
+                            <ul>
+                                <li><a href="#b-1">Tab 1</a></li>
+                                <li><a href="#b-2">Tab 2</a></li>
+                                <li><a href="#b-3">Tab 3</a></li>
+                            </ul>
+                            <div id="b-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="b-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="b-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-danger&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="tabbedwidget tab-inverse">
+                            <ul>
+                                <li><a href="#c-1">Tab 1</a></li>
+                                <li><a href="#c-2">Tab 2</a></li>
+                                <li><a href="#c-3">Tab 3</a></li>
+                            </ul>
+                            <div id="c-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="c-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="c-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-inverse&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        
+                    
+                    </div><!--span6-->
+                    
+                    <div class="span6">
+                                                
+                        <div class="tabbedwidget tab-warning">
+                            <ul>
+                                <li><a href="#d-1">Tab 1</a></li>
+                                <li><a href="#d-2">Tab 2</a></li>
+                                <li><a href="#d-3">Tab 3</a></li>
+                            </ul>
+                            <div id="d-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="d-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="d-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-warning&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="tabbedwidget tab-success">
+                            <ul>
+                                <li><a href="#e-1">Tab 1</a></li>
+                                <li><a href="#e-2">Tab 2</a></li>
+                                <li><a href="#e-3">Tab 3</a></li>
+                            </ul>
+                            <div id="e-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="e-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="e-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-success&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="tabbedwidget tab-info">
+                            <ul>
+                                <li><a href="#f-1">Tab 1</a></li>
+                                <li><a href="#f-2">Tab 2</a></li>
+                                <li><a href="#f-3">Tab 3</a></li>
+                            </ul>
+                            <div id="f-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="f-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="f-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-info&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="tabbedwidget tab-white">
+                            <ul>
+                                <li><a href="#g-1">Tab 1</a></li>
+                                <li><a href="#g-2">Tab 2</a></li>
+                                <li><a href="#g-3">Tab 3</a></li>
+                            </ul>
+                            <div id="g-1">
+                                Your content goes here for tab 1
+                            </div>
+                            <div id="g-2">
+                                Your content goes here for tab 2
+                            </div>
+                            <div id="g-3">
+                                Your content goes here for tab 3 
+                            </div>
+                        </div><!--tabbedwidget-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;tabbedwidget tab-white&quot;&gt;&lt;ul&gt;...&lt;/ul&gt;&lt;/div&gt;</pre>
+                    
+                    </div><!--span6-->                    
+                </div><!--row-fluid-->
+                
+                <br />
+                <h4 class="subtitle2">Accordion Widgets</h4>
+                <br />
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="accordion">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                                                
+                        <div class="accordion accordion-primary">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-primary&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="accordion accordion-danger">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-danger&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="accordion accordion-inverse">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-inverse&quot;&gt;...&lt;/div&gt;</pre>
+                    
+                    </div><!--span6-->
+                    
+                    <div class="span6">
+                        
+                        <div class="accordion accordion-warning">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-warning&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="accordion accordion-success">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-success&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="accordion accordion-info">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-info&quot;&gt;...&lt;/div&gt;</pre>
+                        <br />
+                        
+                        <div class="accordion accordion-white">
+                            <h3><a href="#">Section 1</a></h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 2</a></h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 3</a></h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                            </div>
+                            <h3><a href="#">Section 4</a></h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                            </div>
+                        </div><!--#accordion-->
+                        
+                        <pre class="prettyprint linenums">&lt;div class=&quot;accordion accordion-white&quot;&gt;...&lt;/div&gt;</pre>
+                        
+                    </div><!--span6-->
+                </div><!--row-fluid-->
+                
+                <div class="footer">
+                    <div class="footer-left">
+                        <span>&copy; 2013. Shamcey Admin Template. All Rights Reserved.</span>
+                    </div>
+                    <div class="footer-right">
+                        <span>Designed by: <a href="http://themepixels.com/">ThemePixels</a></span>
+                    </div>
+                </div><!--footer-->
+                
+            </div><!--maincontentinner-->
+        </div><!--maincontent-->
+        
+    </div><!--rightpanel-->
+    
+</div><!--mainwrapper-->
+
+</body>
+</html>

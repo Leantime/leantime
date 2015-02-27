@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>FAQ</title>
+<link type="text/css" rel="stylesheet" href="fpdf.css">
+<style type="text/css">
+ul {list-style-type:none; margin:0; padding:0}
+ul#answers li {margin-top:1.8em}
+.question {font-weight:bold; color:#900000}
+</style>
+</head>
+<body>
+<h1>FAQ</h1>
+<ul>
+<li><b>1.</b> <a href='#q1'>What's exactly the license of FPDF? Are there any usage restrictions?</a></li>
+<li><b>2.</b> <a href='#q2'>When I try to create a PDF, a lot of weird characters show on the screen. Why?</a></li>
+<li><b>3.</b> <a href='#q3'>I try to generate a PDF and IE displays a blank page. What happens?</a></li>
+<li><b>4.</b> <a href='#q4'>I can't make line breaks work. I put \n in the string printed by MultiCell but it doesn't work.</a></li>
+<li><b>5.</b> <a href='#q5'>I try to display a variable in the Header method but nothing prints.</a></li>
+<li><b>6.</b> <a href='#q6'>I defined the Header and Footer methods in my PDF class but nothing appears.</a></li>
+<li><b>7.</b> <a href='#q7'>Accented characters are replaced by some strange characters like é.</a></li>
+<li><b>8.</b> <a href='#q8'>I try to display the Euro symbol but it doesn't work.</a></li>
+<li><b>9.</b> <a href='#q9'>I get the following error when I try to generate a PDF: Some data has already been output, can't send PDF file</a></li>
+<li><b>10.</b> <a href='#q10'>I draw a frame with very precise dimensions, but when printed I notice some differences.</a></li>
+<li><b>11.</b> <a href='#q11'>I'd like to use the whole surface of the page, but when printed I always have some margins. How can I get rid of them?</a></li>
+<li><b>12.</b> <a href='#q12'>How can I put a background in my PDF?</a></li>
+<li><b>13.</b> <a href='#q13'>How can I set a specific header or footer on the first page?</a></li>
+<li><b>14.</b> <a href='#q14'>I'd like to use extensions provided by different scripts. How can I combine them?</a></li>
+<li><b>15.</b> <a href='#q15'>How can I send the PDF by email?</a></li>
+<li><b>16.</b> <a href='#q16'>What's the limit of the file sizes I can generate with FPDF?</a></li>
+<li><b>17.</b> <a href='#q17'>Can I modify a PDF with FPDF?</a></li>
+<li><b>18.</b> <a href='#q18'>I'd like to make a search engine in PHP and index PDF files. Can I do it with FPDF?</a></li>
+<li><b>19.</b> <a href='#q19'>Can I convert an HTML page to PDF with FPDF?</a></li>
+<li><b>20.</b> <a href='#q20'>Can I concatenate PDF files with FPDF?</a></li>
+</ul>
+
+<ul id='answers'>
+<li id='q1'>
+<p><b>1.</b> <span class='question'>What's exactly the license of FPDF? Are there any usage restrictions?</span></p>
+FPDF is released under a permissive license: there is no usage restriction. You may embed it
+freely in your application (commercial or not), with or without modifications.
+</li>
+
+<li id='q2'>
+<p><b>2.</b> <span class='question'>When I try to create a PDF, a lot of weird characters show on the screen. Why?</span></p>
+These "weird" characters are in fact the actual content of your PDF. This behavior is a bug of
+IE6. When it first receives an HTML page, then a PDF from the same URL, it displays it directly
+without launching Acrobat. This happens frequently during the development stage: on the least
+script error, an HTML page is sent, and after correction, the PDF arrives.
+<br>
+To solve the problem, simply quit and restart IE. You can also go to another URL and come
+back.
+<br>
+To avoid this kind of inconvenience during the development, you can generate the PDF directly
+to a file and open it through the explorer.
+</li>
+
+<li id='q3'>
+<p><b>3.</b> <span class='question'>I try to generate a PDF and IE displays a blank page. What happens?</span></p>
+First of all, check that you send nothing to the browser after the PDF (not even a space or a
+carriage return). You can put an exit statement just after the call to the Output() method to
+be sure. If it still doesn't work, it means you're a victim of the "blank page syndrome". IE
+used in conjunction with the Acrobat plug-in suffers from many bugs. To avoid these problems
+in a reliable manner, two main techniques exist:
+<br>
+<br>
+- Disable the plug-in and use Acrobat as a helper application. To do this, launch Acrobat, go
+to the Edit menu, Preferences, Internet, and uncheck "Display PDF in browser". Then, the next
+time you load a PDF in IE, it displays the dialog box "Open it" or "Save it to disk". Uncheck
+the option "Always ask before opening this type of file" and choose Open. From now on, PDF files
+will open automatically in an external Acrobat window.
+<br>
+The drawback of the method is that you need to alter the client configuration, which you can do
+in an intranet environment but not for the Internet.
+<br>
+<br>
+- Use a redirection technique. It consists in generating the PDF in a temporary file on the server
+and redirect the client to it. For example, at the end of the script, you can put the following:
+<div class="doc-source">
+<pre><code>//Determine a temporary file name in the current directory
+$file = basename(tempnam('.', 'tmp'));
+rename($file, $file.'.pdf');
+$file .= '.pdf';
+//Save PDF to file
+$pdf-&gt;Output($file, 'F');
+//Redirect
+header('Location: '.$file);</code></pre>
+</div>
+This method turns the dynamic PDF into a static one and avoids all troubles. But you have to do
+some cleaning in order to delete the temporary files. For example:
+<div class="doc-source">
+<pre><code>function CleanFiles($dir)
+{
+    //Delete temporary files
+    $t = time();
+    $h = opendir($dir);
+    while($file=readdir($h))
+    {
+        if(substr($file,0,3)=='tmp' &amp;&amp; substr($file,-4)=='.pdf')
+        {
+            $path = $dir.'/'.$file;
+            if($t-filemtime($path)&gt;3600)
+                @unlink($path);
+        }
+    }
+    closedir($h);
+}</code></pre>
+</div>
+This function deletes all files of the form tmp*.pdf older than an hour in the specified
+directory. You may call it where you want, for example in the script which generates the PDF.
+</li>
+
+<li id='q4'>
+<p><b>4.</b> <span class='question'>I can't make line breaks work. I put \n in the string printed by MultiCell but it doesn't work.</span></p>
+You have to enclose your string with double quotes, not single ones.
+</li>
+
+<li id='q5'>
+<p><b>5.</b> <span class='question'>I try to display a variable in the Header method but nothing prints.</span></p>
+You have to use the <code>global</code> keyword to access global variables, for example:
+<div class="doc-source">
+<pre><code>function Header()
+{
+    global $title;
+
+    $this-&gt;SetFont('Arial', 'B', 15);
+    $this-&gt;Cell(0, 10, $title, 1, 1, 'C');
+}
+
+$title = 'My title';</code></pre>
+</div>
+Alternatively, you can use an object property:
+<div class="doc-source">
+<pre><code>function Header()
+{
+    $this-&gt;SetFont('Arial', 'B', 15);
+    $this-&gt;Cell(0, 10, $this-&gt;title, 1, 1, 'C');
+}
+
+$pdf-&gt;title = 'My title';</code></pre>
+</div>
+</li>
+
+<li id='q6'>
+<p><b>6.</b> <span class='question'>I defined the Header and Footer methods in my PDF class but nothing appears.</span></p>
+You have to create an object from the PDF class, not FPDF:
+<div class="doc-source">
+<pre><code>$pdf = new PDF();</code></pre>
+</div>
+</li>
+
+<li id='q7'>
+<p><b>7.</b> <span class='question'>Accented characters are replaced by some strange characters like é.</span></p>
+Don't use UTF-8 encoding. Standard FPDF fonts use ISO-8859-1 or Windows-1252.
+It is possible to perform a conversion to ISO-8859-1 with utf8_decode():
+<div class="doc-source">
+<pre><code>$str = utf8_decode($str);</code></pre>
+</div>
+But some characters such as Euro won't be translated correctly. If the iconv extension is available, the
+right way to do it is the following:
+<div class="doc-source">
+<pre><code>$str = iconv('UTF-8', 'windows-1252', $str);</code></pre>
+</div>
+</li>
+
+<li id='q8'>
+<p><b>8.</b> <span class='question'>I try to display the Euro symbol but it doesn't work.</span></p>
+The standard fonts have the Euro character at position 128. You can define a constant like this
+for convenience:
+<div class="doc-source">
+<pre><code>define('EURO', chr(128));</code></pre>
+</div>
+</li>
+
+<li id='q9'>
+<p><b>9.</b> <span class='question'>I get the following error when I try to generate a PDF: Some data has already been output, can't send PDF file</span></p>
+You must send nothing to the browser except the PDF itself: no HTML, no space, no carriage return. A common
+case is having extra blank at the end of an included script file.<br>
+If you can't figure out where the problem comes from, this other message appearing just before can help you:<br>
+<br>
+<b>Warning:</b> Cannot modify header information - headers already sent by (output started at script.php:X)<br>
+<br>
+It means that script.php outputs something at line X. Go to this line and fix it.
+In case the message doesn't show, first check that you didn't disable warnings, then add this at the very
+beginning of your script:
+<div class="doc-source">
+<pre><code>ob_end_clean();</code></pre>
+</div>
+If you still don't see it, disable zlib.output_compression in your php.ini and it should appear.
+</li>
+
+<li id='q10'>
+<p><b>10.</b> <span class='question'>I draw a frame with very precise dimensions, but when printed I notice some differences.</span></p>
+To respect dimensions, select "None" for the Page Scaling setting instead of "Shrink to Printable Area" in the print dialog box.
+</li>
+
+<li id='q11'>
+<p><b>11.</b> <span class='question'>I'd like to use the whole surface of the page, but when printed I always have some margins. How can I get rid of them?</span></p>
+Printers have physical margins (different depending on the models); it is therefore impossible to remove
+them and print on the whole surface of the paper.
+</li>
+
+<li id='q12'>
+<p><b>12.</b> <span class='question'>How can I put a background in my PDF?</span></p>
+For a picture, call Image() in the Header() method, before any other output. To set a background color, use Rect().
+</li>
+
+<li id='q13'>
+<p><b>13.</b> <span class='question'>How can I set a specific header or footer on the first page?</span></p>
+Simply test the page number:
+<div class="doc-source">
+<pre><code>function Header()
+{
+    if($this-&gt;PageNo()==1)
+    {
+        //First page
+        ...
+    }
+    else
+    {
+        //Other pages
+        ...
+    }
+}</code></pre>
+</div>
+</li>
+
+<li id='q14'>
+<p><b>14.</b> <span class='question'>I'd like to use extensions provided by different scripts. How can I combine them?</span></p>
+Use an inheritance chain. If you have two classes, say A in a.php:
+<div class="doc-source">
+<pre><code>require('fpdf.php');
+
+class A extends FPDF
+{
+...
+}</code></pre>
+</div>
+and B in b.php:
+<div class="doc-source">
+<pre><code>require('fpdf.php');
+
+class B extends FPDF
+{
+...
+}</code></pre>
+</div>
+then make B extend A:
+<div class="doc-source">
+<pre><code>require('a.php');
+
+class B extends A
+{
+...
+}</code></pre>
+</div>
+and make your own class extend B:
+<div class="doc-source">
+<pre><code>require('b.php');
+
+class PDF extends B
+{
+...
+}
+
+$pdf = new PDF();</code></pre>
+</div>
+</li>
+
+<li id='q15'>
+<p><b>15.</b> <span class='question'>How can I send the PDF by email?</span></p>
+As any other file, but an easy way is to use <a href="http://phpmailer.codeworxtech.com">PHPMailer</a> and
+its in-memory attachment:
+<div class="doc-source">
+<pre><code>$mail = new PHPMailer();
+...
+$doc = $pdf-&gt;Output('', 'S');
+$mail-&gt;AddStringAttachment($doc, 'doc.pdf', 'base64', 'application/pdf');
+$mail-&gt;Send();</code></pre>
+</div>
+</li>
+
+<li id='q16'>
+<p><b>16.</b> <span class='question'>What's the limit of the file sizes I can generate with FPDF?</span></p>
+There is no particular limit. There are some constraints, however:
+<br>
+<br>
+- The maximum memory size allocated to PHP scripts is usually 8MB. For very big documents,
+especially with images, this limit may be reached (the file being built into memory). The
+parameter is configured in the php.ini file.
+<br>
+<br>
+- The maximum execution time allocated defaults to 30 seconds. This limit can of course be easily
+reached. It is configured in php.ini and may be altered dynamically with set_time_limit().
+<br>
+<br>
+- Browsers generally have a 5 minute time-out. If you send the PDF directly to the browser and
+reach the limit, it will be lost. It is therefore advised for very big documents to
+generate them in a file, and to send some data to the browser from time to time (with a call
+to flush() to force the output). When the document is finished, you can send a redirection to
+it or create a link.
+<br>
+Remark: even if the browser times out, the script may continue to run on the server.
+</li>
+
+<li id='q17'>
+<p><b>17.</b> <span class='question'>Can I modify a PDF with FPDF?</span></p>
+It is possible to import pages from an existing PDF document thanks to the FPDI extension:<br>
+<br>
+<a href="http://www.setasign.de/products/pdf-php-solutions/fpdi/" target="_blank">http://www.setasign.de/products/pdf-php-solutions/fpdi/</a><br>
+<br>
+You can then add some content to them.
+</li>
+
+<li id='q18'>
+<p><b>18.</b> <span class='question'>I'd like to make a search engine in PHP and index PDF files. Can I do it with FPDF?</span></p>
+No. But a GPL C utility does exist, pdftotext, which is able to extract the textual content from
+a PDF. It is provided with the Xpdf package:<br>
+<br>
+<a href="http://www.foolabs.com/xpdf/" target="_blank">http://www.foolabs.com/xpdf/</a>
+</li>
+
+<li id='q19'>
+<p><b>19.</b> <span class='question'>Can I convert an HTML page to PDF with FPDF?</span></p>
+Not real-world pages. But a GPL C utility does exist, htmldoc, which allows to do it and gives good results:<br>
+<br>
+<a href="http://www.htmldoc.org" target="_blank">http://www.htmldoc.org</a>
+</li>
+
+<li id='q20'>
+<p><b>20.</b> <span class='question'>Can I concatenate PDF files with FPDF?</span></p>
+Not directly, but it is possible to use <a href="http://www.setasign.de/products/pdf-php-solutions/fpdi/demos/concatenate-fake/" target="_blank">FPDI</a>
+to perform this task. Some free command-line tools also exist:<br>
+<br>
+<a href="http://thierry.schmit.free.fr/spip/spip.php?article15&amp;lang=en" target="_blank">mbtPdfAsm</a><br>
+<a href="http://www.accesspdf.com/pdftk/" target="_blank">pdftk</a>
+</li>
+</ul>
+</body>
+</html>

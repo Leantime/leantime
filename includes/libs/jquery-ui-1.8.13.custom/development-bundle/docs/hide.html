@@ -1,0 +1,144 @@
+
+<ul class="UIAPIPlugin-toc">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#options">Arguments</a></li>
+</ul>
+<div class="UIAPIPlugin">
+  <h1>jQuery UI hide</h1>
+  <div id="overview">
+    <h2 class="top-header">Overview</h2>
+    <div id="overview-main">
+        <div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/Effects/hide?section=1" title="Edit section: hide( effect, [options], [speed], [callback] )">edit</a>]</div><a name="hide.28_effect.2C_.5Boptions.5D.2C_.5Bspeed.5D.2C_.5Bcallback.5D_.29"></a><h3>hide( effect, <span class="optional">[</span>options<span class="optional">]</span>, <span class="optional">[</span>speed<span class="optional">]</span>, <span class="optional">[</span>callback<span class="optional">]</span> )</h3>
+<p>The enhanced hide method optionally accepts jQuery UI advanced effects.</p>
+<p>Uses a specific effect on an element to hide the element if the first argument is an effect string.</p>
+    </div>
+    <div id="overview-dependencies">
+        <h3>Dependencies</h3>
+        <ul>
+<li>Effects Core</li>
+</ul>
+    </div>
+    <div id="overview-example">
+        <h3>Example</h3>
+        <div id="overview-example" class="example">
+<ul><li><a href="#demo"><span>Demo</span></a></li><li><a href="#source"><span>View Source</span></a></li></ul>
+<p><div id="demo" class="tabs-container" rel="170">
+Apply the effect slide if you click on the p to hide a div.<br />
+</p>
+<pre>$(&quot;p&quot;).<a href="http://docs.jquery.com/Events/click" title="Events/click">click</a>(function () {
+      $(&quot;div&quot;).<strong class="selflink">hide</strong>(&quot;slide&quot;, {}, 1000);
+    });
+</pre>
+<p></div><div id="source" class="tabs-container">
+</p>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;http://ui.jquery.com/latest/ui/effects.core.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://ui.jquery.com/latest/ui/effects.slide.js&quot;&gt;&lt;/script&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+  div { margin: 0px; width: 100px; height: 80px; background: blue; position: relative; }
+&lt;/style&gt;
+  &lt;script&gt;
+  $(document).ready(function() {
+    $(&quot;p&quot;).<a href="http://docs.jquery.com/Events/click" title="Events/click">click</a>(function () {
+      $(&quot;div&quot;).<strong class="selflink">hide</strong>(&quot;slide&quot;, {}, 1000);
+    });
+  });
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body style="font-size:62.5%;"&gt;
+  
+&lt;p&gt;Click me&lt;/p&gt;&lt;div&gt;&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p></div>
+</p><p></div>
+    </div>
+  </div>
+  <div id="options">
+    <h2 class="top-header">Arguments</h2>
+    <ul class="options-list">
+      
+<li class="option" id="option-effect">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-effect">effect</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">String</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>The effect to be used. Possible values: 'blind', 'clip', 'drop', 'explode', 'fold', 'puff', 'slide', 'scale', 'size', 'pulsate'.</p>
+  </div>
+</li>
+
+
+<li class="option" id="option-options">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-options">options</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Hash</dd>
+      
+      <dt class="option-optional-label">Optional</dt>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>A object/hash including specific options for the effect.</p>
+  </div>
+</li>
+
+
+<li class="option" id="option-speed">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-speed">speed</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">String, Number</dd>
+      
+      <dt class="option-optional-label">Optional</dt>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>A string representing one of the predefined speeds ("slow" or "fast") or the number of milliseconds to run the animation (e.g. 1000).</p>
+  </div>
+</li>
+
+
+<li class="option" id="option-callback">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-callback">callback</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Function</dd>
+      
+      <dt class="option-optional-label">Optional</dt>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>A function that is called after the effect is completed.</p>
+  </div>
+</li>
+
+    </ul>
+  </div>
+</div>
+
+</p><!-- 
+Pre-expand include size: 6332 bytes
+Post-expand include size: 8595 bytes
+Template argument size: 5383 bytes
+Maximum: 2097152 bytes
+-->
+
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:2614-1!1!0!!en!2 and timestamp 20110512142209 -->

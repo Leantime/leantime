@@ -1,0 +1,489 @@
+﻿============
+Loading data
+============
+
+Open Flash Chart 2 can load data from a number of places:
+
+==========
+1. The URL
+==========
+
+OFC will look in the url for a variable called 'ofc':
+
+  http://example.com/open-flash-chart/index.php?ofc=data/data.txt
+
+OFC will try to load the file http://example.com/open-flash-chart/data/data.txt
+
+NOTE:
+- ofc=data/data.txt is a relative path.
+- The data file must contain JSON (see examples in this document)
+
+==================
+2. Flash Variables
+==================
+
+If the URL does not contain a variable 'ofc' the next thing it will
+try is look in the variables that have been passed to it for a 'data-file'
+if this is found, OFC will load that URL:
+
+<script type="text/javascript">
+  var so = new SWFObject("../open-flash-chart/open-flash-chart.swf", "ofc", "250", "200", "9", "#FFFFFF");
+  so.addVariable("data-file", "../data-files/data-60.txt");
+  so.addParam("allowScriptAccess", "always" );
+  so.write("my_chart");
+</script>
+
+see flash-variable.html for an example of this.
+
+NOTE:
+
+ - The path of my .swf will differ from yours.
+ - I am using SWFObject (this is in the .zip file in the folder js)
+
+==================
+3. From Javascript
+==================
+
+If the URL does not contain a varibale 'ofc' the next thing it will
+try is calling the Javascript function open_flash_chart_data(), so
+you may have:
+
+function open_flash_chart_data()
+{
+	alert( 'reading data' );
+	return JSON.stringify(data);
+}
+
+This function should return a valid JSON string.
+
+see json-test.html for an example of this.
+
+NOTE:
+
+- I am using the wonderful javascript JSON converter json2.js
+  this is in the .zip file in js/json/json2.js, but take a look
+  at www.json.org for more examples
+
+=============================
+3. You can push JSON into OFC
+=============================
+
+Using Javascript you can push data into OFC via an external interface.
+This is really easy. When OFC has loaded and tried 1, 2 and 3 above and
+failed to find any data it will try to call the Javascript function
+ofc_ready():
+
+function ofc_ready()
+{
+	alert('ofc_ready');
+	tmp = findSWF("ofc");
+	x = tmp.load( JSON.stringify(ofc) );
+}
+
+In this function you can push a JSON string into OFC using
+the interface 'load()', in the above function we find the chart
+then call load and pass in our JSON string.
+
+This is useful for AJAX pages.
+
+see json-test-2.html for an example of this.
+
+=====================
+  Data format: JSON
+=====================
+
+The data must be in JSON format. The basic JSON obect is:
+
+{}
+
+a more complete example with HTML and Javascript:
+
+&lt;script type="text/javascript"&gt;
+
+var data = {};
+
+&lt;/script&gt;
+
+
+Put all other objects inside this. For example the JSON object
+with a title looks like this:
+
+{
+  "title":{
+    "text":  "Many data lines",
+    "style": "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"
+  }
+}
+
+This is what you would save into a data file. Below is the same data,
+but this time as part of the javascript in your web page:
+
+<script type="text/javascript">
+
+var data = {
+  "title":{
+    "text":  "Many data lines",
+    "style": "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"
+  }
+};
+
+</script>
+
+This all sounds rather complex, but it isn't really. This is what is going on
+inside OFC when it reads a data file:
+
+  json_string = load file from URL()
+  json_object = parse string( json_string )
+  display chart( json_object )
+
+The same thing happens when you pass in a JSON object from Javascript,
+to create the JSON string, you call:
+
+  JSON.stringify(ofc)
+
+and pass the string into OFC:
+
+  tmp = findSWF("ofc");
+  x = tmp.load( JSON.stringify(ofc) );
+
+then inside OFC the same functions are called:
+
+  external interface load( json_string ) {
+    json_object = parse string( json_string )
+    display chart( json_object )
+  }
+
+==========
+Tutorial 1
+==========
+
+So, lets go.
+
+Copy the .swf to the root of your web site.
+
+Now take a copy of 'flash-variable.html' and put this into
+the root of the web site.
+
+Copy the Javascript files to the root of your site.
+
+Next take the example data file 'data.txt' and also put this
+into the root.
+
+Edit 'flash-variable.html', find the line:
+
+  var so = new SWFObject("../open-flash-chart/open-flash-chart.swf", "ofc", "250", "200", "9", "#FFFFFF");
+
+and change it to:
+
+  var so = new SWFObject("open-flash-chart.swf", "ofc", "250", "200", "9", "#FFFFFF");
+
+also change all the Javascript includes so they work.
+
+Now browse to:
+
+  http://example.com/flash-variable.html
+
+this should fail.
+
+  http://example.com/flash-variable.html?ofc=data.txt
+
+this should work.
+
+==========
+Tutorial 2
+==========
+
+Try editing the data file. Take a look at the example data files.
+
+
+================
+Title (optional)
+================
+All attributes are optional.
+text: string, the title
+style: string, the CSS style
+
+{
+  "title":{
+    "text":  "Many data lines",
+    "style": "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"
+  }
+}
+
+===================
+Y Legend (optional)
+===================
+All attributes are optional.
+text: string, the title for the Y axis
+style: string, a CSS string
+
+{
+  "y_legend":{
+    "text": "Open Flash Chart",
+    "style": "{color: #736AFF; font-size: 12px;}"
+  }
+}
+
+========
+Elements
+========
+The elements attribute is an array of generic objects.
+Each object is the type of chart (line, bar, scatter etc.)
+
+{
+  "elements":[
+    {
+      "type":      "bar",
+      "alpha":     0.5,
+      "colour":    "#9933CC",
+      "text":      "Page views",
+      "font-size": 10,
+      "values" :   [9,6,7,9,5,7,6,9,7]
+    },
+    {
+      "type":      "bar",
+      "alpha":     0.5,
+      "colour":    "#CC9933",
+      "text":      "Page views 2",
+      "font-size": 10,
+      "values" :   [9,6,7,9,5,7,6,9,7]
+    }
+  ]
+}
+
+=================
+X Axis (optional)
+=================
+This object is optional, if it is not present the chart will show a default
+X axis.
+All attributes are optional.
+
+stroke : number, the width of the line
+tick-height : number, the height of the ticks
+colour : string, the colour of the line
+offset: boolean, x axis min (usually 0) is offset, used in bar charts
+grid-colour: string, colour of the grid lines
+3d: boolean, is it 3D
+steps: show every n ticks
+labels: array of strings, the labels of each X point
+
+Example:
+{
+  "x_axis":{
+    "stroke":1,
+    "tick_height":10,
+    "colour":"#d000d0",
+    "grid_colour":"#00ff00",
+    "labels": ["January","February","March","April","May","June","July","August","Spetember"]
+   }
+}
+
+===============
+Y Axis optional
+===============
+This object is optional, if it is not present the chart will show a default
+Y axis.
+All attributes are optional.
+
+Example:
+{
+  "y_axis":{
+    "stroke":      4,
+    "tick_length": 3,
+    "colour":      "#d000d0",
+    "grid_colour": "#00ff00",
+    "offset":      0,
+    "max":         20
+  }
+}
+
+============
+Elements.bar
+============
+A bar chart. Must be inside the elements array.
+
+type: string, must be 'bar'
+alpha: number, between 0 (transparent) and 1 (opaque)
+colour: string, CSS colour
+text: string, the key
+font-size: number, size of the key text
+values: array of numbers, height of each bar
+
+Example:
+{
+  "elements":[
+    {
+      "type":      "bar",
+      "alpha":     0.5,
+      "colour":    "#9933CC",
+      "text":      "Page views",
+      "font-size": 10,
+      "values" :   [9,6,7,9,5,7,6,9,7]
+     }
+   ]
+}
+
+============
+Elements.pie
+============
+A pie chart. Must be inside the elements array.
+
+type: string, must be 'pie'
+start-angle: number, the angle of the first pie slice
+colours: array of strings, CSS colour
+alpha: number, between 0 (transparent) and 1 (opaque)
+stroke: number, the outline width
+animate: boolean, animate the pie chart
+values: array of objects, value of each pie slice. May be a number or a slice object
+
+Example:
+{
+  "elements":[
+    {
+      "type":      "pie",
+      "start-angle": 180,
+      "colours":   ["#d01f3c","#356aa0","#C79810","#73880A","#D15600","#6BBA70"],
+      "alpha":     0.6,
+      "stroke":    2,
+      "animate":   1,
+      "values" :   [0,2,{"value":0,"text":"zero"},2,6]
+     }
+   ]
+}
+
+=============
+Elements.hbar
+=============
+Horizontal Bar chart
+
+values: array of objects. Each value must have a "right" and an optional "left" value
+
+
+Example:
+{
+  "elements":[
+    {
+      "type":      "hbar",
+      "colour":    "#9933CC",
+      "text":      "Page views",
+      "font-size": 10,
+      "values" :   [{"right":10},{"right":15},{"left":13,"right":17}]
+    }
+  ]
+}
+
+=================
+Elements.line_dot
+=================
+Line chart
+
+values: Array of numbers:
+
+Example:
+{
+  "elements":[
+    {
+      "type":      "line_dot",
+      "colour":    "#736AFF",
+      "text":      "Avg. wave height (cm)",
+      "font-size": 10,
+      "width":     2,
+      "dot-size":  4,
+      "values" :   [1.5,1.69,1.88,2.06,2.21,2.34,null,2.35,2.23,2.08]
+    }
+  ]
+}
+
+=================
+Elements.line*
+=================
+Just a quick note of the 3 different line types:
+
+Example:
+{
+  "title":{
+    "text":"Many data lines",
+    "style":"{font-size: 30px;}"
+  },
+
+  "y_legend":{
+    "text":"Open Flash Chart",
+    "style":"{font-size: 12px; color:#736AFF;}"
+  },
+
+  "elements":[
+    {
+      "type":      "line",
+      "colour":    "#9933CC",
+      "text":      "Page views",
+      "width":     2,
+      "font-size": 10,
+      "dot-size":  6,
+      "values" :   [15,18,19,14,17,18,15,18,17]
+    },
+    {
+      "type":      "line_dot",
+      "colour":    "#CC3399",
+      "width":     2,
+      "text":      "Downloads",
+      "font-size": 10,
+      "dot-size":  5,
+      "values" :   [10,12,14,9,12,13,10,13,12]
+    },
+    {
+      "type":      "line_hollow",
+      "colour":    "#80a033",
+      "width":     2,
+      "text":      "Bounces",
+      "font-size": 10,
+      "dot-size":  6,
+      "values" :   [5,7,9,7,4,6,1,2,5]
+    }
+  ],
+
+  "y_axis":{
+    "max":   20
+  },
+
+  "x_axis":{
+    "steps": 2,
+    "labels": ["January","February","March","April","May","June","July","August","September"]
+  }
+}
+
+========
+Examples
+========
+
+Here is a simple JSON object that contains a horizontal bar chart:
+
+{
+  "title":{
+    "text":"HBar Map X values",
+    "style":"{font-size: 20px; font-family: Verdana; text-align: center;}"
+  },
+
+  "elements":[
+    {
+      "type":      "hbar",
+      "colour":    "#9933CC",
+      "text":      "Page views",
+      "font-size": 10,
+      "values" :   [{"right":10},{"right":15},{"left":13,"right":17}]
+    }
+  ],
+  "x_axis":{
+    "min":    0,
+    "max":    20,
+    "offset": 0,
+    "labels": ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v"]
+  },
+  "y_axis":{
+    "stroke":      14,
+    "tick_length": 30,
+    "colour":      "#d09090",
+    "grid_colour": "#00ff00",
+    "offset":      1,
+    "labels":      ["slashdot.org","digg.com","reddit.com"]
+  }
+}

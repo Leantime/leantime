@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shamcey - Metro Style Admin Template</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-migrate-1.1.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.9.2.min.js"></script>
+<script type="text/javascript" src="../js/modernizr.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('.head-menu a').bind('click',function(event){
+            var anchor = jQuery(this);
+     
+            jQuery('html, body').stop().animate({
+                scrollTop: jQuery(anchor.attr('href')).offset().top - 75
+            }, 1500,'easeInOutExpo');
+            event.preventDefault();
+        });
+    });
+</script>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <img src="../images/logo.png" alt="" />
+        </div>
+        
+        <ul class="head-menu">
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#screenshots">Screenshots</a></li>
+        </ul>
+    </div><!--header-inner-->
+</div><!--header-->
+
+<div id="about" class="banner">
+    <div class="banner-inner">
+        <div class="about">
+            <h1>Introducing the all new metro style admin template - <span>Shamcey</span></h1>
+            <p>Shamcey is yet another new metro style admin template built using Bootstrap and other jQuery plugins
+            that is perfect for your next projects. It provides an easy to use user interface design and a fully responsive
+            layout that is compatible with handheld devices such as phones and tablets. </p>
+            <p class="btns">
+                <a href="http://themepixels.com/themes/demo/webpage/shamcey" class="btn">Launch Demo</a>
+                &nbsp; <a href="" class="btn btn-success">Purchase Template</a>
+            </p>
+        </div>
+        <div class="imac"><img src="images/imac.png" alt="" /></div>
+        <div class="macair"><img src="images/air.png" alt="" /></div>
+        <div class="mini"><img src="images/mini.png" alt="" /></div>
+        <div class="iphone"><img src="images/iphone.png" alt="" /></div>
+    </div><!--banner-inner-->
+</div><!--banner-->
+
+
+<div id="features" class="features">
+    <div class="features-inner">
+        <h2 class="title">Template Features</h2>
+        
+        <br /><br />
+        
+        <div class="row-fluid">
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Built Using Bootstrap</h4>
+                <p>A front-end toolkit for rapidly developing web applications. It is a collection of CSS and HTML conventions
+                that uses some of the latest browser  techniques.</p>
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Responsive Layout</h4>
+                <p>Designed to fit on all mobile and tablet devices such as iPads and iPhones. Let your visitors try it on their
+                devices or even you and see the results. </p>
+                
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Easy to Customize</h4>
+                <p>In addition to predefined skin color feature, this template is built to easily customize and add your own color scheme
+                based on what color you like. </p>
+            </div>
+        </div><!--row-fluid-->
+        
+        <br /><br />
+        
+        <div class="row-fluid">
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Isotope jQuery Plugin</h4>
+                <p>One of the features of Shamcey is Media Manager which uses Isotope for sorting media files. This Isotope plugin
+                can hide/show and reorder items with awesome effects.</p>
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Fancy TinyMCE Editor</h4>
+                <p>Another unique features of Shamcey is adding the TinyMCE WYSIWYG Editor that is very easy to integrate with
+                awesome custom styles added by the author.</p>
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> 600+ Icons</h4>
+                <p>This template uses one of the most stunning icons in the internet whic are the IconGlyphs, Font Awesome and IconSweets
+                with some added examples.</p>
+                
+            </div>
+        </div><!--row-fluid-->
+        
+        <br /><br />
+        
+        <div class="row-fluid">
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> 5 Predefined Color Skins</h4>
+                <p>Shamcey has 5 predefined skins for you to use and with that you can add your own
+                skins easily by referring to the predefined skins that added in this template.</p>
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> Modernizr</h4>
+                <p>Shamcey is using Modernizr to easily detect browser support and make it compatible to all modern browsers
+                such as Firefox, Chrome, Safari, and IE 8 up to IE 10.</p>
+            </div>
+            <div class="span4">
+                <h4><span class="iconfa-ok"></span> More jQuery plugins</h4>
+                <p>This template also uses more jQuery plugins such as bxSlider, Spinner, slimScroll, smartWizard, FullCalendar
+                , jQuery Uniform, jQuery Validation and muc more...</p>
+                
+            </div>
+        </div><!--row-fluid-->
+        
+        
+    </div><!--features-inner-->
+</div><!--features-->
+
+<div id="screenshots" class="screenshots">
+    <div class="screen-inner">
+        <h2 class="title">Screenshots</h2>
+        <br />
+        <h4>Laptop</h4>
+        <br />
+        <div class="row-fluid">
+            <div class="span4">
+                <a href="images/02_Laptop.png"><img src="images/02_Laptop.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/03_Laptop.png"><img src="images/03_Laptop.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/04_Laptop.png"><img src="images/04_Laptop.png" alt="" /></a>
+            </div>
+        </div>
+        
+        <br />
+        <h4>iPad</h4>
+        <br />
+        <div class="row-fluid">
+            <div class="span4">
+                <a href="images/05_Laptop.png"><img src="images/05_Ipad.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/06_Laptop.png"><img src="images/06_Ipad.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/07_Laptop.png"><img src="images/07_Ipad.png" alt="" /></a>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span4">
+                <a href="images/08_Laptop.png"><img src="images/08_Ipad.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/09_Laptop.png"><img src="images/09_Ipad.png" alt="" /></a>
+            </div>
+        </div>
+        
+        <br />
+        <h4>iPhone</h4>
+        <br />
+        <div class="row-fluid">
+            <div class="span4">
+                <a href="images/10_Iphone.png"><img src="images/10_Iphone.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/11_Iphone.png"><img src="images/11_Iphone.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/12_Iphone.png"><img src="images/12_Iphone.png" alt="" /></a>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span4">
+                <a href="images/13_Iphone.png"><img src="images/13_Iphone.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/14_Iphone.png"><img src="images/14_Iphone.png" alt="" /></a>
+            </div>
+            <div class="span4">
+                <a href="images/15_Iphone.png"><img src="images/15_Iphone.png" alt="" /></a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div class="footer">
+    &copy; 2013. Shamcey Metro Style Admin Template. All Rights Reserved.
+</div>
+
+</body>
+</html>

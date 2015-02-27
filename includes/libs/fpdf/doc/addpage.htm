@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>AddPage</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>AddPage</h1>
+<code>AddPage([<b>string</b> orientation ,[ <b>mixed</b> format]])</code>
+<h2>Description</h2>
+Adds a new page to the document. If a page is already present, the Footer() method is called
+first to output the footer. Then the page is added, the current position set to the top-left
+corner according to the left and top margins, and Header() is called to display the header.
+<br>
+The font which was set before calling is automatically restored. There is no need to call
+SetFont() again if you want to continue with the same font. The same is true for colors and
+line width.
+<br>
+The origin of the coordinate system is at the top-left corner and increasing ordinates go
+downwards.
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>orientation</code></dt>
+<dd>
+Page orientation. Possible values are (case insensitive):
+<ul>
+<li><code>P</code> or <code>Portrait</code></li>
+<li><code>L</code> or <code>Landscape</code></li>
+</ul>
+The default value is the one passed to the constructor.
+</dd>
+<dt><code>format</code></dt>
+<dd>
+Page format. It can be either one of the following values (case insensitive):
+<ul>
+<li><code>A3</code></li>
+<li><code>A4</code></li>
+<li><code>A5</code></li>
+<li><code>Letter</code></li>
+<li><code>Legal</code></li>
+</ul>
+or an array containing the width and the height (expressed in user unit).<br>
+<br>
+The default value is the one passed to the constructor.
+</dd>
+</dl>
+<h2>See also</h2>
+<a href="fpdf.htm">FPDF()</a>,
+<a href="header.htm">Header()</a>,
+<a href="footer.htm">Footer()</a>,
+<a href="setmargins.htm">SetMargins()</a>.
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>

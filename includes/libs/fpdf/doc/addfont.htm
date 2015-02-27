@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>AddFont</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>AddFont</h1>
+<code>AddFont(<b>string</b> family [, <b>string</b> style [, <b>string</b> file]])</code>
+<h2>Description</h2>
+Imports a TrueType or Type1 font and makes it available. It is necessary to generate a font
+definition file first with the makefont.php utility.
+<br>
+The definition file (and the font file itself when embedding) must be present in the font directory.
+If it is not found, the error "Could not include font definition file" is generated.
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>family</code></dt>
+<dd>
+Font family. The name can be chosen arbitrarily. If it is a standard family name, it will
+override the corresponding font.
+</dd>
+<dt><code>style</code></dt>
+<dd>
+Font style. Possible values are (case insensitive):
+<ul>
+<li>empty string: regular</li>
+<li><code>B</code>: bold</li>
+<li><code>I</code>: italic</li>
+<li><code>BI</code> or <code>IB</code>: bold italic</li>
+</ul>
+The default value is regular.
+</dd>
+<dt><code>file</code></dt>
+<dd>
+The font definition file.
+<br>
+By default, the name is built from the family and style, in lower case with no space.
+</dd>
+</dl>
+<h2>Example</h2>
+<div class="doc-source">
+<pre><code>$pdf-&gt;AddFont('Comic','I');</code></pre>
+</div>
+is equivalent to:
+<div class="doc-source">
+<pre><code>$pdf-&gt;AddFont('Comic','I','comici.php');</code></pre>
+</div>
+<h2>See also</h2>
+<a href="setfont.htm">SetFont()</a>.
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>

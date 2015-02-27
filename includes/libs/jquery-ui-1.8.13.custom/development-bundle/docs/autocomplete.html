@@ -1,0 +1,875 @@
+
+<ul class="UIAPIPlugin-toc">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#methods">Methods</a></li>
+<li><a href="#theming">Theming</a></li>
+</ul>
+<div class="UIAPIPlugin">
+  <h1>jQuery UI Autocomplete</h1>
+  <div id="overview">
+    <h2 class="top-header">Overview</h2>
+    <div id="overview-main">
+        <p>Autocomplete, when added to an input field, enables users to quickly find and select from a pre-populated list of values as they type, leveraging searching and filtering.</p>
+<p>By giving an Autocomplete field focus or entering something into it, the plugin starts searching for entries that match and displays a list of values to choose from. By entering more characters, the user can filter down the list to better matches.</p>
+<p>This can be used to enter previous selected values, for example you could use Autocomplete for entering tags, to complete an address, you could enter a city name and get the zip code, or maybe enter email addresses from an address book.</p>
+<p>You can pull data in from a local and/or a remote source: Local is good for small data sets (like an address book with 50 entries), remote is necessary for big data sets, like a database with hundreds or millions of entries to select from.</p>
+<p>Autocomplete can be customized to work with various data sources, by just specifying the source option. A data source can be:</p>
+<ul>
+<li>an Array with local data</li>
+<li>a String, specifying a URL</li>
+<li>a Callback</li>
+</ul>
+<p>The local data can be a simple Array of Strings, or it contains Objects for each item in the array, with either a label or value property or both. The label property is displayed in the suggestion menu. The value will be inserted into the input element after the user selected something from the menu. If just one property is specified, it will be used for both, eg. if you provide only value-properties, the value will also be used as the label.</p>
+<p>When a String is used, the Autocomplete plugin expects that string to point to a URL resource that will return JSON data. It can be on the same host or on a different one (must provide JSONP). The request parameter "term" gets added to that URL. The data itself can be in the same format as the local data described above.</p>
+<p>The third variation, the callback, provides the most flexibility, and can be used to connect any data source to Autocomplete. The callback gets two arguments:</p>
+<ul>
+<li>A request object, with a single property called "term", which refers to the value currently in the text input. For example, when the user entered "new yo" in a city field, the Autocomplete term will equal "new yo".</li>
+<li>A response callback, which expects a single argument to contain the data to suggest to the user. This data should be filtered based on the provided term, and can be in any of the formats described above for simple local data (String-Array or Object-Array with label/value/both properties). It's important when providing a custom source callback to handle errors during the request. You must always call the response callback even if you encounter an error. This ensures that the widget always has the correct state.</li>
+</ul>
+<p>The label is always treated as text, if you want the label to be treated as html you can use <a href="https://github.com/scottgonzalez/jquery-ui-extensions/blob/master/autocomplete/jquery.ui.autocomplete.html.js" class="external text" title="https://github.com/scottgonzalez/jquery-ui-extensions/blob/master/autocomplete/jquery.ui.autocomplete.html.js">Scott González' html extension</a>. The demos all focus on different variations of the source-option - look for the one that matches your use case, and take a look at the code.</p>
+    </div>
+    <div id="overview-dependencies">
+        <h3>Dependencies</h3>
+        <ul>
+<li>UI Core</li>
+<li>UI Widget</li>
+<li>UI Position</li>
+</ul>
+    </div>
+    <div id="overview-example">
+        <h3>Example</h3>
+        <div id="overview-example" class="example">
+<ul><li><a href="#demo"><span>Demo</span></a></li><li><a href="#source"><span>View Source</span></a></li></ul>
+<p><div id="demo" class="tabs-container" rel="300">
+A simple jQuery UI Autocomplete.<br />
+</p>
+<pre>$(&quot;input#autocomplete&quot;).autocomplete({
+    source: [&quot;c++&quot;, &quot;java&quot;, &quot;php&quot;, &quot;coldfusion&quot;, &quot;javascript&quot;, &quot;asp&quot;, &quot;ruby&quot;]
+});
+</pre>
+<p></div><div id="source" class="tabs-container">
+</p>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
+  
+  &lt;script&gt;
+  $(document).ready(function() {
+    $(&quot;input#autocomplete&quot;).autocomplete({
+    source: [&quot;c++&quot;, &quot;java&quot;, &quot;php&quot;, &quot;coldfusion&quot;, &quot;javascript&quot;, &quot;asp&quot;, &quot;ruby&quot;]
+});
+  });
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body style="font-size:62.5%;"&gt;
+  
+&lt;input id=&quot;autocomplete&quot; /&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p></div>
+</p><p></div>
+    </div>
+  </div>
+  <div id="options">
+    <h2 class="top-header">Options</h2>
+    <ul class="options-list">
+      
+<li class="option" id="option-disabled">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-disabled">disabled</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Boolean</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">false</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>Disables (true) or enables (false) the autocomplete. Can be set when initialising (first creating) the autocomplete.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>disabled</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ disabled: true });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>disabled</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var disabled = $( ".selector" ).autocomplete( "option", "disabled" );
+//setter
+$( ".selector" ).autocomplete( "option", "disabled", true );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-appendTo">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-appendTo">appendTo</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Selector</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">"body"</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>Which element the menu should be appended to.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>appendTo</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ appendTo: "#someElem" });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>appendTo</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var appendTo = $( ".selector" ).autocomplete( "option", "appendTo" );
+//setter
+$( ".selector" ).autocomplete( "option", "appendTo", "#someElem" );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-autoFocus">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-autoFocus">autoFocus</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Boolean</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">false</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>If set to true the first item will be automatically focused.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>autoFocus</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ autoFocus: true });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>autoFocus</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var autoFocus = $( ".selector" ).autocomplete( "option", "autoFocus" );
+//setter
+$( ".selector" ).autocomplete( "option", "autoFocus", true );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-delay">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-delay">delay</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Integer</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">300</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>The delay in milliseconds the Autocomplete waits after a keystroke to activate itself. A zero-delay makes sense for local data (more responsive), but can produce a lot of load for remote data, while being less responsive.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>delay</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ delay: 0 });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>delay</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var delay = $( ".selector" ).autocomplete( "option", "delay" );
+//setter
+$( ".selector" ).autocomplete( "option", "delay", 0 );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-minLength">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-minLength">minLength</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Integer</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">1</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>The minimum number of characters a user has to type before the Autocomplete activates. Zero is useful for local data with just a few items. Should be increased when there are a lot of items, where a single character would match a few thousand items.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>minLength</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ minLength: 0 });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>minLength</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var minLength = $( ".selector" ).autocomplete( "option", "minLength" );
+//setter
+$( ".selector" ).autocomplete( "option", "minLength", 0 );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-position">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-position">position</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Object</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">{ my: &quot;left top&quot;, at: &quot;left bottom&quot;, collision: &quot;none&quot; }</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>Identifies the position of the Autocomplete widget in relation to the associated input element. The "of" option defaults to the input element, but you can specify another element to position against. You can refer to the <a href="http://docs.jquery.com/UI/Position" class="external text" title="http://docs.jquery.com/UI/Position">jQuery UI Position</a> utility for more details about the various options.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>position</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ position: { my : &quot;right top&quot;, at: &quot;right bottom&quot; } });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>position</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var position = $( ".selector" ).autocomplete( "option", "position" );
+//setter
+$( ".selector" ).autocomplete( "option", "position", { my : &quot;right top&quot;, at: &quot;right bottom&quot; } );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="option" id="option-source">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-source">source</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">String, Array, Callback</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">none, must be specified</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>Defines the data to use, must be specified. See Overview section for more details, and look at the various demos.
+</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a autocomplete with the <code>source</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).autocomplete({ source: [&quot;c++&quot;, &quot;java&quot;, &quot;php&quot;, &quot;coldfusion&quot;, &quot;javascript&quot;, &quot;asp&quot;, &quot;ruby&quot;] });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>source</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var source = $( ".selector" ).autocomplete( "option", "source" );
+//setter
+$( ".selector" ).autocomplete( "option", "source", [&quot;c++&quot;, &quot;java&quot;, &quot;php&quot;, &quot;coldfusion&quot;, &quot;javascript&quot;, &quot;asp&quot;, &quot;ruby&quot;] );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+    </ul>
+  </div>
+  <div id="events">
+    <h2 class="top-header">Events</h2>
+    <ul class="events-list">
+      
+<li class="event" id="event-create">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-create">create</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompletecreate</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>This event is triggered when autocomplete is created.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>create</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   create: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>create</code> event by type: <code>autocompletecreate</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompletecreate&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-search">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-search">search</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompletesearch</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>Before a request (source-option) is started, after minLength and delay are met. Can be canceled (return false), then no request will be started and no items suggested.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>search</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   search: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>search</code> event by type: <code>autocompletesearch</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompletesearch&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-open">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-open">open</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompleteopen</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>Triggered when the suggestion menu is opened.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>open</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   open: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>open</code> event by type: <code>autocompleteopen</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompleteopen&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-focus">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-focus">focus</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompletefocus</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>Before focus is moved to an item (not selecting), ui.item refers to the focused item. The default action of focus is to replace the text field's value with the value of the focused item, though only if the focus event was triggered by a keyboard interaction. Canceling this event prevents the value from being updated, but does not prevent the menu item from being focused.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>focus</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   focus: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>focus</code> event by type: <code>autocompletefocus</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompletefocus&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-select">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-select">select</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompleteselect</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>Triggered when an item is selected from the menu; ui.item refers to the selected item. The default action of select is to replace the text field's value with the value of the selected item. Canceling this event prevents the value from being updated, but does not prevent the menu from closing.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>select</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   select: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>select</code> event by type: <code>autocompleteselect</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompleteselect&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-close">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-close">close</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompleteclose</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>When the list is hidden - doesn't have to occur together with a change.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>close</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   close: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>close</code> event by type: <code>autocompleteclose</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompleteclose&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
+<li class="event" id="event-change">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-change">change</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">autocompletechange</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>After an item was selected; ui.item refers to the selected item. Always triggered after the close event.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>change</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).autocomplete({
+   change: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>change</code> event by type: <code>autocompletechange</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;autocompletechange&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+    </ul>
+  </div>
+  <div id="methods">
+    <h2 class="top-header">Methods</h2>
+    <ul class="methods-list">
+      
+<li class="method" id="method-destroy">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-destroy">destroy</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "destroy"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Remove the autocomplete functionality completely. This will return the element back to its pre-init state.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-disable">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-disable">disable</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "disable"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Disable the autocomplete.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-enable">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-enable">enable</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "enable"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Enable the autocomplete.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-option">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-option">option</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "option"
+
+, optionName
+
+, <span class="optional">[</span>value<span class="optional">] </span>
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Get or set any autocomplete option. If no value is specified, will act as a getter.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-option">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-option">option</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "option"
+
+, options
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Set multiple autocomplete options at once by providing an options object.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-widget">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-widget">widget</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "widget"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Returns the .ui-autocomplete element.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-search">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-search">search</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "search"
+
+, <span class="optional">[</span>value<span class="optional">] </span>
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Triggers a search event, which, when data is available, then will display the suggestions; can be used by a selectbox-like button to open the suggestions when clicked. If no value argument is specified, the current input's value is used. Can be called with an empty string and minLength: 0 to display all items.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-close">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-close">close</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.autocomplete( "close"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Close the Autocomplete menu. Useful in combination with the search method, to close the open menu.</p>
+  </div>
+</li>
+
+    </ul>
+  </div>
+  <div id="theming">
+    <h2 class="top-header">Theming</h2>
+    <p>The jQuery UI Autocomplete plugin uses the jQuery UI CSS Framework to style its look and feel, including colors and background textures. We recommend using the ThemeRoller tool to create and download custom themes that are easy to build and maintain.
+</p>
+  <p>If a deeper level of customization is needed, there are widget-specific classes referenced within the jquery.ui.autocomplete.css stylesheet that can be modified. These classes are highlighed in bold below.
+</p>
+    
+  <h3>Sample markup with jQuery UI CSS Framework classes</h3>
+  &lt;input class=&quot;ui-autocomplete-input&quot;/&gt;<br />
+&lt;ul class=&quot;ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all&quot;&gt;<br />
+&nbsp;&nbsp;&lt;li class=&quot;ui-menu-item&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;a class=&quot;ui-corner-all&quot;&gt;item 1&lt;/a&gt;<br />
+&nbsp;&nbsp;&lt;/li&gt;<br />
+&nbsp;&nbsp;&lt;li class=&quot;ui-menu-item&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;a class=&quot;ui-corner-all&quot;&gt;item 2&lt;/a&gt;<br />
+&nbsp;&nbsp;&lt;/li&gt;<br />
+&nbsp;&nbsp;&lt;li class=&quot;ui-menu-item&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;a class=&quot;ui-corner-all&quot;&gt;item 3&lt;/a&gt;<br />
+&nbsp;&nbsp;&lt;/li&gt;<br />
+&lt;/ul&gt;
+  <p class="theme-note">
+    <strong>
+      Note: This is a sample of markup generated by the autocomplete plugin, not markup you should use to create a autocomplete. The only markup needed for that is &lt;input/&gt;.
+    </strong>
+  </p>
+
+  </div>
+</div>
+
+</p><!-- 
+Pre-expand include size: 35982 bytes
+Post-expand include size: 61199 bytes
+Template argument size: 33647 bytes
+Maximum: 2097152 bytes
+-->
+
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3766-1!1!0!!en!2 and timestamp 20110512151642 -->

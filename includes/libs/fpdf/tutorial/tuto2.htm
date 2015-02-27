@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Header, footer, page break and image</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>Header, footer, page break and image</h1>
+Here is a two page example with header, footer and logo:
+<div class="source">
+<pre><code>&lt;?php
+<span class="kw">require(</span><span class="str">'fpdf.php'</span><span class="kw">);
+
+class </span>PDF <span class="kw">extends </span>FPDF
+<span class="kw">{
+</span><span class="cmt">//Page header
+</span><span class="kw">function </span>Header<span class="kw">()
+{
+    </span><span class="cmt">//Logo
+    </span>$<span class="kw">this-&gt;</span>Image<span class="kw">(</span><span class="str">'logo_pb.png'</span><span class="kw">,</span>10<span class="kw">,</span>8<span class="kw">,</span>33<span class="kw">);
+    </span><span class="cmt">//Arial bold 15
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Arial'</span><span class="kw">,</span><span class="str">'B'</span><span class="kw">,</span>15<span class="kw">);
+    </span><span class="cmt">//Move to the right
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>80<span class="kw">);
+    </span><span class="cmt">//Title
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>30<span class="kw">,</span>10<span class="kw">,</span><span class="str">'Title'</span><span class="kw">,</span>1<span class="kw">,</span>0<span class="kw">,</span><span class="str">'C'</span><span class="kw">);
+    </span><span class="cmt">//Line break
+    </span>$<span class="kw">this-&gt;</span>Ln<span class="kw">(</span>20<span class="kw">);
+}
+
+</span><span class="cmt">//Page footer
+</span><span class="kw">function </span>Footer<span class="kw">()
+{
+    </span><span class="cmt">//Position at 1.5 cm from bottom
+    </span>$<span class="kw">this-&gt;</span>SetY<span class="kw">(-</span>15<span class="kw">);
+    </span><span class="cmt">//Arial italic 8
+    </span>$<span class="kw">this-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Arial'</span><span class="kw">,</span><span class="str">'I'</span><span class="kw">,</span>8<span class="kw">);
+    </span><span class="cmt">//Page number
+    </span>$<span class="kw">this-&gt;</span>Cell<span class="kw">(</span>0<span class="kw">,</span>10<span class="kw">,</span><span class="str">'Page '</span><span class="kw">.</span>$<span class="kw">this-&gt;</span>PageNo<span class="kw">().</span><span class="str">'/{nb}'</span><span class="kw">,</span>0<span class="kw">,</span>0<span class="kw">,</span><span class="str">'C'</span><span class="kw">);
+}
+}
+
+</span><span class="cmt">//Instanciation of inherited class
+</span>$pdf<span class="kw">=new </span>PDF<span class="kw">();
+</span>$pdf<span class="kw">-&gt;</span>AliasNbPages<span class="kw">();
+</span>$pdf<span class="kw">-&gt;</span>AddPage<span class="kw">();
+</span>$pdf<span class="kw">-&gt;</span>SetFont<span class="kw">(</span><span class="str">'Times'</span><span class="kw">,</span><span class="str">''</span><span class="kw">,</span>12<span class="kw">);
+for(</span>$i<span class="kw">=</span>1<span class="kw">;</span>$i<span class="kw">&lt;=</span>40<span class="kw">;</span>$i<span class="kw">++)
+    </span>$pdf<span class="kw">-&gt;</span>Cell<span class="kw">(</span>0<span class="kw">,</span>10<span class="kw">,</span><span class="str">'Printing line number '</span><span class="kw">.</span>$i<span class="kw">,</span>0<span class="kw">,</span>1<span class="kw">);
+</span>$pdf<span class="kw">-&gt;</span>Output<span class="kw">();
+</span>?&gt;</code></pre>
+</div>
+<p class='demo'><a href='tuto2.php' target='_blank' class='demo'>[Demo]</a></p>
+This example makes use of the <a href='../doc/header.htm'>Header()</a> and <a href='../doc/footer.htm'>Footer()</a> methods to process page headers and
+footers. They are called automatically. They already exist in the FPDF class but do nothing,
+therefore we have to extend the class and override them.
+<br>
+<br>
+The logo is printed with the <a href='../doc/image.htm'>Image()</a> method by specifying its upper-left corner and
+its width. The height is calculated automatically to respect the image proportions.
+<br>
+<br>
+To print the page number, a null value is passed as the cell width. It means that the cell
+should extend up to the right margin of the page; it is handy to center text. The current page
+number is returned by the <a href='../doc/pageno.htm'>PageNo()</a> method; as for the total number of pages, it is obtained
+by means of the special value <code>{nb}</code> which will be substituted on document closure
+(provided you first called <a href='../doc/aliasnbpages.htm'>AliasNbPages()</a>).
+<br>
+Note the use of the <a href='../doc/sety.htm'>SetY()</a> method which allows to set position at an absolute location in
+the page, starting from the top or the bottom.
+<br>
+<br>
+Another interesting feature is used here: the automatic page breaking. As soon as a cell would
+cross a limit in the page (at 2 centimeters from the bottom by default), a break is performed
+and the font restored. Although the header and footer select their own font (Arial), the body
+continues with Times. This mechanism of automatic restoration also applies to colors and line
+width. The limit which triggers page breaks can be set with <a href='../doc/setautopagebreak.htm'>SetAutoPageBreak()</a>.
+</body>
+</html>

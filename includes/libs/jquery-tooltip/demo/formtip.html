@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>jQuery Tooltip Plugin Demo</title>
+
+<link rel="stylesheet" href="../jquery.formtip.css" />
+<link rel="stylesheet" href="screen.css" />
+<script src="../lib/jquery.js" type="text/javascript"></script>
+<script src="../lib/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="../lib/jquery.dimensions.js" type="text/javascript"></script>
+<script src="../lib/jquery.delegate.js" type="text/javascript"></script>
+<script src="../jquery.formtip.js" type="text/javascript"></script>
+
+<script src="chili-1.7.pack.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function() {
+	$("form:first").formtip();
+	$("form.test").formtip({
+		positionParent: function(element) {
+			return element.parent();
+		},
+		left: -5
+	});
+});
+</script>
+
+<style type="text/css">
+form.test div {
+	width: 250px;
+	border: 1px solid black;
+	float: left;
+	margin: 1em;
+}
+form.test p {
+	border: 1px solid #999;
+}
+</style>
+
+</head>
+<body>
+<h1 id="banner"><a href="http://bassistance.de/jquery-plugins/jquery-plugin-tooltip/">jQuery Tooltip Plugin</a> Demo</h1>
+<div id="main">
+	<form>
+		<fieldset id="set1">
+			<legend>Three elements with tooltips, default settings</legend>
+			<a title="A tooltip with default settings, the href is displayed below the title" href="http://google.de">Link to google</a>
+			<br/>
+			<label title="A label with a title and default settings, no href here" for="text1">Input something please!</label>
+			<br/>
+			<input title="Note that the tooltip disappears when clicking the input elementthe input elementthe input element" type="text" value="Test" name="action" id="text1"/>
+			
+			<h3>Code</h3>
+			<pre><code class="mix">$('#set1 *').tooltip();</code></pre>
+			<input title="Another tooltip element I" type="text" value="Test"/>
+		</fieldset>
+	</form>
+	
+	<form class="test">
+		<div>
+			<p>
+				<label>II</label><input title="Another tooltip element II" type="text" value="Test"/>
+			</p>
+			<p>
+				<label>III</label><input title="Another tooltip element III" type="text" value="Test"/>
+			</p>
+		</div>
+		<div style="width: 200px">
+			<input title="Another tooltip element IV" type="text" value="Test"/>
+			<br/>
+			<input type="text" value="Test"/>
+			<br/>
+			<input title="Another tooltip element VI" type="text" value="Test"/>
+		</div>
+	</form>
+	
+</div>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2623402-1";
+urchinTracker();
+</script>
+</body>
+</html>

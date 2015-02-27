@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>jQuery Tooltip Plugin Demo</title>
+
+<link rel="stylesheet" href="../jquery.tooltip.css" />
+<link rel="stylesheet" href="screen.css" />
+<script src="../lib/jquery.js" type="text/javascript"></script>
+<script src="../lib/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="../lib/jquery.dimensions.js" type="text/javascript"></script>
+<script src="../jquery.tooltip.js" type="text/javascript"></script>
+
+<script src="chili-1.7.pack.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function() {
+$('#set1 *').tooltip();
+
+$("#foottip a").tooltip({
+	bodyHandler: function() {
+		return $($(this).attr("href")).html();
+	},
+	showURL: false
+});
+
+$('#tonus').tooltip({
+	delay: 0,
+	showURL: false,
+	bodyHandler: function() {
+		return $("<img/>").attr("src", this.src);
+	}
+});
+
+$('#yahoo a').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	showBody: " - ",
+	fade: 250
+});
+
+$("select").tooltip({
+	left: 25
+});
+
+$("map > area").tooltip({ positionLeft: true });
+
+$("#fancy, #fancy2").tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	fixPNG: true,
+	showBody: " - ",
+	extraClass: "pretty fancy",
+	top: -15,
+	left: 5
+});
+
+$('#pretty').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	showBody: " - ",
+	extraClass: "pretty",
+	fixPNG: true,
+	left: -120
+});
+
+$('#right a').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	extraClass: "right"
+});
+$('#right2 a').tooltip({ showURL: false, positionLeft: true });
+
+$("#block").click($.tooltip.block);
+
+});
+</script>
+
+</head>
+<body>
+<h1 id="banner"><a href="http://bassistance.de/jquery-plugins/jquery-plugin-tooltip/">jQuery Tooltip Plugin</a> Demo</h1>
+<div id="main">
+	<fieldset id="set1">
+		<legend>Three elements with tooltips, default settings</legend>
+		<a title="A tooltip with default settings, the href is displayed below the title" href="http://google.de">Link to google</a>
+		<br/>
+		<label title="A label with a title and default settings, no href here" for="text1">Input something please!</label>
+		<br/>
+		<input title="Note that the tooltip disappears when clicking the input element" type="text" value="Test" name="action" id="text1"/>
+		
+		<h3>Code</h3>
+		<pre><code class="mix">$('#set1 *').tooltip();</code></pre>
+	</fieldset>
+	
+	<fieldset id="foottip">
+		<legend>Using bodyHandler to display footnotes in the tooltip</legend>
+		Some text referring to a <a href="#footnote">footnote</a>.
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<div id="footnote"><em>And here</em> is the actual footnote, complete with nested <strong>HTML</strong>.</div>
+		
+		<h3>Code</h3>
+		<pre><code class="mix">$("#foottip a").tooltip({
+	bodyHandler: function() {
+		return $($(this).attr("href")).html();
+	},
+	showURL: false
+});</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>An image with a tooltip</legend>
+		<img id="tonus" src="image.png" height="80" title="No delay. The src value is displayed below the title" />
+		<h3>Code</h3>
+	<pre><code class="mix">$('#tonus').tooltip({
+	delay: 0,
+	showURL: false,
+	bodyHandler: function() {
+		return $("&lt;img/&gt;").attr("src", this.src);
+	}
+});</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Blocking tooltips</legend>
+		<button id="block">Click this button to block/unblock all tooltips</button>
+		<pre><code class="mix">$("#block").click($.tooltip.block);</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>The next four links have no delay with tracking and fading, with extra content:</legend>
+		<div id="yahoo">
+			<a title="Yahoo doo - more content" href="http://yahoo.com">Link to yahoo</a>
+			<a title="Yahoo doo2 - wohooo" href="http://yahoo.com">Link to yahoo1</a>
+			<a title="Yahoo doo3" href="http://yahoo.com">Link to yahoo2</a>
+			<a title="Yahoo doo4 - buga!" href="http://yahoo.com">Link to yahoo3</a>
+		</div>
+		<select><option>bgiframe test</option></select>
+		<h3>Code</h3>
+		<pre><code class="mix">$('#yahoo a').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	showBody: " - ",
+	fade: 250
+});</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Tooltips with extra classes. Useful for different tooltip styles on a single page.</legend>
+		<em>Note how the one on the right gets a different background image when at the right viewport border.</em>
+		<br/>
+		<span id="fancy" title="You are dead, this is hell. - Please note the custom positioning here!">A fancy tooltip, now with some custom positioning.</span>
+		<span id="fancy2" title="You are dead, this is hell. - Please note the custom positioning here!">A fancy tooltip, now with some custom positioning.</span>
+		<p><span id="pretty" title="I am pretty! - I am a very pretty tooltip, I need lot's of attention from buggers like you! Yes!">And now, for the fancy stuff, a tooltip with an extra class for nice shadows, and some extra content</span></p>
+		<br/>
+		<br/>
+		<br/>
+		<select><option>bgiframe test</option></select>
+		<h3>Code</h3>
+		<pre><code class="mix">$("#fancy, #fancy2").tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	opacity: 1,
+	fixPNG: true,
+	showBody: " - ",
+	extraClass: "pretty fancy",
+	top: -15,
+	left: 5
+});
+
+$('#pretty').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	showBody: " - ",
+	extraClass: "pretty",
+	fixPNG: true,
+	opacity: 0.95,
+	left: -120
+});</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Selects</legend>
+		<select title="fancy select with a tooltip">
+			<option>1. option</option>
+			<option>2. option</option>
+			<option>3. option</option>
+		</select>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Image map with tooltips.</legend>
+	
+		<img id="map" src="karte.png" width="345" height="312" border="0" usemap="#Landkarte">
+		<map name="Landkarte">
+		  <area shape="rect" coords="11,10,59,29"
+		        href="http://www.koblenz.de/" alt="Koblenz" title="Koblenz">
+		  <area shape="rect" coords="42,36,96,57"
+		        href="http://www.wiesbaden.de/" alt="Wiesbaden" title="Wiesbaden">
+		  <area shape="rect" coords="42,59,78,80"
+		        href="http://www.mainz.de/" alt="Mainz" title="Mainz">
+		  <area shape="rect" coords="100,26,152,58"
+		        href="http://www.frankfurt.de/" alt="Frankfurt" title="Frankfurt">
+		  <area shape="rect" coords="27,113,93,134"
+		        href="http://www.mannheim.de/" alt="Mannheim" title="Mannheim">
+		  <area shape="rect" coords="100,138,163,159"
+		        href="http://www.heidelberg.de/" alt="Heidelberg" title="Heidelberg">
+		  <area shape="rect" coords="207,77,266,101"
+		        href="http://www.wuerzburg.de/" alt="W&uuml;rzburg" title="W&uuml;rzburg">
+		  <area shape="rect" coords="282,62,344,85"
+		        href="http://www.bamberg.de/" alt="Bamberg" title="Bamberg">
+		  <area shape="rect" coords="255,132,316,150"
+		        href="http://www.nuernberg.de/" alt="N&uuml;rnberg" title="N&uuml;rnberg">
+		  <area shape="rect" coords="78,182,132,200"
+		        href="http://www.karlsruhe.de/" alt="Karlsruhe" title="Karlsruhe">
+		  <area shape="rect" coords="142,169,200,193"
+		        href="http://www.heilbronn.de/" alt="Heilbronn" title="Heilbronn">
+		  <area shape="rect" coords="140,209,198,230"
+		        href="http://www.stuttgart.de/" alt="Stuttgart" title="Stuttgart">
+		  <area shape="rect" coords="187,263,222,281"
+		        href="http://www.ulm.de/" alt="Ulm" title="Ulm">
+		  <area shape="rect" coords="249,278,304,297"
+		        href="http://www.augsburg.de/" alt="Augsburg" title="Augsburg">
+		  <area shape="poly" coords="48,311,105,248,96,210,75,205,38,234,8,310"
+		        href="http://www.baden-aktuell.de/" alt="Baden" title="Baden">
+		</map>
+		<h3>Code</h3>
+		<pre><code class="mix">$("map *").tooltip({ positionLeft: true });</code></pre>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Testing repositioning at viewport borders</legend>
+		<p id="right">
+			Tooltip with fixed width<br/>
+			<a title="Short title" href="http://goggle">Google me!</a><br/>
+			<a title="Rather a very very long title with no meaning but yet quite long long long" href="http://goggle">Google me!</a>
+		</p>
+		<p id="right2">
+			Tooltip width auto width<br/>
+			<a title="Short title" href="http://goggle">Google me!</a><br/>
+			<a title="Rather a very very long title with no meaning but yet quite long long long" href="http://goggle">Google me!</a>
+		</p>
+		<h3>Code</h3>
+		<pre><code class="mix">$('#right a').tooltip({
+	track: true,
+	delay: 0,
+	showURL: false,
+	extraClass: "right"
+});
+$('#right2 a').tooltip({ showURL: false, positionLeft: true });</code></pre>
+	</fieldset>
+</div>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2623402-1";
+urchinTracker();
+</script>
+</body>
+</html>
