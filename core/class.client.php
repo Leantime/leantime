@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * Detect browser client
+ *
+ * @author Marcel Folaron <marcel.folaron@gmail.com>
+ * @version 1.0
+ * @license	GNU/GPL, see license.txt
+ *
+ */
+ 
 class client  
  {  
      /** 

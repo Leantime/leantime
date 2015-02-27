@@ -5,11 +5,9 @@
  *
  * @author Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
- * @package classes
- *
+ * @license	GNU/GPL, see license.txt
  *
  */
-
 class FrontController {
 
 	/**
