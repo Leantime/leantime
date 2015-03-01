@@ -29,6 +29,8 @@ class settings {
 	 *
 	 */
 	public function loadSettings(){
+		
+		date_default_timezone_set('America/Los_Angeles');
 
 		if($this->debug == 1){
 				
