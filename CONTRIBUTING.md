@@ -34,14 +34,6 @@ If this is a new feature please create an **enhancement** issue before submittin
 
 Create a **design** issue and discuss the desired changes before writing any code.  Describe the problem the design will attempt to solve.
 
-#### Signatures
-
-Then you just add a line to every git commit message:
-
-Signed-off-by: Marcel Jensen <marcel.jensen@email.com>
-
-**Tip:** `git commit -s`.
-
 ## Code
 
 ### Assignment
