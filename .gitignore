@@ -1,5 +1,10 @@
 .metadata
 .project
+.idea
 .settings
-userdata/*
+.DS_Store
+*.swp
 
+config/configuration.php
+logs
+userdata/*
