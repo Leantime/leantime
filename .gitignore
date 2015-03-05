@@ -6,5 +6,5 @@
 *.swp
 
 config/configuration.php
-logs
+logs/*
 userdata/*
