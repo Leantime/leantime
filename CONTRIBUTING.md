@@ -94,7 +94,8 @@ public function getUser( $firstName, $lastName )
 
 ```php
 // Yes
-$x = $y + $z;```
+$x = $y + $z;
+```
 
 ```php
 // No
@@ -132,12 +133,12 @@ if( func() )
 
 ```php
 // Yes
-$name='Good';
+$name = 'Good';
 ```
 
 ```php
 // No
-$name="Bad";
+$name = "Bad";
 ```
 
 ### Classes
