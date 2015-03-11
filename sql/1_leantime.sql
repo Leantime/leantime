@@ -474,39 +474,6 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table zp_persons
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `zp_persons`;
-
-CREATE TABLE `zp_persons` (
-  `wpd_person_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto id vorher contact_id',
-  `wpd_person_account_id` int(11) DEFAULT NULL COMMENT 'account id zu table account',
-  `wpd_person_tid` varchar(1) DEFAULT 'n' COMMENT 'vorher: contact_tid',
-  `wpd_person_private` tinyint(4) NOT NULL DEFAULT '0',
-  `wpd_person_name_family` varchar(64) DEFAULT NULL COMMENT 'Familienname',
-  `wpd_person_name_given` varchar(64) DEFAULT NULL COMMENT 'Vorname',
-  `wpd_person_name_middle` varchar(64) DEFAULT NULL COMMENT 'weitere Vornamen',
-  `wpd_person_title2` varchar(64) DEFAULT NULL COMMENT 'Weitere Titel',
-  `wpd_person_title3` varchar(64) DEFAULT NULL,
-  `wpd_person_name_prefix` int(11) DEFAULT NULL COMMENT 'Anrede ID FK tbl jhd_person_prefixes',
-  `wpd_person_title` int(11) DEFAULT NULL COMMENT 'Akademischer Titel. FK for tbl jhd_person_titles',
-  `wpd_person_name_addon_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Name Zusatz wie von oder zu bei Adelstitel etc  FK for tbl jhd_person_name_addon',
-  `wpd_person_birthday` date DEFAULT NULL COMMENT 'Geburtstag',
-  `wpd_person_jpegphoto` longblob COMMENT 'Foto der Person',
-  `wpd_person_note` mediumblob,
-  `wpd_person_owner` int(11) NOT NULL DEFAULT '0',
-  `wpd_person_creator` int(11) DEFAULT NULL,
-  `wpd_person_created` datetime DEFAULT NULL,
-  `wpd_person_modifier` int(11) DEFAULT NULL,
-  `wpd_person_modified` datetime DEFAULT NULL,
-  PRIMARY KEY (`wpd_person_id`),
-  KEY `jhd_person_account_id` (`wpd_person_account_id`),
-  KEY `jhd_person_tid` (`wpd_person_tid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Einzigartige Personendaten';
-
-
-
 # Dump of table zp_project_accounts
 # ------------------------------------------------------------
 

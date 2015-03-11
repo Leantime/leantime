@@ -485,13 +485,13 @@ class login{
 										
 				}else{
 				
-					$template = 'JHDIntern';
+					$template = 'zypro';
 				
 				}
 			
 			
 		}else{
-			$template = 'JHDIntern';
+			$template = 'zypro';
 		}
 			
 		return $template;
