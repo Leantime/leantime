@@ -15,17 +15,15 @@
  * @param $class
  * @return
  */
+ 
+spl_autoload_register("leantimeAutoloader",null,true);
 
-function __autoload($class){
-	
-	@include_once("includes/libs/PHPWord/class.PHPWord.php");
+function leantimeAutoloader($class){
 	
 	$paths = array();
 	$paths[] = "core/class.{$class}.php";
 	$paths[] = "includes/modules/{$class}/model/class.{$class}.php";
 	$paths[] ="includes/libs/{$class}/class.{$class}.php";
-
-	
 
 	foreach($paths as &$path){
 
@@ -34,20 +32,5 @@ function __autoload($class){
 		}
 			
 	}
-	
-	$strObjectName = $class;
-	
-		$PHPWORD_BASE_PATH = 'includes/libs/PHPWord/';
-		
-		$strObjectFilePath = $PHPWORD_BASE_PATH . str_replace('_', '/', $strObjectName) . '.php';
-		
-		if((file_exists($strObjectFilePath) === false) || (is_readable($strObjectFilePath) === false)) {
-			var_dump($strObjectFilePath);
-		}else {
-		
-			require($strObjectFilePath);
-		}
 
 }
-
-?>
