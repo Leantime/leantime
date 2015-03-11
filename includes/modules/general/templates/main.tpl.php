@@ -5,24 +5,19 @@ $config = new config();
 $setting = new setting();
 $siteName = $config->sitename;
 
-//Build header	
-if(!isset($_GET['rpc'])){
+$main->includeAction('general.header');
 		
-		//If Mobile Verison different Header
+$loginInfo = "";
+$sitelogo = "";
+$headerOutput = ob_get_clean();
+ob_start();
 		
-		$main->includeAction('general.header');
-		
-		$loginInfo = "";
-		$sitelogo = "";
-		$headerOutput = ob_get_clean();
-		ob_start();
-		
-		if($login->logged_in()===true){
+if($login->logged_in()===true){
 			 
-                $user = new users();
-				$tpl = new template();
+	$user = new users();
+	$tpl = new template();
 				
-				$loginInfo = 
+	$loginInfo = 
 				'<img src="'.$user->getProfilePicture($_SESSION['userdata']['id']).'" alt="" />
 				<div class="userinfo">
 				 	<h5>'.$_SESSION['userdata']['name'].' <small>- '.$_SESSION['userdata']['mail'].'</small></h5>
@@ -113,15 +108,10 @@ if(!isset($_GET['rpc'])){
 							</a>";
 					
 		}
-}
+
 
 $title = 'Support System';
 
-
-//Build Menu
-if(!isset($_GET['rpc'])){
-	
-	$main->includeAction('general.publicMenu');
 	$publicMenuContent = ob_get_clean();
 	ob_start();
 		
@@ -136,7 +126,6 @@ if(!isset($_GET['rpc'])){
 		$menuContent = '';
 	}
 	
-}
 
 
 //Build Main Content
@@ -160,7 +149,6 @@ $infoText = "";
 $infoText = $login->error;
 
 //Build footer and replace template placeholders
-if(!isset($_GET['rpc'])){
 
 	$main->includeAction('general.footer');
 	$footerContent = ob_get_clean();
@@ -216,15 +204,9 @@ if(!isset($_GET['rpc'])){
 		$content = str_replace('<!--###LOGOPATH###-->', $config->logoPath, $content);
 		
 	}	
+
 	//echo Final Content
 	echo $content;
-
-}else{
 	
-	//AJAX Request or Export
-	//echo the content Everything without the template
-	echo $mainContent;
-	
-}	
 	
 ?>
