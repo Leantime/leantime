@@ -9,8 +9,6 @@ if(is_array($currentLink)) {
 }
 ?>
 
-
-
 <ul class="nav nav-tabs nav-stacked">
 	<li class="nav-header">Navigation</li>
 	<?php foreach($this->get('menus') as $menu): ?>

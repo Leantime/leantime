@@ -57,7 +57,7 @@ class FrontController {
 
 			if (is_null($rootPath)) {
 
-				throw new Exception('Es muss der Rootpfad angegeben werden!');
+				throw new Exception('No root path');
 					
 			}
 
@@ -140,9 +140,6 @@ class FrontController {
 				'clientPortal/class.getAjaxOrganisations.php',
 				'clientPortal/class.forgotPassword.php'
 				);
-				
-		
-		
 		
 		$setting = new setting();
 		if(isset($_SESSION['userdata']['role']) !== false){
@@ -160,19 +157,19 @@ class FrontController {
 
 		if(is_dir('./includes/modules/' . $moduleName) === false) {
 
-			throw new Exception('Bisher ist nur das Modul Adressmanagement freigeschaltet!');
+			throw new Exception('No access');
 		
 		}elseif(in_array(''.$moduleName.'/class.' . $actionName . '.php', $availableModules) === false && (isset($_SESSION['userdata']) === false || $_SESSION['userdata']['id'] != 'x') && $actionName != ''){
 
 			$tpl = new template();
 			$tpl->display('general.error');		
-			throw new Exception('Dieses Modul ist für Sie nicht freigeschaltet');
+			throw new Exception('No Access');
 			
 		}elseif(is_file('./includes/modules/' . $moduleName . '/actions/class.' . $actionName . '.php') === false) {
 
 			$tpl = new template();
 			$tpl->display('general.error');
-		throw new Exception('Die angegebene Action existiert nicht!');
+		throw new Exception('No Access');
 
 		}else{ // Else is not necessary - throw stops execution - but for the look...
 			
@@ -182,7 +179,7 @@ class FrontController {
 			$action = new $actionName();
 
 			if(is_object($action) === false) {
-				throw new Exception('Die Action konnte nicht initialisiert werden!');
+				throw new Exception('Coult not initialize action');
 					
 			}else{// Look at last else
 
