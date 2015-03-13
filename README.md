@@ -17,11 +17,11 @@ Installation
 - Import database dump from sql/1_leantime.sql
 - Adjust db and filesystem values in config/configuration.php
 
+
 Demo
 ====
 English - demo.intheleantime.com
-German - leantime.com
-
+German - leantime.de
 
 Default User Accounts
 ------------------
