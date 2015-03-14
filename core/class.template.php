@@ -115,9 +115,7 @@ class template {
 	 * @param $template
 	 * @return unknown_type
 	 */
-	public function display($template) {
-		
-		$client = new client();  
+	public function display($template) { 
 	
 		$this->template = $template;
 	
@@ -152,8 +150,6 @@ class template {
 			include($strTemplate);
 
 		}
-		
-		
 		
 		return;
 	}
