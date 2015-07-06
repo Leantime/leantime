@@ -25,36 +25,13 @@ if($login->logged_in()!==true){
 	ob_start();
 	
 }else{
+	
 	$loginContent = '';
+
 }
 
 
 $application = new application();
 $application->start();
 
-
-/*
-try {
-	
-	$main = frontcontroller::getInstance($root);
-
-}catch(Exception $e){
-		
-	echo $e->language;
-	
-}
-
-if (is_object($main)) {
-	
-	if(isset($_GET['export']) === true){
-
-		include('includes/modules/general/templates/export.tpl.php');
-		
-	}else{
-			
-		include('includes/modules/general/templates/main.tpl.php');
-
-	}
-}
-*/
 ob_end_flush();
