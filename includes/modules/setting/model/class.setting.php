@@ -498,6 +498,8 @@ class setting {
 		$newArr[] = 'general/class.footer.php';
 		$newArr[] = 'general/class.header.php';
 		$newArr[] = 'general/class.main.php';
+		$newArr[] = 'general/class.logout.php';
+		$newArr[] = 'general/class.headMenu.php';
 		$newArr[] = 'general/class.menu.php';
 		$newArr[] = 'general/class.mobileMenu.php';
 		$newArr[] = 'general/class.publicMenu.php';

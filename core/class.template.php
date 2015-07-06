@@ -76,7 +76,7 @@ class template {
 	 *
 	 * @param $name
 	 * @param $value
-	 * @return array
+	 * 
 	 */
 	public function assign($name, $value) {
 
@@ -115,9 +115,7 @@ class template {
 	 * @param $template
 	 * @return unknown_type
 	 */
-	public function display($template) {
-		
-		$client = new client();  
+	public function display($template) { 
 	
 		$this->template = $template;
 	
@@ -152,8 +150,6 @@ class template {
 			include($strTemplate);
 
 		}
-		
-		
 		
 		return;
 	}
@@ -254,38 +250,50 @@ class template {
 	/**
 	 * displayLink
 	 */ 
-	public function displayLink($module,$name,$params = NULL, $attribute = NULL, $showAlways = false) {
+	public function displayLink($module, $name, $params = NULL, $attribute = NULL) {
 	 	
 		$mod = explode('.',$module);
-		$action = $mod[1];
-		$module = $mod[0];
 		
-		$mod = $module.'/class.'.$action.'.php';
+		if(is_array($mod) === true && count($mod) == 2){
+			
+			$action = $mod[1];
+			$module = $mod[0];
+			
+			$mod = $module.'/class.'.$action.'.php';
 		
-		$setting = new setting();
-		$available = $setting->getAvailableModules($_SESSION['userdata']['role']);
+			$setting = new setting();
+			$available = $setting->getAvailableModules($_SESSION['userdata']['role']);
+			
+		}else{
+			
+			$mod = array();
+		
+		}
 		
 		$returnLink = false;
+		
 		if (!empty($available) && in_array($mod, $available)!==false) {
 				
-//			$url = 'index.php?act='.$module.'.'.$action;
 			$url = "/".$module."/".$action."/";
+			
 			if (!empty($params))
+			
 				foreach ($params as $key => $value) {
-					//$url .= '&'.$key.'='.$value;
 					$url .= $value."/";	
 				}
 			
 			$attr = '';
-			if ($attribute!=NULL)
-				foreach ($attribute as $key => $value)
-					$attr .= $key." = '".$value."' ";
-
-			$returnLink = "<a href='".$url."' ".$attr.">".$name."</a>";
-		} else if ($showAlways !== false) {
 			
-			$returnLink = $name;
-		}
+			if ($attribute!=NULL){
+			
+				foreach ($attribute as $key => $value){
+					$attr .= $key." = '".$value."' ";
+				}
+			}
+			
+			$returnLink = "<a href='".$url."' ".$attr.">".$name."</a>";
+		
+		} 
 		
 		return $returnLink;
 	 }

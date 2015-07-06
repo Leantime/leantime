@@ -117,7 +117,7 @@ class FrontController {
 	 * @return string|object
 	 */
 	private function executeAction($completeName) {
-			
+		
 		//actionname.filename
 		
 		//actionName is foldername
@@ -127,18 +127,13 @@ class FrontController {
 		$moduleName = self::getModuleName($completeName);
 		
 		$defaultModules = array(
+				'general/class.main.php',
+				'general/class.loginInfo.php',
 				'general/class.header.php',
 				'general/class.footer.php',
 				'general/class.ajaxRequest.php',
-				'general/class.publicMenu.php',
-				'general/class.mobileHeader.php',
-				'general/class.mobileMenu.php',
-				'general/class.mobileLogin.php',
-				'publicContent/class.showArticle.php',
-				'publicContent/class.contactForm.php',
-				'clientPortal/class.clientRegistration.php',
-				'clientPortal/class.getAjaxOrganisations.php',
-				'clientPortal/class.forgotPassword.php'
+				'general/class.logout.php'.
+				'general/class.headMenu.php'
 				);
 		
 		$setting = new setting();
@@ -211,6 +206,22 @@ class FrontController {
 	 */
 	public function includeAction($completeName) {
 		$this->executeAction($completeName);
+	}
+	
+	/**
+	 * includeAction - possible to include action from everywhere
+	 *
+	 * @access public
+	 * @param $completeName
+	 * @return object
+	 */
+	public function getRenderedOutput($completeName) {
+			
+		ob_start();	
+		$this->executeAction($completeName);
+		$headerOutput = ob_get_clean();
+		return $headerOutput;
+		
 	}
 
 	/**

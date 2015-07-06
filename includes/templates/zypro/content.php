@@ -3,18 +3,20 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title><!--###TITLE###--></title>
+<title><?php echo $config->sitename; ?></title>
 
-    <meta name="description" content="TimelineJS example">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="TimelineJS example">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<?php echo $frontController->includeAction('general.header'); ?>
    
-    <!-- HTML5 shim, for IE6-8 support of HTML elements--><!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<!-- HTML5 shim, for IE6-8 support of HTML elements--><!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
 <link rel="stylesheet" href="/includes/templates/zypro/css/style.default.css" type="text/css" />
-<link rel="stylesheet" href="/includes/templates/zypro/css/style.custom.php?color=<!--###MAINCOLOR###-->" type="text/css" />
+<link rel="stylesheet" href="/includes/templates/zypro/css/style.custom.php?color=<?php echo $config->mainColor; ?>" type="text/css" />
 <link rel="stylesheet" href="/includes/templates/zypro/css/responsive-tables.css">
 <link rel="stylesheet" href="/includes/templates/zypro/css/bootstrap-timepicker.min.css" type="text/css" />
 <link rel="stylesheet" href="/includes/templates/zypro/css/bootstrap-fileupload.min.css" type="text/css" />
@@ -78,7 +80,12 @@
 </script>
 <!--<script type="text/javascript" src="/includes/templates/zypro/js/forms.js"></script>-->
 <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="includes/templates/zypro/js/excanvas.min.js"></script><![endif]-->
+
+<!--###HEAD##-->
+
 </head>
+
+
 
 <body>
 
@@ -86,38 +93,24 @@
     
     <div class="header">
         <div class="logo">
-            <a href="/"><img src="<!--###LOGOPATH###-->" style="width:260px; height:110px;" alt="" /></a>
+            <a href="/"><img src="<?php echo $config->logoPath; ?>" style="width:260px; height:110px;" alt="" /></a>
         </div>
         <div class="headerinner">
-            <ul class="headmenu">
-            	<li class="odd">
-                    <!--###DASHBOARD###-->
-                </li>
-                <li>
-                    <!--###TICKETS###-->
-                </li>
-                <li class="odd">
-                    <!--###MAIL###-->
-                </li>
-                <li>
-                    <!--###CALENDAR###-->
-                </li>
-                <li class="odd">
-                	<!--###STATISTICS###-->
-                </li>
-                <li class="right">
-                    <div class="userloggedinfo">
-                        <!--###LOGININFO###-->
-                    </div>
-                </li>
-            </ul><!--headmenu-->
+        	
+        	<?php echo $frontController->includeAction('general.headMenu'); ?>
+        	
+        	<div class="userloggedinfo">
+            	<?php echo $frontController->includeAction('general.loginInfo'); ?>	
+            </div>
+            
         </div>
     </div>
         
     <div class="leftpanel">
         
         <div class="leftmenu">    
-        	<!--###MENU###-->	
+
+        	<?php echo $frontController->includeAction('general.menu'); ?>
 
         </div><!--leftmenu-->
         
@@ -130,12 +123,11 @@
             <li><a href='/calendar/showMyCalendar'><span id='headClock'></span></a></li>
         </ul>
 
-      	<!--###CONTENT###-->
-        <!--###LOGINBOX###-->
+      	<?php echo $frontController->run(); ?>
                
         
         <div class='footer' >
-    		  <p>leantime</p>
+    		  <?php echo $frontController->includeAction('general.footer'); ?>
     	</div>
     	
     </div><!--rightpanel-->   
@@ -196,5 +188,7 @@
 		return i;	
 	}
 </script>
+
+<!--###FOOTER###-->
 </body>
 </html>

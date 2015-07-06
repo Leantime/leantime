@@ -1,5 +1,8 @@
-<?php  $helper = $this->get('helper'); ?>
+<?php  $helper = $this->get('helper'); 
 
+	application::addToSection("/asdf/asdf.css", "FOOTER", "CSS");
+
+?>
 		<div class="pageheader">
             <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
                 <input type="text" name="term" placeholder="To search type and hit enter..." />
