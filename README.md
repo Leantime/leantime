@@ -18,6 +18,11 @@ Installation
 - Adjust db and filesystem values in config/configuration.php
 
 
+Demo
+====
+English - demo.intheleantime.com
+German - leantime.de
+
 Default User Accounts
 ------------------
 

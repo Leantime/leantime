@@ -4,12 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<title><?php echo $config->sitename; ?></title>
 
-<title><!--###TITLE###--></title>
-<!--###HEADER###-->
+<?php echo $frontController->includeAction('general.header'); ?>
 
 <link rel="stylesheet" href="/includes/templates/zypro/css/style.default.css" type="text/css" />
-<link rel="stylesheet" href="/includes/templates/zypro/css/style.custom.php?color=<!--###MAINCOLOR###-->" type="text/css" />
+<link rel="stylesheet" href="/includes/templates/zypro/css/style.custom.php?color=<?php echo $config->mainColor; ?>" type="text/css" />
 <link rel="stylesheet" href="/includes/templates/zypro/css/responsive-tables.css">
 <script type="text/javascript" src="/includes/templates/zypro/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/includes/templates/zypro/js/jquery-migrate-1.1.1.min.js"></script>
@@ -55,7 +55,7 @@
         <form id="login" action="/dashboard/show" method="post">
 
              <div class="inputwrapper login-alert">
-                <div class="alert alert-error"><!--###INFO###--></div>
+                <div class="alert alert-error"><?php echo $login->error;?></div>
             </div>
             <div class="inputwrapper animate1 bounceIn">
                 <input type="text" name="username" id="username" placeholder="Enter any username" />
@@ -77,7 +77,7 @@
 </div><!--loginpanel-->
 
 <div class="loginfooter">
-    <p></p>
+    <?php echo $frontController->includeAction('general.footer'); ?>
 </div>
 
 </body>

@@ -223,7 +223,7 @@ h1,h2,h3,h4,h5 { font-weight: normal; line-height: normal; }
 .newusers strong { display: block; line-height: normal; }
 .newusers small { color: #999; line-height: normal; }
 
-.userloggedinfo { padding: 11px; color: #fff; }
+.userloggedinfo { padding: 11px; color: #fff; float:right; }
 .userloggedinfo img { padding: 3px; background: rgba(255,255,255,0.2); width: 80px; float: left; }
 .userloggedinfo .userinfo { float: left; margin-left: 11px; }
 .userloggedinfo .userinfo small { font-size: 11px; opacity: 0.6; color: #fff; font-family: sans-serif; font-style: italic; }

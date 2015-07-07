@@ -28,6 +28,12 @@ if($login->logged_in()!==true){
 	$loginContent = '';
 }
 
+
+$application = new application();
+$application->start();
+
+
+/*
 try {
 	
 	$main = frontcontroller::getInstance($root);
@@ -50,5 +56,5 @@ if (is_object($main)) {
 
 	}
 }
-
+*/
 ob_end_flush();
