@@ -152,3 +152,47 @@
 [07-Jul-2015 13:34:20 America/Los_Angeles] PHP Notice:  Undefined variable: statistics in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\main.tpl.php on line 95
 [07-Jul-2015 13:34:23 America/Los_Angeles] PHP Notice:  Undefined variable: ticketHead in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\main.tpl.php on line 68
 [07-Jul-2015 13:34:23 America/Los_Angeles] PHP Notice:  Undefined variable: statistics in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\main.tpl.php on line 95
+[07-Jul-2015 13:44:47 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:40 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:45 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:46 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:48 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:49 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:51 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:54 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:57 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:46:57 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\projects\templates\submodules\timesheet.sub.php on line 56
+[07-Jul-2015 13:47:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:51:28 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:53:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:53:57 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:53:58 America/Los_Angeles] PHP Notice:  Undefined variable: lastClientName in D:\Source\Repos\OpenSource\leantime\includes\modules\tickets\templates\newTicket.tpl.php on line 72
+[07-Jul-2015 13:54:16 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:54:47 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:54:56 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:54:58 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:55:04 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:55:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:55:07 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\projects\templates\submodules\timesheet.sub.php on line 56
+[07-Jul-2015 13:59:41 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 13:59:42 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\projects\templates\submodules\timesheet.sub.php on line 56
+[07-Jul-2015 14:00:08 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:00:08 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\projects\templates\submodules\timesheet.sub.php on line 56
+[07-Jul-2015 14:00:20 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:00:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:00:25 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:00:36 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:04:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:04:54 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:04:58 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:35 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:41 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:42 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\timesheets\templates\showAll.tpl.php on line 104
+[07-Jul-2015 14:07:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:46 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:07:55 America/Los_Angeles] PHP Notice:  Undefined index: TESTING in D:\Source\Repos\OpenSource\leantime\includes\modules\timesheets\templates\showAll.tpl.php on line 104
+[07-Jul-2015 14:07:58 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:08:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45
+[07-Jul-2015 14:08:05 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\Source\Repos\OpenSource\leantime\includes\modules\general\templates\headMenu.tpl.php on line 45

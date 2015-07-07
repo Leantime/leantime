@@ -190,39 +190,32 @@ function toggleCommentBoxes(id){
 
 <div id="files">
 
-	<div class="widgetbox widgetright">
-    	<h4 class="widgettitle"><?php echo $language->lang_echo('UPLOAD') ?> <a class="close">×</a></h4>
-        <div class="widgetcontent">
+<div class="mediamgr_category">
 	        <form action='#files' method='POST' enctype="multipart/form-data">
 	        	
-			<div class="par">
-			
-			 <label><?php echo $language->lang_echo('UPLOAD_FILE') ?></label>
-		   	 
-		   	 <div class='fileupload fileupload-new' data-provides='fileupload'>
-		   	 	<input type="hidden" />
-				<div class="input-append">
-					<div class="uneditable-input span3">
-						<i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+			<div class="par f-left" style="margin-right: 15px;">
+				
+				 <div class='fileupload fileupload-new' data-provides='fileupload'>
+			   	 	<input type="hidden" />
+					<div class="input-append">
+						<div class="uneditable-input span3">
+							<i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+						</div>
+						<span class="btn btn-file">
+							<span class="fileupload-new">Select file</span>
+							<span class='fileupload-exists'>Change</span>
+							<input type='file' name='file' />
+						</span>	
+						<a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
 					</div>
-					<span class="btn btn-file">
-						<span class="fileupload-new">Select file</span>
-						<span class='fileupload-exists'>Change</span>
-						<input type='file' name='file' />
-					</span>
-						
-					<a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
-				</div>
-		  	</div>		
-		   </div>
-		   
-			<p class='stdformbutton'>
-				<input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
-			</p>		        	
+			  	</div>		
+			   </div>
+			   
+			   <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
 	        	
 			</form>	
-        </div>
-    </div>
+</div>
+
 
                     <div class="mediamgr_content">          
                     	

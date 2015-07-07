@@ -92,7 +92,8 @@ $helper = $this->get('helper');
 	<input type='hidden' name='hiddenStatus' id='hiddenStatus' />
 </form>
 
-
+<?php echo $this->displayLink('tickets.newTicket',$language->lang_echo('NEW_TICKET'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+		
 <div class="headtitle" style="margin:0px;">
 	<div class="btn-group">
 		<button class="btn dropdown-toggle" data-toggle="dropdown" onclick="jQuery('.dataTables_length').toggle('fast'); jQuery('.dataTables_filter').toggle('fast'); jQuery('.column-filter-widgets').toggle('fast');">
