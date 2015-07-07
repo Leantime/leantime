@@ -23,7 +23,7 @@
                         <li class="nav-header"><?php echo $language->lang_echo('NEWTICKETS'); ?></li>';
 						$helper = new helper();		
 		                <?php foreach($this->get("newTickets") as $tick) {
-	                		$name = '<strong>'.$tick['headline'].'</strong><small>Created on: '.$helper->timestamp2date($tick['date'], 2).'</small>';
+	                		$name = '<strong>'.$tick['headline'].'</strong><small>Created on: '.$this->get("helper")->timestamp2date($tick['date'], 2).'</small>';
 		                	?>
 		                	<li><?php echo $this->displayLink('tickets.showTicket', $name ,array('id'=>$tick['id'])) ?></li>
                 		<?php } ?>

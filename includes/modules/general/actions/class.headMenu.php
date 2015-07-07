@@ -27,7 +27,7 @@ class headMenu {
 			$tpl->assign("messagecount", $messageCount);	
 			$tpl->assign("messages", $messages);
 			
-			
+			$tpl->assign("helper", new helper());
 			
 			//Tickets
 			$tickets = new tickets();
