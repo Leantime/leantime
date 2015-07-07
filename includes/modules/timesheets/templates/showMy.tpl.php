@@ -28,26 +28,9 @@ $helper = $this->get('helper');
 
 
 <form action="index.php?act=timesheets.showMy" method="post">
-<!--
-<div id="loader">&nbsp;</div>
 
-<div class="right">
-
-<div id="pager"><span class="prev button">&laquo;<?php echo $lang['BACK']; ?></span>
-
-- <input class="pagedisplay" type="text" readonly="readonly" /> - <span
-	class="next button"><?php echo $lang['NEXT']; ?> &raquo;</span> 
-<select class="pagesize">
-	<option value="5">5</option>
-	<option value="10" selected="selected">10</option>
-	<option value="25">25</option>
-	<option value="50">50</option>
-	<option value="100">100</option>
-</select>
-</div>
-
-</div>
--->
+<?php echo $this->displayLink('timesheets.addTime',$language->lang_echo('NEW_TIMESHEETENTRY'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+		
 <table class='table table-bordered' cellpadding="0" cellspacing="0" border="0" class="table table-bordered" id="dyntable2">
 		<colgroup>
       	  <col class="con0"/>

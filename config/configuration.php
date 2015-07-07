@@ -9,7 +9,7 @@
 								public $dbHost="localhost";
 
 								public $dbUser="root"; 
-								public $dbPassword=''; 
+								public $dbPassword='a'; 
 
 								public $dbDatabase="ticketsystem"; 
 								
