@@ -20,8 +20,8 @@ Installation
 
 Demo
 ====
-English - demo.intheleantime.com<br />
-German - leantime.de
+English - http://demo.intheleantime.com<br />
+German - http://leantime.de
 
 Default User Accounts
 ------------------
