@@ -20,21 +20,21 @@ Installation
 
 Demo
 ====
-English - demo.intheleantime.com
+English - demo.intheleantime.com<br />
 German - leantime.de
 
 Default User Accounts
 ------------------
 
-admin@admin.com
+admin@admin.com<br />
 test
 
-manager@manager.com
+manager@manager.com<br />
 test
 
-developer@developer.com
+developer@developer.com<br />
 test
 
-client@client.com
+client@client.com<br />
 test
 
