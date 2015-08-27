@@ -121,7 +121,7 @@ function removeOptions(className){
 					<?php foreach($this->get('kind') as $row){
 						echo'<option value="'.$row.'"';
 						if($row == $values['kind']) echo ' selected="selected"';
-						echo'>'.$lang[$row].'</option>';
+						echo'>'.$language->lang_echo($row).'</option>';
 				
 					} ?>
 				

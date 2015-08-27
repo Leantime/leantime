@@ -161,7 +161,7 @@ $primeContact = $this->get('contactInfo');
 			    </div>
 			
 				<?php foreach($this->get('files') as $rowFiles): ?> 
-					<a href="downloads.php?id=<?php echo $rowFiles['id']; ?>&class=projects" target="_blank">
+					<a href="/userdata/<?php echo $rowFiles['encName']; ?>" target="_blank">
 						<?php echo $rowFiles['realName']; ?>
 					</a><br />
 			

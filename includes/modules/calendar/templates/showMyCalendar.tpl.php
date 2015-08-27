@@ -104,18 +104,7 @@
 
 				<div id="calendar"></div>
 
-				<div class='box-right'>
-					<h3><?php echo $language->lang_echo('EDIT') ?></h3>
-					
-					<span class="fc-event" style="padding:3px;"><?php echo $lang['SYSTEM_CALENDAR']; ?></span><br /><br />
-					<span class="wish" style="padding:3px;"><?php echo $lang['TICKETS_WISHDATES']; ?></span><br /><br />
-					<span class="editing" style="padding:3px;"><?php echo $lang['TICKETS_WORKING']; ?></span><br /><br />
-					<span class="holidays" style="padding:3px;"><?php echo $lang['HOLIDAYS']; ?></span><br /><br />
-					
-					<?php foreach($this->get('gCalLink') as $row): ?>
-						<span class="<?php echo $row['colorClass']?>" style="padding:3px;"><?php echo $row['name']?>&nbsp;</span><br /><br />		
-					<?php endforeach; ?>
-				</div>
+				
 
 			</div>
 		</div>

@@ -324,14 +324,12 @@ class timesheets {
 			$totalHours = 0;
 			$sql = "SELECT * FROM `zp_timesheets` WHERE zp_timesheets.ticketId ='$ticketId' AND zp_timesheets.userId='$userId'";
 			
-			$query = $this->db->dbQuery($sql)->dbFetchResults();
+			$results = $this->db->dbQuery($sql)->dbFetchResults();
 			
-			if(is_resource($query)) {
-				while($row = mysql_fetch_assoc($query)) {
+			foreach($results as $row) {
 					$totalHours += $row['hours'];
-				}
 			}
-			
+						
 			return $totalHours;
 	}
 	

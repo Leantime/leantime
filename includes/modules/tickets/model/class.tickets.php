@@ -802,39 +802,7 @@ class tickets {
 		
 		return $file;
 	}
-	
-	/**
-	 * getRealName - gets the real name of the file
-	 * 
-	 * @access public
-	 * @return string
-	 */
-	public function getRealName($id) {
-		
-		$query = "SELECT realName FROM `zp_ticketFiles` WHERE id=:id";
-		
-		$stmn = $this->db->{'database'}->prepare($query);
-		$stmn->bindValue(':id',$id,PDO::PARAM_INT);
-		while ($row=mysql_fetch_assoc($query)) {
-			return $row['realName']; 
-		}
-	}
-	
-	/**
-	 * getEncName - get the encrypred name of the file
-	 * 
-	 * @access public
-	 * @return encName
-	 */
-	public function getEncName($id) {
-		
-		$query = mysql_query("SELECT * FROM `zp_ticketFiles` WHERE id='$id'");
-		while ($row=mysql_fetch_assoc($query)) {
-			return $row['encName'];
-		}
-	}
-
-	/**
+		/**
 	 * getStatus - get the Status from the status array
 	 *
 	 * @access public

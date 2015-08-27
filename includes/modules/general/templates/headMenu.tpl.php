@@ -42,7 +42,7 @@
 					
 					<ul class="dropdown-menu">
                     	<li class="nav-header"><?php echo $language->lang_echo('MESSAGES'); ?></li>';
-	                    	<?php foreach ($this->get("messageCount") as $msg) { ?>
+	                    	<?php foreach ($this->get("messages") as $msg) { ?>
 	                    		
 	                    		<li><?php echo $this->displayLink('messages.showAll', '<span class="icon-envelope"></span> '.$language->lang_echo('NEWMESSAGEFROM').' <strong>'.$msg["firstname"].'</strong>',array('id'=>$msg["id"])); ?></li>
 	                        
@@ -55,11 +55,15 @@
                 <li>
                     <a  href='/calendar/showMyCalendar'>
 						<span class='head-icon iconfa-calendar'></span>
+						<span class='headmenu-label'><?php echo $language->lang_echo('CALENDAR'); ?></span>							
+					</a>
+                </li>
+                <li class="odd">
+                    <a  href='/timesheets/showMy'>
+						<span class='head-icon iconfa-time'></span>
 						<span class='headmenu-label'><?php echo $language->lang_echo('MYTIMESHEETS'); ?></span>							
 					</a>
                 </li>
-                
-                <?php echo $this->displayLink('/timesheets/showMy', '<li class="odd">'.$language->lang_echo('MYTIMESHEETS')).'</li>'; ?>
-                
+               
                 
             </ul><!--headmenu-->

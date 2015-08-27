@@ -50,25 +50,5 @@ $helper = new helper();
                     	</ul>
                         
                     </div><!--mediamgr_content-->
-<!--
-<?php foreach($this->get('files') as $row): ?> 
 
-	<br/><a href="/downloads.php?realName=<?php echo $row['realName']; ?>&encName=<?php echo $row['encName'] ?>&ext=<?php echo $row['extension'] ?>&module=<?php echo $row['module'] ?>" target="_blank">
-		<?php echo $row['realName']; ?>
-	</a><br />
-	<?php printf("<span class=\"grey\">".$language->lang_echo('UPLOADED_BY_ON')."</span>", $row['firstname'], $row['lastname'], $helper->timestamp2date($row['date'], 2)); ?>
-	
-	<?php echo $this->displayLink(
-							'tickets.showTicket', 
-							$language->lang_echo('DELETE'), 
-							array('id'=>$ticket['id'],'delFile'=>$row['encName'])
-						) ?>
-	<hr/>
-	
-<?php endforeach; ?> 
-
-<?php if (count($this->get('files')) == 0): ?>
-	<?php echo $language->lang_echo('ERROR_NO_FILES'); ?> 
-<?php endif; ?>
--->
 <div style='clear:both'>&nbsp;</div>
