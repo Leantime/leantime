@@ -12,7 +12,6 @@ $helper = new helper();
 	.maincontent .show { display: block; } 
 	.ui-tabs-panel { padding: 0; }
 	.messagemenu { margin-top: 0; }
-	.maincontent .ui-tabs { border: 1px solid #990033; }
 	.msgauthor { cursor: pointer; }
 </style>
 		
@@ -182,7 +181,7 @@ $helper = new helper();
 		    	<?php endif; ?>
 	        </div><!-- messageview -->
 		      <div class="msgreply">
-		        <div class="thumb"><img src="images/photos/thumb1.png" alt="" /></div>
+		        <div class="thumb"><img src="<?php echo $user->getProfilePicture($_SESSION["userdata"]["id"]) ?>" alt="" /></div>
 		
 		        <div class="reply">
 		        	<form action='' method='POST'>
@@ -194,7 +193,7 @@ $helper = new helper();
 			         	<input type='hidden' name='parent_id' value='<?php echo $msgList['id'] ?>' />
 
 						
-				        <input type='submit' value='<?php echo $language->lang_echo('REPLY') ?>' name='reply' />
+				        <input type='submit' value='<?php echo strip_tags($language->lang_echo('REPLY')) ?>' name='reply' />
 						
 					</form>
 		        </div><!--reply-->
