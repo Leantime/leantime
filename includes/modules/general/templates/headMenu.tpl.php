@@ -42,7 +42,7 @@
 					
 					<ul class="dropdown-menu">
                     	<li class="nav-header"><?php echo $language->lang_echo('MESSAGES'); ?></li>';
-	                    	<?php foreach ($this->get("messageCount") as $msg) { ?>
+	                    	<?php foreach ($this->get("messages") as $msg) { ?>
 	                    		
 	                    		<li><?php echo $this->displayLink('messages.showAll', '<span class="icon-envelope"></span> '.$language->lang_echo('NEWMESSAGEFROM').' <strong>'.$msg["firstname"].'</strong>',array('id'=>$msg["id"])); ?></li>
 	                        

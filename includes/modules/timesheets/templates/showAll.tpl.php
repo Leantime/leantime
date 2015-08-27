@@ -96,7 +96,7 @@ $helper = $this->get('helper');
 				<?php foreach($this->get('kind') as $row){
 					echo'<option value="'.$row.'"';
 					if($row == $this->get('actKind')) echo ' selected="selected"';
-					echo'>'.$lang[$row].'</option>';
+					echo'>'.$language->lang_echo($row).'</option>';
 	
 				}
 				?>
