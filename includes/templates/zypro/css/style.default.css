@@ -946,7 +946,7 @@ ul.edit li { display: inline; margin-right:5px; }
 .msgreply .thumb { width: 40px; height: 40px; float: left; }
 .msgreply .reply { margin-left: 50px; }
 .msgreply textarea {
-		  display: block; width: 100%; height: 128px; -moz-box-sizing: border-box;
+		  display: block; width: 100%; height: 95px; -moz-box-sizing: border-box;
 		  -webkit-box-sizing: border-box; box-sizing: border-box; }
 		  
 
