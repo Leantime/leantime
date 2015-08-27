@@ -1,8 +1,8 @@
 # leantime
 
-Leantime is an open source project management system designed for 
+Leantime is an open source business management system designed for 
 small teams and companies. It offers an all-in-one solution for tasks, 
-projects, timelines and leads.  
+projects, timesheets and leads.  
 
 The intuitive design allows clients and vendors to communicate and manage 
 their projects in one central place. 
