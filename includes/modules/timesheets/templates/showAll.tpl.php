@@ -4,23 +4,21 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 $helper = $this->get('helper');
 ?>
 <script type="text/javascript">
-/*
-	var checkflag = "false";
 	
 	function check(field) {
-	if (checkflag == "false") {
-	  for (i = 0; i < field.length; i++) {
-	  field[i].checked = true;}
-	  checkflag = "true";
-	  return " keine "; }
-	else {
-	  for (i = 0; i < field.length; i++) {
-	  field[i].checked = false; }
-	  checkflag = "false";
-	  return " alle "; }
+		if (checkflag == "false") {
+		  for (i = 0; i < field.length; i++) {
+		  field[i].checked = true;}
+		  checkflag = "true";
+		  return " keine "; }
+		else {
+		  for (i = 0; i < field.length; i++) {
+		  field[i].checked = false; }
+		  checkflag = "false";
+		  return " alle "; 
+		 }
 	}			
-        } 
-	); */
+        
     
 </script>
 
@@ -43,28 +41,25 @@ $helper = $this->get('helper');
 <div id="loader">&nbsp;</div>
 <form action="/timesheets/showAll" method="post" id="form" name="form">
 
-<table class='table table-bordered' cellpadding="0" cellspacing="0" width="90%" id="">
-	<colgroup>
-      	  <col class="con0"/>
-          <col class="con1" />
-      	  <col class="con0"/>
-          <col class="con1" />
-      	  <col class="con0"/>
-	</colgroup>
+
+
+<div class="headtitle" style="margin:0px; background: #eee;">
+	<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('FILTER'); ?></h4>
+	<table class='table table-bordered' cellpadding="0" cellspacing="0" width="90%" id="">
 	<thead>
 		<tr id='toggleBody'>
 			<th><label for="dateFrom"><?php echo $language->lang_echo('DATE_FROM'); ?></label></th>
 			<th><label for="dateTo"><?php echo $language->lang_echo('DATE_TO'); ?></label></th>
 			<th><label></label></th>
 			<th><label></label></th>
-			<th><br/><span class='caret'></span></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody id='body'>
 		<tr>
-			<td><input type="text" id="dateFrom" name="dateFrom"
+			<td><input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
 				value="<?php echo $this->get('dateFrom'); ?>" size="7" /></td>
-			<td><input type="text" id="dateTo" name="dateTo"
+			<td><input type="text" id="dateTo" class="dateTo" name="dateTo"
 				value="<?php echo $this->get('dateTo'); ?>" size="7" /></td>
 			<td>
 			
@@ -128,26 +123,9 @@ $helper = $this->get('helper');
 		</tr>
 	</tbody>
 </table>
-
-<h3><?php echo $lang['OVERVIEW']; ?></h3>
-
-<div class="right">
-<!--
-<div id="pager"><span class="prev button">&laquo;<?php echo $lang['BACK']; ?></span>
-
-- <input class="pagedisplay" type="text" readonly="readonly" /> - <span
-	class="next button"><?php echo $lang['NEXT']; ?> &raquo;</span> <select
-	class="pagesize">
-	<option value="5">5</option>
-	<option value="10" selected="selected">10</option>
-	<option value="25">25</option>
-	<option value="50">50</option>
-	<option value="100">100</option>
-</select></div>
--->
+<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('ALL_TIMESHEETS'); ?></h4>
 </div>
-
-<table class='table table-bordered' cellspacing="0" border="0" class="display" id="">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="dyntableX">
 	<colgroup>
       	  <col class="con0"/>
           <col class="con1" />
@@ -260,7 +238,7 @@ $helper = $this->get('helper');
 	jQuery(document).ready(function() {
 		jQuery('#toggleBody').click(function() {
 			jQuery('#body').toggle();	
-		});;
+		});
 	});
 </script>
 

@@ -104,7 +104,13 @@ class users {
 	 */
 	public function getEmployees() {
 
-		$sql = "SELECT * FROM zp_user WHERE role = 'employee' OR role = 'admin' ORDER BY lastname";
+		$sql = "SELECT 
+			zp_user.id,
+			zp_user.firstname,
+			zp_user.lastname,
+			zp_roles.roleDescription,
+			zp_roles.roleName AS role
+		 FROM zp_user LEFT JOIN zp_roles ON zp_user.role = zp_roles.id WHERE zp_roles.roleName IN('developer','admin','manager') ORDER BY lastname";
 
 		$stmn = $this->db->{'database'}->prepare($sql);
 

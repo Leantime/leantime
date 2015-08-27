@@ -60,19 +60,7 @@ $helper = $this->get('helper');
 			<th><?php echo $lang['DESCRIPTION']; ?></th>
 			
 		</tr>
-		<tr class='filter'>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			
-		</tr>
+		
 	</thead>
 	<tbody>
 
@@ -83,7 +71,7 @@ $helper = $this->get('helper');
 		$sum = $sum + $row['hours'];?>
 		<tr>
 			<td>
-				<a href="/timesheets/editTime/<?php echo $row['id']; ?>"><?php echo $row['id']; ?></a>
+				<a href="/timesheets/editTime/<?php echo $row['id']; ?>">#<?php echo $row['id']; ?></a>
 			</td>
 			<td><?php echo $helper->timestamp2date($row['workDate'], 2); ?></td>
 			<td><?php echo $row['hours']; ?></td>

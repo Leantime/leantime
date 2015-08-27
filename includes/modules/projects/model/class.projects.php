@@ -670,32 +670,6 @@ class projects {
 		return $this->db->dbQuery($query)->dbFetchResults();
 
 	}
-
-	/**
-	 * 
-	 * @access public
-	 * 
-	 */
-	public function getRealName($id) {
-				
-		$query = mysql_query("SELECT * FROM `zp_project_files` WHERE id='".$id."'");
-		while ( $row = mysql_fetch_assoc($query) ) {
-			return $row['realName'];			
-		}
-	}
-	
-	/**
-	 * 
-	 * @access public
-	 * 
-	 */
-	public function getEncName($id) {
-				
-		$query = mysql_query("SELECT * FROM `zp_project_files` WHERE id='".$id."'");
-		while ( $row = mysql_fetch_assoc($query) ) {
-			return $row['encName'];			
-		}
-	}
 	
 	/**
 	 * addFile - add a file to the list

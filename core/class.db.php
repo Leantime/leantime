@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database Class - Connection and query handling
+ * Database Class - Very simple abstraction layer for pdo connection
  *
  * @author Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
@@ -74,23 +74,12 @@ class db {
 		$this->database = $config->dbDatabase;
 		$this->host= $config->dbHost;
 
-		//$this->connection = mysql_connect($this->host, $this->user, $this->password) or die(mysql_error());
-
-		
-		//mysql_query("SET NAMES 'utf8'");
-
-		//mysql_query("SET CHARACTER SET 'utf8'");
-
 		try{
-			
-			
-			
-			
+
 			$driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' );
 			$this->database = new PDO('mysql:host=' . $this->host . ';dbname='. $this->database .'', $this->user, $this->password, $driver_options);			
 			$this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->database->exec('SET CHARACTER SET utf8');
-			
 				
 			return true;
 
@@ -114,9 +103,10 @@ class db {
 		try{
 
 			$this->result = $this->database->query($sql);
-			///echo $sql;
+
 		}catch(Exception $e){
-			echo 'Fehler: '.nl2br($sql).'';
+			
+			echo 'Error: '.nl2br($sql).'';
 			echo $e->getMessage();
 
 		}
@@ -144,18 +134,13 @@ class db {
 	 */
 	
 	public function count() {
-	   
-		//echo '<br>function count()<br>';
-	   
-		
+
 	    if($this->counter===NULL ) {
 			
 			$this->counter=$this->result->fetchColumn();;
-			//echo 'this->counter=$this->result->fetchColumn()<br>';
-		
 
 		}
-		//echo 'this->counter return value:' . $this->counter . '<hr>';
+
 		return $this->counter;
 	}
 	
@@ -167,12 +152,8 @@ class db {
 	 * @return array Dataset
 	 */
 	public function dbFetchRow() {
-			
-		
+					
 			$row = $this->result->fetch(PDO::FETCH_ASSOC);
-			//echo 'dbFetchRow:';
-			
-			//$row = mysql_fetch_assoc($this->result);
 
 			if(is_array($row)){
 				$row = array_map('htmlspecialchars', $row);
@@ -190,9 +171,7 @@ class db {
 	 * @return array
 	 */
 	public function dbFetchResults() {
-			
-		
-		
+
 			$i=0;
 				
 			//Get results and build an array (...better to handle in Templates)
@@ -220,7 +199,6 @@ class db {
 	 */
 	public function dbFetchRowUnmasked() {
 			
-			
 			$row = $this->result->fetch(PDO::FETCH_ASSOC);
 
 			if(is_array($row)){
@@ -243,7 +221,6 @@ class db {
 			$i=0;
 				
 			//Get results and build an array (...better to handle in Templates)
-			
 			while($array[$i] = $this->result->fetch(PDO::FETCH_ASSOC)) {
 				$i++;
 
@@ -294,5 +271,3 @@ class db {
 	}
 
 }
-
-?>

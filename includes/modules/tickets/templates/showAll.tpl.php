@@ -33,8 +33,8 @@ $helper = $this->get('helper');
 		    },
 		     "fnDrawCallback": function(oSettings) {
 		     	jQuery('.column-filter-widgets .btn-primary').remove();
-                 jQuery('.column-filter-widget-selected-terms').before('<button class="btn btn-primary"  onclick="dataTable.fnResetAllFilters();">Reset Filter</button>'); 
-                  jQuery.uniform.update();
+                jQuery('.column-filter-widget-selected-terms').before('<button class="btn btn-primary"  onclick="dataTable.fnResetAllFilters();">Reset Filter</button>'); 
+                jQuery.uniform.update();
             }
 		   
         });
@@ -133,6 +133,7 @@ $helper = $this->get('helper');
 			<th class="head1"><?php echo $language->lang_echo('STATUS'); ?></th>
 			<th class="head0"><?php echo $language->lang_echo('PRIORITY'); ?></th>
 		</tr>
+		
 	</thead>
 	<tbody>
 	<?php foreach($this->get('allTickets') as $row) {?>

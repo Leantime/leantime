@@ -55,11 +55,15 @@
                 <li>
                     <a  href='/calendar/showMyCalendar'>
 						<span class='head-icon iconfa-calendar'></span>
+						<span class='headmenu-label'><?php echo $language->lang_echo('CALENDAR'); ?></span>							
+					</a>
+                </li>
+                <li class="odd">
+                    <a  href='/timesheets/showMy'>
+						<span class='head-icon iconfa-time'></span>
 						<span class='headmenu-label'><?php echo $language->lang_echo('MYTIMESHEETS'); ?></span>							
 					</a>
                 </li>
-                
-                <?php echo $this->displayLink('/timesheets/showMy', '<li class="odd">'.$language->lang_echo('MYTIMESHEETS')).'</li>'; ?>
-                
+               
                 
             </ul><!--headmenu-->

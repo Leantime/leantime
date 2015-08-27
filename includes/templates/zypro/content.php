@@ -56,7 +56,24 @@
 <script type="text/javascript" src="/includes/templates/zypro/js/fullcalendar.min.js"></script>
 <script type="text/javascript" src="/includes/templates/zypro/js/wysiwyg.js"></script>
 
+<!-- Quickselect  -->
+<script
+	src="/includes/libs/Quickselect/quicksilver.js"
+	type="text/javascript"></script>
+<script
+	src="/includes/libs/Quickselect/jquery.quickselect.js"
+	type="text/javascript"></script>
+	
+<link rel="stylesheet" type="text/css"
+	href="/includes/libs/Quickselect/jquery.quickselect.css" />
 
+<!-- Tablsorter Simple  -->
+<script
+	src="/includes/modules/general/templates/js/jquery.tablesorter.min.js"
+	type="text/javascript"></script>
+<script
+	src="/includes/modules/general/templates/js/jquery.tablesorter.pager.js"
+	type="text/javascript"></script>
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
