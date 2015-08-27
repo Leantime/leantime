@@ -4,7 +4,7 @@
  <ul class="headmenu">
             	<li class="odd">
                     <a href="/dashboard/show">
-						<span class='head-icon iconfa-th-large'></span>
+						<span class='head-icon iconfa-th'></span>
 						<span class='headmenu-label'><?php echo $language->lang_echo('DASHBOARD'); ?></span>
 					</a>
                 </li>
@@ -20,8 +20,7 @@
 					<?php echo $this->displayLink('tickets.showAll', $ticketHead, NULL, $this->get("ticketOptions")); ?>
 
                 	<ul class="dropdown-menu newusers">
-                        <li class="nav-header"><?php echo $language->lang_echo('NEWTICKETS'); ?></li>';
-						$helper = new helper();		
+                        <li class="nav-header"><?php echo $language->lang_echo('NEWTICKETS'); ?></li>';	
 		                <?php foreach($this->get("newTickets") as $tick) {
 	                		$name = '<strong>'.$tick['headline'].'</strong><small>Created on: '.$this->get("helper")->timestamp2date($tick['date'], 2).'</small>';
 		                	?>

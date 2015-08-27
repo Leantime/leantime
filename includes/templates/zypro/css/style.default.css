@@ -1763,7 +1763,8 @@ table td.center, table th.center { text-align: center; }
 		  .header { height: 90px; }
 		  .headmenu > li { font-size: 12px; }
 		  .headmenu > li > a { padding: 25px 5px 9px; }
-		  .headmenu > li > a .head-icon { width: 30px; height: 30px; background-size: cover; }
+		  .headmenu > li > a .head-icon { width: 30px; height: 30px; background-size: cover; font-size:28px; }
+	
 		  .leftmenu .nav-tabs.nav-stacked li a { font-size: 13px; }
 		  .leftmenu .nav-tabs.nav-stacked .dropdown ul li a { font-size: 12px; }
 		  .userloggedinfo img { width: 60px; }
@@ -1827,7 +1828,9 @@ table td.center, table th.center { text-align: center; }
 		  .footer .footer-left { float: none; text-align: center; }
 		  .footer .footer-right { float: none; text-align: center; }
 	  
-		  
+		  .column-filter-widgets {
+		  	display:none;
+		  }
 }
 
 @media screen and (max-width: 320px) {

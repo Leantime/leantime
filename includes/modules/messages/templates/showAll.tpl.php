@@ -115,7 +115,7 @@ $helper = new helper();
       				<h4 class="name"><?php echo $msgList['firstname'].' '.$msgList['lastname'] ?></h4>
       				<p class="sum">
       					<!-- <?php echo $msgList['content'] ?><?php echo $msgList['subject'] ?>-->
-      					<strong><?php echo substr($msgList['subject'],0,30) ?>...</strong> -<br/> <?php echo substr($msgList['content'],0,55) ?>...
+      					<strong><?php echo substr(strip_tags($msgList['subject']),0,30) ?>...</strong> -<br/> <?php echo substr(strip_tags($msgList['content']),0,55) ?>...
       				</p>
       			</div>
       		</li>
