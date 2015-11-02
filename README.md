@@ -9,14 +9,22 @@ their projects in one central place.
 
 The system is written in PHP & Mysql.
 
+Local Installation
+==================
 
-Installation
-============
-- Install XAMPP https://www.apachefriends.org/index.html
+Windows
+-------
+- Install XAMPP or WAMP https://www.apachefriends.org/index.html
 - Clone repository into httpdocs/
 - Import database dump from sql/1_leantime.sql
 - Adjust db and filesystem values in config/configuration.php
 
+Linux/Mac
+---------
+- Install apache, PHP and MySQL
+- Clone repository into your local web root
+- Import dump from sql/1_leantime.sql
+- Adjust db and filesystem values in config/configuration.php
 
 Demo
 ====
