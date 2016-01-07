@@ -28,7 +28,6 @@ Linux/Mac
 
 Demo
 ====
-English - http://demo.intheleantime.com<br />
 German - http://leantime.de
 
 Default User Accounts
