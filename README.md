@@ -9,7 +9,7 @@ their projects in one central place.
 
 The system is written in PHP & Mysql.
 
-Local Installation
+Installation
 ==================
 
 - Clone repository into your local web root
