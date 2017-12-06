@@ -12,36 +12,14 @@ The system is written in PHP & Mysql.
 Local Installation
 ==================
 
-Windows
--------
-- Install XAMPP or WAMP https://www.apachefriends.org/index.html
-- Clone repository into httpdocs/
-- Import database dump from sql/1_leantime.sql
-- Adjust db and filesystem values in config/configuration.php
-
-Linux/Mac
----------
-- Install apache, PHP and MySQL
 - Clone repository into your local web root
 - Import dump from sql/1_leantime.sql
-- Adjust db and filesystem values in config/configuration.php
+- Update db credentials and filesystem path in config/configuration.php
 
-Demo
-====
-German - http://leantime.de
+Default admin account is:
 
-Default User Accounts
-------------------
+Username: admin
+Password: test
 
-admin@admin.com<br />
-test
 
-manager@manager.com<br />
-test
-
-developer@developer.com<br />
-test
-
-client@client.com<br />
-test
 
