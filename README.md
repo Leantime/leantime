@@ -9,6 +9,8 @@ their projects in one central place.
 
 The system is written in PHP & Mysql.
 
+This is V1 of leantime that was released in 2016. 
+
 Installation
 ==================
 
