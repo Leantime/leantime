@@ -33,7 +33,7 @@ class login{
 	 * @access private
 	 * @var string
 	 */
-	private $passwort = NULL;
+	private $password = NULL;
 
 	/**
 	 * @access private
@@ -119,7 +119,7 @@ class login{
 
 			$this->username = ($_POST['username']);
 				
-			$this->passwort = ($_POST['password']);
+			$this->password = ($_POST['password']);
 				
 			if(isset($_POST['language']) === true){
 				
@@ -157,7 +157,7 @@ class login{
 		
 		$config = new config();
 		
-		if($this->getUserByLogin($this->username, $this->passwort) === true){
+		if($this->getUserByLogin($this->username, $this->password) === true){
 				
 			//Set Sessions
 			$_SESSION['userdata']['role'] = $this->role;
@@ -176,7 +176,7 @@ class login{
 			
 			return true;
 
-		}elseif($this->username == $config->adminUserName && $this->passwort == $config->adminUserPassword){
+		}elseif($this->username == $config->adminUserName && $this->password == $config->adminUserPassword){
 			
 			//Set Sessions
 			$_SESSION['userdata']['role'] = 'admin';
