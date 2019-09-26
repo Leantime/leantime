@@ -1,0 +1,209 @@
+<?php
+
+/**
+ * Mail class - mails with php mail()
+ *
+ * @author  Marcel Folaron <marcel.folaron@gmail.com>
+ * @version 1.0
+ * @license GNU/GPL, see license.txt
+ */
+namespace leantime\core {
+
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+    
+    class mailer
+    {
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $cc;
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $bcc;
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $from = '';
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $text = '';
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $subject;
+
+
+        private $mailAgent;
+
+        private $emailDomain;
+
+        /**
+         * __construct - get configurations
+         *
+         * @access public
+         * @return void
+         */
+        public function __construct()
+        {
+
+            $config = new config();
+
+            $this->from = $config->email;
+
+            //PHPMailer
+            $this->mailAgent = new PHPMailer();
+
+
+            //Use SMTP or php mail().
+            if($config->useSMTP === true) {
+
+                $this->mailAgent->SMTPDebug = 0;                                  // Enable verbose debug output
+                $this->mailAgent->Timeout = 20;
+
+                $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
+                $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
+                $this->mailAgent->SMTPAuth = true;                               // Enable SMTP authentication
+                $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
+                $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
+                $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
+                $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
+
+            }else{
+
+                $this->mailAgent->isMail();
+
+            }
+
+            $this->emailDomain = $config->email;
+
+            $this->logo = $config->logoPath;
+            $this->companyColor = $config->mainColor;
+
+        }
+
+        /**
+         * 
+         * setText - sets the mailtext
+         *
+         * @access public
+         * @param  $text
+         * @return void
+         */
+        public function setText($text)
+        {
+
+            $this->text = $text;
+
+        }
+
+        /**
+         * 
+         * setHTML - set Mail html (no function yet)
+         *
+         * @access public
+         * @param  $html
+         * @return void
+         */
+        public function setHtml($html)
+        {
+
+            $this->html = $html;
+
+        }
+
+        /**
+         * setSubject - set mail subject
+         *
+         * @access public
+         * @param  $subject
+         * @return void
+         */
+        public function setSubject($subject)
+        {
+
+            $this->subject = $subject;
+
+        }
+
+        /**
+         * sendMail - send the mail with mail()
+         *
+         * @access public
+         * @param  array $to
+         * @param  $from
+         * @return void
+         * @throws \phpmailerException
+         */
+        public function sendMail(array $to, $from)
+        {
+
+
+            $this->mailAgent->isHTML(true);                                  // Set email format to HTML
+
+            $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
+
+            $this->mailAgent->Subject = $this->subject;
+
+            $bodyTemplate = '
+		<table width="100%" style="background:#eeeeee; padding:15px; ">
+		<tr>
+			<td align="center" valign="top">
+				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+					<tr>
+						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
+							<table>
+								<tr>
+								<td width="150"><img alt="Logo" src="' . $this->logo . '" width="150" style="width:150px;"></td>
+								<td></td>
+							</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+							Hi,<br /><br />
+							' . nl2br($this->html) . '
+							<br /><br />
+						</td>
+					</tr>
+				</table>
+				
+			</td>
+		</tr>
+		<tr>
+			
+			<td align="center">To <a href="https://'.$_SERVER['HTTP_HOST'].'/users/editOwn/">unsubscribe</a> from these types of notifications please login and edit your notifications settings</td>
+			
+		</tr>
+		</table>';
+
+            $this->mailAgent->Body = $bodyTemplate;
+            $this->mailAgent->AltBody = $this->text;
+
+            $to = array_unique($to);
+
+            foreach ($to as $recip) {
+                $this->mailAgent->addAddress($recip);
+                $this->mailAgent->send();
+                $this->mailAgent->clearAllRecipients();
+            }
+
+
+        }
+
+    }
+
+}

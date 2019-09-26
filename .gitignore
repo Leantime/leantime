@@ -6,5 +6,15 @@
 *.swp
 
 config/configuration.php
-logs/*
-userdata/*
+resources/logs/*
+userfiles/*
+node_modules
+package-lock.json
+public/js/compiled-app.min.js
+public/js/compiled-libs.min.js
+public/js/jsSourceMapAPP.map
+public/js/SourceMapLIBS.map
+public/css/main.css
+public/css/main.css.map
+
+/vendor/

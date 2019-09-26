@@ -1,0 +1,19 @@
+{
+    "name": "leantime/leantime",
+    "description": "Lean project management system",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Marcel",
+            "email": "marcel@leantime.io"
+        }
+    ],
+    "require": {
+        "aws/aws-sdk-php": "^3.87",
+        "phpmailer/phpmailer": "^6.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    }
+
+}

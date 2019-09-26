@@ -1,38 +1,41 @@
-<?php						
-	class config
-							{
-							/* General */
-								public $sitename = "";
-								public $language = "en";
-								
-								/* Database */
-								public $dbHost="localhost";
+<?php
+namespace leantime\core;
 
-								public $dbUser="root"; 
-								public $dbPassword='a'; 
+class config
+{
+    /* General */
+    public $sitename = "Leantime";
+    public $language = "en";
+    public $mainColor = "1b75bb";
+    public $logoPath = "/images/logo.png";
 
-								public $dbDatabase="ticketsystem"; 
-								
-								/* Fileupload */
-								public $userFilePath= "userdata/";
-								public $maxFileSize = "10000";
-								
-								/* Sessions */
-								public $sessionpassword = "53b37easdfasdfasdf8d6e";
-								
-								/* Email */
-								public $email = "support@leantime.com";
-								
-								/* Admin */
-								public $adminUserName = 'admin';
-								public $adminUserPassword = 'test';
-								public $adminFirstname = 'Admin';
-								public $adminLastname = 'Admin';
-								public $adminEmail = 'superadmin';
-								
-								/* Company Styles*/
-								public $mainColor = "1b75bb";
-								public $logoPath = "/includes/templates/zypro/images/leantime-blueBg.png";
-							
-							}
-?>
+    /* Database */
+    public $dbHost="localhost"; //Comes from client db config
+    public $dbUser="root";
+    public $dbPassword="";
+    public $dbDatabase="leantimeos";
+
+    /* Fileupload */
+    public $userFilePath= "userfiles/";
+
+    public $useS3 = false;
+    public $s3Key = "";
+    public $s3Secret = "";
+    public $s3Bucket = "";
+    public $s3Region = "";
+    public $s3FolderName = "";
+
+    /* Sessions */
+    public $sessionpassword = "3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m"; //Replace with a strong password
+    public $sessionExpiration = 28800; //How many seconds after inactivity should we logout?  28800seconds = 8hours
+
+    /* Email */
+    public $email = "";
+    public $useSMTP = true;
+    public $smtpHosts = "";		  // Specify main and backup SMTP servers
+    public $smtpUsername ="";
+    public $smtpPassword = "";
+    public $smtpSecure ="";
+    public $smtpPort = "";
+
+}

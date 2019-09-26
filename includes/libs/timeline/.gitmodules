@@ -1,6 +1,0 @@
-[submodule "source/js/Core"]
-	path = source/js/Core
-	url = https://zachwise@github.com/VeriteCo/StoryJS-Core.git
-[submodule "source/less/Core"]
-	path = source/less/Core
-	url = https://zachwise@github.com/VeriteCo/StoryJS-Core-CSS.git

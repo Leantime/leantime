@@ -1,0 +1,47 @@
+<?php
+  $currentSprint = $this->get('sprint');
+?>
+
+<div class="center padding-lg">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="primaryColor">Welcome to leantime!</h3>
+            <p>We're glad you're here.  Let's take a minute to get acquainted.<br />
+                 </p>
+            <br /><br />
+        </div>
+    </div>
+
+    <div class="row onboarding">
+        <div class="col-md-4">
+            <h4 class="primaryColor">1. Discover!</h4>
+            <img src="/images/onboarding/canvasScreen.png" style="width:65%"/>
+            <p>Our Business Research section is your new home for your ideas. This section is designed to take you through the steps of customer development, problem research, and solution ideation. </p>
+
+        </div>
+        <div class="col-md-4">
+            <h4 class="primaryColor">2. Plan!</h4>
+            <img src="/images/onboarding/roadmapScreen.png" style="width:65%"/>
+            <p>Our roadmap is designed to take you from smaller manageable milestones to big picture completion.  Plan for milestones about 3 months long and use these project markers to stay on target.</p>
+        </div>
+        <div class="col-md-4">
+            <h4 class="primaryColor">3. Track!</h4>
+            <img src="/images/onboarding/todoScreen.png" style="width:65%"/>
+            <p>This is where you’ll spend most of your time - doing.  Plan your 2 week Sprints and execute successfully with the Kanban Board and our Backlog tools.  Use Retrospectives to grow for the next Sprint.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br /><br />
+            <p>
+                <br /></p>
+            <a href="javascript:void(0);" class="btn btn-primary" onclick="leantime.helperController.startDashboardTour()"><i class="fas fa-map-signs"></i> Take the Full Tour</a><br />
+            <a href="/projects/newProject">Skip the tour and Start a Project</a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('dashboard')">Skip the tour & don't show again</a>
+        </div>
+    </div>
+
+
+</div>

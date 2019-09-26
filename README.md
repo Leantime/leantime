@@ -1,27 +1,48 @@
-# leantime
 
-Leantime is a project management system designed for 
-small teams and companies. It offers an all-in-one solution for tasks, 
-projects, timesheets and leads.  
+# Leantime #
 
-The intuitive design allows clients and vendors to communicate and manage 
-their projects in one central place. 
+Leantime is an open source project management system for small teams. [https://leantime.io](https://leantime.io)
+<br /><br />
+It is written in PHP, Javascript with MySQL. 
 
-The system is written in PHP & Mysql.
+![Build Status](public/images/Screenshots/Dashboard.png)
 
-This is V1 of leantime that was released in 2016. 
+![Build Status](public/images/Screenshots/ToDos_Kanban.png)
 
-Installation
-==================
+![Build Status](public/images/Screenshots/Milestones_Gantt.png)
 
-- Clone repository into your local web root
-- Import dump from sql/1_leantime.sql
-- Update db credentials and filesystem path in config/configuration.php
+### Installation (Production) ###
 
-Default admin account is:
+* Download latest release package
+* Create MySQL database
+* Upload entire directory to your server 
+* Point your domain to the "public/" directory
+* Rename config/configuration.sample.php to config/configuration.php
+* Fill in your database credentials (username, password, host, dbname)
+* Navigate to yourdomain.com/install
+* Follow instructions to install database and user account
 
-Username: admin
-Password: test
+### Installation (Development) ###
 
+* Clone Repository to your local server
+* Create MySQL database
+* Execute:
+```
+composer install
+```
+to load the php dependencies, then
+```
+npm install
+```
+to load Javascript dependencies and finally run the grunt task to create the comiled js files
+```
+grunt default
+```
+* Point your local domain to the "public/" directory
+* Rename config/configuration.sample.php to config/configuration.php
+* Fill in your database credentials (username, password, host, dbname)
+* Navigate to localhost/install
+* Follow instructions to install database and user account
 
-
+### Learn More ###
+Documentation can be found at [https://help.leantime.io](https://help.leantime.io)
