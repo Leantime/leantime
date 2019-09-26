@@ -1,9 +1,15 @@
 
 # Leantime #
 
-Leantime is an open source project management system for small teams. [https://leantime.io](https://leantime.io)
-<br /><br />
-It is written in PHP, Javascript with MySQL. 
+Leantime is an open source project management system for small teams written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
+<br />
+It offers
+* Task Management using Kanban boards, list and calendar views
+* Milestone management using Gantt charts
+* Timesheet management
+* Research boards for product development
+* Idea boards
+* Progress review reports
 
 ![Build Status](public/images/Screenshots/Dashboard.png)
 
@@ -14,27 +20,27 @@ It is written in PHP, Javascript with MySQL.
 ### Installation (Production) ###
 
 * Download latest release package
-* Create MySQL database
+* Create an empty MySQL database
 * Upload entire directory to your server 
 * Point your domain to the "public/" directory
 * Rename config/configuration.sample.php to config/configuration.php
 * Fill in your database credentials (username, password, host, dbname)
 * Navigate to yourdomain.com/install
-* Follow instructions to install database and user account
+* Follow instructions to install database and set up first user account
 
 ### Installation (Development) ###
 
-* Clone Repository to your local server
+* Clone repository to your local server
 * Create MySQL database
-* Execute:
+* Run composer to load php dependencies
 ```
 composer install
 ```
-to load the php dependencies, then
+then
 ```
 npm install
 ```
-to load Javascript dependencies and finally run the grunt task to create the comiled js files
+to load Javascript dependencies and finally run the grunt task to create the compiled js files
 ```
 grunt default
 ```
@@ -45,4 +51,4 @@ grunt default
 * Follow instructions to install database and user account
 
 ### Learn More ###
-Documentation can be found at [https://help.leantime.io](https://help.leantime.io)
+Additional documentation can be found at [https://help.leantime.io](https://help.leantime.io)
