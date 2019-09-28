@@ -89,8 +89,8 @@
     <script type="text/javascript" src="/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
 
     <!-- app -->
-    <script src="/js/compiled-libs.min.js?v=2.0.4"></script>
-    <script src="/js/compiled-app.min.js?v=2.0.4"></script>
+    <script src="/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <!--###HEAD##-->
 

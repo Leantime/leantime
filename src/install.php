@@ -17,8 +17,8 @@ $install = new leantime\core\install();
 
 <?php echo $frontController->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="/css/style.default.css?v=1.0.1" type="text/css" />
-    <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>" type="text/css" />
+    <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
     <link rel="stylesheet" href="/css/main.css"/>
 
     <script type="text/javascript" src="/js/libs/jquery-1.9.1.min.js"></script>

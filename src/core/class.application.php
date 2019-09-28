@@ -20,9 +20,11 @@ class application
     public function start()
     {
         
-        $config = new config();
+        $config = new config();// Used in template
+        $settings = new settings(); //Used in templates to show app version
         $login = new login(session::getSID());
         $frontController = frontcontroller::getInstance(ROOT);
+
 
         //Override theme settings
         $this->overrideThemeSettings();
