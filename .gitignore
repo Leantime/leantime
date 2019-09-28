@@ -9,7 +9,6 @@ config/configuration.php
 resources/logs/*
 node_modules/*
 vendor/*
-package-lock.json
 public/js/compiled-app.min.js
 public/js/compiled-libs.min.js
 public/js/jsSourceMapAPP.map
