@@ -13,10 +13,10 @@ Features:
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/ToDos_Kanban.png "Dashboard")  |
+| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/ToDos_Kanban.png "Kanban Board")  |
 | ------------------------------------------------------------------------|:--------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/Milestones_Gantt.png "Dashboard") | ![alt text](public/images/Screenshots/Calendar.png "Dashboard")      | 
-| ![alt text](public/images/Screenshots/Idea Board.png "Dashboard")       | ![alt text](public/images/Screenshots/Timesheets.png "Dashboard")    |  
+| ![alt text](public/images/Screenshots/Milestones_Gantt.png "Gantt Charts") | ![alt text](public/images/Screenshots/Calendar.png "Calendar View")      | 
+| ![alt text](public/images/Screenshots/Idea_Board.png "Idea Board")       | ![alt text](public/images/Screenshots/Timesheets.png "Timesheets")    |  
 
 ### Installation (Production) ###
 
