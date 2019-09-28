@@ -8,7 +8,8 @@
 config/configuration.php
 resources/logs/*
 userfiles/*
-node_modules
+node_modules/*
+vendor/*
 package-lock.json
 public/js/compiled-app.min.js
 public/js/compiled-libs.min.js
@@ -17,4 +18,3 @@ public/js/SourceMapLIBS.map
 public/css/main.css
 public/css/main.css.map
 
-/vendor/
