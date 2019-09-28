@@ -190,8 +190,8 @@ $helper = $this->get('helper');
 			<td><?php echo $row['planHours']; ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
 			<td <?php if($diff<0)echo'class="new" ';?>><?php echo $diff; ?></td>
-			<td><a href="/public/index.php?act=tickets.showTicket&amp;id=<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
-			<td><a href="/public/index.php?act=projects.showProject&amp;id=<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
+			<td><a href="/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
+			<td><a href="/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
 			<td><?php echo $row['firstname']; ?>, <?php echo $row['lastname']; ?></td>
 			<td><?php echo $language->lang_echo($row['kind']); ?></td>
 			<td><?php echo $row['description']; ?></td>

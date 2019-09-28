@@ -103,16 +103,16 @@ leantime.ticketsController = (function () {
 
                         },
                         on_progress_change: function (task, progress) {
-                            console.log(task, progress);
+
                             //_initModals();
                         },
                         on_view_change: function (mode) {
-                            console.log(mode);
+
                             leantime.usersRepository.updateUserViewSettings("roadmap", mode);
                             _initModals();
                         }
                     }
-                );
+                ); 
 
                 jQuery(".btn-group").on(
                     "click", "button", function () {

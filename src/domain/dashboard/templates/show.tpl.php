@@ -537,11 +537,9 @@
 
    jQuery(document).ready(function() {
 
-       var thisFriday = moment().startOf('week').add('days', 5);
+       var thisFriday = moment().startOf('week').add(5, 'days');
 
         jQuery("#dateToFinish").val(thisFriday.format("YYYY-MM-DD"));
-
-       leantime.dashboardController.initTicketTimers();
 
        leantime.dashboardController.initProgressChart(<?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
 

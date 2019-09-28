@@ -18,6 +18,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
+            $_SESSION['lastPage'] = "/timesheets/showAll";
 
             //Only admins and employees
 

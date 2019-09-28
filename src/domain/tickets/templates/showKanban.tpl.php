@@ -129,7 +129,7 @@ $efforts = $this->get('efforts');
     });
 	
 	jQuery(".punchOut").on("click", function(){
-	    	
+
 	    	var ticketId = jQuery(this).attr("value");
 	    	
 	    	// POST to server using $.post or $.ajax

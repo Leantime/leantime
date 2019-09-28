@@ -23,6 +23,16 @@ leantime.menuController = (function () {
 
     var _initLeftMenuHamburgerButton = function (){
 
+        if (jQuery('.barmenu').hasClass('open')) {
+            jQuery('.rightpanel, .headerinner').css({marginLeft: '260px'});
+            jQuery('.logo, .leftpanel').css({marginLeft: 0});
+            leantime.menuRepository.updateUserMenuSettings("open");
+        } else {
+            jQuery('.rightpanel, .headerinner').css({marginLeft: 0});
+            jQuery('.logo, .leftpanel').css({marginLeft: '-260px'});
+            leantime.menuRepository.updateUserMenuSettings("closed");
+        }
+
         jQuery('.barmenu').click(function () {
 
             var lwidth = '260px';
@@ -55,9 +65,11 @@ leantime.menuController = (function () {
             if (jQuery('.barmenu').hasClass('open')) {
                 jQuery('.rightpanel, .headerinner').css({marginLeft: '260px'});
                 jQuery('.logo, .leftpanel').css({marginLeft: 0});
+                leantime.menuRepository.updateUserMenuSettings("open");
             } else {
                 jQuery('.rightpanel, .headerinner').css({marginLeft: 0});
                 jQuery('.logo, .leftpanel').css({marginLeft: '-260px'});
+                leantime.menuRepository.updateUserMenuSettings("closed");
             }
         });
 

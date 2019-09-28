@@ -20,6 +20,7 @@ leantime.dashboardController = (function () {
         jQuery(document).ready(
             function () {
                 _initDueDateTimePickers();
+                initTicketTimers();
             });
     })();
 

@@ -282,7 +282,6 @@ label.inline {
 	position:absolute;
 	width:100%;
 	height:40px;
-	background:url(../images/loaders/loader13.gif) no-repeat center center;
 }
 
 .widgettitle.title-light {
