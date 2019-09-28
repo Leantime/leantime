@@ -1,0 +1,7 @@
+- finish tests
+- update jquery support
+- stop supporting ie 6
+- replace clear: both by .first-in-line
+- remove as much css as possible from js
+- generate hidden span for color codes (avoid empty lis)
+- organize plugin code

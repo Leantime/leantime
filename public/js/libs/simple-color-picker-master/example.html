@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>simpleColorPicker jQuery plugin</title>
+	<link type="text/css" href="jquery.simple-color-picker.css" rel="stylesheet" />
+	<style type="text/css">
+		body { font-family: sans-serif; font-size: 12px; margin: 0px; }
+		h1 { font-size: 16px; margin: 0px; padding: 5px 5px; }
+		h2 { font-size: 14px; margin: 0px; padding: 5px 5px; }
+		h3 { font-size: 12px; margin: 0px; padding: 2px 0px; }
+		ul { list-style-type: none; padding: 0px; margin: 0px 10px; }
+		p { margin: 10px 0px; padding: 0px 5px; }
+		label { display: block; }
+		input#color { width: 150px; }
+		pre { font-family: monospace; display: block; margin: 5px; }
+	</style>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+	<script type="text/javascript" src="jquery.simple-color-picker.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('input#color').simpleColorPicker();
+			$('input#color2').simpleColorPicker({ colorsPerLine: 16 });
+			var colors = ['#000000', '#444444', '#666666', '#999999', '#cccccc', '#eeeeee', '#f3f3f3', '#ffffff'];
+			$('input#color3').simpleColorPicker({ colors: colors });
+			$('input#color4').simpleColorPicker({ showEffect: 'fade', hideEffect: 'slide' });
+			$('button#color5').simpleColorPicker({ onChangeColor: function(color) { $('label#color-result').text(color); } });
+		});
+	</script>
+</head>
+<body>
+	<h1>simpleColorPicker jQuery plugin</h1>
+
+	<p>A simple color picker jQuery plugin that appears as the user focuses the input.</p>
+
+	<p>Just attach the simpleColorPicker to an input text and when it gains focus the color palette appears aligned to its bottom right corner.</p>
+
+	<p>Check out the latest version at <a href="http://github.com/rachel-carvalho/simple-color-picker">http://github.com/rachel-carvalho/simple-color-picker</a>.</p>
+
+	<h2>Live samples</h2>
+	<ul>
+		<li>
+			<h3>Default options</h3>
+
+			<label for="color">Choose a color:</label>
+			<input type="text" id="color" name="color" />
+
+			<pre>
+$(document).ready(function() {
+	$('input#color').simpleColorPicker();
+});
+			</pre>
+		</li>
+		<li>
+			<h3>More colors per line</h3>
+
+			<label for="color2">Choose a color:</label>
+			<input type="text" id="color2" name="color2" />
+
+			<pre>
+$(document).ready(function() {
+	$('input#color2').simpleColorPicker({ colorsPerLine: 16 });
+});
+			</pre>
+		</li>
+		<li>
+			<h3>Different colors</h3>
+
+			<label for="color3">Choose a color:</label>
+			<input type="text" id="color3" name="color3" />
+
+			<pre>
+$(document).ready(function() {
+	var colors = ['#000000', '#444444', '#666666', '#999999', '#cccccc', '#eeeeee', '#f3f3f3', '#ffffff'];
+	$('input#color3').simpleColorPicker({ colors: colors });
+});
+			</pre>
+		</li>
+		<li>
+			<h3>Effects</h3>
+
+			<label for="color4">Choose a color:</label>
+			<input type="text" id="color4" name="color4" />
+
+			<pre>
+$(document).ready(function() {
+	$('input#color4').simpleColorPicker({ showEffect: 'fade', hideEffect: 'slide' });
+});
+			</pre>
+		</li>
+		<li>
+			<h3>Non-input elements</h3>
+
+			<label id="color-result">No color chosen yet</label>
+			<button id="color5">Choose a color</button>
+
+			<pre>
+$(document).ready(function() {
+	$('button#color5').simpleColorPicker({ onChangeColor: function(color) { $('label#color-result').text(color); } });
+});
+			</pre>
+		</li>
+	</ul>
+</body>
+</html>

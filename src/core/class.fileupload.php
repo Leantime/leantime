@@ -1,0 +1,277 @@
+<?php
+namespace leantime\core;
+
+use Aws\S3\Exception\S3Exception;
+use Aws\S3;
+/**
+ * Fileupload class - Data filuploads
+ *
+ */
+
+class fileupload
+{
+
+    /**
+     * @access private
+     * @var    string path on the server
+     */
+    private $path;
+
+    /**
+     * @access public
+     * @var    integer max filesize in kb
+     */
+    public $max_size = 10000;
+
+    /**
+     * @access private
+     * @var    string filename in a temporary variable
+     */
+    private $file_tmp_name;
+
+    /**
+     * @access public
+     * @var    integer
+     */
+    public $file_size;
+
+    /**
+     * @access public
+     * @var    string give the file-type (not extension)
+     */
+    public $file_type;
+
+    /**
+     * @access public
+     * @var    string - Name of file after renaming and on server
+     */
+    public $file_name;
+
+    /**
+     * @access public
+     * @var    string
+     */
+    public $error = '';
+
+    /**
+     * @access public
+     * @var    string name of file after by upload
+     */
+    public $real_name='';
+
+    /**
+     * @access public
+     * @var    object configuration object
+     */
+    public $config;
+
+    /**
+     * @var \Aws\S3\S3Client|string
+     */
+    public $s3Client = "";
+
+
+    /**
+     * fileupload constructor.
+     */
+    function __construct()
+    {
+
+        $this->config = new config();
+        $this->path = $this->config->userFilePath;
+        
+        if($this->config->useS3 == true) {
+            // Instantiate the S3 client with your AWS credentials
+            $this->s3Client = new S3\S3Client(
+                [
+                'version'     => 'latest',
+                'region'      => $this->config->s3Region,
+                'credentials' => [
+                 'key'    => $this->config->s3Key,
+                 'secret' => $this->config->s3Secret
+                ]
+                ]
+            );
+
+        }else{
+            //Can discuss whether we want to allow local uploads again at some point...
+            return false;
+
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getAbsolutePath()
+    {
+        $path = realpath(__DIR__."/../../".$this->path);
+       if($path === false){
+           throw Exception("Path not valid");
+       }else{
+           return $path;
+       }
+    }
+
+
+    /**
+     * initFile - init variables of file
+     *
+     * @access public
+     * @param  $file $file from Post
+     */
+    public function initFile($file)
+    {
+
+        $this->file_tmp_name       = $file['tmp_name'];
+        $this->file_size           = $file['size'];
+        $this->file_type           = $file['type'];
+        $this->file_name           = $file['name'];
+        $this->path_parts           = pathinfo($file['name']);
+    }
+
+    /**
+     * checkFileSize - Checks if filesize is ok
+     *
+     * @access private
+     * @return boolean
+     */
+    public function checkFileSize()
+    {
+
+        if($this->file_size <= $this->max_size*1024) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * renameFile
+     *
+     * @param  $name
+     * @return string
+     */
+    public function renameFile($name)
+    {
+
+        $this->real_name = $this->file_name;
+
+        if($name != '') {
+
+            if (isset($this->path_parts['extension'])) {
+                $this->file_name = $name.'.'.$this->path_parts['extension'];
+            } else {
+                $this->file_name = $name;
+            }
+
+            return true;
+                
+        }else{
+
+            return false;
+
+        }
+
+    }
+
+    /**
+     * upload - move file from tmp-folder to S3
+     *
+     * @access public
+     * @param  bool $resize
+     * @param  int  $w
+     * @param  int  $h
+     * @return boolean
+     */
+    public function upload()
+    {
+
+        if($this->config->useS3 === true) {
+            //S3 upload
+            return $this->uplodToS3();
+        }else{
+
+            //Local upload
+            return $this->uploadLocal();
+        }
+
+    }
+
+    public function uploadPublic()
+    {
+
+        try {
+            // Upload data.
+            $file = fopen($this->file_tmp_name, "rb");
+
+            $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "public-read");
+            $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name);
+
+            return $url;
+
+        } catch (S3Exception $e) {
+
+            error_reporting($e->getMessage());
+            return false;
+
+        }
+
+    }
+    
+    private function uplodToS3()
+    {
+
+        try {
+            // Upload data.
+            $file = fopen($this->file_tmp_name, "rb");
+
+            $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "authenticated-read");
+
+            return true;
+
+        } catch (S3Exception $e) {
+
+            error_reporting($e->getMessage());
+            return false;
+
+        }
+
+    }
+
+    private function uploadLocal() {
+
+        try {
+
+            if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath() . "/" . $this->file_name)) {
+                return true;
+            }
+
+        }catch(Exception $e){
+
+            error_reporting($e->getMessage());
+            return false;
+        }
+
+        return false;
+
+    }
+
+        
+    /**
+     * deleteFile - delete file from server
+     *
+     * @access public
+     * @param  $file
+     * @return boolean
+     */
+    public function deleteFile($file)
+    {
+
+        //TODO: Write a method to remove file from S3
+        return true;
+    }
+
+}
+

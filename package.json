@@ -1,0 +1,39 @@
+{
+  "name": "leantime",
+  "version": "2.0.0",
+  "description": "Project Management Tools",
+  "main": "gruntfile.js",
+  "dependencies": {
+    "chart.js": "^2.8.0",
+    "croppie": "^2.6.4",
+    "imagesloaded": "^4.1.4",
+    "jquery": "^3.4.1",
+    "masonry-layout": "^4.2.2",
+    "tether-shepherd": "^1.8.1"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.4",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-less": "^1.4.1",
+    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Leantime/leantime"
+  },
+  "keywords": [
+    "Project",
+    "Management",
+    "Agile",
+    "Sprint",
+    "Lean"
+  ],
+  "author": "Marcel Folaron",
+  "license": "No License",
+  "homepage": "https://github.com/Leantime/leantime/blob/master/README.md"
+}

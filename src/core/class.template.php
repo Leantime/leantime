@@ -1,0 +1,431 @@
+<?php
+
+/**
+ * Template class - Template routing
+ *
+ */
+
+namespace leantime\core {
+
+    use leantime\domain\repositories;
+
+    class template
+    {
+
+        /**
+         * @access private
+         * @var    array - vars that are set in the action
+         */
+        private $vars = array();
+
+        /**
+         *
+         * @access private
+         * @var    string
+         */
+        private $controller = '';
+
+        /**
+         *
+         * @access private
+         * @var    string
+         */
+        private $notifcation = '';
+
+        /**
+         *
+         * @access private
+         * @var    string
+         */
+        private $notifcationType = '';
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $tmpError = '';
+
+        public $template = '';
+
+        public $picture = array(
+            'calendar'    => 'iconfa-calendar',
+            'clients'     => 'iconfa-group',
+            'dashboard' => 'iconfa-th-large',
+            'files'     => 'iconfa-picture',
+            'leads'     => 'iconfa-signal',
+            'messages'     => 'iconfa-envelope',
+            'projects'     => 'iconfa-bar-chart',
+            'setting'    => 'iconfa-cogs',
+            'tickets'    => 'iconfa-pushpin',
+            'timesheets'=> 'iconfa-table',
+            'users'        => 'iconfa-group',
+            'default'    => 'iconfa-off'
+        );
+
+        /**
+         * __construct - get instance of frontcontroller
+         *
+         * @access public
+         */
+        public function __construct()
+        {
+            $this->controller = FrontController::getInstance();
+
+        }
+
+        /**
+         * assign - assign variables in the action for template
+         *
+         * @param $name
+         * @param $value
+         */
+        public function assign($name, $value)
+        {
+
+            $this->vars[$name] = $value;
+
+        }
+
+        /**
+         * setError - assign errors to the template
+         *
+         * @param  $msg
+         * @param  $type
+         * @return string
+         */
+        public function setNotification($msg,$type)
+        {
+
+            $_SESSION['notification'] = $msg;
+            $_SESSION['notifcationType'] = $type;
+
+        }
+
+        public function getModulePicture()
+        {
+
+            $module = frontcontroller::getModuleName($this->template);
+
+            $picture = $this->picture['default'];
+            if (isset($this->picture[$module])) {
+                $picture = $this->picture[$module];
+            }
+
+            return $picture;
+        }
+
+        /**
+         * display - display template from folder template including main layout wrapper
+         *
+         * @access public
+         * @param  $template
+         * @return void
+         */
+        public function display($template)
+        {
+
+            $this->template = $template;
+
+            $frontController = frontcontroller::getInstance(ROOT);
+            $config = new config();
+            $settings = new settings();
+            include '../src/content.php';
+            $mainContent = ob_get_clean();
+            ob_start();
+
+            //frontcontroller splits the name (actionname.modulename)
+            $action = frontcontroller::getActionName($template);
+
+            $module = frontcontroller::getModuleName($template);
+
+            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
+
+                echo '<p>Could not find template</p>';
+
+            } else {
+
+                //get language-File for labels
+                $language = new language();
+
+                $lang = $language->readIni();
+
+                include $strTemplate;
+
+                $subContent = ob_get_clean();
+
+                $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+
+                echo $content;
+
+            }
+
+            return;
+        }
+
+        /**
+         * display - display only the template from the template folder without a wrapper
+         *
+         * @access public
+         * @param  $template
+         * @return void
+         */
+        public function displayPartial($template)
+        {
+
+            $this->template = $template;
+
+            //frontcontroller splits the name (actionname.modulename)
+            $action = frontcontroller::getActionName($template);
+
+            $module = frontcontroller::getModuleName($template);
+
+                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+
+            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
+
+                echo '<p>Could not find template</p>';
+
+            } else {
+
+                //get language-File for labels
+                $language = new language();
+
+                $lang = $language->readIni();
+
+                include $strTemplate;
+
+            }
+
+            return;
+        }
+
+
+        /**
+         * includeAction - possible to include Actions from erverywhere
+         *
+         * @access public
+         * @param  $completeName
+         * @return void
+         */
+        public function includeAction($completeName)
+        {
+
+            $this->controller->includeAction($completeName);
+
+        }
+
+        /**
+         * get - get assigned values
+         *
+         * @access public
+         * @param  $name
+         * @return array
+         */
+        public function get($name)
+        {
+
+            if (! isset($this->vars[$name])) {
+
+                return null;
+            }
+
+            return $this->vars[$name];
+        }
+
+        public function getNotification()
+        {
+
+            if(isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
+
+                return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
+            }else{
+                return array('type' => "", 'msg' => "");
+            }
+        }
+
+        /**
+         * displaySubmodule - display a submodule for a given module
+         *
+         * @access public
+         * @param  $alias
+         * @return void
+         */
+        public function displaySubmodule($alias)
+        {
+
+            $submodule = array("module"=>'', "submodule"=>'');
+
+            $aliasParts = explode("-", $alias);
+            if(count($aliasParts) > 1) {
+                $submodule['module'] = $aliasParts[0];
+                $submodule['submodule'] = $aliasParts[1];
+            }
+
+            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+
+            if (file_exists($file)) {
+
+                $language = new language();
+
+                $lang = $language->readIni();
+
+                include $file;
+            }
+
+        }
+
+        public function displaySubmoduleTitle($alias)
+        {
+
+            $setting = new repositories\setting();
+            $language = new language();
+            $title = '';
+
+            if ($setting->submoduleHasRights($alias) !== false) {
+
+                $submodule = $setting->getSubmodule($alias);
+
+                if ($submodule['title'] !== '') {
+
+                    $language->readIni();
+
+                    $title = $language->lang_echo($submodule['title']);
+
+                } else {
+
+                    $title = ucfirst(str_replace('.sub.php', $submodule['submodule']));
+
+                }
+            }
+
+            return $title;
+        }
+
+        /**
+         * displayLink
+         */
+        public function displayLink($module, $name, $params = null, $attribute = null)
+        {
+
+            $mod = explode('.', $module);
+
+            if(is_array($mod) === true && count($mod) == 2) {
+
+                $action = $mod[1];
+                $module = $mod[0];
+
+                $mod = $module.'/class.'.$action.'.php';
+
+                $setting = new repositories\setting();
+                $available = $setting->getAvailableModules($_SESSION['userdata']['role']);
+
+            }else{
+
+                $mod = array();
+
+            }
+
+            $returnLink = false;
+
+
+
+                $url = "/".$module."/".$action."/";
+
+            if (!empty($params)) {
+
+                foreach ($params as $key => $value) {
+                    $url .= $value."/";
+                }
+            }
+
+                $attr = '';
+
+            if ($attribute!=null) {
+
+                foreach ($attribute as $key => $value){
+                    $attr .= $key." = '".$value."' ";
+                }
+            }
+
+                $returnLink = "<a href='".$url."' ".$attr.">".$name."</a>";
+
+
+
+            return $returnLink;
+        }
+
+        public function displayNotification()
+        {
+
+            $language = new language();
+            $language->readIni();
+
+            $notification = '';
+            $note = $this->getNotification();
+
+            $alertIcons = array(
+                "success" => '<i class="far fa-check-circle"></i>',
+                "error" => '<i class="fas fa-exclamation-triangle"></i>',
+                "info" => '<i class="fas fa-info-circle"></i>'
+            );
+
+            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
+
+                $notification = "<div class='alert alert-".$note['type']."'>
+                                    <div class='infoBox'>
+                                        ".$alertIcons[$note['type']]."
+                                    </div>
+								<button data-dismiss='alert' class='close' type='button'>×</button>
+								<div class='alert-content'><h4>"
+                    .ucfirst($note['type']).
+                    "!</h4>"
+                    .$language->lang_echo($note['msg'], false).
+                    "
+								</div>
+								<div class='clearall'></div>
+							</div>";
+
+                $_SESSION['notification'] = "";
+                $_SESSION['notificationType'] = "";
+
+            }
+
+            return $notification;
+        }
+
+        public function redirect($url)
+        {
+
+            header("Location: ".$url);
+            exit();
+        }
+
+        public function getSubdomain()
+        {
+
+            preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
+
+            $domain = $_SERVER['HTTP_HOST'];
+            $tmp = explode('.', $domain); // split into parts
+            $subdomain = $tmp[0];
+
+            return $subdomain;
+
+        }
+
+        //Echos and escapes content
+        public function e($content) {
+            $escaped = $this->escape($content);
+            echo $escaped;
+        }
+
+        public function escape($content) {
+            return htmlentities($content);
+        }
+
+    }
+
+}
