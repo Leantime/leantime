@@ -6,11 +6,11 @@ class config
 	/* General */
 	public $sitename = "Leantime"; //Name of your site, can be changed later
 	public $language = "en"; //Default language
-        public $mainColor = "1b75bb"; //Default color, can be changed later
-        public $logoPath = "images/logo.png"; //Default logo path, can be changed later
+    public $mainColor = "1b75bb"; //Default color, can be changed later
+    public $logoPath = "images/logo.png"; //Default logo path, can be changed later
 
-        /* Database */
-    	public $dbHost="localhost"; //Database host
+    /* Database */
+    public $dbHost="localhost"; //Database host
 	public $dbUser=""; //Database username
 	public $dbPassword=""; //Database password
 	public $dbDatabase=""; //Database name
@@ -27,7 +27,7 @@ class config
 								
 	/* Sessions */
 	public $sessionpassword = "3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m"; //Salting sessions. Replace with a strong password
-        public $sessionExpiration = 28800; //How many seconds after inactivity should we logout?  28800seconds = 8hours
+    public $sessionExpiration = 28800; //How many seconds after inactivity should we logout?  28800seconds = 8hours
 
 	/* Email */
 	public $email = ""; //Return email address
@@ -37,4 +37,5 @@ class config
 	public $smtpPassword = ""; //SMTP password
 	public $smtpSecure =""; //SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
 	public $smtpPort = ""; //Port (usually one of 25, 465, 587, 2526)
+
 }
