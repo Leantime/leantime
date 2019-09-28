@@ -45,61 +45,6 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getUsersWidgets($userId)
-        {
-
-            $query = "SELECT relation.userId, relation.widgetId, widget.submoduleAlias, widget.title 
-	    			FROM zp_widgetrelation as relation
-	    			INNER JOIN zp_widget as widget ON relation.widgetId = widget.id
-	    			WHERE userId= :user_id";
-
-            $stmn = $this->db->{'database'}->prepare($query);
-
-            $stmn->bindValue(':user_id', $userId, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $returnValues= $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $returnValues;
-        }
-
-        public function getWidget($id)
-        {
-
-            $query = "SELECT * FROM zp_widget WHERE id = :id LIMIT 1";
-
-            $stmn = $this->db->{'database'}->prepare($query);
-
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $returnValues= $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $returnValues;
-        }
-
-        public function getAvailableWidgets($userId)
-        {
-
-            $query = "SELECT widgetId FROM zp_widgetrelation WHERE userId=:userId";
-
-            $stmn = $this->db->{'database'}->prepare($query);
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values= $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $return = array();
-            foreach ($values as $value) {
-                $return[] = $value['widgetId'];
-            }
-
-            return $return;
-        }
-
         public function getClosedTicketsPerWeek()
         {
 
@@ -365,4 +310,4 @@ namespace leantime\domain\repositories {
     }
 
 
-}?>
+}
