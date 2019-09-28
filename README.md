@@ -23,10 +23,10 @@ Features:
 * Download latest release package
 * Create an empty MySQL database
 * Upload entire directory to your server 
-* Point your domain to the "public/" directory
-* Rename config/configuration.sample.php to config/configuration.php
-* Fill in your database credentials (username, password, host, dbname) in config/configuration.php
-* Navigate to yourdomain.com/install
+* Point your domain to the `public/` directory
+* Rename `config/configuration.sample.php` to `config/configuration.php`
+* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
 ### Installation (Development) ###
@@ -46,10 +46,10 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ```
 grunt default
 ```
-* Point your local domain to the "public/" directory
-* Rename config/configuration.sample.php to config/configuration.php
-* Fill in your database credentials (username, password, host, dbname) in config/configuration.php
-* Navigate to localhost/install
+* Point your local domain to the `public/` directory
+* Rename `config/configuration.sample.ph`p to `config/configuration.php`
+* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
 ### Learn More ###
