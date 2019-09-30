@@ -44,15 +44,15 @@ $.effects.bounce = function(o) {
 			el.animate(animation, speed / 2, o.options.easing);
 			distance = distance / 2;
 			times--;
-		};
-		for (var i = 0; i < times; i++) { // Bounces
+        }
+        for (var i = 0; i < times; i++) { // Bounces
 			var animation1 = {}, animation2 = {};
 			animation1[ref] = (motion == 'pos' ? '-=' : '+=') + distance;
 			animation2[ref] = (motion == 'pos' ? '+=' : '-=') + distance;
 			el.animate(animation1, speed / 2, o.options.easing).animate(animation2, speed / 2, o.options.easing);
 			distance = (mode == 'hide') ? distance * 2 : distance / 2;
-		};
-		if (mode == 'hide') { // Last Bounce
+        }
+        if (mode == 'hide') { // Last Bounce
 			var animation = {opacity: 0};
 			animation[ref] = (motion == 'pos' ? '-=' : '+=')  + distance;
 			el.animate(animation, speed / 2, o.options.easing, function(){
@@ -68,8 +68,8 @@ $.effects.bounce = function(o) {
 				$.effects.restore(el, props); $.effects.removeWrapper(el); // Restore
 				if(o.callback) o.callback.apply(this, arguments); // Callback
 			});
-		};
-		el.queue('fx', function() { el.dequeue(); });
+        }
+        el.queue('fx', function() { el.dequeue(); });
 		el.dequeue();
 	});
 

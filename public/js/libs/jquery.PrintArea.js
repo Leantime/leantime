@@ -72,7 +72,7 @@
 
             if ( settings.mode == modes.popup && settings.popClose )
                 printWindow.close();
-        }
+        };
 
     function docType()
     {

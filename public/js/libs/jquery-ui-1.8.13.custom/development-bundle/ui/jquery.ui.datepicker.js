@@ -1738,18 +1738,16 @@ function extendRemove(target, props) {
 		if (props[name] == null || props[name] == undefined)
 			target[name] = props[name];
 	return target;
-};
-
-/* Determine whether an object is an array. */
+}
+    /* Determine whether an object is an array. */
 function isArray(a) {
 	return (a && (($.browser.safari && typeof a == 'object' && a.length) ||
 		(a.constructor && a.constructor.toString().match(/\Array\(\)/))));
-};
-
-/* Invoke the datepicker functionality.
-   @param  options  string - a command, optionally followed by additional parameters or
-                    Object - settings for attaching new datepicker functionality
-   @return  jQuery object */
+}
+    /* Invoke the datepicker functionality.
+       @param  options  string - a command, optionally followed by additional parameters or
+                        Object - settings for attaching new datepicker functionality
+       @return  jQuery object */
 $.fn.datepicker = function(options){
 	
 	/* Verify an empty collection wasn't passed - Fixes #6976 */

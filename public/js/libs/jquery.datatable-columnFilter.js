@@ -35,12 +35,12 @@
 		oSettings.oPreviousSearch.sSearch = '';
 		if(typeof bDraw === 'undefined') bDraw = true;
 		if(bDraw) this.fnDraw();
-		}
+		};
 
 
 	$.fn.dataTableExt.oApi.fnGetColumnData = function ( oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty ) {
 		// check that we have a column id
-		if ( typeof iColumn == "undefined" ) return new Array();
+		if ( typeof iColumn == "undefined" ) return [];
 		
 		// by default we only wany unique data
 		if ( typeof bUnique == "undefined" ) bUnique = true;
@@ -60,17 +60,17 @@
 		else aiRows = oSettings.aiDisplayMaster; // all row numbers
 	
 		// set up data array	
-		var asResultData = new Array();
+		var asResultData = [];
 		
 		for (var i=0,c=aiRows.length; i<c; i++) {
 			var iRow = aiRows[i];
 			var sValue = this.fnGetData(iRow, iColumn);
 			
 			// ignore empty values?
-			if (bIgnoreEmpty == true && sValue.length == 0) continue;
+			if (bIgnoreEmpty == true && sValue.length == 0)
 	
 			// ignore unique values?
-			else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) continue;
+			else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1)
 			
 			// else push the value onto the result data array
 			else asResultData.push(sValue);
@@ -149,7 +149,7 @@
 	*/
 	ColumnFilterWidgets.prototype.getContainer = function() {
 		return this.$WidgetContainer.get( 0 );
-	}
+	};
 
 	/**
 	* A filter widget based on data in a table column.

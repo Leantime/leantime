@@ -5833,7 +5833,7 @@
 				{
 					throw sAlert;
 				}
-				return;
+
 			}
 			else if ( typeof console != 'undefined' && typeof console.log != 'undefined' )
 			{

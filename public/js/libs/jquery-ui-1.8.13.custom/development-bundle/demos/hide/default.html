@@ -42,16 +42,14 @@
 
 			// run the effect
 			$( "#effect" ).hide( selectedEffect, options, 1000, callback );
-		};
-
-		// callback function to bring a hidden box back
+        }
+        // callback function to bring a hidden box back
 		function callback() {
 			setTimeout(function() {
 				$( "#effect" ).removeAttr( "style" ).hide().fadeIn();
 			}, 1000 );
-		};
-
-		// set effect from select menu value
+        }
+        // set effect from select menu value
 		$( "#button" ).click(function() {
 			runEffect();
 			return false;

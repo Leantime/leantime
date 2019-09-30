@@ -39,7 +39,7 @@
                 shadow.html(val);
                 $(this).css('height', Math.max(shadow.height() + 20, minHeight));
             
-            }
+            };
             
             $(this).change(update).keyup(update).keydown(update);
             

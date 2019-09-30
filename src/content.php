@@ -26,17 +26,12 @@
     <link rel="stylesheet" href="/css/main.css"/>
 
     <!-- libs -->
+    <script src="/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
-
-    <script type="text/javascript" src="/js/libs/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery-migrate-1.1.1.min.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery-ui-1.9.2.min.js"></script>
     <script type="text/javascript" src="/js/libs/modernizr.min.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/libs/jquery.cookie.js"></script>
-    <script type="text/javascript" src="\js\libs\tinymce_4.7.9\tinymce\js\tinymce\jquery.tinymce.min.js"></script>
-    <script type="text/javascript" src="\js\libs\tinymce_4.7.9\tinymce\js\tinymce\tinymce.min.js"></script>
-    <script type="text/javascript" src="/js/libs/chosen.jquery.min.js"></script>
+
 
     <script type="text/javascript" src="/js/libs/bootstrap-timepicker.min.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-fileupload.min.js"></script>
@@ -55,9 +50,6 @@
 
     <script type="text/javascript" src="/js/libs/jquery.form.js"></script>
     <script type="text/javascript" src="/js/libs/jquery.tagsinput.min.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.datatable-columnFilter.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.dataTables.sorting.js"></script>
     <script type="text/javascript" src="/js/libs/ListJS/list.min.js"></script>
 
     <script type="text/javascript" src="/js/libs/fullcalendar.min.js"></script>
@@ -76,10 +68,6 @@
 
     <link rel="stylesheet" type="text/css" href="/js/libs/Quickselect/jquery.quickselect.css"/>
 
-    <!-- Tablsorter Simple  -->
-    <script src="/js/libs/jquery.tablesorter.min.js" type="text/javascript"></script>
-    <script src="/js/libs/jquery.tablesorter.pager.js" type="text/javascript"></script>
-
     <script type="text/javascript" src="/js/libs/touchpunch.js"></script>
 
     <!--[if lte IE 8]>
@@ -89,7 +77,6 @@
     <script type="text/javascript" src="/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
 
     <!-- app -->
-    <script src="/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
     <script src="/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <!--###HEAD##-->
@@ -103,7 +90,7 @@
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
             <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);"></a>
-            <a href="/" style="background-image:url(<?php echo  $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+            <a href="/" style="background-image:url('/<?php echo  $_SESSION["companysettings.logoPath"]; ?>'">&nbsp;</a>
 
         </div>
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">

@@ -10,7 +10,7 @@ $.fn.pager = function(clas, options) {
 		linkText: null,
 		linkWrap: null,
 		height: null
-	}
+	};
 	if(options) $.extend(settings, options);
 	
 		
@@ -122,4 +122,4 @@ $.fn.pager = function(clas, options) {
 			return false;
 		});
 	});	
-}
+};

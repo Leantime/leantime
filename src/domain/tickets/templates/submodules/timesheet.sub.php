@@ -105,7 +105,7 @@ $currentPay = $this->get('userHours') * $userInfo['wage'];
 
             <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span><?php echo $language->lang_echo('Booked Time Chart', false); ?></h4>
                 <br />
-                <div id="bargraph" style="height:300px; width:100%;"></div>
+                <div id="bargraph" style="height:300px; width:400px;"></div>
                 
                 <p><br />
         <?php echo $language->lang_echo('PLAN_HOURS'); ?>: <?php echo $ticket['planHours']; ?><br />

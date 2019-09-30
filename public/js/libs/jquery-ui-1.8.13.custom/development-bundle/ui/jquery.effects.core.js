@@ -85,8 +85,7 @@ function getColor(elem, attr) {
 		} while ( elem = elem.parentNode );
 
 		return getRGB(color);
-};
-
+}
 // Some named colors to work with
 // From Interface by Stefan Petre
 // http://interface.eyecon.ro/
@@ -335,14 +334,14 @@ $.extend($.effects, {
 			case 'middle': y = 0.5; break;
 			case 'bottom': y = 1; break;
 			default: y = origin[0] / original.height;
-		};
-		switch (origin[1]) {
+        }
+        switch (origin[1]) {
 			case 'left': x = 0; break;
 			case 'center': x = 0.5; break;
 			case 'right': x = 1; break;
 			default: x = origin[1] / original.width;
-		};
-		return {x: x, y: y};
+        }
+        return {x: x, y: y};
 	},
 
 	// Wraps the element around a wrapper that copies position properties

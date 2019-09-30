@@ -904,8 +904,7 @@ jQuery(function($, undefined) {
               if (!execAsap)
                   func.apply(obj, args);
               timeout = null;
-          };
-
+          }
           if (timeout)
               clearTimeout(timeout);
           else if (execAsap)

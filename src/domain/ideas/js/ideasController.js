@@ -20,12 +20,13 @@ leantime.ideasController = (function () {
                         // General options
                         width: "98%",
                         height:"200",
+                        skin_url: '/css/tinymceSkin/oxide',
+                        content_css: '/css/tinymceSkin/oxide/content.css',
                         content_style: "img { max-width: 100%; }",
                         plugins : "autolink,link,textcolor,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
                         // Theme options
-                        toolbar : "bold,italic,strikethrough,|,fontsizeselect,forecolor,|,link,unlink,image,|,bullist,|,fullscreen",
+                        toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | fullscreen",
                         branding: false,
-                        menubar:false,
                         statusbar: false,
                         convert_urls: false,
                         paste_data_images: true,

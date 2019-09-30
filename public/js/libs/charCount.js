@@ -44,9 +44,8 @@
 				$(obj).next().removeClass(options.cssExceeded);
 			}
 			$(obj).next().html(options.counterText + available);
-		};
-				
-		this.each(function() {  			
+        }
+        this.each(function() {
 			$(this).after('<'+ options.counterElement +' class="' + options.css + '">'+ options.counterText +'</'+ options.counterElement +'>');
 			calculate(this);
 			$(this).keyup(function(){calculate(this)});

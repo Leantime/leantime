@@ -69,7 +69,7 @@
                 if (left < pos.left) left = pos.left;
                 box.css({ left: left, top: (pos.top + txt.outerHeight(opts.includeMargins)) });
                 showBox(box);
-            }
+            };
 
             txt.click(function(event) {
                 event.stopPropagation();

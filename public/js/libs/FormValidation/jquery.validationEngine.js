@@ -168,7 +168,7 @@
 
 			   	if(prompt)
 					methods._updatePrompt(field, $(prompt), promptText, undefined, false, options, noAnimation);
-		    })
+		    });
 	        return this;
         },
         /**
@@ -486,7 +486,7 @@
 
             for (var i = 0; i < rules.length; i++) {
 				// Fix for adding spaces in the rules
-				rules[i] = rules[i].replace(" ", "")
+				rules[i] = rules[i].replace(" ", "");
                 var errorMsg = undefined;
                 switch (rules[i]) {
 
@@ -503,10 +503,10 @@
 						var classGroup = "[class*=" +rules[i + 1] +"]";	
 						var firstOfGroup = form.find(classGroup).eq(0);
 						if(firstOfGroup[0] != field[0]){
-							methods._validateField(firstOfGroup, options, skipAjaxValidation)
+							methods._validateField(firstOfGroup, options, skipAjaxValidation);
 							options.showArrow = true;
 							continue;
-						};
+                        }
                         errorMsg = methods._groupRequired(field, rules, i, options);
 						if(errorMsg) required = true;
 						options.showArrow = false;
@@ -688,7 +688,7 @@
 					isValid = true;
 					return false;
 				}
-			})
+			});
 			
 			if(!isValid) return options.allrules[rules[i]].alertText;
         },
@@ -1012,11 +1012,11 @@
             var numDigits = cardNumber.length;
             if (numDigits >= 14 && numDigits <= 16 && parseInt(cardNumber) > 0) {
         
-                var sum = 0, i = numDigits - 1, pos = 1, digit, luhn = new String();
+                var sum = 0, i = numDigits - 1, pos = 1, digit, luhn = String();
                 do {
                     digit = parseInt(cardNumber.charAt(i));
                     luhn += (pos++ % 2 == 0) ? digit * 2 : digit;
-                } while (--i >= 0)
+                } while (--i >= 0);
         
                 for (i = 0; i < luhn.length; i++) {
                     sum += parseInt(luhn.charAt(i));
@@ -1231,10 +1231,8 @@
 				if (typeof(positionType)=='string') {
 					if (positionType.indexOf(":")!=-1) {
 						positionType=positionType.substring(0,positionType.indexOf(":"));
-					};
-				};
-
-				
+                    }
+                }
                 switch (positionType) {
                     case "bottomLeft":
                     case "bottomRight":
@@ -1430,16 +1428,17 @@
 						shift2=shift1.substring(shift1.indexOf(",")+1);
 						shift1=shift1.substring(0,shift1.indexOf(","));
 						shiftY=parseInt(shift2);
-						if (isNaN(shiftY)) {shiftY=0;};
-					};
-					
-					shiftX=parseInt(shift1);
-					if (isNaN(shift1)) {shift1=0;};
-					
-				};
-			};
-
-			if(!methods.isRTL(field))
+                        if (isNaN(shiftY)) {
+                            shiftY = 0;
+                        }
+                    }
+                    shiftX=parseInt(shift1);
+                    if (isNaN(shift1)) {
+                        shift1 = 0;
+                    }
+                }
+            }
+            if(!methods.isRTL(field))
 			{
 				switch (positionType) {
 					default:

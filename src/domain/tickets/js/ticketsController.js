@@ -142,7 +142,7 @@ leantime.ticketsController = (function () {
 
     var initModals = function () {
         _initModals();
-    }
+    };
 
     var _initSprintDates = function () {
 
@@ -506,13 +506,13 @@ leantime.ticketsController = (function () {
             {
                 // General options
                 width: "98%",
+                skin_url: '/css/tinymceSkin/oxide',
+                content_css: '/css/tinymceSkin/oxide/content.css',
                 height:"300",
                 content_style: "img { max-width: 100%; }",
-                plugins : "autolink,link,textcolor,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
-                // Theme options
-                toolbar : "bold,italic,strikethrough,|,fontsizeselect,forecolor,|,link,unlink,image,|,bullist,|,fullscreen",
+                plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
+                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | fullscreen",
                 branding: false,
-                menubar:false,
                 statusbar: false,
                 convert_urls: false,
                 paste_data_images: true,

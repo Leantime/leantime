@@ -8,14 +8,20 @@
     "croppie": "^2.6.4",
     "imagesloaded": "^4.1.4",
     "jquery": "^3.4.1",
+    "jquery-migrate": "1.4.1",
+    "jquery-ui-dist": "^1.12.1",
+    "jquery.uniform": "^4.3.0",
     "masonry-layout": "^4.2.2",
-    "tether-shepherd": "^1.8.1"
+    "tether-shepherd": "^1.8.1",
+    "datatables.net": "^1.10.19",
+    "chosen-js": "^1.8.7",
+    "tinymce": "^5.0.16"
   },
   "devDependencies": {
     "grunt": "^1.0.4",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-less": "^1.4.1",
-    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^3.0.0"
   },
@@ -34,6 +40,6 @@
     "Lean"
   ],
   "author": "Marcel Folaron",
-  "license": "No License",
+  "license": "GPL-2.0-or-later",
   "homepage": "https://github.com/Leantime/leantime/blob/master/README.md"
 }

@@ -29,13 +29,42 @@ module.exports = function (grunt) {
                     , mangle: false
                 }
                 , src: [
+                    "node_modules/jquery/dist/jquery.js",
+                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
+                    "node_modules/jquery-ui-dist/jquery-ui.js",
+                    "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/croppie/croppie.js",
-                    "node_modules/chart.js/dist/Chart.min.js",
-                    "node_modules/masonry-layout/dist/masonry.pkgd.min.js",
-                    "node_modules/imagesloaded/imagesloaded.pkgd.min.js",
+                    "node_modules/chart.js/dist/Chart.bundle.js",
+                    "node_modules/masonry-layout/dist/masonry.pkgd.js",
+                    "node_modules/imagesloaded/imagesloaded.pkgd.js",
                     "node_modules/tether-shepherd/dist/js/tether.js",
-                    "node_modules/tether-shepherd/dist/js/shepherd.js"
-
+                    "node_modules/tether-shepherd/dist/js/shepherd.js",
+                    "node_modules/datatables.net/js/jquery.dataTables.js",
+                    "node_modules/chosen-js/chosen.jquery.js",
+                    "node_modules/tinymce/tinymce.js",
+                    "node_modules/tinymce/jquery.tinymce.js",
+                    "node_modules/tinymce/themes/silver/theme.js",
+                    "node_modules/tinymce/plugins/autolink/plugin.js",
+                    "node_modules/tinymce/plugins/link/plugin.js",
+                    "node_modules/tinymce/plugins/textcolor/plugin.js",
+                    "node_modules/tinymce/plugins/image/plugin.js",
+                    "node_modules/tinymce/plugins/lists/plugin.js",
+                    "node_modules/tinymce/plugins/pagebreak/plugin.js",
+                    "node_modules/tinymce/plugins/table/plugin.js",
+                    "node_modules/tinymce/plugins/save/plugin.js",
+                    "node_modules/tinymce/plugins/insertdatetime/plugin.js",
+                    "node_modules/tinymce/plugins/preview/plugin.js",
+                    "node_modules/tinymce/plugins/media/plugin.js",
+                    "node_modules/tinymce/plugins/searchreplace/plugin.js",
+                    "node_modules/tinymce/plugins/print/plugin.js",
+                    "node_modules/tinymce/plugins/paste/plugin.js",
+                    "node_modules/tinymce/plugins/directionality/plugin.js",
+                    "node_modules/tinymce/plugins/fullscreen/plugin.js",
+                    "node_modules/tinymce/plugins/noneditable/plugin.js",
+                    "node_modules/tinymce/plugins/visualchars/plugin.js",
+                    "node_modules/tinymce/plugins/nonbreaking/plugin.js",
+                    "node_modules/tinymce/plugins/template/plugin.js",
+                    "node_modules/tinymce/plugins/advlist/plugin.js"
                 ]
                 , dest: "public/js/compiled-libs.min.js"
             }

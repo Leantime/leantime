@@ -387,7 +387,7 @@ $.widget( "ui.accordion", {
 				.addClass( "ui-accordion-content-active" );
 		}
 
-		return;
+
 	},
 
 	_toggle: function( toShow, toHide, data, clickedIsActive, down ) {

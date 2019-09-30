@@ -73,7 +73,7 @@ leantime.menuController = (function () {
             }
         });
 
-    }
+    };
 
     // Make public what you want to have public, everything else is private
     return {};
