@@ -62,7 +62,6 @@ namespace leantime\domain\repositories {
         {
             $config = new core\config();
             $this->db = core\db::getInstance();
-            $this->iv = mb_strcut($config->sessionpassword, 0, 16);
 
         }
 

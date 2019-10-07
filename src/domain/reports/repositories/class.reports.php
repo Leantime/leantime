@@ -72,7 +72,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
 
             }else{
-                $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId";
+                $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId, sprint";
             }
 
             $stmn = $this->db->{'database'}->prepare($query);

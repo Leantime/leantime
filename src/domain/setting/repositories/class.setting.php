@@ -38,9 +38,14 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->{'database'}->prepare($sql);
                 $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
-                $stmn->execute();
-                $values = $stmn->fetch();
-                $stmn->closeCursor();
+                try {
+                    $stmn->execute();
+                    $values = $stmn->fetch();
+                    $stmn->closeCursor();
+
+                }catch(\PDOException $e){
+                    return false;
+                }
 
                 if($values !== false && isset($values['value'])) {
                     return $values['value'];
