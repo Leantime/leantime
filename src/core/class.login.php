@@ -427,7 +427,7 @@ namespace leantime\core {
             $query = "UPDATE
 					zp_user 
 				SET 
-					lastlogin = :date,
+					lastlogin = NOW(),
 					session = :sessionid,
 					sessionTime = :time 
 				WHERE 
@@ -436,7 +436,7 @@ namespace leantime\core {
 
 
             $stmn = $this->db->{'database'}->prepare($query);
-            $stmn->bindValue(':date', date("Y-m-d h:i:s", time()), PDO::PARAM_INT);
+
             $stmn->bindValue(':id', $this->userId, PDO::PARAM_INT);
             $stmn->bindValue(':sessionid', $sessionid, PDO::PARAM_STR);
             $stmn->bindValue(':time', $time, PDO::PARAM_STR);

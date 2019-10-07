@@ -166,7 +166,7 @@ namespace leantime\domain\services {
 
             //Slack Webhook post
             $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".slackWebhookURL");
-            if($slackWebhookURL !== ""){
+            if($slackWebhookURL !== "" && $slackWebhookURL !== false){
 
                 $data = array(
                     'text'        => '',
@@ -190,7 +190,7 @@ namespace leantime\domain\services {
 
             //Mattermost Webhook Post
             $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".mattermostWebhookURL");
-            if($mattermostWebhookURL !== "") {
+            if($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
 
                 $data = array(
                     'username' => "Leantime",

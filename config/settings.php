@@ -24,7 +24,6 @@ class settings {
 	 *
 	 */
 	public function __construct(){
-		$this->debug = $_SERVER['DEBUG'];
 	}
 
 	/**

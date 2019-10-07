@@ -98,10 +98,13 @@ namespace leantime\core {
             $stmn->bindValue(':dbVersion',$settings->dbVersion,PDO::PARAM_STR);
             $stmn->bindValue(':company',$values["company"],PDO::PARAM_STR);
 
-
-            $stmn->execute();
-            $stmn->closeCursor();
-
+            try {
+                $stmn->execute();
+                $stmn->closeCursor();
+            }catch (\PDOException $e){
+                echo $e;
+                exit();
+            }
         }
 
         private function sqlPrep(){
@@ -434,7 +437,7 @@ namespace leantime\core {
                 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
                 
                 insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`) 
-                values (1,:email,:password,:firstname,:lastname,'','','',0,'a',NULL,'2','','',0,0,NULL,0,1);
+                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'2','','',0,0,NULL,0,1);
                 
                 CREATE TABLE `zp_wiki` (
                   `id` int(255) NOT NULL AUTO_INCREMENT,
