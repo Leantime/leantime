@@ -28,13 +28,14 @@
     <!-- libs -->
     <script src="/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
-    <script type="text/javascript" src="/js/libs/modernizr.min.js"></script>
-    <script type="text/javascript" src="/js/libs/bootstrap.min.js"></script>
+
     <script type="text/javascript" src="/js/libs/jquery.cookie.js"></script>
 
-
+    <script type="text/javascript" src="/js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-timepicker.min.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-fileupload.min.js"></script>
+
+
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.min.js"></script>
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.pie.min.js"></script>
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.symbol.min.js"></script>
@@ -43,8 +44,7 @@
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.stack.min.js"></script>
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="/js/libs/flot/jquery.flot.time.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.isotope.min.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.colorbox-min.js"></script>
+
 
     <script type="text/javascript" src="/js/libs/jquery.jgrowl.js"></script>
 
@@ -54,13 +54,16 @@
 
     <script type="text/javascript" src="/js/libs/fullcalendar.min.js"></script>
 
+
+
+
+
+    <script type="text/javascript" src="/js/libs/jquery.colorbox-min.js"></script>
     <script type="text/javascript" src="/js/libs/simple-color-picker-master/jquery.simple-color-picker.js"></script>
     <script type="text/javascript" src="/js/libs/colorpicker.js"></script>
 
 
-    <script type="text/javascript" src="/js/libs/simpleGantt/moment.min.js"></script>
-    <script type="text/javascript" src="/js/libs/simpleGantt/snap.svg-min.js"></script>
-    <script type="text/javascript" src="/js/libs/simpleGantt/frappe-gantt.min.js?v=2.1"></script>
+
 
     <!-- Quickselect  -->
     <script src="/js/libs/Quickselect/quicksilver.js" type="text/javascript"></script>
@@ -70,9 +73,17 @@
 
     <script type="text/javascript" src="/js/libs/touchpunch.js"></script>
 
-    <!--[if lte IE 8]>
-    <script language="javascript" type="text/javascript" src="/js/libs/excanvas.min.js"></script>
-    <![endif]-->
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="/js/libs/simpleGantt/moment.min.js"></script>
+    <script type="text/javascript" src="/js/libs/simpleGantt/snap.svg-min.js"></script>
+    <script type="text/javascript" src="/js/libs/simpleGantt/frappe-gantt.min.js?v=2.1"></script>
 
     <script type="text/javascript" src="/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"></script>
 

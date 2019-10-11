@@ -343,7 +343,7 @@
 
                                                             <?php } ?>
 
-                                                            <a class="popoverbtn" style="display:block; float:left;" href="javascript:void(0);" data-html="true" data-content="<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo"<input type='radio' name='ticketStatusChange_".$row['id']."' id='ticketStatusChange".$row['id'].$key."' value='".$key."' style='float:left; margin-right:10px;' "; if($row['status'] == $key) echo" checked='selected' "; echo"><label for='ticketStatusChange".$row['id'].$key."'>". $ticketsRepo->stateLabels[$statusRow]."</label>"; ?> <?php } 	?>" data-placement="left" data-toggle="popover" data-container="body" data-original-title="" title="Status">
+                                                            <a class="popoverbtn" style="display:block; float:left;" href="javascript:void(0);" data-html="true" data-placement="left" data-toggle="popover" data-container="body" data-original-title="Status" title="Status" data-content="<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo"<input type='radio' name='ticketStatusChange_".$row['id']."' id='ticketStatusChange".$row['id'].$key."' value='".$key."' style='float:left; margin-right:10px;' "; if($row['status'] == $key) echo" checked='selected' "; echo"><label for='ticketStatusChange".$row['id'].$key."'>". $ticketsRepo->stateLabels[$statusRow]."</label>"; }?>">
                                                                   <span id="status-<?php echo $row['id'] ?>" class="f-left <?php echo strtolower($ticketsRepo->getStatus($row['status']));?>">
                                                                             <?php echo  $ticketsRepo->stateLabels[$ticketsRepo->getStatusPlain($row['status'])]; ?>
                                                                     </span>
@@ -483,10 +483,15 @@
 
 
     }
-    jQuery(function() {
+
+    jQuery(document).ready(function(){
+
+    });
+    jQuery(document).ready(function(){
 
         jQuery('.popoverbtn').popover({
-            template: '<div class="popover statusPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+            html: true,
+            template: '<div class="popover statusPopoverContainer" role="tooltip"><div class="popover-arrow arrow"></div><h3 class="popover-title popover-header"></h3><div class="popover-body popover-content"></div></div>'
         });
 
         colorBoxes();

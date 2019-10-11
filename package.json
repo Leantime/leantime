@@ -15,7 +15,8 @@
     "tether-shepherd": "^1.8.1",
     "datatables.net": "^1.10.19",
     "chosen-js": "^1.8.7",
-    "tinymce": "^5.0.16"
+    "tinymce": "^5.0.16",
+    "isotope-layout": "^3.0.6"
   },
   "devDependencies": {
     "grunt": "^1.0.4",

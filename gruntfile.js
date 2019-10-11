@@ -64,7 +64,9 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/visualchars/plugin.js",
                     "node_modules/tinymce/plugins/nonbreaking/plugin.js",
                     "node_modules/tinymce/plugins/template/plugin.js",
-                    "node_modules/tinymce/plugins/advlist/plugin.js"
+                    "node_modules/tinymce/plugins/advlist/plugin.js",
+                    "node_modules/isotope-layout/dist/isotope.pkgd.js",
+
                 ]
                 , dest: "public/js/compiled-libs.min.js"
             }

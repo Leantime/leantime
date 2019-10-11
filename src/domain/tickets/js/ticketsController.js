@@ -409,7 +409,7 @@ leantime.ticketsController = (function () {
 
         jQuery('.milestonePopover').popover(
             {
-                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-body popover-content"></div></div>'
 
             }
         );
