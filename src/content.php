@@ -101,7 +101,11 @@
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
             <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);"></a>
+<<<<<<< HEAD
             <a href="/" style="background-image:url('/<?php echo  $_SESSION["companysettings.logoPath"]; ?>'">&nbsp;</a>
+=======
+            <a href="/" style="background-image:url(/<?php echo  $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+>>>>>>> b6118e20ccce88f7549d37b3aaef49ae864b2a63
 
         </div>
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">

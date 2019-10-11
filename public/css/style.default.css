@@ -16,6 +16,7 @@
 @import url('roboto.css');
 @import url('lato.css');
 @import url('font-awesome.min.css');
+@import url('/fonts/Exo/stylesheet.css');
 
 @-ms-viewport {
     width: device-width;

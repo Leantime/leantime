@@ -53,4 +53,4 @@ grunt default
 * Follow instructions to install database and user account
 
 ### Learn More ###
-For more information, check out:[https://help.leantime.io](https://help.leantime.io)
+For more information, check out: [https://help.leantime.io](https://help.leantime.io)
