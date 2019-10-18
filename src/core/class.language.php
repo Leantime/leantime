@@ -194,7 +194,7 @@ namespace leantime\core {
          * @access public
          * @return string
          */
-        public function __($index, $alert = false)
+        public function __($index, $alert)
         {
 
             $indexCopy = $index;
@@ -230,7 +230,7 @@ namespace leantime\core {
         public function lang_echo($index, $alert = false)
         {
 
-            $this->__($index, $alert);
+            return $this->__($index, $alert);
 
         }
 

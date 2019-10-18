@@ -101,21 +101,14 @@
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
             <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);"></a>
-<<<<<<< HEAD
-            <a href="/" style="background-image:url('/<?php echo  $_SESSION["companysettings.logoPath"]; ?>'">&nbsp;</a>
-=======
-            <a href="/" style="background-image:url(/<?php echo  $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
->>>>>>> b6118e20ccce88f7549d37b3aaef49ae864b2a63
-
+            <a href="/" style="background-image:url('<?php echo  $_SESSION["companysettings.logoPath"]; ?>'">&nbsp;</a>
         </div>
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
-
             <div class="userloggedinfo">
                 <?php echo $frontController->includeAction('general.loginInfo'); ?>    
             </div>
 
             <?php echo $frontController->includeAction('general.headMenu'); ?>
-
 
         </div>
     </div>
