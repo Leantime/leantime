@@ -42,6 +42,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
             <a href="/ideas/delCanvasItem/<?php echo $id;?>" class="ideaModal delete right"><i class="fa fa-trash"></i> Delete</a>
         <?php } ?>
         <input type="submit" value="Save" id="primaryCanvasSubmitButton"/>
+        <input type="submit" value="Save & Close" id="saveAndClose" onclick="leantime.ideasController.setCloseModal();"/>
 
         <?php if($id !== '') { ?>
             <br /><br />

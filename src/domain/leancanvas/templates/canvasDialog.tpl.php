@@ -52,7 +52,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
             <a href="/leancanvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class="fa fa-trash"></i> Delete <?php echo $canvasTypes[$canvasItem['box']]; ?></a>
         <?php } ?>
         <input type="submit" value="Save" id="primaryCanvasSubmitButton"/>
-
+        <input type="submit" value="Save & Close" id="saveAndClose" onclick="leantime.leanCanvasController.setCloseModal();"/>
         <?php if($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> Attached Milestone</h4>
