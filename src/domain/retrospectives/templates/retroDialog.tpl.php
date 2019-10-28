@@ -47,8 +47,6 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> Attached Milestone</h4>
 
-
-
             <ul class="sortableTicketList" style="width:99%">
             <?php
             if($canvasItem['milestoneId'] == '') {

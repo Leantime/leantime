@@ -42,7 +42,7 @@ namespace leantime\core {
 
             try{
 
-                $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' );
+                $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8,sql_mode="NO_ENGINE_SUBSTITUTION"');
                 $this->database = new PDO('mysql:host=' . $this->host . '', $this->user, $this->password, $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -88,23 +88,38 @@ namespace leantime\core {
 
             $sql = $this->sqlPrep();
 
-            $this->database->query("Use ".$config->dbDatabase.";");
-
-            $stmn = $this->database->prepare($sql);
-            $stmn->bindValue(':email',$values["email"],PDO::PARAM_STR);
-            $stmn->bindValue(':password',$values["password"],PDO::PARAM_STR);
-            $stmn->bindValue(':firstname',$values["firstname"],PDO::PARAM_STR);
-            $stmn->bindValue(':lastname',$values["lastname"],PDO::PARAM_STR);
-            $stmn->bindValue(':dbVersion',$settings->dbVersion,PDO::PARAM_STR);
-            $stmn->bindValue(':company',$values["company"],PDO::PARAM_STR);
+            $this->database->beginTransaction();
 
             try {
+
+                $this->database->query("Use ".$config->dbDatabase.";");
+
+                $stmn = $this->database->prepare($sql);
+                $stmn->bindValue(':email',$values["email"],PDO::PARAM_STR);
+                $stmn->bindValue(':password',$values["password"],PDO::PARAM_STR);
+                $stmn->bindValue(':firstname',$values["firstname"],PDO::PARAM_STR);
+                $stmn->bindValue(':lastname',$values["lastname"],PDO::PARAM_STR);
+                $stmn->bindValue(':dbVersion',$settings->dbVersion,PDO::PARAM_STR);
+                $stmn->bindValue(':company',$values["company"],PDO::PARAM_STR);
+
                 $stmn->execute();
-                $stmn->closeCursor();
-            }catch (\PDOException $e){
-                echo $e;
-                exit();
+
+                while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */};
+
+                $this->database->commit();
+
+                return true;
+
+            } catch (\PDOException $e) {
+
+                $this->database->rollBack();
+
+                return $e->getMessage();
+
             }
+
+            return "Could not initialize transaction";
+
         }
 
         private function sqlPrep(){
@@ -385,8 +400,7 @@ namespace leantime\core {
                   PRIMARY KEY (`id`),
                   KEY `ProjectUserId` (`projectId`,`userId`),
                   KEY `StatusSprint` (`status`,`sprint`),
-                  KEY `Sorting` (`sortindex`),
-                  FULLTEXT KEY `HeadlineDescription` (`tags`, `headline`,`description`)
+                  KEY `Sorting` (`sortindex`)
                 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
                 
                 insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`dependingTicketId`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values 
