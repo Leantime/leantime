@@ -116,9 +116,10 @@ $install = new leantime\core\install();
 
                                     $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-                                    $install->setupDB($values);
+                                    $dbSetupResults = $install->setupDB($values);
+                                    if($dbSetupResults === true) {
 
-                                    echo "<div class='inputwrapper login-alert'>
+                                        echo "<div class='inputwrapper login-alert'>
                                             <div class='alert alert-success' style='padding:10px;'>
                                             The installation was successful<br />
                                             <br />
@@ -126,6 +127,16 @@ $install = new leantime\core\install();
                                             <a href='http://" . $_SERVER['HTTP_HOST'] . "'>" . $_SERVER['HTTP_HOST'] . "</a>
                                             </div>
 								       </div>";
+                                    }else{
+                                        echo "<div class='inputwrapper login-alert'>
+                                            <div class='alert alert-error' style='padding:10px;'>
+                                            Something went wrong
+                                            <br />
+                                            ".$dbSetupResults."<br /><br />
+                                            Before continuing you should delete all tables from your database.                                            
+                                            </div>
+								       </div>";
+                                    }
                                 }
                             }else{
                                 $error = "Database already installed. Please login";
