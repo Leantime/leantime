@@ -1,5 +1,7 @@
 leantime.leanCanvasController = (function () {
 
+    var closeModal = false;
+
     //Variables
     var canvasoptions = {
         sizes: {
@@ -11,6 +13,10 @@ leantime.leanCanvasController = (function () {
         callbacks: {
             beforeShowCont: function() {
                 jQuery(".showDialogOnLoad").show();
+                if(closeModal == true){
+                    closeModal = false;
+                    location.reload();
+                }
             },
             afterShowCont: function () {
 
@@ -64,8 +70,13 @@ leantime.leanCanvasController = (function () {
         }
     };
 
+    var setCloseModal = function() {
+        closeModal = true;
+    };
+
     // Make public what you want to have public, everything else is private
     return {
+        setCloseModal:setCloseModal,
         toggleMilestoneSelectors: toggleMilestoneSelectors,
         openModalManually:openModalManually
     };

@@ -54,16 +54,9 @@
 
     <script type="text/javascript" src="/js/libs/fullcalendar.min.js"></script>
 
-
-
-
-
     <script type="text/javascript" src="/js/libs/jquery.colorbox-min.js"></script>
     <script type="text/javascript" src="/js/libs/simple-color-picker-master/jquery.simple-color-picker.js"></script>
     <script type="text/javascript" src="/js/libs/colorpicker.js"></script>
-
-
-
 
     <!-- Quickselect  -->
     <script src="/js/libs/Quickselect/quicksilver.js" type="text/javascript"></script>
@@ -72,14 +65,6 @@
     <link rel="stylesheet" type="text/css" href="/js/libs/Quickselect/jquery.quickselect.css"/>
 
     <script type="text/javascript" src="/js/libs/touchpunch.js"></script>
-
-
-
-
-
-
-
-
 
     <script type="text/javascript" src="/js/libs/simpleGantt/moment.min.js"></script>
     <script type="text/javascript" src="/js/libs/simpleGantt/snap.svg-min.js"></script>
@@ -101,7 +86,7 @@
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
             <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);"></a>
-            <a href="/" style="background-image:url('<?php echo  $_SESSION["companysettings.logoPath"]; ?>'">&nbsp;</a>
+            <a href="/" style="background-image:url('<?php echo  $_SESSION["companysettings.logoPath"]; ?>')">&nbsp;</a>
         </div>
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
             <div class="userloggedinfo">

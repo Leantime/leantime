@@ -52,5 +52,11 @@ grunt default
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
+### Update (Only starting version 2.0.0) ###
+
+* Make sure to take a backup of your database and files
+* Replace all files in your directory with the updated version
+* If there were any database changes, the system will redirect your to <yourdomain.com>/update
+
 ### Learn More ###
 For more information, check out: [https://help.leantime.io](https://help.leantime.io)
