@@ -40,7 +40,6 @@ module.exports = function (grunt) {
                     "node_modules/tether-shepherd/dist/js/tether.js",
                     "node_modules/tether-shepherd/dist/js/shepherd.js",
                     "node_modules/datatables.net/js/jquery.dataTables.js",
-                    "node_modules/chosen-js/chosen.jquery.js",
                     "node_modules/tinymce/tinymce.js",
                     "node_modules/tinymce/jquery.tinymce.js",
                     "node_modules/tinymce/themes/silver/theme.js",
@@ -66,7 +65,21 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/template/plugin.js",
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
-
+                    "public/js/libs/bootstrap.min.js",
+                    "public/js/libs/bootstrap-timepicker.min.js",
+                    "public/js/libs/bootstrap-fileupload.min.js",
+                    "public/js/libs/jquery.jgrowl.js",
+                    "public/js/libs/chosen.jquery.min.js",
+                    "public/js/libs/jquery.form.js",
+                    "public/js/libs/jquery.tagsinput.min.js",
+                    "public/js/libs/ListJS/list.min.js",
+                    "public/js/libs/fullcalendar.min.js",
+                    "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
+                    "public/js/libs/colorpicker.js",
+                    "public/js/libs/simpleGantt/moment.min.js",
+                    "public/js/libs/simpleGantt/snap.svg-min.js",
+                    "public/js/libs/simpleGantt/frappe-gantt.min.js",
+                    "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"
                 ]
                 , dest: "public/js/compiled-libs.min.js"
             }

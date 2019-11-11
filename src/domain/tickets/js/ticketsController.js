@@ -606,6 +606,38 @@ leantime.ticketsController = (function () {
         );
     };
 
+    var initTimeSheetChart = function (labels, d2, d3, canvasId) {
+
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        var stackedLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets:[{
+                    label:"Booked Hours",
+                    backgroundColor: 'rgba(201,48,44, 0.5)',
+                    borderColor: 'rgb(201,48,44)',
+                    data:d2
+                },
+                    {
+                        label:"Planned Hours",
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor:'rgb(54, 162, 235)',
+                        data:d3
+                    }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+        });
+
+    };
+
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -613,6 +645,7 @@ leantime.ticketsController = (function () {
         initGanttChart:initGanttChart,
         updateRemaining:updateRemaining,
         initModals:initModals,
-        openMilestoneModalManually:openMilestoneModalManually
+        openMilestoneModalManually:openMilestoneModalManually,
+        initTimeSheetChart:initTimeSheetChart
     };
 })();

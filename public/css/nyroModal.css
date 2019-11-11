@@ -17,7 +17,7 @@
 	width: 12px;
 	height: 12px;
 	text-indent: -9999em;
-	background: url(../img/close.gif);
+	background: url(../js/libs/jquery.nyroModal/img/close.gif);
 }
 .nyroModalTitle {
 	top: -26px;
@@ -69,7 +69,7 @@
 	position: absolute;
 	width: 100px;
 	height: 100px;
-	background: #fff url(../img/ajaxLoader.gif) no-repeat center;
+	background: #fff url(../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
 	padding: 0;
 	background-size: 100px 100px;
 }
@@ -94,7 +94,7 @@
 	left: 0;
 }
 .nyroModalPrev:hover {
-	background-image: url(../img/prev.gif);
+	background-image: url(../js/libs/jquery.nyroModal/img/prev.gif);
 }
 .nyroModalNext {
 	right: 0;
@@ -102,5 +102,5 @@
 }
 .nyroModalNext:hover {
 	background-position: right 20%;
-	background-image: url(../img/next.gif);
+	background-image: url(../js/libs/jquery.nyroModal/img/next.gif);
 }

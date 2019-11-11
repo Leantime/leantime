@@ -4,6 +4,7 @@
   position: relative;
   display: inline-block;
   zoom: 1;
+  min-width:150px;
   *display: inline;
 }
 .chzn-container .chzn-drop {
@@ -17,6 +18,7 @@
   -moz-box-shadow   : 0 4px 5px rgba(0,0,0,.15);
   -o-box-shadow     : 0 4px 5px rgba(0,0,0,.15);
   box-shadow        : 0 4px 5px rgba(0,0,0,.15);
+  min-width:150px;
   z-index: 1010;
 }
 /* @end */
