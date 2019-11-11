@@ -72,7 +72,6 @@ module.exports = function (grunt) {
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
                     "public/js/libs/jquery.tagsinput.min.js",
-                    "public/js/libs/ListJS/list.min.js",
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
                     "public/js/libs/colorpicker.js",
