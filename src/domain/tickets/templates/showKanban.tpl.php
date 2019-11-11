@@ -23,7 +23,7 @@ $efforts = $this->get('efforts');
   jQuery(window).bind("load", function () {
   		jQuery(".loading").fadeOut();
         jQuery(".filterBar .row-fluid").css("opacity", "1");
-        var height = jQuery("html").height()-175;
+        var height = jQuery("html").height()-320;
         jQuery(".column .contentInner").css("height", height);
       countTickets();
   });
