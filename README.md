@@ -1,15 +1,17 @@
 
 # Leantime #
 
-Leantime is an open source project management system for small teams written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
+Leantime is an open source project management system for small teams and startups written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
 Features:
-* Idea Boards
-* Research Boards for Idea Development
-* Task Management including Kanban boards, Backlog List view and Calendar views
-* Milestone Management using Gantt charts
-* Timesheet Management
-* Project Overview and Progress Review Reports  
+* Idea boards
+* Research boards using the Lean Canvas
+* Task management using Kanban boards, list and calendar views
+* Milestone management using Gantt charts
+* Timesheet management
+* Retrospectives
+* Project Overview dashboard
+* Integrations with Mattermost & Slack
 
 ### Screenshots ###
 
@@ -47,12 +49,12 @@ to load Javascript dependencies and finally run the grunt task to create the com
 grunt default
 ```
 * Point your local domain to the `public/` directory
-* Rename `config/configuration.sample.ph`p to `config/configuration.php`
+* Rename `config/configuration.sample.php` to `config/configuration.php`
 * Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
-### Update (Only starting version 2.0.0) ###
+### Update ###
 
 * Make sure to take a backup of your database and files
 * Replace all files in your directory with the updated version
