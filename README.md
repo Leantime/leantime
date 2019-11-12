@@ -11,6 +11,7 @@ Features:
 * Timesheet management
 * Retrospectives
 * Project dashboards
+* Multiple user roles (client, developer, manager, admin)
 * Integrations with Mattermost & Slack
 
 ### Screenshots ###
