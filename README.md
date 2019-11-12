@@ -10,7 +10,7 @@ Features:
 * Milestone management using Gantt charts
 * Timesheet management
 * Retrospectives
-* Project Overview dashboard
+* Project dashboards
 * Integrations with Mattermost & Slack
 
 ### Screenshots ###
