@@ -187,7 +187,14 @@ namespace leantime\core {
 
         }
 
-        public function lang_echo($index, $alert = true)
+        /**
+         * lang_echo - returns the string from the language file
+         * DEPRECATED: Use __()
+         *
+         * @access public
+         * @return string
+         */
+        public function __($index, $alert)
         {
 
             $indexCopy = $index;
@@ -209,6 +216,21 @@ namespace leantime\core {
                     return $indexCopy;
                 }
             }
+
+        }
+
+
+        /**
+         * lang_echo - returns the string from the language file
+         * DEPRECATED: Use __()
+         *
+         * @access public
+         * @return string
+         */
+        public function lang_echo($index, $alert = false)
+        {
+
+            return $this->__($index, $alert);
 
         }
 

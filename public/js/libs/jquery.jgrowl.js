@@ -139,8 +139,8 @@
 					$(this).data('jGrowl.instance').create( m , o );
 				}
 			});
-		};
-	};
+        }
+    };
 
 	$.extend( $.fn.jGrowl.prototype , {
 
@@ -280,8 +280,8 @@
 							self.defaults.closer.apply( $(this).parent()[0] , [$(this).parent()[0]] );
 						}
 					});
-			};
-		},
+            }
+        },
 
 		/** Update the jGrowl Container, removing old jGrowl notifications **/
 		update:	 function() {

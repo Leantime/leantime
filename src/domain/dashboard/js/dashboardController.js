@@ -263,7 +263,7 @@ leantime.dashboardController = (function () {
                         url: '/tickets/showAll&raw=true&punchIn=true'
                     }
                 ).done(function(msg){
-                    jQuery.jGrowl("Timer started!");
+                    jQuery.growl("Timer started!");
                 });
                 var currentdate = new Date();
 

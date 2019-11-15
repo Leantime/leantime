@@ -142,7 +142,7 @@ leantime.ticketsController = (function () {
 
     var initModals = function () {
         _initModals();
-    }
+    };
 
     var _initSprintDates = function () {
 
@@ -409,7 +409,7 @@ leantime.ticketsController = (function () {
 
         jQuery('.milestonePopover').popover(
             {
-                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-body popover-content"></div></div>'
 
             }
         );
@@ -506,13 +506,13 @@ leantime.ticketsController = (function () {
             {
                 // General options
                 width: "98%",
+                skin_url: '/css/tinymceSkin/oxide',
+                content_css: '/css/tinymceSkin/oxide/content.css',
                 height:"300",
                 content_style: "img { max-width: 100%; }",
-                plugins : "autolink,link,textcolor,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
-                // Theme options
-                toolbar : "bold,italic,strikethrough,|,fontsizeselect,forecolor,|,link,unlink,image,|,bullist,|,fullscreen",
+                plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
+                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | fullscreen",
                 branding: false,
-                menubar:false,
                 statusbar: false,
                 convert_urls: false,
                 paste_data_images: true,
@@ -606,6 +606,38 @@ leantime.ticketsController = (function () {
         );
     };
 
+    var initTimeSheetChart = function (labels, d2, d3, canvasId) {
+
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        var stackedLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets:[{
+                    label:"Booked Hours",
+                    backgroundColor: 'rgba(201,48,44, 0.5)',
+                    borderColor: 'rgb(201,48,44)',
+                    data:d2
+                },
+                    {
+                        label:"Planned Hours",
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor:'rgb(54, 162, 235)',
+                        data:d3
+                    }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+        });
+
+    };
+
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -613,6 +645,7 @@ leantime.ticketsController = (function () {
         initGanttChart:initGanttChart,
         updateRemaining:updateRemaining,
         initModals:initModals,
-        openMilestoneModalManually:openMilestoneModalManually
+        openMilestoneModalManually:openMilestoneModalManually,
+        initTimeSheetChart:initTimeSheetChart
     };
 })();

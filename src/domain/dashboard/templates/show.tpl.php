@@ -343,7 +343,7 @@
 
                                                             <?php } ?>
 
-                                                            <a class="popoverbtn" style="display:block; float:left;" href="javascript:void(0);" data-html="true" data-content="<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo"<input type='radio' name='ticketStatusChange_".$row['id']."' id='ticketStatusChange".$row['id'].$key."' value='".$key."' style='float:left; margin-right:10px;' "; if($row['status'] == $key) echo" checked='selected' "; echo"><label for='ticketStatusChange".$row['id'].$key."'>". $ticketsRepo->stateLabels[$statusRow]."</label>"; ?> <?php } 	?>" data-placement="left" data-toggle="popover" data-container="body" data-original-title="" title="Status">
+                                                            <a class="popoverbtn" style="display:block; float:left;" href="javascript:void(0);" data-html="true" data-placement="left" data-toggle="popover" data-container="body" data-original-title="Status" title="Status" data-content="<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo"<input type='radio' name='ticketStatusChange_".$row['id']."' id='ticketStatusChange".$row['id'].$key."' value='".$key."' style='float:left; margin-right:10px;' "; if($row['status'] == $key) echo" checked='selected' "; echo"><label for='ticketStatusChange".$row['id'].$key."'>". $ticketsRepo->stateLabels[$statusRow]."</label>"; }?>">
                                                                   <span id="status-<?php echo $row['id'] ?>" class="f-left <?php echo strtolower($ticketsRepo->getStatus($row['status']));?>">
                                                                             <?php echo  $ticketsRepo->stateLabels[$ticketsRepo->getStatusPlain($row['status'])]; ?>
                                                                     </span>
@@ -483,10 +483,15 @@
 
 
     }
-    jQuery(function() {
+
+    jQuery(document).ready(function(){
+
+    });
+    jQuery(document).ready(function(){
 
         jQuery('.popoverbtn').popover({
-            template: '<div class="popover statusPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+            html: true,
+            template: '<div class="popover statusPopoverContainer" role="tooltip"><div class="popover-arrow arrow"></div><h3 class="popover-title popover-header"></h3><div class="popover-body popover-content"></div></div>'
         });
 
         colorBoxes();
@@ -544,21 +549,21 @@
        leantime.dashboardController.initProgressChart(<?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
 
        <?php if($sprintBurndown != []){ ?>
-           leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ])
+           leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
 
-           leantime.dashboardController.initChartButtonClick('HourlyChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ])
-           leantime.dashboardController.initChartButtonClick('EffortChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ])
-           leantime.dashboardController.initChartButtonClick('NumChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ])
+           leantime.dashboardController.initChartButtonClick('HourlyChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ]);
+           leantime.dashboardController.initChartButtonClick('EffortChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ]);
+           leantime.dashboardController.initChartButtonClick('NumChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
 
        <?php } ?>
 
 
        <?php if($backlogBurndown != []){ ?>
-       leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ])
+       leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
 
-       leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButton', [ <?php foreach($backlogBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ])
-       leantime.dashboardController.initBacklogChartButtonClick('EffortChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ])
-       leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ])
+       leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButton', [ <?php foreach($backlogBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ]);
+       leantime.dashboardController.initBacklogChartButtonClick('EffortChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ]);
+       leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
 
        <?php } ?>
 

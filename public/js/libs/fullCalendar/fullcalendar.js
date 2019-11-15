@@ -4475,10 +4475,8 @@ function formatDates(date1, date2, format, options) {
 		}
 	}
 	return res;
-};
-
-
-var dateFormatters = {
+}
+    var dateFormatters = {
 	s	: function(d)	{ return d.getSeconds() },
 	ss	: function(d)	{ return zeroPad(d.getSeconds()) },
 	m	: function(d)	{ return d.getMinutes() },

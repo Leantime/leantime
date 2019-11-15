@@ -1,21 +1,27 @@
 {
   "name": "leantime",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Project Management Tools",
   "main": "gruntfile.js",
   "dependencies": {
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.2",
     "croppie": "^2.6.4",
+    "datatables.net": "^1.10.19",
     "imagesloaded": "^4.1.4",
+    "isotope-layout": "^3.0.6",
     "jquery": "^3.4.1",
+    "jquery-migrate": "1.4.1",
+    "jquery-ui-dist": "^1.12.1",
+    "jquery.uniform": "^4.3.0",
     "masonry-layout": "^4.2.2",
-    "tether-shepherd": "^1.8.1"
+    "tether-shepherd": "^1.8.1",
+    "tinymce": "^5.0.16"
   },
   "devDependencies": {
     "grunt": "^1.0.4",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-less": "^2.0.0",
-    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^3.0.0"
   },

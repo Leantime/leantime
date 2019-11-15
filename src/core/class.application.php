@@ -2,6 +2,10 @@
 
 namespace leantime\core;
 
+/**
+ * Class application
+ * @package leantime\core
+ */
 class application
 {
     

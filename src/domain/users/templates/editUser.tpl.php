@@ -24,9 +24,7 @@
                     if(jQuery(this).is(':selected')) {
                         
                         jQuery(this).attr('selected',false);
-                        
-                        
-                        
+
                         sel2.append(jQuery(this).clone());
                         
                         jQuery('#projects').append(jQuery(this));
@@ -45,7 +43,7 @@
                         
                         jQuery(this).attr('selected',false);
                         index = jQuery(this).index();
-                        alert(index)
+
                         sel1.append(jQuery(this));
                         
                         jQuery('#projects option:eq('+index+')').remove();
