@@ -37,8 +37,8 @@ defined('RESTRICTED') or die('Restricted access');
             
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('ALL_GCCALS'); ?></h1>
+                <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+                <h1><?php echo $this->__('ALL_GCCALS'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -47,7 +47,7 @@ defined('RESTRICTED') or die('Restricted access');
 <form action="">
 
 
-<?php echo $this->displayLink('calendar.importGCal', $language->lang_echo('GOOGLE_CALENDAR_IMPORT'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+<?php echo $this->displayLink('calendar.importGCal', $this->__('GOOGLE_CALENDAR_IMPORT'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
 <table cellpadding="0" cellspacing="0" border="0" class="allTickets table table-bordered"
     id="allTickets">

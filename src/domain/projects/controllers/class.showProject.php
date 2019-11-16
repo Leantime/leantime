@@ -200,7 +200,7 @@ namespace leantime\domain\controllers {
                     if ($row['month'] != null) {
 
                         $data[] = (int)$row['summe'];
-                        $months[] = substr($language->lang_echo('MONTH_' . $row['month'] . ''), 0, 3);
+                        $months[] = substr($this->__('MONTH_' . $row['month'] . ''), 0, 3);
 
                         if ($row['summe'] > $max) {
                             $max = $row['summe'];

@@ -61,22 +61,22 @@
     <li class="dropdown">
         <ul style='display:block'>
             <li <?php if($module == 'dashboard') echo" class='active' "; ?>>
-                <?php echo $this->displayLink('dashboard.show', '<span class="fa fa-home"></span>'.$language->lang_echo('Project Dashboard', false).'') ?>
+                <?php echo $this->displayLink('dashboard.show', '<span class="fa fa-home"></span>'.$this->__('Project Dashboard', false).'') ?>
             </li>
             <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll')) echo"class=' active '"; ?>>
-                <?php echo $this->displayLink('tickets.showKanban', '<span class="fa fa-thumb-tack"></span>'.$language->lang_echo('To-Dos', false).'') ?>
+                <?php echo $this->displayLink('tickets.showKanban', '<span class="fa fa-thumb-tack"></span>'.$this->__('To-Dos', false).'') ?>
             </li>
             <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
-                <?php echo $this->displayLink('tickets.roadmap', '<span class="fa fa-sliders" ></span>'.$language->lang_echo('Milestones', false).'') ?>
+                <?php echo $this->displayLink('tickets.roadmap', '<span class="fa fa-sliders" ></span>'.$this->__('Milestones', false).'') ?>
             </li>
             <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
-                <?php echo $this->displayLink('timesheets.showAll', '<span class="fa fa-clock-o"></span>'.$language->lang_echo('Timesheets', false).'') ?>
+                <?php echo $this->displayLink('timesheets.showAll', '<span class="fa fa-clock-o"></span>'.$this->__('Timesheets', false).'') ?>
             </li>
             <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
-                <?php echo $this->displayLink('leancanvas.simpleCanvas', '<span class="fas fa-flask"></span>'.$language->lang_echo('Research', false).'') ?>
+                <?php echo $this->displayLink('leancanvas.simpleCanvas', '<span class="fas fa-flask"></span>'.$this->__('Research', false).'') ?>
             </li>
             <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
-                <?php echo $this->displayLink('ideas.showBoards', '<span class="far fa-lightbulb"></span>'.$language->lang_echo('Ideas', false).'') ?>
+                <?php echo $this->displayLink('ideas.showBoards', '<span class="far fa-lightbulb"></span>'.$this->__('Ideas', false).'') ?>
             </li>
             <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
                 <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Progress Review'); ?>

@@ -14,19 +14,13 @@ namespace leantime\core {
          * @access private
          * @var    string
          */
-        private $iniFolder = '../resources/language/';
+        private $iniFolder = '/resources/language/';
 
         /**
          * @access private
          * @var    string default de-DE
          */
         private $language = 'de';
-
-        /**
-         * @access public
-         * @var    string which module to take (different ini-Files)
-         */
-        public $module;
 
         /**
          * @access public
@@ -41,6 +35,12 @@ namespace leantime\core {
         public $langlist;
 
         /**
+         * debug value. Will highlight untranslated text
+         * @access public
+         * @var    array ini-values
+         */
+        private $alert = false;
+        /**
          * __construct - Check standard language otherwise get language from browser
          *
          * @return
@@ -48,43 +48,28 @@ namespace leantime\core {
         function __construct()
         {
 
+            $config = new config();
+
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
-
-                $config = new config();
 
                 if($config->language != '' && (!isset($_SESSION['language']) || $_SESSION['language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['language']) ===true && $_SESSION['language'] != '') {
+                }elseif(isset($_SESSION['language']) === true && $_SESSION['language'] != '') {
 
                     $this->setLanguage($_SESSION['language']);
 
                 }else{
+
                     $browserLang = $this->getBrowserLanguage();
                     $this->setLanguage($browserLang);
+
                 }
 
             }
-
-        }
-
-        /**
-         * Deprecated. Not used anymore
-         * setModule - set module name
-         *
-         * TODO: Remove all calls to this method
-         *
-         * @access public
-         * @param  $module
-         * @return string
-         */
-        public function setModule($module)
-        {
-
-            $this->module = $module;
 
         }
 
@@ -93,7 +78,7 @@ namespace leantime\core {
          *
          * @access public
          * @param  $lang
-         * @return unknown_type
+         * @return void
          */
         public function setLanguage($lang)
         {
@@ -125,40 +110,6 @@ namespace leantime\core {
 
         }
 
-        /**
-         * getInstalledLangs - reads the existing language folders
-         *
-         * @access public
-         * @return array
-         */
-        public function getInstalledLangs()
-        {
-
-            $handle = opendir($this->iniFolder);
-
-            while ($file = readdir($handle)) {
-
-                if($file != "." && $file != "..") {
-
-                    if(is_dir($this->iniFolder."/".$file)) {
-
-                        if(isset($this->langlist[$file]) === true) {
-
-                            $langs[$file] = $this->langlist[$file];
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            closedir($handle);
-
-            return $langs;
-
-        }
 
         /**
          * getBrowserLanguage - gets the language that is setted in the browser
@@ -187,30 +138,28 @@ namespace leantime\core {
 
         }
 
-        public function lang_echo($index, $alert = true)
+        public function __($index)
         {
 
-            $indexCopy = $index;
-
-            $caps = strtoupper($index);
-
-            $index = str_replace(' ', "_", strtoupper($index));
-
             if (isset($this->ini_array[$index]) === true) {
+
                 return $this->ini_array[$index];
 
-            } else if (isset($this->ini_array[$caps]) === true) {
-                return $this->ini_array[$caps];
-
             } else {
-                if($alert === true) {
+
+                if($this->alert === true) {
+
                     return '<span style="color: red; font-weight:bold;">'.$index.'</span>';
+
                 }else{
-                    return $indexCopy;
+
+                    return $index;
+
                 }
             }
 
         }
 
     }
+
 }

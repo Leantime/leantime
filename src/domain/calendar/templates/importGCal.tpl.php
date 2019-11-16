@@ -12,8 +12,8 @@ $values = $this->get('values');
             
             <div class="pageicon"><span class="iconfa-laptop"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('GOOGLE_CALENDAR_IMPORT'); ?></h1>
+                <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+                <h1><?php echo $this->__('GOOGLE_CALENDAR_IMPORT'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -25,13 +25,13 @@ $values = $this->get('values');
 <form action="" method="post">
 
 
-	<label for="name"><?php echo $language->lang_echo('DESCRIPTION') ?>:</label>
+	<label for="name"><?php echo $this->__('DESCRIPTION') ?>:</label>
 	<input type="text" id="name" name="name" value="<?php echo $values['name']; ?>" /><br />
 	
-	<label for="url"><?php echo $language->lang_echo('URL') ?>:</label>
+	<label for="url"><?php echo $this->__('URL') ?>:</label>
 	<input type="text" id="url" name="url" style="width:300px;" value="<?php echo $values['url']; ?>" /><br />
 	
-	<label for="color"><?php echo $language->lang_echo('COLOR') ?>:</label>
+	<label for="color"><?php echo $this->__('COLOR') ?>:</label>
 	<select name="color" id="color">
 		<option value="c0033ff" class="c0033ff" <?php if($values['colorClass'] == 'c0033ff') echo 'selected="selected"';?>>0033ff</option>
 		<option value="c0099ff" class="c0099ff" <?php if($values['colorClass'] == 'c0099ff') echo 'selected="selected"';?>>0099ff</option>
@@ -55,13 +55,13 @@ $values = $this->get('values');
 	</select><br/>
 	
 	
-<input type="submit" name="save" id="save" value="<?php echo $language->lang_echo('SAVE') ?>" class="button" />
+<input type="submit" name="save" id="save" value="<?php echo $this->__('SAVE') ?>" class="button" />
 <br/><br/>
-<h3><?php echo $language->lang_echo('EXPLANATION') ?></h3>
+<h3><?php echo $this->__('EXPLANATION') ?></h3>
 
-<p><?php echo $language->lang_echo('FOLLOW_STEPS') ?></p><br/>
-<p>1. <?php echo $language->lang_echo('STEP_ONE_IMPORT') ?></p>
-<p>2. <?php echo $language->lang_echo('STEP_TWO_IMPORT') ?></p>
-<p>3. <?php echo $language->lang_echo('STEP_THREE_IMPORT') ?></p>
+<p><?php echo $this->__('FOLLOW_STEPS') ?></p><br/>
+<p>1. <?php echo $this->__('STEP_ONE_IMPORT') ?></p>
+<p>2. <?php echo $this->__('STEP_TWO_IMPORT') ?></p>
+<p>3. <?php echo $this->__('STEP_THREE_IMPORT') ?></p>
 
 </form>

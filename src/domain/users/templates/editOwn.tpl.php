@@ -10,8 +10,8 @@ $user = $this->get('user');
 
     <div class="pageicon"><span class="fa fa-user"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-        <h1><?php echo $language->lang_echo('EDIT_MY_DATA'); ?></h1>
+        <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+        <h1><?php echo $this->__('EDIT_MY_DATA'); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -24,13 +24,13 @@ $user = $this->get('user');
             <div class="span7">
 
                 <div class="widget">
-                    <h4 class="widgettitle"><?php echo $language->lang_echo('OVERVIEW'); ?></h4>
+                    <h4 class="widgettitle"><?php echo $this->__('OVERVIEW'); ?></h4>
                     <div class="widgetcontent">
 
                         <form action="" method="post" class='stdform'>
 
                             <p>
-                                <label for="firstname"><?php echo $language->lang_echo('FIRSTNAME'); ?></label>
+                                <label for="firstname"><?php echo $this->__('FIRSTNAME'); ?></label>
                                 <span class='field'>
                                     <input type="text" class="input" name="firstname" id="firstname"
                                            value="<?php echo $values['firstname'] ?>"/><br/>
@@ -38,7 +38,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="lastname"><?php echo $language->lang_echo('LASTNAME'); ?></label>
+                                <label for="lastname"><?php echo $this->__('LASTNAME'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="lastname" class="input" id="lastname"
                                            value="<?php echo $values['lastname'] ?>"/><br/>
@@ -46,7 +46,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="user"><?php echo $language->lang_echo('EMAIL'); ?></label>
+                                <label for="user"><?php echo $this->__('EMAIL'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="user" class="input" id="user"
                                            value="<?php echo $values['user'] ?>"/><br/>
@@ -54,7 +54,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="phone"><?php echo $language->lang_echo('PHONE'); ?></label>
+                                <label for="phone"><?php echo $this->__('PHONE'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="phone" class="input" id="phone"
                                            value="<?php echo $values['phone'] ?>"/><br/>
@@ -62,7 +62,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="currentPassword"><?php echo $language->lang_echo('OLD_PASSWORD') ?></label>
+                                <label for="currentPassword"><?php echo $this->__('OLD_PASSWORD') ?></label>
                                 <span class='field'>
                                     <input type='password' value="" name="currentPassword" class="input"
                                            id="currentPassword"/><br/>
@@ -70,7 +70,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="oldPassword"><?php echo $language->lang_echo('NEW_PASSWORD') ?></label>
+                                <label for="oldPassword"><?php echo $this->__('NEW_PASSWORD') ?></label>
                                 <span class='field'>
                                     <input type='password' value="" name="newPassword" class="input"
                                            id="newPassword"/><br/>
@@ -78,7 +78,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="newPassword"><?php echo $language->lang_echo('NEW_PASSWORD2') ?></label>
+                                <label for="newPassword"><?php echo $this->__('NEW_PASSWORD2') ?></label>
                                 <span class='field'>
                                     <input type="password" value="" name="confirmPassword" class="input"
                                            id="confirmPassword"/><br/>
@@ -86,7 +86,7 @@ $user = $this->get('user');
                             </p>
 
                             <p>
-                                <label for="notifications"><?php echo $language->lang_echo('RECEIVE_NOTIFICATIONS') ?></label>
+                                <label for="notifications"><?php echo $this->__('RECEIVE_NOTIFICATIONS') ?></label>
                                 <span class='field'>
                                     <input type="checkbox" value="" name="notifications" class="input"
                                            id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
@@ -95,7 +95,7 @@ $user = $this->get('user');
 
                             <p class='stdformbutton'>
                                 <input type="submit" name="save" id="save"
-                                       value="<?php echo $language->lang_echo('SAVE'); ?>" class="button"/>
+                                       value="<?php echo $this->__('SAVE'); ?>" class="button"/>
                             </p>
 
                         </form>
@@ -105,7 +105,7 @@ $user = $this->get('user');
             </div>
             <div class="span5">
                 <div class='widgetbox'>
-                    <h4 class='widgettitle'><?php echo $language->lang_echo('PROFILE_PICTURE'); ?></h4>
+                    <h4 class='widgettitle'><?php echo $this->__('PROFILE_PICTURE'); ?></h4>
 
                     <div class='widgetcontent' style="text-align:center;">
 
@@ -115,7 +115,7 @@ $user = $this->get('user');
 
                         <div class="par">
 
-                            <label><?php echo $language->lang_echo('UPLOAD_NEW') ?></label>
+                            <label><?php echo $this->__('UPLOAD_NEW') ?></label>
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>
                                 <input type="hidden"/>
@@ -138,7 +138,7 @@ $user = $this->get('user');
                                         <span class="ld ld-ring ld-spin"</span>
                                     </span>
                                     <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                                           value="<?php echo $language->lang_echo('UPLOAD'); ?>"/>
+                                           value="<?php echo $this->__('UPLOAD'); ?>"/>
                                 </p>
                             </div>
                         </div>

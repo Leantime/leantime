@@ -9,7 +9,7 @@ $client = $this->get('client');
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5>Administration</h5>
-                <h1><?php printf($language->lang_echo('DELETE_CLIENT'), $client['name']); ?></h1>
+                <h1><?php printf($this->__('DELETE_CLIENT'), $client['name']); ?></h1>
             </div>
         </div><!--pageheader-->
         

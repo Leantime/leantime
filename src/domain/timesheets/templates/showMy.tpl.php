@@ -181,8 +181,8 @@ jQuery(document).ready(function(){
 
             <div class="pageicon"><span class="iconfa-time"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('MY_TIMESHEETS'); ?></h1>
+                <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+                <h1><?php echo $this->__('MY_TIMESHEETS'); ?></h1>
             </div>
         </div><!--pageheader-->
         

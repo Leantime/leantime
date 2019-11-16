@@ -3,7 +3,7 @@
 $helper = new helper();
 $ticket = $this->get('ticket');
 ?>
-<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"><?php echo $language->lang_echo('COMMENT') ?></a>	
+<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"><?php echo $this->__('COMMENT') ?></a>
 
 <form method="post" accept-charset="utf-8" action="index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>#comment">
 
@@ -13,7 +13,7 @@ $ticket = $this->get('ticket');
 		
 		<textarea rows="5" cols="50" name="text" name="text"></textarea><br />
 		
-		<input type="submit" value="<?php echo $language->lang_echo('SUBMIT'); ?>" name="comment" class="button" />
+		<input type="submit" value="<?php echo $this->__('SUBMIT'); ?>" name="comment" class="button" />
 		<input type="hidden" name="father" id="father"/>
 		
 		<br />
@@ -49,20 +49,20 @@ $openSpan = 0;
 		<img src="<?php echo $img; ?>" style="float:left; width:100px; margin-right:10px;"/>
 		<br /><p><?php echo nl2br($row['text']); ?></p><br />
 		<div class="clear"></div>
-		<?php printf("<small class=\"grey\">".$language->lang_echo('WRITTEN_ON_BY')."</small>", $helper->timestamp2date($row['date'], 2), $helper->timestamp2date($row['date'], 1), $row['firstname'], $row['lastname']); ?>
+		<?php printf("<small class=\"grey\">".$this->__('WRITTEN_ON_BY')."</small>", $helper->timestamp2date($row['date'], 2), $helper->timestamp2date($row['date'], 1), $row['firstname'], $row['lastname']); ?>
 
 		
 		<?php if($this->get('role') === 'admin'){ ?> | 
 			<a href="index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>&amp;delComment=<?php echo $row['id']; ?>#commentList">
-				<?php echo $language->lang_echo('DELETE'); ?>
+				<?php echo $this->__('DELETE'); ?>
 			</a>
 		<?php } ?>
 		
-		|<a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $k; ?>)"><?php echo $language->lang_echo('Reply', false) ?></a>
+		|<a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $k; ?>)"><?php echo $this->__('Reply', false) ?></a>
 		<br /><br /><hr />
 		<span style="display:none;" id="comment<?php echo$k;?>" class="commentBox">
 			<textarea rows="5" cols="50" name="text"></textarea><br />
-			<input type="submit" value="<?php echo $language->lang_echo('SUBMIT'); ?>" name="comment" class="button" onclick="$('#father').val('<?php echo $row['id']; ?>')" />
+			<input type="submit" value="<?php echo $this->__('SUBMIT'); ?>" name="comment" class="button" onclick="$('#father').val('<?php echo $row['id']; ?>')" />
 		</span>
 		
 		<br/>
@@ -84,7 +84,7 @@ $openSpan = 0;
 } ?>
 
 <?php if(count($this->get('comments')) == 0){?> 
-	<?php echo $language->lang_echo('ERROR_NO_COMMENTS'); ?>
+	<?php echo $this->__('ERROR_NO_COMMENTS'); ?>
 <?php } ?>
 
 </div><br /><br />

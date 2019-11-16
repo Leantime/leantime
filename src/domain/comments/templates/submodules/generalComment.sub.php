@@ -15,7 +15,7 @@ if($formUrl == "") {
 }
 ?>
 
-<h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $language->lang_echo('Discussion', false); ?></h4>
+<h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('Discussion', false); ?></h4>
 
 <script type='text/javascript'>
 
@@ -47,7 +47,7 @@ if($formUrl == "") {
 </script>
 
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl?>" id="commentForm">
-    <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)" style="display:none;" id="mainToggler"><span class="fa fa-plus-square"></span> <?php echo $language->lang_echo('Add a new comment', false) ?></a>
+    <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)" style="display:none;" id="mainToggler"><span class="fa fa-plus-square"></span> <?php echo $this->__('Add a new comment', false) ?></a>
     <div id="comment0" class="commentBox">
         
         <textarea rows="5" cols="50" name="text"></textarea><br />
@@ -82,7 +82,7 @@ if($formUrl == "") {
                             <div class="clear"></div>
                     <small>
                         <?php printf(
-                            $language->lang_echo('WRITTEN_ON_BY'),
+                            $this->__('WRITTEN_ON_BY'),
                             $helper->timestamp2date($row['date'], 2),
                             $helper->timestamp2date($row['date'], 1),
                             $this->escape($row['firstname']),
@@ -91,13 +91,13 @@ if($formUrl == "") {
                     </small>
 
                     | <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                        <span class="fa fa-reply"></span> <?php echo $language->lang_echo('Reply', false) ?>
+                        <span class="fa fa-reply"></span> <?php echo $this->__('Reply', false) ?>
                     </a>
 
                     <?php if($row['userId'] == $_SESSION['userdata']['id']) { ?>
                     |
                         <a href="<?php echo $deleteUrlBase.$row['id'] ?>" class="deleteComment">
-                            <span class="fa fa-trash"></span> <?php echo $language->lang_echo('Delete', false) ?>
+                            <span class="fa fa-trash"></span> <?php echo $this->__('Delete', false) ?>
                         </a>
                     <?php } ?>
                     <div style="display:none;" id="comment<?php echo $row['id'];?>" class="commentBox">
@@ -127,7 +127,7 @@ if($formUrl == "") {
                             <div class="clear"></div>
                             <small>
                                 <?php printf(
-                                    $language->lang_echo('WRITTEN_ON_BY'),
+                                    $this->__('WRITTEN_ON_BY'),
                                     $helper->timestamp2date($comment['date'], 2),
                                     $helper->timestamp2date($comment['date'], 1),
                                     $this->escape($comment['firstname']),
@@ -138,7 +138,7 @@ if($formUrl == "") {
                             <?php if($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                 |
                                 <a href="<?php echo $deleteUrlBase.$comment['id'] ?>" class="deleteComment">
-                                    <span class="fa fa-trash"></span> <?php echo $language->lang_echo('Delete', false) ?>
+                                    <span class="fa fa-trash"></span> <?php echo $this->__('Delete', false) ?>
                                 </a>
                             <?php } ?>
 

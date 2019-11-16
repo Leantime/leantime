@@ -73,7 +73,7 @@ namespace leantime\core {
         }
 
         /**
-         * run - executesx the action depending on Request or firstAction
+         * run - executes the action depending on Request or firstAction
          *
          * @access public
          * @return
@@ -81,6 +81,7 @@ namespace leantime\core {
         public function run($differentFirstAction = '')
         {
 
+            //Todo: find a different place for this
             $projectRepository = new repositories\projects();
 
             //Find project if nothing is set
@@ -143,45 +144,15 @@ namespace leantime\core {
             //moduleName is filename
             $moduleName = self::getModuleName($completeName);
 
-            $defaultModules = array(
-                'general/class.main.php',
-                'general/class.loginInfo.php',
-                'general/class.header.php',
-                'general/class.footer.php',
-                'general/class.ajaxRequest.php',
-                'general/class.logout.php'.
-                'general/class.headMenu.php'
-            );
 
-            $setting = new repositories\setting();
-            if(isset($_SESSION['userdata']['role']) !== false) {
-
-                $availableUserModules = $setting->getAvailableModules($_SESSION['userdata']['role']);
-
-                $availableModules = array_merge($availableUserModules, $defaultModules);
-
-            }else{
-
-                $availableModules = $defaultModules;
-
-            }
-            $settings = new settings();
-
+            //Folder doesn't exist.
             if(is_dir('../src/domain/' . $moduleName) === false) {
 
                 throw new Exception('No access');
 
-            }elseif(in_array(''.$moduleName.'/class.' . $actionName . '.php', $availableModules) === false && (isset($_SESSION['userdata']) === false) && $actionName != '') {
-
-                $tpl = new template();
-                $tpl->display('general.error');
-                throw new Exception('No Access');
-
             }elseif(is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
 
-                $tpl = new template();
-                $tpl->display('general.error');
-                throw new Exception('No Access');
+                throw new Exception('File not found');
 
             }else{ // Else is not necessary - throw stops execution - but for the look...
 

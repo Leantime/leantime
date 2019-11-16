@@ -3,7 +3,7 @@
     $tickets = $this->get('objTicket');
 ?>
 
-<h4 class="widgettitle title-light"><span class="fa fa-list-ul"></span><?php echo $language->lang_echo('Subtasks', false); ?></h4>
+<h4 class="widgettitle title-light"><span class="fa fa-list-ul"></span><?php echo $this->__('Subtasks', false); ?></h4>
 <p>Use Subtasks to break down your main ToDo into smaller chunks of work. You can add plan hours and remaining hours right here. <strong>We recommend Subtasks be less than 4 hours long.</strong>
 <br />Once you add subtasks planned and remaining hours on the main ToDo will be updated as well.<br /><br /></p>
 
@@ -12,11 +12,11 @@
     
     <thead>
         <tr>
-            <th width="15%"><?php echo $language->lang_echo('TITLE'); ?></th>
-            <th  width="30%"><?php echo $language->lang_echo('DESCRIPTION'); ?></th>
-            <th width="15%"><?php echo $language->lang_echo('STATUS'); ?></th>
-            <th width="10%"><?php echo $language->lang_echo('PLANNED HOURS', false); ?></th>
-            <th width="10%"><?php echo $language->lang_echo('Remaining Hours', false); ?></th>
+            <th width="15%"><?php echo $this->__('TITLE'); ?></th>
+            <th  width="30%"><?php echo $this->__('DESCRIPTION'); ?></th>
+            <th width="15%"><?php echo $this->__('STATUS'); ?></th>
+            <th width="10%"><?php echo $this->__('PLANNED HOURS', false); ?></th>
+            <th width="10%"><?php echo $this->__('Remaining Hours', false); ?></th>
             <th width="10%">Actions</th>
         </tr>
     </thead>
@@ -33,12 +33,12 @@
             <form method="post" action="#subtasks">
                 <td><input type="text" value="<?php echo $subticket['headline']; ?>" name="headline"/></td>
                 <td><textarea  name="description" style="width:80%"><?php echo $subticket['description'] ?></textarea></td>
-                <td style="width:150px;" ><select class="span11 status-select" name="status" style="width:150px;"  data-placeholder="<?php echo $language->lang_echo($tickets->getStatusPlain($subticket['status'])); ?>">
+                <td style="width:150px;" ><select class="span11 status-select" name="status" style="width:150px;"  data-placeholder="<?php echo $this->__($tickets->getStatusPlain($subticket['status'])); ?>">
                         <?php foreach($tickets->statePlain as $key => $row2) {?>
                             <option value="<?php echo $key; ?>"
                                 <?php if($subticket['status'] == $key) {echo"selected='selected'";
                                 }?>
-                            ><?php echo $language->lang_echo($tickets->getStatusPlain($key)); ?></option>
+                            ><?php echo $this->__($tickets->getStatusPlain($key)); ?></option>
                         <?php } ?>
                     </select>
                 </td>
@@ -53,7 +53,7 @@
     <?php } ?>
     <?php if(count($this->get('allSubTasks')) === 0) : ?>
         <tr>
-            <td colspan="6"><?php echo $language->lang_echo('You have not created any Subtasks yet.', false); ?></td>
+            <td colspan="6"><?php echo $this->__('You have not created any Subtasks yet.', false); ?></td>
         </tr>
     <?php endif; ?>
     <tr><td colspan="6" style="background:#ccc;">Create a new Subtask:</td></tr>
@@ -62,10 +62,10 @@
         <td><input type="text" value="" name="headline"/></td>
         <td><textarea  name="description" style="width:80%"></textarea></td>
         <td style="width:150px;">
-            <select class="span11 status-select" name="status"  style="width:150px;" data-placeholder="<?php echo $language->lang_echo($tickets->getStatusPlain("3")); ?>">
+            <select class="span11 status-select" name="status"  style="width:150px;" data-placeholder="<?php echo $this->__($tickets->getStatusPlain("3")); ?>">
                 <?php foreach($tickets->statePlain as $key => $row2) {?>
                     <option value="<?php echo $key; ?>"
-                    ><?php echo $language->lang_echo($tickets->getStatusPlain($key)); ?></option>
+                    ><?php echo $this->__($tickets->getStatusPlain($key)); ?></option>
                 <?php } ?>
             </select>
         </td>
@@ -77,7 +77,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3"><strong><?php echo $language->lang_echo('Total Hours', false) ?>:</strong></td>
+            <td colspan="3"><strong><?php echo $this->__('Total Hours', false) ?>:</strong></td>
             <td><strong><?php echo $sumPlanHours; ?></strong></td>
             <td><strong><?php echo $sumEstHours; ?></strong></td>
             <td></td>

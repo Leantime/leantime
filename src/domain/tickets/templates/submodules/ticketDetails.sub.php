@@ -40,16 +40,16 @@ $type = $this->get('type');
         <div class="span7">
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span><?php echo $language->lang_echo('GENERAL'); ?></h4>
+                    <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span><?php echo $this->__('GENERAL'); ?></h4>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('HEADLINE'); ?>*</label>
+                        <label class="span4 control-label"><?php echo $this->__('HEADLINE'); ?>*</label>
                         <div class="span6">
                             <input type="text" value="<?php $this->e($ticket['headline']); ?>" name="headline" autocomplete="off"  style="width:220px;"/>
 
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('Milestone', false); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('Milestone', false); ?></label>
                         <div class="span6">
                             <div class="form-group">
                                 <select  name="dependingTicketId"  class="span11" >
@@ -69,7 +69,7 @@ $type = $this->get('type');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('TYPE'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('TYPE'); ?></label>
                         <div class="span6">
                             <select id='type' name='type' class="span11">
                                 <?php foreach ($type as $types) {
@@ -84,10 +84,10 @@ $type = $this->get('type');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('STATUS'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('STATUS'); ?></label>
                         <div class="span6">
                             <select id="status-select" class="span11" name="status"
-                                    data-placeholder="<?php echo $language->lang_echo($tickets->getStatusPlain($ticket['status'])); ?>">
+                                    data-placeholder="<?php echo $this->__($tickets->getStatusPlain($ticket['status'])); ?>">
                                 <?php foreach ($tickets->statePlain as $key => $row2) { ?>
                                     <option value="<?php echo $key; ?>"
                                         <?php if ($ticket['status'] == $key) {
@@ -99,7 +99,7 @@ $type = $this->get('type');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('SPRINT'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('SPRINT'); ?></label>
                         <div class="span6">
 
                             <select id="sprint-select" class="span11" name="sprint"
@@ -116,7 +116,7 @@ $type = $this->get('type');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('Effort', false); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('Effort', false); ?></label>
                         <div class="span6">
                             <select id='storypoints' name='storypoints' class="span11">
                                 <option value="">Effort not clear</option>
@@ -131,7 +131,7 @@ $type = $this->get('type');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('TAGS'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('TAGS'); ?></label>
                         <div class="span6">
                             <input type="text" value="<?php $this->e($ticket['tags']); ?>" name="tags" id="tags"/>
                         </div>
@@ -141,7 +141,7 @@ $type = $this->get('type');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-asterisk"></span><?php echo $language->lang_echo('DESCRIPTION'); ?>
+                                class="iconfa iconfa-asterisk"></span><?php echo $this->__('DESCRIPTION'); ?>
                     </h4>
 
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
@@ -155,10 +155,10 @@ $type = $this->get('type');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-group"></span><?php echo $language->lang_echo('PEOPLE'); ?></h4>
+                                class="iconfa iconfa-group"></span><?php echo $this->__('PEOPLE'); ?></h4>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('AUTHOR'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('AUTHOR'); ?></label>
                         <div class="span6">
                             <input type="text" disabled="disabled"
                                    value="<?php $this->e($ticket['userFirstname']); ?> <?php $this->e($ticket['userLastname']); ?>"/>
@@ -166,10 +166,10 @@ $type = $this->get('type');
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('EDITOR'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('EDITOR'); ?></label>
                         <div class="span6">
 
-                            <select data-placeholder="<?php echo $language->lang_echo('FILTER_BY_USER'); ?>"
+                            <select data-placeholder="<?php echo $this->__('FILTER_BY_USER'); ?>"
                                     name="editorId" class="user-select span11">
                                 <option value=""></option>
                                 <?php foreach ($this->get('users') as $userRow) { ?>
@@ -192,9 +192,9 @@ $type = $this->get('type');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-calendar"></span><?php echo $language->lang_echo('DATES'); ?></h4>
+                                class="iconfa iconfa-calendar"></span><?php echo $this->__('DATES'); ?></h4>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('DATE_OF_TICKET'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('DATE_OF_TICKET'); ?></label>
                         <div class="span6">
                             <input type="text" class="dates" id="submittedDate" disabled="disabled"
                                    value="<?php echo $helper->timestamp2date($ticket['date'], 2); ?>" name="date"/>
@@ -202,7 +202,7 @@ $type = $this->get('type');
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('DATE_TO_FINISH'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('DATE_TO_FINISH'); ?></label>
                         <div class="span6">
                             <input type="text" class="dates" id="deadline"
                                    value="<?php echo $helper->timestamp2date($ticket['dateToFinish'], 2); ?>"
@@ -211,7 +211,7 @@ $type = $this->get('type');
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('DATE_FROM') . $lang['DATE_TO']; ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('DATE_FROM') . $lang['DATE_TO']; ?></label>
                         <div class="span6">
 
                             <input type="text" class="dates" style="width:90px; float:left;" name="editFrom"
@@ -226,9 +226,9 @@ $type = $this->get('type');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-time"></span><?php echo $language->lang_echo('TIME'); ?></h4>
+                                class="iconfa iconfa-time"></span><?php echo $this->__('TIME'); ?></h4>
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('PLAN_HOURS'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('PLAN_HOURS'); ?></label>
                         <div class="span6">
                             <input type="text" value="<?php $this->e($ticket['planHours']); ?>" name="planHours"/>
                         </div>
@@ -244,7 +244,7 @@ $type = $this->get('type');
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('BOOKED_HOURS'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('BOOKED_HOURS'); ?></label>
                         <div class="span6">
                             <input type="text" disabled="disabled"
                                    value="<?php echo $this->get('timesheetsAllHours'); ?>"/>
@@ -252,7 +252,7 @@ $type = $this->get('type');
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label"><?php echo $language->lang_echo('HOURS_REMAINING'); ?></label>
+                        <label class="span4 control-label"><?php echo $this->__('HOURS_REMAINING'); ?></label>
                         <div class="span6">
                             <input type="text" disabled="disabled" value="<?php echo $remainingHours; ?>"/>
                         </div>

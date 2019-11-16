@@ -32,7 +32,10 @@ class application
         ob_start();
         
         if($login->logged_in()===false) {
-                
+
+            //Language is usually initialized by template engine. But template is not loaded on log in / installed case
+            $language = new language();
+
             //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
                 include '../src/resetPassword.php';
@@ -45,7 +48,9 @@ class application
         }else{
 
             $frontController->run();
+
         }
+
         $toRender = ob_get_clean();
         echo $toRender;
             

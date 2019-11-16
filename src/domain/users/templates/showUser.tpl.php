@@ -18,10 +18,10 @@ $role = $this->get('roles');
             <div class="maincontentinner">
 
 
-<p><strong><?php echo $language->lang_echo('NAME'); ?>:</strong> <?php echo ''.$user['lastname'].', '.$user['firstname'].''; ?></p>
-<p><strong><?php echo $language->lang_echo('EMAIL'); ?>:</strong> <?php echo $user['username']; ?></p>
-<p><strong><?php echo $language->lang_echo('PHONE'); ?>:</strong> <?php echo $user['phone']; ?></p>
-<p><strong><?php echo $language->lang_echo('ROLE'); ?>:</strong> <?php echo $role['roleDescription']; ?></p><br/>
+<p><strong><?php echo $this->__('NAME'); ?>:</strong> <?php echo ''.$user['lastname'].', '.$user['firstname'].''; ?></p>
+<p><strong><?php echo $this->__('EMAIL'); ?>:</strong> <?php echo $user['username']; ?></p>
+<p><strong><?php echo $this->__('PHONE'); ?>:</strong> <?php echo $user['phone']; ?></p>
+<p><strong><?php echo $this->__('ROLE'); ?>:</strong> <?php echo $role['roleDescription']; ?></p><br/>
 <hr />
 
 <div class='box-right'>
@@ -32,7 +32,7 @@ $role = $this->get('roles');
         alt='<?php echo $_SESSION['userdata']['firstname']." ".$_SESSION['userdata']['lastname']; ?>s profile pic' />
     <?php } else { ?>
         <img src='/userdata/default.png' class='profileImg' width='150px'
-        alt='<?php echo $language->lang_echo('Default_Profile_Pic'); ?>' />        
+        alt='<?php echo $this->__('Default_Profile_Pic'); ?>' />
     <?php } ?>
 </div>
 

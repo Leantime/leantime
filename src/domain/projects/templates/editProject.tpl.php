@@ -14,7 +14,7 @@ $helper = $this->get('helper');
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5>Administration</h5>
-                <h1><?php printf($language->lang_echo('EDIT_PROJECT'), $values['name']); ?></h1>
+                <h1><?php printf($this->__('EDIT_PROJECT'), $values['name']); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -29,17 +29,17 @@ $helper = $this->get('helper');
 		
 			
 		<div class="widget">
-		   <h4 class="widgettitle"><?php echo $language->lang_echo('PROJECT'); ?></h4>
+		   <h4 class="widgettitle"><?php echo $this->__('PROJECT'); ?></h4>
 		   <div class="widgetcontent">
 		
 		<p>
-		<label for="name"><?php echo $language->lang_echo('NAME'); ?></label> 
+		<label for="name"><?php echo $this->__('NAME'); ?></label>
 		<span class='field'>
 		<input type="text" name="name" id="name" class="input-large" value="<?php echo $values['name'] ?>" /><br />
 		</span></p>
 		
 		<p>
-		<label for="clientId"><?php echo $language->lang_echo('CLIENT'); ?></label> 
+		<label for="clientId"><?php echo $this->__('CLIENT'); ?></label>
 		<span class='field'>
 		<select name="clientId" id="clientId">
 		
@@ -65,14 +65,14 @@ $helper = $this->get('helper');
 		</span></p>
 		
 		<p>
-		<label for="projectState"><?php echo $language->lang_echo('PROJECTAPPROVAL'); ?></label>
+		<label for="projectState"><?php echo $this->__('PROJECTAPPROVAL'); ?></label>
 		<span class='field'>
 		<select name="projectState" id="projectState">
 			<option value="0" <?php if($values['state'] == 0){ ?> selected=selected
-			<?php } ?>><?php echo $language->lang_echo('OPEN'); ?></option>
+			<?php } ?>><?php echo $this->__('OPEN'); ?></option>
 		
 			<option value="-1" <?php if($values['state'] == -1){ ?> selected=selected
-			<?php } ?>><?php echo $language->lang_echo('CLOSED'); ?></option>
+			<?php } ?>><?php echo $this->__('CLOSED'); ?></option>
 		
 		</select> <br />
 		</span></p>
@@ -84,7 +84,7 @@ $helper = $this->get('helper');
 </div>
 <div class="span6">
 			<div class="widget">
-			   <h4 class="widgettitle"><?php echo $language->lang_echo('ASSIGN'); ?></h4>
+			   <h4 class="widgettitle"><?php echo $this->__('ASSIGN'); ?></h4>
 			   <div class="widgetcontent">
 			   	Choose the users that will have access to this project<br />
 			   
@@ -121,7 +121,7 @@ $helper = $this->get('helper');
 	
 
 <div class="widget">
-   <h4 class="widgettitle"><?php echo $language->lang_echo('PROJECT_DETAILS'); ?></h4>
+   <h4 class="widgettitle"><?php echo $this->__('PROJECT_DETAILS'); ?></h4>
    <div class="widgetcontent">
 
 
@@ -130,7 +130,7 @@ $helper = $this->get('helper');
 </span></p>
 
 <p class='stdformbutton'>
-	<input type="submit" name="save" id="save" class="button" value="<?php echo $language->lang_echo('SAVE'); ?>" class="button" />
+	<input type="submit" name="save" id="save" class="button" value="<?php echo $this->__('SAVE'); ?>" class="button" />
 </p>
 
 	</div>

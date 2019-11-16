@@ -73,8 +73,8 @@ $helper = new leantime\core\helper();
             	<span class="<?php echo $this->getModulePicture() ?>"></span>
             </div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('MESSAGES'); ?></h1>
+                <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+                <h1><?php echo $this->__('MESSAGES'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -89,8 +89,8 @@ $helper = new leantime\core\helper();
 
     <ul>
       <li class="back"><a>Back</a></li>
-      <li class="active"><a href="#inbox"><?php echo $language->lang_echo('MESSAGES') ?></a></li>
-      <li><a href="#compose"><?php echo $language->lang_echo('COMPOSE') ?></a></li>
+      <li class="active"><a href="#inbox"><?php echo $this->__('MESSAGES') ?></a></li>
+      <li><a href="#compose"><?php echo $this->__('COMPOSE') ?></a></li>
     </ul>
   </div>
   
@@ -205,7 +205,7 @@ $helper = new leantime\core\helper();
 			         	<input type='hidden' name='parent_id' value='<?php echo $msgList['id'] ?>' />
 
 						
-				        <input type='submit' value='<?php echo strip_tags($language->lang_echo('REPLY')) ?>' name='reply' />
+				        <input type='submit' value='<?php echo strip_tags($this->__('REPLY')) ?>' name='reply' />
 						
 					</form>
 		        </div><!--reply-->
@@ -225,7 +225,7 @@ $helper = new leantime\core\helper();
 				<div class='par'>
 					<div class="btn-group" style="float: left; margin-left: 40px; ">
 						<button id='widgetAction' type='button' class='btn btn-primary'  style='position:relative; z-index:999;'>
-							<?php echo $language->lang_echo('ADD_USER') ?>
+							<?php echo $this->__('ADD_USER') ?>
 							<span class="caret"></span>
 						</button>
 						<ul id='widgetList' class='dropdown-menu widgetList' style='display: none; right: auto; left: 0;'>
@@ -263,8 +263,8 @@ $helper = new leantime\core\helper();
 				
 				<p>
 					<span class='field'>
-						<input type='submit' class="button" value='<?php echo $language->lang_echo('SEND') ?>' name='send' />					
-						<input type="reset" class="btn" value="<?php echo $language->lang_echo('RESET_BUTTON') ?>" />
+						<input type='submit' class="button" value='<?php echo $this->__('SEND') ?>' name='send' />
+						<input type="reset" class="btn" value="<?php echo $this->__('RESET_BUTTON') ?>" />
 					</span>
 				</p>
 				

@@ -43,7 +43,7 @@ $project = $this->get('values');
 
 
                     <ul>
-                        <li><a href="#projectdetails"><?php echo $language->lang_echo('PROJECT_DETAILS'); ?></a></li>
+                        <li><a href="#projectdetails"><?php echo $this->__('PROJECT_DETAILS'); ?></a></li>
                     </ul>
 
                     <div id="projectdetails">
