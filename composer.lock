@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "645131267eebdef25cad0f83acbec080",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.112.16",
+            "version": "3.112.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "782f304ef4dc2fa73f5ecfbb49fcba46238ed541"
+                "reference": "c84de8adf2b014124b0058013805caf2ae384137"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/782f304ef4dc2fa73f5ecfbb49fcba46238ed541",
-                "reference": "782f304ef4dc2fa73f5ecfbb49fcba46238ed541",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c84de8adf2b014124b0058013805caf2ae384137",
+                "reference": "c84de8adf2b014124b0058013805caf2ae384137",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-10-07T18:13:37+00:00"
+            "time": "2019-10-11T18:14:55+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

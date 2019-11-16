@@ -14,7 +14,7 @@ jQuery(document).ready(function(){
         window.setTimeout(function () {
             jQuery('.ui-weekpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
         }, 1);
-    }
+    };
 
     var setDates = function (input) {
         var $input = jQuery(input);
@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
             jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
             jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         }
-    }
+    };
 
 
 
@@ -116,7 +116,7 @@ jQuery(document).ready(function(){
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
 
-    })
+    });
     
     jQuery(".timesheetTable input").change(function(){
     	

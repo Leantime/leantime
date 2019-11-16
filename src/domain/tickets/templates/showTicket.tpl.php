@@ -30,9 +30,9 @@ $tickets = $objTicket;
 
         <script type="text/javascript">
             function changeStatus(id) {
-                var state = new Array('label-success', 'label-warning', 'label-info', 'label-important', 'label-inverse');
+                var state = ['label-success', 'label-warning', 'label-info', 'label-important', 'label-inverse'];
 
-                var statePlain = new Array('Finished', 'Problem', 'Unapproved', 'New', 'Seen');
+                var statePlain = ['Finished', 'Problem', 'Unapproved', 'New', 'Seen'];
 
                 var newStatus = jQuery("#status-select-" + id + " option:selected").val();
 

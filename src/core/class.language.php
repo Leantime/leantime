@@ -48,6 +48,7 @@ namespace leantime\core {
         function __construct()
         {
 
+            //Todo: Add cache
             $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
@@ -137,6 +138,7 @@ namespace leantime\core {
             }
 
         }
+
 
         public function __($index)
         {

@@ -23,7 +23,7 @@ $efforts = $this->get('efforts');
   jQuery(window).bind("load", function () {
   		jQuery(".loading").fadeOut();
         jQuery(".filterBar .row-fluid").css("opacity", "1");
-        var height = jQuery("html").height()-175;
+        var height = jQuery("html").height()-320;
         jQuery(".column .contentInner").css("height", height);
       countTickets();
   });
@@ -67,15 +67,13 @@ $efforts = $this->get('efforts');
 	        	type: 'POST',
 	            url: '/tickets/showKanban&raw=true&sort=true',            
 	            data: 
-	            {
-		        	<?php foreach($this->get('allTicketStates') as $key => $statusRow){ ?>
+	            {  	<?php foreach($this->get('allTicketStates') as $key => $statusRow){ ?>
 					<?php echo $key ?>: jQuery(".contentInner.status_<?php echo $key ?>").sortable('serialize'),
 		        	<?php } ?>
 		        	statusX: ""
 				}
-	        });
-	        				        
-	    }
+        })
+        }
     });
     
     function tilt_direction(item) {

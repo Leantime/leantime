@@ -12,9 +12,8 @@ jQuery(function($, undefined) {
 
 	function isFullScreen() {
 		return screen.height == $w.height()+58;
-	};
-
-	$b.append('<style type="text/css">'+
+    }
+    $b.append('<style type="text/css">'+
 		'.nyroModalCloseButton{font-size: 1px}'+
 		'.nyroModalLink .nyroModalPrev, .nyroModalDom .nyroModalPrev, .nyroModalForm .nyroModalPrev, .nyroModalFormFile .nyroModalPrev {left: -10px}'+
 		'</style>');
