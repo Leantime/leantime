@@ -55,6 +55,22 @@ grunt default
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
+### Installation via Docker ###
+
+We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
+To run the image enter your MySQL credentials and execute
+
+```
+docker run -d -p 80:80 --network leantime-net \
+-e DB_HOST=mysql_leantime \
+-e MYSQL_USER=admin \
+-e MYSQL_PASSWORD=321.qwerty \
+-e MYSQL_DATABASE=leantime \
+--name leantime leantime/leantime:latest
+```
+
+Once started you can go to `<yourdomain.com>/install` and run the installation script.
+
 ### Update ###
 
 * Make sure to take a backup of your database and files
