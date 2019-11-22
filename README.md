@@ -13,6 +13,7 @@ Features:
 * Project dashboards
 * Multiple user roles (client, developer, manager, admin)
 * Integrations with Mattermost & Slack
+* File storage with AWS S3 or local file system 
 
 ### Screenshots ###
 
