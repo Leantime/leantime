@@ -103,7 +103,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
         }
 
-        public function addComment($values,$module)
+        public function addComment($values, $module)
         {
 
             $sql = "INSERT INTO zp_comment (
@@ -118,9 +118,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
 
-
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
         public function deleteComment($id)
@@ -130,11 +131,13 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->{'database'}->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
-        public function editComment($text,$id)
+        public function editComment($text, $id)
         {
 
             $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";
@@ -142,8 +145,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':text', $text, PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
     }

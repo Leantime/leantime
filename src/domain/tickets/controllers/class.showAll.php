@@ -113,17 +113,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            if (isset($_GET["punchIn"]) === true) {
-                $ticketId = $_POST["ticketId"];
-                $ticketRepo->punchIn($ticketId);
 
-            }
-
-            if (isset($_GET["punchOut"]) === true) {
-                $ticketId = $_POST["ticketId"];
-                $hoursBooked = $ticketRepo->punchOut($ticketId);
-                echo $hoursBooked;
-            }
 
             $tpl->assign("onTheClock", $ticketRepo->isClocked($_SESSION["userdata"]["id"]));
 

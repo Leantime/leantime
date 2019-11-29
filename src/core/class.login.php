@@ -137,20 +137,19 @@ namespace leantime\core {
 
             if (isset($_POST['login'])===true && isset($_POST['username'])===true && isset($_POST['password'])===true) {
 
-                $this->username = ($_POST['username']);
+                $this->username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
 
                 $this->password = ($_POST['password']);
 
-                if(isset($_POST['language']) === true) {
+                $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
 
-                    $_SESSION['language'] = htmlentities($_POST['language']);
+                //If login successful redirect to the correct url to avoid post on reload
+                if($this->login() === true){
 
+                    $this->checkSessions();
+                    header("Location:".$redirectUrl);
+                    exit();
                 }
-
-                $this->login();
-
-                //Check the sessions in the DB and delete sessionid if user hasn't done anything since $cookieTime
-                $this->checkSessions();
 
             }
 

@@ -242,8 +242,6 @@ namespace leantime\domain\services {
 
             $project = $this->getProject($projectId);
 
-
-            
             $_SESSION["currentProject"] = $projectId;
 
             if(strlen($_SESSION['currentProjectName']) > 25){
@@ -252,16 +250,23 @@ namespace leantime\domain\services {
                 $_SESSION["currentProjectName"] = $project['name'];
             }
 
-
-
-
-
             $_SESSION["currentProjectClient"] = $project['clientName'];
 
             $_SESSION["currentSprint"] = "";
             $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
             $_SESSION['currentRetroCanvas'] = "";
+
+        }
+
+        public function getUsersAssignedToProject($projectId)
+        {
+            return $this->projectRepository->getUsersAssignedToProject($projectId);
+        }
+
+        public function isUserAssignedToProject($userId, $projectId) {
+
+            return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
 
         }
 

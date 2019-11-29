@@ -14,7 +14,7 @@ namespace leantime\core {
          * @access private
          * @var    string
          */
-        private $iniFolder = '/resources/language/';
+        private $iniFolder = '../resources/language/';
 
         /**
          * @access private
@@ -43,12 +43,12 @@ namespace leantime\core {
         /**
          * __construct - Check standard language otherwise get language from browser
          *
-         * @return
+         * @return array
          */
         function __construct()
         {
 
-            //Todo: Add cache
+
             $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
@@ -70,6 +70,9 @@ namespace leantime\core {
 
                 }
 
+            }else{
+
+                throw new \Exception("Language list missing");
             }
 
         }
@@ -79,12 +82,14 @@ namespace leantime\core {
          *
          * @access public
          * @param  $lang
-         * @return void
+         * @return array
          */
         public function setLanguage($lang)
         {
 
             $this->language = $lang;
+
+            $this->readIni();
 
         }
 
@@ -97,13 +102,14 @@ namespace leantime\core {
         public function readIni()
         {
 
-            if(file_exists(''.$this->iniFolder.''.$this->language.'/'.$this->language.'.ini') === true) {
+            //Todo: Add cache
+            if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.''.$this->language.'/'.$this->language.'.ini');
+                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini');
 
             }else{
 
-                $this->ini_array[0] = 'File not found';
+                throw new \Exception("Language file not found");
 
             }
 

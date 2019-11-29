@@ -212,7 +212,7 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->{'database'}->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
+            return $stmn->execute();
             $stmn->closeCursor();
 
         }

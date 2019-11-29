@@ -9,124 +9,94 @@ namespace leantime\domain\controllers {
     class show
     {
 
-        /**
-         * @return void
-         */
-        public function run()
+        private $tpl;
+        private $dashboardRepo;
+        private $projectService;
+        private $sprintService;
+        private $ticketService;
+        private $userService;
+        private $timesheetService;
+
+
+        public function __construct()
         {
+            $this->tpl = new core\template();
+            $this->dashboardRepo = new repositories\dashboard();
+            $this->projectService = new services\projects();
+            $this->sprintService = new services\sprints();
+            $this->ticketService = new services\tickets();
+            $this->userService = new services\users();
+            $this->timesheetService = new services\timesheets();
 
             $_SESSION['lastPage'] = "/dashboard/show";
 
-            $tpl = new core\template();
-            $helper = new core\helper();
-            $dashboardRepo = new repositories\dashboard();
-            $projectService = new services\projects();
-            $sprintService = new services\sprints();
-            $ticketService= new services\tickets();
-            $userRepo = new repositories\users();
-            $ticketRepo = new repositories\tickets();
-
-            $tpl->assign('allUsers', $userRepo->getAll());
-
-            //QuickAdd
-            if (isset($_POST['quickadd']) == true) {
-                $result = $ticketService->quickAddTicket($_POST);
-
-                if (isset($result["status"])) {
-                    $tpl->setNotification($result["message"], $result["status"]);
-                } else {
-                    $tpl->setNotification("To-Do successfully added", "success");
-
-                    $subject = "A new To-Do was added";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/showTicket/". $result;
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do ";
-                    $projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
-
-                }
-            }
-
-
-            //Run reports
-
             $reportService = new services\reports();
             $reportService->dailyIngestion();
+        }
+
+        /**
+         * @return void
+         */
+        public function get()
+        {
+
+            $this->tpl->assign('allUsers', $this->userService->getAll());
 
             //Project Progress
-
-            $progress = $projectService->getProjectProgress($_SESSION['currentProject']);
-            $tpl->assign('projectProgress', $progress);
-            $tpl->assign("currentProjectName", $projectService->getProjectName($_SESSION['currentProject']));
+            $progress = $this->projectService->getProjectProgress($_SESSION['currentProject']);
+            $this->tpl->assign('projectProgress', $progress);
+            $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Sprint Burndown
-            $currentSprint = $sprintService->getCurrentSprint($_SESSION['currentProject']);
-            $sprintChart = $sprintService->getSprintBurndown($currentSprint);
-
-            if($sprintChart !== false) {
-                $tpl->assign('sprintBurndown', $sprintChart);
-                $tpl->assign('currentSprint', $currentSprint);
-                $tpl->assign('upcomingSprint', false);
-            }else{
-                $tpl->assign('backlogBurndown', $sprintService->getBacklogBurndown($_SESSION['currentProject']));
-                $tpl->assign('currentSprint', false);
-                $tpl->assign('upcomingSprint',  $sprintService->getUpcomingSprint($_SESSION['currentProject']));
+            $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
+            $sprintChart = $this->sprintService->getSprintBurndown($currentSprint);
+            if ($sprintChart !== false) {
+                $this->tpl->assign('sprintBurndown', $sprintChart);
+                $this->tpl->assign('currentSprint', $currentSprint);
+                $this->tpl->assign('upcomingSprint', false);
+            } else {
+                $this->tpl->assign('backlogBurndown', $this->sprintService->getBacklogBurndown($_SESSION['currentProject']));
+                $this->tpl->assign('currentSprint', false);
+                $this->tpl->assign('upcomingSprint', $this->sprintService->getUpcomingSprint($_SESSION['currentProject']));
             }
-
 
             //Milestones
-            $milestones = $ticketService->getAllMilestones($_SESSION['currentProject']);
-            $tpl->assign('milestones', $milestones);
-
+            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
+            $this->tpl->assign('milestones', $milestones);
 
             // TICKETS
-            $tickets = new repositories\tickets();
-
-            $tpl->assign('tickets', $ticketService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $_SESSION['currentProject']));
-
-            $tpl->assign('states', $tickets->statePlain);
-            $tpl->assign("onTheClock", $tickets->isClocked($_SESSION["userdata"]["id"]));
-
-
-
-            // HOURS
-            $ts = new repositories\timesheets();
-            $myHours = $ts->getUsersHours($_SESSION['userdata']['id']);
-
-            $tpl->assign('myHours', $myHours);
-
-            // NOTES
-            if (isset($_POST['save'])) {
-                if (isset($_POST['title']) && isset($_POST['description'])) {
-                    $values = array(
-                        'title' => $_POST['title'],
-                        'description' => $_POST['description']
-                    );
-
-                    $dashboardRepo->addNote($_SESSION['userdata']['id'], $values);
-                    $tpl->setNotification('SAVE_SUCCESS', 'success');
-                } else {
-                    $tpl->setNotification('MISSING_FIELDS', 'error');
-                }
-            }
+            $this->tpl->assign('tickets', $this->ticketService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $_SESSION['currentProject']));
+            $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+            $this->tpl->assign("types", $this->ticketService->getTicketTypes());
+            $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
 
             // Statistics
-            $tpl->assign('closedTicketsPerWeek', $dashboardRepo->getClosedTicketsPerWeek());
-            $tpl->assign('hoursPerTicket', round($dashboardRepo->getHoursPerTicket()));
-            $tpl->assign('hoursBugFixing', round($dashboardRepo->getHoursBugFixing(), 1));
+            $this->tpl->assign('closedTicketsPerWeek', $this->dashboardRepo->getClosedTicketsPerWeek());
+            $this->tpl->assign('hoursPerTicket', round($this->dashboardRepo->getHoursPerTicket()));
+            $this->tpl->assign('hoursBugFixing', round($this->dashboardRepo->getHoursBugFixing(), 1));
 
-            $tpl->assign('ticketsRepo', $ticketRepo);
-            $tpl->assign('efforts', $ticketRepo->efforts);
-            $tpl->assign("types", $ticketRepo->type);
-            $tpl->assign('allTicketStates', $ticketRepo->statePlain);
-
-
-            $tpl->assign('notes', $dashboardRepo->getNotes($_SESSION['userdata']['id']));
-
-            $tpl->assign('helper', $helper);
-
-            $tpl->display('dashboard.show');
+            $this->tpl->display('dashboard.show');
 
         }
 
-    }
+        public function post($params)
+        {
 
+            if (isset($params['quickadd']) == true) {
+
+                $result = $this->ticketService->quickAddTicket($params);
+
+                if (isset($result["status"])) {
+                    $this->tpl->setNotification($result["message"], $result["status"]);
+                } else {
+                    $this->tpl->setNotification("To-Do successfully added", "success");
+                }
+
+                $this->tpl->redirect("/dashboard/show");
+            }
+
+
+        }
+    }
 }

@@ -5,7 +5,7 @@ leantime.ticketsController = (function () {
     var milestoneModalConfig = {
         sizes: {
             minW: 500,
-            minH: 750,
+            minH: 750
         },
         resizable: true,
         autoSizable: true,
@@ -37,9 +37,14 @@ leantime.ticketsController = (function () {
                 _initDates();
                 _initModals();
                 _initSprintPopover();
-                _initMilestonePopover();
+
                 _initUserPopover();
-                _initEffortPopover();
+
+                //_initEffortPopover();
+                _initEffortDropdown();
+                _initMilestoneDropdown();
+                _initStatusDropdown();
+
                 _initTicketEditor();
                 _initToolTips();
 
@@ -116,7 +121,7 @@ leantime.ticketsController = (function () {
 
                 jQuery(".btn-group").on(
                     "click", "button", function () {
-                        $btn =jQuery(this);
+                        var $btn =jQuery(this);
                         var mode = $btn.text();
                         gantt_chart.change_view_mode(mode);
                         $btn.parent().find('button').removeClass('active');
@@ -271,7 +276,7 @@ leantime.ticketsController = (function () {
         var sprintModalConfig = {
             sizes: {
                 minW: 300,
-                minH: 350,
+                minH: 350
             },
             resizable: true,
             autoSizable: true,
@@ -295,7 +300,7 @@ leantime.ticketsController = (function () {
         var modalConfig = {
             sizes: {
                 minW: 500,
-                minH: 750,
+                minH: 750
             },
             resizable: true,
             autoSizable: true,
@@ -360,13 +365,7 @@ leantime.ticketsController = (function () {
         );
     };
 
-    var _initEffortPopover = function () {
-        jQuery('.effortPopover').popover(
-            {
-                template:'<div class="popover effortPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-
-            }
-        );
+    var _initEffortDropdown = function() {
 
         var storyPointLabels = {
             '1': 'XS',
@@ -377,72 +376,120 @@ leantime.ticketsController = (function () {
             '13': "XXL"
         };
 
-        jQuery("body").on(
-            "click", ".effortPopoverContainer input", function () {
+        jQuery("body").on("click", ".effortDropdown .dropdown-menu a", function () {
 
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
+            var dataValue = jQuery(this).attr("data-value").split("_");
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: '/api/tickets',
-                        data:
-                        {
-                            id : ticket[1],
-                            storypoints:val
-                        }
-                    }
-                ).done(
-                    function () {
-                        jQuery("#effort-"+ticket[1]).text(storyPointLabels[val]);
-                        jQuery('.effortPopover').popover('hide');
-                    }
-                );
+            if (dataValue.length === 2) {
 
-            }
-        );
-    };
-
-
-    var _initMilestonePopover = function () {
-
-        jQuery('.milestonePopover').popover(
-            {
-                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-body popover-content"></div></div>'
-
-            }
-        );
-
-        jQuery("body").on(
-            "click", ".milestonePopoverContainer input", function () {
-
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
-                var label = jQuery(this).attr('data-label');
-                var color = jQuery(this).attr('data-color');
+                var ticketId = dataValue[0];
+                var effortId = dataValue[1];
 
                 jQuery.ajax(
                     {
                         type: 'PATCH',
                         url: '/api/tickets',
                         data:
-                        {
-                            id : ticket[1],
-                            dependingTicketId:val
-                        }
+                            {
+                                id: ticketId,
+                                storypoints: effortId
+                            }
                     }
                 ).done(
                     function () {
-                        jQuery("#milestone-"+ticket[1]).text(label);
-                        jQuery("#milestone-"+ticket[1]).css("backgroundColor", color);
-                        jQuery('.milestonePopover').popover('hide');
+                        jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.effort_updated"));
+
                     }
                 );
 
+            }else{
+                console.log("Ticket Controller: Effort data value not set correctly");
+            }
+        });
+
+    };
+
+
+    var _initMilestoneDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".milestoneDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length === 3) {
+
+                    var ticketId = dataValue[0];
+                    var milestoneId = dataValue[1];
+                    var color = dataValue[2];
+
+                    jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").append(" ...");
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    dependingTicketId:milestoneId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
+                            jQuery("#milestoneDropdownMenuLink"+ticketId).css("backgroundColor", color);
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.milestone_updated"));
+                        }
+                    );
+
+                }
             }
         );
     };
+
+    var _initStatusDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".statusDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 3) {
+
+                    var ticketId = dataValue[0];
+                    var statusId = dataValue[1];
+                    var className = dataValue[2];
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    status:statusId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
+                            jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            leantime.ticketsController.colorTicketBoxes(ticketId);
+                        }
+                    );
+
+                }
+            }
+        );
+
+        leantime.ticketsController.colorTicketBoxes();
+    };
+
 
     var _initUserPopover = function () {
 
@@ -637,6 +684,45 @@ leantime.ticketsController = (function () {
 
     };
 
+    var colorTicketBoxes = function (currentBox){
+
+        var color = "#fff";
+        jQuery(".ticketBox").each(function(index){
+
+            var value = jQuery(this).find(".statusDropdown > a").attr("class");
+
+            if(value != undefined) {
+                if (value.indexOf("important") > -1) {
+
+                    color = "#b94a48";
+
+                } else if (value.indexOf("warning") > -1) {
+
+                    color = "#f89406";
+
+                } else if (value.indexOf("success") > -1) {
+
+                    color = "#468847";
+
+                } else if (value.indexOf("default") > -1) {
+
+                    color = "#999999";
+                }
+                jQuery(this).css("borderLeft", "5px solid " + color);
+
+                if(currentBox != null) {
+                    if (jQuery(this).attr("data-val") == currentBox) {
+                        jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
+                    }
+                }
+
+            }
+        });
+
+
+
+    };
+
 
     // Make public what you want to have public, everything else is private
     return {
@@ -646,6 +732,7 @@ leantime.ticketsController = (function () {
         updateRemaining:updateRemaining,
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
-        initTimeSheetChart:initTimeSheetChart
+        initTimeSheetChart:initTimeSheetChart,
+        colorTicketBoxes:colorTicketBoxes
     };
 })();

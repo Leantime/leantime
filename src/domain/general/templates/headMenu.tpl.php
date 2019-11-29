@@ -2,10 +2,13 @@
 
 <ul class="headmenu">
 
-    <?php if ($_SESSION['userdata']['role'] != "user") { ?>
+    <?php if ($_SESSION['userdata']['role'] != "user") {
 
-        <?php if($this->get('onTheClock') !== false){
-           echo "<li class='timerHeadMenu'><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
+
+
+           echo "<li class='timerHeadMenu' id='timerHeadMenu'";
+            if($this->get('onTheClock') === false){ echo " style='display:none;' " ;}
+           echo"><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
                 <span class='head-icon fa fa-stop'></span>
                 ".$this->get('onTheClock')['totalTime']."
                 Timer on ".substr($this->escape($this->get('onTheClock')['headline']), 0, 10)."...
@@ -20,15 +23,14 @@
                     </a>
                 </li>
                 <li>
-                    <a href='javascript:void(0);' class="punchOut" value="<?php $this->e($this->get('onTheClock')['id']); ?>">
+                    <a href='javascript:void(0);' class="punchOut" data-value="<?php $this->e($this->get('onTheClock')['id']); ?>">
                         <span class="fa fa-stop"></span> Stop Timer
                     </a>
                 </li>
             </ul>
 
-<?php
-           echo"</li>";
-        }?>
+        </li>
+
         <li>
             <a href='/timesheets/showMy/'>
                 <span class="head-icon fa fa-clock-o"></span>

@@ -77,8 +77,7 @@ namespace leantime\core {
         {
             $this->controller = FrontController::getInstance();
 
-            $language = new language();
-            $this->language = $language->readIni();
+            $this->language = new language();
 
         }
 
@@ -151,24 +150,18 @@ namespace leantime\core {
             $module = frontcontroller::getModuleName($template);
 
             $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
                 throw new Exception($this->__("notifications.no_template"));
-
-            } else {
-
-                include $strTemplate;
-
-                $subContent = ob_get_clean();
-
-                $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
-
-                echo $content;
-
             }
 
-            return;
+            include $strTemplate;
+
+            $subContent = ob_get_clean();
+
+            $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+
+            echo $content;
+
         }
 
         /**

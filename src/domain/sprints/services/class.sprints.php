@@ -47,9 +47,11 @@ namespace leantime\domain\services {
             $sprint = $this->sprintRepository->getCurrentSprint($projectId);
 
             if($sprint) {
+                $_SESSION["currentSprint"] = $sprint->id;
                 return $sprint;
             }
 
+            $_SESSION["currentSprint"] = "";
             return false;
 
         }

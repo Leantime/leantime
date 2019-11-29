@@ -18,7 +18,11 @@ if($login->logged_in()!==true){
 	ob_start();
 }
 
-$application = new leantime\core\application();
+$application = new leantime\core\application(new leantime\core\config(), $settings, $login,  leantime\core\frontcontroller::getInstance(ROOT), new  leantime\core\language());
 $application->start();
 
-ob_end_flush();
+if(ob_get_length() > 0) {
+    ob_end_flush();
+}
+
+

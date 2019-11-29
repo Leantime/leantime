@@ -381,16 +381,22 @@ namespace leantime\domain\repositories {
          */
         public function getUsersTicketHours($ticketId, $userId)
         {
-            $totalHours = 0;
-            $sql = "SELECT * FROM `zp_timesheets` WHERE zp_timesheets.ticketId ='$ticketId' AND zp_timesheets.userId='$userId'";
 
-            $results = $this->db->dbQuery($sql)->dbFetchResults();
+            $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
-            foreach($results as $row) {
-                $totalHours += $row['hours'];
+            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            if(count($values) > 0) {
+                return $values[0]['sumHours'];
+            }else{
+                return 0;
             }
-
-            return $totalHours;
         }
 
         /**
@@ -402,22 +408,39 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO zp_timesheets
-			(userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate) 
+			  (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate) 
 			VALUES
-			('".$values['userId']."', 
-			'".$values['ticket']."', 
-			'".$values['date']."', 
-			'".$values['hours']."', 
-			'".$values['kind']."', 
-			'".$values['description']."', 
-			'".$values['invoicedEmpl']."', 
-			'".$values['invoicedComp']."',  
-			'".$values['invoicedEmplDate']."', 
-			'".$values['invoicedCompDate']."', 
-			'".$values['rate']."')
-			 ON DUPLICATE KEY UPDATE hours = '".$values['hours']."'";
+                (:userId,
+                :ticket,
+                :date,
+                :hours,
+                :kind,
+                :description, 
+                :invoicedEmpl,
+                :invoicedComp, 
+                :invoicedEmplDate,
+                :invoicedCompDate, 
+                :rate)
+			 ON DUPLICATE KEY UPDATE hours = :hours";
 
-            $this->db->dbQuery($query);
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
+            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedEmpl', $values['invoicedEmpl'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedComp', $values['invoicedComp'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
+            $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+
+            $stmn->execute();
+
+            $stmn->closeCursor();
         }
 
         public function simpleInsert($values)
@@ -557,48 +580,26 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * getTicketHours - get the Ticket hours for a specific ticket
+         * getLoggedHoursForTicket - get the Ticket hours for a specific ticket
          *
          * @access public
+         * @param $ticketId
+         * @return array
          */
-        public function getTicketHours($ticketId)
+        public function getLoggedHoursForTicket($ticketId)
         {
-            /*
-
-            $sql = "SELECT * FROM `zp_timesheets`
-                        WHERE ticketId = :ticketId ORDER BY workDate asc";
-
-            $stmn = $this->db->{'database'}->prepare($sql);
-            $stmn->bindValue(':ticketId',$ticketId,PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-
-            $hours = 0;
-
-            $results = $this->db->dbQuery($sql)->dbFetchResults();
-
-
-            foreach($results as $timesheet) {
-                $hours += $timesheet['hours'];
-            }
-            */
-
-
 
             $query = "SELECT
 				YEAR(zp_timesheets.workDate) AS year,
 				DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
 				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
 				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-				(zp_timesheets.hours) AS summe
-			
+				SUM(zp_timesheets.hours) AS summe
 			FROM 
 				zp_timesheets 
 			WHERE 
 				zp_timesheets.ticketId = :ticketId
+			GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
 			ORDER BY utc
 			";
 
@@ -609,13 +610,12 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-
             $returnValues = array();
 
             if(count($values) >0) {
+
                 $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
                 $endDate = "".$values[(count($values)-1)]['utc']."";
-
 
                 $returnValues = $this->dateRange($startDate, $endDate);
 
@@ -624,16 +624,28 @@ namespace leantime\domain\repositories {
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
 
                 }
+
             }else{
+
                 $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
                 $returnValues[date("%Y-%m-%d")]["summe"] = 0;
+
             }
 
             return $returnValues;
         }
 
-
-        function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d' )
+        /**
+         * dateRange - returns every single day between two dates
+         *
+         * @access private
+         * @param $first first date
+         * @param $last last date
+         * @param string $step default 1 day, can be changed to get every other day, week etc.
+         * @param string $format date format
+         * @return array
+         */
+        private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d' )
         {
 
             $dates = array();
@@ -695,6 +707,144 @@ namespace leantime\domain\repositories {
             }
 
         }
+
+
+        /**
+         * punchIn - clock in on a specified ticket
+         *
+         * @access public
+         * @param  $ticketId
+         */
+        public function punchIn($ticketId)
+        {
+
+            $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,UNIX_TIMESTAMP(CURRENT_TIMESTAMP))";
+
+            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+
+            $stmn->execute();
+            $stmn->closeCursor();
+
+        }
+
+        /**
+         * punchOut - clock out on whatever ticket is open for the user
+         *
+         * @access public
+         */
+        public function punchOut($ticketId)
+        {
+
+            $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
+
+            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+
+            $stmn->execute();
+
+            $result = $stmn->fetch();
+
+            $stmn->closeCursor();
+
+            if($result) {
+
+                $inTimestamp = $result['punchIn'];
+                $outTimestamp = time();
+
+                $seconds =  ( $outTimestamp - $inTimestamp );
+
+                $totalMinutesWorked = $seconds / 60;
+
+                $hoursWorked = round(($totalMinutesWorked / 60), 2);
+
+                $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
+
+                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+                $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+
+                $stmn->execute();
+                $stmn->closeCursor();
+
+                //At least 1 minutes
+                if($hoursWorked >= 0.016) {
+
+                    $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) 
+				VALUES
+                (:sessionId,:ticketId,CURRENT_TIMESTAMP,:hoursWorked,'GENERAL_BILLABLE');";
+
+                    $stmn = $this->db->{'database'}->prepare($query);
+                    $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+                    $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+                    $stmn->bindValue(':hoursWorked', $hoursWorked, PDO::PARAM_STR);
+
+                    $stmn->execute();
+                    $stmn->closeCursor();
+
+                }else{
+                    $hoursWorked = 0;
+                }
+
+                return $hoursWorked;
+
+            }else{
+                return false;
+            }
+
+
+
+
+        }
+
+        /**
+         * isClocked - Checks to see whether a user is clocked in
+         *
+         * @access public
+         * @param  id
+         */
+        public function isClocked($id)
+        {
+
+            $query = "SELECT 
+                     zp_punch_clock.id,
+                     zp_punch_clock.userId,
+                     zp_punch_clock.minutes,
+                     zp_punch_clock.hours,
+                     zp_punch_clock.punchIn,
+                     zp_tickets.headline
+                  FROM `zp_punch_clock` 
+                  LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
+
+            $onTheClock = false;
+
+            $stmn = $this->db->{'database'}->prepare($query);
+
+            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            $stmn->execute();
+
+            $results = $stmn->fetchAll();
+
+            $stmn->closeCursor();
+
+            if (count($results) > 0) {
+                $onTheClock["id"] = $results[0]["id"];
+                $onTheClock["since"] = $results[0]["punchIn"];
+                $onTheClock["headline"] = $results[0]["headline"];
+                $start_date = new \DateTime();
+                $start_date->setTimestamp($results[0]["punchIn"]);
+                $since_start = $start_date->diff(new \DateTime('NOW'));
+
+                $r = $since_start->format('%H:%I');
+
+                $onTheClock["totalTime"] = $r;
+            }
+
+            return $onTheClock;
+        }
+
 
 
     }

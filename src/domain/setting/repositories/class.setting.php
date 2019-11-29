@@ -1241,19 +1241,5 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function submoduleHasRights($alias)
-        {
-
-            $return = false;
-            $submodule = $this->getSubmodule($alias);
-            $role = $this->getRoleByName($_SESSION['userdata']['role']);
-
-            if (in_array($role['id'], explode(',', $submodule['roleIds'])) !== false) {
-                $return = true;
-            }
-
-            return $return;
-        }
-
     }
 }

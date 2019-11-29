@@ -8,15 +8,27 @@ namespace leantime\core;
  */
 class application
 {
-    
+
+    private $config;
+    private $settings;
+    private $login;
+    private $frontController;
+    private $language;
+
+
+    public function __construct(config $config, settings $settings, login $login, frontcontroller $frontController, language $language)
+    {
+
+        $this->config = $config;
+        $this->settings = $settings;
+        $this->login = $login;
+        $this->frontController = $frontController;
+        $this->language = $language;
+
+    }
+
     /**
-     * @access private
-     * @var    string - array of scripts to render (currently only CSS and Javascript)
-     */
-    private static $sections = array();
-    
-    /**
-     * start - renders applicaiton and routes to correct template, writes content to output buffer
+     * start - renders application and routes to correct template, writes content to output buffer
      *
      * @access public static
      * @return void
@@ -24,10 +36,10 @@ class application
     public function start()
     {
         
-        $config = new config();// Used in template
-        $settings = new settings(); //Used in templates to show app version
-        $login = new login(session::getSID());
-        $frontController = frontcontroller::getInstance(ROOT);
+        $config = $this->config; // Used in template
+        $settings = $this->settings; //Used in templates to show app version
+        $login = $this->login;
+        $frontController = $this->frontController;
 
 
         //Override theme settings
@@ -35,9 +47,9 @@ class application
 
         ob_start();
         
-        if($login->logged_in()===false) {
+        if($this->login->logged_in()===false) {
 
-            //Language is usually initialized by template engine. But template is not loaded on log in / installed case
+            //Language is usually initialized by template engine. But template is not loaded on log in / install case
             $language = new language();
 
             //Run password reset through application to avoid security holes in the front controller
@@ -51,7 +63,7 @@ class application
         
         }else{
 
-            $frontController->run();
+            $this->frontController->run();
 
         }
 

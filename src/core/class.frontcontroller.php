@@ -144,52 +144,53 @@ namespace leantime\core {
             //moduleName is filename
             $moduleName = self::getModuleName($completeName);
 
-
             //Folder doesn't exist.
-            if(is_dir('../src/domain/' . $moduleName) === false) {
+            if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
 
-                throw new Exception('No access');
+                header("HTTP/1.0 404 Not Found");
+                exit();
 
-            }elseif(is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
+            }
 
-                throw new Exception('File not found');
+            //TODO: refactor to be psr 4 compliant
+            include_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
 
-            }else{ // Else is not necessary - throw stops execution - but for the look...
+            //Initialize Action
+            $classname = "leantime\\domain\\controllers\\".$actionName ;
+            $action = new $classname;
 
-                include_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
+            if(is_object($action) === false) {
 
-                //Initialize Action
-                $classname = "leantime\\domain\\controllers\\".$actionName ;
-                $action = new $classname;
+                header("HTTP/1.0 501 Not Implemented");
+                exit();
 
-                if(is_object($action) === false) {
-                    throw new Exception('Could not initialize action');
+            }else{// Look at last else
 
-                }else{// Look at last else
+                try {
 
-                    try {
+                    //Everything ok? run action
+                    $method= $this->getRequestMethod();
 
-                        //Everything ok? run action
-                        $method= $this->getRequestMethod();
+                    if(method_exists($action, $method)) {
+                        $params = $this->getRequestParams($method);
+                        $action->$method($params);
 
-                        if(method_exists($action, $method)) {
-                            $params = $this->getRequestParams($method);
-                            $action->$method($params);
-                        }else {
-                            $action->run();
-                        }
-
-                    }catch (Exception $e) {
-
-                        echo $e->getMessage();
-
+                    }else {
+                        //Use run for all request types.
+                        $action->run();
                     }
+
+                }catch (Exception $e) {
+
+                    echo $e->getMessage();
 
                 }
 
-                $this->lastAction = $completeName;
-
             }
+
+            $this->lastAction = $completeName;
+
+
 
         }
 

@@ -14,14 +14,14 @@
 
     <?php echo $frontController->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css"/>
     <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"] ?>&v=<?php echo $settings->appVersion; ?>" type="text/css"/>
 
+    <script src="/api/i18n"></script>
 
     <!-- libs -->
     <script src="/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
-
 
     <!-- app -->
     <script src="/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>

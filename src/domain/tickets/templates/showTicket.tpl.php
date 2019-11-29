@@ -1,105 +1,44 @@
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
-$ticket = $this->get('ticket');
-$objTicket = $this->get('objTicket');
-$helper = $this->get('helper');
-$state = $this->get('state');
-$statePlain = $this->get('statePlain');
-$userId = $this->get('userId');
-$unreadCount = $this->get('unreadCount');
-$tickets = $objTicket;
+    defined('RESTRICTED') or die('Restricted access');
+    $ticket = $this->get('ticket');
+
 ?>
 
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> Go Back</a>
+        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$this->__("links.go_back") ?></a>
     </div>
 
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Edit ToDo</h1>
+        <h1><?=$this->__("headlines.edit_todo") ?></h1>
     </div>
+
 </div><!--pageheader-->
 
 <div class="maincontent">
     <div class="maincontentinner">
 
-
-        <script type="text/javascript">
-            function changeStatus(id) {
-                var state = ['label-success', 'label-warning', 'label-info', 'label-important', 'label-inverse'];
-
-                var statePlain = ['Finished', 'Problem', 'Unapproved', 'New', 'Seen'];
-
-                var newStatus = jQuery("#status-select-" + id + " option:selected").val();
-
-                jQuery.ajax({
-                    url: '/index.php?act=general.ajaxRequest&module=tickets.showAll&export=true',
-                    type: 'post',
-                    data: {ticketId: id, newStatus: newStatus},
-                    success: function (msg) {
-
-                        jQuery("#status-" + id).show();
-
-                        jQuery("#status-" + id).attr("class", "f-left " + state[newStatus]);
-                        jQuery("#status-" + id).html(statePlain[newStatus]);
-
-                        jQuery("#status-spinner-" + id).show();
-
-                        jQuery("#status-select-" + id).hide();
-
-                        jQuery(".maincontentinner").prepend("<div class='alert alert-success'><button data-dismiss='alert' class='close' type='button'>×</button>" + msg + "</div>");
-                    }
-                });
-
-            }
-
-
-            jQuery(document).ready(function () {
-
-                    jQuery("#ticketCount").html(<?php echo $unreadCount; ?>);
-                    jQuery('.tabbedwidget').tabs();
-
-                }
-            );
-
-
-            jQuery(window).load(function () {
-                jQuery(window).resize();
-            });
-
-
-        </script>
-
         <?php echo $this->displayNotification(); ?>
 
-
-            <div class="tabbedwidget tab-primary">
+        <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
             <ul>
-                <li><a href="#ticketdetails"><?php echo $this->displaySubmoduleTitle('tickets-ticketDetails') ?></a>
-                </li>
-                <li><a href="#subtasks"><?php echo $this->displaySubmoduleTitle('tickets-subTasks') ?>
-                        (<?php echo $this->get('numSubTasks'); ?>)</a></li>
-                <li><a href="#files"><?php echo $this->displaySubmoduleTitle('tickets-attachments') ?>
-                        (<?php echo $this->get('numFiles'); ?>)</a></li>
-                <li><a href="#comments">Discussion
-                        (<?php echo $this->get('numComments'); ?>)</a></li>
-
-                <?php if ($this->displaySubmoduleTitle('tickets-timesheet') != '') : ?>
-                    <li><a href="#timesheet">Time Tracking</a></li>
-                <?php endif; ?>
-
+                <li><a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a></li>
+                <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
+                <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
+                <li><a href="#comments"><?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
+                <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
+                    <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
+                <?php }; ?>
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="/tickets/showTicket/<?php echo $ticket['id']?>" method="post">
+                <form class="ticketModal" action="/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
-
-
                 </form>
             </div>
 
@@ -116,22 +55,37 @@ $tickets = $objTicket;
             </div>
 
             <div id="comments">
-                <form method="post" action="/tickets/showTicket/<?php echo $ticket['id']; ?>#comments" class="ticketModal">
+                <form method="post" action="/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', "/tickets/showTicket/".$ticket['id']."");
+                    $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
                     $this->displaySubmodule('comments-generalComment') ?>
                 </form>
             </div>
 
-            <?php if ($this->displaySubmoduleTitle('tickets-timesheet') != '') : ?>
+            <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                 <div id="timesheet">
                     <?php $this->displaySubmodule('tickets-timesheet') ?>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
         </div>
-
-        <br/><br/>
 
     </div>
 </div>
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        jQuery('.ticketTabs').tabs({
+            create: function( event, ui ) {
+
+                jQuery('.ticketTabs').css("visibility", "visible");
+            }
+        });
+    });
+
+    jQuery(window).load(function () {
+        jQuery(window).resize();
+    });
+
+</script>
