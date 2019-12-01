@@ -273,7 +273,7 @@ namespace leantime\domain\services {
                 $_SESSION['currentProject'] = '';
 
                 //If last project setting is set use that
-                $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject".$_SESSION['userdata']['id']);
+                $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject");
 
                 if($lastProject !== false && $lastProject != ''){
 
