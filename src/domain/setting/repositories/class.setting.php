@@ -35,7 +35,7 @@ namespace leantime\domain\repositories {
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($sql);
+                $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
                 try {
@@ -63,7 +63,7 @@ namespace leantime\domain\repositories {
 				VALUES (:key, :value) ON DUPLICATE KEY UPDATE
 				  `value` = :value";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
             $stmn->bindvalue(':value', $value, PDO::PARAM_STR);
 
@@ -78,7 +78,7 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_settings WHERE `key` = :key LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -109,7 +109,7 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_menu AS t2 ON t1.parent = t2.id
 				ORDER BY t2.name, t1.name";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
 
                 $stmn->execute();
 
@@ -163,7 +163,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_usermenu WHERE username = :user";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':user', $user, PDO::PARAM_STR);
 
@@ -178,7 +178,7 @@ namespace leantime\domain\repositories {
 
             $num = count($values);
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             for ($i = 0; $i < $num; $i++) {
 
@@ -186,7 +186,7 @@ namespace leantime\domain\repositories {
 				(username, menuId) VALUES
 				(:user, :value)";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
 
                 $stmn->bindValue(':user', $user, PDO::PARAM_STR);
                 $stmn->bindValue(':value', $values[$i], PDO::PARAM_STR);
@@ -195,7 +195,7 @@ namespace leantime\domain\repositories {
 
 
             }
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
             $stmn->closeCursor();
 
@@ -209,7 +209,7 @@ namespace leantime\domain\repositories {
             $query = "SELECT * FROM zp_menu 
 				ORDER BY name";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
 
@@ -229,7 +229,7 @@ namespace leantime\domain\repositories {
 				WHERE id = :id
 				LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -244,7 +244,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_usermenu WHERE menuId = :menu";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':menu', $menu, PDO::PARAM_STR);
 
@@ -260,7 +260,7 @@ namespace leantime\domain\repositories {
 
             $num = count($user);
             $stmn = '';
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             for ($i = 0; $i < $num; $i++) {
 
@@ -268,7 +268,7 @@ namespace leantime\domain\repositories {
 				(username, menuId) VALUES
 				(:user, :menu)";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
 
                 $stmn->bindValue(':menu', $menu, PDO::PARAM_STR);
                 $stmn->bindValue(':user', $user[$i], PDO::PARAM_STR);
@@ -278,7 +278,7 @@ namespace leantime\domain\repositories {
 
             }
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
             if ($num > 0) {
                 $stmn->closeCursor();
@@ -300,7 +300,7 @@ namespace leantime\domain\repositories {
 				FROM zp_user AS ac
 				LEFT JOIN zp_persons AS a ON ac.id = a.zp_person_account_id ORDER BY nachname";
 
-                $stmn = $this->db->{'database'}->prepare($sql_nutzer);
+                $stmn = $this->db->database->prepare($sql_nutzer);
 
 
                 $stmn->execute();
@@ -359,7 +359,7 @@ namespace leantime\domain\repositories {
 			
 			ORDER BY zp_roles.sysOrg, zp_roles.roleName";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
 
@@ -378,7 +378,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, roleName, roleDescription, sysOrg, template FROM zp_roles WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -396,7 +396,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_roles WHERE roleName = :name";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':name', $name, PDO::PARAM_STR);
 
@@ -421,7 +421,7 @@ namespace leantime\domain\repositories {
 
             $query .= " LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':alias', $alias, PDO::PARAM_STR);
 
@@ -453,7 +453,7 @@ namespace leantime\domain\repositories {
         public function editRole($values, $id)
         {
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $query = "UPDATE zp_roles SET 
 			roleName = :roleName,
@@ -462,7 +462,7 @@ namespace leantime\domain\repositories {
 			template = :template
 			 WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':roleName', $values['roleName'], PDO::PARAM_STR);
             $stmn->bindValue(':roleDescription', $values['roleDescription'], PDO::PARAM_STR);
@@ -476,7 +476,7 @@ namespace leantime\domain\repositories {
             //Delete old Relations
             $query = "DELETE FROM zp_rolesdefaultmenu WHERE roleId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -502,13 +502,13 @@ namespace leantime\domain\repositories {
 
                 $query2 .= " ";
 
-                $stmn = $this->db->{'database'}->prepare($query2);
+                $stmn = $this->db->database->prepare($query2);
                 $stmn->execute();
 
             }
 
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
 
             $stmn->closeCursor();
@@ -521,7 +521,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_roles WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -535,7 +535,7 @@ namespace leantime\domain\repositories {
 		role = :newRole 
 		WHERE role = :oldRole";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':newRole', $newRole, PDO::PARAM_STR);
             $stmn->bindValue(':oldRole', $roleName, PDO::PARAM_STR);
@@ -547,7 +547,7 @@ namespace leantime\domain\repositories {
             //Delete old Relations
             $query = "DELETE FROM zp_rolesdefaultmenu WHERE roleId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -561,11 +561,11 @@ namespace leantime\domain\repositories {
         public function newRole($values)
         {
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $query = "INSERT INTO zp_roles (roleName, roleDescription, sysOrg, template) VALUES (:roleName, :roleDescription, :sysOrg, :template)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':roleName', $values['roleName'], PDO::PARAM_STR);
             $stmn->bindValue(':roleDescription', $values['roleDescription'], PDO::PARAM_STR);
@@ -578,7 +578,7 @@ namespace leantime\domain\repositories {
 
             if ($menu[0] != '') {
 
-                $id = $this->db->{'database'}->lastInsertId();
+                $id = $this->db->database->lastInsertId();
 
                 $query2 = "INSERT INTO zp_rolesdefaultmenu
 					(menuId, roleId) 
@@ -598,13 +598,13 @@ namespace leantime\domain\repositories {
 
                 $query2 .= " ";
 
-                $stmn = $this->db->{'database'}->prepare($query2);
+                $stmn = $this->db->database->prepare($query2);
                 $stmn->execute();
 
             }
 
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
             $stmn->closeCursor();
 
@@ -622,7 +622,7 @@ namespace leantime\domain\repositories {
 					icon  = :icon
 				WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue(':parent', $values['parent'], PDO::PARAM_STR);
@@ -641,7 +641,7 @@ namespace leantime\domain\repositories {
             $query = "INSERT INTO zp_menu (name, parent, module, action, icon) VALUES 
 			(:name, :parent, :module, :action, :icon)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue(':parent', $values['parent'], PDO::PARAM_STR);
@@ -657,7 +657,7 @@ namespace leantime\domain\repositories {
         {
             $query = "DELETE FROM zp_menu WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -672,7 +672,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, roleId, menuId FROM zp_rolesdefaultmenu WHERE roleId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -705,7 +705,7 @@ namespace leantime\domain\repositories {
 			modules
 			FROM zp_system_organisations ORDER BY name";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
 
@@ -730,7 +730,7 @@ namespace leantime\domain\repositories {
 			FROM zp_system_organisations 
 			WHERE id = :id ORDER BY name";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -755,7 +755,7 @@ namespace leantime\domain\repositories {
 			modules = :modules				
 			WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':modules', $values['modules'], PDO::PARAM_STR);
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
@@ -774,7 +774,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_system_organisations (name, alias, modules) VALUES (:name,:alias,:modules)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue(':alias', $values['alias'], PDO::PARAM_STR);
@@ -789,11 +789,11 @@ namespace leantime\domain\repositories {
         {
 
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $query = "DELETE FROM zp_system_organisations WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -803,7 +803,7 @@ namespace leantime\domain\repositories {
             /*SELECT all roles that needs to be deleted*/
             $query = "SELECT roleName FROM zp_roles WHERE sysOrg = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -819,7 +819,7 @@ namespace leantime\domain\repositories {
 			role = :newRole 
 			WHERE role = :oldRole";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
 
                 $stmn->bindValue(':newRole', $newRole, PDO::PARAM_STR);
                 $stmn->bindValue(':oldRole', $values['roleName'], PDO::PARAM_STR);
@@ -833,7 +833,7 @@ namespace leantime\domain\repositories {
             /* DELETE all Roles */
             $query = "DELETE FROM zp_roles WHERE sysOrg = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -846,14 +846,14 @@ namespace leantime\domain\repositories {
             //Delete old Relations
             $query = "DELETE FROM zp_rolesdefaultmenu WHERE roleId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
 
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
             $stmn->closeCursor();
 
@@ -884,7 +884,7 @@ namespace leantime\domain\repositories {
             }
 
             $query .= ")";
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             for ($i = 0; $i < count($array); $i++) {
                 $stmn->bindValue(':role_' . $i . '', $array[$i], PDO::PARAM_STR);
@@ -953,7 +953,7 @@ namespace leantime\domain\repositories {
 			FROM zp_action_tabs
 			WHERE action = :action";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':action', $action, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -987,10 +987,10 @@ namespace leantime\domain\repositories {
         {
             $stmn = '';
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $query1 = "DELETE FROM zp_action_tabs WHERE action = :action";
-            $stmn = $this->db->{'database'}->prepare($query1);
+            $stmn = $this->db->database->prepare($query1);
             $stmn->bindValue(':action', $action, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -1002,7 +1002,7 @@ namespace leantime\domain\repositories {
 				(action, tab, tabRights) VALUES
 				(:action, :tab, :tabRights)";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
 
                 $stmn->bindValue(':action', $row['action'], PDO::PARAM_STR);
                 $stmn->bindValue(':tab', $row['tab'], PDO::PARAM_STR);
@@ -1012,7 +1012,7 @@ namespace leantime\domain\repositories {
 
             }
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
             $stmn->closeCursor();
 
         }
@@ -1025,7 +1025,7 @@ namespace leantime\domain\repositories {
 
 			FROM zp_action_tabs WHERE action = :action LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':action', $action, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -1076,7 +1076,7 @@ namespace leantime\domain\repositories {
 
             $query .= ")";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':action', $action, PDO::PARAM_STR);
             $stmn->bindValue(':tab', $tab, PDO::PARAM_STR);
@@ -1112,7 +1112,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_submodulerights";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -1126,7 +1126,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_submodulerights WHERE submodule=:file LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':file', $file, PDO::PARAM_STR);
 
@@ -1147,7 +1147,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_submodulerights WHERE alias=:alias LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':alias', $alias, PDO::PARAM_STR);
 
@@ -1211,19 +1211,19 @@ namespace leantime\domain\repositories {
         public function saveSubmoduleRights($values)
         {
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $truncate = "TRUNCATE zp_submodulerights";
             $insert = "INSERT INTO zp_submodulerights (alias, title, submodule, module, roleIds) 
 					VALUES (:alias, :title, :submodule, :module, :roleIds)";
 
 
-            $stmn = $this->db->{'database'}->prepare($truncate);
+            $stmn = $this->db->database->prepare($truncate);
             $stmn->execute();
 
             foreach ($values as $value) {
 
-                $stmn = $this->db->{'database'}->prepare($insert);
+                $stmn = $this->db->database->prepare($insert);
 
                 $stmn->bindValue(':alias', $value['alias'], PDO::PARAM_STR);
                 $stmn->bindValue(':title', $value['title'], PDO::PARAM_STR);
@@ -1235,7 +1235,7 @@ namespace leantime\domain\repositories {
             }
 
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
             $stmn->closeCursor();
 

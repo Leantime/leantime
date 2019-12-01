@@ -3,55 +3,96 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\domain\repositories;
     use leantime\domain\services;
 
     class showKanban
     {
+        private $projectService;
+        private $tpl;
+        private $ticketService;
+        private $sprintService;
+        private $timesheetService;
 
         public function __construct()
         {
+            $this->tpl = new core\template();
             $this->projectService = new services\projects();
+            $this->ticketService = new services\tickets();
+            $this->sprintService = new services\sprints();
+            $this->timesheetService = new services\timesheets();
+
+            $_SESSION['lastPage'] = "/tickets/showKanban";
+
+
+        }
+
+        public function get(array $params) {
+
+            if(isset($params['project']) === true && $_SESSION['currentProject'] != $_GET['project']) {
+
+            }
+
+            $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
+            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
+
+            $searchCriteria["orderBy"] = "kanbanSortIndex";
+
+            $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
+            $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
+            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
+
+            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
+
+
+            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+            $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
+
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+
+            $this->tpl->assign('currentSprint', $currentSprint);
+            $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+
+            $this->tpl->display('tickets.showKanban');
+
+        }
+
+        public function post(array $params) {
+
+
+            //QuickAdd
+            if(isset($_POST['quickadd']) == true) {
+
+                $result = $this->ticketService->quickAddTicket($params);
+
+                if(isset($result["status"]) ) {
+                    $this->tpl->setNotification($result["message"], $result["status"]);
+                }
+            }
+
         }
 
         /**
          * run - display template and edit data
          *
          * @access public
-         */
+
         public function run()
         {
 
-            $tpl = new core\template();
-            $projects = new repositories\projects();
-            $ticketsRepo = new repositories\tickets();
-            $sprintService = new services\sprints();
-            $ticketService = new services\tickets();
 
-            $_SESSION['lastPage'] = "/tickets/showKanban";
+
+
+
 
             //Default Search Criteria, set current project
 
             //Set initial sprint
 
-            $sprintService->getCurrentSprint($_SESSION['currentProject']);
-
-            if(isset($_SESSION['currentSprint']) === false || $_SESSION['currentSprint'] == '') {
-                $currentSprint = $sprintService->getCurrentSprint($_SESSION['currentProject']);
-
-                if(is_object($currentSprint) === true) {
-                    $_SESSION['currentSprint'] = $currentSprint->id;
-                }else{
-                    //If sprint doesnt exist. Show backlog
-                    $_SESSION['currentSprint'] = "none";
-                }
-
-            }
-
-            $searchCriteria = array("currentProject"=>$_SESSION["currentProject"],"users"=>"", "status"=>"", "searchterm"=> "", "searchType"=> "", "sprint"=>$_SESSION['currentSprint'], "milestone"=>"");
 
             //Active search overrides
-            if(isset($_COOKIE['searchCriteria']) == true) {
+            /*if(isset($_COOKIE['searchCriteria']) == true) {
                 $postedValues = unserialize($_COOKIE['searchCriteria']);
                 $searchCriteria = $this->getSearchCriteriaFromPost($postedValues, $searchCriteria);
             }
@@ -63,28 +104,13 @@ namespace leantime\domain\controllers {
             if(isset($_POST['search']) == true) {
                 $searchCriteria = $this->getSearchCriteriaFromPost($_POST, $searchCriteria);
             }
+*/
 
 
 
 
-            //QuickAdd
-            if(isset($_POST['quickadd']) == true) {
-                $result = $ticketService->quickAddTicket($_POST);
 
-                if(isset($result["status"]) ) {
-                    $tpl->setNotification($result["message"], $result["status"]);
-                }else{
-
-                    $tpl->setNotification("To-Do successfully added", "success");
-                    $subject = "A new To-Do was added";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/showTicket/". $result;
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".strip_tags($_POST['headline'])."'";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
-
-                }
-            }
-
-            if(isset($_GET["sort"]) === true) {
+  /*          if(isset($_GET["sort"]) === true) {
 
                 $sortedTicketArray = array();
 
@@ -105,17 +131,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $tpl->assign("onTheClock", $ticketsRepo->isClocked($_SESSION["userdata"]["id"]));
-            $tpl->assign("milestones", $ticketService->getAllMilestones($_SESSION["currentProject"]));
 
-            $tpl->assign("sprints", $sprintService->getAllSprints($_SESSION["currentProject"]));
-            $tpl->assign("futureSprints", $sprintService->getAllFutureSprints($_SESSION["currentProject"]));
-
-
-            $tpl->assign('allTickets', $ticketsRepo->getAllBySearchCriteria($searchCriteria, 'kanbansort'));
-            $tpl->assign("users", $projects->getUsersAssignedToProject($searchCriteria["currentProject"]));
-
-            $tpl->assign("types", $ticketsRepo->type);
 
             //prepare search criteria
             $searchCriteria["users"] = array_filter(
@@ -201,10 +217,11 @@ namespace leantime\domain\controllers {
             setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
 
             return $searchCriteria;
-        }
+        }*/
 
 
     }
+
 }
 
 

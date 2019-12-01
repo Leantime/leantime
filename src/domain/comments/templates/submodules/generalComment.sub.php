@@ -22,7 +22,7 @@
         
         <textarea rows="5" cols="50" name="text"></textarea><br />
         
-        <input type="submit" value="<?php echo $this->__('button.save') ?>" name="comment" class="button" />
+        <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="button" />
         <input type="hidden" name="comment"  value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         
@@ -35,7 +35,7 @@
 
             <?php foreach($this->get('comments') as $row): ?>
 
-                <div style="display:block; padding:10px; margin-bottom:10px; border-bottom:1px solid #d9d9d9;">
+                <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #d9d9d9;">
                     <?php
                             $files = new leantime\domain\repositories\files;
                             $file = $files->getFile($row['profileId']);
@@ -53,8 +53,8 @@
                     <small>
                         <?php printf(
                             $this->__('text.written_on_by'),
-                            date($this->__('language.dateformat') ,$row['date']),
-                            date($this->__('language.timeformat') ,$row['date']),
+                            date($this->__('language.dateformat'), strtotime($row['date'])),
+                            date($this->__('language.timeformat'), strtotime($row['date'])),
                             $this->escape($row['firstname']),
                             $this->escape($row['lastname'])
                         ); ?>
@@ -66,7 +66,7 @@
 
                     <?php if($row['userId'] == $_SESSION['userdata']['id']) { ?>
                     |
-                        <a href="<?php echo $deleteUrlBase.$row['id'] ?>" class="deleteComment">
+                        <a href="<?php echo $deleteUrlBase.$row['id'] ?>#comments" class="deleteComment">
                             <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
                         </a>
                     <?php } ?>
@@ -98,8 +98,8 @@
                             <small>
                                 <?php printf(
                                     $this->__('text.written_on_by'),
-                                    date($this->__('language.dateformat') ,$row['date']),
-                                    date($this->__('language.timeformat') ,$row['date']),
+                                    date($this->__('language.dateformat'), strtotime($row['date'])),
+                                    date($this->__('language.timeformat'), strtotime($row['date'])),
                                     $this->escape($row['firstname']),
                                     $this->escape($row['lastname'])
                                 ); ?>
@@ -107,7 +107,7 @@
 
                             <?php if($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                 |
-                                <a href="<?php echo $deleteUrlBase.$comment['id'] ?>" class="deleteComment">
+                                <a href="<?php echo $deleteUrlBase.$comment['id'] ?>#comments" class="deleteComment">
                                     <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
                                 </a>
                             <?php } ?>

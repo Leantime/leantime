@@ -318,7 +318,7 @@ namespace leantime\core {
             $query = "UPDATE zp_user SET session = '' 
 				 WHERE session = :sessionid LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':sessionid', $this->session, PDO::PARAM_STR);
             $stmn->execute();
@@ -352,7 +352,7 @@ namespace leantime\core {
 
             $query = "UPDATE zp_user SET session = '' WHERE (".time()." - sessionTime) > ".$this->cookieTime." ";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->execute();
             $stmn->closeCursor();
 
@@ -392,7 +392,7 @@ namespace leantime\core {
 			          WHERE username = :username
 			          LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':username', $username, PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -434,7 +434,7 @@ namespace leantime\core {
 				LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $this->userId, PDO::PARAM_INT);
             $stmn->bindValue(':sessionid', $sessionid, PDO::PARAM_STR);
@@ -458,7 +458,7 @@ namespace leantime\core {
 
             $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':resetLink', $link, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -514,7 +514,7 @@ namespace leantime\core {
 				LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':user', $username, PDO::PARAM_STR);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
             $stmn->bindValue(':link', $resetLink, PDO::PARAM_STR);
@@ -548,7 +548,7 @@ namespace leantime\core {
 				LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
             $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
             $stmn->bindValue(':password', password_hash($password, PASSWORD_DEFAULT), PDO::PARAM_STR);

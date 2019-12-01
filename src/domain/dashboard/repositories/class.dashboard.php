@@ -50,7 +50,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_tickets WHERE status = 0 AND date < DATE_SUB(NOW(),INTERVAL 1 WEEK);";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -98,14 +98,14 @@ namespace leantime\domain\repositories {
             $sql = "SELECT id 
 				FROM zp_tickets as tickets";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $tickets = $stmn->fetchAll();
             $stmn->closeCursor();
 
             $sql = "SELECT hours FROM zp_timesheets WHERE ticketId=:ticketId";
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $allHours = 0;
             foreach ($tickets as $ticket) {
                 $stmn->bindValue(':ticketId', $ticket['id'], PDO::PARAM_INT);
@@ -135,14 +135,14 @@ namespace leantime\domain\repositories {
             $sql = "SELECT id 
 				FROM zp_tickets as tickets WHERE type = 'Error Report'";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $tickets = $stmn->fetchAll();
             $stmn->closeCursor();
 
             $sql = "SELECT hours FROM zp_timesheets WHERE ticketId=:ticketId";
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $allHours = 0;
             foreach ($tickets as $ticket) {
                 $stmn->bindValue(':ticketId', $ticket['id'], PDO::PARAM_INT);
@@ -167,7 +167,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM zp_widget";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
             $returnValues= $stmn->fetchAll();
@@ -181,7 +181,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT value FROM wpd_dashboard_widgets WHERE user_id= :user_id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':user_id', $userId, PDO::PARAM_INT);
 
@@ -198,7 +198,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_widget (submoduleAlias, title) VALUES (:subAlias, :title)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':subAlias', $submoduleAlias, PDO::PARAM_INT);
             $stmn->bindValue(':title', $title, PDO::PARAM_INT);
@@ -214,16 +214,16 @@ namespace leantime\domain\repositories {
             $delete = 'DELETE FROM zp_widgetrelation WHERE userId = :userId';
             $insert = 'INSERT INTO zp_widgetrelation (userId, widgetId) VALUES (:userId, :widgetId)';
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
-            $stmn = $this->db->{'database'}->prepare($delete);
+            $stmn = $this->db->database->prepare($delete);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
 
-            $stmn = $this->db->{'database'}->prepare($insert);
+            $stmn = $this->db->database->prepare($insert);
 
             foreach ($widgetIds as $widgetId) {
 
@@ -235,7 +235,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
         }
 
         public function userHasWidgets($userId)
@@ -243,7 +243,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'SELECT * FROM zp_widgetrelation WHERE userId=:userId';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
 
@@ -264,7 +264,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'INSERT INTO zp_widgetrelation (userId,widgetId) VALUES (:userId,:widgetId)';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             foreach ($this->defaultWidgets as $widget) {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
@@ -281,7 +281,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'SELECT * FROM zp_note WHERE userId=:userId';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
 
@@ -297,7 +297,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'INSERT INTO zp_note (title,description,userId) VALUES (:title,:description,:userId)';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);

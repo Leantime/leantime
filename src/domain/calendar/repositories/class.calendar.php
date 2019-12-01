@@ -32,7 +32,7 @@ namespace leantime\domain\repositories {
             $query = "SELECT * FROM zp_calendar WHERE 
 					userId = :userId ORDER BY zp_calendar.dateFrom";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             $stmn->execute();
@@ -55,7 +55,7 @@ namespace leantime\domain\repositories {
 				FROM zp_tickets AS tickets
 				WHERE (tickets.editorId = :userId OR tickets.userId = :userId) AND tickets.type <> 'Milestone' AND tickets.type <> 'Subtask'";
 
-            $stmn = $this->db->{'database'}->prepare($userTickets);
+            $stmn = $this->db->database->prepare($userTickets);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -64,7 +64,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -159,7 +159,7 @@ namespace leantime\domain\repositories {
 						(TO_DAYS(tickets.editFrom) <= TO_DAYS(CURDATE()) AND TO_DAYS(tickets.editTo) >= TO_DAYS(CURDATE()) )
 					)";
 
-            $stmn = $this->db->{'database'}->prepare($userTickets);
+            $stmn = $this->db->database->prepare($userTickets);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -168,7 +168,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId AND TO_DAYS(dateFrom) = TO_DAYS(CURDATE())";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -255,7 +255,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, headline, dateToFinish FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND dateToFinish <> '000-00-00 00:00:00'";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             $stmn->execute();
@@ -272,7 +272,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, headline, editFrom, editTo FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND editFrom <> '000-00-00 00:00:00'";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             $stmn->execute();
@@ -288,7 +288,7 @@ namespace leantime\domain\repositories {
             $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay) 
 		VALUES (:userId, :dateFrom, :dateTo, :description, :allDay)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':dateFrom', $values['dateFrom'], PDO::PARAM_STR);
             $stmn->bindValue(':dateTo', $values['dateTo'], PDO::PARAM_STR);
@@ -305,7 +305,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM zp_calendar WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -327,7 +327,7 @@ namespace leantime\domain\repositories {
 			WHERE id = :id AND userId = :userId LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -345,7 +345,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_calendar WHERE id = :id AND userId = :userId LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
@@ -359,7 +359,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             $stmn->execute();
@@ -375,7 +375,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -396,7 +396,7 @@ namespace leantime\domain\repositories {
 			colorClass = :colorClass 
 		WHERE userId = :userId AND id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue(':url', $values['url'], PDO::PARAM_STR);
             $stmn->bindValue(':colorClass', $values['colorClass'], PDO::PARAM_STR);
@@ -413,7 +413,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
@@ -430,7 +430,7 @@ namespace leantime\domain\repositories {
 					VALUES 
 				(:userId, :name, :url, :colorClass)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);

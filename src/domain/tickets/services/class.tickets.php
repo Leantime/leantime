@@ -10,10 +10,9 @@ namespace leantime\domain\services {
     {
 
         private $projectRepository;
-        private $sprintRepository;
         private $ticketRepository;
         private $projectService;
-        private $timesheetsService;
+        private $timesheetsRepo;
         private $language;
 
         public function __construct()
@@ -25,6 +24,7 @@ namespace leantime\domain\services {
             $this->language = new core\language();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
+
         }
 
         //GET Properties
@@ -46,7 +46,57 @@ namespace leantime\domain\services {
 
         }
 
+        public function prepareTicketSearchArray(array $searchParams)
+        {
+
+            $searchCriteria = array(
+                "currentProject"=> $_SESSION["currentProject"],
+                "users"=>"",
+                "status"=>"",
+                "term"=> "",
+                "type"=> "",
+                "sprint"=> $_SESSION['currentSprint'],
+                "milestone"=>"",
+                "orderBy" => "sortIndex"
+            );
+
+            if(isset($searchParams["users"]) === true) {
+                var_dump($searchParams["users"]);
+                $searchCriteria["users"] = $searchParams["users"];
+            }
+
+            if (isset($searchParams["status"]) === true) {
+                $searchCriteria["status"] = $searchParams["status"];
+            }
+
+            if(isset($searchParams["term"]) === true) {
+                $searchCriteria["term"] =$searchParams["term"];
+            }
+
+            if(isset($searchParams["type"]) === true) {
+                $searchCriteria["type"] = $searchParams["type"];
+            }
+
+            if(isset($searchParams["milestone"]) === true) {
+                $searchCriteria["milestone"] =$searchParams["milestone"];
+            }
+
+            if(isset($searchParams["sprint"]) === true) {
+                $searchCriteria["sprint"] =  $searchParams["sprint"];
+                $_SESSION["currentSprint"] = $searchCriteria["sprint"];
+            }
+
+            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
+
+            return $searchCriteria;
+        }
+
         //GET
+        public function getAll($searchCriteria){
+
+            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy']);
+        }
+
         public function getTicket($id)
         {
 
@@ -254,10 +304,17 @@ namespace leantime\domain\services {
             } else {
 
                 //Prepare dates for db
-                $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
-                $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
-                $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
+                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                }
 
+                if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
+                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                }
+
+                if($values['editTo'] != "" && $values['editTo'] != NULL) {
+                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                }
                 //Update Ticket
                 if($this->ticketRepository->updateTicket($values, $id) === true){
 
@@ -324,7 +381,7 @@ namespace leantime\domain\services {
                 'headline' => $values['headline'],
                 'type' => 'subtask',
                 'description' => $values['description'],
-                'projectId' => $parentTicket['projectId'],
+                'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
 
@@ -339,7 +396,7 @@ namespace leantime\domain\services {
                 'tags' => "",
                 'editFrom' => "",
                 'editTo' => "",
-                'dependingTicketId' => $parentTicket['id'],
+                'dependingTicketId' => $parentTicket->id,
             );
 
             if ($values['subtaskId'] == "new" || $values['subtaskId'] == "") {

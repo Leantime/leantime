@@ -155,7 +155,7 @@ namespace leantime\domain\repositories {
             $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date) 
 					VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':module', 'export', PDO::PARAM_STR);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
@@ -180,7 +180,7 @@ namespace leantime\domain\repositories {
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -357,7 +357,7 @@ namespace leantime\domain\repositories {
 
             $query.="GROUP BY ticketId, kind";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':dateStart', $dateStart, PDO::PARAM_STR);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -384,7 +384,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
@@ -542,7 +542,7 @@ namespace leantime\domain\repositories {
 				AND TO_DAYS(workDate) = TO_DAYS(:date)
 				LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':date', $values['date'], PDO::PARAM_INT);
             $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_INT);
@@ -603,7 +603,7 @@ namespace leantime\domain\repositories {
 			ORDER BY utc
 			";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -627,8 +627,8 @@ namespace leantime\domain\repositories {
 
             }else{
 
-                $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
-                $returnValues[date("%Y-%m-%d")]["summe"] = 0;
+                $returnValues[date("Y-m-d")]["utc"] = date("Y-m-d");
+                $returnValues[date("Y-m-d")]["summe"] = 0;
 
             }
 
@@ -720,7 +720,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,UNIX_TIMESTAMP(CURRENT_TIMESTAMP))";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
             $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
 
@@ -739,7 +739,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
             $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
@@ -762,7 +762,7 @@ namespace leantime\domain\repositories {
 
                 $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
                 $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
 
@@ -776,7 +776,7 @@ namespace leantime\domain\repositories {
 				VALUES
                 (:sessionId,:ticketId,CURRENT_TIMESTAMP,:hoursWorked,'GENERAL_BILLABLE');";
 
-                    $stmn = $this->db->{'database'}->prepare($query);
+                    $stmn = $this->db->database->prepare($query);
                     $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
                     $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
                     $stmn->bindValue(':hoursWorked', $hoursWorked, PDO::PARAM_STR);
@@ -820,7 +820,7 @@ namespace leantime\domain\repositories {
 
             $onTheClock = false;
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
             $stmn->execute();

@@ -95,7 +95,7 @@ namespace leantime\domain\repositories {
 					project.clientId
 				ORDER BY clientName, project.name";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -137,7 +137,7 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
 
 
@@ -154,7 +154,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_account WHERE projectId = :projectId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -182,7 +182,7 @@ namespace leantime\domain\repositories {
 					LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId 
 				WHERE clientId = :clientId GROUP BY project.id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -197,7 +197,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_account WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -222,7 +222,7 @@ namespace leantime\domain\repositories {
 
             $sql = "INSERT INTO zp_account (projectId, name, username, password, host, kind) VALUES (:projectId, :name, :username, :password, :host, :kind)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
             $stmn->bindValue(':name', openssl_encrypt($values['name'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
             $stmn->bindValue(':username', openssl_encrypt($values['username'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
@@ -246,7 +246,7 @@ namespace leantime\domain\repositories {
 						'kind' = :kind
 					WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue(':username', $values['username'], PDO::PARAM_STR);
             $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
@@ -263,7 +263,7 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_account WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -283,7 +283,7 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_user ON zp_tickets.editorId = zp_user.id
 		WHERE projectId=:projectId ORDER BY zp_tickets.editFrom";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -324,7 +324,7 @@ namespace leantime\domain\repositories {
 					zp_projects.details
 				LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -355,7 +355,7 @@ namespace leantime\domain\repositories {
 				WHERE zp_relationuserproject.projectId = :projectId && zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -375,7 +375,7 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
 				WHERE projectId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -408,7 +408,7 @@ namespace leantime\domain\repositories {
 				WHERE projectId =  :id GROUP BY zp_timesheets.workDate	
 				ORDER BY workDate";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -464,7 +464,7 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
 				WHERE projectId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -487,7 +487,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT COUNT(zp_tickets.status) AS openTickets FROM zp_tickets WHERE zp_tickets.projectId = :id AND zp_tickets.status > 0";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -517,7 +517,7 @@ namespace leantime\domain\repositories {
 				:dollarBudget
 			)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue('name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue('details', $values['details'], PDO::PARAM_STR);
@@ -528,7 +528,7 @@ namespace leantime\domain\repositories {
             $stuff = $stmn->execute();
 
 
-            $projectId = $this->db->{'database'}->lastInsertId();
+            $projectId = $this->db->database->lastInsertId();
             $stmn->closeCursor();
 
             //Add author to project
@@ -566,7 +566,7 @@ namespace leantime\domain\repositories {
 				dollarBudget = :dollarBudget
 				WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue('name', $values['name'], PDO::PARAM_STR);
             $stmn->bindValue('details', $values['details'], PDO::PARAM_STR);
@@ -605,7 +605,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_projects WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -625,7 +625,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT id FROM zp_tickets WHERE projectId = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -662,7 +662,7 @@ namespace leantime\domain\repositories {
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -683,7 +683,7 @@ namespace leantime\domain\repositories {
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
@@ -709,7 +709,7 @@ namespace leantime\domain\repositories {
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE projectId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -737,7 +737,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT id,userId,projectId FROM zp_relationuserproject WHERE userId=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -775,7 +775,7 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
@@ -790,7 +790,7 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE userId=:userId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
@@ -804,7 +804,7 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
@@ -824,7 +824,7 @@ namespace leantime\domain\repositories {
 					:projectId
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);

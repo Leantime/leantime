@@ -257,7 +257,7 @@ leantime.dashboardController = (function () {
     };
 
     var _initDueDateTimePickers = function () {
-        jQuery(".dates").datepicker(
+        jQuery(".duedates").datepicker(
             {
                 dateFormat: leantime.i18n.__("language.jsdateformat"),
                 onSelect: function(date) {

@@ -2,6 +2,8 @@
 
 namespace leantime\core;
 
+use leantime\domain\services;
+
 /**
  * Class application
  * @package leantime\core
@@ -14,9 +16,15 @@ class application
     private $login;
     private $frontController;
     private $language;
+    private $projectService;
 
 
-    public function __construct(config $config, settings $settings, login $login, frontcontroller $frontController, language $language)
+    public function __construct(config $config,
+                                settings $settings,
+                                login $login,
+                                FrontController $frontController,
+                                language $language,
+                                services\projects $projectService)
     {
 
         $this->config = $config;
@@ -24,6 +32,7 @@ class application
         $this->login = $login;
         $this->frontController = $frontController;
         $this->language = $language;
+        $this->projectService = $projectService;
 
     }
 
@@ -106,5 +115,7 @@ class application
 
 
     }
+
+
 
 }

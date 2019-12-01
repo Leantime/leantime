@@ -126,7 +126,7 @@ namespace leantime\domain\repositories {
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($sql);
+                $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".ticketlabels", PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -239,7 +239,7 @@ namespace leantime\domain\repositories {
                 $sql .= " LIMIT :limit";
             }
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             if($limit > -1) {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -280,7 +280,7 @@ namespace leantime\domain\repositories {
 				ORDER BY ticket.id DESC
 				LIMIT :limit";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':limit', $limit, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -305,7 +305,7 @@ namespace leantime\domain\repositories {
 					INNER JOIN zp_tickets as ticket ON th.ticketId = ticket.id
 					WHERE ticketId = :ticketId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -342,7 +342,7 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_tickets SET status=:status WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':status', $status, PDO::PARAM_STR);
 
@@ -359,7 +359,7 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_tickets SET editFrom=:start, editTo=:end WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':start', $start, PDO::PARAM_STR);
             $stmn->bindValue(':end', $end, PDO::PARAM_STR);
@@ -383,7 +383,7 @@ namespace leantime\domain\repositories {
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
@@ -411,7 +411,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM `zp_timesheets` WHERE ticketId=:id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -441,7 +441,7 @@ namespace leantime\domain\repositories {
             $sql = 'SELECT count(*) as count FROM zp_tickets 
 				WHERE editorId LIKE "%'.$id.'%"';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -460,7 +460,7 @@ namespace leantime\domain\repositories {
                 $sql .= " LIMIT :limit";
             }
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             if ($limit!=null) {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -530,7 +530,7 @@ namespace leantime\domain\repositories {
                     INNER JOIN zp_user as user ON projectRelation.userId = user.id
                     WHERE projectId=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -555,7 +555,7 @@ namespace leantime\domain\repositories {
 					FROM zp_relationuserproject WHERE userId = ".$_SESSION['userdata']["id"]."
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
 
             $stmn->execute();
@@ -700,7 +700,7 @@ namespace leantime\domain\repositories {
 						GROUP BY zp_tickets.id ORDER BY date DESC";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             if($term != '') {
                 $stmn->bindValue(':term', "%".$term."%", PDO::PARAM_STR);
@@ -801,14 +801,13 @@ namespace leantime\domain\repositories {
                 }
             }
 
-            if($searchCriteria["searchType"]  != "") {
-                $query .= " AND zp_tickets.type = :searchType ";
+            if($searchCriteria["type"]  != "") {
+                $query .= " AND LOWER(zp_tickets.type) = LOWER(:searchType) ";
             }
 
-            if($searchCriteria["searchterm"]  != "") {
-                $query .= " AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild)";
+            if($searchCriteria["term"]  != "") {
+                $query .= " AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)";
             }
-
 
 
             if($searchCriteria["sprint"]  != "" && $searchCriteria["sprint"]  != "all" && $searchCriteria["sprint"]  != "none") {
@@ -819,11 +818,10 @@ namespace leantime\domain\repositories {
                 $query .= " AND (zp_tickets.sprint <> NULL AND zp_tickets.sprint <> '' AND zp_tickets.sprint IS NOT NULL AND zp_tickets.sprint <> 0)";
             }
 
-            //TODO: Deprecated: Should be -1 for all items not assigned to a sprint
+            //TODO: Deprecated: Should be empty/null for all items not assigned to a sprint
             if($searchCriteria["sprint"]  == "none") {
                 $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = 0 OR zp_tickets.sprint = -1)";
             }
-
 
             $query .= " GROUP BY zp_tickets.id ";
 
@@ -833,7 +831,7 @@ namespace leantime\domain\repositories {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC";
             }
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             if($searchCriteria["currentProject"]  != "") {
@@ -844,14 +842,14 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':milestoneId', $searchCriteria["milestone"], PDO::PARAM_INT);
             }
 
-            if($searchCriteria["searchType"]  != "") {
-                $stmn->bindValue(':searchType', $searchCriteria["searchType"], PDO::PARAM_STR);
+            if($searchCriteria["type"]  != "") {
+                $stmn->bindValue(':searchType', $searchCriteria["type"], PDO::PARAM_STR);
             }
 
-            if($searchCriteria["searchterm"]  != "") {
-                $termWild = "%".$searchCriteria["searchterm"]."%";
+            if($searchCriteria["term"]  != "") {
+                $termWild = "%".$searchCriteria["term"]."%";
                 $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
-                $stmn->bindValue(':termStandard', $searchCriteria["searchterm"], PDO::PARAM_STR);
+                $stmn->bindValue(':termStandard', $searchCriteria["term"], PDO::PARAM_STR);
             }
 
             $stmn->execute();
@@ -874,7 +872,7 @@ namespace leantime\domain\repositories {
 					GROUP BY zp_tickets.sprint ORDER BY zp_tickets.sprint ASC";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -895,7 +893,7 @@ namespace leantime\domain\repositories {
 					LIMIT 1";
 
             foreach($ticketSorting as $ticket){
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':projectId', $project, PDO::PARAM_INT);
                 $stmn->bindValue(':sortIndex', $ticket["sortIndex"], PDO::PARAM_INT);
                 $stmn->bindValue(':sprint', $ticket["sprint"], PDO::PARAM_INT);
@@ -920,7 +918,7 @@ namespace leantime\domain\repositories {
 					LIMIT 1";
 
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
@@ -934,7 +932,7 @@ namespace leantime\domain\repositories {
 					LIMIT 1";
 
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
                 $stmn->execute();
@@ -1007,7 +1005,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM zp_tickets WHERE id=:ticketId LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1029,7 +1027,7 @@ namespace leantime\domain\repositories {
 					:userId, :ticketId, :changeType, :changeValue, NOW()
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             foreach ($changedFields as $field => $value) {
 
@@ -1148,7 +1146,7 @@ namespace leantime\domain\repositories {
 					GROUP BY
 						zp_tickets.id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1214,7 +1212,7 @@ namespace leantime\domain\repositories {
 						progressTickets.dependingTicketId, zp_tickets.id
 					ORDER BY zp_tickets.editFrom ASC";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1236,7 +1234,7 @@ namespace leantime\domain\repositories {
 		  	INNER JOIN zp_tickets as ticket ON history.ticketId = ticket.id
 		 WHERE history.ticketId = :ticketId ORDER BY history.id DESC";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1322,6 +1320,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  array $values
+         * @return boolean|int
          */
         public function addTicket(array $values)
         {
@@ -1367,7 +1366,7 @@ namespace leantime\domain\repositories {
 						:dependingTicketId
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
             $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
@@ -1437,7 +1436,7 @@ namespace leantime\domain\repositories {
 				dependingTicketId = :dependingTicketId
 			WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
             $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
@@ -1493,7 +1492,7 @@ namespace leantime\domain\repositories {
                     dependingTicketId = ''
                 WHERE dependingTicketId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
@@ -1503,14 +1502,14 @@ namespace leantime\domain\repositories {
                     milestoneId = ''
                 WHERE milestoneId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
 
             $query = "DELETE FROM zp_tickets WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
@@ -1533,7 +1532,7 @@ namespace leantime\domain\repositories {
 			
 			WHERE zp_tickets.id=:id AND zp_relationuserproject.userId = :user";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':user', $_SESSION['userdata']['id'], PDO::PARAM_STR);
@@ -1570,7 +1569,7 @@ namespace leantime\domain\repositories {
 					INNER JOIN zp_tickets as ticket ON th.ticketId = ticket.id
 					WHERE ticketId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -1595,7 +1594,7 @@ namespace leantime\domain\repositories {
 					
 					WHERE tickets.id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -1651,7 +1650,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1677,7 +1676,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1703,7 +1702,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -1729,7 +1728,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             $stmn->bindValue(':avgStorySize', $averageStorySize, PDO::PARAM_INT);
 
@@ -1756,7 +1755,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             $stmn->bindValue(':avgStorySize', $averageStorySize, PDO::PARAM_INT);
 
@@ -1783,7 +1782,7 @@ namespace leantime\domain\repositories {
 					    zp_tickets.date ASC
 					LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();

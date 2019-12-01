@@ -188,7 +188,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4" style="padding:0 15px;">
-                                                    <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="dates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                                    <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                                                 </div>
                                                 <div class="col-md-8" style="padding-top:3px;" >
                                                     <div class="right">
@@ -320,7 +320,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4" style="padding:0 15px;">
-                                                <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due");?>" value="<?php echo $date ?>" class="dates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                                <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due");?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                                             </div>
                                             <div class="col-md-8" style="padding-top:3px;" >
                                                 <div class="right">

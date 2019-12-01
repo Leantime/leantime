@@ -18,7 +18,15 @@ if($login->logged_in()!==true){
 	ob_start();
 }
 
-$application = new leantime\core\application(new leantime\core\config(), $settings, $login,  leantime\core\frontcontroller::getInstance(ROOT), new  leantime\core\language());
+//Bootstrap application
+$application = new leantime\core\application(
+                        new leantime\core\config(),
+                        $settings,
+                        $login,
+                        leantime\core\FrontController::getInstance(ROOT),
+                        new  leantime\core\language(),
+                        new leantime\domain\services\projects());
+
 $application->start();
 
 if(ob_get_length() > 0) {

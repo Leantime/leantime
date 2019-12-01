@@ -75,14 +75,7 @@
 
 <script type="text/javascript">
 
-    jQuery(document).ready(function () {
-        jQuery('.ticketTabs').tabs({
-            create: function( event, ui ) {
-
-                jQuery('.ticketTabs').css("visibility", "visible");
-            }
-        });
-    });
+    leantime.ticketsController.initTicketTabs();
 
     jQuery(window).load(function () {
         jQuery(window).resize();

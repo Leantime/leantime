@@ -81,18 +81,6 @@ namespace leantime\core {
         public function run($differentFirstAction = '')
         {
 
-            //Todo: find a different place for this
-            $projectRepository = new repositories\projects();
-
-            //Find project if nothing is set
-            if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '') {
-
-                $allprojects = $projectRepository->getUserProjects();
-                $_SESSION['currentProject'] = $allprojects[0]["id"];
-                $_SESSION['currentProjectName'] = $allprojects[0]["name"];
-                $_SESSION['currentProjectClient'] = $allprojects[0]["clientName"];
-            }
-
             //Set action-name
             if(isset($_REQUEST['act'])) {
 

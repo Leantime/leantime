@@ -14,7 +14,7 @@
                     <span class='fileupload-exists'><?php echo $this->__("buttons.change"); ?></span>
                     <input type='file' name='file' />
                 </span>
-                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?php echo $this->__("buttons.change"); ?></a>
+                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?php echo $this->__("buttons.remove"); ?></a>
             </div>
           </div>
        </div>

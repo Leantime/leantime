@@ -4,8 +4,9 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 $tickets = $this->get("tickets");
 $sprints = $this->get("sprints");
 $searchCriteria = $this->get("searchCriteria");
+$currentSprint = $this->get("currentSprint");
 
-$todoTypeIcons = array('Story' => 'fa-book', 'Task' => 'fa-check-square', 'Bug' => 'fa-bug');
+$todoTypeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'bug' => 'fa-bug');
 
 $efforts = $this->get('efforts');
 
@@ -68,7 +69,7 @@ $efforts = $this->get('efforts');
 	            url: '/tickets/showKanban&raw=true&sort=true',            
 	            data: 
 	            {  	<?php foreach($this->get('allTicketStates') as $key => $statusRow){ ?>
-					<?php echo $key ?>: jQuery(".contentInner.status_<?php echo $key ?>").sortable('serialize'),
+					<?php echo "'".$key."'" ?>: jQuery(".contentInner.status_<?php echo $key ?>").sortable('serialize'),
 		        	<?php } ?>
 		        	statusX: ""
 				}
@@ -103,45 +104,6 @@ $efforts = $this->get('efforts');
 	    icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
 	    icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
 	});
-    
-    jQuery(".punchIn").on("click", function(){
-    	
-    	var ticketId = jQuery(this).attr("value");
-    	
-    	// POST to server using $.post or $.ajax
-	        jQuery.ajax({
-	            data: "ticketId="+ticketId,
-	            type: 'POST',
-	            url: '/tickets/showAll&raw=true&punchIn=true'
-	        });
-	        
-	        var currentdate = new Date();
-	               
-			var datetime = currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + " ";
-            
-            jQuery(".timerContainer .punchIn").hide();     
-            jQuery("#timerContainer-"+ticketId+" .working").show();
-	        jQuery("#timerContainer-"+ticketId+" span.time").text(datetime);
-
-    });
-	
-	jQuery(".punchOut").on("click", function(){
-
-	    	var ticketId = jQuery(this).attr("value");
-	    	
-	    	// POST to server using $.post or $.ajax
-		        jQuery.ajax({
-		            data: "ticketId="+ticketId,
-		            type: 'POST',
-		            url: '/tickets/showAll&raw=true&punchOut=true',
-		            
-		        });
-		        
-		        jQuery(".timerContainer .punchIn").show();     
-				jQuery("#timerContainer-"+ticketId+" .working").hide();   
-
-	 });
 
       <?php if(isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0){     ?>
       leantime.helperController.showHelperModal("kanban");
@@ -152,6 +114,7 @@ $efforts = $this->get('efforts');
   });
   
   </script>
+
   <style type="text/css">
   <?php 
 	$numberofStatus = count($this->get('allTicketStates'));
@@ -242,9 +205,10 @@ $efforts = $this->get('efforts');
             echo $this->displayNotification();
         ?>
 
-		<form action="/tickets/showKanban" method="post">
+		<form action="" method="get" id="ticketSearch">
 
-            <input type="hidden" value="1" name="search"/>
+            <input type="hidden" value="true" name="search"/>
+            <input type="hidden" value="true" name="<?php echo $_SESSION['currentProject']; ?> " id="projectIdInput"/>
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group">
@@ -260,9 +224,9 @@ $efforts = $this->get('efforts');
 
                 <div class="col-md-4 center">
                     <span class="currentSprint">
-                        <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) { ?>
-                        <select data-placeholder="Filter by Sprint..." name="searchSprints" class="mainSprintSelector" onchange="form.submit()">
-                                <option value="none" <?php if($searchCriteria['sprint'] !== false && array_search("none", $searchCriteria['sprint']) !== false) echo"selected='selected'"; ?>>Backlog</option>
+                        <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
+                        <select data-placeholder="Filter by Sprint..." name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
+                                <option value="" <?php if($searchCriteria['sprint'] !== false && $searchCriteria['sprint'] != null && array_search("none", $searchCriteria['sprint']) !== false) echo"selected='selected'"; ?>>Backlog</option>
                             <?php
                             $dates = "";
                             foreach($this->get('sprints') as $sprintRow){ 	?>
@@ -307,25 +271,24 @@ $efforts = $this->get('efforts');
 
 			<div class="clearfix"></div>			
 			<div class="filterBar <?php
-
-            if((count($searchCriteria['users']) == 0 || $searchCriteria['users'] == '') && $searchCriteria['milestone'] == '' && $searchCriteria['searchType'] == '') { echo "hideOnLoad"; } ?>">
+            if(($searchCriteria['users'] == '' || count($searchCriteria['users']) == 0) && $searchCriteria['milestone'] == '' && $searchCriteria['searchType'] == '') { echo "hideOnLoad"; } ?>">
 				<div class="loading"></div>
 				<div class="row-fluid" style="opacity:0.4">
                     <div class="pull-right">
-                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="Search" value="<?php echo $searchCriteria['searchterm']; ?>">
-                        <input type="submit" value="Search" name="search" class="form-control btn btn-primary" />
+                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['searchterm']; ?>">
+                        <input type="submit" value="Search" class="form-control btn btn-primary" />
                     </div>
 
 					<div class="filterBoxLeft">
                         <label class="inline">User</label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by User..." name="searchUsers[]"  multiple="multiple" class="user-select" onchange="form.submit()">
+                            <select data-placeholder="Filter by User..." name="users" multiple="multiple" class="user-select" id="userSelect">
                                 <option value=""></option>
                                 <?php foreach($this->get('users') as $userRow){ 	?>
 
                                     <?php echo"<option value='".$userRow["id"]."'";
 
-                                    if($searchCriteria['users'] !== false && array_search($userRow["id"], $searchCriteria['users']) !== false) echo" selected='selected' ";
+                                    if($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], $searchCriteria['users']) !== false) echo" selected='selected' ";
 
                                     echo">".$this->escape($userRow["firstname"]." ".$userRow["lastname"])."</option>"; ?>
 
@@ -339,7 +302,7 @@ $efforts = $this->get('efforts');
 
                         <label class="inline">Milestone</label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by Milestone..." name="searchMilestone"  class="user-select" onchange="form.submit()">
+                            <select data-placeholder="Filter by Milestone..." name="milestone"  class="user-select" id="milestoneSelect">
                                 <option value="">All Milestones</option>
                                 <?php foreach($this->get('milestones') as $milestoneRow){ 	?>
 
@@ -359,7 +322,7 @@ $efforts = $this->get('efforts');
 
                         <label class="inline">To-Do Type</label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by Type..." name="searchType" onchange="form.submit()" >
+                            <select data-placeholder="Filter by Type..." name="type" id="typeSelect">
                                 <option value="">All Types</option>
                                 <?php foreach($this->get('types') as $type){ 	?>
 
@@ -405,10 +368,10 @@ $efforts = $this->get('efforts');
 							
                             <h4 class="widgettitle title-primary" style="border-bottom:5px solid <?php echo $color; ?>">
                                 <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="/setting/editBoxLabel&module=ticketlabels&label=<?=$statusRow?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="/setting/editBoxLabel&module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                 <?php } ?>
                                 <strong class="count">0</strong>
-                                <?php echo $tickets->stateLabels[$statusRow]; ?></h4>
+                                <?php echo $statusRow['name']; ?></h4>
 							<div class="contentInner <?php echo"status_".$key;?>">
                                 <div>
                                     <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>"  onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> Add To-Do</a>
@@ -419,7 +382,7 @@ $efforts = $this->get('efforts');
 
                                             <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
                                             <input type="hidden" name="status" value="<?php echo $key; ?> " />
-                                            <input type="hidden" name="sprint" value="<?php echo $this->get("currentSprint"); ?> " />
+                                            <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
                                             <input type="submit" value="Save" name="quickadd">
                                             <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
                                                 <i class="fas fa-times"></i> Cancel
@@ -508,11 +471,6 @@ $efforts = $this->get('efforts');
 
                                         </div>
 
-
-
-
-
-										
 										<div class="clearfix" ></div>
 
                                         <div style="float:left;">
@@ -595,6 +553,10 @@ $efforts = $this->get('efforts');
     </div>
 
 </div>
+
+<script type="text/javascript">
+    leantime.ticketsController.initTicketSearchSubmit("/tickets/showKanban");
+</script>
 
 
 

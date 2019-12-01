@@ -633,6 +633,7 @@ leantime.ticketsController = (function () {
     };
 
     var _initDueDateTimePickers = function () {
+
         jQuery(".quickDueDates").datepicker(
             {
                 dateFormat: 'mm/dd/yy',
@@ -723,6 +724,54 @@ leantime.ticketsController = (function () {
 
     };
 
+    var initTicketTabs = function(){
+
+        jQuery(document).ready(function () {
+            jQuery('.ticketTabs').tabs({
+                create: function( event, ui ) {
+                    jQuery('.ticketTabs').css("visibility", "visible");
+                },
+                activate: function(event, ui) {
+                    console.log(ui);
+                    window.location.hash = ui.newPanel.selector;
+                }
+            });
+        });
+
+    };
+
+    var initTicketSearchSubmit = function (url) {
+
+        jQuery("#ticketSearch").on('submit', function(e) {
+            e.preventDefault()
+
+            var project = jQuery("#projectIdInput").val();
+            var users = jQuery("#userSelect").val();
+            var milestones = jQuery("#milestoneSelect").val();
+            var term = jQuery("#termInput").val();
+            var sprints = jQuery("#sprintSelect").val();
+            var types = jQuery("#typeSelect").val();
+            var status = jQuery("#statusSelect").val();
+            var sort = jQuery("#sortBySelect").val();
+            var group = jQuery("#groupBySelect").val();
+
+            var query = "?search=true";
+            if(project != "" && project != undefined) {query = query + "&projectId=" + project}
+            if(users != "" && users != undefined) {query = query + "&users=" + users}
+            if(milestones != ""  && milestones != undefined) {query = query + "&milestone=" + milestones}
+            if(term != ""  && term != undefined) {query = query + "&term=" + term;}
+            if(sprints != ""  && sprints != undefined) {query = query + "&sprint=" + sprints;}
+            if(types != "" && types != undefined) {query = query + "&type=" + types;}
+            if(status != "" && status != undefined) {query = query + "&status=" + status;}
+            if(sort != "" && sort != undefined) {query = query + "&sort=" + sort;}
+            if(group != "" && group != undefined) {query = query + "&group=" + group;}
+
+            var rediredirectUrl = url + query;
+
+            window.location.href = rediredirectUrl;
+
+        });
+    }
 
     // Make public what you want to have public, everything else is private
     return {
@@ -733,6 +782,8 @@ leantime.ticketsController = (function () {
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
         initTimeSheetChart:initTimeSheetChart,
-        colorTicketBoxes:colorTicketBoxes
+        colorTicketBoxes:colorTicketBoxes,
+        initTicketTabs:initTicketTabs,
+        initTicketSearchSubmit:initTicketSearchSubmit
     };
 })();

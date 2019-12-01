@@ -17,7 +17,7 @@
             <th width="15%"><?php echo $this->__('label.todo_status'); ?></th>
             <th width="10%"><?php echo $this->__('label.planned_hours'); ?></th>
             <th width="10%"><?php echo $this->__('label.actual_hours_remaining'); ?></th>
-            <th width="10%">Actions</th>
+            <th width="10%"><?php echo $this->__('label.actions'); ?></th>
         </tr>
     </thead>
     <tbody>
