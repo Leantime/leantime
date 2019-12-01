@@ -6,14 +6,14 @@ namespace leantime\domain\services {
     use leantime\domain\repositories;
     use \DateTime;
     use \DateInterval;
-    use PHPMailer\PHPMailer\PHPMailer;
 
     class projects
     {
 
+        private $tpl;
         private $projectRepository;
-        private $sprintRepository;
         private $ticketRepository;
+        private $settingsRepo;
 
         public function __construct()
         {
@@ -238,30 +238,151 @@ namespace leantime\domain\services {
 
         }
 
-        public function changeCurrentSessionProject($projectId) {
+        public function getProjectsAssignedToUser($userId, $projectStatus = "open")
+        {
+            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus);
 
-            $project = $this->getProject($projectId);
-
-
-            
-            $_SESSION["currentProject"] = $projectId;
-
-            if(strlen($_SESSION['currentProjectName']) > 25){
-                $_SESSION["currentProjectName"] = substr($_SESSION['currentProjectName'], 0, 25)." (...)";
+            if($projects) {
+                return $projects;
             }else{
-                $_SESSION["currentProjectName"] = $project['name'];
+                return false;
             }
 
+        }
 
+        public function setCurrentProject () {
 
+            //If projectId in URL use that as the project
+            //$_GET is highest priority. Will overwrite current set session project
+            //This comes from emails, shared links etc.
+            if(isset($_GET['projectId']) === true){
 
+                $projectId = filter_var($_GET['projectId'], FILTER_SANITIZE_NUMBER_INT);
 
-            $_SESSION["currentProjectClient"] = $project['clientName'];
+                if($this->changeCurrentSessionProject($projectId) === true) {
+                    return;
+                }
+
+            }
+
+            //Find project if nothing is set
+            //Login experience. If nothing is set look for the last set project
+            //If there is none (new feature, new user) use the first project in the list.
+            if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '') {
+
+                $_SESSION['currentProject'] = '';
+
+                //If last project setting is set use that
+                $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject".$_SESSION['userdata']['id']);
+
+                if($lastProject !== false && $lastProject != ''){
+
+                    if($this->changeCurrentSessionProject($lastProject) === true) {
+                        return;
+                    }
+
+                }else{
+
+                    $allProjects = $this->getProjectsAssignedToUser($_SESSION['userdata']['id']);
+
+                    if($allProjects !== false && count($allProjects) > 0) {
+
+                        if($this->changeCurrentSessionProject($allProjects[0]['id']) === true) {
+                            return;
+                        }
+
+                    }
+
+                    $route = core\FrontController::getCurrentRoute();
+
+                    if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
+
+                        $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
+                        if($route != "projects.newProject") {
+                            $this->tpl->redirect("/projects/newProject");
+                        }
+
+                    }else{
+
+                        $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.", "info");
+
+                        if($route != "users.editOwn") {
+                            $this->tpl->redirect("/users/editOwn");
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        public function changeCurrentSessionProject($projectId) {
+
+            if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
+
+                $project = $this->getProject($projectId);
+
+                if ($project) {
+
+                    $_SESSION["currentProject"] = $projectId;
+
+                    if (strlen($project['name']) > 25) {
+                        $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                    } else {
+                        $_SESSION["currentProjectName"] = $project['name'];
+                    }
+
+                    $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                    $_SESSION["currentSprint"] = "";
+                    $_SESSION['currentLeanCanvas'] = "";
+                    $_SESSION['currentIdeaCanvas'] = "";
+                    $_SESSION['currentRetroCanvas'] = "";
+
+                    $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+                    return true;
+
+                } else {
+
+                    return false;
+
+                }
+
+            }else {
+
+                return false;
+
+            }
+
+        }
+
+        public function resetCurrentProject () {
+
+            $_SESSION["currentProject"] = "";
+            $_SESSION["currentProjectClient"] = "";
+            $_SESSION["currentProjectName"] = "";
 
             $_SESSION["currentSprint"] = "";
             $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
             $_SESSION['currentRetroCanvas'] = "";
+
+            $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+            $this->setCurrentProject();
+        }
+
+        public function getUsersAssignedToProject($projectId)
+        {
+            return $this->projectRepository->getUsersAssignedToProject($projectId);
+        }
+
+        public function isUserAssignedToProject($userId, $projectId) {
+
+            return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
 
         }
 

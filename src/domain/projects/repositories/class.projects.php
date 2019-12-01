@@ -82,6 +82,7 @@ namespace leantime\domain\repositories {
 					project.clientId,
 					project.hourBudget,
 					project.dollarBudget,
+					project.state,
 					COUNT(ticket.projectId) AS numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -670,6 +671,32 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
+        }
+
+        public function isUserAssignedToProject($userId, $projectId)
+        {
+
+            $query = "SELECT
+				zp_relationuserproject.userId, 
+				zp_relationuserproject.projectId,
+				zp_projects.name 
+			FROM zp_relationuserproject JOIN zp_projects 
+				ON zp_relationuserproject.projectId = zp_projects.id
+			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if($values && count($values) > 1){
+                return true;
+            }
+
+            return false;
         }
 
         public function getProjectUserRelation($id)

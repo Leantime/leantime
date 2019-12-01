@@ -108,7 +108,7 @@ class fileupload
     {
         $path = realpath(__DIR__."/../../".$this->path);
        if($path === false){
-           throw Exception("Path not valid");
+           throw new Exception("Path not valid");
        }else{
            return $path;
        }

@@ -47,7 +47,7 @@ $projects = $this->get('relations');
 
                         jQuery(this).attr('selected',false);
                         index = jQuery(this).index();
-                        alert(index)
+
                         sel1.append(jQuery(this));
 
                         jQuery('#projects option:eq('+index+')').remove();
