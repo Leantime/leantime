@@ -31,7 +31,7 @@ namespace leantime\domain\controllers {
                 'details' => '<strong>Summary</strong><br /><i>{{Describe the project in a few words}}</i><br /><br/><strong>Business Justification</strong><br /><i>{{Why are you doing this project?}}</i><br /><br/><strong>Objectives/Goals</strong><ul><li><i>{{What are your goals with this project?}}</i></li></ul><br /><br/>  ',
                 'clientId' => '',
                 'hourBudget' => '',
-                'assignedUsers' => array(),
+                'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => ''
             );

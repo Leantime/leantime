@@ -144,8 +144,10 @@ namespace leantime\domain\repositories {
         public function getStateLabels()
         {
 
-            if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
+            //Todo in 2.1: Do not call stateLabels in constructor
+            if(isset($_SESSION['currentProject']) === false) return;
 
+            if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
 
                 return $_SESSION["projectsettings"]["ticketlabels"];
 

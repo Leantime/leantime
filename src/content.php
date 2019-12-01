@@ -142,7 +142,5 @@
 
 </div><!--mainwrapper-->
 
-<!--###FOOTER###-->
-
 </body>
 </html>

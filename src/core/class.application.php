@@ -2,6 +2,8 @@
 
 namespace leantime\core;
 
+use leantime\domain\services;
+
 class application
 {
     
@@ -10,7 +12,22 @@ class application
      * @var    string - array of scripts to render (currently only CSS and Javascript)
      */
     private static $sections = array();
-    
+
+    private $config;
+    private $settings;
+    private $login;
+    private $frontController;
+    private $projectService;
+
+    public function __construct()
+    {
+        $this->config = new config();// Used in template
+        $this->settings = new settings(); //Used in templates to show app version
+        $this->login = new login(session::getSID());
+        $this->frontController = frontcontroller::getInstance(ROOT);
+
+    }
+
     /**
      * start - renders applicaiton and routes to correct template, writes content to output buffer
      *
@@ -19,19 +36,18 @@ class application
      */
     public function start()
     {
-        
-        $config = new config();// Used in template
-        $settings = new settings(); //Used in templates to show app version
-        $login = new login(session::getSID());
-        $frontController = frontcontroller::getInstance(ROOT);
 
+        $config = $this->config; // Used in template
+        $settings = $this->settings; //Used in templates to show app version
+        $login = $this->login;
+        $frontController = $this->frontController;
 
         //Override theme settings
         $this->overrideThemeSettings();
 
         ob_start();
         
-        if($login->logged_in()===false) {
+        if($this->login->logged_in()===false) {
                 
             //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
@@ -44,8 +60,15 @@ class application
         
         }else{
 
+            $this->projectService = new services\projects();
+
+            //Set current/default project
+            $this->projectService->setCurrentProject();
+
+            //Run frontcontroller
             $frontController->run();
         }
+
         $toRender = ob_get_clean();
         echo $toRender;
             
@@ -54,14 +77,13 @@ class application
     public function overrideThemeSettings() {
 
         $settings = new \leantime\domain\repositories\setting();
-        $config = new config();
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
             $logoPath = $settings->getSetting("companysettings.logoPath");
             if ($logoPath !== false) {
                 $_SESSION["companysettings.logoPath"] = $logoPath;
             }else{
-                $_SESSION["companysettings.logoPath"] = $config->logoPath;
+                $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
             }
         }
 
@@ -70,7 +92,7 @@ class application
             if ($mainColor !== false) {
                 $_SESSION["companysettings.mainColor"] = $mainColor;
             }else{
-                $_SESSION["companysettings.mainColor"] = $config->mainColor;
+                $_SESSION["companysettings.mainColor"] = $this->config->mainColor;
             }
         }
 
@@ -79,7 +101,7 @@ class application
             if ($sitename !== false) {
                 $_SESSION["companysettings.sitename"] = $sitename;
             }else{
-                $_SESSION["companysettings.sitename"] = $config->sitename;
+                $_SESSION["companysettings.sitename"] = $this->config->sitename;
             }
         }
 

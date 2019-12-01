@@ -191,7 +191,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4" style="padding:0px 15px;">
-                                                            Due: <input type="text" value="<?php echo $date ?>" class="dates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                                            Due: <input type="text" value="<?php echo $date ?>" class="quickDueDates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                                                         </div>
 
 
@@ -305,7 +305,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-4" style="padding:0px 15px;">
-                                                        Due: <input type="text" value="<?php echo $date ?>" class="dates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                                        Due: <input type="text" value="<?php echo $date ?>" class="quickDueDates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                                                     </div>
 
 

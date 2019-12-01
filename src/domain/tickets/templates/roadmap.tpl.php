@@ -46,7 +46,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         }
         ?>
-        <div class="gantt-container" style="overflow: scroll;">
+        <div class="gantt-container" style="overflow: auto;">
             <svg id="gantt"></svg>
         </div>
 

@@ -19,7 +19,6 @@ leantime.dashboardController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
-                _initDueDateTimePickers();
                 initTicketTimers();
             });
     })();
@@ -309,27 +308,6 @@ leantime.dashboardController = (function () {
                 jQuery(".timerContainer .working").hide();
                 jQuery(".timerHeadMenu").hide("slow");
 
-            }
-        );
-    };
-
-    var _initDueDateTimePickers = function () {
-        jQuery(".dates").datepicker(
-            {
-                dateFormat: 'mm/dd/yy',
-                onSelect: function(date) {
-
-                    var dateTime = new Date(date);
-                    dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-
-                    var id = jQuery(this).attr("data-id");
-                    var newDate = dateTime;
-
-                    leantime.ticketsRepository.updateDueDates(id, newDate, function() {
-                        jQuery.jGrowl("Due date changed!");
-                    });
-
-                }
             }
         );
     };
