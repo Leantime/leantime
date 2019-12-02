@@ -252,7 +252,6 @@ namespace leantime\domain\services {
 
         public function setCurrentProject () {
 
-
             //If projectId in URL use that as the project
             //$_GET is highest priority. Will overwrite current set session project
             //This comes from emails, shared links etc.
@@ -269,7 +268,6 @@ namespace leantime\domain\services {
                 }
 
             }
-
 
             //Find project if nothing is set
             //Login experience. If nothing is set look for the last set project
@@ -316,22 +314,30 @@ namespace leantime\domain\services {
 
             $project = $this->getProject($projectId);
 
-            $_SESSION["currentProject"] = $projectId;
+            if($project) {
 
-            if(strlen($_SESSION['currentProjectName']) > 25){
-                $_SESSION["currentProjectName"] = substr($_SESSION['currentProjectName'], 0, 25)." (...)";
-            }else{
-                $_SESSION["currentProjectName"] = $project['name'];
+                $_SESSION["currentProject"] = $projectId;
+
+                if (strlen($project['name']) > 25) {
+                    $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                } else {
+                    $_SESSION["currentProjectName"] = $project['name'];
+                }
+
+                $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                $_SESSION["currentSprint"] = "";
+                $_SESSION['currentLeanCanvas'] = "";
+                $_SESSION['currentIdeaCanvas'] = "";
+                $_SESSION['currentRetroCanvas'] = "";
+
+                $this->settingsRepo->saveSetting("lastProject", $_SESSION["currentProject"]);
+
+            }else {
+
+                return false;
+
             }
-
-            $_SESSION["currentProjectClient"] = $project['clientName'];
-
-            $_SESSION["currentSprint"] = "";
-            $_SESSION['currentLeanCanvas'] = "";
-            $_SESSION['currentIdeaCanvas'] = "";
-            $_SESSION['currentRetroCanvas'] = "";
-
-            $this->settingsRepo->saveSetting("lastProject", $_SESSION["currentProject"]);
 
         }
 
