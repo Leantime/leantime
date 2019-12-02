@@ -60,7 +60,7 @@ namespace leantime\core {
             $settings = new settings();
 
             try {
-                $this->database->query("Use " . $config->dbDatabase . ";");
+                $this->database->query("Use `" . $config->dbDatabase . "`;");
 
                 $stmn = $this->database->prepare("SELECT COUNT(*) FROM zp_user");
 
