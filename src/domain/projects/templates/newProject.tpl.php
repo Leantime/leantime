@@ -8,7 +8,9 @@ $project = $this->get('values');
 <script type="text/javascript">
     jQuery(document).ready(function() {
             jQuery('.tabbedwidget').tabs();
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) {     ?>
+
+            <?php if((isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) && $_SESSION['currentProject'] != '') {     ?>
+
             leantime.helperController.showHelperModal("newProject");
             <?php
             //Only show once per session

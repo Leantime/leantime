@@ -98,13 +98,15 @@ namespace leantime\domain\controllers {
 
                         $userRepo->editUser($values, $id);
 
-
                         if (isset($_POST['projects'])) {
                             if ($_POST['projects'][0] !== '0') {
                                 $project->editUserProjectRelations($id, $_POST['projects']);
                             } else {
                                 $project->deleteAllProjectRelations($id);
                             }
+                        }else{
+                            //If projects is not set, all project assignments have been removed.
+                            $project->deleteAllProjectRelations($id);
                         }
                         $tpl->setNotification('EDIT_SUCCESS', 'success');
                     }

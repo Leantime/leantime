@@ -11,9 +11,10 @@ namespace leantime\domain\services {
     class projects
     {
 
+        private $tpl;
         private $projectRepository;
-        private $sprintRepository;
         private $ticketRepository;
+        private $settingsRepo;
 
         public function __construct()
         {
@@ -238,9 +239,9 @@ namespace leantime\domain\services {
 
         }
 
-        public function getProjectsAssignedToUser($userId)
+        public function getProjectsAssignedToUser($userId, $projectStatus = "open")
         {
-            $projects = $this->projectRepository->getUserProjects($userId);
+            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus);
 
             if($projects) {
                 return $projects;
@@ -259,12 +260,8 @@ namespace leantime\domain\services {
 
                 $projectId = filter_var($_GET['projectId'], FILTER_SANITIZE_NUMBER_INT);
 
-                if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true){
-
-                    $this->changeCurrentSessionProject($projectId);
-
+                if($this->changeCurrentSessionProject($projectId) === true) {
                     return;
-
                 }
 
             }
@@ -274,14 +271,16 @@ namespace leantime\domain\services {
             //If there is none (new feature, new user) use the first project in the list.
             if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '') {
 
-                //If lastproject setting is set use that
-                $lastProject = $this->settingsRepo->getSetting("lastProject");
+                $_SESSION['currentProject'] = '';
 
-                if($lastProject !== false){
+                //If last project setting is set use that
+                $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject");
 
-                    $this->changeCurrentSessionProject($lastProject);
+                if($lastProject !== false && $lastProject != ''){
 
-                    return;
+                    if($this->changeCurrentSessionProject($lastProject) === true) {
+                        return;
+                    }
 
                 }else{
 
@@ -289,16 +288,26 @@ namespace leantime\domain\services {
 
                     if($allProjects !== false && count($allProjects) > 0) {
 
-                        $this->changeCurrentSessionProject($allProjects[0]["id"]);
-                        return;
+                        if($this->changeCurrentSessionProject($allProjects[0]['id']) === true) {
+                            return;
+                        }
+
+                    }
+
+                    $route = core\FrontController::getCurrentRoute();
+
+                    if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
+
+                        $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
+                        if($route != "projects.newProject") {
+                            $this->tpl->redirect("/projects/newProject");
+                        }
 
                     }else{
 
-                        if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "administrator") {
-                            $this->tpl->setNotification("notification.noProjectsCreateNew", "info");
-                            $this->tpl->redirect("/projects/newProject");
-                        }else{
-                            $this->tpl->setNotification("notification.noProjects", "info");
+                        $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.", "info");
+
+                        if($route != "users.editOwn") {
                             $this->tpl->redirect("/users/editOwn");
                         }
 
@@ -312,26 +321,36 @@ namespace leantime\domain\services {
 
         public function changeCurrentSessionProject($projectId) {
 
-            $project = $this->getProject($projectId);
+            if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
-            if($project) {
+                $project = $this->getProject($projectId);
 
-                $_SESSION["currentProject"] = $projectId;
+                if ($project) {
 
-                if (strlen($project['name']) > 25) {
-                    $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                    $_SESSION["currentProject"] = $projectId;
+
+                    if (strlen($project['name']) > 25) {
+                        $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                    } else {
+                        $_SESSION["currentProjectName"] = $project['name'];
+                    }
+
+                    $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                    $_SESSION["currentSprint"] = "";
+                    $_SESSION['currentLeanCanvas'] = "";
+                    $_SESSION['currentIdeaCanvas'] = "";
+                    $_SESSION['currentRetroCanvas'] = "";
+
+                    $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+                    return true;
+
                 } else {
-                    $_SESSION["currentProjectName"] = $project['name'];
+
+                    return false;
+
                 }
-
-                $_SESSION["currentProjectClient"] = $project['clientName'];
-
-                $_SESSION["currentSprint"] = "";
-                $_SESSION['currentLeanCanvas'] = "";
-                $_SESSION['currentIdeaCanvas'] = "";
-                $_SESSION['currentRetroCanvas'] = "";
-
-                $this->settingsRepo->saveSetting("lastProject", $_SESSION["currentProject"]);
 
             }else {
 
@@ -339,6 +358,22 @@ namespace leantime\domain\services {
 
             }
 
+        }
+
+        public function resetCurrentProject () {
+
+            $_SESSION["currentProject"] = "";
+            $_SESSION["currentProjectClient"] = "";
+            $_SESSION["currentProjectName"] = "";
+
+            $_SESSION["currentSprint"] = "";
+            $_SESSION['currentLeanCanvas'] = "";
+            $_SESSION['currentIdeaCanvas'] = "";
+            $_SESSION['currentRetroCanvas'] = "";
+
+            $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+            $this->setCurrentProject();
         }
 
         public function getUsersAssignedToProject($projectId)

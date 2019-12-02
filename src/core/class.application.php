@@ -4,10 +4,6 @@ namespace leantime\core;
 
 use leantime\domain\services;
 
-/**
- * Class application
- * @package leantime\core
- */
 class application
 {
 
@@ -44,12 +40,11 @@ class application
      */
     public function start()
     {
-        
+
         $config = $this->config; // Used in template
         $settings = $this->settings; //Used in templates to show app version
         $login = $this->login;
         $frontController = $this->frontController;
-
 
         //Override theme settings
         $this->overrideThemeSettings();
@@ -59,7 +54,7 @@ class application
         if($this->login->logged_in()===false) {
 
             //Language is usually initialized by template engine. But template is not loaded on log in / install case
-            $language = new language();
+            $language = $this->language;
 
             //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
@@ -72,8 +67,11 @@ class application
         
         }else{
 
-            $this->frontController->run();
+            //Set current/default project
+            $this->projectService->setCurrentProject();
 
+            //Run frontcontroller
+            $frontController->run();
         }
 
         $toRender = ob_get_clean();
@@ -84,14 +82,13 @@ class application
     public function overrideThemeSettings() {
 
         $settings = new \leantime\domain\repositories\setting();
-        $config = new config();
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
             $logoPath = $settings->getSetting("companysettings.logoPath");
             if ($logoPath !== false) {
                 $_SESSION["companysettings.logoPath"] = $logoPath;
             }else{
-                $_SESSION["companysettings.logoPath"] = $config->logoPath;
+                $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
             }
         }
 
@@ -100,7 +97,7 @@ class application
             if ($mainColor !== false) {
                 $_SESSION["companysettings.mainColor"] = $mainColor;
             }else{
-                $_SESSION["companysettings.mainColor"] = $config->mainColor;
+                $_SESSION["companysettings.mainColor"] = $this->config->mainColor;
             }
         }
 
@@ -109,13 +106,8 @@ class application
             if ($sitename !== false) {
                 $_SESSION["companysettings.sitename"] = $sitename;
             }else{
-                $_SESSION["companysettings.sitename"] = $config->sitename;
+                $_SESSION["companysettings.sitename"] = $this->config->sitename;
             }
         }
-
-
     }
-
-
-
 }

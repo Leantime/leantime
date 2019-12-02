@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jquery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
         </div>
     </div>
 

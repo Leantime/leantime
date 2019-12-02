@@ -82,6 +82,7 @@ namespace leantime\domain\repositories {
 					project.clientId,
 					project.hourBudget,
 					project.dollarBudget,
+					project.state,
 					COUNT(ticket.projectId) AS numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 

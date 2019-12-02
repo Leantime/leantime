@@ -178,8 +178,6 @@ namespace leantime\core {
 
             $this->lastAction = $completeName;
 
-
-
         }
 
         private function getRequestMethod()
@@ -275,6 +273,18 @@ namespace leantime\core {
         }
 
 
+        /**
+         * getCurrentRoute - gets the current main action
+         *
+         * @access public
+         * @param  $completeName
+         * @return string
+         */
+        public static function getCurrentRoute() {
+
+            return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+
+        }
 
     }
 }

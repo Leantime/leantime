@@ -7,10 +7,20 @@ namespace leantime\domain\controllers {
     class footer
     {
 
+        private $tpl;
+        private $settings;
+
+
+        public function __construct()
+        {
+            $this->tpl = new core\template();
+            $this->settings = new core\settings();
+        }
+
         public function run()
         {
-            $tpl = new core\template();
-            $tpl->displayPartial('general.footer');
+            $this->tpl->assign("version", $this->settings->appVersion);
+            $this->tpl->displayPartial('general.footer');
         }
     }
 }
