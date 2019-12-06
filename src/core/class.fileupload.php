@@ -114,6 +114,21 @@ class fileupload
        }
     }
 
+    /**
+     * @return string
+     */
+    public function getPublicFilesPath()
+    {
+        $path = realpath(__DIR__."/../../public/userfiles");
+        if($path === false){
+            throw new Exception("Path not valid");
+        }else{
+            return $path;
+        }
+    }
+
+
+
 
     /**
      * initFile - init variables of file
@@ -188,7 +203,7 @@ class fileupload
     public function upload()
     {
 
-        if($this->config->useS3 === true) {
+        if($this->config->useS3 == true) {
             //S3 upload
             return $this->uplodToS3();
         }else{
@@ -202,19 +217,37 @@ class fileupload
     public function uploadPublic()
     {
 
-        try {
-            // Upload data.
-            $file = fopen($this->file_tmp_name, "rb");
+        if($this->config->useS3 == true) {
 
-            $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "public-read");
-            $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name);
+            try {
+                // Upload data.
+                $file = fopen($this->file_tmp_name, "rb");
 
-            return $url;
+                $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "public-read");
+                $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name);
 
-        } catch (S3Exception $e) {
+                return $url;
 
-            error_reporting($e->getMessage());
-            return false;
+            } catch (S3Exception $e) {
+
+                error_reporting($e->getMessage());
+                return false;
+
+            }
+
+        }else{
+
+            try {
+
+                if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
+                    return "/userfiles/".$this->file_name;
+                }
+
+            }catch(Exception $e){
+
+                error_reporting($e->getMessage());
+                return false;
+            }
 
         }
 

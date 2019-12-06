@@ -217,7 +217,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function upload($file,$module,$moduleId,$resize=false,$w=200,$h=200)
+        public function upload($file,$module,$moduleId)
         {
 
             $upload = new core\fileupload();
