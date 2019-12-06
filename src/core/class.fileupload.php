@@ -61,6 +61,12 @@ class fileupload
 
     /**
      * @access public
+     * @var    array parts of the path
+     */
+    public $path_parts=array();
+
+    /**
+     * @access public
      * @var    object configuration object
      */
     public $config;
@@ -99,16 +105,19 @@ class fileupload
 
         }
 
+        return false;
+
     }
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getAbsolutePath()
     {
         $path = realpath(__DIR__."/../../".$this->path);
        if($path === false){
-           throw new Exception("Path not valid");
+           throw new \Exception("Path not valid");
        }else{
            return $path;
        }
@@ -116,12 +125,13 @@ class fileupload
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getPublicFilesPath()
     {
         $path = realpath(__DIR__."/../../public/userfiles");
         if($path === false){
-            throw new Exception("Path not valid");
+            throw new \Exception("Path not valid");
         }else{
             return $path;
         }
@@ -195,9 +205,6 @@ class fileupload
      * upload - move file from tmp-folder to S3
      *
      * @access public
-     * @param  bool $resize
-     * @param  int  $w
-     * @param  int  $h
      * @return boolean
      */
     public function upload()
@@ -243,13 +250,15 @@ class fileupload
                     return "/userfiles/".$this->file_name;
                 }
 
-            }catch(Exception $e){
+            }catch(\Exception $e){
 
                 error_reporting($e->getMessage());
                 return false;
             }
 
         }
+
+        return false;
 
     }
     
@@ -281,7 +290,7 @@ class fileupload
                 return true;
             }
 
-        }catch(Exception $e){
+        }catch(\Exception $e){
 
             error_reporting($e->getMessage());
             return false;
@@ -291,20 +300,6 @@ class fileupload
 
     }
 
-        
-    /**
-     * deleteFile - delete file from server
-     *
-     * @access public
-     * @param  $file
-     * @return boolean
-     */
-    public function deleteFile($file)
-    {
-
-        //TODO: Write a method to remove file from S3
-        return true;
-    }
 
 }
 
