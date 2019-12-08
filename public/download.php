@@ -67,6 +67,7 @@ function getFileLocally(){
 							 
    				header('content-type: '. $mimes[$ext]);
     			header('content-disposition: inline; filename="'.$path_parts["basename"].'";');
+                header('Cache-Control: max-age=84600');
 			
 			}else{
 				

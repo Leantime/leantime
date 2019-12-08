@@ -24,8 +24,9 @@ $application = new leantime\core\application(
                         $settings,
                         $login,
                         leantime\core\FrontController::getInstance(ROOT),
-                        new  leantime\core\language(),
-                        new leantime\domain\services\projects());
+                        new leantime\core\language(),
+                        new leantime\domain\services\projects(),
+                        new leantime\domain\repositories\setting());
 
 $application->start();
 

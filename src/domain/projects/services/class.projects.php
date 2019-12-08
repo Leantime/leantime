@@ -23,6 +23,7 @@ namespace leantime\domain\services {
             $this->projectRepository = new repositories\projects();
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
+            $this->filesRepository = new repositories\files();
         }
 
         public function getProject($id) {
@@ -378,7 +379,29 @@ namespace leantime\domain\services {
 
         public function getUsersAssignedToProject($projectId)
         {
-            return $this->projectRepository->getUsersAssignedToProject($projectId);
+            $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            if($users) {
+
+                foreach ($users as &$user) {
+
+                    $file = $this->filesRepository->getFile($user['profileId']);
+
+                    $return = '/images/default-user.png';
+                    if ($file) {
+                        $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                    }
+
+                    $user["profilePicture"] = $return;
+
+                }
+
+                return $users;
+
+            }
+
+            return false;
+
         }
 
         public function isUserAssignedToProject($userId, $projectId) {

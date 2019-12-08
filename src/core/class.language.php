@@ -151,6 +151,8 @@ namespace leantime\core {
 
             if (isset($this->ini_array[$index]) === true) {
 
+                $index = trim($index);
+
                 return $this->ini_array[$index];
 
             } else {

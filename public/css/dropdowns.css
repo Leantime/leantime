@@ -13,6 +13,8 @@
     padding: 5px 10px;
 }
 
+
+
 .dropdown-menu > li > a:hover .muted {
     color: #fff;
 }
@@ -37,9 +39,34 @@
     top: 22px;
 }
 
-.maincontentinner .ticketDropdown > a {
+
+
+.ticketDropdown.userDropdown {
+    margin-top:-2px;
+}
+
+.ticketDropdown.userDropdown ul {
+    top: 33px;
+    left: 6px;
+}
+
+.ticketDropdown.dropRight ul{
+    right:0px;
+    left:auto;
+}
+
+.maincontentinner .ticketDropdown > a,
+.maincontentinner .ticketDropdown > a:link{
     color:#fff;
-    padding:5px 10px;
+    padding:0px 10px;
+}
+
+.maincontentinner .ticketDropdown.firstDropdown > a {
+    margin-left:0px;
+}
+
+.maincontentinner .ticketDropdown.lastDropdown > a {
+    padding-right:0px;
 }
 
 .maincontentinner .ticketDropdown > a:hover,
@@ -51,6 +78,21 @@
 .maincontentinner .ticketDropdown.colorized li a {
     color:#fff;
 }
+
+.maincontentinner .ticketDropdown.noBg {
+    background:transparent;
+
+}
+
+.maincontentinner .ticketDropdown.noBg >a img {
+
+}
+
+.maincontentinner .ticketDropdown.noBg >a:hover {
+    color:#000;
+}
+
+
 
 .maincontentinner .ticketDropdown ul li a.label-warning,
 .maincontentinner .ticketDropdown ul li a.label-important,
@@ -97,4 +139,9 @@
     border-bottom: 7px solid white;
     border-left: 7px solid transparent;
     content: '';
+}
+
+.ticketDropdown.dropRight  ul::after {
+    right: 10px;
+    left:auto;
 }

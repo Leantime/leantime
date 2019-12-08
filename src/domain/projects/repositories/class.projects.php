@@ -350,7 +350,8 @@ namespace leantime\domain\repositories {
 					zp_user.firstname,
 					zp_user.lastname,
 					zp_user.username,
-					zp_user.notifications
+					zp_user.notifications,
+					zp_user.profileId
 				FROM zp_relationuserproject 
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				WHERE zp_relationuserproject.projectId = :projectId && zp_user.id IS NOT NULL

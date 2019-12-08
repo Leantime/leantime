@@ -34,6 +34,12 @@ namespace leantime\domain\services {
 
         }
 
+        public function getTypeIcons() {
+
+            return $this->ticketRepository->typeIcons;
+
+        }
+
         public function getEffortLabels() {
 
             return $this->ticketRepository->efforts;
@@ -61,7 +67,6 @@ namespace leantime\domain\services {
             );
 
             if(isset($searchParams["users"]) === true) {
-                var_dump($searchParams["users"]);
                 $searchCriteria["users"] = $searchParams["users"];
             }
 
@@ -135,7 +140,7 @@ namespace leantime\domain\services {
 
         public function getOpenUserTicketsThisWeekAndLater ($userId, $projectId) {
 
-            $searchCriteria = array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "searchType"=> "", "searchterm" => "", "sprint" => "", "milestone" => '');
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria);
 
             $tickets = array(
@@ -417,6 +422,37 @@ namespace leantime\domain\services {
             }
 
             return true;
+
+        }
+
+        public function updateTicketStatusAndSorting($params)
+        {
+
+            //Jquery sortable serializes the array for kanban in format
+            //statusKey: ticket[]=X&ticket[]=X2...,
+            //statusKey2: ticket[]=X&ticket[]=X2...,
+            //This represents status & kanban sorting
+            foreach($params as $status=>$ticketList){
+
+                if(is_numeric($status)) {
+
+                    $tickets = explode("&", $ticketList);
+
+                    if (is_array($tickets) === true) {
+                        foreach ($tickets as $key => $ticketString) {
+                            $id = substr($ticketString, 9);
+
+                            if($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false){
+                                return false;
+                            };
+
+                        }
+                    }
+                }
+            }
+
+            return true;
+
 
         }
 

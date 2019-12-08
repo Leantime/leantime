@@ -64,6 +64,12 @@ namespace leantime\domain\repositories {
         public $type = array('task', 'story', 'bug');
 
         /**
+         * @access public
+         * @var    array
+         */
+        public $typeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'bug' => 'fa-bug');
+
+        /**
          * @access private
          * @var    integer
          */
@@ -759,9 +765,10 @@ namespace leantime\domain\repositories {
 							zp_clients.id AS clientId,
 							t1.lastname AS authorLastname,
 							t1.firstname AS authorFirstname, 
-							t1.profileId AS authorProfilePicture,
+							t1.profileId AS authorProfileId,
 							t2.firstname AS editorFirstname,
 							t2.lastname AS editorLastname,
+							t2.profileId AS editorProfileId,
 							milestone.headline AS milestoneHeadline,
 							IF((milestone.tags IS NULL OR milestone.tags = ''), '#1b75bb', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
@@ -922,7 +929,8 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                $stmn->execute();
+                return $stmn->execute();
+
             }else{
 
                 $query = "UPDATE zp_tickets
@@ -935,7 +943,7 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                $stmn->execute();
+                return $stmn->execute();
 
             }
 

@@ -267,7 +267,7 @@
                         </ul>
 
                         <br /><br />
-                        <h5 class="subtitle"><?php echo sprintf($this->__("subtitles.todos_later"), count($this->get('tickets')["later"])) ?>></h5>
+                        <h5 class="subtitle"><?php echo sprintf($this->__("subtitles.todos_later"), count($this->get('tickets')["later"])) ?></h5>
 
                         <ul class="sortableTicketList" >
 

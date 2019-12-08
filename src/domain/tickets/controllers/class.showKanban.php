@@ -28,19 +28,18 @@ namespace leantime\domain\controllers {
 
         public function get(array $params) {
 
-            if(isset($params['project']) === true && $_SESSION['currentProject'] != $_GET['project']) {
-
-            }
-
             $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
-            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
+            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
             $searchCriteria["orderBy"] = "kanbanSortIndex";
 
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('types', $this->ticketService->getTicketTypes());
+            $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
+
+            $this->tpl->assign('searchCriteria', $searchCriteria);
 
             $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
 
@@ -51,7 +50,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
 
-            $this->tpl->assign('currentSprint', $currentSprint);
+            $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
             $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showKanban');
@@ -68,8 +67,12 @@ namespace leantime\domain\controllers {
 
                 if(isset($result["status"]) ) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
+
+
                 }
             }
+
+            $this->tpl->redirect($_SERVER['REQUEST_URI']);
 
         }
 

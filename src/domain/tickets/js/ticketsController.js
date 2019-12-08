@@ -44,6 +44,7 @@ leantime.ticketsController = (function () {
                 _initEffortDropdown();
                 _initMilestoneDropdown();
                 _initStatusDropdown();
+                _initUserDropdown();
 
                 _initTicketEditor();
                 _initToolTips();
@@ -329,8 +330,6 @@ leantime.ticketsController = (function () {
 
     };
 
-
-
     var _initSprintPopover = function () {
         jQuery('.sprintPopover').popover(
             {
@@ -409,7 +408,6 @@ leantime.ticketsController = (function () {
         });
 
     };
-
 
     var _initMilestoneDropdown = function () {
 
@@ -490,6 +488,44 @@ leantime.ticketsController = (function () {
         leantime.ticketsController.colorTicketBoxes();
     };
 
+    var _initUserDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".userDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 3) {
+
+                    var ticketId = dataValue[0];
+                    var userId = dataValue[1];
+                    var profileImageId = dataValue[2];
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    editorId:userId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                        }
+                    );
+
+                }
+            }
+        );
+
+        leantime.ticketsController.colorTicketBoxes();
+    };
 
     var _initUserPopover = function () {
 
@@ -771,7 +807,114 @@ leantime.ticketsController = (function () {
             window.location.href = rediredirectUrl;
 
         });
-    }
+    };
+
+    var initTicketKanban = function (ticketStatusList) {
+
+        jQuery(window).bind("load", function () {
+
+            jQuery(".loading").fadeOut();
+            jQuery(".filterBar .row-fluid").css("opacity", "1");
+            var height = jQuery("html").height()-320;
+            jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
+            countTickets();
+        });
+
+        jQuery("#sortableTicketKanban .ticketBox").hover(function(){
+            jQuery(this).css("background", "#f9f9f9");
+        },function(){
+            jQuery(this).css("background", "#ffffff");
+        });
+
+
+        jQuery("#sortableTicketKanban .contentInner").sortable({
+            connectWith: ".contentInner",
+            items: "> .moveable",
+            tolerance: 'intersect',
+            placeholder: "ui-state-highlight",
+            forcePlaceholderSize: true,
+            cancel: ".portlet-toggle,:input,a,input",
+            distance: 25,
+
+            start: function (event, ui) {
+                ui.item.addClass('tilt');
+                tilt_direction(ui.item);
+            },
+            stop: function (event, ui) {
+                ui.item.removeClass("tilt");
+                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
+                ui.item.removeData("move_handler");
+            },
+            update: function (event, ui) {
+
+                countTickets();
+
+                var statusPostData = {
+                    action: "kanbanSort",
+                    payload: {}
+                };
+                for(var i=0; i<ticketStatusList.length; i++) {
+
+                    if(jQuery(".contentInner.status_"+ticketStatusList[i]).length) {
+                        statusPostData.payload[ticketStatusList[i]] = jQuery(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                    }
+                }
+
+                // POST to server using $.post or $.ajax
+                jQuery.ajax({
+                    type: 'POST',
+                    url: '/api/tickets',
+                    data: statusPostData
+
+                });
+
+            }
+        });
+
+        function countTickets () {
+
+            jQuery("#sortableTicketKanban .column").each(function(){
+                var counting= jQuery(this).find('.moveable').length;
+                jQuery(this).find(' .count').text(counting);
+            });
+
+        }
+
+        function tilt_direction(item) {
+            var left_pos = item.position().left,
+                move_handler = function (e) {
+                    if (e.pageX >= left_pos) {
+                        item.addClass("right");
+                        item.removeClass("left");
+                    } else {
+                        item.addClass("left");
+                        item.removeClass("right");
+                    }
+                    left_pos = e.pageX;
+                };
+            jQuery("html").bind("mousemove", move_handler);
+            item.data("move_handler", move_handler);
+        }
+
+        jQuery( ".portlet" )
+            .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+            .find( ".portlet-header" )
+            .addClass( "ui-widget-header ui-corner-all" )
+            .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+        jQuery( ".portlet-toggle" ).click(function() {
+            var icon = jQuery( this );
+            icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+            icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+        });
+
+    };
+
+    var initUserSelectBox = function () {
+
+        jQuery(".user-select").chosen();
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
@@ -784,6 +927,8 @@ leantime.ticketsController = (function () {
         initTimeSheetChart:initTimeSheetChart,
         colorTicketBoxes:colorTicketBoxes,
         initTicketTabs:initTicketTabs,
-        initTicketSearchSubmit:initTicketSearchSubmit
+        initTicketSearchSubmit:initTicketSearchSubmit,
+        initTicketKanban:initTicketKanban,
+        initUserSelectBox:initUserSelectBox
     };
 })();

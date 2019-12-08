@@ -3,6 +3,7 @@
 namespace leantime\core;
 
 use leantime\domain\services;
+use leantime\domain\repositories;
 
 class application
 {
@@ -13,6 +14,7 @@ class application
     private $frontController;
     private $language;
     private $projectService;
+    private $settingsRepo;
 
 
     public function __construct(config $config,
@@ -20,7 +22,8 @@ class application
                                 login $login,
                                 FrontController $frontController,
                                 language $language,
-                                services\projects $projectService)
+                                services\projects $projectService,
+                                repositories\setting $settingRepo)
     {
 
         $this->config = $config;
@@ -29,6 +32,7 @@ class application
         $this->frontController = $frontController;
         $this->language = $language;
         $this->projectService = $projectService;
+        $this->settingRepo = $settingRepo;
 
     }
 
@@ -81,10 +85,8 @@ class application
 
     public function overrideThemeSettings() {
 
-        $settings = new \leantime\domain\repositories\setting();
-
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
-            $logoPath = $settings->getSetting("companysettings.logoPath");
+            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
             if ($logoPath !== false) {
                 $_SESSION["companysettings.logoPath"] = $logoPath;
             }else{
@@ -93,7 +95,7 @@ class application
         }
 
         if(isset($_SESSION["companysettings.mainColor"]) === false) {
-            $mainColor = $settings->getSetting("companysettings.mainColor");
+            $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
             if ($mainColor !== false) {
                 $_SESSION["companysettings.mainColor"] = $mainColor;
             }else{
@@ -102,7 +104,7 @@ class application
         }
 
         if(isset($_SESSION["companysettings.sitename"]) === false) {
-            $sitename = $settings->getSetting("companysettings.sitename");
+            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
             if ($sitename !== false) {
                 $_SESSION["companysettings.sitename"] = $sitename;
             }else{

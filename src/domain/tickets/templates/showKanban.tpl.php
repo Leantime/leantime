@@ -1,201 +1,29 @@
 <?php
 
-defined( 'RESTRICTED' ) or die( 'Restricted access' );
-$tickets = $this->get("tickets");
-$sprints = $this->get("sprints");
-$searchCriteria = $this->get("searchCriteria");
-$currentSprint = $this->get("currentSprint");
+    defined( 'RESTRICTED' ) or die( 'Restricted access' );
+    $tickets        = $this->get("tickets");
+    $sprints        = $this->get("sprints");
+    $searchCriteria = $this->get("searchCriteria");
+    $currentSprint  = $this->get("currentSprint");
 
-$todoTypeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'bug' => 'fa-bug');
+    $todoTypeIcons  = $this->get("ticketTypeIcons");
 
-$efforts = $this->get('efforts');
+    $efforts        = $this->get('efforts');
+
+    //All states >0 (<1 is archive)
+    $numberofColumns = count($this->get('allTicketStates'))-1;
+    $size = floor(100 / $numberofColumns);
 
 ?>
 
- <script type="text/javascript">
-
-     function countTickets () {
-         jQuery("#sortableBacklog .column").each(function(){
-             var counting= jQuery(this).find('.moveable').length;
-             jQuery(this).find(' .count').text(counting);
-         });
-     }
-  
-  jQuery(window).bind("load", function () {
-  		jQuery(".loading").fadeOut();
-        jQuery(".filterBar .row-fluid").css("opacity", "1");
-        var height = jQuery("html").height()-320;
-        jQuery(".column .contentInner").css("height", height);
-      countTickets();
-  });
-      
-  jQuery(function() { 
-	
-	jQuery('.popoverlink').popover({trigger: 'hover'});
-	
-	jQuery( "#sortableBacklog" ).disableSelection();
-    
-    jQuery(".project-select, .user-select, .status-select").chosen();
-    
-    jQuery(".ticketBox").hover(function(){
-    	jQuery(this).css("background", "#f9f9f9");
-    },function(){
-    	jQuery(this).css("background", "#ffffff");
-    });
-    
-    jQuery(".contentInner").sortable({
-    	connectWith: ".contentInner",
-        items: "> .moveable",
-        tolerance: 'intersect',
-        placeholder: "ui-state-highlight",
-    	forcePlaceholderSize: true,
-	    cancel: ".portlet-toggle,:input,a,input",
-        distance: 25,
-
-	    start: function (event, ui) {
-	        ui.item.addClass('tilt');
-	        tilt_direction(ui.item);
-	    },
-	    stop: function (event, ui) {
-	        ui.item.removeClass("tilt");
-	        jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-	        ui.item.removeData("move_handler");
-	    },
-	    update: function (event, ui) {
-            countTickets();
-			 // POST to server using $.post or $.ajax
-	        jQuery.ajax({
-	        	type: 'POST',
-	            url: '/tickets/showKanban&raw=true&sort=true',            
-	            data: 
-	            {  	<?php foreach($this->get('allTicketStates') as $key => $statusRow){ ?>
-					<?php echo "'".$key."'" ?>: jQuery(".contentInner.status_<?php echo $key ?>").sortable('serialize'),
-		        	<?php } ?>
-		        	statusX: ""
-				}
-        })
-        }
-    });
-    
-    function tilt_direction(item) {
-	    var left_pos = item.position().left,
-	        move_handler = function (e) {
-	            if (e.pageX >= left_pos) {
-	                item.addClass("right");
-	                item.removeClass("left");
-	            } else {
-	                item.addClass("left");
-	                item.removeClass("right");
-	            }
-	            left_pos = e.pageX;
-	        };
-	    jQuery("html").bind("mousemove", move_handler);
-	    item.data("move_handler", move_handler);
-	}  
-	
-	jQuery( ".portlet" )
-	    .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-	    .find( ".portlet-header" )
-	    .addClass( "ui-widget-header ui-corner-all" )
-	    .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-	
-	jQuery( ".portlet-toggle" ).click(function() {
-	    var icon = jQuery( this );
-	    icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-	    icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-	});
-
-      <?php if(isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0){     ?>
-      leantime.helperController.showHelperModal("kanban");
-      <?php
-      //Only show once per session
-      $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
-      } ?>
-  });
-  
-  </script>
-
-  <style type="text/css">
-  <?php 
-	$numberofStatus = count($this->get('allTicketStates'));
-	$size = floor(100 / $numberofStatus)
-	?>
-	.tilt.right {
-	    transform: rotate(3deg);
-	    -moz-transform: rotate(3deg);
-	    -webkit-transform: rotate(3deg);
-	}
-	.tilt.left {
-	    transform: rotate(-3deg);
-	    -moz-transform: rotate(-3deg);
-	    -webkit-transform: rotate(-3deg);
-	}
-
-  	.column {
-  		box-sizing: border-box;
-  		height:auto;
-  		padding:5px;
-  		float:left;
-  		width:<?php echo $size?>%;
-  	}
-
-  .column:first-child {
-    padding-left:0px;
-  }
-
-  	.column .contentInner {
-  		background:#f0f0f0;
-  		border:1px solid #ccc;
-  		padding:10px 5px;
-  		min-height:200px;
-  		overflow:auto;
-  	}
-  	
-  	.ticketBox:hover {
-  		background:#f9f9f9;
-  	}
-  	
-  	.ui-state-highlight {
-  		background:#aaa;
-  		border:1px dotted #eee;
-  		visibility:visible;
-  	}
-  	
-	.portlet {
-	    margin: 0 1em 1em 0;
-	    padding: 0.3em;
-	}
-	.portlet-header {
-	    padding: 0.2em 0.3em;
-	    margin-bottom: 0.5em;
-	    position: relative;
-	}
-	.portlet-toggle {
-	    position: absolute;
-	    top: 50%;
-	    right: 0;
-	    margin-top: -8px;
-	}
-	.portlet-content {
-	    padding: 0.4em;
-	}
-	.portlet-placeholder {
-	    border: 1px dotted black;
-	    margin: 0 1em 1em 0;
-	    height: 50px;
-	}
-  </style>
- <div class="pageheader">  
+ <div class="pageheader">
  	
  	<div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-	    <h1>Current To-Dos</h1>
-
+	    <h1><?=$this->__("headlines.current_todos") ?></h1>
 	</div>
-	
-	
-	
+
 </div><!--pageheader-->
            
 <div class="maincontent">
@@ -208,25 +36,25 @@ $efforts = $this->get('efforts');
 		<form action="" method="get" id="ticketSearch">
 
             <input type="hidden" value="true" name="search"/>
-            <input type="hidden" value="true" name="<?php echo $_SESSION['currentProject']; ?> " id="projectIdInput"/>
+            <input type="hidden" value="<?php echo $_SESSION['currentProject']; ?>" name="projectId" id="projectIdInput"/>
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th"></i> &nbsp; Add <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="/tickets/newTicket"><span class="iconfa-pushpin "></span> Add ToDo</a></li>
-                            <li><a href="/tickets/editMilestone" class="milestoneModal"><span class="fa fa-map"></span> Add Milestone</a></li>
-                            <li><a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Add Sprint</a></li>
+                            <li><a href="/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
+                            <li><a href="/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
+                            <li><a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a href="javascript:void(0);" onclick="leantime.ticketsController.toggleFilterBar();" class="formLink btn btn-default"><i class="fas fa-filter"></i> Filters</a>
+                    <a href="javascript:void(0);" onclick="leantime.ticketsController.toggleFilterBar();" class="formLink btn btn-default"><?=$this->__("links.filter") ?></a>
                 </div>
 
                 <div class="col-md-4 center">
                     <span class="currentSprint">
                         <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
-                        <select data-placeholder="Filter by Sprint..." name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
-                                <option value="" <?php if($searchCriteria['sprint'] !== false && $searchCriteria['sprint'] != null && array_search("none", $searchCriteria['sprint']) !== false) echo"selected='selected'"; ?>>Backlog</option>
+                        <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
+                                <option value="" <?php if($searchCriteria['sprint'] !== false && $searchCriteria['sprint'] != null) echo"selected='selected'"; ?>><?=$this->__("links.backlog") ?></option>
                             <?php
                             $dates = "";
                             foreach($this->get('sprints') as $sprintRow){ 	?>
@@ -235,7 +63,8 @@ $efforts = $this->get('efforts');
 
                                 if($this->get("currentSprint") !== false && $sprintRow->id == $this->get("currentSprint")) {
                                     echo " selected='selected' ";
-                                    $dates = date("m/d/Y", strtotime($sprintRow->startDate)) ." - " .date("m/d/Y", strtotime($sprintRow->endDate));
+
+                                    $dates = sprintf($this->__("label.date_from_date_to"), date($this->__("language.dateformat"), strtotime($sprintRow->startDate)), date($this->__("language.dateformat"), strtotime($sprintRow->endDate)));
                                 }
                                 echo ">";
                                 $this->e($sprintRow->name);
@@ -247,48 +76,47 @@ $efforts = $this->get('efforts');
                             <br/>
                         <small>
                             <?php if($dates != "") {
-                                echo $dates; ?> - <a href="/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal">edit Sprint</a>
+                                echo $dates; ?> - <a href="/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
                             <?php }else{ ?>
-                                <a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create a new Sprint</a>
+                                <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
                             <?php } ?>
                         </small>
                         <?php }else{ ?>
-                            <br /><h4> <a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create your first Sprint</a></h4>
+                            <br /><h4> <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_first_sprint") ?></a></h4>
                         <?php } ?>
                     </span>
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group mt-1 mx-auto" role="group">
-                            <a href="/tickets/showKanban" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Kanban</a>
-                            <a href="/tickets/showAll" class="btn btn-sm btn-secondary"><i class='iconfa-list'></i> List</a>
+                            <a href="/tickets/showKanban" class="btn btn-sm btn-secondary active"><?=$this->__("links.kanban") ?></a>
+                            <a href="/tickets/showAll" class="btn btn-sm btn-secondary"><?=$this->__("links.list") ?></a>
                         </div>
 
                     </div>
                 </div>
-
             </div>
 
 			<div class="clearfix"></div>			
 			<div class="filterBar <?php
-            if(($searchCriteria['users'] == '' || count($searchCriteria['users']) == 0) && $searchCriteria['milestone'] == '' && $searchCriteria['searchType'] == '') { echo "hideOnLoad"; } ?>">
+            if($searchCriteria['users'] == '' && $searchCriteria['milestone'] == '' && $searchCriteria['type'] == '') { echo "hideOnLoad"; } ?>">
 				<div class="loading"></div>
 				<div class="row-fluid" style="opacity:0.4">
                     <div class="pull-right">
-                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['searchterm']; ?>">
+                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['term']; ?>">
                         <input type="submit" value="Search" class="form-control btn btn-primary" />
                     </div>
 
 					<div class="filterBoxLeft">
-                        <label class="inline">User</label>
+                        <label class="inline"><?=$this->__("label.user") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by User..." name="users" multiple="multiple" class="user-select" id="userSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
                                 <option value=""></option>
                                 <?php foreach($this->get('users') as $userRow){ 	?>
 
                                     <?php echo"<option value='".$userRow["id"]."'";
 
-                                    if($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], $searchCriteria['users']) !== false) echo" selected='selected' ";
+                                    if($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], explode(",", $searchCriteria['users'])) !== false) echo" selected='selected' ";
 
                                     echo">".$this->escape($userRow["firstname"]." ".$userRow["lastname"])."</option>"; ?>
 
@@ -300,10 +128,10 @@ $efforts = $this->get('efforts');
 				    </div>
                     <div class="filterBoxLeft">
 
-                        <label class="inline">Milestone</label>
+                        <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by Milestone..." name="milestone"  class="user-select" id="milestoneSelect">
-                                <option value="">All Milestones</option>
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  class="user-select" id="milestoneSelect">
+                                <option value=""><?=$this->__("label.all_milestones") ?></option>
                                 <?php foreach($this->get('milestones') as $milestoneRow){ 	?>
 
                                     <?php echo"<option value='".$milestoneRow->id."'";
@@ -320,15 +148,15 @@ $efforts = $this->get('efforts');
 
                     <div class="">
 
-                        <label class="inline">To-Do Type</label>
+                        <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="Filter by Type..." name="type" id="typeSelect">
-                                <option value="">All Types</option>
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="type" id="typeSelect">
+                                <option value=""><?=$this->__("label.all_types") ?></option>
                                 <?php foreach($this->get('types') as $type){ 	?>
 
                                     <?php echo"<option value='".$type."'";
 
-                                    if(isset($searchCriteria['searchType']) && ($searchCriteria['searchType'] == $type)) echo" selected='selected' ";
+                                    if(isset($searchCriteria['type']) && ($searchCriteria['type'] == $type)) echo" selected='selected' ";
 
                                     echo">$type</option>"; ?>
 
@@ -343,7 +171,7 @@ $efforts = $this->get('efforts');
 		</form>
 
 
-		<div id="sortableBacklog" class="sortableTicketList">
+		<div id="sortableTicketKanban" class="sortableTicketList">
 			
 			<div class="row-fluid">
 				
@@ -352,40 +180,35 @@ $efforts = $this->get('efforts');
 				
 				
 				foreach($this->get('allTicketStates') as $key => $statusRow){ 	
-					
-					$color = "";
-					switch($key){
-						case "3": $color = "#b94a48"; break;
-						case "1": $color = "#f89406"; break;
-						case "4": $color = "#f89406"; break;
-						case "2": $color = "#f89406"; break;
-						case "0": $color = "#468847"; break;
-						case "-1": $color = "#999999"; break;
-					}
+
+				    //Don't display archive on kanban board
+				    if($key<0){continue;}
+
 					?>
 						
-						<div class="column">
+						<div class="column" style="width:<?=$size?>%;">
 							
-                            <h4 class="widgettitle title-primary" style="border-bottom:5px solid <?php echo $color; ?>">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                            <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
+                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
                                 <a href="/setting/editBoxLabel&module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
+                            <?php } ?>
+
                                 <strong class="count">0</strong>
-                                <?php echo $statusRow['name']; ?></h4>
-							<div class="contentInner <?php echo"status_".$key;?>">
+                            <?php $this->e($statusRow['name']); ?></h4>
+
+							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
                                     <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>"  onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> Add To-Do</a>
                                     <div class="ticketBox hideOnLoad " id="ticket_new_<?=$key?>">
 
                                         <form method="post">
-                                            <textarea name="headline"></textarea><br />
-
+                                            <input type="text" name="headline" style="width:100%;" title="<?=$this->__("label.headline") ?>"/><br />
                                             <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
                                             <input type="hidden" name="status" value="<?php echo $key; ?> " />
                                             <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
-                                            <input type="submit" value="Save" name="quickadd">
+                                            <input type="submit" value="Save" name="quickadd" />
                                             <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
-                                                <i class="fas fa-times"></i> Cancel
+                                                <?=$this->__("links.cancel") ?>
                                             </a>
                                         </form>
 
@@ -410,26 +233,21 @@ $efforts = $this->get('efforts');
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">
-                                                            <li class="nav-header">To-Do</li>
-                                                            <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                            <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
-                                                            <li class="nav-header border">Track Time</li>
+                                                            <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
+                                                            <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                                            <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                                <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>
-
-                                                                <a class="punchOut" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn === false || $clockedIn["id"] != $row["id"]) { echo"style='display:none;'"; }?>><span class="iconfa-stop"></span> Stop Work, <?php echo "<span >started at: <span class='time'>".date("h:i A", $clockedIn["since"]); ?></span></span></a>
-
-                                                                <span class='working' <?php if($clockedIn === false || $clockedIn["id"] === $row["id"]) { echo"style='display:none;'"; }?>>Timer set on another To-Do</span>
-
-
-
+                                                                <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                                                <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn === false || $clockedIn["id"] != $row["id"]) { echo"style='display:none;'"; }?>><span class="iconfa-stop"></span> <?php echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"])); ?></a>
+                                                                <span class='working' <?php if($clockedIn === false || $clockedIn["id"] === $row["id"]) { echo"style='display:none;'"; }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
                                                             </li>
                                                         </ul>
                                                     </div>
                                                 <?php } ?>
-                                                <small><i class="fa <?php echo $todoTypeIcons[$row['type']]; ?>"></i> <?php echo $row['type']; ?></small>
+                                                <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $row['type']; ?></small>
 
-                                                <h4><a href="/tickets/showTicket/<?php echo $row["id"];?>"><?php echo $row["headline"];?></a></h4>
+                                                <h4><a href="/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
                                                 <p class="description"><?php echo substr(strip_tags($row["description"]), 0, 100);?><?php if(strlen($row["description"]) > 0) echo" (...)";?></p>
 
 
@@ -441,99 +259,99 @@ $efforts = $this->get('efforts');
                                         <div class="row">
 
                                             <div class="col-md-6" style="white-space: nowrap;">
-                                                <?php
+                                                &nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comments"><span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?></a>
+                                                &nbsp;&nbsp;&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;
+                                                 <?php
 
                                                 if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                                                    $date = "Anytime";
+                                                    $date = $this->__("text.anytime");
 
                                                 }else {
                                                     $date = new DateTime($row['dateToFinish']);
-                                                    $date = $date->format("m/d/Y");
+                                                    $date = $date->format($this->__("language.dateformat"));
+
                                                 }
-                                                ?>
 
-                                                Due: <input type="text" value="<?php echo $date ?>" class="quickDueDates secretInput" data-id="<?php echo $row['id'];?>" name="quickDueDate" />
+                                                echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
 
                                             </div>
 
-                                            <div class="col-md-6" style="padding-top:3px;">
-                                                <a class="userPopover" style="white-space: nowrap;" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id']."' value='' data-label='nobody' style='float:left; margin-right:10px;' "; if($row['editorId'] == '') echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id']."'>Not assigned</label>";foreach($this->get('users') as $user){ echo"<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id'].$user['id']."' value='".$user['id']."' data-label='".$user['firstname'].", ".$user['lastname']."' style='float:left; margin-right:10px;' "; if($row['editorId'] == $user['id']) echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id'].$user['id']."'>".$user['firstname'].", ".$user['lastname']."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="Who is working on this?">
-                                                    <span class="author"><span class="iconfa-user"></span>
-                                                        <?php if($row["editorFirstname"] != ""){
-                                                            echo "<span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span> <i class=\"fas fa-caret-down\"></i>";
-                                                        }else {
-                                                            echo "<span id='user".$row['id']."'>nobody</span> <i class=\"fas fa-caret-down\"></i>";
-                                                        }?>
-                                                    </span>
-                                                </a>
-                                            </div>
+                                            <div class="col-md-6" style="padding-top:3px; text-align:right;">
 
+                                            </div>
 
                                         </div>
 
-										<div class="clearfix" ></div>
-
-                                        <div style="float:left;">
-                                            </div>
-                                        <div  style="float:right; padding-top:5px;">
-
-
-
-                                        </div>
 
                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-										<div class="left" style="float:left;">
+										<div class="timerContainer" id="timerContainer-<?php echo $row["id"]; ?>" >
 
-											&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comment"><span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?></a>
-											&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>
-											&nbsp;<?php
-											$tagArray = explode(",", $row["tags"]);
-
-											$tagClass = "";
-
-											if($tagArray !== false && $tagArray[0] != ""){
-												$tagCount = count($tagArray);
-												$tagClass = "popoverlink";
-											}else{
-												$tagCount = 0;
-
-											}
-
-											?><a data-content="<?php echo str_replace(",", ", ", $row["tags"]) ?>" class="<?php echo $tagClass; ?>" data-placement="top" data-rel="popover" href="#" data-original-title="Tags" rel="popover"><i class="iconfa-tags"></i> <?php echo $tagCount; ?></a>
-										</div>
-										
-										<div class="right timerContainer" style="float:right" id="timerContainer-<?php echo $row["id"]; ?>" >
-
-                                                <a class="effortPopover" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketEffortChange_".$row['id']."' id='ticketEffortChange".$row['id']."' value='' data-label='Effort not clear' style='float:left; margin-right:10px;' "; if($row['storypoints'] == '') echo" checked='selected' "; echo"><label for='ticketEffortChange".$row['id']."'>Effort not clear</label>";foreach($this->get('efforts') as $effortKey => $effortValue){ echo"<input type='radio' name='ticketEffortChange_".$row['id']."' id='ticketEffortChange".$row['id'].$effortKey."' value='".$effortKey."' data-label='".$effortValue."' style='float:left; margin-right:10px;' "; if($row['storypoints'] == $effortKey) echo" checked='selected' "; echo"><label for='ticketEffortChange".$row['id'].$effortKey."'>".$effortValue."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="How big is this To-Do?">
-                                                  <span id="effort-<?php echo $row['id'] ?>" class="f-left label label-default effort" >
-                                                           <?php
-                                                           if($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                               echo $efforts[$row['storypoints']];
-                                                           }else{
-                                                               echo "?";
-                                                           }?>
-                                                    </span>
+                                            <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
+                                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <span class="text"><?php
+                                                                    if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
+                                                                        $this->e($row['milestoneHeadline']);
+                                                                    }else{
+                                                                        echo $this->__("label.no_milestone");
+                                                                    }?>
+                                                                </span>
+                                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
+                                                <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
+                                                    <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
+                                                    <?php foreach($this->get('milestones') as $milestone){
+                                                        echo"<li class='dropdown-item'>
+                                                            <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
 
-                                            <?php if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){?>
-
-                                                <a class="milestonePopover" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketMilestoneChange_".$row['id']."' id='ticketMilestoneChange".$row['id']."0' value='0' data-label='No Milestone' data-color='' style='float:left; margin-right:10px;' "; if($row['dependingTicketId'] == 0) echo" checked='selected' "; echo"><label for='ticketMilestoneChange".$row['id']."0'>No Milestone</label>"; foreach($this->get('milestones') as $milestone){ echo"<input type='radio' name='ticketMilestoneChange_".$row['id']."' id='ticketMilestoneChange".$row['id'].$milestone->id."' value='".$milestone->id."' data-label='".$milestone->headline."' data-color='".$milestone->tags."' style='float:left; margin-right:10px;' "; if($row['dependingTicketId'] == $milestone->id) echo" checked='selected' "; echo"><label for='ticketMilestoneChange".$row['id'].$milestone->id."'>".$milestone->headline."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="Choose a milestone">
-                                                  <span id="milestone-<?php echo $row['id'] ?>" class="f-left label label-primary sprint" style="background-color:<?=$row['milestoneColor'] ?>">
-                                                           <?php echo $row['milestoneHeadline']; ?>
-                                                    </span>
+                                            <div class="dropdown ticketDropdown effortDropdown show">
+                                                <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <span class="text"><?php
+                                                                    if($row['storypoints'] != '' && $row['storypoints'] > 0) {
+                                                                        echo $efforts[$row['storypoints']];
+                                                                    }else{
+                                                                        echo $this->__("label.story_points_unkown");
+                                                                    }?>
+                                                                </span>
+                                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
+                                                <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
+                                                    <?php foreach($efforts as $effortKey => $effortValue){
+                                                        echo"<li class='dropdown-item'>
+                                                                            <a href='javascript:void(0);' data-value='".$row['id']."_".$effortKey."' id='ticketEffortChange".$row['id'].$effortKey."'>".$effortValue."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
 
-                                            <?php }else{ ?>
-
-                                                <a class="milestonePopover" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketMilestoneChange_".$row['id']."' id='ticketMilestoneChange".$row['id']."0' value='0' data-label='No Milestone' data-color='' style='float:left; margin-right:10px;' "; if($row['dependingTicketId'] == 0) echo" checked='selected' "; echo"><label for='ticketMilestoneChange".$row['id']."0'>No Milestone</label>"; foreach($this->get('milestones') as $milestone){ echo"<input type='radio' name='ticketMilestoneChange_".$row['id']."' id='ticketMilestoneChange".$row['id'].$milestone->id."' value='".$milestone->id."' data-label='".$milestone->headline."' data-color='".$milestone->tags."' style='float:left; margin-right:10px;' "; if($row['dependingTicketId'] == $milestone->id) echo" checked='selected' "; echo"><label for='ticketMilestoneChange".$row['id'].$milestone->id."'>".$milestone->headline."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="Choose a milestone">
-                                                <span id="milestone-<?php echo $row['id'] ?>" class="f-left label label-primary sprint">
-                                                           No Milestone
-                                                    </span>
+                                            <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <span class="text">
+                                                                    <?php if($row["editorFirstname"] != ""){
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
+                                                                    }else {
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span> <i class=\"fas fa-caret-down\"></i>";
+                                                                    }?>
+                                                                </span>
+                                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
+                                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                            <?php } ?>
+                                                    <?php foreach($this->get('users') as $user){
+                                                        echo"<li class='dropdown-item'>
+                                                                            <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
 
 												
 										</div>
@@ -546,8 +364,9 @@ $efforts = $this->get('efforts');
 
 						</div>
 				<?php } ?>
-				<div class="clearfix"></div>
+
 			</div>
+            <div class="clearfix"></div>
 
 		</div>
     </div>
@@ -555,10 +374,26 @@ $efforts = $this->get('efforts');
 </div>
 
 <script type="text/javascript">
-    leantime.ticketsController.initTicketSearchSubmit("/tickets/showKanban");
+
 </script>
 
 
+<script type="text/javascript">
 
+    //jQuery( "#sortableBacklog" ).disableSelection();
 
+    leantime.ticketsController.initTicketSearchSubmit("/tickets/showKanban");
 
+    leantime.ticketsController.initUserSelectBox();
+
+    var ticketStatusList = [<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo "'".$key."',"; }?>];
+    leantime.ticketsController.initTicketKanban(ticketStatusList);
+
+    <?php if(isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0){ ?>
+        leantime.helperController.showHelperModal("kanban");
+    <?php
+        //Only show once per session
+        $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
+    } ?>
+
+</script>

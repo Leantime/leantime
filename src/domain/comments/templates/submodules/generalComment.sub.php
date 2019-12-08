@@ -36,17 +36,8 @@
             <?php foreach($this->get('comments') as $row): ?>
 
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #d9d9d9;">
-                    <?php
-                            $files = new leantime\domain\repositories\files;
-                            $file = $files->getFile($row['profileId']);
 
-                            $img = '/images/default-user.png';
-                    if ($file) {
-                        $img = "/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
-                    }
-                    ?>
-
-                            <img src="<?php echo $img; ?>" style="float:left; width:75px; margin-right:10px; padding:2px;"/>
+                            <img src="/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <strong><?php $this->e($row['firstname']); ?> <?php $this->e($row['lastname']); ?></strong><br />
                             <p><?php echo nl2br($this->escape($row['text'])); ?></p>
                             <div class="clear"></div>

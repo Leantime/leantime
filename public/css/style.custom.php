@@ -50,7 +50,8 @@ a,a:hover,a:link,a:active,a:focus,
 .optionLink,
 .inlineDropDownContainer .ticketDropDown:hover,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
-input.secretInput
+input.secretInput,
+.maincontentinner .ticketDropdown.noBg >a
 { color: <?php echo $color; ?>; }
 
 
@@ -256,7 +257,7 @@ padding:20px 0px;
 	
 	border:1px solid #ccc;
 	padding:10px;
-	margin-bottom:10px;
+	margin-bottom:5px;
 	background:#fff;
 	padding-top:15px;
 }
