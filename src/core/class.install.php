@@ -92,7 +92,7 @@ namespace leantime\core {
 
             try {
 
-                $this->database->query("Use ".$config->dbDatabase.";");
+                $this->database->query("Use `".$config->dbDatabase."`;");
 
                 $stmn = $this->database->prepare($sql);
                 $stmn->bindValue(':email',$values["email"],PDO::PARAM_STR);
@@ -524,9 +524,11 @@ namespace leantime\core {
                     `daily_avg_hours_planned_point` INT NULL,
                     `daily_avg_hours_remaining_point` INT NULL,
                     `daily_avg_hours_remaining_todo` INT NULL,
-                    INDEX `projectId` (`projectId` ASC, `sprintId` ASC));
+                    INDEX `projectId` (`projectId` ASC, `sprintId` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
                     
-                CREATE TABLE `zp_settings` (`key` VARCHAR(255) NOT NULL,`value` TEXT NULL,PRIMARY KEY (`key`));
+                CREATE TABLE `zp_settings` (`key` VARCHAR(255) NOT NULL,`value` TEXT NULL,PRIMARY KEY (`key`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
                 
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', :dbVersion);
                             
