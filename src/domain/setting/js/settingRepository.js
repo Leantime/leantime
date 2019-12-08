@@ -24,7 +24,6 @@ leantime.settingRepository = (function () {
             }
         ).success(
             function (resp) {
-                    console.log(resp);
                     jQuery('#save-logo').removeClass('running');
                     location.reload();
             }
