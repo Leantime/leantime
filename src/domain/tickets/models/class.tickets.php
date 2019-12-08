@@ -11,6 +11,7 @@ namespace leantime\domain\models {
         public $projectId;
         public $editorId;
         public $userId;
+        public $priority;
 
         public $date;
         public $dateToFinish;
@@ -24,6 +25,13 @@ namespace leantime\domain\models {
         public $editFrom;
         public $editTo;
         public $dependingTicketId;
+
+        public $projectName;
+        public $clientName;
+        public $userFirstname;
+        public $userLastname;
+        public $editorFirstname;
+        public $editorLastname;
 
         public function __construct()
         {

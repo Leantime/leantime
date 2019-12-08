@@ -1,23 +1,3 @@
-@import url('bootstrap.min.css');
-@import url('bootstrap-responsive.min.css');
-@import url('jquery.ui.css');
-@import url('animate.min.css');
-@import url('animate.delay.css');
-@import url('isotope.css');
-@import url('colorbox.css');
-
-@import url('colorpicker.css');
-@import url('jquery.jgrowl.css');
-@import url('jquery.alerts.css');
-@import url('jquery.tagsinput.css');
-@import url('ui.spinner.css');
-@import url('jquery.chosen.css');
-@import url('fullcalendar.css');
-@import url('roboto.css');
-@import url('lato.css');
-@import url('font-awesome.min.css');
-@import url('/fonts/Exo/stylesheet.css');
-
 @-ms-viewport {
     width: device-width;
 }
@@ -6145,35 +6125,7 @@ strong, .headmenu .nav-header,
     text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-.dropdown-menu {
-    margin-top: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 0;
-}
 
-.dropdown-menu > li > a {
-    font-size: 12px;
-    color: #444;
-    margin: 0 5px;
-    padding: 5px 10px;
-}
-
-.dropdown-menu > li > a:hover .muted {
-    color: #fff;
-}
-
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus,
-.dropdown-submenu:hover > a,
-.dropdown-submenu:focus > a {
-    background: #333;
-}
-
-.dropdown .dropdown-menu .nav-header {
-    padding-left: 10px;
-    padding-right: 10px;
-}
 
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
@@ -8858,6 +8810,7 @@ input.secretInput {
     border: 1px solid transparent;
     margin-top:-1px;
     cursor:pointer;
+    padding-left: 3px;
 
 }
 
@@ -8865,11 +8818,10 @@ input.secretInput {
 input.secretInput:hover,
 input.secretInput:focus,
 input.secretInput:active {
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
-    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
-    border: 1px solid #cccccc;
-    text-decoration:none;
+    color:#222;
+    border-color:transparent;
+    box-shadow:none;
+    text-decoration:underline;
 }
 
 

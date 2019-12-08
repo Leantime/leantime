@@ -67,7 +67,7 @@ function toggleCommentBoxes(id){
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
             <div class="pagetitle">
                 <h5>Administration</h5>
-                <h1><?php echo $language->lang_echo('PROJECT') ?> <?php echo $project['name']; ?></h1>
+                <h1><?php echo $this->__('PROJECT') ?> <?php echo $project['name']; ?></h1>
             </div>
 </div><!--pageheader-->
         
@@ -79,9 +79,9 @@ function toggleCommentBoxes(id){
                 <div class="tabbedwidget tab-primary">
 
                 <ul>
-                    <li><a href="#projectdetails"><?php echo $language->lang_echo('PROJECT_DETAILS'); ?></a></li>
+                    <li><a href="#projectdetails"><?php echo $this->__('PROJECT_DETAILS'); ?></a></li>
                     <li><a href="#integrations">Integrations</a></li>
-                    <li><a href="#files"><?php echo $language->lang_echo('FILES'); ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
+                    <li><a href="#files"><?php echo $this->__('FILES'); ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
                     <li><a href="#comment">Discussion (<?php echo $this->get('numComments'); ?>)</a></li>
 
                 </ul>
@@ -113,7 +113,7 @@ function toggleCommentBoxes(id){
                                       </div>
                                    </div>
 
-                                   <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
+                                   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 
                                 </form>
                     </div>

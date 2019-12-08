@@ -40,7 +40,7 @@ namespace leantime\domain\repositories {
 					:encName, :realName, :extension, :module, :moduleId, :userId, NOW()
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':encName', $values['encName'], PDO::PARAM_STR);
             $stmn->bindValue(':realName', $values['realName'], PDO::PARAM_STR);
             $stmn->bindValue(':extension', $values['extension'], PDO::PARAM_STR);
@@ -51,7 +51,7 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $stmn->closeCursor();
 
-            return $this->db->{'database'}->lastInsertId();
+            return $this->db->database->lastInsertId();
 
         }
 
@@ -65,7 +65,7 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_user as user ON file.userId = user.id
 				WHERE file.id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -90,7 +90,7 @@ namespace leantime\domain\repositories {
 
             $sql .= " ORDER BY file.module, file.moduleId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
@@ -122,7 +122,7 @@ namespace leantime\domain\repositories {
                 break;
             }
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $ids = array();
             foreach($files as $file) {
@@ -171,7 +171,7 @@ namespace leantime\domain\repositories {
                 $sql .= " AND userId=".$userId;
             }
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             if ($module!='') {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
@@ -192,7 +192,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT encName, extension FROM zp_file WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -209,15 +209,15 @@ namespace leantime\domain\repositories {
 
             $sql = "DELETE FROM zp_file WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
+            return $stmn->execute();
             $stmn->closeCursor();
 
         }
 
-        public function upload($file,$module,$moduleId,$resize=false,$w=200,$h=200)
+        public function upload($file,$module,$moduleId)
         {
 
             $upload = new core\fileupload();

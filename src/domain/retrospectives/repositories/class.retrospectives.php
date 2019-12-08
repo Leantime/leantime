@@ -61,7 +61,7 @@ namespace leantime\domain\repositories {
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($sql);
+                $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".retrolabels", PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -98,7 +98,7 @@ namespace leantime\domain\repositories {
 				WHERE type = 'retrospective' AND projectId = :projectId
 				ORDER BY zp_canvas.title, zp_canvas.created";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -114,13 +114,13 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
             $query = "DELETE FROM zp_canvas WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
@@ -145,7 +145,7 @@ namespace leantime\domain\repositories {
 						:projectId
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
@@ -156,7 +156,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            return $this->db->{'database'}->lastInsertId();
+            return $this->db->database->lastInsertId();
 
         }
 
@@ -172,7 +172,7 @@ namespace leantime\domain\repositories {
 					milestoneId =			:milestoneId
 					WHERE id = :id LIMIT 1	";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $values['itemId'], PDO::PARAM_STR);
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
@@ -199,7 +199,7 @@ namespace leantime\domain\repositories {
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
@@ -255,7 +255,7 @@ namespace leantime\domain\repositories {
 				GROUP BY zp_canvas_items.id
 				ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -304,7 +304,7 @@ namespace leantime\domain\repositories {
 				WHERE zp_canvas_items.id = :id 
 				";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -342,7 +342,7 @@ namespace leantime\domain\repositories {
 						:status
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
@@ -354,7 +354,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
 
             $stmn->execute();
-            $id = $this->db->{'database'}->lastInsertId();
+            $id = $this->db->database->lastInsertId();
             $stmn->closeCursor();
 
             return $id;
@@ -365,7 +365,7 @@ namespace leantime\domain\repositories {
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 

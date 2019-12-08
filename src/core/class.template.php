@@ -45,6 +45,12 @@ namespace leantime\core {
          */
         public $tmpError = '';
 
+        /**
+         * @access public
+         * @var    object
+         */
+        public $language = '';
+
         public $template = '';
 
         public $picture = array(
@@ -70,6 +76,8 @@ namespace leantime\core {
         public function __construct()
         {
             $this->controller = FrontController::getInstance();
+
+            $this->language = new language();
 
         }
 
@@ -124,12 +132,15 @@ namespace leantime\core {
         public function display($template)
         {
 
-            $this->template = $template;
-
+            //These variables are available in the template
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new settings();
+
+            $this->template = $template;
+
             include '../src/content.php';
+
             $mainContent = ob_get_clean();
             ob_start();
 
@@ -139,29 +150,18 @@ namespace leantime\core {
             $module = frontcontroller::getModuleName($template);
 
             $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
-                echo '<p>Could not find template</p>';
-
-            } else {
-
-                //get language-File for labels
-                $language = new language();
-
-                $lang = $language->readIni();
-
-                include $strTemplate;
-
-                $subContent = ob_get_clean();
-
-                $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
-
-                echo $content;
-
+                throw new Exception($this->__("notifications.no_template"));
             }
 
-            return;
+            include $strTemplate;
+
+            $subContent = ob_get_clean();
+
+            $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+
+            echo $content;
+
         }
 
         /**
@@ -173,6 +173,11 @@ namespace leantime\core {
          */
         public function displayPartial($template)
         {
+
+            //These variables are available in the template
+            $frontController = frontcontroller::getInstance(ROOT);
+            $config = new config();
+            $settings = new settings();
 
             $this->template = $template;
 
@@ -186,14 +191,9 @@ namespace leantime\core {
 
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
 
-                echo '<p>Could not find template</p>';
+                throw ($this->__("notifications.no_template"));
 
             } else {
-
-                //get language-File for labels
-                $language = new language();
-
-                $lang = $language->readIni();
 
                 include $strTemplate;
 
@@ -241,8 +241,11 @@ namespace leantime\core {
             if(isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
 
                 return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
+
             }else{
+
                 return array('type' => "", 'msg' => "");
+
             }
         }
 
@@ -256,6 +259,11 @@ namespace leantime\core {
         public function displaySubmodule($alias)
         {
 
+            $frontController = frontcontroller::getInstance(ROOT);
+            $config = new config();
+            $settings = new settings();
+
+
             $submodule = array("module"=>'', "submodule"=>'');
 
             $aliasParts = explode("-", $alias);
@@ -268,11 +276,8 @@ namespace leantime\core {
 
             if (file_exists($file)) {
 
-                $language = new language();
-
-                $lang = $language->readIni();
-
                 include $file;
+
             }
 
         }
@@ -281,7 +286,8 @@ namespace leantime\core {
         {
 
             $setting = new repositories\setting();
-            $language = new language();
+            $language = $this->language;
+
             $title = '';
 
             if ($setting->submoduleHasRights($alias) !== false) {
@@ -290,9 +296,7 @@ namespace leantime\core {
 
                 if ($submodule['title'] !== '') {
 
-                    $language->readIni();
-
-                    $title = $language->lang_echo($submodule['title']);
+                    $title = $this->__($submodule['title']);
 
                 } else {
 
@@ -319,9 +323,6 @@ namespace leantime\core {
 
                 $mod = $module.'/class.'.$action.'.php';
 
-                $setting = new repositories\setting();
-                $available = $setting->getAvailableModules($_SESSION['userdata']['role']);
-
             }else{
 
                 $mod = array();
@@ -331,8 +332,7 @@ namespace leantime\core {
             $returnLink = false;
 
 
-
-                $url = "/".$module."/".$action."/";
+            $url = "/".$module."/".$action."/";
 
             if (!empty($params)) {
 
@@ -360,11 +360,9 @@ namespace leantime\core {
         public function displayNotification()
         {
 
-            $language = new language();
-            $language->readIni();
-
             $notification = '';
             $note = $this->getNotification();
+            $language = $this->language;
 
             $alertIcons = array(
                 "success" => '<i class="far fa-check-circle"></i>',
@@ -382,7 +380,7 @@ namespace leantime\core {
 								<div class='alert-content'><h4>"
                     .ucfirst($note['type']).
                     "!</h4>"
-                    .$language->lang_echo($note['msg'], false).
+                    .$language->__($note['msg'], false).
                     "
 								</div>
 								<div class='clearall'></div>
@@ -416,14 +414,25 @@ namespace leantime\core {
 
         }
 
+        public function __($index){
+
+            return $this->language->__($index);
+
+        }
+
         //Echos and escapes content
         public function e($content) {
+
             $escaped = $this->escape($content);
+
             echo $escaped;
+
         }
 
         public function escape($content) {
+
             return htmlentities($content);
+
         }
 
     }

@@ -10,7 +10,7 @@ $ticket = $this->get('ticket');
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5><?php echo $_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']; ?></h5>
-                <h1><?php printf($language->lang_echo('DELETE_TICKET'), $ticket['id']); ?></h1>
+                <h1><?php printf($this->__('DELETE_TICKET'), $ticket['id']); ?></h1>
             </div>
         </div><!--pageheader-->
         

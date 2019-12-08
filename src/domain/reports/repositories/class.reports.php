@@ -75,7 +75,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId, sprint";
             }
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
@@ -97,7 +97,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM zp_stats WHERE DATE(date) = DATE(NOW() - INTERVAL 1 DAY) AND projectId = :projectId LIMIT 2";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -174,7 +174,7 @@ namespace leantime\domain\repositories {
                                :daily_avg_hours_remaining_point,
                                :daily_avg_hours_remaining_todo)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':sprintId', $report->sprintId, PDO::PARAM_INT);
             $stmn->bindValue(':projectId', $report->projectId, PDO::PARAM_INT);
             $stmn->bindValue(':date', $report->date, PDO::PARAM_STR);
@@ -215,7 +215,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM zp_stats WHERE sprintId = :sprint ORDER BY date ASC";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':sprint', $sprint, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -233,7 +233,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM zp_stats WHERE projectId = :project AND sprintId = 0 ORDER BY date ASC LIMIT 95 ";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':project', $project, PDO::PARAM_INT);
 
             $stmn->execute();

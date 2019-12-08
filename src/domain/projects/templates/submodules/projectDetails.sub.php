@@ -17,7 +17,7 @@ $helper = $this->get('helper');
 
                     <div class="form-group">
 
-                        <label  class="span4 control-label" for="name"><?php echo $language->lang_echo('NAME'); ?></label>
+                        <label  class="span4 control-label" for="name"><?php echo $this->__('NAME'); ?></label>
                         <div class="span6">
                             <input type="text" name="name" id="name" class="input-large" value="<?php echo $project['name'] ?>" />
 
@@ -43,14 +43,14 @@ $helper = $this->get('helper');
 
                     <div class="form-group">
 
-                        <label class="span4 control-label" for="projectState"><?php echo $language->lang_echo('PROJECTAPPROVAL'); ?></label>
+                        <label class="span4 control-label" for="projectState"><?php echo $this->__('PROJECTAPPROVAL'); ?></label>
                         <div class="span6">
                             <select name="projectState" id="projectState">
                                 <option value="0" <?php if($project['state'] == 0) { ?> selected=selected
-                                <?php } ?>><?php echo $language->lang_echo('OPEN'); ?></option>
+                                <?php } ?>><?php echo $this->__('OPEN'); ?></option>
 
                                 <option value="-1" <?php if($project['state'] == -1) { ?> selected=selected
-                               <?php } ?>><?php echo $language->lang_echo('CLOSED'); ?></option>
+                               <?php } ?>><?php echo $this->__('CLOSED'); ?></option>
 
                             </select>
 
@@ -62,7 +62,7 @@ $helper = $this->get('helper');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-asterisk"></span><?php echo $language->lang_echo('DESCRIPTION'); ?>
+                                class="iconfa iconfa-asterisk"></span><?php echo $this->__('DESCRIPTION'); ?>
                     </h4>
 
                     <textarea name="details" id="details" class="tinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
@@ -144,7 +144,7 @@ $helper = $this->get('helper');
             </div>
         <?php endif; ?>
 
-        <input type="submit" name="save" id="save" class="button" value="<?php echo $language->lang_echo('SAVE'); ?>" class="button" />
+        <input type="submit" name="save" id="save" class="button" value="<?php echo $this->__('SAVE'); ?>" class="button" />
 
     </div>
 </form>

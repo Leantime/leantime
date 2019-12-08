@@ -45,7 +45,7 @@ $milestones = $this->get('milestones');
         </select>
 
         <label>Owner</label>
-        <select data-placeholder="<?php echo $language->lang_echo('FILTER_BY_USER'); ?>"
+        <select data-placeholder="<?php echo $this->__('FILTER_BY_USER'); ?>"
                 name="editorId" class="user-select span11">
             <option value="">Not assigned</option>
             <?php foreach ($this->get('users') as $userRow) { ?>

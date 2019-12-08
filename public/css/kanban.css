@@ -1,0 +1,93 @@
+.tilt.right {
+    transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -webkit-transform: rotate(3deg);
+}
+.tilt.left {
+    transform: rotate(-3deg);
+    -moz-transform: rotate(-3deg);
+    -webkit-transform: rotate(-3deg);
+}
+
+.column {
+    box-sizing: border-box;
+    height:auto;
+    padding:5px;
+    float:left;
+}
+
+.column:first-child {
+    padding-left:0px;
+}
+.column:last-child {
+    padding-right:0px;
+}
+
+.column .contentInner {
+    background:#f0f0f0;
+    border:1px solid #ccc;
+    padding:10px 5px;
+    min-height:200px;
+    /*overflow-x: hidden;*/
+    overflow-y: auto;
+}
+
+.ticketBox:hover {
+    background:#f9f9f9;
+}
+
+.column .contentInner .ui-state-highlight {
+    background:#ddd;
+    border: 2px dotted #ccc;
+    visibility:visible;
+    display:block;
+}
+
+.portlet {
+    margin: 0 1em 1em 0;
+    padding: 0.3em;
+}
+.portlet-header {
+    padding: 0.2em 0.3em;
+    margin-bottom: 0.5em;
+    position: relative;
+}
+.portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+}
+.portlet-content {
+    padding: 0.4em;
+}
+.portlet-placeholder {
+    border: 1px dotted black;
+    margin: 0 1em 1em 0;
+    height: 50px;
+}
+
+.titleBorderColor1 {
+    border-bottom:5px solid #b94a48;
+}
+
+.titleBorderColor3 {
+    border-bottom:5px solid #b94a48;
+}
+
+.titleBorderColor4 {
+    border-bottom:5px solid #f89406;
+}
+
+.titleBorderColor2 {
+    border-bottom:5px solid #f89406;
+}
+
+.titleBorderColor0 {
+    border-bottom:5px solid #468847;
+}
+
+.titleBorderColor-1 {
+    border-bottom:5px solid #999999;
+}
+

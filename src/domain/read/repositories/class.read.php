@@ -18,7 +18,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'INSERT INTO zp_read (module,moduleId,userId) VALUES (:module,:moduleId,:userId)';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_STR);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
@@ -34,7 +34,7 @@ namespace leantime\domain\repositories {
             $sql = "SELECT * FROM zp_read 
 					WHERE module=:module AND moduleId=:moduleId AND userId=:userId";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_STR);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);

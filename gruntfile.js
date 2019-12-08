@@ -21,6 +21,21 @@ module.exports = function (grunt) {
                 ]
                 , dest: "public/js/compiled-app.min.js"
             },
+            login_lib_src: {
+                options: {
+                    sourceMap: true
+                    , sourceMapName: "public/js/jsSourceMapLIBS.map"
+                    , sourceMapUrl: "jsSourceMapLIBS.map"
+                    , mangle: false
+                }
+                , src: [
+                    "node_modules/jquery/dist/jquery.js",
+                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
+                    "node_modules/jquery-ui-dist/jquery-ui.js",
+                    "public/js/libs/bootstrap.min.js",
+                ]
+                , dest: "public/js/compiled-libs-login.min.js"
+            },
             lib_src: {
                 options: {
                     sourceMap: true
@@ -125,7 +140,7 @@ module.exports = function (grunt) {
         , watch: {
             scripts: {
                 files: ["src/domain/**/*.js"]
-                , tasks: ["uglify", "jshint"]
+                , tasks: ["uglify:app_src", "jshint"]
                 , options: {
                     nospawn: true
                 }
@@ -149,6 +164,6 @@ module.exports = function (grunt) {
             }
         }
     });
-    grunt.registerTask("default", ["less:dev", "uglify", "jshint"]);
+    grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
     grunt.registerTask("Dev-Watch", ["watch"]);
 };

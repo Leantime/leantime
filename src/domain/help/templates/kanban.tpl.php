@@ -21,7 +21,7 @@
             <p>
              </p>
             <a href="javascript:void(0);"  onclick="leantime.helperController.startKanbanTour();" class="btn btn-primary"><i class="fas fa-map-signs"></i> Take the Kanban Tour</a><br />
-            <a href="javascript:void(0);"  onclick="jquery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('kanban')">Close and don't show this screen again</a>
         </div>
     </div>

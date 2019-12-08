@@ -32,8 +32,8 @@ function removeOptions(className){
             
             <div class="pageicon"><span class="iconfa-laptop"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('EDIT_TIME'); ?></h1>
+                <h5><?php echo $this->__('OVERVIEW'); ?></h5>
+                <h1><?php echo $this->__('EDIT_TIME'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -45,10 +45,10 @@ function removeOptions(className){
 <form action="" method="post" class="stdform">
 
 <div class="widget">
-   <h4 class="widgettitle"><?php echo $language->lang_echo('OVERVIEW'); ?></h4>
+   <h4 class="widgettitle"><?php echo $this->__('OVERVIEW'); ?></h4>
    <div class="widgetcontent">
 
-    <?php echo $this->displayLink('timesheets.delTime', $language->lang_echo('DELETE'), array('id' => $_GET['id']), array('class'=>'btn btn-primary btn-rounded f-right')); ?> 
+    <?php echo $this->displayLink('timesheets.delTime', $this->__('DELETE'), array('id' => $_GET['id']), array('class'=>'btn btn-primary btn-rounded f-right')); ?>
 
 <label for="projects"><?php echo $lang['PROJECT']?></label> 
 <select name="projects" id="projects" onchange="removeOptions($('select#projects option:selected').val());">

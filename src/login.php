@@ -1,29 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>" />
 
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>" />
 
-<title><?php echo  $_SESSION["companysettings.sitename"]; ?></title>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-<?php echo $frontController->includeAction('general.header'); ?>
+    <title><?php echo  $_SESSION["companysettings.sitename"]; ?></title>
 
-<link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
-<link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
-<link rel="stylesheet" href="/css/main.css"/>
+    <?php echo $frontController->includeAction('general.header'); ?>
 
-<script type="text/javascript" src="/js/libs/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="/js/libs/jquery-migrate-1.1.1.min.js"></script>
-<script type="text/javascript" src="/js/libs/jquery-ui-1.9.2.min.js"></script>
-<script type="text/javascript" src="/js/libs/modernizr.min.js"></script>
-<script type="text/javascript" src="/js/libs/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/libs/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/js/libs/excanvas.min.js"></script><![endif]-->
+    <script src="/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+
+
 </head>
 
 <script type="text/javascript">
@@ -42,7 +40,7 @@
     $redirectUrl = "/dashboard/show";
 
     if($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
-        $redirectUrl = htmlentities($_SERVER['REQUEST_URI']);
+        $redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
     }
 
 ?>
@@ -66,7 +64,7 @@
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
-                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;">Drive Impact</h1>
+                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
                 </span>
@@ -81,23 +79,24 @@
                     <div class="pageicon"><span class="iconfa-signin"></span></div>
                     <div class="pagetitle">
                         <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
-                        <h1>Login</h1>
+                        <h1><?php echo $language->__("headlines.login"); ?></h1>
                     </div>
                 </div>
                 <div class="regcontent"  style="margin-left: 90px;">
                     <form id="login" action="<?php echo $redirectUrl?>" method="post">
+                        <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
                         <div class="inputwrapper login-alert">
                             <div class="alert alert-error"><?php echo $login->error;?></div>
                         </div>
                         <div class="">
-                            <input type="text" name="username" id="username" class="form-control" placeholder="Enter Email Address" value=""/>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_email"); ?>" value=""/>
                         </div>
                         <div class="">
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password" value=""/>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_password"); ?>" value=""/>
                         </div>
                         <div class="">
-                            <a href="/resetPassword" style="float:right; margin-top:10px;">Forgot password</a>
-                            <input type="submit" name="login" value="Login" class="btn btn-primary"/>
+                            <a href="/resetPassword" style="float:right; margin-top:10px;"><?php echo $language->__("links.forgot_password"); ?></a>
+                            <input type="submit" name="login" value="<?php echo $language->__("buttons.login"); ?>" class="btn btn-primary"/>
                         </div>
 
                     </form>

@@ -9,7 +9,7 @@ $roles = $this->get('roles');
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5>Administration</h5>
-                <h1><h1><?php echo $language->lang_echo('ALL_USER'); ?></h1></h1>
+                <h1><h1><?php echo $this->__('ALL_USER'); ?></h1></h1>
             </div>
         </div><!--pageheader-->
         
@@ -20,7 +20,7 @@ $roles = $this->get('roles');
 
                 <div class="row">
                     <div class="col-md-6">
-                        <?php echo $this->displayLink('users.newUser', "<i class='iconfa-plus'></i> ".$language->lang_echo('ADD_USER'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+                        <?php echo $this->displayLink('users.newUser', "<i class='iconfa-plus'></i> ".$this->__('ADD_USER'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
                     </div>
                     <div class="col-md-6 align-right">
@@ -37,9 +37,9 @@ $roles = $this->get('roles');
                     </colgroup>
                     <thead>
                         <tr>
-                            <th class='head1'><?php echo $language->lang_echo('NAME'); ?></th>
+                            <th class='head1'><?php echo $this->__('NAME'); ?></th>
                             <th class='head0'>Email</th>
-                            <th class='head1'><?php echo $language->lang_echo('ROLE'); ?></th>
+                            <th class='head1'><?php echo $this->__('ROLE'); ?></th>
                             <th class='head0'>Action</th>
                         </tr>
                     </thead>

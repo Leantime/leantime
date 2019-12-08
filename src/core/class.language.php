@@ -24,12 +24,6 @@ namespace leantime\core {
 
         /**
          * @access public
-         * @var    string which module to take (different ini-Files)
-         */
-        public $module;
-
-        /**
-         * @access public
          * @var    array ini-values
          */
         public $ini_array;
@@ -41,50 +35,45 @@ namespace leantime\core {
         public $langlist;
 
         /**
+         * debug value. Will highlight untranslated text
+         * @access public
+         * @var    array ini-values
+         */
+        private $alert = false;
+        /**
          * __construct - Check standard language otherwise get language from browser
          *
-         * @return
+         * @return array
          */
         function __construct()
         {
+
+
+            $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
 
-                $config = new config();
-
                 if($config->language != '' && (!isset($_SESSION['language']) || $_SESSION['language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['language']) ===true && $_SESSION['language'] != '') {
+                }elseif(isset($_SESSION['language']) === true && $_SESSION['language'] != '') {
 
                     $this->setLanguage($_SESSION['language']);
 
                 }else{
+
                     $browserLang = $this->getBrowserLanguage();
                     $this->setLanguage($browserLang);
+
                 }
 
+            }else{
+
+                throw new \Exception("Language list missing");
             }
-
-        }
-
-        /**
-         * Deprecated. Not used anymore
-         * setModule - set module name
-         *
-         * TODO: Remove all calls to this method
-         *
-         * @access public
-         * @param  $module
-         * @return string
-         */
-        public function setModule($module)
-        {
-
-            $this->module = $module;
 
         }
 
@@ -93,12 +82,14 @@ namespace leantime\core {
          *
          * @access public
          * @param  $lang
-         * @return unknown_type
+         * @return array
          */
         public function setLanguage($lang)
         {
 
             $this->language = $lang;
+
+            $this->readIni();
 
         }
 
@@ -111,13 +102,14 @@ namespace leantime\core {
         public function readIni()
         {
 
-            if(file_exists(''.$this->iniFolder.''.$this->language.'/'.$this->language.'.ini') === true) {
+            //Todo: Add cache
+            if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.''.$this->language.'/'.$this->language.'.ini');
+                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini');
 
             }else{
 
-                $this->ini_array[0] = 'File not found';
+                throw new \Exception("Language file not found");
 
             }
 
@@ -125,40 +117,6 @@ namespace leantime\core {
 
         }
 
-        /**
-         * getInstalledLangs - reads the existing language folders
-         *
-         * @access public
-         * @return array
-         */
-        public function getInstalledLangs()
-        {
-
-            $handle = opendir($this->iniFolder);
-
-            while ($file = readdir($handle)) {
-
-                if($file != "." && $file != "..") {
-
-                    if(is_dir($this->iniFolder."/".$file)) {
-
-                        if(isset($this->langlist[$file]) === true) {
-
-                            $langs[$file] = $this->langlist[$file];
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            closedir($handle);
-
-            return $langs;
-
-        }
 
         /**
          * getBrowserLanguage - gets the language that is setted in the browser
@@ -187,52 +145,31 @@ namespace leantime\core {
 
         }
 
-        /**
-         * lang_echo - returns the string from the language file
-         * DEPRECATED: Use __()
-         *
-         * @access public
-         * @return string
-         */
-        public function __($index, $alert)
+
+        public function __($index)
         {
 
-            $indexCopy = $index;
-
-            $caps = strtoupper($index);
-
-            $index = str_replace(' ', "_", strtoupper($index));
-
             if (isset($this->ini_array[$index]) === true) {
+
+                $index = trim($index);
+
                 return $this->ini_array[$index];
 
-            } else if (isset($this->ini_array[$caps]) === true) {
-                return $this->ini_array[$caps];
-
             } else {
-                if($alert === true) {
+
+                if($this->alert === true) {
+
                     return '<span style="color: red; font-weight:bold;">'.$index.'</span>';
+
                 }else{
-                    return $indexCopy;
+
+                    return $index;
+
                 }
             }
 
         }
 
-
-        /**
-         * lang_echo - returns the string from the language file
-         * DEPRECATED: Use __()
-         *
-         * @access public
-         * @return string
-         */
-        public function lang_echo($index, $alert = false)
-        {
-
-            return $this->__($index, $alert);
-
-        }
-
     }
+
 }

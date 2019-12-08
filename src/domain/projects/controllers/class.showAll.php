@@ -18,12 +18,20 @@ namespace leantime\domain\controllers {
         {
 
             $tpl = new core\template();
-            $projectRepo = new repositories\projects();
 
-            $tpl->assign('role', $_SESSION['userdata']['role']);
-            $tpl->assign('allProjects', $projectRepo->getUserProjects());
+            if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
 
-            $tpl->display('projects.showAll');
+                $projectRepo = new repositories\projects();
+
+                $tpl->assign('role', $_SESSION['userdata']['role']);
+                $tpl->assign('allProjects', $projectRepo->getAll());
+
+                $tpl->display('projects.showAll');
+            }else{
+
+                $tpl->display('general.error');
+
+            }
 
         }
 

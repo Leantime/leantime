@@ -1,0 +1,147 @@
+/* Ticket Labelled dropdowns */
+.dropdown-menu {
+    margin-top: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.dropdown-menu > li > a {
+    font-size: 12px;
+    color: #444;
+    margin: 0 5px;
+    padding: 5px 10px;
+}
+
+
+
+.dropdown-menu > li > a:hover .muted {
+    color: #fff;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+    background: #444;
+}
+
+.dropdown .dropdown-menu .nav-header {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.ticketDropdown.show {
+    display:inline-block;
+}
+
+.ticketDropdown ul {
+    top: 22px;
+}
+
+
+
+.ticketDropdown.userDropdown {
+    margin-top:-2px;
+}
+
+.ticketDropdown.userDropdown ul {
+    top: 33px;
+    left: 6px;
+}
+
+.ticketDropdown.dropRight ul{
+    right:0px;
+    left:auto;
+}
+
+.maincontentinner .ticketDropdown > a,
+.maincontentinner .ticketDropdown > a:link{
+    color:#fff;
+    padding:0px 10px;
+}
+
+.maincontentinner .ticketDropdown.firstDropdown > a {
+    margin-left:0px;
+}
+
+.maincontentinner .ticketDropdown.lastDropdown > a {
+    padding-right:0px;
+}
+
+.maincontentinner .ticketDropdown > a:hover,
+.maincontentinner .ticketDropdown > a:focus {
+    text-decoration: none;
+}
+
+
+.maincontentinner .ticketDropdown.colorized li a {
+    color:#fff;
+}
+
+.maincontentinner .ticketDropdown.noBg {
+    background:transparent;
+
+}
+
+.maincontentinner .ticketDropdown.noBg >a img {
+
+}
+
+.maincontentinner .ticketDropdown.noBg >a:hover {
+    color:#000;
+}
+
+
+
+.maincontentinner .ticketDropdown ul li a.label-warning,
+.maincontentinner .ticketDropdown ul li a.label-important,
+.maincontentinner .ticketDropdown ul li a.label-success,
+.maincontentinner .ticketDropdown ul li a.label-default {
+    padding: 5px 10px;
+    display:block;
+    border-radius: 0px;
+}
+
+.maincontentinner .ticketDropdown a.label-warning {
+    background:#f89406;
+}
+
+.maincontentinner .ticketDropdown a.label-important {
+    background:#b94a48;
+}
+
+.maincontentinner .ticketDropdown a.label-success {
+    background:#468847;
+}
+
+.maincontentinner .ticketDropdown a.label-default {
+
+}
+
+
+.maincontentinner .ticketDropdown ul li {
+    margin-bottom:1px;
+}
+
+.maincontentinner .ticketDropdown.milestoneDropdown li a:hover{
+    background-color:#444 !important;
+}
+
+
+.ticketDropdown ul::after {
+    position: absolute;
+    top:-6px;
+    left: 10px;
+    transform: rotate(0deg);
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid white;
+    border-left: 7px solid transparent;
+    content: '';
+}
+
+.ticketDropdown.dropRight  ul::after {
+    right: 10px;
+    left:auto;
+}

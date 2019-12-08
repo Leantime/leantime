@@ -24,6 +24,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->usersService = new services\users;
+            $this->filesRepository = new repositories\files();
 
         }
 
@@ -36,6 +37,19 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+            if(isset($params["profileImage"])) {
+
+                $imageId = (int)$params["profileImage"];
+                $file = $this->filesRepository->getFile($imageId);
+
+                $return = '/images/default-user.png';
+                if ($file) {
+                    $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                }
+
+                $this->tpl->redirect($return);
+
+            }
 
         }
 

@@ -31,7 +31,7 @@
             <div class="maincontentinner">
 
 
-		<?php echo $this->displayLink('projects.newProject',"<i class='iconfa-plus'></i> ".$language->lang_echo('NEW_PROJECT'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+		<?php echo $this->displayLink('projects.newProject',"<i class='iconfa-plus'></i> ".$this->__('NEW_PROJECT'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
 
         <h4 class="widgettitle">Project List</h4>
 		<table class='table table-bordered' cellpadding="0" cellspacing="0" border="0" class="table table-bordered" id="dyntable2">
@@ -44,12 +44,12 @@
 		    </colgroup>
 			<thead>
 				<tr>
-					<th class="head0"><?php echo $language->lang_echo('NAME'); ?></th>
-					<th class="head1"><?php echo $language->lang_echo('CLIENT'); ?></th>
+					<th class="head0"><?php echo $this->__('NAME'); ?></th>
+					<th class="head1"><?php echo $this->__('CLIENT'); ?></th>
                     <th class="head1">Status</th>
-					<th class="head0"><?php echo $language->lang_echo('NUMBER_OF_TICKETS'); ?></th>
-					<th class="head1"><?php echo $language->lang_echo('BUDGET_HOURS') ?></th>
-					<th class="head0"><?php echo $language->lang_echo('BUDGET_DOLLARS') ?></th>
+					<th class="head0"><?php echo $this->__('NUMBER_OF_TICKETS'); ?></th>
+					<th class="head1"><?php echo $this->__('BUDGET_HOURS') ?></th>
+					<th class="head0"><?php echo $this->__('BUDGET_DOLLARS') ?></th>
 				</tr>
 			</thead>
 			<tbody>

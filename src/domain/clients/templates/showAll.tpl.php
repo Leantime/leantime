@@ -29,7 +29,7 @@
             <form action="">
             
             
-                <?php echo $this->displayLink('clients.newClient', "<i class='iconfa-plus'></i> ".$language->lang_echo('ADD_NEW_CLIENT'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
+                <?php echo $this->displayLink('clients.newClient', "<i class='iconfa-plus'></i> ".$this->__('ADD_NEW_CLIENT'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
                 <h4 class="widgettitle">Client List</h4>
             <table class='table table-bordered' cellspacing="0" border="0" class="display" id="dyntable2">
                 <colgroup>
@@ -40,9 +40,9 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th class='head1'><?php echo $language->lang_echo('CLIENTNAME'); ?></th>
-                        <th class='head0'><?php echo $language->lang_echo('EMAIL'); ?></th>
-                        <th class='head1'><?php echo $language->lang_echo('NUMBER_PROJECTS'); ?></th>
+                        <th class='head1'><?php echo $this->__('CLIENTNAME'); ?></th>
+                        <th class='head0'><?php echo $this->__('EMAIL'); ?></th>
+                        <th class='head1'><?php echo $this->__('NUMBER_PROJECTS'); ?></th>
                     </tr>
                 </thead>
                 <tbody>

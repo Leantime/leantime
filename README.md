@@ -13,6 +13,7 @@ Features:
 * Project dashboards
 * Multiple user roles (client, developer, manager, admin)
 * Integrations with Mattermost & Slack
+* File storage with AWS S3 or local file system 
 
 ### Screenshots ###
 
@@ -54,6 +55,22 @@ grunt default
 * Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
+
+### Installation via Docker ###
+
+We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
+To run the image enter your MySQL credentials and execute
+
+```
+docker run -d -p 80:80 --network leantime-net \
+-e DB_HOST=mysql_leantime \
+-e MYSQL_USER=admin \
+-e MYSQL_PASSWORD=321.qwerty \
+-e MYSQL_DATABASE=leantime \
+--name leantime leantime/leantime:latest
+```
+
+Once started you can go to `<yourdomain.com>/install` and run the installation script.
 
 ### Update ###
 

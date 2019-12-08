@@ -179,7 +179,7 @@ $efforts = $this->get('efforts');
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-    	<h1><?php echo $language->lang_echo('ALL_TICKETS'); ?></h1>
+    	<h1><?php echo $this->__('ALL_TICKETS'); ?></h1>
 	</div>
 </div><!--pageheader-->
            

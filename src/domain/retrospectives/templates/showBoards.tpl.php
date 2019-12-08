@@ -221,7 +221,7 @@ $canvasLabels = $this->get("canvasLabels");
     <div class="pageicon"><i class="far fa-hand-spock"></i></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Progress Review</h1>
+        <h1>Retrospectives</h1>
     </div>
 </div><!--pageheader-->
            
@@ -251,7 +251,7 @@ $canvasLabels = $this->get("canvasLabels");
 
                             <?php }     ?>
                         </select><br />
-                         <small><a href="javascript:void(0)" class="addCanvasLink "><i class="fa fa-plus"></i> Create Review Board</a></small>
+                         <small><a href="javascript:void(0)" class="addCanvasLink "><i class="fa fa-plus"></i> Create Retrospective Board</a></small>
                         <?php } ?>
                     </form>
 
@@ -453,10 +453,10 @@ $canvasLabels = $this->get("canvasLabels");
 
     <?php } else {
 
-        echo "<br /><br /><div class='center'><h4>You don't have any previous progress reviews yet.</h4><br />
+        echo "<br /><br /><div class='center'><h4>You don't have any previous retrospectives yet.</h4><br />
 Start one now and discuss what went well and what you can improve on.<br/> 
 We suggest you have one every sprint or at the end of each milestone.<br /><br />
-<a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a review</a></div>";
+<a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a retrospective</a></div>";
 
     }
     ?>
@@ -496,10 +496,10 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Start a new review</h4>
+                            <h4 class="modal-title">Start a new retrospective</h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your review?</label>
+                            <label>What is the title of your retrospective?</label>
                             <input type="text" name="canvastitle" placeholder="You can use the Sprint or Milestone Name (e.g. Milestone 1 Review)" style="width:90%"/>
 
 

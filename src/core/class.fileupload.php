@@ -61,6 +61,12 @@ class fileupload
 
     /**
      * @access public
+     * @var    array parts of the path
+     */
+    public $path_parts=array();
+
+    /**
+     * @access public
      * @var    object configuration object
      */
     public $config;
@@ -99,20 +105,39 @@ class fileupload
 
         }
 
+        return false;
+
     }
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getAbsolutePath()
     {
         $path = realpath(__DIR__."/../../".$this->path);
        if($path === false){
-           throw Exception("Path not valid");
+           throw new \Exception("Path not valid");
        }else{
            return $path;
        }
     }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function getPublicFilesPath()
+    {
+        $path = realpath(__DIR__."/../../public/userfiles");
+        if($path === false){
+            throw new \Exception("Path not valid");
+        }else{
+            return $path;
+        }
+    }
+
+
 
 
     /**
@@ -180,15 +205,12 @@ class fileupload
      * upload - move file from tmp-folder to S3
      *
      * @access public
-     * @param  bool $resize
-     * @param  int  $w
-     * @param  int  $h
      * @return boolean
      */
     public function upload()
     {
 
-        if($this->config->useS3 === true) {
+        if($this->config->useS3 == true) {
             //S3 upload
             return $this->uplodToS3();
         }else{
@@ -202,21 +224,41 @@ class fileupload
     public function uploadPublic()
     {
 
-        try {
-            // Upload data.
-            $file = fopen($this->file_tmp_name, "rb");
+        if($this->config->useS3 == true) {
 
-            $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "public-read");
-            $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name);
+            try {
+                // Upload data.
+                $file = fopen($this->file_tmp_name, "rb");
 
-            return $url;
+                $this->s3Client->upload($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name, $file, "public-read");
+                $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $this->config->s3FolderName."/".$this->file_name);
 
-        } catch (S3Exception $e) {
+                return $url;
 
-            error_reporting($e->getMessage());
-            return false;
+            } catch (S3Exception $e) {
+
+                error_reporting($e->getMessage());
+                return false;
+
+            }
+
+        }else{
+
+            try {
+
+                if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
+                    return "/userfiles/".$this->file_name;
+                }
+
+            }catch(\Exception $e){
+
+                error_reporting($e->getMessage());
+                return false;
+            }
 
         }
+
+        return false;
 
     }
     
@@ -248,7 +290,7 @@ class fileupload
                 return true;
             }
 
-        }catch(Exception $e){
+        }catch(\Exception $e){
 
             error_reporting($e->getMessage());
             return false;
@@ -258,20 +300,6 @@ class fileupload
 
     }
 
-        
-    /**
-     * deleteFile - delete file from server
-     *
-     * @access public
-     * @param  $file
-     * @return boolean
-     */
-    public function deleteFile($file)
-    {
-
-        //TODO: Write a method to remove file from S3
-        return true;
-    }
 
 }
 

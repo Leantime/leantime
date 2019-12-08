@@ -5,7 +5,7 @@ leantime.ticketsController = (function () {
     var milestoneModalConfig = {
         sizes: {
             minW: 500,
-            minH: 750,
+            minH: 750
         },
         resizable: true,
         autoSizable: true,
@@ -37,9 +37,15 @@ leantime.ticketsController = (function () {
                 _initDates();
                 _initModals();
                 _initSprintPopover();
-                _initMilestonePopover();
+
                 _initUserPopover();
-                _initEffortPopover();
+
+                //_initEffortPopover();
+                _initEffortDropdown();
+                _initMilestoneDropdown();
+                _initStatusDropdown();
+                _initUserDropdown();
+
                 _initTicketEditor();
                 _initToolTips();
 
@@ -116,7 +122,7 @@ leantime.ticketsController = (function () {
 
                 jQuery(".btn-group").on(
                     "click", "button", function () {
-                        $btn =jQuery(this);
+                        var $btn =jQuery(this);
                         var mode = $btn.text();
                         gantt_chart.change_view_mode(mode);
                         $btn.parent().find('button').removeClass('active');
@@ -271,7 +277,7 @@ leantime.ticketsController = (function () {
         var sprintModalConfig = {
             sizes: {
                 minW: 300,
-                minH: 350,
+                minH: 350
             },
             resizable: true,
             autoSizable: true,
@@ -295,7 +301,7 @@ leantime.ticketsController = (function () {
         var modalConfig = {
             sizes: {
                 minW: 500,
-                minH: 750,
+                minH: 750
             },
             resizable: true,
             autoSizable: true,
@@ -323,8 +329,6 @@ leantime.ticketsController = (function () {
 
 
     };
-
-
 
     var _initSprintPopover = function () {
         jQuery('.sprintPopover').popover(
@@ -360,13 +364,7 @@ leantime.ticketsController = (function () {
         );
     };
 
-    var _initEffortPopover = function () {
-        jQuery('.effortPopover').popover(
-            {
-                template:'<div class="popover effortPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-
-            }
-        );
+    var _initEffortDropdown = function() {
 
         var storyPointLabels = {
             '1': 'XS',
@@ -377,71 +375,156 @@ leantime.ticketsController = (function () {
             '13': "XXL"
         };
 
-        jQuery("body").on(
-            "click", ".effortPopoverContainer input", function () {
+        jQuery("body").on("click", ".effortDropdown .dropdown-menu a", function () {
 
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
+            var dataValue = jQuery(this).attr("data-value").split("_");
+
+            if (dataValue.length === 2) {
+
+                var ticketId = dataValue[0];
+                var effortId = dataValue[1];
 
                 jQuery.ajax(
                     {
                         type: 'PATCH',
                         url: '/api/tickets',
                         data:
-                        {
-                            id : ticket[1],
-                            storypoints:val
-                        }
+                            {
+                                id: ticketId,
+                                storypoints: effortId
+                            }
                     }
                 ).done(
                     function () {
-                        jQuery("#effort-"+ticket[1]).text(storyPointLabels[val]);
-                        jQuery('.effortPopover').popover('hide');
+                        jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.effort_updated"));
+
                     }
                 );
 
+            }else{
+                console.log("Ticket Controller: Effort data value not set correctly");
+            }
+        });
+
+    };
+
+    var _initMilestoneDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".milestoneDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length === 3) {
+
+                    var ticketId = dataValue[0];
+                    var milestoneId = dataValue[1];
+                    var color = dataValue[2];
+
+                    jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").append(" ...");
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    dependingTicketId:milestoneId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
+                            jQuery("#milestoneDropdownMenuLink"+ticketId).css("backgroundColor", color);
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.milestone_updated"));
+                        }
+                    );
+
+                }
             }
         );
     };
 
-
-    var _initMilestonePopover = function () {
-
-        jQuery('.milestonePopover').popover(
-            {
-                template:'<div class="popover milestonePopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-body popover-content"></div></div>'
-
-            }
-        );
+    var _initStatusDropdown = function () {
 
         jQuery("body").on(
-            "click", ".milestonePopoverContainer input", function () {
+            "click", ".statusDropdown .dropdown-menu a", function () {
 
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
-                var label = jQuery(this).attr('data-label');
-                var color = jQuery(this).attr('data-color');
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
 
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: '/api/tickets',
-                        data:
+                if (dataValue.length == 3) {
+
+                    var ticketId = dataValue[0];
+                    var statusId = dataValue[1];
+                    var className = dataValue[2];
+
+                    jQuery.ajax(
                         {
-                            id : ticket[1],
-                            dependingTicketId:val
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    status:statusId
+                                }
                         }
-                    }
-                ).done(
-                    function () {
-                        jQuery("#milestone-"+ticket[1]).text(label);
-                        jQuery("#milestone-"+ticket[1]).css("backgroundColor", color);
-                        jQuery('.milestonePopover').popover('hide');
-                    }
-                );
+                    ).done(
+                        function () {
+                            jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
+                            jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            leantime.ticketsController.colorTicketBoxes(ticketId);
+                        }
+                    );
 
+                }
             }
         );
+
+        leantime.ticketsController.colorTicketBoxes();
+    };
+
+    var _initUserDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".userDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 3) {
+
+                    var ticketId = dataValue[0];
+                    var userId = dataValue[1];
+                    var profileImageId = dataValue[2];
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    editorId:userId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                        }
+                    );
+
+                }
+            }
+        );
+
+        leantime.ticketsController.colorTicketBoxes();
     };
 
     var _initUserPopover = function () {
@@ -586,6 +669,7 @@ leantime.ticketsController = (function () {
     };
 
     var _initDueDateTimePickers = function () {
+
         jQuery(".quickDueDates").datepicker(
             {
                 dateFormat: 'mm/dd/yy',
@@ -637,6 +721,200 @@ leantime.ticketsController = (function () {
 
     };
 
+    var colorTicketBoxes = function (currentBox){
+
+        var color = "#fff";
+        jQuery(".ticketBox").each(function(index){
+
+            var value = jQuery(this).find(".statusDropdown > a").attr("class");
+
+            if(value != undefined) {
+                if (value.indexOf("important") > -1) {
+
+                    color = "#b94a48";
+
+                } else if (value.indexOf("warning") > -1) {
+
+                    color = "#f89406";
+
+                } else if (value.indexOf("success") > -1) {
+
+                    color = "#468847";
+
+                } else if (value.indexOf("default") > -1) {
+
+                    color = "#999999";
+                }
+                jQuery(this).css("borderLeft", "5px solid " + color);
+
+                if(currentBox != null) {
+                    if (jQuery(this).attr("data-val") == currentBox) {
+                        jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
+                    }
+                }
+
+            }
+        });
+
+
+
+    };
+
+    var initTicketTabs = function(){
+
+        jQuery(document).ready(function () {
+            jQuery('.ticketTabs').tabs({
+                create: function( event, ui ) {
+                    jQuery('.ticketTabs').css("visibility", "visible");
+                },
+                activate: function(event, ui) {
+                    console.log(ui);
+                    window.location.hash = ui.newPanel.selector;
+                }
+            });
+        });
+
+    };
+
+    var initTicketSearchSubmit = function (url) {
+
+        jQuery("#ticketSearch").on('submit', function(e) {
+            e.preventDefault()
+
+            var project = jQuery("#projectIdInput").val();
+            var users = jQuery("#userSelect").val();
+            var milestones = jQuery("#milestoneSelect").val();
+            var term = jQuery("#termInput").val();
+            var sprints = jQuery("#sprintSelect").val();
+            var types = jQuery("#typeSelect").val();
+            var status = jQuery("#statusSelect").val();
+            var sort = jQuery("#sortBySelect").val();
+            var group = jQuery("#groupBySelect").val();
+
+            var query = "?search=true";
+            if(project != "" && project != undefined) {query = query + "&projectId=" + project}
+            if(users != "" && users != undefined) {query = query + "&users=" + users}
+            if(milestones != ""  && milestones != undefined) {query = query + "&milestone=" + milestones}
+            if(term != ""  && term != undefined) {query = query + "&term=" + term;}
+            if(sprints != ""  && sprints != undefined) {query = query + "&sprint=" + sprints;}
+            if(types != "" && types != undefined) {query = query + "&type=" + types;}
+            if(status != "" && status != undefined) {query = query + "&status=" + status;}
+            if(sort != "" && sort != undefined) {query = query + "&sort=" + sort;}
+            if(group != "" && group != undefined) {query = query + "&group=" + group;}
+
+            var rediredirectUrl = url + query;
+
+            window.location.href = rediredirectUrl;
+
+        });
+    };
+
+    var initTicketKanban = function (ticketStatusList) {
+
+        jQuery(window).bind("load", function () {
+
+            jQuery(".loading").fadeOut();
+            jQuery(".filterBar .row-fluid").css("opacity", "1");
+            var height = jQuery("html").height()-320;
+            jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
+            countTickets();
+        });
+
+        jQuery("#sortableTicketKanban .ticketBox").hover(function(){
+            jQuery(this).css("background", "#f9f9f9");
+        },function(){
+            jQuery(this).css("background", "#ffffff");
+        });
+
+
+        jQuery("#sortableTicketKanban .contentInner").sortable({
+            connectWith: ".contentInner",
+            items: "> .moveable",
+            tolerance: 'intersect',
+            placeholder: "ui-state-highlight",
+            forcePlaceholderSize: true,
+            cancel: ".portlet-toggle,:input,a,input",
+            distance: 25,
+
+            start: function (event, ui) {
+                ui.item.addClass('tilt');
+                tilt_direction(ui.item);
+            },
+            stop: function (event, ui) {
+                ui.item.removeClass("tilt");
+                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
+                ui.item.removeData("move_handler");
+            },
+            update: function (event, ui) {
+
+                countTickets();
+
+                var statusPostData = {
+                    action: "kanbanSort",
+                    payload: {}
+                };
+                for(var i=0; i<ticketStatusList.length; i++) {
+
+                    if(jQuery(".contentInner.status_"+ticketStatusList[i]).length) {
+                        statusPostData.payload[ticketStatusList[i]] = jQuery(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                    }
+                }
+
+                // POST to server using $.post or $.ajax
+                jQuery.ajax({
+                    type: 'POST',
+                    url: '/api/tickets',
+                    data: statusPostData
+
+                });
+
+            }
+        });
+
+        function countTickets () {
+
+            jQuery("#sortableTicketKanban .column").each(function(){
+                var counting= jQuery(this).find('.moveable').length;
+                jQuery(this).find(' .count').text(counting);
+            });
+
+        }
+
+        function tilt_direction(item) {
+            var left_pos = item.position().left,
+                move_handler = function (e) {
+                    if (e.pageX >= left_pos) {
+                        item.addClass("right");
+                        item.removeClass("left");
+                    } else {
+                        item.addClass("left");
+                        item.removeClass("right");
+                    }
+                    left_pos = e.pageX;
+                };
+            jQuery("html").bind("mousemove", move_handler);
+            item.data("move_handler", move_handler);
+        }
+
+        jQuery( ".portlet" )
+            .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+            .find( ".portlet-header" )
+            .addClass( "ui-widget-header ui-corner-all" )
+            .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+        jQuery( ".portlet-toggle" ).click(function() {
+            var icon = jQuery( this );
+            icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+            icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+        });
+
+    };
+
+    var initUserSelectBox = function () {
+
+        jQuery(".user-select").chosen();
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
@@ -646,6 +924,11 @@ leantime.ticketsController = (function () {
         updateRemaining:updateRemaining,
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
-        initTimeSheetChart:initTimeSheetChart
+        initTimeSheetChart:initTimeSheetChart,
+        colorTicketBoxes:colorTicketBoxes,
+        initTicketTabs:initTicketTabs,
+        initTicketSearchSubmit:initTicketSearchSubmit,
+        initTicketKanban:initTicketKanban,
+        initUserSelectBox:initUserSelectBox
     };
 })();

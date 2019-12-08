@@ -31,7 +31,7 @@
 					  	 </div>		
 					   	</div>
 					   
-					   <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
+					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 		
 					</form>	
 					

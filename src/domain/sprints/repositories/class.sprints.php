@@ -41,7 +41,7 @@ namespace leantime\domain\repositories {
 				WHERE sprint.id = :id
 				LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\sprints");
@@ -71,7 +71,7 @@ namespace leantime\domain\repositories {
 				FROM zp_sprints 
 				WHERE zp_sprints.projectId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
             $stmn->execute();
 
@@ -101,7 +101,7 @@ namespace leantime\domain\repositories {
 				FROM zp_sprints 
 				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW() ";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
             $stmn->execute();
 
@@ -131,7 +131,7 @@ namespace leantime\domain\repositories {
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate < NOW() && zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\sprints");
@@ -162,7 +162,7 @@ namespace leantime\domain\repositories {
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate > NOW() ORDER BY zp_sprints.startDate ASC LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\sprints");
@@ -179,7 +179,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_sprints (name, projectId, startDate, endDate) VALUES (:name, :projectId, :startDate, :endDate)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':name', $sprint->name, PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $sprint->projectId, PDO::PARAM_STR);
             $stmn->bindValue(':startDate', $sprint->startDate, PDO::PARAM_STR);
@@ -203,7 +203,7 @@ namespace leantime\domain\repositories {
                         endDate = :endDate
                         WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':name', $sprint->name, PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $sprint->projectId, PDO::PARAM_STR);
             $stmn->bindValue(':startDate', $sprint->startDate, PDO::PARAM_STR);
@@ -225,14 +225,14 @@ namespace leantime\domain\repositories {
                     sprint = ''
                 WHERE sprint = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
 
             $query = "DELETE FROM zp_sprints WHERE id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 

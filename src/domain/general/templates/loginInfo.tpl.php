@@ -17,17 +17,17 @@
         <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
         <li class="nav-header border">Administration</li>
             <li <?php if($module == 'projects') echo" class='active' "; ?>>
-                <?php echo $this->displayLink('projects.showAll', '<span class="fa fa-suitcase"></span>'.$language->lang_echo('All Projects', false).'') ?>
+                <?php echo $this->displayLink('projects.showAll', '<span class="fa fa-suitcase"></span>'.$this->__('All Projects', false).'') ?>
             </li>
             <?php if ($_SESSION['userdata']['role'] == 'admin'){ ?>
                 <li <?php if($module == 'clients') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('clients.showAll', '<span class="fa fa-address-book"></span>'.$language->lang_echo('All Clients/Products', false).'') ?>
+                    <?php echo $this->displayLink('clients.showAll', '<span class="fa fa-address-book"></span>'.$this->__('All Clients/Products', false).'') ?>
                 </li>
                 <li <?php if($module == 'users') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('users.showAll', '<span class="fa fa-users"></span>'.$language->lang_echo('User Management', false).'') ?>
+                    <?php echo $this->displayLink('users.showAll', '<span class="fa fa-users"></span>'.$this->__('User Management', false).'') ?>
                 </li>
                 <li <?php if($module == 'setting') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('setting.editCompanySettings', '<span class="fa fa-cogs"></span>'.$language->lang_echo('Company Settings', false).'') ?>
+                    <?php echo $this->displayLink('setting.editCompanySettings', '<span class="fa fa-cogs"></span>'.$this->__('Company Settings', false).'') ?>
                 </li>
             <?php } ?>
         <?php } ?>

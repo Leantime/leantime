@@ -44,12 +44,18 @@ namespace leantime\domain\services {
         public function getCurrentSprint($projectId)
         {
 
+            if(isset($_SESSION["currentSprint"])) {
+                return $_SESSION["currentSprint"];
+            }
+
             $sprint = $this->sprintRepository->getCurrentSprint($projectId);
 
             if($sprint) {
+                $_SESSION["currentSprint"] = $sprint->id;
                 return $sprint;
             }
 
+            $_SESSION["currentSprint"] = "";
             return false;
 
         }

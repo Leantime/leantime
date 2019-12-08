@@ -30,9 +30,9 @@ $users = $this->get('users');
                 <div class="tabbedwidget tab-primary">
 
         <ul>
-            <li><a href="#clientDetails"><?php echo $language->lang_echo('CLIENT_DETAILS'); ?></a></li>
+            <li><a href="#clientDetails"><?php echo $this->__('CLIENT_DETAILS'); ?></a></li>
             <li><a href="#comment">Discussion (<?php echo count($this->get('comments')) ?>)</a></li>
-            <li><a href="#files"><?php echo $language->lang_echo('FILES'); ?> (<?php echo count($this->get('files')) ?>)</a></li>
+            <li><a href="#files"><?php echo $this->__('FILES'); ?> (<?php echo count($this->get('files')) ?>)</a></li>
 
 
         </ul>
@@ -45,21 +45,21 @@ $users = $this->get('users');
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span> Details</h4>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('NAME') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('NAME') ?></label>
                             <div class="span6">
                                 <input type="text" name="name" id="name" value="<?php $this->e($values['name']); ?>" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('EMAIL') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('EMAIL') ?></label>
                             <div class="span6">
                                 <input type="text" name="email" id="email" value="<?php $this->e($values['email']); ?>" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('URL') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('URL') ?></label>
                             <div class="span6">
                                 <input
                                         type="text" name="internet" id="internet"
@@ -68,7 +68,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('STREET') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('STREET') ?></label>
                             <div class="span6">
                                 <input
                                         type="text" name="street" id="street"
@@ -77,7 +77,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('ZIP') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('ZIP') ?></label>
                             <div class="span6">
                                 <input type="text"
                                 name="zip" id="zip" value="<?php $this->e($values['zip']); ?>" />
@@ -85,7 +85,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('CITY') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('CITY') ?></label>
                             <div class="span6">
                                 <input type="text"
                                        name="city" id="city" value="<?php $this->e($values['city']); ?>" />
@@ -93,7 +93,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('STATE') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('STATE') ?></label>
                             <div class="span6">
                                 <input
                                         type="text" name="state" id="state"
@@ -102,7 +102,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('COUNTRY') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('COUNTRY') ?></label>
                             <div class="span6">
                                 <input
                                         type="text" name="country" id="country"
@@ -111,7 +111,7 @@ $users = $this->get('users');
                         </div>
 
                         <div class="form-group">
-                            <label class="span4 control-label"><?php echo $language->lang_echo('PHONE') ?></label>
+                            <label class="span4 control-label"><?php echo $this->__('PHONE') ?></label>
                             <div class="span6">
                                 <input
                                         type="text" name="phone" id="phone"
@@ -134,9 +134,9 @@ $users = $this->get('users');
                             </colgroup>
                             <thead>
                             <tr>
-                                <th><?php echo $language->lang_echo('NAME') ?></th>
-                                <th><?php echo $language->lang_echo('EMAIL') ?></th>
-                                <th><?php echo $language->lang_echo('PHONE') ?></th>
+                                <th><?php echo $this->__('NAME') ?></th>
+                                <th><?php echo $this->__('EMAIL') ?></th>
+                                <th><?php echo $this->__('PHONE') ?></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -161,7 +161,7 @@ $users = $this->get('users');
                 <div class="row">
                     <div class="col-md-6">
                         <input type="submit" name="save" id="save"
-                               value="<?php echo $language->lang_echo('SAVE') ?>" class="btn btn-primary" />
+                               value="<?php echo $this->__('SAVE') ?>" class="btn btn-primary" />
                     </div>
                     <div class="col-md-6 align-right">
                         <a href="/clients/delClient/<?php $this->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> Delete Client</a>
@@ -200,7 +200,7 @@ $users = $this->get('users');
                         </div>
                     </div>
 
-                    <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
+                    <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 
                 </form>
             </div>
@@ -231,7 +231,7 @@ $users = $this->get('users');
 
                     <?php /*
         <div id='projects'>
-            <?php echo $this->displayLink('projects.newProject', $language->lang_echo('NEW_PROJECT'), null, array('class' => 'btn btn-primary btn-rounded')) ?><br/>
+            <?php echo $this->displayLink('projects.newProject', $this->__('NEW_PROJECT'), null, array('class' => 'btn btn-primary btn-rounded')) ?><br/>
             <table class='table table-bordered'>
              <colgroup>
                     <col class="con0"/>
@@ -241,10 +241,10 @@ $users = $this->get('users');
              </colgroup>
              <thead>
                  <tr>
-                     <th><?php echo $language->lang_echo('ID') ?></th>
-                     <th><?php echo $language->lang_echo('TITLE') ?></th>
-                     <th><?php echo $language->lang_echo('OPEN_TICKETS') ?></th>
-                     <th><?php echo $language->lang_echo('HOUR_BUDGET') ?></th>
+                     <th><?php echo $this->__('ID') ?></th>
+                     <th><?php echo $this->__('TITLE') ?></th>
+                     <th><?php echo $this->__('OPEN_TICKETS') ?></th>
+                     <th><?php echo $this->__('HOUR_BUDGET') ?></th>
                  </tr>
              </thead>
              <tbody>

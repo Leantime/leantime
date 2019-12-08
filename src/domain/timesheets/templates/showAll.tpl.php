@@ -54,12 +54,12 @@ $helper = $this->get('helper');
 
 
 <div class="headtitle" style="margin:0px; background: #eee;">
-	<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('FILTER'); ?></h4>
+	<h4 class="widgettitle title-primary"><?php echo $this->__('FILTER'); ?></h4>
 	<table class='table table-bordered' cellpadding="0" cellspacing="0" width="90%" id="">
 	<thead>
 		<tr id='toggleBody'>
-			<th><label for="dateFrom"><?php echo $language->lang_echo('DATE_FROM'); ?></label></th>
-			<th><label for="dateTo"><?php echo $language->lang_echo('DATE_TO'); ?></label></th>
+			<th><label for="dateFrom"><?php echo $this->__('DATE_FROM'); ?></label></th>
+			<th><label for="dateTo"><?php echo $this->__('DATE_TO'); ?></label></th>
 			<th><label></label></th>
 			<th><label></label></th>
 			<th></th>
@@ -91,7 +91,7 @@ $helper = $this->get('helper');
 				<?php foreach($this->get('kind') as $row){
 					echo'<option value="'.$row.'"';
 					if($row == $this->get('actKind')) echo ' selected="selected"';
-					echo'>'.$language->lang_echo($row).'</option>';
+					echo'>'.$this->__($row).'</option>';
 	
 				}
 				?>
@@ -117,7 +117,7 @@ $helper = $this->get('helper');
 		</tr>
 	</tbody>
 </table>
-<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('ALL_TIMESHEETS'); ?></h4>
+<h4 class="widgettitle title-primary"><?php echo $this->__('ALL_TIMESHEETS'); ?></h4>
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="dyntableX">
 	<colgroup>
@@ -137,18 +137,18 @@ $helper = $this->get('helper');
 	</colgroup>
 	<thead>
 		<tr>
-			<th><?php echo $language->lang_echo('DATE'); ?></th>
-			<th><?php echo $language->lang_echo('HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('BILLABLE_HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('PLANHOURS'); ?></th>
-			<th><?php echo $language->lang_echo('DIFFERENCE_HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('TICKET'); ?></th>
-			<th><?php echo $language->lang_echo('PROJECT'); ?></th>
-			<th><?php echo $language->lang_echo('EMPLOYEE'); ?></th>
+			<th><?php echo $this->__('DATE'); ?></th>
+			<th><?php echo $this->__('HOURS'); ?></th>
+			<th><?php echo $this->__('BILLABLE_HOURS'); ?></th>
+			<th><?php echo $this->__('PLANHOURS'); ?></th>
+			<th><?php echo $this->__('DIFFERENCE_HOURS'); ?></th>
+			<th><?php echo $this->__('TICKET'); ?></th>
+			<th><?php echo $this->__('PROJECT'); ?></th>
+			<th><?php echo $this->__('EMPLOYEE'); ?></th>
 			<th>Type</th>
-			<th><?php echo $language->lang_echo('DESCRIPTION'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED_COMP'); ?></th>
+			<th><?php echo $this->__('DESCRIPTION'); ?></th>
+			<th><?php echo $this->__('INVOICED'); ?></th>
+			<th><?php echo $this->__('INVOICED_COMP'); ?></th>
 		</tr>
 		<tr class='filter'>
 
@@ -193,7 +193,7 @@ $helper = $this->get('helper');
 			<td><a href="/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
 			<td><a href="/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
 			<td><?php echo $row['firstname']; ?>, <?php echo $row['lastname']; ?></td>
-			<td><?php echo $language->lang_echo($row['kind']); ?></td>
+			<td><?php echo $this->__($row['kind']); ?></td>
 			<td><?php echo $row['description']; ?></td>
 			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedEmplDate'], 2); ?>
 			<?php }else{ ?> <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"

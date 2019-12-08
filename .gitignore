@@ -11,6 +11,7 @@ node_modules/*
 vendor/*
 public/js/compiled-app.min.js
 public/js/compiled-libs.min.js
+public/js/compiled-libs-login.min.js
 public/js/jsSourceMapAPP.map
 public/js/jsSourceMapLIBS.map
 public/css/main.css

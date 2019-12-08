@@ -86,8 +86,8 @@
                         
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('CALENDAR'); ?></h5>
-                <h1><?php echo $language->lang_echo('MY_CALENDAR'); ?></h1>
+                <h5><?php echo $this->__('CALENDAR'); ?></h5>
+                <h1><?php echo $this->__('MY_CALENDAR'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -96,7 +96,7 @@
 
                 <?php echo $this->displayLink(
                     'calendar.addEvent',
-                    "<i class='iconfa-plus'></i> ".$language->lang_echo('NEW_EVENT'),
+                    "<i class='iconfa-plus'></i> ".$this->__('NEW_EVENT'),
                     null,
                     array('class'=>'btn btn-primary btn-rounded')
                 ) ?>
