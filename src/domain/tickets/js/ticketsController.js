@@ -36,11 +36,7 @@ leantime.ticketsController = (function () {
                 _initDueDateTimePickers();
                 _initDates();
                 _initModals();
-                _initSprintPopover();
 
-                _initUserPopover();
-
-                //_initEffortPopover();
                 _initEffortDropdown();
                 _initMilestoneDropdown();
                 _initStatusDropdown();
@@ -527,43 +523,6 @@ leantime.ticketsController = (function () {
         leantime.ticketsController.colorTicketBoxes();
     };
 
-    var _initUserPopover = function () {
-
-        jQuery('.userPopover').popover(
-            {
-                template:'<div class="popover userPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-
-            }
-        );
-
-        jQuery("body").on(
-            "click", ".userPopoverContainer input", function () {
-
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
-                var label = jQuery(this).attr('data-label');
-
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: '/api/tickets',
-                        data:
-                        {
-                            id : ticket[1],
-                            editorId:val
-                        }
-                    }
-                ).done(
-                    function () {
-                        jQuery("#user"+ticket[1]).text(label);
-                        jQuery('.userPopover').popover('hide');
-                    }
-                );
-
-            }
-        );
-    };
-
     var _initSimpleColorPicker = function () {
 
             var colors = ['#064779', '#1B76BB', '#00814A', '#35CB8B', '#F3B600', '#FFD042', '#BC3600', '#F34500'];
@@ -916,6 +875,38 @@ leantime.ticketsController = (function () {
 
     };
 
+    var initStatusSelectBox = function () {
+
+        jQuery(".status-select").chosen();
+
+    };
+
+    var initTicketsTable = function () {
+
+        jQuery(document).ready(function() {
+
+            var size = 20;
+
+            var allTickets = jQuery("#allTicketsTable").DataTable({
+                    "dom": '<"top">rt<"bottom"ilp><"clear">',
+                    "searching": false,
+                    order: [[2, 'asc']],
+
+            });
+
+            /*
+
+            rowGroup: {
+                        dataSrc: function(row) {
+
+                            return row[2]["@data-order"];
+                        }
+                    }
+             */
+
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -929,6 +920,8 @@ leantime.ticketsController = (function () {
         initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
-        initUserSelectBox:initUserSelectBox
+        initUserSelectBox:initUserSelectBox,
+        initStatusSelectBox:initStatusSelectBox,
+        initTicketsTable:initTicketsTable
     };
 })();

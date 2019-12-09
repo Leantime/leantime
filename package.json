@@ -7,6 +7,7 @@
     "chart.js": "^2.9.2",
     "croppie": "^2.6.4",
     "datatables.net": "^1.10.19",
+    "datatables.net-rowgroup": "^1.1.1",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "^3.4.1",

@@ -32,7 +32,7 @@ class application
         $this->frontController = $frontController;
         $this->language = $language;
         $this->projectService = $projectService;
-        $this->settingRepo = $settingRepo;
+        $this->settingsRepo = $settingRepo;
 
     }
 

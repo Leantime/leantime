@@ -146,7 +146,7 @@
 
                     </div>
 
-                    <div class="">
+                    <div class="filterBoxLeft">
 
                         <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
@@ -347,7 +347,7 @@
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -380,8 +380,6 @@
 
 <script type="text/javascript">
 
-    //jQuery( "#sortableBacklog" ).disableSelection();
-
     leantime.ticketsController.initTicketSearchSubmit("/tickets/showKanban");
 
     leantime.ticketsController.initUserSelectBox();
@@ -390,10 +388,12 @@
     leantime.ticketsController.initTicketKanban(ticketStatusList);
 
     <?php if(isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0){ ?>
+
         leantime.helperController.showHelperModal("kanban");
-    <?php
+        <?php
         //Only show once per session
         $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
-    } ?>
+        }
+    ?>
 
 </script>

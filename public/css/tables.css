@@ -1,0 +1,10 @@
+.maincontentinner .table th {
+    font-weight: normal;
+    text-transform:none;
+    font-size: 14px;
+    border-top: 0;
+    color: #fff;
+    font-weight: normal;
+    text-rendering: optimizelegibility;
+
+}

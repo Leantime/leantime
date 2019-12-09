@@ -9,8 +9,23 @@ namespace leantime\domain\controllers {
     class showAll
     {
 
-        public function __construct() {
+        private $projectService;
+        private $tpl;
+        private $ticketService;
+        private $sprintService;
+        private $timesheetService;
+
+        public function __construct()
+        {
+            $this->tpl = new core\template();
             $this->projectService = new services\projects();
+            $this->ticketService = new services\tickets();
+            $this->sprintService = new services\sprints();
+            $this->timesheetService = new services\timesheets();
+
+            $_SESSION['lastPage'] = "/tickets/showAll";
+
+
         }
 
         /**
@@ -169,59 +184,32 @@ namespace leantime\domain\controllers {
             }
         }
 
-
-        private function getSearchCriteriaFromPost($post, $searchCriteria)
-        {
+        public function get($params) {
 
 
-            if(isset($post["searchUsers"]) === true) {
-                $searchCriteria["users"] = implode(",", $post["searchUsers"]);
-            }else if(isset($post["users"]) === true) {
-                $searchCriteria["users"] =  $post["users"];
-            }else{
-                $searchCriteria["users"] = '';
-            }
+            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
-            if (isset($post["searchStatus"]) === true) {
-                $searchCriteria["status"] = implode(",", $post["searchStatus"]);
-            }else if (isset($post["status"]) === true) {
-                $searchCriteria["status"] = $post["status"];
-            }else{
-                $searchCriteria["status"] = "";
-            }
+            $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
+            $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
+            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
+            $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
 
-            if(isset($post["searchTerm"]) === true) {
-                $searchCriteria["searchterm"] =$post["searchTerm"];
-            }else{
-                $searchCriteria["searchterm"] = "";
-            }
+            $this->tpl->assign('searchCriteria', $searchCriteria);
 
-            if(isset($post["searchType"]) === true) {
-                $searchCriteria["searchType"] =$post["searchType"];
-            }else{
-                $searchCriteria["searchType"] = "";
-            }
+            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
 
-            if(isset($post["searchMilestone"]) === true) {
-                $searchCriteria["milestone"] =$post["searchMilestone"];
-            }else if(isset($post["milestone"])) {
-                $searchCriteria["milestone"] = $post["milestone"];
-            }
+            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+            $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
 
-            if(isset($post["searchSprints"]) === true) {
-                $searchCriteria["sprint"] =  $post["searchSprints"];
-                $_SESSION["currentSprint"] = $searchCriteria["sprint"];
-            }else if(isset($post["sprint"]) === true) {
-                $searchCriteria["sprint"] = $post["sprint"];
-                $_SESSION["currentSprint"] = $searchCriteria["sprint"];
-            }else{
-                $searchCriteria["sprint"] = "";
-            }
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
 
+            $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
+            $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
-            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
+            $this->tpl->display('tickets.showAll');
 
-            return $searchCriteria;
         }
 
 

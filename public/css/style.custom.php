@@ -51,14 +51,16 @@ a,a:hover,a:link,a:active,a:focus,
 .inlineDropDownContainer .ticketDropDown:hover,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
 input.secretInput,
-.maincontentinner .ticketDropdown.noBg >a
+.maincontentinner .ticketDropdown.noBg >a,
+.maincontentinner .ticketDropdown.noBg >a:link
 { color: <?php echo $color; ?>; }
 
 
 input[type='submit'],
 button,
 .shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
-.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header
+.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
+.table th
 { background-color:  <?php echo $color; ?>;  }
 
 input[type='submit']:hover, 
