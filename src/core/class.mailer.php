@@ -157,6 +157,8 @@ namespace leantime\core {
 
             $this->mailAgent->Subject = $this->subject;
 
+            $this->mailAgent->addEmbeddedImage(ROOT."".$this->logo, 'companylogo');
+
             $bodyTemplate = '
 		<table width="100%" style="background:#eeeeee; padding:15px; ">
 		<tr>
@@ -166,7 +168,7 @@ namespace leantime\core {
 						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
 							<table>
 								<tr>
-								<td width="150"><img alt="Logo" src="' . $this->logo . '" width="150" style="width:150px;"></td>
+								<td width="150"><img alt="Logo" src="cid:companylogo" width="150" style="width:150px;"></td>
 								<td></td>
 							</tr>
 							</table>
