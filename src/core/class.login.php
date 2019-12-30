@@ -400,8 +400,8 @@ namespace leantime\core {
                 $returnValues = $stmn->fetch();
                 $stmn->closeCursor();
 
-                $this->name = htmlentities($returnValues['firstname']);
-                $this->mail = htmlentities($returnValues['username']);
+                $this->name = strip_tags($returnValues['firstname']);
+                $this->mail = filter_var($returnValues['username'], FILTER_SANITIZE_EMAIL);
                 $this->userId = $returnValues['id'];
                 $this->settings = unserialize($returnValues['settings']);
 
