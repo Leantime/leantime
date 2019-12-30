@@ -80,6 +80,7 @@ namespace leantime\core {
                 $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
+                $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             }else{
 

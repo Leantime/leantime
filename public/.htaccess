@@ -9,10 +9,12 @@ RewriteRule ^resetPassword/([^/\.]+)/?$ /index.php?resetPassword=true&hash=$1
 RewriteRule ^install$ /index.php?install=true
 RewriteRule ^install/([^/\.]+)/?$ /index.php?install=true
 
+RewriteRule ^update /index.php?update=true
+RewriteRule ^update/([^/\.]+)/?$ /index.php?update=true
+
 RewriteRule ^/?$ /index.php?act=dashboard.show
-RewriteRule ^([^/\.]+)/([^/\.]+)/?$ /index.php?act=$1.$2 [NC]
-RewriteRule ^([^/\.]+)/([^/\.]+)/([^/\.]+)/?$ /index.php?act=$1.$2&id=$3
-RewriteRule ^([^/\.]+)/([^/\.]+)/([^/\.]+)/([^/\.]+)/?$ /index.php?act=$1.$2&id=$3&id2=$4
+RewriteRule ^([^/\.]+)/([^/\.]+)/?$ /index.php?act=$1.$2 [QSA]
+RewriteRule ^([^/\.]+)/([^/\.]+)/([^/\.]+)/?$ /index.php?act=$1.$2&id=$3 [QSA]
 
 
 

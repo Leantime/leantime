@@ -1,7 +1,8 @@
 <?php
 
-
-$install = new leantime\core\install();
+$config = new leantime\core\config();
+$settings = new leantime\core\settings();
+$install = new leantime\core\install($config, $settings);
 
 ?>
 <!DOCTYPE html>
@@ -70,111 +71,109 @@ $install = new leantime\core\install();
     <div class="col-md-6 col-sm-12 regRight"  style="box-shadow: -2px 0px 2px #494949; padding-top:14%; border-left: 1px solid #ddd;">
 
         <div class="regpanel">
-            <div class="regpanelinner">
-                <div class="pageheader">
-                    <div class="pageicon"><span class="iconfa-signin"></span></div>
-                    <div class="pagetitle">
-                        <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
-                        <h1>Install Database</h1>
-                        <p>This script will set up your database and create an administrator account</p><br />
-                    </div>
-                </div>
-                <div class="regcontent"  id="login" style="margin-left: 90px;">
-
-                    <?php
-                    $error = false;
-                    $values = array(
-                        'email'			=>"",
-                        'password'		=>"",
-                        'firstname'		=>"",
-                        'lastname'		=>""
-                    );
-
-                    if(isset($_POST['install'])) {
-
-                            $values = array(
-                                'email'			=>($_POST['email']),
-                                'password'		=>$_POST['password'],
-                                'firstname'		=>($_POST['firstname']),
-                                'lastname'		=>($_POST['lastname']),
-                                'company'		=>($_POST['company'])
-                            );
-
-                            if($install->checkIfInstalled() === false) {
-
-                                if (isset($_POST['email']) == false || $_POST['email'] == '') {
-                                    $error = "Please enter an email address";
-                                } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
-                                    $error = "Please enter a password";
-                                } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
-                                    $error = "Please enter a firstname";
-                                } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
-                                    $error = "Please enter a lastname";
-                                } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
-                                    $error = "Please enter a company";
-                                } else {
-
-                                    $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-                                    $dbSetupResults = $install->setupDB($values);
-                                    if($dbSetupResults === true) {
-
-                                        echo "<div class='inputwrapper login-alert'>
-                                            <div class='alert alert-success' style='padding:10px;'>
-                                            The installation was successful<br />
-                                            <br />
-                                            You can now login using your workspace URL:
-                                            <a href='http://" . $_SERVER['HTTP_HOST'] . "'>" . $_SERVER['HTTP_HOST'] . "</a>
-                                            </div>
-								       </div>";
-                                    }else{
-                                        echo "<div class='inputwrapper login-alert'>
-                                            <div class='alert alert-error' style='padding:10px;'>
-                                            Something went wrong
-                                            <br />
-                                            ".$dbSetupResults."<br /><br />
-                                            Before continuing you should delete all tables from your database.                                            
-                                            </div>
-								       </div>";
-                                    }
-                                }
-                            }else{
-                                $error = "Database already installed. Please login";
-                            }
-
-
-                    }
-
-                    ?>
-                    <?php
-                        if($error !== false){
-                            echo "
-                                <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-error'>".$error."</div>
-                                </div>";
-                        }
-                    ?>
-
-                        <form action="/install" method="post" class="registrationForm">
-                            <h3 class="subtitle">Login Info</h3>
-                            <input type="email" name="email" class="form-control" placeholder="Email Address" value=""/><br />
-                            <input type="password" name="password" class="form-control" placeholder="Password" />
-                            <br /><br />
-                            <h3 class="subtitle">User Info</h3>
-                            <input type="text" name="firstname" class="form-control" placeholder="Firstname" value=""/><br />
-                            <input type="text" name="lastname" class="form-control" placeholder="Lastname" value=""/>
-                            <input type="text" name="company" class="form-control" placeholder="Company" value=""/>
-                            <br /><br />
-
-                            <p><input type="submit" name="install" class="btn btn-primary" value="Install"/></p>
-
-                        </form>
-
+        <div class="regpanelinner">
+            <div class="pageheader">
+                <div class="pageicon"><span class="iconfa-signin"></span></div>
+                <div class="pagetitle">
+                    <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
+                    <h1>Install Database</h1>
+                    <p>This script will set up your database and create an administrator account</p><br />
                 </div>
             </div>
+            <div class="regcontent"  id="login" style="margin-left: 90px;">
+
+                <?php
+                $error = false;
+                $values = array(
+                    'email'			=>"",
+                    'password'		=>"",
+                    'firstname'		=>"",
+                    'lastname'		=>""
+                );
+
+                if(isset($_POST['install'])) {
+
+                        $values = array(
+                            'email'			=>($_POST['email']),
+                            'password'		=>$_POST['password'],
+                            'firstname'		=>($_POST['firstname']),
+                            'lastname'		=>($_POST['lastname']),
+                            'company'		=>($_POST['company'])
+                        );
+
+                        if($install->checkIfInstalled() === false) {
+
+                            if (isset($_POST['email']) == false || $_POST['email'] == '') {
+                                $error = "Please enter an email address";
+                            } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
+                                $error = "Please enter a password";
+                            } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
+                                $error = "Please enter a firstname";
+                            } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
+                                $error = "Please enter a lastname";
+                            } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
+                                $error = "Please enter a company";
+                            } else {
+
+                                $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+                                $dbSetupResults = $install->setupDB($values);
+                                if($dbSetupResults === true) {
+
+                                    echo "<div class='inputwrapper login-alert'>
+                                        <div class='alert alert-success' style='padding:10px;'>
+                                        The installation was successful<br />
+                                        <br />
+                                        You can now login using your workspace URL:
+                                        <a href='http://" . $_SERVER['HTTP_HOST'] . "'>" . $_SERVER['HTTP_HOST'] . "</a>
+                                        </div>
+                                   </div>";
+                                }else{
+                                    echo "<div class='inputwrapper login-alert'>
+                                        <div class='alert alert-error' style='padding:10px;'>
+                                        Something went wrong
+                                        <br />
+                                        ".$dbSetupResults."<br /><br />
+                                        Before continuing you should delete all tables from your database.                                            
+                                        </div>
+                                   </div>";
+                                }
+                            }
+                        }else{
+                            $error = "Database already installed. Please login";
+                        }
+
+
+                }
+
+                ?>
+                <?php
+                    if($error !== false){
+                        echo "
+                            <div class='inputwrapper login-alert'>
+                                <div class='alert alert-error'>".$error."</div>
+                            </div>";
+                    }
+                ?>
+
+                    <form action="/install" method="post" class="registrationForm">
+                        <h3 class="subtitle">Login Info</h3>
+                        <input type="email" name="email" class="form-control" placeholder="Email Address" value=""/><br />
+                        <input type="password" name="password" class="form-control" placeholder="Password" />
+                        <br /><br />
+                        <h3 class="subtitle">User Info</h3>
+                        <input type="text" name="firstname" class="form-control" placeholder="Firstname" value=""/><br />
+                        <input type="text" name="lastname" class="form-control" placeholder="Lastname" value=""/>
+                        <input type="text" name="company" class="form-control" placeholder="Company" value=""/>
+                        <br /><br />
+                        <input type="hidden" name="install" value="Install" />
+                        <p><input type="submit" name="installAction" class="btn btn-primary" value="Install" onClick="this.form.submit(); this.disabled=true; this.value='Installing…'; "/></p>
+
+                    </form>
+
+            </div>
         </div>
-
-
+    </div>
 
     </div>
 </div>

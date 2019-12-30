@@ -1454,5 +1454,32 @@ namespace leantime\domain\repositories {
             return $return;
         }
 
+        /**
+         * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
+         *
+         * @access public
+         * @return bool
+         */
+        public function checkIfInstalled()
+        {
+
+            try {
+
+                $stmn = $this->db->database->prepare("SELECT COUNT(*) FROM zp_user");
+
+                $stmn->execute();
+                $values = $stmn->fetchAll();
+
+                $stmn->closeCursor();
+
+                return true;
+
+            } catch (\PDOException $e) {
+
+                return false;
+
+            }
+        }
+
     }
 }
