@@ -44,9 +44,9 @@ namespace leantime\domain\controllers {
             if($_SESSION['userdata']['role'] == 'admin') {
 
                 $companySettings = array(
-                    "logo" => $this->config->logoPath,
-                    "color" => $this->config->mainColor,
-                    "name" => $this->config->sitename
+                    "logo" => $_SESSION["companysettings.logoPath"],
+                    "color" => $_SESSION["companysettings.mainColor"],
+                    "name" => $_SESSION["companysettings.sitename"]
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
