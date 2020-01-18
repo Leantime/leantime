@@ -173,7 +173,13 @@ $users = $this->get('users');
 
         <div id='comment'>
 
-            <?php $this->displaySubmodule('comments-generalComment') ?>
+            <form method="post" action="/clients/showClient/<?php echo $this->e($_GET['id']); ?>#comment">
+                <input type="hidden" name="comment" value="1" />
+                <?php
+                $this->assign('formUrl', "/clients/showClient/".$this->escape($_GET['id'])."");
+                $this->displaySubmodule('comments-generalComment') ?>
+            </form>
+
 
         </div>
 

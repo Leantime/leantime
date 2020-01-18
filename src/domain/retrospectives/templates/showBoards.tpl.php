@@ -111,6 +111,12 @@ $canvasLabels = $this->get("canvasLabels");
 
     });
 
+      jQuery(".editCanvasLink").click(function() {
+
+          jQuery('#editCanvas').modal('show');
+
+      });
+
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["retrospectives"]) === false || $_SESSION['userdata']['settings']["modals"]["retrospectives"] == 0) {     ?>
       leantime.helperController.showHelperModal("retrospectives");
@@ -245,13 +251,18 @@ $canvasLabels = $this->get("canvasLabels");
                             foreach($this->get('allCanvas') as $canvasRow){ ?>
 
                                 <?php echo"<option value='".$canvasRow["id"]."'";
-                                if($this->get('currentCanvas') == $canvasRow["id"]) { echo" selected='selected' ";
+                                if($this->get('currentCanvas') == $canvasRow["id"]) {
+                                    $canvasTitle = $canvasRow["title"];
+                                    echo" selected='selected' ";
                                 }
-                                echo">".$canvasRow["title"]."</option>"; ?>
+                                echo">".$canvasRow["title"]."</option>";
+
+                                ?>
 
                             <?php }     ?>
                         </select><br />
-                         <small><a href="javascript:void(0)" class="addCanvasLink "><i class="fa fa-plus"></i> Create Retrospective Board</a></small>
+                        <small><a href="javascript:void(0)" class="addCanvasLink "><i class="fa fa-plus"></i> Create Retrospective Board</a></small> |
+                        <small><a href="javascript:void(0)" class="editCanvasLink "><i class="fa fa-edit"></i> Edit Board</a></small>
                         <?php } ?>
                     </form>
 
@@ -446,11 +457,15 @@ $canvasLabels = $this->get("canvasLabels");
 
 
             </div>    
-            
+
+
+
 
         </div>
-        <div class="clearfix"></div>
 
+        <div class="clearfix"></div>
+        <br />
+        <a href="/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
     <?php } else {
 
         echo "<br /><br /><div class='center'><h4>You don't have any previous retrospectives yet.</h4><br />
@@ -507,6 +522,30 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <input type="submit"  class="btn btn-default" value="Start" name="newCanvas" />
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+        <div class="modal fade bs-example-modal-lg" id="editCanvas">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="" method="post">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Edit Board Name</h4>
+                        </div>
+                        <div class="modal-body">
+                            <label>What is the title of your retrospective?</label>
+                            <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit"  class="btn btn-default" value="Save" name="editCanvas" />
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
