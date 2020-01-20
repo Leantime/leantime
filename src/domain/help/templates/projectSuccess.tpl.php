@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-suitcase"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_events_2p66.svg");
+                echo"</div>";?>
             <h3 class="primaryColor">Congratulations, on your project!</h3><br />
             <p>You can now go to <a href="/leancanvas/simpleCanvas/" class="btn btn-primary" ><span class="fas fa-flask"></span> Research</a> to identify your Customer, Problem and Solution Fit. <br /><br />Or, to skip research and go right into planning, go to the <a href="/tickets/roadmap/" class="btn btn-primary"><span class="fas fa-map"></span> Roadmap</a><br /><br /></p>
         </div>

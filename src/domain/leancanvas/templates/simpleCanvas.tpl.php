@@ -572,7 +572,13 @@ $canvasTitle = "";
 
     <?php } else {
 
-            echo "<br /><br /><div class='center'><h4>Research your next big product and collect your experiements here.</h4><br />
+            echo "<br /><br /><div class='center'>";
+
+            echo"<div style='width:50%' class='svgContainer'>";
+            echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+            echo"</div>";
+
+        echo"<h4>Research your next big product and collect your experiements here.</h4><br />
 The lean canvas will guide your through a customer, problem and solution fit.<br/> 
 We suggest you create a new canvas for every product you start.<br /><br />
 <a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Create new plan</a></div>";

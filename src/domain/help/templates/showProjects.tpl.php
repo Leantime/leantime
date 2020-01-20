@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-suitcase"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_Organizing_projects_0p9a.svg");
+                echo"</div>";?><br />
             <h3 class="primaryColor">Welcome to Projects!</h3><br />
             <p>Projects are the heart of your business and leantime! Change, development, goals, and anything you can build or dream of will involve projects. <br /> Project management is simply the process of ensuring that your projects are delivered timely, correctly, and with real business value.
 <br /><br />

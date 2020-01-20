@@ -154,7 +154,12 @@ $canvasTitle = "";
 
     <?php } else {
 
-        echo "<br /><br /><div class='center'><h4>All out of ideas?</h4><br />
+        echo "<br /><br /><div class='center'>";
+        echo"<div style='width:50%' class='svgContainer'>";
+        echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
+        echo"</div>";
+
+echo"<br /><h4>Have an idea?</h4><br />
 Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a new idea board</a></div>";
 
     }

@@ -470,7 +470,12 @@ $canvasTitle = "";
 
     <?php } else {
 
-        echo "<br /><br /><div class='center'><h4>You don't have any previous retrospectives yet.</h4><br />
+         echo "<br /><br /><div class='center'>";
+        echo"<div style='width:50%' class='svgContainer'>";
+        echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
+        echo"</div>";
+
+echo"<h4>You don't have any previous retrospectives yet.</h4><br />
 Start one now and discuss what went well and what you can improve on.<br/> 
 We suggest you have one every sprint or at the end of each milestone.<br /><br />
 <a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a retrospective</a></div>";

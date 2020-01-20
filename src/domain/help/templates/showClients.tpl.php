@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-address-book"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_complete_task_u2c3.svg");
+                echo"</div>";?><br />
             <h3 class="primaryColor">Welcome to Clients / Products!</h3><br />
             <p>Clients/Products organize your Projects into categories and allow you to isolate different groups.<br /><br /></p>
             <p>As a consultant, you work with clients already and this would be the place to organize them.</p>

@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="iconfa-pushpin"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_schedule_pnbk.svg");
+                echo"</div>";?><br />
             <h3 class="primaryColor">Welcome to Your Backlog!</h3><br />
             <p>A backlog is the home of all of your to-dos; those you are working on currently and plan to work on.<br />
                 <br/>To make progress towards completing your backlog we recommend working in short iterations - Sprints.<br />

@@ -6,7 +6,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-flask"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+            <?php    echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+            echo"</div>";?>
+
             <h3 class="primaryColor">Welcome to The Simple Research Board!</h3><br />
             <p>The foundation of any project is rooted here -- in your research.  On this board, you'll focus on building for your customer by using the Problem Solution Fit.<br/><br />
                 In Problem Solution fit, you'll start with identifying who your customer is. Think about demographics, what they do, and what they need.<br/>
