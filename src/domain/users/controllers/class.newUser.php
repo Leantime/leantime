@@ -21,12 +21,21 @@ namespace leantime\domain\controllers {
             $userRepo =  new repositories\users();
             $project = new repositories\projects();
 
+            $values = array(
+                'firstname' =>"",
+                'lastname' => "",
+                'user' => "",
+                'phone' => "",
+                'role' => "",
+                'password' => "",
+                'clientId' => ""
+            );
+
             //only Admins
             if ($_SESSION['userdata']['role'] == 'admin') {
 
                     $projectrelation = array();
 
-                    $values = array();
                     if (isset($_POST['save'])) {
 
                         $tempPasswordVar = $_POST['password'];
@@ -42,8 +51,8 @@ namespace leantime\domain\controllers {
 
                         //Validation
                         if ($values['user'] !== '') {
-                            $helper = new core\helper();
-                            if ($helper->validateEmail($values['user']) == 1) {
+
+                            if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                                 if (password_verify($_POST['password'], $values['password']) && $_POST['password'] != '') {
                                     if ($userRepo->usernameExist($values['user']) === false) {
 
@@ -70,7 +79,7 @@ namespace leantime\domain\controllers {
 
                                         $tpl->setNotification('USER_ADDED', 'success');
 
-                                        header("Location: /users/showAll");
+                                        $tpl->redirect(" /users/showAll");
 
                                     } else {
 
@@ -90,10 +99,9 @@ namespace leantime\domain\controllers {
                             $tpl->setNotification('NO_USERNAME', 'error');
                         }
 
-                        $tpl->assign('values', $values);
-
                     }
 
+                    $tpl->assign('values', $values);
                     $clients = new repositories\clients();
                     $tpl->assign('clients', $clients->getAll());
                     $tpl->assign('allProjects', $project->getAll());

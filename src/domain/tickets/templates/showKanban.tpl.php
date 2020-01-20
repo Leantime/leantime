@@ -27,6 +27,11 @@ $efforts = $this->get('efforts');
         jQuery(".column .contentInner").css("height", height);
       countTickets();
   });
+
+     jQuery(window).resize(function() {
+         var height = jQuery("html").height()-320;
+         jQuery(".column .contentInner").css("height", height);
+     });
       
   jQuery(function() { 
 	

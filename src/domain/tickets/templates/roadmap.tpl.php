@@ -42,7 +42,15 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <?php
         if(count($milestones) == 0) {
-            echo"<div class='empty' id='emptySprint' style='text-align:center;'><h1><i class=\"fas fa-map\"></i></h1><h4>You don't have any milestones yet<br/><a href=\"/tickets/editMilestone\" class=\"milestoneModal\"><span class=\"fa fa-map\"></span> Add a Milestone here</a></h4></div>";
+            echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
+            echo"<div style='width:50%' class='svgContainer'>";
+            echo file_get_contents(ROOT."/images/svg/undraw_adjustments_p22m.svg");
+            echo"</div>";
+echo"
+<h4>You don't have any milestones yet<br/>
+
+<br />
+<a href=\"/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\"><span class=\"fa fa-map\"></span> Add a Milestone</a></h4></div>";
 
         }
         ?>

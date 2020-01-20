@@ -23,7 +23,11 @@ leantime.helperController = (function () {
                 },
                 resizable: true,
                 autoSizable: true,
-                callbacks: {}
+                callbacks: {
+                    beforeShowCont: function () {
+                        leantime.replaceSVGColors();
+                    }
+                }
             }
         );
     };

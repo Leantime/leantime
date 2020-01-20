@@ -160,6 +160,26 @@ namespace leantime\domain\repositories {
 
         }
 
+        public function updateCanvas($values)
+        {
+
+            $query = "UPDATE zp_canvas SET
+						title = :title
+				WHERE id = :id";
+
+            $stmn = $this->db->{'database'}->prepare($query);
+
+            $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
+            $stmn->bindValue(':id', $values['id'], PDO::PARAM_INT);
+
+            $result = $stmn->execute();
+
+            $stmn->closeCursor();
+
+            return $result;
+
+        }
+
         public function editCanvasItem($values)
         {
             $sql = "UPDATE zp_canvas_items SET
@@ -191,13 +211,13 @@ namespace leantime\domain\repositories {
         public function patchCanvasItem($id, $params)
         {
 
-            $sql = "UPDATE zp_canvas_items SET ";
+            $sql = "UPDATE zp_canvas_items SET";
 
             foreach($params as $key=>$value){
-                $sql .= "".$key."=:".$key.", ";
+                $sql .= " ".$key."=:".$key.", ";
             }
 
-            $sql .= "id=:id WHERE id=:id LIMIT 1";
+            $sql .= " id=:id WHERE id=:id LIMIT 1";
 
             $stmn = $this->db->{'database'}->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);

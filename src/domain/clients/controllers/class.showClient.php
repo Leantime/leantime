@@ -120,6 +120,7 @@ namespace leantime\domain\controllers {
                 $tpl->assign('users', new repositories\users());
                 $tpl->assign('clientProjects', $project->getClientProjects($id));
                 $tpl->assign('files', $file->getFilesByModule('client'));
+                $tpl->assign('helper', new core\helper());
                 //var_dump($file->getFilesByModule('client')); die();
 
                 $tpl->display('clients.showClient');

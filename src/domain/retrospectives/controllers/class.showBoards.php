@@ -52,9 +52,28 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $retroRepo->addCanvas($values);
                     $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $_SESSION["msg"] = "NEW_CANVAS_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location: /retrospectives/showBoards/".$currentCanvasId);
+                    $tpl->setNotification("New Board added", "success");
+                    $_SESSION['currentRetroCanvas'] = $currentCanvasId;
+                    $tpl->redirect("/retrospectives/showBoards/");
+
+
+                } else {
+                    $tpl->setNotification('ENTER_TITLE', 'error');
+                }
+
+            }
+
+            //Edit Canvas
+            if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
+
+                if (isset($_POST['canvastitle']) === true) {
+
+                    $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
+                    $currentCanvasId = $retroRepo->updateCanvas($values);
+
+                    $tpl->setNotification("Board edited", "success");
+                    $tpl->redirect("/retrospectives/showBoards/");
+
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

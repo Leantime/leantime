@@ -66,7 +66,7 @@ namespace leantime\domain\controllers {
 
                     $helper = new core\helper();
 
-                    if ($helper->validateEmail($values['user']) == 1) {
+                    if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 
                         if ($_POST['newPassword'] == $_POST['confirmPassword']) {
 
@@ -122,15 +122,13 @@ namespace leantime\domain\controllers {
 
             }
 
-            $file = new repositories\files();
-
             //Assign vars
             $users = new repositories\users();
-            //        $tpl->assign('profilePic', $file->getFilesByModule('user',$_SESSION['userdata']['id']));
+
             $tpl->assign('profilePic', $users->getProfilePicture($_SESSION['userdata']['id']));
             $tpl->assign('info', $infoKey);
             $tpl->assign('values', $values);
-            //$tpl->assign('roles', $this->roles);
+
             $tpl->assign('user', $row);
 
             $tpl->display('users.editOwn');

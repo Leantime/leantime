@@ -2,6 +2,8 @@
 
 var leantime = leantime || {};
 
+var themeColor = $('meta[name=theme-color]').attr("content");
+leantime.companyColor = "#"+themeColor;
 
 jQuery(document).on('click', function (e) {
     jQuery('[data-toggle="popover"],[data-original-title]').each(function () {
@@ -13,3 +15,23 @@ jQuery(document).on('click', function (e) {
 
     });
 });
+
+
+leantime.replaceSVGColors = function () {
+    jQuery(document).ready(function(){
+
+        if(leantime.companyColor != "#1b75bb") {
+            jQuery("svg").children().each(function () {
+                if (jQuery(this).attr("fill") == "#1b75bb") {
+                    jQuery(this).attr("fill", leantime.companyColor);
+                }
+            });
+        }
+
+    });
+};
+
+leantime.replaceSVGColors();
+
+
+

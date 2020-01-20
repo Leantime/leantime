@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?php echo $_SESSION["companysettings.sitename"] ?></title>
 
-    <meta name="description" content="TimelineJS example">
+    <meta name="description" content="<?php echo $_SESSION["companysettings.sitename"] ?>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="theme-color" content="<?php echo $_SESSION["companysettings.mainColor"] ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link rel="shortcut icon" href="/favicon.ico"/>
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -24,8 +25,6 @@
     <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css"/>
     <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"] ?>&v=<?php echo $settings->appVersion; ?>" type="text/css"/>
     <link rel="stylesheet" href="/css/main.css"/>
-
-    <!-- libs -->
 
 
     <script type="text/javascript" src="/js/libs/jquery-1.9.1.min.js"></script>

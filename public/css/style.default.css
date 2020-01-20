@@ -8870,3 +8870,12 @@ input.secretInput:active {
     border: 1px solid #cccccc;
     text-decoration:none;
 }
+
+.svgContainer {
+    margin:auto;
+}
+
+.svgContainer svg {
+    max-width: 100%;
+    height: auto;
+}
