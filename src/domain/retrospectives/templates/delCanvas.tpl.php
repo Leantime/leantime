@@ -1,7 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
-$ticket = $this->get('ticket');
-
+    defined('RESTRICTED') or die('Restricted access');
 ?>
 
 <div class="pageheader">

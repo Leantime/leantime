@@ -3,6 +3,7 @@
 defined('RESTRICTED') or die('Restricted access');
 $allCanvas = $this->get("allCanvas");
 $canvasLabels = $this->get("canvasLabels");
+$canvasTitle = "";
 ?>
 
  <script type="text/javascript">
@@ -415,9 +416,6 @@ $canvasLabels = $this->get("canvasLabels");
                                             <?php echo nl2br($row["data"]);?>
                                             <br /><br />
 
-                                            
-                                            
-                                            
                                             <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
                                                 <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
                                             <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
@@ -464,8 +462,12 @@ $canvasLabels = $this->get("canvasLabels");
         </div>
 
         <div class="clearfix"></div>
-        <br />
-        <a href="/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+
+        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
+            <br />
+            <a href="/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+        <?php } ?>
+
     <?php } else {
 
         echo "<br /><br /><div class='center'><h4>You don't have any previous retrospectives yet.</h4><br />

@@ -52,9 +52,28 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->addCanvas($values);
                     $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $_SESSION["msg"] = "NEW_CANVAS_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location: /ideas/advancedBoards/".$currentCanvasId);
+                    $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
+
+                    $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                    header("Location: /ideas/advancedBoards/");
+
+                } else {
+                    $tpl->setNotification('ENTER_TITLE', 'error');
+                }
+
+            }
+
+            //Edit Canvas
+            if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
+
+                if (isset($_POST['canvastitle']) === true) {
+
+                    $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
+                    $currentCanvasId = $ideaRepo->updateCanvas($values);
+
+                    $tpl->setNotification("Board edited", "success");
+                    $tpl->redirect("/ideas/advancedBoards/");
+
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

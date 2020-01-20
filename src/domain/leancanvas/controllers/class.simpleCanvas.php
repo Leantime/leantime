@@ -53,9 +53,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $leancanvasRepo->addCanvas($values);
                     $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $_SESSION["msg"] = "NEW_CANVAS_ADDED";
-                    $_SESSION["msgT"] = "success";
-
+                    $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
 
                     $mailer = new core\mailer();
                     $projectService = new services\projects();
@@ -69,7 +67,26 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification('New canvas created successfully. Now who is your customer?', 'success');
 
-                    $tpl->redirect("/leancanvas/simpleCanvas/".$currentCanvasId);
+                    $_SESSION['currentLeanCanvas'] = $currentCanvasId;
+                    $tpl->redirect("/leancanvas/simpleCanvas/");
+
+                } else {
+                    $tpl->setNotification('ENTER_TITLE', 'error');
+                }
+
+            }
+
+            //Edit Canvas
+            if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
+
+                if (isset($_POST['canvastitle']) === true) {
+
+                    $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
+                    $currentCanvasId = $leancanvasRepo->updateCanvas($values);
+
+                    $tpl->setNotification("Board edited", "success");
+                    $tpl->redirect("/leancanvas/simpleCanvas/");
+
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
