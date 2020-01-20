@@ -21,4 +21,6 @@ if($login->logged_in()!==true){
 $application = new leantime\core\application();
 $application->start();
 
-ob_end_flush();
+if(ob_get_length() > 0) {
+    ob_end_flush();
+}
