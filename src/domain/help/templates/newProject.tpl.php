@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-suitcase"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_Organizing_projects_0p9a.svg");
+                echo"</div>";?><br />
             <h3 class="primaryColor">Welcome to your Project!</h3><br />
             <p>This is the place you'll describe, define, and set the parameters for your project.  This is important as it's the piece that communicates to the <br/>entire team what the project priorities, expectations, and guidelines are.</p>
             <p><br /><em>Things to think about here: the 4Cs.<br />Be Clear, be Concise, Complete and Credible.<br /><br /></em></p>

@@ -1621,7 +1621,6 @@ body {
     background: url(../images/leftpanelbg.png) repeat-y 0 0;
     font-size: 12px;
     font-family: 'RobotoRegular', 'Helvetica Neue', Helvetica, sans-serif;
-    min-height:100%;
 }
 
 body.errorpage {
@@ -6104,7 +6103,7 @@ strong, .headmenu .nav-header,
 .userloggedinfo .userinfo h5,
 .loginpanel .inputwrapper button,
 .userlist li .uinfo h5 {
-
+    font-family: 'LatoBold', 'Helvetica Neue', Helvetica, sans-serif;
     font-weight: normal;
 }
 
@@ -6125,7 +6124,35 @@ strong, .headmenu .nav-header,
     text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
 }
 
+.dropdown-menu {
+    margin-top: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
 
+.dropdown-menu > li > a {
+    font-size: 12px;
+    color: #444;
+    margin: 0 5px;
+    padding: 5px 10px;
+}
+
+.dropdown-menu > li > a:hover .muted {
+    color: #fff;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+    background: #333;
+}
+
+.dropdown .dropdown-menu .nav-header {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
@@ -8810,7 +8837,6 @@ input.secretInput {
     border: 1px solid transparent;
     margin-top:-1px;
     cursor:pointer;
-    padding-left: 3px;
 
 }
 
@@ -8818,14 +8844,18 @@ input.secretInput {
 input.secretInput:hover,
 input.secretInput:focus,
 input.secretInput:active {
-    color:#222;
-    border-color:transparent;
-    box-shadow:none;
-    text-decoration:underline;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    border: 1px solid #cccccc;
+    text-decoration:none;
 }
 
+.svgContainer {
+    margin:auto;
+}
 
-/*tinymce Overrides*/
-body .tox-silver-sink {
-    z-index:1000008;
+.svgContainer svg {
+    max-width: 100%;
+    height: auto;
 }

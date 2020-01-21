@@ -68,13 +68,12 @@ namespace leantime\domain\controllers {
 
                         if ($values['user'] !== '') {
 
-                            $helper = new core\helper();
-
-                            if ($helper->validateEmail($values['user']) === 1) {
+                            if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                                 if ($changedEmail == 1) {
                                     if ($userRepo->usernameExist($row['username'], $id) === false) {
 
                                         $edit = true;
+
                                     } else {
 
                                         $tpl->setNotification('USERNAME_EXISTS', 'error');
@@ -85,7 +84,7 @@ namespace leantime\domain\controllers {
                                 }
                             } else {
 
-                                $tpl->setNotification('NO_VALID_EMAIL_'.$helper->validateEmail($values['user']), 'error');
+                                $tpl->setNotification('NO_VALID_EMAIL', 'error');
                             }
                         } else {
 

@@ -6,7 +6,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><span class="fa fa-flask"></span></span><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+                echo"</div>";?>
             <h3 class="primaryColor">Welcome to the Full Research Board!</h3><br />
             <p>The full research board will take you through the full idea validation process.  <br/>
             On this page, you'll again address your Customer Segment, Problem, Solution (but don't worry, if you filled that out on the Simple board, you'll see it again here!).<br/>

@@ -11,7 +11,7 @@ namespace leantime\core {
 
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
-    
+
     class mailer
     {
 
@@ -80,6 +80,7 @@ namespace leantime\core {
                 $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
+                $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             }else{
 
@@ -89,13 +90,13 @@ namespace leantime\core {
 
             $this->emailDomain = $config->email;
 
-            $this->logo = $config->logoPath;
-            $this->companyColor = $config->mainColor;
+            $this->logo = $_SESSION["companysettings.logoPath"];
+            $this->companyColor = $_SESSION["companysettings.mainColor"];
 
         }
 
         /**
-         * 
+         *
          * setText - sets the mailtext
          *
          * @access public
@@ -110,7 +111,7 @@ namespace leantime\core {
         }
 
         /**
-         * 
+         *
          * setHTML - set Mail html (no function yet)
          *
          * @access public
@@ -157,6 +158,17 @@ namespace leantime\core {
 
             $this->mailAgent->Subject = $this->subject;
 
+            $logoParts = parse_url($this->logo);
+
+            if(isset($logoParts['scheme'])) {
+                //Logo is URL
+                $inlineLogoContent = $this->logo;
+            }else{
+                //Logo comes from local file system
+                $this->mailAgent->addEmbeddedImage(ROOT."".$this->logo, 'companylogo');
+                $inlineLogoContent = "cid:companylogo";
+            }
+
             $bodyTemplate = '
 		<table width="100%" style="background:#eeeeee; padding:15px; ">
 		<tr>
@@ -166,7 +178,7 @@ namespace leantime\core {
 						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
 							<table>
 								<tr>
-								<td width="150"><img alt="Logo" src="' . $this->logo . '" width="150" style="width:150px;"></td>
+								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>
 								<td></td>
 							</tr>
 							</table>

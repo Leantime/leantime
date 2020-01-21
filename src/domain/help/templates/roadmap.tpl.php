@@ -6,8 +6,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><i class="fas fa-map"></i></span><br />
-            <h3 class="primaryColor">Welcome to The Roadmap!</h3><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_adjustments_p22m.svg");
+                echo"</div>";?>
+            <h3 class="primaryColor">Welcome to Your Roadmap!</h3><br />
             <p>Roadmaps are helpful for scaling down large projects into smaller and more manageable chunks.<br /><br /></p>
             <p>To create your roadmap, we recommend setting milestones that can be achieved within a 3 month time span.</p>
             <p>Milestones are checkpoints on the way to project completion.<br /> Simply speaking: If you're taking a cross country road trip, then each state you pass through could be a milestone.<br/>

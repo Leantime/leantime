@@ -59,8 +59,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->addCanvas($values);
                     $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $_SESSION["msg"] = "NEW_CANVAS_ADDED";
-                    $_SESSION["msgT"] = "success";
+                    $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
 
                     $mailer = new core\mailer();
                     $projectService = new services\projects();
@@ -72,7 +71,26 @@ namespace leantime\domain\controllers {
                     $mailer->setHtml("A new idea board was created by " . $_SESSION["userdata"]["name"] . ": <a href='" . $actual_link . "'>" . $values['title'] . "</a>.<br />");
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
-                    header("Location: /ideas/showBoards/".$currentCanvasId);
+                    $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                    header("Location: /ideas/showBoards/");
+
+                } else {
+                    $tpl->setNotification('ENTER_TITLE', 'error');
+                }
+
+            }
+
+            //Edit Canvas
+            if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
+
+                if (isset($_POST['canvastitle']) === true) {
+
+                    $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
+                    $currentCanvasId = $ideaRepo->updateCanvas($values);
+
+                    $tpl->setNotification("Board edited", "success");
+                    $tpl->redirect("/ideas/showBoards/");
+
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

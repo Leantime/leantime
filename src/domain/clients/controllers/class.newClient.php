@@ -30,6 +30,18 @@ namespace leantime\domain\controllers {
 
                 $msgKey = '';
 
+                $values = array(
+                    'name' => '',
+                    'street' => '',
+                    'zip' => '',
+                    'city' => '',
+                    'state' => '',
+                    'country' => '',
+                    'phone' => '',
+                    'internet' => '',
+                    'email' => ''
+                );
+
                 if (isset($_POST['save']) === true) {
 
                     $values = array(
@@ -60,10 +72,10 @@ namespace leantime\domain\controllers {
                         $tpl->setNotification('NO_NAME', 'error');
                     }
 
-                    $tpl->assign('values', $values);
+
                 }
 
-
+                $tpl->assign('values', $values);
                 $tpl->display('clients.newClient');
             } else {
 

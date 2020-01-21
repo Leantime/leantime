@@ -155,7 +155,7 @@ jQuery(function($) {
         	   "sPaginationType": "full_numbers",
         	   "bFilter": true,
         	    "fnDrawCallback": function(oSettings) {
-                jQuery.uniform.update();
+
             	},
         	   "sDom": '<"H"<"left"l><"right"f>>rt<"F"<"left"i><"right"p>>',
         	   "iDisplayLength": size,
@@ -215,7 +215,7 @@ jQuery(function($) {
                 "sPaginationType": "full_numbers",
                 "bFilter": true,
                 "fnDrawCallback": function(oSettings) {
-                    jQuery.uniform.update();
+
                 },
                 "sDom": '<"H"<"left"l><"right"f>>rt<"F"<"left"i><"right"p>>',
                 "iDisplayLength": size,
@@ -275,7 +275,7 @@ jQuery(function($) {
                 "sPaginationType": "full_numbers",
                 "bFilter": true,
                 "fnDrawCallback": function(oSettings) {
-                    jQuery.uniform.update();
+
                 },
                 "sDom": '<"H"<"left"l><"right"f>>rt<"F"<"left"i><"right"p>>',
                 "iDisplayLength": size,

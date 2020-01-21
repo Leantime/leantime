@@ -65,6 +65,8 @@ class application
                 include '../src/resetPassword.php';
             }else if(isset($_GET['install']) === true) {
                  include '../src/install.php';
+            }else if(isset($_GET['update']) === true) {
+                include '../src/update.php';
             }else{
                 include '../src/login.php';
             }    
@@ -109,6 +111,21 @@ class application
                 $_SESSION["companysettings.sitename"] = $sitename;
             }else{
                 $_SESSION["companysettings.sitename"] = $this->config->sitename;
+            }
+        }
+
+        //Only run this if the user is not logged in (db should be updated/installed before user login)
+        if($this->login->logged_in()===false) {
+
+            if($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false){
+                header("Location: /install");
+                exit();
+            }
+
+            $dbVersion = $settings->getSetting("db-version");
+            if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
+                header("Location: /update");
+                exit();
             }
         }
     }

@@ -3,6 +3,7 @@
 defined('RESTRICTED') or die('Restricted access');
 $allCanvas = $this->get("allCanvas");
 $canvasLabels = $this->get("canvasLabels");
+$canvasTitle = "";
 ?>
 
  <script type="text/javascript">
@@ -112,6 +113,12 @@ $canvasLabels = $this->get("canvasLabels");
         jQuery('#addCanvas').modal('show');
 
     });
+
+      jQuery(".editCanvasLink").click(function() {
+
+          jQuery('#editCanvas').modal('show');
+
+      });
 
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
@@ -254,13 +261,16 @@ $canvasLabels = $this->get("canvasLabels");
                             foreach($this->get('allCanvas') as $canvasRow){ ?>
 
                                 <?php echo"<option value='".$canvasRow["id"]."'";
-                                if($this->get('currentCanvas') == $canvasRow["id"]) { echo" selected='selected' ";
+                                if($this->get('currentCanvas') == $canvasRow["id"]) {
+                                    echo" selected='selected' ";
+                                    $canvasTitle = $canvasRow["title"];
                                 }
                                 echo">".$this->escape($canvasRow["title"])."</option>"; ?>
 
                             <?php }     ?>
                         </select><br />
-                            <small><a href="javascript:void(0)" class="addCanvasLink"><i class="fa fa-plus"></i> Create New Board</a></small>
+                            <small><a href="javascript:void(0)" class="addCanvasLink"><i class="fa fa-plus"></i> Create New Board</a></small> |
+                            <small><a href="javascript:void(0)" class="editCanvasLink "><i class="fa fa-edit"></i> Edit Board</a></small>
                         <?php } ?>
                     </form>
 
@@ -626,27 +636,23 @@ $canvasLabels = $this->get("canvasLabels");
         </div>
         <div class="clearfix"></div>
 
+        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager'){ ?>
+            <br />
+            <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+        <?php } ?>
+
     <?php } else {
 
-            echo "<br /><br /><div class='center'><h4>All out of ideas?</h4><br />
+        echo "<br /><br /><div class='center'>";
+        echo"<div style='width:50%' class='svgContainer'>";
+        echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
+        echo"</div>";
+
+        echo"<br /><h4>Have an idea?</h4><br />
 Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a new idea board</a></div>";
 
     }
     ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         <!-- Modals -->
 
@@ -668,6 +674,29 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <input type="submit"  class="btn btn-default" value="Create Board" name="newCanvas" />
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div class="modal fade bs-example-modal-lg" id="editCanvas">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="" method="post">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Edit Board Name</h4>
+                        </div>
+                        <div class="modal-body">
+                            <label>What is the title of your  idea board?</label>
+                            <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit"  class="btn btn-default" value="Save" name="editCanvas" />
                         </div>
                     </form>
                 </div><!-- /.modal-content -->

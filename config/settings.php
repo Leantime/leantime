@@ -13,11 +13,11 @@ class settings {
 	 * @access private
 	 * @var string - 1 debugmodus
 	 */
-	private $debug = '1';
+	private $debug = 1;
 
-	public $appVersion = "2.0.3";
+	public $appVersion = "2.0.5";
 
-    public $dbVersion = "2.0";
+    public $dbVersion = "2.0.4";
 
 	/**
 	 * __construct

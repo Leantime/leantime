@@ -6,8 +6,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <span class="bigIcon primaryColor"><i class="far fa-hand-spock"></i></span><br />
-            <h3 class="primaryColor">Welcome to retrospectives!</h3><br />
+            <div style='width:50%' class='svgContainer'>
+                <?php    echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
+                echo"</div>";?>
+            <h3 class="primaryColor">Welcome to Retrospectives!</h3><br />
             <p>Retrospectives are quick reflections about the work, team functioning, and of course progress.  <br/>
                 This is where your team can take a moment to hone in on what went well, what didn't go well and what could be done differently next time. <br/>
             We recommend running a review meeting in regular intervals, or at minimum, at the end of each Milestone.<br/>
