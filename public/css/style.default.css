@@ -2259,6 +2259,7 @@ a .label-default:after, a .label-primary:after {
     height: 60px;
     background-position: left center;
     display: block;
+    background-size:260px auto;
 }
 
 .header .logo a.barmenu {

@@ -68,7 +68,7 @@ leantime.settingController = (function () {
             'result', {
                 type: "blob",
                 circle: false,
-                size: {width:260},
+                size: "original",
                 quality:1
 
             }
