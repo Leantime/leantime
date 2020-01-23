@@ -7,37 +7,37 @@ $canvasTitle = "";
 ?>
 
  <script type="text/javascript">
-    
-  
+
+
   jQuery(window).bind("load", function () {
           jQuery(".loading").fadeOut();
         jQuery(".filterBar .row-fluid").css("opacity", "1");
-        
+
         var maxHeight = 0;
-        
+
         jQuery("#firstRow .bgColumn").each(function(){
             if(jQuery(this).height() > maxHeight){
                 maxHeight = jQuery(this).height();
             }
         });
-        
+
         jQuery("#firstRow .contentInner").css("height", (maxHeight+100));
-        
-      
+
+
   });
-      
+
   jQuery(function() {
 
     jQuery( "#sortableBacklog" ).disableSelection();
-    
+
     jQuery(".canvas-select").chosen();
-    
+
     jQuery(".ticketBox").hover(function(){
         jQuery(this).css("background", "#f9f9f9");
     },function(){
         jQuery(this).css("background", "#ffffff");
     });
-    
+
     jQuery(".contentInner").sortable({
         connectWith: ".contentInner",
         items: "> .moveable",
@@ -55,7 +55,7 @@ $canvasTitle = "";
             ui.item.removeData("move_handler");
         },
         update: function (event, ui) {
-            
+
              // POST to server using $.post or $.ajax
             jQuery.ajax({
                 type: 'POST',
@@ -68,10 +68,10 @@ $canvasTitle = "";
                         statusX: ""
                 }
                 });
-                                    
+
         }
     });
-    
+
     function tilt_direction(item) {
         var left_pos = item.position().left,
             move_handler = function (e) {
@@ -86,25 +86,25 @@ $canvasTitle = "";
             };
         jQuery("html").bind("mousemove", move_handler);
         item.data("move_handler", move_handler);
-    }  
-    
+    }
+
     jQuery( ".portlet" )
         .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
         .find( ".portlet-header" )
         .addClass( "ui-widget-header ui-corner-all" )
         .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-    
+
     jQuery( ".portlet-toggle" ).click(function() {
         var icon = jQuery( this );
         icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
         icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
     });
-    
-    
+
+
     jQuery(".addItem").click(function(){
         jQuery("#box").val(jQuery(this).attr("id"));
         jQuery('#addItem').modal('show');
-        
+
     });
 
 
@@ -127,15 +127,15 @@ $canvasTitle = "";
             //Only show once per session
             $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
         } ?>
-       
+
   });
-  
+
   </script>
   <style type="text/css">
   #addItem, #editItem {
       display:none;
   }
-  
+
   @media (min-width:900px) {
       .row-fluid .span2,
       .row-fluid .span3 {
@@ -144,15 +144,15 @@ $canvasTitle = "";
       }
   }
 
-  
+
      .modal-body {
-         max-height:550px;    
+         max-height:550px;
      }
-     
+
      .modalTextArea {
-         width:100%;    
+         width:100%;
      }
-     
+
     .tilt.right {
         transform: rotate(3deg);
         -moz-transform: rotate(3deg);
@@ -168,40 +168,40 @@ $canvasTitle = "";
           box-sizing: border-box;
           height:auto;
           width:100%;
-          
+
       }
-      
+
       .column.full {
           width:100%;
       }
-      
+
       .bgColumn {
           background:#f0f0f0;
           border:1px solid #ccc;
           padding:0px;
       }
-      
+
       .column .contentInner {
-          
+
           padding:10px 5px;
           min-height:200px;
           overflow:auto;
       }
-      
+
       .column.full .contentInner {
           min-height:100px;
       }
-      
+
       .ticketBox:hover {
           background:#f9f9f9;
       }
-      
+
       .ui-state-highlight {
           background:#aaa;
           border:1px dotted #eee;
           visibility:visible;
       }
-      
+
     .portlet {
         margin: 0 1em 1em 0;
         padding: 0.3em;
@@ -230,14 +230,14 @@ $canvasTitle = "";
         padding-right:0px;
       }
   </style>
- <div class="pageheader">           
+ <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Idea Management</h1>
+        <h1><?php echo $this->__("headlines.idea_management"); ?></h1>
     </div>
 </div><!--pageheader-->
-           
+
 <div class="maincontent">
     <div class="maincontentinner">
     <?php echo $this->displayNotification(); ?>
@@ -245,7 +245,7 @@ $canvasTitle = "";
         <div class="row">
             <div class="col-md-4">
                 <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span><?php echo $this->__("buttons.add_idea"); ?></a>
 
                 <?php } ?>
             </div>
@@ -269,8 +269,8 @@ $canvasTitle = "";
 
                             <?php }     ?>
                         </select><br />
-                            <small><a href="javascript:void(0)" class="addCanvasLink"><i class="fa fa-plus"></i> Create New Board</a></small> |
-                            <small><a href="javascript:void(0)" class="editCanvasLink "><i class="fa fa-edit"></i> Edit Board</a></small>
+                            <small><a href="javascript:void(0)" class="addCanvasLink"><?php echo $this->__("links.create_idea_board"); ?></a></small> |
+                            <small><a href="javascript:void(0)" class="editCanvasLink "><?php echo $this->__("links.edit_idea_board"); ?></a></small>
                         <?php } ?>
                     </form>
 
@@ -280,8 +280,8 @@ $canvasTitle = "";
                 <div class="pull-right">
                     <div class="btn-group mt-1 mx-auto" role="group">
 
-                       <a href="/ideas/showBoards" class="btn btn-sm btn-secondary"><i class="fas fa-columns"></i> Idea Wall</a>
-                       <a href="/ideas/advancedBoards" class="btn btn-sm btn-secondary active"><i class='iconfa-list'></i> Idea Kanban</a>
+                       <a href="/ideas/showBoards" class="btn btn-sm btn-secondary"><?php echo $this->__("buttons.idea_wall") ?></a>
+                       <a href="/ideas/advancedBoards" class="btn btn-sm btn-secondary active"><?php echo $this->__("buttons.idea_kanban") ?></a>
 
                     </div>
 
@@ -290,11 +290,11 @@ $canvasTitle = "";
 
         </div>
 
-        <div class="clearfix"></div>             
+        <div class="clearfix"></div>
     <?php if(count($this->get('allCanvas')) > 0) {?>
 
         <div id="sortableBacklog" class="sortableTicketList" style="padding-top:10px;">
-            
+
             <div class="row" id="firstRow">
 
                 <div class="col-md-2 reducePadding">
@@ -318,8 +318,8 @@ $canvasTitle = "";
 
 
                                         <span class="author"><span class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]);?> <?php $this->e($row["authorLastname"]);?></span>&nbsp;
-                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
+                                            <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                         <?php if($row['milestoneHeadline'] != '') {?>
                                             <br /> <hr />
                                             <div class="row">
@@ -328,14 +328,14 @@ $canvasTitle = "";
                                                     <?php $this->e(substr($row['milestoneHeadline'], 0, 10)); ?> [...]
                                                 </div>
                                                 <div class="col-md-7" style="text-align:right">
-                                                    <?php echo $row['percentDone']; ?>% Complete
+                                                    <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                            <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -345,7 +345,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="/ideas/ideaDialog&type=idea" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="/ideas/ideaDialog&type=idea" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                         </div>
                     </div>
                 </div>
@@ -372,8 +372,8 @@ $canvasTitle = "";
 
 
                                         <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
+                                        <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                         <?php if($row['milestoneHeadline'] != '') {?>
                                             <br /><hr />
                                             <div class="row">
@@ -382,14 +382,14 @@ $canvasTitle = "";
                                                     <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                 </div>
                                                 <div class="col-md-7" style="text-align:right">
-                                                    <?php echo $row['percentDone']; ?>% Complete
+                                                    <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                            <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -401,7 +401,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="/ideas/ideaDialog&type=research" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="/ideas/ideaDialog&type=research" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                         </div>
                     </div>
                 </div>
@@ -429,8 +429,8 @@ $canvasTitle = "";
 
 
                                         <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
+                                        <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                         <?php if($row['milestoneHeadline'] != '') {?>
                                             <br /><hr />
                                             <div class="row">
@@ -439,14 +439,14 @@ $canvasTitle = "";
                                                     <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                 </div>
                                                 <div class="col-md-7" style="text-align:right">
-                                                    <?php echo $row['percentDone']; ?>% Complete
+                                                    <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                            <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -456,7 +456,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="/ideas/ideaDialog&type=prototype" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="/ideas/ideaDialog&type=prototype" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                         </div>
                     </div>
                 </div>
@@ -485,8 +485,8 @@ $canvasTitle = "";
 
 
                                                 <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                                <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                                <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                                <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
+                                                <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                                 <?php if($row['milestoneHeadline'] != '') {?>
                                                     <br /><hr />
                                                     <div class="row">
@@ -495,14 +495,14 @@ $canvasTitle = "";
                                                             <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                         </div>
                                                         <div class="col-md-7" style="text-align:right">
-                                                            <?php echo $row['percentDone']; ?>% Complete
+                                                            <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="progress">
                                                                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                                    <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                                    <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -512,7 +512,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="/ideas/ideaDialog&type=validation" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="/ideas/ideaDialog&type=validation" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                                 </div>
                             </div>
 
@@ -542,8 +542,8 @@ $canvasTitle = "";
 
 
                                                 <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                                <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                                <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                                <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
+                                                <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                                 <?php if($row['milestoneHeadline'] != '') {?>
                                                     <br /><hr />
                                                     <div class="row">
@@ -552,14 +552,14 @@ $canvasTitle = "";
                                                             <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                         </div>
                                                         <div class="col-md-7" style="text-align:right">
-                                                            <?php echo $row['percentDone']; ?>% Complete
+                                                            <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="progress">
                                                                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                                    <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                                    <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -569,7 +569,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="/ideas/ideaDialog&type=implemented" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="/ideas/ideaDialog&type=implemented" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                                 </div>
                             </div>
                 </div>
@@ -598,8 +598,8 @@ $canvasTitle = "";
 
 
                                         <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
+                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
+                                        <br /><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
                                         <?php if($row['milestoneHeadline'] != '') {?>
                                             <br /><hr />
                                             <div class="row">
@@ -608,14 +608,14 @@ $canvasTitle = "";
                                                     <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                 </div>
                                                 <div class="col-md-7" style="text-align:right">
-                                                    <?php echo $row['percentDone']; ?>% Complete
+                                                    <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                                            <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -625,20 +625,20 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="/ideas/ideaDialog&type=deferred" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="/ideas/ideaDialog&type=deferred" class="ideaModal" id="customersegment"><?php echo $this->__("links.add_more") ?></a>
                         </div>
                     </div>
                 </div>
 
-            </div>    
-            
+            </div>
+
 
         </div>
         <div class="clearfix"></div>
 
         <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager'){ ?>
             <br />
-            <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+            <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?php echo $this->__("links.delete_board") ?></a>
         <?php } ?>
 
     <?php } else {
@@ -689,7 +689,7 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                             <h4 class="modal-title">Edit Board Name</h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your  idea board?</label>
+                            <label>What is the title of your idea board?</label>
                             <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
 
 

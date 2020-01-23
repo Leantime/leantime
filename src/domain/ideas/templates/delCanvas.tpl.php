@@ -15,12 +15,12 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <h4 class="widget widgettitle"><i class="iconfa iconfa-trash"></i> Delete</h4>
+        <h4 class="widget widgettitle"><?php echo $this->__("subtitles.delete") ?></h4>
         <div class="widgetcontent">
             <form method="post" action="/ideas/delCanvas/<?php echo $_GET['id']?>">
-                <p><?php echo $lang['CONFIRM_DELETE_CANVAS_ITEM']; ?></p><br />
+                <p><?php echo $this->__("text.are_you_sure_delete_canvas_item") ?></p>
                 <input type="submit" value="Yes, delete!" name="del" class="button" />
-                <a class="btn btn-secondary" href="/ideas/showBoards"><?php echo $lang['BACK']; ?></a>
+                <a class="btn btn-secondary" href="/ideas/showBoards"><?php echo $this->__("buttons.back") ?></a>
             </form>
         </div>
 
