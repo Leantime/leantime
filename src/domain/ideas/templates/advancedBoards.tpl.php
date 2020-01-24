@@ -643,7 +643,7 @@ $canvasTitle = "";
 
     <?php } else {
 
-        echo "<br /><br /><div class='center'>";
+        echo"<br /><br /><div class='center'>";
         echo"<div style='width:50%' class='svgContainer'>";
         echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
         echo"</div>";
@@ -663,16 +663,16 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Start a new idea board</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headlines.start_new_idea_board") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the topic of your idea board?</label>
+                            <label><?php echo $this->__("label.topic_idea_board") ?></label>
                             <input type="text" name="canvastitle" placeholder="A name for your idea board" style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
                             <input type="submit"  class="btn btn-default" value="Create Board" name="newCanvas" />
                         </div>
                     </form>
@@ -686,16 +686,16 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Edit Board Name</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headlines.edit_board_name") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your idea board?</label>
+                            <label><?php echo $this->__("label.title_idea_board") ?></label>
                             <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><? echo $this->__("buttons.close") ?></button>
                             <input type="submit"  class="btn btn-default" value="Save" name="editCanvas" />
                         </div>
                     </form>
