@@ -6,77 +6,82 @@ $canvasTitle = "";
 ?>
 
 
-  <style type="text/css">
-  #addItem, #editItem {
-      display:none;
-  }
+<style type="text/css">
+    #addItem, #editItem {
+        display: none;
+    }
 
-  #ideaMason .ticketBox {
-      width:250px;
+    #ideaMason .ticketBox {
+        width: 250px;
 
-  }
-  
-  @media (min-width:900px) {
-      .row-fluid .span2,
-      .row-fluid .span3 {
-          margin-left: 0.5%;
-        width: 19.6%;
-      }
-  }
+    }
 
-  
-     .modal-body {
-         max-height:550px;    
-     }
-     
-     .modalTextArea {
-         width:100%;    
-     }
+    @media (min-width: 900px) {
+        .row-fluid .span2,
+        .row-fluid .span3 {
+            margin-left: 0.5%;
+            width: 19.6%;
+        }
+    }
+
+
+    .modal-body {
+        max-height: 550px;
+    }
+
+    .modalTextArea {
+        width: 100%;
+    }
 
     .sortableTicketList .ticketBox {
-        cursor:default;
+        cursor: default;
     }
-  </style>
- <div class="pageheader">           
+</style>
+<div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Ideas</h1>
+        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h1><?php echo $this->__("headlines.ideas") ?></h1>
     </div>
 </div><!--pageheader-->
-           
+
 <div class="maincontent">
     <div class="maincontentinner" id="ideaBoards">
-    <?php echo $this->displayNotification(); ?>
+        <?php echo $this->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-4">
-                <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                <?php if (count($this->get('allCanvas')) > 0) { ?>
+                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
+                                class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea") ?></a>
                 <?php } ?>
             </div>
 
             <div class="col-md-4 center">
                 <span class="currentSprint">
                     <form action="" method="post">
-                        <?php if(count($this->get('allCanvas')) > 0) {?>
-                            <select data-placeholder="Filter by Sprint..." name="searchCanvas" class="mainSprintSelector" onchange="form.submit()">
+                        <?php if (count($this->get('allCanvas')) > 0) { ?>
+                            <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint") ?>"
+                                    name="searchCanvas"
+                                    class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
-                            $i=0;
-                            foreach($this->get('allCanvas') as $canvasRow){ ?>
+                            $i = 0;
+                            foreach ($this->get('allCanvas') as $canvasRow) { ?>
 
-                                <?php echo"<option value='".$canvasRow["id"]."'";
-                                if($this->get('currentCanvas') == $canvasRow["id"]) {
+                                <?php echo "<option value='" . $canvasRow["id"] . "'";
+                                if ($this->get('currentCanvas') == $canvasRow["id"]) {
                                     $canvasTitle = $canvasRow["title"];
-                                    echo" selected='selected' ";
+                                    echo " selected='selected' ";
                                 }
-                                echo">".$this->escape($canvasRow["title"])."</option>"; ?>
+                                echo ">" . $this->escape($canvasRow["title"]) . "</option>"; ?>
 
-                            <?php }     ?>
-                        </select><br />
-                         <small><a href="javascript:void(0)" class="addCanvasLink"><i class="fa fa-plus"></i> Create New Board</a></small> |
-                         <small><a href="javascript:void(0)" class="editCanvasLink "><i class="fa fa-edit"></i> Edit Board</a></small>
+                            <?php } ?>
+                        </select><br/>
+                            <small><a href="javascript:void(0)"
+                                      class="addCanvasLink"><?php echo $this->__("links.create_idea_board") ?></a></small> |
+                         <small><a href="javascript:void(0)"
+                                   class="editCanvasLink "><?php echo $this->__("links.edit_idea_board") ?></a></small>
                         <?php } ?>
                     </form>
 
@@ -85,8 +90,10 @@ $canvasTitle = "";
             <div class="col-md-4">
                 <div class="pull-right">
                     <div class="btn-group mt-1 mx-auto" role="group">
-                        <a href="/ideas/showBoards" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Idea Wall</a>
-                        <a href="/ideas/advancedBoards" class="btn btn-sm btn-secondary "><i class='iconfa-list'></i> Idea Kanban</a>
+                        <a href="/ideas/showBoards"
+                           class="btn btn-sm btn-secondary active"><?php echo $this->__("buttons.idea_wall") ?></a>
+                        <a href="/ideas/advancedBoards"
+                           class="btn btn-sm btn-secondary "><?php echo $this->__("buttons.idea_kanban") ?></a>
                     </div>
 
                 </div>
@@ -94,45 +101,48 @@ $canvasTitle = "";
 
         </div>
 
-        <div class="clearfix"></div>             
-    <?php if(count($this->get('allCanvas')) > 0) {?>
+        <div class="clearfix"></div>
+        <?php if (count($this->get('allCanvas')) > 0) { ?>
 
-        <div id="ideaMason" class="sortableTicketList">
+            <div id="ideaMason" class="sortableTicketList">
 
 
-            <?php foreach($this->get('canvasItems') as $row) { ?>
+                <?php foreach ($this->get('canvasItems') as $row) { ?>
 
-                    <div class="ticketBox" id="item_<?php echo $row["id"];?>">
+                    <div class="ticketBox" id="item_<?php echo $row["id"]; ?>">
 
-                        <h4><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
-                        <br />
+                        <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
+                               data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
+                        <br/>
                         <div class="mainIdeaContent">
-                            <?php echo nl2br($row["data"]);?>
+                            <?php echo nl2br($row["data"]); ?>
                         </div>
-                        <br /><br />
+                        <br/><br/>
 
 
-
-
-                        <span class="author"><span class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]);?> <?php $this->e($row["authorLastname"]);?></span>&nbsp;
-                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
-                        <?php if($row['milestoneHeadline'] != '') {?>
-                            <br /> <hr />
+                        <span class="author"><span
+                                    class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
+                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
+                        <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
+                        <?php if ($row['milestoneHeadline'] != '') { ?>
+                            <br/>
+                            <hr/>
                             <div class="row">
 
-                                <div class="col-md-5" >
+                                <div class="col-md-5">
                                     <?php $this->e(substr($row['milestoneHeadline'], 0, 10)); ?>[...]
                                 </div>
                                 <div class="col-md-7" style="text-align:right">
-                                    <?php echo $row['percentDone']; ?>% Complete
+                                    <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
+                                        <div class="progress-bar progress-bar-success" role="progressbar"
+                                             aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0"
+                                             aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
+                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -140,31 +150,33 @@ $canvasTitle = "";
                         <?php } ?>
                     </div>
 
+                <?php } ?>
+
+
+            </div>
+            <div class="clearfix"></div>
+
+            <?php if ($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager') { ?>
+                <br/>
+                <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
+                   class="delete right"><?php echo $this->__("links.delete_board") ?></a>
             <?php } ?>
 
+        <?php } else { ?>
 
+            <br/><br/>
+            <div class='center'>
+                <div style='width:50%' class='svgContainer'>
+                    <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
+                </div>
 
-        </div>
-        <div class="clearfix"></div>
+                <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>
+                <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
+                <a href="javascript:void(0)"
+                   class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_new_idea_board") ?></a>
+            </div>
 
-        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
-            <br />
-            <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
         <?php } ?>
-
-    <?php } else {
-
-        echo "<br /><br /><div class='center'>";
-        echo"<div style='width:50%' class='svgContainer'>";
-        echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
-        echo"</div>";
-
-echo"<br /><h4>Have an idea?</h4><br />
-Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a new idea board</a></div>";
-
-    }
-    ?>
-
         <!-- Modals -->
 
 
@@ -174,17 +186,19 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Start a new idea board</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headlines.start_new_idea_board") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the topic of your idea board?</label>
-                            <input type="text" name="canvastitle" placeholder="A name for your idea board" style="width:90%"/>
+                            <label><?php echo $this->__("label.topic_idea_board") ?></label>
+                            <input type="text" name="canvastitle" placeholder="<?php echo $this->__("input.placeholders.name_for_idea_board")?>"
+                                   style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit"  class="btn btn-default" value="Create Board" name="newCanvas" />
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.create_board")?>" name="newCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -197,17 +211,19 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Edit Board Name</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headlines.edit_board_name") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your idea board?</label>
-                            <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
+                            <label><?php echo $this->__("label.title_idea_board") ?></label>
+                            <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>"
+                                   style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit"  class="btn btn-default" value="Save" name="editCanvas" />
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.save")?>" name="editCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -221,23 +237,23 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
 <script type="text/javascript">
 
 
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
 
         jQuery(".canvas-select").chosen();
 
-        jQuery(".addItem").click(function(){
+        jQuery(".addItem").click(function () {
             jQuery("#box").val(jQuery(this).attr("id"));
             jQuery('#addItem').modal('show');
 
         });
 
-        jQuery(".addCanvasLink").click(function() {
+        jQuery(".addCanvasLink").click(function () {
 
             jQuery('#addCanvas').modal('show');
 
         });
 
-        jQuery(".editCanvasLink").click(function() {
+        jQuery(".editCanvasLink").click(function () {
 
             jQuery('#editCanvas').modal('show');
 
@@ -249,39 +265,37 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
             columnWidth: 260
         });
 
-        $grid.imagesLoaded().progress( function() {
+        $grid.imagesLoaded().progress(function () {
             $grid.masonry('layout');
 
         });
 
-        jQuery('.mainIdeaContent img').each(function(){
-            jQuery(this).wrap("<a href='"+jQuery(this).attr("src")+"' class='imageModal'></a>");
+        jQuery('.mainIdeaContent img').each(function () {
+            jQuery(this).wrap("<a href='" + jQuery(this).attr("src") + "' class='imageModal'></a>");
         });
 
         jQuery(".imageModal").nyroModal();
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
-            leantime.helperController.showHelperModal("ideaBoard");
-            <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
+        leantime.helperController.showHelperModal("ideaBoard");
+        <?php
+        //Only show once per session
+        $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
         } ?>
 
         <?php if(isset($_GET['showIdeaModal'])) {
-            if($_GET['showIdeaModal'] == "") {
-                $modalUrl = "&type=idea";
-            }else{
-                $modalUrl = "/".(int)$_GET['showIdeaModal'];
-            }
-            ?>
+        if ($_GET['showIdeaModal'] == "") {
+            $modalUrl = "&type=idea";
+        } else {
+            $modalUrl = "/" . (int)$_GET['showIdeaModal'];
+        }
+        ?>
 
-            leantime.ideasController.openModalManually("/ideas/ideaDialog<?php echo $modalUrl; ?>");
-            window.history.pushState({},document.title, '/ideas/showBoards');
+        leantime.ideasController.openModalManually("/ideas/ideaDialog<?php echo $modalUrl; ?>");
+        window.history.pushState({}, document.title, '/ideas/showBoards');
 
         <?php } ?>
     });
-
-
 
 
 </script>
