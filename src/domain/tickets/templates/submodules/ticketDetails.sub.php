@@ -167,6 +167,7 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.ticket_date'); ?></label>
                     <div class="span6">
+
                         <input type="text" class="dates" id="submittedDate" disabled="disabled"
                                value="<?php echo date($this->__("language.dateformat"), strtotime($ticket->date)); ?>" name="date"/>
                     </div>

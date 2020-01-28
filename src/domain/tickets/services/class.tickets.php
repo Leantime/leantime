@@ -5,6 +5,7 @@ namespace leantime\domain\services {
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\models;
 
     class tickets
     {
@@ -276,6 +277,73 @@ namespace leantime\domain\services {
 
         }
 
+        public function addTicket($values)
+        {
+
+            $values = array(
+                'id' => '',
+                'headline' => $values['headline'],
+                'type' => $values['type'],
+                'description' => $values['description'],
+                'projectId' => $_SESSION['currentProject'],
+                'editorId' => $values['editorId'],
+                'userId' => $_SESSION['userdata']['id'],
+                'date' => date('Y-m-d  H:i:s'),
+                'dateToFinish' => $values['dateToFinish'],
+                'status' => $values['status'],
+                'planHours' => $values['planHours'],
+                'tags' => $values['tags'],
+                'sprint' => $values['sprint'],
+                'storypoints' => $values['storypoints'],
+                'hourRemaining' => $values['hourRemaining'],
+                'acceptanceCriteria' => $values['acceptanceCriteria'],
+                'editFrom' => $values['editFrom'],
+                'editTo' => $values['editTo'],
+                'dependingTicketId' => $values['dependingTicketId']
+            );
+
+            if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $values['projectId'])) {
+
+                return array("msg" => "notifications.ticket_save_error_no_access", "type" => "error");
+
+            }
+
+            if ($values['headline'] === '') {
+
+                return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
+
+            } else {
+
+                //Prepare dates for db
+                if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
+                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                }
+
+                if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
+                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                }
+
+                if($values['editTo'] != "" && $values['editTo'] != NULL) {
+                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                }
+                //Update Ticket
+                $addTicketResponse = $this->ticketRepository->addTicket($values);
+                if($addTicketResponse !== false){
+
+                    $values["id"] = $addTicketResponse;
+                    $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
+                    $actual_link = "http://$_SERVER[HTTP_HOST]/tickets/showTicket/".$addTicketResponse;
+                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['id'], $values['headline']);
+
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_todo_cta")));
+
+                    return $addTicketResponse;
+                }
+
+            }
+
+        }
+
         //Update
         public function updateTicket($id, $values)
         {
@@ -330,7 +398,7 @@ namespace leantime\domain\services {
 
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
                     $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                    $message = sprintf($this->language->__("email_notifications.todo_update_subject"), $_SESSION['userdata']['id'], $values['headline']);
+                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['id'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.todo_update_cta")));
 

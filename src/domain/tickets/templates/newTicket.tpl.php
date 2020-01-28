@@ -1,37 +1,20 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
-$projects = $this->get('projects');
-$values = $this->get('values');
-$tickets = $this->get('objTicket');
-$type = $this->get('type');
+$ticket = $this->get('ticket');
 
 ?>
-
-<script type="text/javascript">
-    jQuery(function () {
-        jQuery('.tabbedwidget').tabs();
-
-    });
-</script>
-
-<style type='text/css'>
-    .stdform label {
-        width: 105px !important;
-    }
-
-</style>
 
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> Go Back</a>
+        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$this->__("links.go_back") ?></a>
     </div>
 
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>New To-Do</h1>
+        <h1><?=$this->__("headlines.new_to_do") ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -42,18 +25,30 @@ $type = $this->get('type');
             echo $this->displayNotification();
         ?>
 
-        <div class="tabbedwidget tab-primary">
+        <div class="tabbedwidget tab-primary ticketTabs">
 
             <ul>
-                <li><a href="#ticketdetails"><?php echo $this->displaySubmoduleTitle('tickets-ticketDetails') ?></a>
+                <li>
+                    <a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a>
                 </li>
             </ul>
 
             <div id="ticketdetails">
-                <?php $this->displaySubmodule('tickets-ticketDetails') ?>
+                <form class="ticketModal" action="/tickets/newTicket" method="post">
+                    <?php $this->displaySubmodule('tickets-ticketDetails') ?>
+                </form>
             </div>
 
         </div>
     </div>
 </div>
 
+<script type="text/javascript">
+
+    leantime.ticketsController.initTicketTabs();
+
+    jQuery(window).load(function () {
+        jQuery(window).resize();
+    });
+
+</script>
