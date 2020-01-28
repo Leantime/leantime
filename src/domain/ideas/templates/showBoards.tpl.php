@@ -123,7 +123,7 @@ $canvasTitle = "";
                         <span class="author"><span
                                     class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
                         <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                        <br/>Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                        <br/>Last modified on <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                         <?php if ($row['milestoneHeadline'] != '') { ?>
                             <br/>
                             <hr/>
@@ -133,7 +133,7 @@ $canvasTitle = "";
                                     <?php $this->e(substr($row['milestoneHeadline'], 0, 10)); ?>[...]
                                 </div>
                                 <div class="col-md-7" style="text-align:right">
-                                    <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                    <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                 </div>
                             </div>
                             <div class="row">
@@ -142,7 +142,7 @@ $canvasTitle = "";
                                         <div class="progress-bar progress-bar-success" role="progressbar"
                                              aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0"
                                              aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                            <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>></span>
+                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -198,7 +198,7 @@ $canvasTitle = "";
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default"
                                     data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
-                            <input type="submit" class="btn btn-default" value="Create Board" name="newCanvas"/>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.create_board")?>" name="newCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -223,7 +223,7 @@ $canvasTitle = "";
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default"
                                     data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
-                            <input type="submit" class="btn btn-default" value="Save" name="editCanvas"/>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.save")?>" name="editCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->

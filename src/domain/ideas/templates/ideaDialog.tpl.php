@@ -47,8 +47,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <a href="/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
                         class="fa fa-trash"></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
-        <input type="submit" value="Save" id="primaryCanvasSubmitButton"/>
-        <input type="submit" value="Save & Close" id="saveAndClose"
+        <input type="submit" value="<?php echo $this->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
+        <input type="submit" value="<?php echo $this->__("buttons.save_and_close")?>" id="saveAndClose"
                onclick="leantime.ideasController.setCloseModal();"/>
 
         <?php if ($id !== '') { ?>
@@ -75,7 +75,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <textarea name="newMilestone"></textarea><br/>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> "/>
-                                <input type="button" value="Save" onclick="jQuery('#primaryCanvasSubmitButton').click()"
+                                <input type="button" value="<?php echo $this->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
                                    onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
@@ -104,7 +104,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 </select>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> "/>
-                                <input type="button" value="Save" onclick="jQuery('#primaryCanvasSubmitButton').click()"
+                                <input type="button" value="<?php echo $this->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
                                    onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
@@ -122,7 +122,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         $date = "No Date defined";
                     } else {
                         $date = new DateTime($canvasItem['milestoneEditTo']);
-                        $date = $date->format("m/d/Y");
+                        $date = $date->format($this->__("language.dateformat"));
                     }
 
                     ?>
@@ -147,7 +147,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <?php echo $date; ?>
                                 </div>
                                 <div class="col-md-5" style="text-align:right">
-                                    <?php echo $canvasItem['percentDone']; ?><?php echo $this->__("text.percent_complete")?>
+                                    <?=sprintf($this->__("text.percent_complete"), $canvasItem['percentDone'])?>
                                 </div>
                             </div>
                             <div class="row">
@@ -157,7 +157,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                              aria-valuenow="<?php echo $canvasItem['percentDone']; ?>" aria-valuemin="0"
                                              aria-valuemax="100"
                                              style="width: <?php echo $canvasItem['percentDone']; ?>%">
-                                            <span class="sr-only"><?php echo $canvasItem['percentDone']; ?><?php echo $this->__("text.percent_complete")?></span>
+                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $canvasItem['percentDone'])?></span>
                                         </div>
                                     </div>
                                 </div>

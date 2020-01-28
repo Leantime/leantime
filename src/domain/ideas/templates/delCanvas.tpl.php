@@ -19,7 +19,7 @@
         <div class="widgetcontent">
             <form method="post" action="/ideas/delCanvas/<?php echo $_GET['id']?>">
                 <p><?php echo $this->__("text.are_you_sure_delete_canvas_item") ?></p>
-                <input type="submit" value="Yes, delete!" name="del" class="button" />
+                <input type="submit" value="<?php echo $this->__("buttons.yes_delete")?>" name="del" class="button" />
                 <a class="btn btn-secondary" href="/ideas/showBoards"><?php echo $this->__("buttons.back") ?></a>
             </form>
         </div>

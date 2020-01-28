@@ -264,7 +264,8 @@ $canvasTitle = "";
                 <span class="currentSprint">
                     <form action="" method="post">
                         <?php if (count($this->get('allCanvas')) > 0) { ?>
-                            <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint")?>" name="searchCanvas"
+                            <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint") ?>"
+                                    name="searchCanvas"
                                     class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
@@ -337,7 +338,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -348,7 +349,7 @@ $canvasTitle = "";
                                                         [...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -359,7 +360,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -401,7 +402,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -411,7 +412,7 @@ $canvasTitle = "";
                                                         <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -422,7 +423,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -466,7 +467,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -476,7 +477,7 @@ $canvasTitle = "";
                                                         <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -487,7 +488,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -530,7 +531,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -540,7 +541,7 @@ $canvasTitle = "";
                                                         <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -551,7 +552,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -595,7 +596,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -605,7 +606,7 @@ $canvasTitle = "";
                                                         <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -616,7 +617,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -659,7 +660,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), "m/d/Y"); ?>
+                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -669,7 +670,7 @@ $canvasTitle = "";
                                                         <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
                                                     </div>
                                                     <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?>
+                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -680,7 +681,7 @@ $canvasTitle = "";
                                                                  aria-valuenow="<?php echo $row['percentDone']; ?>"
                                                                  aria-valuemin="0" aria-valuemax="100"
                                                                  style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?><?php echo $this->__("text.percent_complete") ?></span>
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -733,7 +734,8 @@ $canvasTitle = "";
                         </div>
                         <div class="modal-body">
                             <label><?php echo $this->__("label.topic_idea_board") ?></label>
-                            <input type="text" name="canvastitle" placeholder="<?php echo $this->__("input.placeholders.name_for_idea_board")?>"
+                            <input type="text" name="canvastitle"
+                                   placeholder="<?php echo $this->__("input.placeholders.name_for_idea_board") ?>"
                                    style="width:90%"/>
 
 
@@ -741,7 +743,8 @@ $canvasTitle = "";
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default"
                                     data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
-                            <input type="submit" class="btn btn-default" value="Create Board" name="newCanvas"/>
+                            <input type="submit" class="btn btn-default"
+                                   value="<?php echo $this->__("buttons.create_board") ?>" name="newCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -766,7 +769,8 @@ $canvasTitle = "";
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default"
                                     data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
-                            <input type="submit" class="btn btn-default" value="Save" name="editCanvas"/>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.save") ?>"
+                                   name="editCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->

@@ -8,6 +8,6 @@ $ticket = $this->get('ticket');
 
 <form method="post" action="/ideas/delCanvasItem/<?php echo $_GET['id']?>">
     <p><?php echo $this->__("text.are_you_sure_delete_retro") ?></p><br />
-    <input type="submit" value="Yes, delete!" name="del" class="button" />
+    <input type="submit" value="<?php echo $this->__("buttons.yes_delete")?>" name="del" class="button" />
     <a class="btn btn-secondary" href="/ideas/showBoards/"><?php echo $this->__("buttons.back") ?></a>
 </form>
