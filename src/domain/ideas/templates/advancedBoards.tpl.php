@@ -338,7 +338,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -402,7 +402,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -467,7 +467,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -531,7 +531,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -596,7 +596,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
@@ -660,7 +660,7 @@ $canvasTitle = "";
                                             <span class="author"><span
                                                         class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
                                             <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?php echo $this->__("text.last_modified_on") ?> <?php echo date_format(new DateTime($row["modified"]), $this->__("language.dateformat")); ?>
+                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                                             <?php if ($row['milestoneHeadline'] != '') { ?>
                                                 <br/>
                                                 <hr/>
