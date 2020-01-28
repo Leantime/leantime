@@ -76,7 +76,7 @@
 
                         <select id="sprint-select" class="span11" name="sprint"
                                 data-placeholder="<?php echo $ticket->sprint ?>">
-                            <option value="-1"><?php echo $this->__('label.not_assigned_to_sprint'); ?></option>
+                            <option value=""><?php echo $this->__('label.not_assigned_to_sprint'); ?></option>
                             <?php foreach ($this->get('sprints') as $sprintRow) { ?>
                                 <option value="<?php echo $sprintRow->id; ?>"
                                     <?php if ($ticket->sprint == $sprintRow->id) {

@@ -58,7 +58,7 @@
 .maincontentinner .ticketDropdown > a,
 .maincontentinner .ticketDropdown > a:link{
     color:#fff;
-    padding:0px 10px;
+    padding:0px 6px;
 }
 
 .maincontentinner .ticketDropdown.firstDropdown > a {
@@ -145,4 +145,40 @@
 .ticketDropdown.dropRight  ul::after {
     right: 10px;
     left:auto;
+}
+
+.viewDropDown .dropdown-menu {
+    right:0px;
+    left:auto;
+}
+
+.viewDropDown .dropdown-menu li a.active{
+    font-weight:bold;
+}
+
+.viewDropDown .dropdown-menu li a.active:hover {
+    color:#fff;
+}
+
+.dropdown-menu span.radio input[type="radio"] {
+    float:left;
+    vertical-align: middle;
+    margin-top: 5px;
+    margin-right:5px;
+}
+
+.dropdown-menu span.radio {
+    display:block;
+    font-size: 12px;
+    color: #444;
+    margin: 0 5px;
+    padding: 5px 10px;
+}
+
+.dropdown-menu span.radio:hover {
+    color:#fff;
+}
+
+.dropdown-menu span.radio label {
+    display:inline;
 }

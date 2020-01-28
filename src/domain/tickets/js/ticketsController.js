@@ -41,6 +41,7 @@ leantime.ticketsController = (function () {
                 _initMilestoneDropdown();
                 _initStatusDropdown();
                 _initUserDropdown();
+                _initSprintDropdown();
 
                 _initTicketEditor();
                 _initToolTips();
@@ -523,6 +524,43 @@ leantime.ticketsController = (function () {
         leantime.ticketsController.colorTicketBoxes();
     };
 
+    var _initSprintDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".sprintDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 2) {
+
+                    var ticketId = dataValue[0];
+                    var sprintId = dataValue[1];
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: '/api/tickets',
+                            data:
+                                {
+                                    id : ticketId,
+                                    sprint:sprintId
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#sprintDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.sprint_updated"));
+                        }
+                    );
+
+                }
+            }
+        );
+
+        leantime.ticketsController.colorTicketBoxes();
+    };
+
     var _initSimpleColorPicker = function () {
 
             var colors = ['#064779', '#1B76BB', '#00814A', '#35CB8B', '#F3B600', '#FFD042', '#BC3600', '#F34500'];
@@ -881,27 +919,99 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTicketsTable = function () {
+    var initTicketsTable = function (groupBy) {
 
         jQuery(document).ready(function() {
 
-            var size = 20;
+            var size = 100;
+            var columnIndex = false;
+
+            if(groupBy == "sprint") {
+                columnIndex = 2;
+            }
+
+            if(groupBy == "milestone") {
+                columnIndex = 3;
+            }
+
+            if(groupBy == "user") {
+                columnIndex = 5;
+            }
+            var rowGroupOption = false;
+            var orderFixedOption = false;
+
+            if(columnIndex !== false) {
+
+                rowGroupOption = {
+                    startRender: function (rows, group) {
+
+                        var sumPlanned = rows
+                            .data()
+                            .pluck(7)
+                            .reduce(function (a, b) {
+                                return parseInt(a) + parseInt(jQuery(b).val())*1;
+                            }, 0);
+
+                        var sumRemaining = rows
+                            .data()
+                            .pluck(8)
+                            .reduce(function (a, b) {
+                                return parseInt(a) + parseInt(jQuery(b).val())*1;
+                            }, 0);
+
+                        return jQuery('<tr/>')
+                            .append('<td colspan="7">' + group + ' ('+rows.count()+')</td>')
+                            .append('<td>' + sumPlanned + '</td>')
+                            .append('<td>' + sumRemaining + '</td>');
+
+                    },
+                    dataSrc: function (row) {
+                        return row[columnIndex]["@data-order"];
+                    }
+                };
+
+                orderFixedOption = [[columnIndex, 'asc']]
+            }
 
             var allTickets = jQuery("#allTicketsTable").DataTable({
+                    "language": {
+                        "decimal":        leantime.i18n.__("datatables.decimal"),
+                        "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
+                        "info":           leantime.i18n.__("datatables.info"),
+                        "infoEmpty":      leantime.i18n.__("datatables.infoEmpty"),
+                        "infoFiltered":   leantime.i18n.__("datatables.infoFiltered"),
+                        "infoPostFix":    leantime.i18n.__("datatables.infoPostFix"),
+                        "thousands":      leantime.i18n.__("datatables.thousands"),
+                        "lengthMenu":     leantime.i18n.__("datatables.lengthMenu"),
+                        "loadingRecords": leantime.i18n.__("datatables.loadingRecords"),
+                        "processing":     leantime.i18n.__("datatables.processing"),
+                        "search":         leantime.i18n.__("datatables.search"),
+                        "zeroRecords":    leantime.i18n.__("datatables.zeroRecords"),
+                        "paginate": {
+                            "first":      leantime.i18n.__("datatables.first"),
+                            "last":       leantime.i18n.__("datatables.last"),
+                            "next":       leantime.i18n.__("datatables.next"),
+                            "previous":   leantime.i18n.__("datatables.previous"),
+                        },
+                        "aria": {
+                            "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
+                            "sortDescending":leantime.i18n.__("datatables.sortDescending"),
+                        }
+
+                    },
                     "dom": '<"top">rt<"bottom"ilp><"clear">',
                     "searching": false,
-                    order: [[2, 'asc']],
+                    displayLength:100,
+                    order: [[6, 'asc']],
+                    orderFixed: orderFixedOption,
+                    rowGroup: rowGroupOption
+
 
             });
 
             /*
 
-            rowGroup: {
-                        dataSrc: function(row) {
 
-                            return row[2]["@data-order"];
-                        }
-                    }
              */
 
         });

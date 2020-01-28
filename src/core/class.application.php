@@ -122,7 +122,7 @@ class application
                 exit();
             }
 
-            $dbVersion = $settings->getSetting("db-version");
+            $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
                 header("Location: /update");
                 exit();

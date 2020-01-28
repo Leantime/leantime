@@ -63,7 +63,8 @@ namespace leantime\domain\services {
                 "type"=> "",
                 "sprint"=> $_SESSION['currentSprint'],
                 "milestone"=>"",
-                "orderBy" => "sortIndex"
+                "orderBy" => "sortIndex",
+                "groupBy" => ""
             );
 
             if(isset($searchParams["users"]) === true) {
@@ -84,6 +85,10 @@ namespace leantime\domain\services {
 
             if(isset($searchParams["milestone"]) === true) {
                 $searchCriteria["milestone"] =$searchParams["milestone"];
+            }
+
+            if(isset($searchParams["groupBy"]) === true) {
+                $searchCriteria["groupBy"] =$searchParams["groupBy"];
             }
 
             if(isset($searchParams["sprint"]) === true) {

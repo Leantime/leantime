@@ -816,18 +816,16 @@ namespace leantime\domain\repositories {
                 $query .= " AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)";
             }
 
-
-            if($searchCriteria["sprint"]  != "" && $searchCriteria["sprint"]  != "all" && $searchCriteria["sprint"]  != "none") {
+            if($searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
                 $query .= " AND zp_tickets.sprint IN(".strip_tags($searchCriteria["sprint"]).")";
             }
 
-            if($searchCriteria["sprint"]  == "all") {
-                $query .= " AND (zp_tickets.sprint <> NULL AND zp_tickets.sprint <> '' AND zp_tickets.sprint IS NOT NULL AND zp_tickets.sprint <> 0)";
+            if($searchCriteria["sprint"]  == "backlog" ) {
+                $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
             }
 
-            //TODO: Deprecated: Should be empty/null for all items not assigned to a sprint
-            if($searchCriteria["sprint"]  == "none") {
-                $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = 0 OR zp_tickets.sprint = -1)";
+            if($searchCriteria["sprint"]  == "all") {
+                $query .= "";
             }
 
             $query .= " GROUP BY zp_tickets.id ";

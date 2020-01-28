@@ -56,6 +56,7 @@ module.exports = function (grunt) {
                     "node_modules/tether-shepherd/dist/js/shepherd.js",
                     "node_modules/datatables.net/js/jquery.dataTables.js",
                     "node_modules/datatables.net-rowgroup/js/dataTables.rowGroup.js",
+                    "node_modules/datatables.net-rowreorder/js/dataTables.rowReorder.js",
                     "node_modules/tinymce/tinymce.js",
                     "node_modules/tinymce/jquery.tinymce.js",
                     "node_modules/tinymce/themes/silver/theme.js",

@@ -54,7 +54,8 @@
                     <span class="currentSprint">
                         <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
                         <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
-                                <option value="" <?php if($searchCriteria['sprint'] !== false && $searchCriteria['sprint'] != null) echo"selected='selected'"; ?>><?=$this->__("links.backlog") ?></option>
+                            <option value="all" <?php if($searchCriteria['sprint'] != "all") echo"selected='selected'"; ?>><?=$this->__("links.all_todos") ?></option>
+                            <option value="backlog" <?php if($searchCriteria['sprint'] == "backlog") echo"selected='selected'"; ?>><?=$this->__("links.backlog") ?></option>
                             <?php
                             $dates = "";
                             foreach($this->get('sprints') as $sprintRow){ 	?>
@@ -88,9 +89,12 @@
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <div class="btn-group mt-1 mx-auto" role="group">
-                            <a href="/tickets/showKanban" class="btn btn-sm btn-secondary active"><?=$this->__("links.kanban") ?></a>
-                            <a href="/tickets/showAll" class="btn btn-sm btn-secondary"><?=$this->__("links.list") ?></a>
+                        <div class="btn-group viewDropDown">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="/tickets/showKanban" class="active"><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="/tickets/showAll" ><?=$this->__("links.table") ?></a></li>
+                            </ul>
                         </div>
 
                     </div>
