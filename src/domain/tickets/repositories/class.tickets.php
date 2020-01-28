@@ -36,6 +36,13 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
+        public $statusClassesByKey = array('NEW' => 'label-important', 'ERROR' => 'label-important', 'INPROGRESS' => 'label-warning', 'APPROVAL' => 'label-warning', 'FINISHED' => 'label-success', "ARCHIVED" =>"label-default");
+
+
+        /**
+         * @access public
+         * @var    array
+         */
         public $statusList = array(
             '3' => 'status.new', //New
             '1' => 'status.blocked', //In Progress
@@ -139,7 +146,6 @@ namespace leantime\domain\repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-
                 $labels = array();
 
                 if($values !== false) {
@@ -147,7 +153,7 @@ namespace leantime\domain\repositories {
                     foreach(unserialize($values['value']) as $key=>$label) {
                         $labels[$key] = array(
                             "name" => $label,
-                            "class" => $this->statusClasses[$key]
+                            "class" => $this->statusClassesByKey[$key]
                         );
                     }
 
@@ -1518,6 +1524,8 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
+
+            return true;
 
         }
 

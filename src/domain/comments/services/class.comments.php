@@ -50,12 +50,18 @@ namespace leantime\domain\services {
                             $message = sprintf($this->language->__("email_notifications.new_comment_todo_subject"), $_SESSION["userdata"]["name"], $entity->headline);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
                             break;
+                        case "project":
+                            $subject = sprintf($this->language->__("email_notifications.new_comment_project_subject "), $entityId, $entity['name']);
+                            $message = sprintf($this->language->__("email_notifications.new_comment_project_message"), $_SESSION["userdata"]["name"], $entity['name']);
+                            $linkLabel = $this->language->__("email_notifications.new_comment_project_cta");
+                            break;
                         default:
                             $subject = $this->language->__("email_notifications.new_file_general_subject");
                             $message = $this->language->__("email_notifications.new_file_general_message");
                             $linkLabel = $this->language->__("email_notifications.new_file_general_cta");
                             break;
                     }
+
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$currentUrl, "text"=> $linkLabel));
 

@@ -51,9 +51,10 @@ namespace leantime\domain\controllers {
 
                 if(isset($params['module']) && isset($params['label'])) {
 
+                    //Move to settings service
                     if($params['module'] == "ticketlabels") {
                         $stateLabels = $this->ticketsRepo->getStateLabels();
-                        $currentLabel = $stateLabels[$params['label']];
+                        $currentLabel = $stateLabels[$params['label']]["name"];
                     }
 
                     if($params['module'] == "retrolabels") {
@@ -96,6 +97,7 @@ namespace leantime\domain\controllers {
 
                     $sanatizedString = preg_replace("/[^a-zA-Z0-9 ]+/", '', $params['newLabel']);
 
+                    //Move to settings service
                     if ($_GET['module'] == "ticketlabels") {
                         $stateLabels = $this->ticketsRepo->getStateLabels();
                         $stateLabels[$_GET['label']] = $sanatizedString;

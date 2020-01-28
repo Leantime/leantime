@@ -12,7 +12,7 @@
 
     <?php if($currentLabel !== false) {?>
     <label>Label</label>
-    <input type="text" name="newLabel" value="<?php echo $currentLabel?>" /><br />
+    <input type="text" name="newLabel" value="<?php echo $currentLabel; ?>" /><br />
 
 
     <div class="row">

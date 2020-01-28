@@ -42,49 +42,49 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-			zp_timesheets.id, 
-			zp_timesheets.userId, 
-			zp_timesheets.ticketId,
-			zp_timesheets.workDate,
-			zp_timesheets.hours,
-			zp_timesheets.description,
-			zp_timesheets.kind,
-			zp_projects.name,
-			zp_projects.id AS projectId,
-			zp_timesheets.invoicedEmpl,
-			zp_timesheets.invoicedComp,
-			zp_timesheets.invoicedEmplDate,
-			zp_timesheets.invoicedCompDate,
-			zp_user.firstname,
-			zp_user.lastname,
-			zp_tickets.id as ticketId,
-			zp_tickets.headline,
-			zp_tickets.planHours
-		FROM
-			zp_timesheets
-		LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
-		LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-		WHERE 
-			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS('".$dateFrom."')) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS('".$dateTo."'))))";
+                        zp_timesheets.id, 
+                        zp_timesheets.userId, 
+                        zp_timesheets.ticketId,
+                        zp_timesheets.workDate,
+                        zp_timesheets.hours,
+                        zp_timesheets.description,
+                        zp_timesheets.kind,
+                        zp_projects.name,
+                        zp_projects.id AS projectId,
+                        zp_timesheets.invoicedEmpl,
+                        zp_timesheets.invoicedComp,
+                        zp_timesheets.invoicedEmplDate,
+                        zp_timesheets.invoicedCompDate,
+                        zp_user.firstname,
+                        zp_user.lastname,
+                        zp_tickets.id as ticketId,
+                        zp_tickets.headline,
+                        zp_tickets.planHours
+                    FROM
+                        zp_timesheets
+                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
+                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    WHERE 
+                        ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
+
             if($projectId > 0) {
-                $query.=" AND (zp_tickets.projectId = '".$projectId."')";
+                $query.=" AND (zp_tickets.projectId = :projectId)";
             }
 
             if($ticketFilter > 0) {
-                $query.=" AND (zp_tickets.id = '".$ticketFilter."')";
+                $query.=" AND (zp_tickets.id = :ticketFilter)";
             }
 
             if($kind != 'all') {
-                $query.= " AND (zp_timesheets.kind = '".$kind."')";
+                $query.= " AND (zp_timesheets.kind = :kind)";
             }
 
             if($userId != 'all') {
-                $query.= " AND (zp_timesheets.userId= '".$userId."')";
+                $query.= " AND (zp_timesheets.userId= :userId)";
             }
 
             if($invComp == '1' && $invEmpl == '1') {
-
 
 
             }elseif($invComp == '1' && $invEmpl != '1') {
@@ -100,21 +100,45 @@ namespace leantime\domain\repositories {
 
                 $query.= " AND ((zp_timesheets.invoicedComp = '0' OR zp_timesheets.invoicedComp IS NULL) AND (zp_timesheets.invoicedEmpl = '0' OR zp_timesheets.invoicedEmpl IS NULL))";
 
-
             }
 
             $query.= "GROUP BY
-		zp_timesheets.id, 
-			zp_timesheets.userId, 
-			zp_timesheets.ticketId,
-			zp_timesheets.workDate,
-			zp_timesheets.hours,
-			zp_timesheets.description,
-			zp_timesheets.kind";
+		                zp_timesheets.id, 
+                        zp_timesheets.userId, 
+                        zp_timesheets.ticketId,
+                        zp_timesheets.workDate,
+                        zp_timesheets.hours,
+                        zp_timesheets.description,
+                        zp_timesheets.kind";
 
 
+            $stmn = $this->db->database->prepare($query);
 
-            return $this->db->dbQuery($query)->dbFetchResults();
+            $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
+            $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
+
+            if($projectId > 0) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            }
+
+            if($ticketFilter > 0) {
+                $stmn->bindValue(':ticketFilter', $ticketFilter, PDO::PARAM_STR);
+            }
+
+            if($kind != 'all') {
+                $stmn->bindValue(':kind', $kind, PDO::PARAM_STR);
+            }
+
+            if($userId != 'all') {
+                $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+
+            return $values;
 
 
         }
@@ -570,13 +594,20 @@ namespace leantime\domain\repositories {
 			FROM 
 				zp_timesheets LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
 			WHERE 
-				zp_tickets.projectId = '".$projectId."'
+				zp_tickets.projectId = :projectId
 			GROUP BY
 				MONTH(zp_timesheets.workDate)
 				WITH ROLLUP
 			LIMIT 12";
 
-            return $this->db->dbQuery($query)->dbFetchResults();
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
         }
 
         /**

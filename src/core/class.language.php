@@ -105,7 +105,7 @@ namespace leantime\core {
             //Todo: Add cache
             if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini');
+                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
 
             }else{
 

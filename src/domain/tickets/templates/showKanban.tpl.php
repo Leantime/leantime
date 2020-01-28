@@ -63,6 +63,8 @@
                                 <?php echo"<option value='".$sprintRow->id."'";
 
                                 if($this->get("currentSprint") !== false && $sprintRow->id == $this->get("currentSprint")) {
+
+
                                     echo " selected='selected' ";
 
                                     $dates = sprintf($this->__("label.date_from_date_to"), date($this->__("language.dateformat"), strtotime($sprintRow->startDate)), date($this->__("language.dateformat"), strtotime($sprintRow->endDate)));

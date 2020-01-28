@@ -138,7 +138,18 @@ leantime.ticketsController = (function () {
 
         jQuery(".dates").datepicker(
             {
-                dateFormat: 'mm/dd/yy'
+                dateFormat:  leantime.i18n.__("language.dateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: leantime.i18n.__("language.isRTL"),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
             }
         );
     };
@@ -158,11 +169,23 @@ leantime.ticketsController = (function () {
                 if (jQuery(i).attr('readonly')) { return false; } } }
         );
 
-        var dateFormat = "mm/dd/yy",
+        var dateFormat = leantime.i18n.__("language.dateformat").split(","),
             from = jQuery("#sprintStart")
                 .datepicker(
                     {
-                        numberOfMonths: 1
+                        numberOfMonths: 1,
+                        dateFormat:  leantime.i18n.__("language.dateformat"),
+                        dayNames: leantime.i18n.__("language.dayNames").split(","),
+                        dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                        dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                        monthNames: leantime.i18n.__("language.monthNames").split(","),
+                        currentText: leantime.i18n.__("language.currentText"),
+                        closeText: leantime.i18n.__("language.closeText"),
+                        buttonText: leantime.i18n.__("language.buttonText"),
+                        isRTL: leantime.i18n.__("language.isRTL"),
+                        nextText: leantime.i18n.__("language.nextText"),
+                        prevText: leantime.i18n.__("language.prevText"),
+                        weekHeader: leantime.i18n.__("language.weekHeader"),
                     }
                 )
                 .on(
@@ -177,7 +200,19 @@ leantime.ticketsController = (function () {
             to = jQuery("#sprintEnd").datepicker(
                 {
                     defaultDate: "+1w",
-                    numberOfMonths: 1
+                    numberOfMonths: 1,
+                    dateFormat:  leantime.i18n.__("language.dateformat"),
+                    dayNames: leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: leantime.i18n.__("language.monthNames").split(","),
+                    currentText: leantime.i18n.__("language.currentText"),
+                    closeText: leantime.i18n.__("language.closeText"),
+                    buttonText: leantime.i18n.__("language.buttonText"),
+                    isRTL: leantime.i18n.__("language.isRTL"),
+                    nextText: leantime.i18n.__("language.nextText"),
+                    prevText: leantime.i18n.__("language.prevText"),
+                    weekHeader: leantime.i18n.__("language.weekHeader"),
                 }
             )
             .on(

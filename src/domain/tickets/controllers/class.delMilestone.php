@@ -3,21 +3,26 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class delMilestone
     {
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
+        private $ticketService;
+        private $tpl;
+        private $language;
 
-            $tpl = new core\template();
-            $ticketRepo = new repositories\tickets();
+        public function __construct()
+        {
+            $this->tpl = new core\template();
+            $this->language = new core\language();
+            $this->ticketService = new services\tickets();
+
+        }
+
+
+        public function get()
+        {
 
             //Only admins
             if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
@@ -26,27 +31,46 @@ namespace leantime\domain\controllers {
                     $id = (int)($_GET['id']);
                 }
 
-                $msgKey = '';
-
-                if (isset($_POST['del'])) {
-
-                    $ticketRepo->delMilestone($id);
-
-                    $tpl->setNotification("Milestone successfully deleted", "success");
-                    $tpl->redirect("/tickets/roadmap");
-
-                }
-
-                $tpl->assign('info', $msgKey);
-                $tpl->assign('id', $id);
-                $tpl->displayPartial('tickets.delMilestone');
+                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                $this->tpl->displayPartial('tickets.delMilestone');
 
             } else {
 
-                $tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('general.error');
 
             }
 
+        }
+
+        public function post($params) {
+
+            if (isset($_GET['id'])) {
+                $id = (int)($_GET['id']);
+            }
+
+            //Only admins
+            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+
+                if (isset($params['del'])) {
+
+                    $result = $this->ticketService->deleteMilestone($id);
+
+                    if($result === true) {
+                        $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
+                        $this->tpl->redirect("/tickets/roadmap");
+                    }else{
+                        $this->tpl->setNotification($this->language->__($result['msg']), "error");
+                        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                        $this->tpl->displayPartial('tickets.delMilestone');
+                    }
+
+                }else{
+                    $this->tpl->displayPartial('general.error');
+                }
+
+            }else{
+                $this->tpl->displayPartial('general.error');
+            }
         }
 
     }

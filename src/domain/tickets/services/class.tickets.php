@@ -534,11 +534,27 @@ namespace leantime\domain\services {
 
             $ticket = $this->getTicket($id);
 
-            if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket['projectId'])) {
+            if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
                 return array("msg" => "notifications.ticket_delete_error", "type" => "error");
             }
 
             if($this->ticketRepository->delticket($id)){
+                return true;
+            }
+
+            return false;
+
+        }
+
+        public function deleteMilestone($id){
+
+            $ticket = $this->getTicket($id);
+
+            if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
+                return array("msg" => "notifications.milestone_delete_error", "type" => "error");
+            }
+
+            if($this->ticketRepository->delMilestone($id)){
                 return true;
             }
 
