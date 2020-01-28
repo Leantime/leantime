@@ -47,7 +47,7 @@
                             <li><a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a href="javascript:void(0);" onclick="leantime.ticketsController.toggleFilterBar();" class="formLink btn btn-default"><?=$this->__("links.filter") ?></a>
+                    <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                 </div>
 
                 <div class="col-md-4 center">
@@ -341,7 +341,7 @@
                                                                     <?php if($row["editorFirstname"] != ""){
                                                                         echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
                                                                     }else {
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span> <i class=\"fas fa-caret-down\"></i>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
                                                                     }?>
                                                                 </span>
                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

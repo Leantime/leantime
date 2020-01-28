@@ -59,6 +59,7 @@
 .maincontentinner .ticketDropdown > a:link{
     color:#fff;
     padding:0px 6px;
+    white-space: nowrap;
 }
 
 .maincontentinner .ticketDropdown.firstDropdown > a {

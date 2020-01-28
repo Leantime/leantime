@@ -73,7 +73,7 @@ leantime.ticketsController = (function () {
     };
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle("fast");
+        jQuery(".filterBar").toggle();
     };
 
     var initGanttChart = function (tasks, viewMode) {
@@ -1001,11 +1001,10 @@ leantime.ticketsController = (function () {
                     },
                     "dom": '<"top">rt<"bottom"ilp><"clear">',
                     "searching": false,
-                    displayLength:100,
-                    order: [[6, 'asc']],
-                    orderFixed: orderFixedOption,
-                    rowGroup: rowGroupOption
-
+                    "displayLength":100,
+                    "order": [[6, 'asc']],
+                    "orderFixed": orderFixedOption,
+                    "rowGroup": rowGroupOption,
 
             });
 

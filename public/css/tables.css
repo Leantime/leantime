@@ -213,3 +213,7 @@
 .maincontentinner .table tr.dt-rowReorder-moving {
     outline:2px solid #333;
 }
+
+.paginate_button.current {
+    color:#fff;
+}

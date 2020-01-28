@@ -26,6 +26,9 @@
            
 <div class="maincontent">
 	<div class="maincontentinner">
+
+        <?php echo $this->displayNotification(); ?>
+
 		<form action="/tickets/showAll" method="get" id="ticketFilterForm">
             <input type="hidden" value="1" name="search"/>
             <div class="row">
@@ -38,7 +41,7 @@
                             <li><a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a href="javascript:void(0);" onclick="leantime.ticketsController.toggleFilterBar();" class="formLink btn btn-default"><?=$this->__("links.filter") ?></a>
+                    <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                 </div>
 
                 <div class="col-md-4 center">
@@ -201,15 +204,15 @@
         </form>
             <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
                 <colgroup>
-                    <col class="con1" width="30%">
-                    <col class="con0" width="10%">
-                    <col class="con1" width="9%">
-                    <col class="con0" width="9%">
-                    <col class="con1" width="5%">
-                    <col class="con0" width="9%">
-                    <col class="con1" width="9%">
-                    <col class="con0" width="9%">
-                    <col class="con0" width="11%">
+                    <col class="con1" width="20%">
+                    <col class="con0">
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
+                    <col class="con0">
+                    <col class="con1">
 
                 </colgroup>
                 <thead>
@@ -322,14 +325,14 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td data-order="<?=$row["editorFirstname"] ?>">
+                            <td data-order="<?=$row["editorFirstname"] != "" ?  $row["editorFirstname"] : $this->__("dropdown.not_assigned")?>">
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if($row["editorFirstname"] != ""){
                                                                         echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
                                                                     }else {
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span> <i class=\"fas fa-caret-down\"></i>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
                                                                     }?>
                                                                 </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

@@ -53,7 +53,8 @@ a,a:hover,a:link,a:active,a:focus,
 input.secretInput,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
-.viewDropDown .dropdown-menu li a.active
+.viewDropDown .dropdown-menu li a.active,
+.paginate_button.current:hover
 { color: <?php echo $color; ?>; }
 
 
@@ -62,7 +63,8 @@ button,
 .shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
 .table th,
-.dropdown-menu span.radio:hover
+.dropdown-menu span.radio:hover,
+.paginate_button.current
 { background-color:  <?php echo $color; ?>;  }
 
 input[type='submit']:hover, 
@@ -262,7 +264,7 @@ padding:20px 0px;
 	border:1px solid #ccc;
 	padding:10px;
 	margin-bottom:5px;
-	background:#fff;
+	background:#eee;
 	padding-top:15px;
 }
 
