@@ -13,9 +13,8 @@
     padding: 5px 10px;
 }
 
-
-
-.dropdown-menu > li > a:hover .muted {
+.maincontentinner .viewDropDown .dropdown-menu > li > a:hover .muted,
+.maincontentinner .viewDropDown .dropdown-menu li a.active{
     color: #fff;
 }
 
@@ -50,7 +49,7 @@
     left: 6px;
 }
 
-.ticketDropdown.dropRight ul{
+.dropRight ul{
     right:0px;
     left:auto;
 }

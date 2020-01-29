@@ -182,9 +182,7 @@
 			<div class="row-fluid">
 				
 				<?php
-				
-				
-				
+
 				foreach($this->get('allTicketStates') as $key => $statusRow){ 	
 
 				    //Don't display archive on kanban board

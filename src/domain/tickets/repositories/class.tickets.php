@@ -36,7 +36,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $statusClassesByKey = array('NEW' => 'label-important', 'ERROR' => 'label-important', 'INPROGRESS' => 'label-warning', 'APPROVAL' => 'label-warning', 'FINISHED' => 'label-success', "ARCHIVED" =>"label-default");
+        public $statusNumByKey = array('NEW' => 3, 'ERROR' => 1, 'INPROGRESS' => 4, 'APPROVAL' => 2, 'FINISHED' => 0, "ARCHIVED" =>-1);
 
 
         /**
@@ -118,10 +118,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
             $this->language = new core\language();
-            //$this->statusLabels = $this->getStateLabels();
-
 
         }
 
@@ -150,10 +147,15 @@ namespace leantime\domain\repositories {
 
                 if($values !== false) {
 
+
                     foreach(unserialize($values['value']) as $key=>$label) {
-                        $labels[$key] = array(
+
+                        //Custom key in the database represents the string value. Needs to be translated to numeric status value
+                        $numericKey = $this->statusNumByKey[$key];
+
+                        $labels[$numericKey] = array(
                             "name" => $label,
-                            "class" => $this->statusClassesByKey[$key]
+                            "class" => $this->statusClasses[$numericKey]
                         );
                     }
 

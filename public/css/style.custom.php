@@ -64,7 +64,8 @@ button,
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
 .table th,
 .dropdown-menu span.radio:hover,
-.paginate_button.current
+.paginate_button.current,
+.dropdown-menu > li > a.active
 { background-color:  <?php echo $color; ?>;  }
 
 input[type='submit']:hover, 

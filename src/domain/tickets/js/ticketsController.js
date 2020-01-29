@@ -86,13 +86,13 @@ leantime.ticketsController = (function () {
                         custom_popup_html: function (task) {
                             // the task object will contain the updated
                             // dates and progress value
-                            var end_date = task._end.format('MMM D');
+                            var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
                             return '<div class="details-container"> ' +
                             '<h4><a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
-                            '<p>Expected to finish by <strong>'+end_date+'</strong><br /> ' +
-                            ''+Math.round(task.progress)+'% completed!</p> ' +
-                            '<a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> Edit Milestone</a> | ' +
-                            '<a href="/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> View To-Dos</a> ' +
+                            '<p>'+leantime.i18n.__("text.expected_to_finish_by")+' <strong>'+end_date+'</strong><br /> ' +
+                            ''+Math.round(task.progress)+'%</p> ' +
+                            '<a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
+                            '<a href="/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> '+leantime.i18n.__("links.view_todos")+'</a> ' +
 
                             '</div>';
                         },
@@ -117,12 +117,13 @@ leantime.ticketsController = (function () {
                     }
                 ); 
 
-                jQuery(".btn-group").on(
-                    "click", "button", function () {
+                jQuery("#ganttTimeControl").on(
+                    "click", "a", function () {
+
                         var $btn =jQuery(this);
-                        var mode = $btn.text();
+                        var mode = $btn.attr("data-value");
                         gantt_chart.change_view_mode(mode);
-                        $btn.parent().find('button').removeClass('active');
+                        $btn.parent().parent().find('a').removeClass('active');
                         $btn.addClass('active');
                     }
                 );

@@ -33,5 +33,8 @@ leantime.replaceSVGColors = function () {
 
 leantime.replaceSVGColors();
 
+//Set moment locale early in app creation
+moment.locale(leantime.i18n.__("language.code"));
+
 
 

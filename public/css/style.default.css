@@ -2803,11 +2803,14 @@ a .label-default:after, a .label-primary:after {
     padding: 20px;
 }
 
-.subtitle {
-    text-transform: uppercase;
-    font-size: 11px;
-    color: #999;
-    margin-bottom: 5px;
+.maincontentinner .subtitle {
+
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 10px;
+    font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;
+    
+
 }
 
 .subtitle2 {
