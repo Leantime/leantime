@@ -1,14 +1,10 @@
 <?php
-
-defined('RESTRICTED') or die('Restricted access');
-$project = $this->get('project');
-$bookedHours = $this->get('bookedHours');
-$helper = $this->get('helper');
-$state = $this->get('state');
+    defined('RESTRICTED') or die('Restricted access');
+    $project = $this->get('project');
+    $bookedHours = $this->get('bookedHours');
+    $helper = $this->get('helper');
+    $state = $this->get('state');
 ?>
-
-
-
 
 <div class="pageheader">
 

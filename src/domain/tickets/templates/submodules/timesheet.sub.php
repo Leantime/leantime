@@ -11,7 +11,7 @@
             <div class="span6">
                 
 
-                <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $this->__('Add Time Entry', false); ?></h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $this->__('headline.add_time_entry', false); ?></h4>
                 <br />
 
                 <form method="post" action="#timesheet" class="stdform">

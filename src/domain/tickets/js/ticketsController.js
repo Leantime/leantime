@@ -53,11 +53,21 @@ leantime.ticketsController = (function () {
 
     //Functions
 
-    var updateRemaining = function (element, id) {
+    var updateRemainingHours = function (element, id) {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updateRemainingHours(
             id, value, function () {
-                jQuery.jGrowl("Remaining Hours updated!");
+                jQuery.jGrowl(leantime.i18n.__("short_notifications.remaining_hours_updated"));
+            }
+        );
+
+    };
+
+    var updatePlannedHours = function (element, id) {
+        var value = jQuery(element).val();
+        leantime.ticketsRepository.updatePlannedHours(
+            id, value, function () {
+                jQuery.jGrowl(leantime.i18n.__("short_notifications.planned_hours_updated"));
             }
         );
 
@@ -237,7 +247,7 @@ leantime.ticketsController = (function () {
     };
 
     var _initMilestoneDates = function () {
-        var dateFormat = "mm/dd/yy",
+        var dateFormat = leantime.i18n.__("language.jsdateformat"),
             from = jQuery("#milestoneEditFrom")
                 .datepicker(
                     {
@@ -402,8 +412,8 @@ leantime.ticketsController = (function () {
         var storyPointLabels = {
             '1': 'XS',
             '2': 'S',
-            '3':"M",
-            '5':"L",
+            '3': "M",
+            '5': "L",
             '8' : "XL",
             '13': "XXL"
         };
@@ -684,28 +694,13 @@ leantime.ticketsController = (function () {
             }
         );
 
-        jQuery("#type").change(
-            function () {
-                var templates = {
-                    Story : "As <i>{{ TYPE OF USER }}, I would like to <i>{{ DESCRIBE THE FEATURE }}</i>, so that <i>{{ DESCRIBE THE REASON }}</i><br /><br /><strong>Acceptance Critria</strong><br /><ul><li><i>{{ DESCRIBE THE FEATURES YOU EXPECT AT A MINIMUM }}</i></li></ul>",
-                    Bug : "<strong>Summary</strong><br /><i>{{ DESCRIBE WHAT IS HAPPENING }}</i><br /><br /><strong>Steps to Reproduce</strong><br /><i>{{ DESCRIBE HOW YOU GOT THERE }}</i><br /><br /><strong>Expected Results</strong><br /><i>{{ WHAT OUTCOME DID YOU EXPECT}}</i><br /><br /><strong>Actual Results</strong><br /><i>{{ WHAT WAS THE ACTUAL RESULT}}</i>",
-                };
-
-                var currentValue = jQuery('#ticketDescription').val().replace(/(\r\n\t|\n|\r\t)/gm,"");
-
-                if(currentValue == '' || jQuery(currentValue).text() == jQuery(templates.Story).text() || jQuery(currentValue).text() ==  jQuery(templates.Bug).text()) {
-                    var selection = jQuery(this).val();
-                    jQuery('#ticketDescription').val(templates[selection]);
-                }
-            }
-        );
     };
 
     var _initDueDateTimePickers = function () {
 
         jQuery(".quickDueDates").datepicker(
             {
-                dateFormat: 'mm/dd/yy',
+                dateFormat: leantime.i18n.__("language.dateformat"),
                 onSelect: function(date) {
 
                     var dateTime = new Date(date);
@@ -715,7 +710,7 @@ leantime.ticketsController = (function () {
                     var newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function() {
-                        jQuery.jGrowl("Due date changed!");
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.due_date_updated"));
                     });
 
                 }
@@ -731,13 +726,13 @@ leantime.ticketsController = (function () {
             data: {
                 labels: labels,
                 datasets:[{
-                    label:"Booked Hours",
+                    label: leantime.i18n.__("label.booked_hours"),
                     backgroundColor: 'rgba(201,48,44, 0.5)',
                     borderColor: 'rgb(201,48,44)',
                     data:d2
                 },
                     {
-                        label:"Planned Hours",
+                        label:leantime.i18n.__("label.planned_hours"),
                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor:'rgb(54, 162, 235)',
                         data:d3
@@ -812,7 +807,7 @@ leantime.ticketsController = (function () {
     var initTicketSearchSubmit = function (url) {
 
         jQuery("#ticketSearch").on('submit', function(e) {
-            e.preventDefault()
+            e.preventDefault();
 
             var project = jQuery("#projectIdInput").val();
             var users = jQuery("#userSelect").val();
@@ -822,7 +817,7 @@ leantime.ticketsController = (function () {
             var types = jQuery("#typeSelect").val();
             var status = jQuery("#statusSelect").val();
             var sort = jQuery("#sortBySelect").val();
-            var group = jQuery("#groupBySelect").val();
+            var groupBy = jQuery("input[name='groupBy']:checked").val();
 
             var query = "?search=true";
             if(project != "" && project != undefined) {query = query + "&projectId=" + project}
@@ -833,7 +828,7 @@ leantime.ticketsController = (function () {
             if(types != "" && types != undefined) {query = query + "&type=" + types;}
             if(status != "" && status != undefined) {query = query + "&status=" + status;}
             if(sort != "" && sort != undefined) {query = query + "&sort=" + sort;}
-            if(group != "" && group != undefined) {query = query + "&group=" + group;}
+            if(groupBy != "" && groupBy != undefined) {query = query + "&groupBy=" + groupBy;}
 
             var rediredirectUrl = url + query;
 
@@ -1044,11 +1039,6 @@ leantime.ticketsController = (function () {
 
             });
 
-            /*
-
-
-             */
-
         });
     };
 
@@ -1057,7 +1047,8 @@ leantime.ticketsController = (function () {
         toggleFilterBar: toggleFilterBar,
         triggerMilestoneModal: triggerMilestoneModal,
         initGanttChart:initGanttChart,
-        updateRemaining:updateRemaining,
+        updateRemainingHours:updateRemainingHours,
+        updatePlannedHours:updatePlannedHours,
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
         initTimeSheetChart:initTimeSheetChart,

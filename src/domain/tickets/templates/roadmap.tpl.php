@@ -123,7 +123,5 @@ jQuery(document).ready(function(){
         leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>');
     <?php } ?>
 
-
-
 </script>
 

@@ -61,7 +61,6 @@ namespace leantime\domain\services {
                 $percentNum = ($numberOfClosedTickets / $numberOfTotalTickets) * 100;
             }
 
-
             $effortOfClosedTickets = $this->ticketRepository->getEffortOfClosedTickets($projectId, $averageStorySize);
             $effortOfTotalTickets = $this->ticketRepository->getEffortOfAllTickets($projectId, $averageStorySize);
 
@@ -70,7 +69,6 @@ namespace leantime\domain\services {
             }else{
                 $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
             }
-            
 
             $finalPercent = ($percentNum + $percentEffort) / 2;
 

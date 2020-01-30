@@ -809,10 +809,12 @@ namespace leantime\domain\repositories {
 
 
             if($searchCriteria["status"]  != "") {
-                if($searchCriteria["status"] == "not_done") {
+
+                $statusArray = explode(",", $searchCriteria['status']);
+                if(array_search("not_done", $statusArray) !== false) {
                     $query .= " AND zp_tickets.status > 0";
-                }else{
-                    $query .= " AND zp_tickets.status IN('".implode("','", explode(",", strip_tags($searchCriteria["status"])))."')";
+                }else {
+                    $query .= " AND zp_tickets.status IN('" . implode("','", explode(",", strip_tags($searchCriteria["status"]))) . "')";
                 }
             }
 
@@ -830,10 +832,6 @@ namespace leantime\domain\repositories {
 
             if($searchCriteria["sprint"]  == "backlog" ) {
                 $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
-            }
-
-            if($searchCriteria["sprint"]  == "all") {
-                $query .= "";
             }
 
             $query .= " GROUP BY zp_tickets.id ";

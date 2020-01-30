@@ -260,6 +260,9 @@
 
                                         </div>
 
+                                        <?php
+                                        /* Experimenting with reducing the number of fields in the kanban board.
+                                           Stop Experiment in 6 months. 1/29/2020
                                         <div class="row">
 
                                             <div class="col-md-6" style="white-space: nowrap;">
@@ -285,6 +288,7 @@
                                             </div>
 
                                         </div>
+                                        */ ?>
 
 
                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -339,12 +343,12 @@
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if($row["editorFirstname"] != ""){
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
                                                                     }else {
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
                                                                     }?>
                                                                 </span>
-                                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>

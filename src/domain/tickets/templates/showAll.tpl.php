@@ -29,7 +29,7 @@
 
         <?php echo $this->displayNotification(); ?>
 
-		<form action="/tickets/showAll" method="get" id="ticketFilterForm">
+		<form action="" method="get" id="ticketSearch">
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-4">
@@ -90,10 +90,10 @@
 
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketFilterForm').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketFilterForm').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketFilterForm').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketFilterForm').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
                             </ul>
 
                         </div>
@@ -162,7 +162,7 @@
 
                         <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="type" id="typeSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_tye") ?>" title="<?=$this->__("input.placeholders.filter_by_tye") ?>" name="type" id="typeSelect">
                                 <option value=""><?=$this->__("label.all_types") ?></option>
                                 <?php foreach($this->get('types') as $type){ 	?>
 
@@ -182,14 +182,14 @@
                         <label class="inline"><?=$this->__("label.todo_status") ?></label>
                         <div class="form-group">
 
-                            <select data-placeholder="<?=$this->__("input.placeholders..filter_by_status")?>" name="searchStatus[]"  multiple="multiple" class="status-select" onchange="form.submit()">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_status")?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
                                 <option value=""></option>
                                 <option value="not_done" <?php if($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) echo" selected='selected' ";?>><?=$this->__("label.not_done")?></option>
                                 <?php foreach($statusLabels as $key=>$label){?>
 
                                     <?php echo"<option value='".$key."'";
 
-                                    if($searchCriteria['status'] !== false && strpos($searchCriteria['status'], (string) $key) !== false) echo" selected='selected' ";
+                                    if($searchCriteria['status'] !== false && array_search((string) $key, explode(",",$searchCriteria['status'])) !== false) echo" selected='selected' ";
                                     echo">". $this->escape($label["name"])."</option>"; ?>
 
                                 <?php } 	?>
@@ -297,7 +297,7 @@
 
                                         <?php foreach($this->get('milestones') as $milestone){
                                             echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
+                                                <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
                                             echo"</li>";
                                         }?>
                                     </ul>
@@ -365,8 +365,8 @@
                                 <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
 
                             </td>
-                            <td><input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input"/></td>
-                            <td><input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="planHours" class="small-input"/></td>
+                            <td><input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>');" /></td>
+                            <td><input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');"/></td>
 
                         </tr>
 
@@ -384,6 +384,8 @@
 </div>
 
 <script type="text/javascript">
+
+    leantime.ticketsController.initTicketSearchSubmit("/tickets/showAll");
 
     leantime.ticketsController.initUserSelectBox();
     leantime.ticketsController.initStatusSelectBox();
