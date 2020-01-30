@@ -970,6 +970,7 @@ leantime.ticketsController = (function () {
             }
             var rowGroupOption = false;
             var orderFixedOption = false;
+            var defaultOrder = [];
 
             if(columnIndex !== false) {
 
@@ -1001,7 +1002,8 @@ leantime.ticketsController = (function () {
                     }
                 };
 
-                orderFixedOption = [[columnIndex, 'asc']]
+                orderFixedOption = [[columnIndex, 'asc']];
+                defaultOrder = [[columnIndex, 'asc'], [6, 'asc']];
             }
 
             var allTickets = jQuery("#allTicketsTable").DataTable({
@@ -1033,8 +1035,8 @@ leantime.ticketsController = (function () {
                     "dom": '<"top">rt<"bottom"ilp><"clear">',
                     "searching": false,
                     "displayLength":100,
-                    "order": [[6, 'asc']],
-                    "orderFixed": orderFixedOption,
+                    "order": defaultOrder,
+                    
                     "rowGroup": rowGroupOption,
 
             });

@@ -59,7 +59,7 @@ namespace leantime\domain\services {
             $searchCriteria = array(
                 "currentProject"=> $_SESSION["currentProject"],
                 "users"=>"",
-                "status"=>"not_done",
+                "status"=>"",
                 "term"=> "",
                 "type"=> "",
                 "sprint"=> $_SESSION['currentSprint'],
