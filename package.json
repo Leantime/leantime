@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.0.4",
+  "version": "2.0.6",
   "description": "Project Management Tools",
   "main": "gruntfile.js",
   "dependencies": {

@@ -109,9 +109,10 @@ namespace leantime\domain\controllers {
             }
 
             // Statistics
-            $tpl->assign('closedTicketsPerWeek', $dashboardRepo->getClosedTicketsPerWeek());
-            $tpl->assign('hoursPerTicket', round($dashboardRepo->getHoursPerTicket()));
-            $tpl->assign('hoursBugFixing', round($dashboardRepo->getHoursBugFixing(), 1));
+            //Todo: Remove in 2.1
+            //$tpl->assign('closedTicketsPerWeek', $dashboardRepo->getClosedTicketsPerWeek());
+            //$tpl->assign('hoursPerTicket', round($dashboardRepo->getHoursPerTicket()));
+            //$tpl->assign('hoursBugFixing', round($dashboardRepo->getHoursBugFixing(), 1));
 
             $tpl->assign('ticketsRepo', $ticketRepo);
             $tpl->assign('efforts', $ticketRepo->efforts);

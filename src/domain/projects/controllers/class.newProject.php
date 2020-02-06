@@ -17,6 +17,10 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/projects/showAll";
+            }
+
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
             $leancanvasRepo = new repositories\leancanvas();
