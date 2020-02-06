@@ -224,7 +224,7 @@ namespace leantime\domain\services {
 
                 $botEmail = $zulipWebhook['zulipEmail'];
                 $botKey = $zulipWebhook['zulipBotKey'];
-                $botURL = $zulipWebhook['zulipURL'];
+                $botURL = $zulipWebhook['zulipURL']."/api/v1/messages";
 
                 $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
                 if($url !== false){
@@ -238,9 +238,9 @@ namespace leantime\domain\services {
                     'content' => $prepareChatMessage
                 );
 
-                $url = $botURL . '?' . http_build_query($data);
+                $curlUrl = $botURL . '?' . http_build_query($data);
 
-                $ch = curl_init($url);
+                $ch = curl_init($curlUrl);
 
                 $data_string = json_encode($data);
 
