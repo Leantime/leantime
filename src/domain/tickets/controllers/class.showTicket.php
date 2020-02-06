@@ -12,6 +12,11 @@ namespace leantime\domain\controllers {
         public function __construct()
         {
             $this->projectService = new services\projects();
+
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/tickets/showKanban/";
+            }
+
         }
         /**
          * run - display template and edit data

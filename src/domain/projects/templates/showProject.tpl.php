@@ -194,6 +194,39 @@ function toggleCommentBoxes(id){
                                 </form>
                             </div>
                         </div>
+
+                        <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Zulip</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="/images/zulip-org-logo.png" width="200"/>
+                            </div>
+
+                            <div class="col-md-5">
+                                This integration will post update notifications to the stream and topic of your choice.<br />
+                                Follow the instructions <a href="https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack" target="_blank">here to create a new Bot</a>. Then paste the information into the form to the right and click Save.
+                            </div>
+                            <div class="col-md-4">
+
+                                <form action="/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                                    <strong>Base URL</strong><br />
+                                    <input type="text" name="zulipURL" id="zulipURL" placeholder="Example: https://company.zulipchat.com" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
+                                    <br />
+                                    <strong>Bot Email</strong><br />
+                                    <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $this->get("zulipHook")['zulipEmail']; ?>"/>
+                                    <br />
+                                    <strong>Bot Key</strong><br />
+                                    <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $this->get("zulipHook")['zulipBotKey']; ?>"/>
+                                    <br />
+                                    <strong>Stream</strong><br />
+                                    <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $this->get("zulipHook")['zulipStream']; ?>"/>
+                                    <br />
+                                    <strong>Topic</strong><br />
+                                    <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $this->get("zulipHook")['zulipTopic']; ?>"/>
+                                    <br />
+                                    <input type="submit" value="Save" name="zulipSave" />
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

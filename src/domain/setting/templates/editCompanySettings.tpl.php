@@ -45,7 +45,7 @@ $companySettings= $this->get('companySettings');
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>Color</label>
+                                            <label>Theme Color</label>
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" id="colorpicker" name="color" class="form-control input-sm" value="<?php echo $companySettings['color']; ?>"/>
@@ -55,10 +55,10 @@ $companySettings= $this->get('companySettings');
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>Image</label>
+                                            <label>Logo</label>
                                         </div>
                                         <div class="col-md-4">
-                                            <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage"/>
+                                            <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
                                             <div id="logoImg" style="height:auto;">
                                             </div>
 
