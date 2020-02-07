@@ -19,7 +19,7 @@ namespace leantime\domain\repositories {
          * @var    array
          */
 
-        public $kind = array('GENERAL_BILLABLE', 'GENERAL_NOT_BILLABLE', 'PROJECTMANAGEMENT', 'DEVELOPMENT', 'BUGFIXING_NOT_BILLABLE', 'TESTING');
+        public $kind = array('label.general_billable', 'label.general_not_billable', 'label.projectmanagement', 'label.development', 'label.bugfixing_not_billable', 'label.testing');
 
         /**
          * __construct - get database connection
