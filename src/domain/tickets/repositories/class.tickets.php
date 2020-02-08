@@ -30,7 +30,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $statusClasses = array('3' => 'label-important', '1' => 'label-important', '4' => 'label-warning', '2' => 'label-warning', '0' => 'label-success', "-1" =>"label-default");
+        public $statusClasses = array('3' => 'label-info', '1' => 'label-important', '4' => 'label-warning', '2' => 'label-warning', '0' => 'label-success', "-1" =>"label-default");
 
         /**
          * @access public
@@ -125,6 +125,7 @@ namespace leantime\domain\repositories {
         public function getStateLabels()
         {
             unset($_SESSION["projectsettings"]["ticketlabels"]);
+
             if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
 
                 return $_SESSION["projectsettings"]["ticketlabels"];
@@ -145,27 +146,29 @@ namespace leantime\domain\repositories {
 
                 $labels = array();
 
-                if($values !== false) {
+                //preseed state labels with default values
+                foreach($this->statusList as $key=>$label) {
+                    $labels[$key] = array(
+                        "name" => $this->language->__($label),
+                        "class" => $this->statusClasses[$key]
+                    );
+                }
 
+                //Override the state values that are in the db
+                if($values !== false) {
 
                     foreach(unserialize($values['value']) as $key=>$label) {
 
                         //Custom key in the database represents the string value. Needs to be translated to numeric status value
-                        $numericKey = $this->statusNumByKey[$key];
+                        if(!is_int($key)) {
+                            $numericKey = $this->statusNumByKey[$key];
+                        }else{
+                            $numericKey = $key;
+                        }
 
                         $labels[$numericKey] = array(
                             "name" => $label,
                             "class" => $this->statusClasses[$numericKey]
-                        );
-                    }
-
-                } else{
-
-                    //translate state labels if they don't come from user
-                    foreach($this->statusList as $key=>$label) {
-                        $labels[$key] = array(
-                            "name" => $this->language->__($label),
-                            "class" => $this->statusClasses[$key]
                         );
                     }
 
@@ -178,6 +181,9 @@ namespace leantime\domain\repositories {
             }
         }
 
+        public function getStatusList() {
+            return $this->statusList;
+        }
         public function getUnreadTickets($userId,$limit = 9999)
         {
 

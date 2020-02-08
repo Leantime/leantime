@@ -761,6 +761,10 @@ leantime.ticketsController = (function () {
 
                     color = "#b94a48";
 
+                }else if (value.indexOf("info") > -1) {
+
+                        color = "#2d6987";
+
                 } else if (value.indexOf("warning") > -1) {
 
                     color = "#f89406";
@@ -772,7 +776,12 @@ leantime.ticketsController = (function () {
                 } else if (value.indexOf("default") > -1) {
 
                     color = "#999999";
+                }else{
+
+                    color = "#999999";
+
                 }
+
                 jQuery(this).css("borderLeft", "5px solid " + color);
 
                 if(currentBox != null) {
@@ -1036,7 +1045,7 @@ leantime.ticketsController = (function () {
                     "searching": false,
                     "displayLength":100,
                     "order": defaultOrder,
-                    
+
                     "rowGroup": rowGroupOption,
 
             });

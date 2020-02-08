@@ -59,7 +59,7 @@ echo"
 
         }
         ?>
-        <div class="gantt-container" style="overflow: auto;">
+        <div class="gantt-container" style="height:100%; overflow: auto;">
             <svg id="gantt"></svg>
         </div>
 
@@ -81,15 +81,16 @@ jQuery(document).ready(function(){
     } ?>
 
     <?php if(isset($_GET['showMilestoneModal'])) {
-    if($_GET['showMilestoneModal'] == "") {
-        $modalUrl = "";
-    }else{
-        $modalUrl = "/".(int)$_GET['showMilestoneModal'];
-    }
-    ?>
 
-    leantime.ticketsController.openMilestoneModalManually("/tickets/editMilestone<?php echo $modalUrl; ?>");
-    window.history.pushState({},document.title, '/tickets/roadmap');
+        if($_GET['showMilestoneModal'] == "") {
+            $modalUrl = "";
+        }else{
+            $modalUrl = "/".(int)$_GET['showMilestoneModal'];
+        }
+        ?>
+
+        leantime.ticketsController.openMilestoneModalManually("/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '/tickets/roadmap');
 
     <?php } ?>
 

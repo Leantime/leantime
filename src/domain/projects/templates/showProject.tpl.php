@@ -13,11 +13,11 @@
     </div>
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-            <div class="pagetitle">
-                <h5><?php echo $this->__('label.administration') ?></h5>
-                <h1><?php echo sprintf($this->__('headline.project'),$project['name']); ?>
-                </h1>
-            </div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('label.administration') ?></h5>
+        <h1><?php echo sprintf($this->__('headline.project'),$project['name']); ?>
+        </h1>
+    </div>
 </div><!--pageheader-->
         
         <div class="maincontent">
@@ -102,7 +102,9 @@
 
                 </div>
                 
-                    <div id="integrations">
+                    <div
+
+                            id="integrations">
 
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
                         <div class="row">

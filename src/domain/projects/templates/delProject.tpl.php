@@ -5,35 +5,30 @@ $project = $this->get('project');
 
 
 <div class="pageheader">
-           
-            
-            <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
-            <div class="pagetitle">
-                <h5>Administration</h5>
-                <h1><?php printf($this->__('DELETE_PROJECT'), $project['name']); ?></h1>
-            </div>
-        </div><!--pageheader-->
+
+    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('label.administration') ?></h5>
+        <h1><?php echo sprintf($this->__('headlines.delete_project_x'), $project['name']); ?></h1>
+    </div>
+</div><!--pageheader-->
         
-        <div class="maincontent">
-            <div class="maincontentinner">
+<div class="maincontent">
+    <div class="maincontentinner">
 
+        <?php echo $this->displayNotification() ?>
 
-<h4 class="widget widgettitle"><?php echo $lang['CONFIRM_DELETE']; ?></h4>
-                <div class="widgetcontent">
-                    
-        <?php if($this->get('msg') !== '') { ?>
-                        <span class="info">
-            <?php echo $lang[$this->get('msg')]; ?><br />
-                            <a href="/projects/showAll/">Back to all projects</a>
-                        </span>
-        <?php }else { ?>
-                    
-                    <form method="post">
-                        <p><?php echo $lang['CONFIRM_DELETE_TEXT']; ?></p><br />
-                        <input type="submit" value="<?php echo $lang['DELETE']; ?>" name="del" class="button" />
-                    </form>
-        <?php } ?>
-                
-                </div>
-            </div>
+        <h4 class="widget widgettitle"><?php echo $this->__("subtitles.delete") ?></h4>
+        <div class="widgetcontent">
+
+            <form method="post">
+                <p><?php echo $this->__('text.confirm_project_deletion'); ?></p><br />
+                <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
+                <a class="btn btn-primary" href="/projects/showProject/<?php echo $project['id'] ?>"><?php echo $this->__('buttons.back'); ?></a>
+            </form>
+
         </div>
+                
+
+    </div>
+</div>

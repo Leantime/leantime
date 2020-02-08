@@ -414,9 +414,6 @@
                         <div id="canvas-holder" style="width:100%; height:250px;">
                             <canvas id="chart-area" ></canvas>
                         </div>
-                        <div style="text-align:center">
-                            <?=sprintf($this->__("text.estimated_date_of_completion"), $projectProgress['estimatedCompletionDate']); ?>
-                        </div>
                         <br /><br />
                     </div>
                 </div>

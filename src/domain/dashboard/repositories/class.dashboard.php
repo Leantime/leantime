@@ -92,41 +92,33 @@ namespace leantime\domain\repositories {
             */
         }
 
+
+
         public function getHoursPerTicket()
         {
 
-            $sql = "SELECT id 
-				FROM zp_tickets as tickets";
+
+            $sql = "SELECT 
+                        SUM(hours) AS sum,
+                        COUNT(DISTINCT zp_tickets.id) AS numTickets 
+                    FROM zp_tickets LEFT JOIN zp_timesheets on zp_timesheets.ticketId = zp_tickets.id
+                    WHERE zp_tickets.projectId = :projectId AND type <> 'milestone' and type <> 'subtask'
+                    GROUP BY zp_tickets.projectId";
+
 
             $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':projectId', $_SESSION["currentProject"], PDO::PARAM_INT);
 
             $stmn->execute();
             $tickets = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            $sql = "SELECT hours FROM zp_timesheets WHERE ticketId=:ticketId";
-            $stmn = $this->db->database->prepare($sql);
-            $allHours = 0;
-            foreach ($tickets as $ticket) {
-                $stmn->bindValue(':ticketId', $ticket['id'], PDO::PARAM_INT);
-                $stmn->execute();
-                $times = $stmn->fetchAll();
-
-                foreach ($times as $time) {
-                    if ($time['hours']) {
-                        $allHours += $time['hours'];
-                    }
-                }
-
+            if(isset($tickets['sum']) && isset($tickets['numTickets'])){
+                return     $tickets['sum']/$tickets['numTickets'];
+            }else{
+                return false;
             }
 
-            $stmn->closeCursor();
-
-            if($allHours != '' AND $allHours >0) {
-
-                return $allHours / count($tickets);
-
-            }
         }
 
         public function getHoursBugFixing()

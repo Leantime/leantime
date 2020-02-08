@@ -18,6 +18,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
+            $language = new core\language();
 
             //Only admins
             if ($_SESSION['userdata']['role'] == 'admin') {
@@ -30,7 +31,7 @@ namespace leantime\domain\controllers {
 
                     if ($projectRepo->hasTickets($id)) {
 
-                        $msgKey = 'PROJECT_HAS_TICKETS';
+                       $tpl->setNotification($language->__("notification.project_has_tasks"), "error");
 
                     } else {
 
@@ -39,7 +40,8 @@ namespace leantime\domain\controllers {
                             $projectRepo->deleteProject($id);
                             $projectRepo->deleteAllUserRelations($id);
 
-                            $msgKey = 'PROJECT_DELETED';
+                            $tpl->setNotification($language->__("notification.project_deleted"), "success");
+                            $tpl->redirect("/projects/showAll");
 
                         }
 

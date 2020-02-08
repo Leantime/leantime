@@ -101,7 +101,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown ul li a.label-warning,
 .maincontentinner .ticketDropdown ul li a.label-important,
 .maincontentinner .ticketDropdown ul li a.label-success,
-.maincontentinner .ticketDropdown ul li a.label-default {
+.maincontentinner .ticketDropdown ul li a.label-default,
+.maincontentinner .ticketDropdown ul li a.label-info{
     padding: 5px 10px;
     display:block;
     border-radius: 0px;
@@ -109,6 +110,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontentinner .ticketDropdown a.label-warning {
     background:#f89406;
+}
+
+.maincontentinner .ticketDropdown a.label-info {
+    background:#2d6987;
 }
 
 .maincontentinner .ticketDropdown a.label-important {

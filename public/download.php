@@ -36,10 +36,10 @@ function getFileLocally(){
 	
 	$config = new leantime\core\config();
 	
-	$encName = $_GET['encName'];
+	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
- 	$ext = $_GET['ext'];
- 	$module = $_GET['module'];
+ 	$ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
+ 	$module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
  
 	$mimes = array
     (
@@ -67,20 +67,19 @@ function getFileLocally(){
 							 
    				header('content-type: '. $mimes[$ext]);
     			header('content-disposition: inline; filename="'.$path_parts["basename"].'";');
-                header('Cache-Control: max-age=84600');
+                header('Cache-Control: max-age=300');
 			
 			}else{
 				
 				header("Content-type: application/octet-stream");
 				header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
 
-			}	
-				
-			while (!feof($fd)) {
-				$buffer = fread($fd, 2048);
-				echo $buffer;
-			} 
-			fclose($fd);					 
+			}
+
+            ob_end_clean();
+			fpassthru($fd);
+			fclose($fd);
+
 		} 
 
 	}else{
@@ -92,10 +91,10 @@ function getFileLocally(){
 function getFileFromS3(){
 		
 	// Include the AWS SDK using the Composer autoloader.
-	$encName = $_GET['encName'];
- 	$realName = $_GET['realName'];
- 	$ext = $_GET['ext'];
- 	$module = $_GET['module'];
+    $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
+    $realName = $_GET['realName'];
+    $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
+    $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
  
 	$config = new leantime\core\config();
 	
@@ -120,19 +119,18 @@ function getFileFromS3(){
 	
 	try {
 
-
-        // Save object to a file.
-        $result = $s3Client->getObject(array(
+        $cmd = $s3Client->getCommand('GetObject', [
             'Bucket' => $config->s3Bucket,
-            'Key'    => $config->s3FolderName."/".$encName.".".$ext,
-            'ResponseCacheControl'       => 'No-cache',
-            'ResponseExpires'            => gmdate(DATE_RFC2822, time() + 3600),
-        ));
+            'Key' => $config->s3FolderName."/".$encName.".".$ext,
+            'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
+        ]);
 
-        // Display the object in the browser
-        header("Content-Type: {$result['ContentType']}");
-        header("Content-Disposition: filename=\"".$realName.".".$ext."\"");
-        echo $result['Body'];
+        $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
+        $presignedUrl = (string)$request->getUri();
+
+        header("Location: ".$presignedUrl);
+        exit();
+
 
 
     } catch (Aws\S3\Exception\S3Exception $e) {

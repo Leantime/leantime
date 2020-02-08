@@ -21,7 +21,7 @@
  	<div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-	    <h1><?=$this->__("headlines.current_todos") ?></h1>
+	    <h1><?=$this->__("headlines.todos"); ?></h1>
 	</div>
 
 </div><!--pageheader-->
@@ -202,7 +202,7 @@
 
 							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
-                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>"  onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> Add To-Do</a>
+                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>"  onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.add_todo_no_icon"); ?></a>
                                     <div class="ticketBox hideOnLoad " id="ticket_new_<?=$key?>">
 
                                         <form method="post">
