@@ -20,6 +20,10 @@ namespace leantime\domain\controllers {
             $this->projectService = new services\projects();
             $this->language = new core\language();
             $this->commentService = new services\comments();
+
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/projects/showAll";
+            }
         }
 
 
@@ -51,12 +55,65 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification($this->language->__("notification.saved_mattermost_webhook"), 'success');
                 }
 
+
+                //Zulip
+                $zulipWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".zulipHook");
+
+                if($zulipWebhook === false || $zulipWebhook == ""){
+
+                    $zulipHook = array(
+                        'zulipURL' => '',
+                        'zulipEmail' => '',
+                        'zulipBotKey' => '',
+                        'zulipStream' => '',
+                        'zulipTopic' => '',
+                    );
+                    $tpl->assign('zulipHook', $zulipHook);
+                }else{
+                    $tpl->assign('zulipHook', unserialize($zulipWebhook));
+                }
+
+
+                if(isset($_POST['zulipSave'])) {
+
+                    $zulipHook = array(
+                        'zulipURL' => strip_tags($_POST['zulipURL']),
+                        'zulipEmail' => strip_tags($_POST['zulipEmail']),
+                        'zulipBotKey' => strip_tags($_POST['zulipBotKey']),
+                        'zulipStream' => strip_tags($_POST['zulipStream']),
+                        'zulipTopic' => strip_tags($_POST['zulipTopic']),
+                    );
+
+                    if($zulipHook['zulipURL'] == "" ||
+                        $zulipHook['zulipEmail'] == "" ||
+                        $zulipHook['zulipBotKey'] == "" ||
+                        $zulipHook['zulipStream'] == "" ||
+                        $zulipHook['zulipTopic'] == "") {
+
+
+                        $tpl->setNotification('Zulip integration could not be saved. Please fill out all the fields', 'error');
+
+                    }else{
+
+                        $this->settingsRepo->saveSetting("projectsettings." . $id . ".zulipHook", serialize($zulipHook));
+                        $tpl->setNotification('Zulip integration saved successfully', 'success');
+                    }
+
+                    $tpl->assign('zulipHook', $zulipHook);
+
+
+                }
+
+
+                if(isset($_GET['integrationSuccess'])) {
+                    $tpl->setNotification('Slack was successfully connected', 'success');
+                }
+
                 $mattermostWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".mattermostWebhookURL");
                 $tpl->assign('mattermostWebhookURL', $mattermostWebhook);
 
                 $slackWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".slackWebhookURL");
                 $tpl->assign('slackWebhookURL', $slackWebhook);
-
 
                 $_SESSION['lastPage'] = "/projects/showProject/".$id;
                 

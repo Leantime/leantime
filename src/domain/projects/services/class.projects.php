@@ -213,6 +213,52 @@ namespace leantime\domain\services {
                 $result = curl_exec($ch);
             }
 
+
+            //Test Zulip
+            $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".zulipHook");
+
+            if($zulipWebhookSerialized !== false || $zulipWebhookSerialized !== ""){
+
+
+                $zulipWebhook = unserialize($zulipWebhookSerialized);
+
+                $botEmail = $zulipWebhook['zulipEmail'];
+                $botKey = $zulipWebhook['zulipBotKey'];
+                $botURL = $zulipWebhook['zulipURL']."/api/v1/messages";
+
+                $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
+                if($url !== false){
+                    $prepareChatMessage .= "".$url['link']."";
+                }
+
+                $data = array(
+                    "type" => "stream",
+                    "to" => $zulipWebhook['zulipStream'],
+                    "topic" => $zulipWebhook['zulipTopic'],
+                    'content' => $prepareChatMessage
+                );
+
+                $curlUrl = $botURL . '?' . http_build_query($data);
+
+                $ch = curl_init($curlUrl);
+
+                $data_string = json_encode($data);
+
+                curl_setopt($ch, CURLOPT_USERPWD, "$botEmail:$botKey");
+                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($data_string))
+                );
+
+                //Execute CURL
+                $result = curl_exec($ch);
+
+            }
+
         }
 
         public function getProjectName($projectId)

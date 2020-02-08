@@ -33,6 +33,10 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
             $this->timesheetService = new services\timesheets();
             $this->userService = new services\users();
+
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/tickets/showKanban/";
+            }
         }
 
         /**
@@ -59,10 +63,6 @@ namespace leantime\domain\controllers {
                 $searchCriteria = unserialize($_COOKIE['searchCriteria']);
 
             }
-
-            //$language->setModule('tickets');
-
-            //$lang = $language->readIni();
 
 
             $msgKey = '';
