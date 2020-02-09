@@ -116,7 +116,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     background:#2d6987;
 }
 
-.maincontentinner .ticketDropdown a.label-important {
+.maincontentinner .ticketDropdown a.label-important,
+.maincontentinner .ticketDropdown a.label-danger {
     background:#b94a48;
 }
 

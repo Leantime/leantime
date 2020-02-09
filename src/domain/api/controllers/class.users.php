@@ -39,7 +39,13 @@ namespace leantime\domain\controllers {
         {
             if(isset($params["profileImage"])) {
 
-                $imageId = (int)$params["profileImage"];
+                if($params["profileImage"] == "currentUser") {
+                    $return = $this->usersService->getProfilePicture($_SESSION['userdata']['id']);
+                    $this->tpl->redirect($return);
+                }else{
+                    $imageId = (int)$params["profileImage"];
+                }
+
                 $file = $this->filesRepository->getFile($imageId);
 
                 $return = '/images/default-user.png';

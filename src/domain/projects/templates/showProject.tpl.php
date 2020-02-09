@@ -150,28 +150,27 @@
                             </div>
 
                             <div class="col-md-5">
-                                This integration will post update notifications to the stream and topic of your choice.<br />
-                                Follow the instructions <a href="https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack" target="_blank">here to create a new Bot</a>. Then paste the information into the form to the right and click Save.
+                                <?=$this->__('text.zulip_instructions'); ?>
                             </div>
                             <div class="col-md-4">
 
                                 <form action="/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                                    <strong>Base URL</strong><br />
-                                    <input type="text" name="zulipURL" id="zulipURL" placeholder="Example: https://company.zulipchat.com" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
+                                    <strong><?=$this->__('label.base_url'); ?></strong><br />
+                                    <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$this->__('input.placeholders.zulip_url'); ?>" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
                                     <br />
-                                    <strong>Bot Email</strong><br />
+                                    <strong><?=$this->__('label.bot_email'); ?></strong><br />
                                     <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $this->get("zulipHook")['zulipEmail']; ?>"/>
                                     <br />
-                                    <strong>Bot Key</strong><br />
+                                    <strong><?=$this->__('label.botkey'); ?></strong><br />
                                     <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $this->get("zulipHook")['zulipBotKey']; ?>"/>
                                     <br />
-                                    <strong>Stream</strong><br />
+                                    <strong><?=$this->__('label.stream'); ?></strong><br />
                                     <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $this->get("zulipHook")['zulipStream']; ?>"/>
                                     <br />
-                                    <strong>Topic</strong><br />
+                                    <strong><?=$this->__('label.topic'); ?></strong><br />
                                     <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $this->get("zulipHook")['zulipTopic']; ?>"/>
                                     <br />
-                                    <input type="submit" value="Save" name="zulipSave" />
+                                    <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="zulipSave" />
                                 </form>
                             </div>
                         </div>

@@ -20,18 +20,16 @@ leantime.usersRepository = (function () {
                 url: '/api/users',
                 data: formData,
                 processData: false,
-                contentType: false
-            }
-        ).success(
-            function (resp) {
-                    console.log(resp);
+                contentType: false,
+                success: function (resp) {
+
                     jQuery('#save-picture').removeClass('running');
 
                     location.reload();
-            }
-        ).error(
-            function (err) {
+                },
+                error:  function (err) {
                     console.log(err);
+                }
             }
         );
     };

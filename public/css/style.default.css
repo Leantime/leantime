@@ -8154,7 +8154,7 @@ a.filter-term {
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
-    padding:15px;
+
 }
 
 .nyroModalCloseButton {
@@ -8258,6 +8258,7 @@ div.color-picker ul li {
 .nyroModalCont, .nyroModalBg {
     z-index: 1000005;
     overflow-x: hidden !important;
+    padding: 30px 40px 20px 35px
 }
 
 #sortableSprint {

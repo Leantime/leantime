@@ -386,7 +386,8 @@ namespace leantime\core {
 					role,
 					firstname AS firstname,
 					lastname AS name,
-					settings
+					settings,
+					profileId
 					
 						FROM zp_user 
 			          WHERE username = :username

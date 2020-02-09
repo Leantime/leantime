@@ -15,6 +15,7 @@ namespace leantime\domain\services {
         private $projectRepository;
         private $ticketRepository;
         private $settingsRepo;
+        private $language;
 
         public function __construct()
         {
@@ -24,6 +25,7 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
+            $this->language = new core\language();
         }
 
         public function getProject($id) {
@@ -157,7 +159,7 @@ namespace leantime\domain\services {
                 'color'    => '#1b75bb',
                 'fields'   => array(
                     [
-                        'title' => "Project: ".$projectName,
+                        'title' => $this->language->__("headlines.project_with_name")." ".$projectName,
                         'value' => $prepareChatMessage,
                         'short' => false
                     ]
@@ -217,7 +219,7 @@ namespace leantime\domain\services {
             //Test Zulip
             $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".zulipHook");
 
-            if($zulipWebhookSerialized !== false || $zulipWebhookSerialized !== ""){
+            if($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== ""){
 
 
                 $zulipWebhook = unserialize($zulipWebhookSerialized);

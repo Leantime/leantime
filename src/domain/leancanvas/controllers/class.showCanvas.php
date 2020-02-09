@@ -25,6 +25,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $leancanvasRepo = new repositories\leancanvas();
+            $projectService = new services\projects();
 
             $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -161,9 +162,12 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('currentCanvas', $currentCanvasId);
 
+            $tpl->assign('statusLabels', $leancanvasRepo->getStatusLabels());
+
             $tpl->assign('canvasLabels', $leancanvasRepo->canvasTypes);
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $leancanvasRepo->getCanvasItemsById($currentCanvasId));
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
 
             if (isset($_GET["raw"]) === false) {

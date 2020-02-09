@@ -91,22 +91,17 @@ namespace leantime\domain\controllers {
                         $zulipHook['zulipTopic'] == "") {
 
 
-                        $tpl->setNotification('Zulip integration could not be saved. Please fill out all the fields', 'error');
+                        $tpl->setNotification($this->language->__("notification.error_zulip_webhook_fill_out_fields"), 'error');
 
                     }else{
 
                         $this->settingsRepo->saveSetting("projectsettings." . $id . ".zulipHook", serialize($zulipHook));
-                        $tpl->setNotification('Zulip integration saved successfully', 'success');
+                        $tpl->setNotification($this->language->__("notification.saved_zulip_webhook"), 'success');
                     }
 
                     $tpl->assign('zulipHook', $zulipHook);
 
 
-                }
-
-
-                if(isset($_GET['integrationSuccess'])) {
-                    $tpl->setNotification('Slack was successfully connected', 'success');
                 }
 
                 $mattermostWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".mattermostWebhookURL");

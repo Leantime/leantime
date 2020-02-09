@@ -23,7 +23,6 @@ namespace leantime\domain\controllers {
 
             $_SESSION['lastPage'] = "/tickets/showKanban";
 
-
         }
 
         public function get(array $params) {
