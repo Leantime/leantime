@@ -50,7 +50,7 @@ module.exports = function (grunt) {
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/croppie/croppie.js",
                     "node_modules/chart.js/dist/Chart.bundle.js",
-                    "node_modules/masonry-layout/dist/masonry.pkgd.js",
+                    "node_modules/packery/dist/packery.pkgd.js",
                     "node_modules/imagesloaded/imagesloaded.pkgd.js",
                     "node_modules/tether-shepherd/dist/js/tether.js",
                     "node_modules/tether-shepherd/dist/js/shepherd.js",

@@ -139,7 +139,7 @@ leantime.ticketsController = (function () {
 
         jQuery(".dates").datepicker(
             {
-                dateFormat:  leantime.i18n.__("language.dateformat"),
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -334,8 +334,8 @@ leantime.ticketsController = (function () {
 
         var modalConfig = {
             sizes: {
-                minW: 500,
-                minH: 750
+                minW:  700,
+                minH: 1000
             },
             resizable: true,
             autoSizable: true,
@@ -689,7 +689,7 @@ leantime.ticketsController = (function () {
 
         jQuery(".quickDueDates").datepicker(
             {
-                dateFormat: leantime.i18n.__("language.dateformat"),
+                dateFormat: leantime.i18n.__("language.jsdateformat"),
                 onSelect: function(date) {
 
                     var dateTime = new Date(date);
@@ -1042,6 +1042,10 @@ leantime.ticketsController = (function () {
         });
     };
 
+    var initTagsInput = function( ) {
+        jQuery("#tags").tagsInput();
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
@@ -1065,6 +1069,7 @@ leantime.ticketsController = (function () {
         initUserDropdown:initUserDropdown,
         initSprintDropdown:initSprintDropdown,
         initTicketEditor:initTicketEditor,
-        initToolTips:initToolTips
+        initToolTips:initToolTips,
+        initTagsInput:initTagsInput
     };
 })();

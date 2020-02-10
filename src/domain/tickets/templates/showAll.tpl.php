@@ -392,6 +392,8 @@
     leantime.ticketsController.initEffortDropdown();
     leantime.ticketsController.initStatusDropdown();
     leantime.ticketsController.initSprintDropdown();
+    leantime.ticketsController.initUserSelectBox();
+    leantime.ticketsController.initStatusSelectBox();
 
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");

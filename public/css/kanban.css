@@ -41,6 +41,8 @@
     border: 2px dotted #ccc;
     visibility:visible;
     display:block;
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
 }
 
 .portlet {

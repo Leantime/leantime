@@ -8,6 +8,9 @@ namespace leantime\domain\controllers {
 
     class showCanvas
     {
+
+        private $tpl;
+
         public function __construct()
         {
 
@@ -26,6 +29,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $leancanvasRepo = new repositories\leancanvas();
             $projectService = new services\projects();
+            $language = new core\language();
 
             $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -60,24 +64,25 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $leancanvasRepo->addCanvas($values);
                     $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
+
 
                     $mailer = new core\mailer();
                     $projectService = new services\projects();
                     $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
 
-                    $mailer->setSubject("A new research canvas was created");
-
                     $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                    $mailer->setHtml("A new lean canvas was created by " . $_SESSION["userdata"]["name"] . ": <a href='" . $actual_link . "'>" . $values['title'] . "</a>.<br />");
+                    $message = sprintf($language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
+                    $mailer->setHtml($message);
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+                    $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');
 
                     $_SESSION['currentLeanCanvas'] = $currentCanvasId;
                     $tpl->redirect(" /leancanvas/simpleCanvas/");
 
                 } else {
 
-                    $tpl->setNotification('ENTER_TITLE', 'error');
+                    $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
 
                 }
 
@@ -91,71 +96,13 @@ namespace leantime\domain\controllers {
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $leancanvasRepo->updateCanvas($values);
 
-                    $tpl->setNotification("Board edited", "success");
+                    $tpl->setNotification($language->__("notification.board_edited"), "success");
                     $tpl->redirect("/leancanvas/simpleCanvas/");
 
-
                 } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
 
-            }
+                    $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
 
-            //Add Canvas Item
-            if (isset($_POST["addItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => $_POST['status'],
-                        "assumptions" => $_POST['assumptions'],
-                        "data" => $_POST['data'],
-                        "conclusion" => $_POST['conclusion'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $leancanvasRepo->addCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    $tpl->redirect("Location: /leancanvas/showCanvas/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
-            }
-
-            if (isset($_POST["editItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => $_POST['status'],
-                        "assumptions" => $_POST['assumptions'],
-                        "data" => $_POST['data'],
-                        "conclusion" => $_POST['conclusion'],
-                        "itemId" => $_POST['itemId'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $leancanvasRepo->editCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location: /leancanvas/showCanvas/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
                 }
 
             }
@@ -178,5 +125,3 @@ namespace leantime\domain\controllers {
     }
 
 }
-
-

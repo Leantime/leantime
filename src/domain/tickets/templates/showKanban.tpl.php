@@ -253,7 +253,7 @@
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $row['type']; ?></small>
 
                                                 <h4><a href="/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                <p class="description"><?php echo substr(strip_tags($row["description"]), 0, 100);?><?php if(strlen($row["description"]) > 0) echo" (...)";?></p>
+                                                <p class="description"><?php echo substr(strip_tags($row["description"]), 0, 200);?><?php if(strlen($row["description"]) >= 200) echo" (...)";?></p>
 
 
                                             </div>
@@ -344,9 +344,9 @@
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if($row["editorFirstname"] != ""){
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle;'/></span>";
                                                                     }else {
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span>";
+                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span>";
                                                                     }?>
                                                                 </span>
 
@@ -394,6 +394,8 @@
     leantime.ticketsController.initUserDropdown();
     leantime.ticketsController.initMilestoneDropdown();
     leantime.ticketsController.initEffortDropdown();
+    leantime.ticketsController.initUserSelectBox();
+    leantime.ticketsController.initStatusSelectBox();
 
     var ticketStatusList = [<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo "'".$key."',"; }?>];
     leantime.ticketsController.initTicketKanban(ticketStatusList);

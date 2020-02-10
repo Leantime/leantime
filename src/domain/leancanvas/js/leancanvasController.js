@@ -85,9 +85,20 @@ leantime.leanCanvasController = (function () {
         });
 
         jQuery("#firstRow div.contentInner.even").css("height", maxHeight);
-        jQuery("#firstRow div.contentInner.odd").css("height", (maxHeight*2+45));
+        jQuery("#firstRow div.contentInner.odd").css("height", (maxHeight*2+85));
 
     };
+
+    var setSimpleCanvasHeights = function () {
+
+        var maxHeight = 0;
+
+        var height = jQuery("html").height()-320;
+        jQuery("#firstRow .column .contentInner").css("height", height);
+
+    };
+
+
 
     var initFilterBar = function () {
 
@@ -201,6 +212,7 @@ leantime.leanCanvasController = (function () {
         initFilterBar:initFilterBar,
         initCanvasLinks:initCanvasLinks,
         initUserDropdown:initUserDropdown,
-        initStatusDropdown:initStatusDropdown
+        initStatusDropdown:initStatusDropdown,
+        setSimpleCanvasHeights:setSimpleCanvasHeights
     };
 })();

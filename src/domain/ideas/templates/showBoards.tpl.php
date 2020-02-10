@@ -13,7 +13,13 @@ $canvasTitle = "";
 
     #ideaMason .ticketBox {
         width: 250px;
+        cursor:move;
+        z-index:5;
 
+    }
+
+    #ideaMason .ticketBox:hover {
+        background:#f9f9f9;
     }
 
     @media (min-width: 900px) {
@@ -22,6 +28,15 @@ $canvasTitle = "";
             margin-left: 0.5%;
             width: 19.6%;
         }
+    }
+
+    .packery-drop-placeholder {
+        background:#ddd;
+        border: 2px dotted #ccc;
+        visibility:visible;
+        /* transition position changing */
+        -webkit-transition: -webkit-transform 0.2s;
+        transition: transform 0.2s;
     }
 
 
@@ -109,13 +124,13 @@ $canvasTitle = "";
 
                 <?php foreach ($this->get('canvasItems') as $row) { ?>
 
-                    <div class="ticketBox" id="item_<?php echo $row["id"]; ?>">
+                    <div class="ticketBox" id="item_<?php echo $row["id"]; ?>" data-value="<?php echo $row["id"]; ?>">
 
                         <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
                                data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
                         <br/>
                         <div class="mainIdeaContent">
-                            <?php echo nl2br($row["data"]); ?>
+                            <?php echo($row["data"]); ?>
                         </div>
                         <br/><br/>
 
@@ -239,6 +254,74 @@ $canvasTitle = "";
 
     jQuery(document).ready(function () {
 
+
+        var $grid = jQuery('#ideaMason').packery({
+            // options
+            itemSelector: '.ticketBox',
+            columnWidth: 260,
+            isResizable: true
+        });
+
+        $grid.imagesLoaded().progress(function () {
+            $grid.packery('layout');
+        });
+
+        var $items = $grid.find('.ticketBox').draggable({
+            start: function (event, ui) {
+                ui.helper.addClass('tilt');
+                tilt_direction(ui.helper);
+            },
+            stop: function (event, ui) {
+                ui.helper.removeClass("tilt");
+                jQuery("html").unbind('mousemove', ui.helper.data("move_handler"));
+                ui.helper.removeData("move_handler");
+            },
+        });
+
+        function tilt_direction(item) {
+            var left_pos = item.position().left,
+                move_handler = function (e) {
+                    if (e.pageX >= left_pos) {
+                        item.addClass("right");
+                        item.removeClass("left");
+                    } else {
+                        item.addClass("left");
+                        item.removeClass("right");
+                    }
+                    left_pos = e.pageX;
+                };
+            jQuery("html").bind("mousemove", move_handler);
+            item.data("move_handler", move_handler);
+        }
+        // bind drag events to Packery
+        $grid.packery( 'bindUIDraggableEvents', $items );
+
+        function orderItems() {
+            var ideaSort = [];
+
+            var itemElems = $grid.packery('getItemElements');
+            jQuery( itemElems ).each( function( i, itemElem ) {
+                var sortIndex = i + 1;
+                var ideaId = jQuery( itemElem ).attr("data-value");
+                ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
+            });
+
+            // POST to server using $.post or $.ajax
+            jQuery.ajax({
+                type: 'POST',
+                url: '/api/ideas',
+                data: {
+                    action:"ideaSort",
+                    payload: ideaSort
+                }
+
+            });
+        }
+
+
+        $grid.on( 'dragItemPositioned',orderItems);
+
+
         jQuery(".canvas-select").chosen();
 
         jQuery(".addItem").click(function () {
@@ -259,16 +342,7 @@ $canvasTitle = "";
 
         });
 
-        var $grid = jQuery('#ideaMason').masonry({
-            // options
-            itemSelector: '.ticketBox',
-            columnWidth: 260
-        });
 
-        $grid.imagesLoaded().progress(function () {
-            $grid.masonry('layout');
-
-        });
 
         jQuery('.mainIdeaContent img').each(function () {
             jQuery(this).wrap("<a href='" + jQuery(this).attr("src") + "' class='imageModal'></a>");

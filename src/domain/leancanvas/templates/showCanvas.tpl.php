@@ -18,6 +18,7 @@ $statusLabels = $this->get("statusLabels");
            
 <div class="maincontent">
     <div class="maincontentinner">
+
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
@@ -47,7 +48,7 @@ $statusLabels = $this->get("statusLabels");
                         <?php } ?>
                     </form>
 
-                    </span>
+                </span>
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
@@ -140,9 +141,9 @@ $statusLabels = $this->get("statusLabels");
                                                         <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -257,9 +258,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -372,9 +373,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -489,9 +490,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -606,9 +607,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -721,9 +722,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -958,9 +959,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -1075,9 +1076,9 @@ $statusLabels = $this->get("statusLabels");
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 

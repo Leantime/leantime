@@ -236,6 +236,28 @@ namespace leantime\domain\repositories {
 
         }
 
+        public function updateIdeaSorting($sortingArray) {
+
+            $sql = "INSERT INTO zp_canvas_items (id, sortindex) VALUES ";
+
+            $sqlPrep = array();
+            foreach($sortingArray as $idea){
+                $sqlPrep[] = "(".(int)$idea['id'].", ".(int)$idea['sortIndex'].")";
+            }
+
+            $sql.= implode(",", $sqlPrep);
+
+            $sql.= " ON DUPLICATE KEY UPDATE sortindex = VALUES(sortindex)";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $return = $stmn->execute();
+            $stmn->closeCursor();
+
+            return $return;
+
+        }
+
         public function getCanvasItemsById($id)
         {
 
@@ -276,7 +298,7 @@ namespace leantime\domain\repositories {
 			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
 				WHERE zp_canvas_items.canvasId = :id 
 				GROUP BY zp_canvas_items.id
-				ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
+				ORDER BY zp_canvas_items.sortindex";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);

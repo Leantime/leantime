@@ -36,7 +36,7 @@
 
             <?php foreach($this->get('comments') as $row): ?>
 
-                <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #d9d9d9;">
+                <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
 
                             <img src="/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div class="right"><?php printf(
@@ -69,7 +69,7 @@
                 <?php if ($comments->getReplies($row['id'])) : ?>
                     <?php foreach($comments->getReplies($row['id']) as $comment): ?>
 
-                        <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #d9d9d9;">
+                        <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
 
 
                             <img src="/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>

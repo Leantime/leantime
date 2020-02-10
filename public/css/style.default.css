@@ -1569,8 +1569,19 @@ table, caption, tbody, tfoot, thead, tr, th, td {
     outline: none;
 }
 
+tox-edit-area,
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     height: auto;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+    border-radius: 3px;
 }
 
 ::selection {
@@ -8197,6 +8208,7 @@ a.filter-term {
     background: none;
     border: 0px;
     margin-bottom: 0px;
+    box-shadow:none;
 }
 
 .mainSprintSelector small {
@@ -8284,8 +8296,11 @@ div.color-picker ul li {
 
 .ui-state-highlight {
     background: #aaa;
-    border: 1px dotted #eee;
+    border: 1px dashed #eee;
     visibility: visible;
+    /* transition position changing */
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
 }
 
 .currentSprint {

@@ -194,6 +194,7 @@ namespace leantime\domain\controllers {
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
 
 
+                        $this->tpl->setNotification($this->language->__("notification.hypothesis_created"), 'success');
 
                         $this->tpl->redirect("/leancanvas/editCanvasItem/".$id);
 

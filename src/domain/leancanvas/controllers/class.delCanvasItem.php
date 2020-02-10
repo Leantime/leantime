@@ -8,6 +8,7 @@ namespace leantime\domain\controllers {
     class delCanvasItem
     {
 
+
         /**
          * run - display template and edit data
          *
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $leancanvasRepo = new repositories\leancanvas();
+            $language = new core\language();
 
 
             if (isset($_GET['id'])) {
@@ -30,11 +32,8 @@ namespace leantime\domain\controllers {
 
                 $leancanvasRepo->delCanvasItem($id);
 
-                $msgKey = 'TICKET_DELETED';
-
-                $_SESSION["msg"] = "CANVAS_ITEM_DELETED";
-                $_SESSION["msgT"] = "success";
-                header("Location: /leancanvas/showCanvas/");
+                $tpl->setNotification($language->__("notification.research_board_item_deleted"), "success");
+                $tpl->redirect("/leancanvas/simpleCanvas");
 
             }
 
