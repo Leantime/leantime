@@ -303,7 +303,8 @@ $efforts = $this->get('efforts');
                                 &nbsp;&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span><?php echo $row["fileCount"] ?> Files</a>
                                 <?php
 
-                                if ($row["tags"] != "" && count($row["tags"]) > 0){?>
+
+                                if ($row["tags"] != ""){?>
                                     <i class="iconfa-tags"></i> <?php echo str_replace(",", ", ", $row["tags"]) ?>
                                 <?php } ?>
                                 <a class="userPopover" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id']."' value='' data-label='nobody' style='float:left; margin-right:10px;' "; if($row['editorId'] == '') echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id']."'>Not assigned</label>";foreach($this->get('users') as $user){ echo"<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id'].$user['id']."' value='".$user['id']."' data-label='".$user['firstname']."' style='float:left; margin-right:10px;' "; if($row['editorId'] == $user['id']) echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id'].$user['id']."'>".$user['firstname'].", ".$user['lastname']."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="Who is working on this?">
@@ -595,7 +596,7 @@ $efforts = $this->get('efforts');
 
                             <a href="/tickets/showTicket/<?php echo $row["id"];?>#comment"><span class="iconfa-comments"></span><?php echo $row["commentCount"] ?> Comments</a>
 							<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span><?php echo $row["fileCount"] ?> Files</a>
-                            <?php if ($row["tags"] != ""  && count($row["tags"]) > 0 ){?>
+                            <?php if ($row["tags"] != "" ){?>
                                 <i class="iconfa-tags"></i> <?php echo str_replace(",", ", ", $row["tags"]) ?>
                             <?php } ?>
                             <a class="userPopover" href="javascript:void(0);" data-html="true" data-content="<?php echo "<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id']."' value='' data-label='nobody' style='float:left; margin-right:10px;' "; if($row['editorId'] == '') echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id']."'>Not assigned</label>";foreach($this->get('users') as $user){ echo"<input type='radio' name='ticketUserChange_".$row['id']."' id='ticketUserChange".$row['id'].$user['id']."' value='".$user['id']."' data-label='".$user['firstname']."' style='float:left; margin-right:10px;' "; if($row['editorId'] == $user['id']) echo" checked='selected' "; echo"><label for='ticketUserChange".$row['id'].$user['id']."'>".$user['firstname'].", ".$user['lastname']."</label>"; ?> <?php } 	?>" data-placement="bottom" data-toggle="popover" data-container="body" data-original-title="" title="Who is working on this?">
