@@ -422,7 +422,7 @@ $efforts = $this->get('efforts');
             <div class="clearfix"></div>
             <div class="filterBar <?php
 
-            if((count($searchCriteria['users']) == 0 || $searchCriteria['users'] == '') && $searchCriteria['milestone'] == '' && $searchCriteria['searchType'] == '') { echo "hideOnLoad"; } ?>">
+            if((count($searchCriteria['users']) == 0 || $searchCriteria['users'] == '') && $searchCriteria['milestone'] == '' && $searchCriteria['searchType'] == '' && trim($searchCriteria['status']) == 'not_done') { echo "hideOnLoad"; } ?>">
 
                 <div class="loading"></div>
                 <div class="row-fluid" style="opacity:0.4">
