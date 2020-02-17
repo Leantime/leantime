@@ -203,7 +203,7 @@ function toggleCommentBoxes(id){
 
                             <div class="col-md-5">
                                 This integration will post update notifications to the stream and topic of your choice.<br />
-                                Follow the instructions <a href="https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack" target="_blank">here to create a new Bot</a>. Then paste the information into the form to the right and click Save.
+                                Follow the instructions <a href="https://zulipchat.com/help/add-a-bot-or-integration" target="_blank">here to create a new Bot</a>. Then paste the information into the form to the right and click Save.
                             </div>
                             <div class="col-md-4">
 

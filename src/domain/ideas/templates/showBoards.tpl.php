@@ -107,7 +107,7 @@ $canvasTitle = "";
                         <h4><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
                         <br />
                         <div class="mainIdeaContent">
-                            <?php echo nl2br($row["data"]);?>
+                            <?php echo $row["data"];?>
                         </div>
                         <br /><br />
 
