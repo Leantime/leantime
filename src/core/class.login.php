@@ -434,7 +434,6 @@ namespace leantime\core {
 					id =  :id 
 				LIMIT 1";
 
-
             $stmn = $this->db->{'database'}->prepare($query);
 
             $stmn->bindValue(':id', $this->userId, PDO::PARAM_INT);
