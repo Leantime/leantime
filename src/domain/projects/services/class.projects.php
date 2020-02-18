@@ -217,8 +217,7 @@ namespace leantime\domain\services {
             //Test Zulip
             $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".zulipHook");
 
-            if($zulipWebhookSerialized !== false || $zulipWebhookSerialized !== ""){
-
+            if($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== ""){
 
                 $zulipWebhook = unserialize($zulipWebhookSerialized);
 

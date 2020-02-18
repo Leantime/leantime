@@ -876,6 +876,82 @@ namespace leantime\domain\repositories {
             return $onTheClock;
         }
 
+        /**
+         * getTicketHours - get the Ticket hours for a specific ticket
+         *
+         * @access public
+         */
+        public function getTicketHours($ticketId)
+        {
+            /*
+
+            $sql = "SELECT * FROM `zp_timesheets`
+                        WHERE ticketId = :ticketId ORDER BY workDate asc";
+
+            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn->bindValue(':ticketId',$ticketId,PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+
+            $hours = 0;
+
+            $results = $this->db->dbQuery($sql)->dbFetchResults();
+
+
+            foreach($results as $timesheet) {
+                $hours += $timesheet['hours'];
+            }
+            */
+
+
+
+            $query = "SELECT
+				YEAR(zp_timesheets.workDate) AS year,
+				DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
+				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
+				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
+				(zp_timesheets.hours) AS summe
+			
+			FROM 
+				zp_timesheets 
+			WHERE 
+				zp_timesheets.ticketId = :ticketId
+			ORDER BY utc
+			";
+
+            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+
+            $returnValues = array();
+
+            if(count($values) >0) {
+                $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
+                $endDate = "".$values[(count($values)-1)]['utc']."";
+
+
+                $returnValues = $this->dateRange($startDate, $endDate);
+
+                foreach($values as $row) {
+
+                    $returnValues[$row['utc']]["summe"] = $row['summe'];
+
+                }
+            }else{
+                $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
+                $returnValues[date("%Y-%m-%d")]["summe"] = 0;
+            }
+
+            return $returnValues;
+        }
+
 
 
     }

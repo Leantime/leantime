@@ -1,6 +1,6 @@
 <?php 
 
-$values = $this->get('values'); 
+$values = $this->get('timesheetValues');
 $ticket = $this->get('ticket');
 $userInfo = $this->get('userInfo');
 $remainingHours = $ticket['planHours'] - $this->get('timesheetsAllHours'); 
