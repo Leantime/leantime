@@ -198,6 +198,21 @@ namespace leantime\domain\controllers {
 
 
                     //Prepare and assign variables
+
+                    $timeSheetValues = array(
+                        'userId' => $_SESSION['userdata']['id'],
+                        'ticket' => $id,
+                        'date' => '',
+                        'kind' => '',
+                        'hours' => '',
+                        'description' => '',
+                        'invoicedEmpl' => '',
+                        'invoicedComp' => '',
+                        'invoicedEmplDate' => '',
+                        'invoicedCompDate' => ''
+                    );
+
+                    $tpl->assign("timesheetValues", $timeSheetValues);
                     $ticketHours = $timesheets->getTicketHours($id);
                     $tpl->assign('ticketHours', $ticketHours);
                     $tpl->assign('userHours', $timesheets->getUsersTicketHours($id, $_SESSION['userdata']['id']));
