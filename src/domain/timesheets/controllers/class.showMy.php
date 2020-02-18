@@ -121,6 +121,7 @@ namespace leantime\domain\controllers {
                     } else {
 
                         $timesheetRepo->UpdateHours($values);
+
                     }
                 }
             }

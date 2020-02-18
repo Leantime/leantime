@@ -24,3 +24,4 @@ $application->start();
 if(ob_get_length() > 0) {
     ob_end_flush();
 }
+

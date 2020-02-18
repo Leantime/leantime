@@ -33,32 +33,41 @@ namespace leantime\domain\controllers {
             $allSprints = $sprintService->getAllSprints($_SESSION["currentProject"]);
 
             //Set initial sprint
+            $currentSprint = "";
+
             if (isset($_SESSION['currentSprint']) === false || $_SESSION['currentSprint'] == '' || $_SESSION['currentSprint'] == 'none') {
+
                 $currentSprint = $sprintService->getCurrentSprint($_SESSION['currentProject']);
 
                 if (is_object($currentSprint) === true) {
-                
-                    $_SESSION['currentSprint'] = $currentSprint->id;
-                
+
+                    $currentSprint =  $currentSprint->id;
+
                 } else {
-                
+
                     if ($allSprints !== false && count($allSprints) > 0) {
-                        $_SESSION['currentSprint'] = $allSprints[0]->id;
+
+                        $currentSprint = $allSprints[0]->id;
+
                     }else{
+
                         //No sprints available
-                        $_SESSION['currentSprint'] = '';
+                        $currentSprint = '';
+
                     }
                 }
 
+            }else{
+                $currentSprint = $_SESSION['currentSprint'];
             }
 
-            $searchCriteria = array("currentProject" => $_SESSION["currentProject"], "users" => "", "status" => "not_done", "searchType"=> "", "searchterm" => "", "sprint" => "", "milestone" => '');
+            $searchCriteria = array("currentProject" => $_SESSION["currentProject"], "users" => "", "status" => "not_done", "searchType"=> "", "searchterm" => "", "sprint" => $currentSprint, "milestone" => '');
 
             //Active search overrides
-            if(isset($_COOKIE['searchCriteria']) == true) {
-                $postedValues = unserialize($_COOKIE['searchCriteria']);
-                $searchCriteria = $this->getSearchCriteriaFromPost($postedValues, $searchCriteria);
-            }
+            /*if(isset($_COOKIE['searchCriteria']) == true) {
+                //$postedValues = unserialize($_COOKIE['searchCriteria']);
+                //$searchCriteria = $this->getSearchCriteriaFromPost($postedValues, $searchCriteria);
+            }*/
 
             if (isset($_POST['search']) == true) {
                 $searchCriteria = $this->getSearchCriteriaFromPost($_POST, $searchCriteria);
@@ -128,19 +137,24 @@ namespace leantime\domain\controllers {
             $tpl->assign("onTheClock", $ticketRepo->isClocked($_SESSION["userdata"]["id"]));
 
 
-            $searchCriteria["sprint"] = 'none';
-            $tpl->assign('allBacklogTickets', $ticketRepo->getAllBySearchCriteria($searchCriteria));
+
 
 
             //If sprint is empty that means that we don't have a single sprint available. Don't perform search for sprints.
-            if($_SESSION['currentSprint'] != "") {
-                $searchCriteriaSprint = array("currentProject" => $_SESSION["currentProject"], "users" => "", "status" => "", "searchType"=> "", "searchterm" => "", "sprint" => $_SESSION['currentSprint'], "milestone" => '');
+
+            if($searchCriteria["sprint"] != "") {
+                $searchCriteriaSprint = array("currentProject" => $_SESSION["currentProject"], "users" => "", "status" => "", "searchType"=> "", "searchterm" => "", "sprint" => $searchCriteria["sprint"], "milestone" => '');
                 $tpl->assign('allSprintTickets', $ticketRepo->getAllBySearchCriteria($searchCriteriaSprint));
             }else{
                 $tpl->assign('allSprintTickets', []);
             }
 
-            $tpl->assign("currentSprint", $_SESSION['currentSprint']);
+            $tpl->assign("currentSprint", $searchCriteriaSprint["sprint"]);
+
+            $searchCriteria["sprint"] = 'none';
+            $tpl->assign('allBacklogTickets', $ticketRepo->getAllBySearchCriteria($searchCriteria));
+
+
 
             $tpl->assign("users", $projects->getUsersAssignedToProject($searchCriteria["currentProject"]));
 
@@ -151,14 +165,16 @@ namespace leantime\domain\controllers {
                     }
                 }
             );
+
             //$searchCriteria["status"] = array_filter(explode(",", $searchCriteria["status"]), function($s) {if($s == "") return false; else return true;} );
-            $searchCriteria["sprint"] = array_filter(
+            /*$searchCriteria["sprint"] = array_filter(
                 explode(",", $searchCriteria["sprint"]), function ($s) {
                     if($s == "") { return false; 
                     } else { return true;
                     }
                 }
-            );
+            );*/
+
             $tpl->assign('searchCriteria', $searchCriteria);
 
 
@@ -220,10 +236,10 @@ namespace leantime\domain\controllers {
 
             if(isset($post["searchSprints"]) === true) {
                 $searchCriteria["sprint"] =  $post["searchSprints"];
-                $_SESSION["currentSprint"] = $searchCriteria["sprint"];
+
             }else if(isset($post["sprint"]) === true) {
                 $searchCriteria["sprint"] = $post["sprint"];
-                $_SESSION["currentSprint"] = $searchCriteria["sprint"];
+
             }else{
                 $searchCriteria["sprint"] = "";
             }

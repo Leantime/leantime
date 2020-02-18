@@ -17,11 +17,7 @@ namespace leantime\domain\controllers {
             $this->projectService = new services\projects();
 
         }
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
+
         /**
          * get - handle get requests
          *
@@ -32,7 +28,7 @@ namespace leantime\domain\controllers {
         {
             if(isset($params['id'])) {
 
-                $id = (int) $params['id'];
+                $id = filter_var($params['id'], FILTER_SANITIZE_NUMBER_INT);
 
                 $projects = $this->projectService->getProjectIdAssignedToUser($_SESSION['userdata']['id']);
 
@@ -61,11 +57,28 @@ namespace leantime\domain\controllers {
                     $this->tpl->redirect("/404/");
                 }
 
-
-
             }else{
 
                 //$this->tpl->redirect("/404/");
+
+            }
+
+        }
+
+
+
+        /**
+         * post - handle post requests (via login for example) and redirects to get
+         *
+         * @access public
+         * @param  paramters or body of the request
+         */
+        public function post($params)
+        {
+            if(isset($_GET['id'])) {
+
+                $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+                $this->tpl->redirect("/projects/changeCurrentProject/".$id);
 
             }
 
