@@ -52,7 +52,7 @@
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
-                              	<a class="imageLink" href="https://<?=$_SERVER['SERVER_NAME']?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                              	<a class="imageLink" href="<?=SITE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                               		<?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
                               			<img style='max-height: 50px; max-width: 70px;' src="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                               		<?php else: ?>

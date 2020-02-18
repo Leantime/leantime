@@ -11,7 +11,7 @@ namespace leantime\core {
     use leantime\domain\repositories;
 
 
-    class FrontController
+    class frontcontroller
     {
 
         /**
