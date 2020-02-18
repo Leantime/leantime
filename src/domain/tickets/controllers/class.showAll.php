@@ -137,19 +137,16 @@ namespace leantime\domain\controllers {
             $tpl->assign("onTheClock", $ticketRepo->isClocked($_SESSION["userdata"]["id"]));
 
 
-
-
-
             //If sprint is empty that means that we don't have a single sprint available. Don't perform search for sprints.
 
             if($searchCriteria["sprint"] != "") {
                 $searchCriteriaSprint = array("currentProject" => $_SESSION["currentProject"], "users" => "", "status" => "", "searchType"=> "", "searchterm" => "", "sprint" => $searchCriteria["sprint"], "milestone" => '');
                 $tpl->assign('allSprintTickets', $ticketRepo->getAllBySearchCriteria($searchCriteriaSprint));
+                $tpl->assign("currentSprint", $searchCriteriaSprint["sprint"]);
             }else{
                 $tpl->assign('allSprintTickets', []);
+                $tpl->assign("currentSprint", "");
             }
-
-            $tpl->assign("currentSprint", $searchCriteriaSprint["sprint"]);
 
             $searchCriteria["sprint"] = 'none';
             $tpl->assign('allBacklogTickets', $ticketRepo->getAllBySearchCriteria($searchCriteria));
