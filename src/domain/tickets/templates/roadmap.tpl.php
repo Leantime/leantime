@@ -33,11 +33,22 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             <div class="col-md-6">
                 <div class="pull-right">
                     <div class="btn-group dropRight">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?> <span class="caret"></span></button>
+
+                        <?php
+                            $currentView = "";
+                            if($roadmapView == 'Day') {
+                                $currentView = $this->__("buttons.day");
+                            }elseif($roadmapView == 'Week') {
+                                $currentView = $this->__("buttons.week");
+                            }elseif($roadmapView == 'Month') {
+                                $currentView = $this->__("buttons.month");
+                            }
+                        ?>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?> <?=$currentView; ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if($roadmapView == 'Day') echo "active";?>"> <?=$this->__("buttons.day"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if($roadmapView == 'Week') echo "active";?>"><?=$this->__("buttons.week"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if($roadmapView == 'Month') echo "active";?>"><?=$this->__("buttons.month"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if($roadmapView == 'Day') echo "active";?>"> <?=$currentView; ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if($roadmapView == 'Week') echo "active";?>"><?=$currentView; ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if($roadmapView == 'Month') echo "active";?>"><?=$currentView; ?></a></li>
                         </ul>
                     </div>
                 </div>

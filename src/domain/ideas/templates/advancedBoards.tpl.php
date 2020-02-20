@@ -4,241 +4,14 @@ defined('RESTRICTED') or die('Restricted access');
 $allCanvas = $this->get("allCanvas");
 $canvasLabels = $this->get("canvasLabels");
 $canvasTitle = "";
+
+//All states >0 (<1 is archive)
+$numberofColumns = count($this->get('canvasLabels'));
+$size = floor((100 / $numberofColumns)* 100) / 100;
 ?>
 
-<script type="text/javascript">
 
 
-    jQuery(window).bind("load", function () {
-        jQuery(".loading").fadeOut();
-        jQuery(".filterBar .row-fluid").css("opacity", "1");
-
-        var maxHeight = 0;
-
-        jQuery("#firstRow .bgColumn").each(function () {
-            if (jQuery(this).height() > maxHeight) {
-                maxHeight = jQuery(this).height();
-            }
-        });
-
-        jQuery("#firstRow .contentInner").css("height", (maxHeight + 100));
-
-
-    });
-
-    jQuery(function () {
-
-        jQuery("#sortableBacklog").disableSelection();
-
-        jQuery(".canvas-select").chosen();
-
-        jQuery(".ticketBox").hover(function () {
-            jQuery(this).css("background", "#f9f9f9");
-        }, function () {
-            jQuery(this).css("background", "#ffffff");
-        });
-
-        jQuery(".contentInner").sortable({
-            connectWith: ".contentInner",
-            items: "> .moveable",
-            tolerance: 'pointer',
-            placeholder: "ui-state-highlight",
-            forcePlaceholderSize: true,
-            cancel: ".portlet-toggle",
-            start: function (event, ui) {
-                ui.item.addClass('tilt');
-                tilt_direction(ui.item);
-            },
-            stop: function (event, ui) {
-                ui.item.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                ui.item.removeData("move_handler");
-            },
-            update: function (event, ui) {
-
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: '/ideas/advancedBoards&raw=true&sort=true',
-                    data:
-                        {
-                <?php foreach($this->get('canvasLabels') as $key => $statusRow){ ?>
-                <?php echo $key ?>:
-                jQuery(".contentInner.status_<?php echo $key ?>").sortable('serialize'),
-                <?php } ?>
-                    statusX
-            :
-                ""
-            }
-            })
-                ;
-
-            }
-        });
-
-        function tilt_direction(item) {
-            var left_pos = item.position().left,
-                move_handler = function (e) {
-                    if (e.pageX >= left_pos) {
-                        item.addClass("right");
-                        item.removeClass("left");
-                    } else {
-                        item.addClass("left");
-                        item.removeClass("right");
-                    }
-                    left_pos = e.pageX;
-                };
-            jQuery("html").bind("mousemove", move_handler);
-            item.data("move_handler", move_handler);
-        }
-
-        jQuery(".portlet")
-            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-            .find(".portlet-header")
-            .addClass("ui-widget-header ui-corner-all")
-            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-
-        jQuery(".portlet-toggle").click(function () {
-            var icon = jQuery(this);
-            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
-            icon.closest(".portlet").find(".portlet-content").toggle();
-        });
-
-
-        jQuery(".addItem").click(function () {
-            jQuery("#box").val(jQuery(this).attr("id"));
-            jQuery('#addItem').modal('show');
-
-        });
-
-
-        jQuery(".addCanvasLink").click(function () {
-
-            jQuery('#addCanvas').modal('show');
-
-        });
-
-        jQuery(".editCanvasLink").click(function () {
-
-            jQuery('#editCanvas').modal('show');
-
-        });
-
-
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
-        leantime.helperController.showHelperModal("advancedBoards");
-        <?php
-        //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
-        } ?>
-
-    });
-
-</script>
-<style type="text/css">
-    #addItem, #editItem {
-        display: none;
-    }
-
-    @media (min-width: 900px) {
-        .row-fluid .span2,
-        .row-fluid .span3 {
-            margin-left: 0.5%;
-            width: 19.6%;
-        }
-    }
-
-
-    .modal-body {
-        max-height: 550px;
-    }
-
-    .modalTextArea {
-        width: 100%;
-    }
-
-    .tilt.right {
-        transform: rotate(3deg);
-        -moz-transform: rotate(3deg);
-        -webkit-transform: rotate(3deg);
-    }
-
-    .tilt.left {
-        transform: rotate(-3deg);
-        -moz-transform: rotate(-3deg);
-        -webkit-transform: rotate(-3deg);
-    }
-
-    .column {
-        box-sizing: border-box;
-        height: auto;
-        width: 100%;
-
-    }
-
-    .column.full {
-        width: 100%;
-    }
-
-    .bgColumn {
-        background: #f0f0f0;
-        border: 1px solid #ccc;
-        padding: 0px;
-    }
-
-    .column .contentInner {
-
-        padding: 10px 5px;
-        min-height: 200px;
-        overflow: auto;
-    }
-
-    .column.full .contentInner {
-        min-height: 100px;
-    }
-
-    .ticketBox:hover {
-        background: #f9f9f9;
-    }
-
-    .ui-state-highlight {
-        background: #aaa;
-        border: 1px dotted #eee;
-        visibility: visible;
-    }
-
-    .portlet {
-        margin: 0 1em 1em 0;
-        padding: 0.3em;
-    }
-
-    .portlet-header {
-        padding: 0.2em 0.3em;
-        margin-bottom: 0.5em;
-        position: relative;
-    }
-
-    .portlet-toggle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        margin-top: -8px;
-    }
-
-    .portlet-content {
-        padding: 0.4em;
-    }
-
-    .portlet-placeholder {
-        border: 1px dotted black;
-        margin: 0 1em 1em 0;
-        height: 50px;
-    }
-
-    .reducePadding {
-        padding-right: 0px;
-    }
-</style>
 <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
@@ -292,14 +65,11 @@ $canvasTitle = "";
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
-                    <div class="btn-group mt-1 mx-auto" role="group">
-
-                        <a href="/ideas/showBoards"
-                           class="btn btn-sm btn-secondary"><?php echo $this->__("buttons.idea_wall") ?></a>
-                        <a href="/ideas/advancedBoards"
-                           class="btn btn-sm btn-secondary active"><?php echo $this->__("buttons.idea_kanban") ?></a>
-
-                    </div>
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.idea_kanban") ?> <?=$this->__("links.view") ?></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/ideas/showBoards" ><?php echo $this->__("buttons.idea_wall") ?></a></li>
+                        <li><a href="/ideas/advancedBoards" class="active"><?php echo $this->__("buttons.idea_kanban") ?></a></li>
+                    </ul>
 
                 </div>
             </div>
@@ -309,393 +79,117 @@ $canvasTitle = "";
         <div class="clearfix"></div>
         <?php if (count($this->get('allCanvas')) > 0) { ?>
 
-            <div id="sortableBacklog" class="sortableTicketList" style="padding-top:10px;">
+            <div id="sortableIdeaKanban" class="sortableTicketList">
 
-                <div class="row" id="firstRow">
+                <div class="row-fluid">
 
-                    <div class="col-md-2 reducePadding">
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=idea"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php $this->e($canvasLabels["idea"]); ?>
-                            </h4>
-                            <div class="contentInner status_idea">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "idea" || $row["box"] == "0") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
+                    <?php foreach($this->get('canvasLabels') as $key => $statusRow){
 
 
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
+                        ?>
 
-                                                    <div class="col-md-5">
-                                                        <?php $this->e(substr($row['milestoneHeadline'], 0, 10)); ?>
-                                                        [...]
+                    <div class="column" style="width:<?=$size?>%;">
+
+                        <h4 class="widgettitle title-primary">
+                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
+                                <a href="/setting/editBoxLabel&module=idealabels&label=<?=$key?>"
+                                   class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                            <?php } ?>
+                            <?php $this->e($statusRow["name"]); ?>
+                        </h4>
+
+                        <div class="contentInner status_<?=$key?>">
+
+                            <?php foreach ($this->get('canvasItems') as $row) { ?>
+                                <?php if ($row["box"] == $key) { ?>
+                                    <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+
+                                                <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                                    <div class="inlineDropDownContainer" style="float:right;">
+
+                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
+                                                            <li><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                            <li><a href="/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+
+                                                        </ul>
                                                     </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
-                                                    </div>
+                                                <?php } ?>
+
+                                                <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
+                                                       data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
+
+                                                <div class="mainIdeaContent">
+                                                    <?php echo($row["data"]); ?>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
-                                                            </div>
+
+                                                <div class="clearfix" style="padding-bottom: 8px;"></div>
+
+                                                <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">
+                                                                        <?php if($row["authorFirstname"] != ""){
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }else {
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }?>
+                                                                    </span>
+
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                                        <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+
+                                                        <?php foreach($this->get('users') as $user){
+                                                            echo"<li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                            echo"</li>";
+                                                        }?>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <?php if ($row['milestoneHeadline'] != '') { ?>
+                                            <br/>
+                                            <hr/>
+                                            <div class="row">
+
+                                                <div class="col-md-5">
+                                                    <?php $this->e(substr($row['milestoneHeadline'], 0, 10)); ?>[...]
+                                                </div>
+                                                <div class="col-md-7" style="text-align:right">
+                                                    <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-success" role="progressbar"
+                                                             aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0"
+                                                             aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
+                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
+                                            </div>
+                                        <?php } ?>
+
+                                    </div>
                                 <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=idea" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
-                        </div>
-                    </div>
+                            <?php } ?>
 
-                    <div class="col-md-2 reducePadding">
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=research"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php echo $canvasLabels["research"]; ?>
-                            </h4>
-                            <div class="contentInner status_research">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "research") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php echo $row["description"]; ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
-
-
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
-
-                                                    <div class="col-md-5">
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-
-                                        </div>
-
-                                    <?php } ?>
-                                <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=research" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2 reducePadding">
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=prototype"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php echo $canvasLabels["prototype"]; ?>
-                            </h4>
-                            <div class="contentInner status_prototype">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "prototype") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php echo $row["description"]; ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
-
-
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
-
-                                                    <div class="col-md-5">
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?= sprintf($this->__("text.percent_complete"), $row['percentDone']) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=prototype" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2 reducePadding">
-
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=validation"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php echo $canvasLabels["validation"]; ?>
-                            </h4>
-                            <div class="contentInner status_validation">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "validation") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php echo $row["description"]; ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
-
-
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
-
-                                                    <div class="col-md-5">
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=validation" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
                         </div>
 
                     </div>
 
-                    <div class="col-md-2 reducePadding">
+                    <?php } ?>
 
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=implemented"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php echo $canvasLabels["implemented"]; ?>
-                            </h4>
-                            <div class="contentInner status_implemented">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "implemented") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php echo $row["description"]; ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
-
-
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
-
-                                                    <div class="col-md-5">
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=implemented" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2 ">
-
-                        <div class="column bgColumn">
-                            <h4 class="widgettitle title-primary">
-                                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                    <a href="/setting/editBoxLabel&module=idealabels&label=deferred"
-                                       class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                                <?php } ?>
-                                <?php echo $canvasLabels["deferred"]; ?>
-                            </h4>
-                            <div class="contentInner status_deferred">
-                                <?php foreach ($this->get('canvasItems') as $row) { ?>
-                                    <?php if ($row["box"] == "deferred") { ?>
-                                        <div class="ticketBox moveable" id="item_<?php echo $row["id"]; ?>">
-
-
-                                            <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                                                   data="item_<?php echo $row["id"]; ?>"><?php echo $row["description"]; ?></a>
-                                            </h4>
-                                            <br/>
-                                            <?php echo nl2br($row["data"]); ?>
-                                            <br/><br/>
-
-
-                                            <span class="author"><span
-                                                        class="iconfa-user"></span> <?php echo $row["authorFirstname"]; ?> <?php echo $row["authorLastname"]; ?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?><?php echo $this->__("text.comments") ?>
-                                            <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
-                                            <?php if ($row['milestoneHeadline'] != '') { ?>
-                                                <br/>
-                                                <hr/>
-                                                <div class="row">
-
-                                                    <div class="col-md-5">
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                 role="progressbar"
-                                                                 aria-valuenow="<?php echo $row['percentDone']; ?>"
-                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                 style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                <?php } ?>
-                                <br/>
-                                <a href="/ideas/ideaDialog&type=deferred" class="ideaModal"
-                                   id="customersegment"><?php echo $this->__("links.add_more") ?></a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -780,4 +274,26 @@ $canvasTitle = "";
 
     </div>
 </div>
-        
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+
+        leantime.ideasController.initBoardControlModal();
+        leantime.ideasController.setKanbanHeights();
+
+        var ideaStatusList = [<?php foreach($canvasLabels as $key => $statusRow){ echo "'".$key."',"; }?>];
+        leantime.ideasController.initIdeaKanban(ideaStatusList);
+        leantime.ideasController.initUserDropdown();
+
+
+        <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
+        leantime.helperController.showHelperModal("advancedBoards");
+        <?php
+        //Only show once per session
+        $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
+        } ?>
+
+    });
+
+</script>

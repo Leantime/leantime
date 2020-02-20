@@ -9,6 +9,7 @@ include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
 define('SITE_URL', $settings->getSiteURL());
+define('CURRENT_URL', $settings->getFullURL());
 
 $login = new leantime\core\login(leantime\core\session::getSID());
 
@@ -36,5 +37,3 @@ $application->start();
 if(ob_get_length() > 0) {
     ob_end_flush();
 }
-
-

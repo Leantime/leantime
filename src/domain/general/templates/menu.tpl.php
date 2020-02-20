@@ -77,7 +77,7 @@
                 <?php echo $this->displayLink('ideas.showBoards', '<span class="far fa-lightbulb"></span>'.$this->__('Ideas', false).'') ?>
             </li>
             <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
-                <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Progress Review'); ?>
+                <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Retrospectives'); ?>
             </li>
             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
                 <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>

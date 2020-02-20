@@ -4,8 +4,6 @@
     	<div >
     		
     		<?php echo $this->displayNotification() ?>
-    		
-
 
 			<div class='mediamgr'>
 			 <div class='mediamgr_left'>
@@ -34,7 +32,6 @@
 					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 		
 					</form>	
-					
 
 					</div> 
                     
@@ -121,12 +118,14 @@
 
             <?php if(isset($_GET['modalPopUp'])) { ?>
                 jQuery('#medialist a.imageLink').click(function(event){
-                    console.log("Loading Image");
+
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
                     var url = jQuery(this).attr("href");
-                    jQuery("#"+window.tinyMceUploadFieldname).val(url);
+
+                    //File picker upload callback from tinymce
+                    window.filePickerCallback(url, {text: "file"});
 
                     jQuery.nmTop().close();
                 });

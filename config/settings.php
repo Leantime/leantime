@@ -33,29 +33,39 @@ class settings {
 	public function loadSettings(){
 
 		date_default_timezone_set('America/Los_Angeles');
+        error_reporting(E_ALL);
 
-		if($this->debug == 1){
-			ini_set('display_errors', TRUE);
-			error_reporting(E_ALL);
+		if($this->debug === 1){
+			ini_set('display_errors', 1);
 		}else{
-			ini_set('display_errors', FALSE);
+			ini_set('display_errors', 0);
 		}
 
 		ini_set('session.use_cookies',1);
 		ini_set('session.use_only_cookies',1);
+        ini_set('session.cookie_httponly',1);
 		ini_set('session.use_trans_sid',0);
-				
+
 		ini_set("log_errors", 1);
+
+        ini_set('error_log', '../resource/logs/error.log');
+
 
 	}
 
 	public function getSiteURL () {
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        $domainName = $_SERVER['HTTP_HOST'].'/';
+        $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 
 	}
+
+    public function getFullURL () {
+
+        return $this->getSiteURL().$_SERVER['REQUEST_URI'];
+
+    }
 
 }
 

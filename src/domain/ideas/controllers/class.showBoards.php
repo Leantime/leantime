@@ -25,6 +25,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $ideaRepo = new repositories\ideas();
+            $projectService = new services\projects();
 
             $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -109,7 +110,7 @@ namespace leantime\domain\controllers {
                         "box" => $_POST['box'],
                         "author" => $_SESSION['userdata']["id"],
                         "description" => $_POST['description'],
-                        "status" => "",
+                        "status" => "idea",
                         "assumptions" =>"",
                         "data" => "",
                         "conclusion" => $_POST['conclusion'],
@@ -162,8 +163,11 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('currentCanvas', $currentCanvasId);
 
+            $tpl->assign('canvasLabels', $ideaRepo->getCanvasLabels());
+
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $ideaRepo->getCanvasItemsById($currentCanvasId));
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
 
             if (isset($_GET["raw"]) === false) {

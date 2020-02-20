@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class advancedBoards
     {
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $ideaRepo = new repositories\ideas();
+            $projectService = new services\projects();
 
             $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -166,9 +168,10 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('currentCanvas', $currentCanvasId);
 
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $ideaRepo->getCanvasItemsById($currentCanvasId));
-            $tpl->assign('canvasLabels', $ideaRepo->canvasTypes);
+            $tpl->assign('canvasLabels', $ideaRepo->getCanvasLabels());
 
             if (isset($_GET["raw"]) === false) {
                 $tpl->display('ideas.advancedBoards');

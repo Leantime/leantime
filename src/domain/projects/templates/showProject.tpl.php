@@ -102,9 +102,7 @@
 
                 </div>
                 
-                    <div
-
-                            id="integrations">
+                    <div id="integrations">
 
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
                         <div class="row">

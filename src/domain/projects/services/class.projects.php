@@ -221,7 +221,6 @@ namespace leantime\domain\services {
 
             if($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== ""){
 
-
                 $zulipWebhook = unserialize($zulipWebhookSerialized);
 
                 $botEmail = $zulipWebhook['zulipEmail'];

@@ -124,6 +124,7 @@ namespace leantime\domain\repositories {
 
         public function getStateLabels()
         {
+            //Todo: Remove!
             unset($_SESSION["projectsettings"]["ticketlabels"]);
 
             if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
@@ -801,7 +802,7 @@ namespace leantime\domain\repositories {
 						
 						WHERE zp_relationuserproject.userId = :userId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-            if($searchCriteria["currentProject"]  != "") {
+            if($_SESSION['currentProject']  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
@@ -851,7 +852,8 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
-            if($searchCriteria["currentProject"]  != "") {
+            if($_SESSION['currentProject'] != "") {
+
                 $stmn->bindValue(':projectId', $_SESSION['currentProject'], PDO::PARAM_INT);
             }
 

@@ -50,11 +50,26 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true){
+            if(isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
 
                 $sortOrder = $params["payload"];
 
                 $results = $this->ideaAPIRepo->updateIdeaSorting($sortOrder);
+
+                if ($results === true) {
+
+                    echo "{status:ok}";
+
+                } else {
+
+                    echo "{status:failure}";
+
+                }
+
+            }elseif(isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true){
+
+
+                $results = $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"]);
 
                 if($results === true) {
 
@@ -82,7 +97,13 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
+            $results = $this->ideaAPIRepo->patchCanvasItem($params['id'], $params);
 
+            if($results === true) {
+                echo "{status:ok}";
+            }else{
+                echo "{status:failure}";
+            }
         }
 
         /**

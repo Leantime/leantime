@@ -1,57 +1,10 @@
 <?php
-
 defined('RESTRICTED') or die('Restricted access');
 $allCanvas = $this->get("allCanvas");
 $canvasTitle = "";
+$canvasLabels = $this->get('canvasLabels');
 ?>
 
-
-<style type="text/css">
-    #addItem, #editItem {
-        display: none;
-    }
-
-    #ideaMason .ticketBox {
-        width: 250px;
-        cursor:move;
-        z-index:5;
-
-    }
-
-    #ideaMason .ticketBox:hover {
-        background:#f9f9f9;
-    }
-
-    @media (min-width: 900px) {
-        .row-fluid .span2,
-        .row-fluid .span3 {
-            margin-left: 0.5%;
-            width: 19.6%;
-        }
-    }
-
-    .packery-drop-placeholder {
-        background:#ddd;
-        border: 2px dotted #ccc;
-        visibility:visible;
-        /* transition position changing */
-        -webkit-transition: -webkit-transform 0.2s;
-        transition: transform 0.2s;
-    }
-
-
-    .modal-body {
-        max-height: 550px;
-    }
-
-    .modalTextArea {
-        width: 100%;
-    }
-
-    .sortableTicketList .ticketBox {
-        cursor: default;
-    }
-</style>
 <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
@@ -104,11 +57,12 @@ $canvasTitle = "";
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
-                    <div class="btn-group mt-1 mx-auto" role="group">
-                        <a href="/ideas/showBoards"
-                           class="btn btn-sm btn-secondary active"><?php echo $this->__("buttons.idea_wall") ?></a>
-                        <a href="/ideas/advancedBoards"
-                           class="btn btn-sm btn-secondary "><?php echo $this->__("buttons.idea_kanban") ?></a>
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.idea_wall") ?> <?=$this->__("links.view") ?></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="/ideas/showBoards" class="active"><?php echo $this->__("buttons.idea_wall") ?></a></li>
+                            <li><a href="/ideas/advancedBoards" class=""><?php echo $this->__("buttons.idea_kanban") ?></a></li>
+                        </ul>
                     </div>
 
                 </div>
@@ -126,19 +80,76 @@ $canvasTitle = "";
 
                     <div class="ticketBox" id="item_<?php echo $row["id"]; ?>" data-value="<?php echo $row["id"]; ?>">
 
-                        <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
-                               data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
-                        <br/>
-                        <div class="mainIdeaContent">
-                            <?php echo($row["data"]); ?>
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                    <div class="inlineDropDownContainer" style="float:right;">
+
+                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
+                                            <li><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                            <li><a href="/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+
+                                        </ul>
+                                    </div>
+                                <?php } ?>
+
+                                <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
+                                       data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
+
+                                <div class="mainIdeaContent">
+                                    <?php echo($row["data"]); ?>
+                                </div>
+
+                                <div class="clearfix" style="padding-bottom: 8px;"></div>
+
+                                <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
+                                    <a class="dropdown-toggle f-left status <?=$canvasLabels[$row['box']]['class'] ?> " href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text"><?php
+                                                                        echo $canvasLabels[$row['box']]['name'];
+                                                                        ?>
+                                                                    </span>
+                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
+                                        <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
+
+                                        <?php foreach($canvasLabels as $key=>$label){
+                                            echo"<li class='dropdown-item'>
+                                                <a href='javascript:void(0);' class='".$label['class']."' data-label='".$this->escape($label['name'])."' data-value='".$row['id']."_".$key."_".$label['class']."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label['name'])."</a>";
+                                            echo"</li>";
+                                        }?>
+                                    </ul>
+                                </div>
+
+                                <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">
+                                                                        <?php if($row["authorFirstname"] != ""){
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }else {
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }?>
+                                                                    </span>
+
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                        <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+
+                                        <?php foreach($this->get('users') as $user){
+                                            echo"<li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                            echo"</li>";
+                                        }?>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <br/><br/>
 
-
-                        <span class="author"><span
-                                    class="iconfa-user"></span> <?php $this->e($row["authorFirstname"]); ?> <?php $this->e($row["authorLastname"]); ?></span>&nbsp;
-                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> <?php echo $this->__("text.comments") ?>
-                        <br/><?=sprintf($this->__("text.last_modified"), date_format(new DateTime($row["modified"]), $this->__("language.dateformat"))) ?>
                         <?php if ($row['milestoneHeadline'] != '') { ?>
                             <br/>
                             <hr/>
@@ -254,104 +265,14 @@ $canvasTitle = "";
 
     jQuery(document).ready(function () {
 
-
-        var $grid = jQuery('#ideaMason').packery({
-            // options
-            itemSelector: '.ticketBox',
-            columnWidth: 260,
-            isResizable: true
-        });
-
-        $grid.imagesLoaded().progress(function () {
-            $grid.packery('layout');
-        });
-
-        var $items = $grid.find('.ticketBox').draggable({
-            start: function (event, ui) {
-                ui.helper.addClass('tilt');
-                tilt_direction(ui.helper);
-            },
-            stop: function (event, ui) {
-                ui.helper.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.helper.data("move_handler"));
-                ui.helper.removeData("move_handler");
-            },
-        });
-
-        function tilt_direction(item) {
-            var left_pos = item.position().left,
-                move_handler = function (e) {
-                    if (e.pageX >= left_pos) {
-                        item.addClass("right");
-                        item.removeClass("left");
-                    } else {
-                        item.addClass("left");
-                        item.removeClass("right");
-                    }
-                    left_pos = e.pageX;
-                };
-            jQuery("html").bind("mousemove", move_handler);
-            item.data("move_handler", move_handler);
-        }
-        // bind drag events to Packery
-        $grid.packery( 'bindUIDraggableEvents', $items );
-
-        function orderItems() {
-            var ideaSort = [];
-
-            var itemElems = $grid.packery('getItemElements');
-            jQuery( itemElems ).each( function( i, itemElem ) {
-                var sortIndex = i + 1;
-                var ideaId = jQuery( itemElem ).attr("data-value");
-                ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
-            });
-
-            // POST to server using $.post or $.ajax
-            jQuery.ajax({
-                type: 'POST',
-                url: '/api/ideas',
-                data: {
-                    action:"ideaSort",
-                    payload: ideaSort
-                }
-
-            });
-        }
-
-
-        $grid.on( 'dragItemPositioned',orderItems);
-
-
-        jQuery(".canvas-select").chosen();
-
-        jQuery(".addItem").click(function () {
-            jQuery("#box").val(jQuery(this).attr("id"));
-            jQuery('#addItem').modal('show');
-
-        });
-
-        jQuery(".addCanvasLink").click(function () {
-
-            jQuery('#addCanvas').modal('show');
-
-        });
-
-        jQuery(".editCanvasLink").click(function () {
-
-            jQuery('#editCanvas').modal('show');
-
-        });
-
-
-
-        jQuery('.mainIdeaContent img').each(function () {
-            jQuery(this).wrap("<a href='" + jQuery(this).attr("src") + "' class='imageModal'></a>");
-        });
-
-        jQuery(".imageModal").nyroModal();
+        leantime.ideasController.initMasonryWall();
+        leantime.ideasController.initBoardControlModal();
+        leantime.ideasController.initWallImageModals();
+        leantime.ideasController.initStatusDropdown();
+        leantime.ideasController.initUserDropdown();
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
-        leantime.helperController.showHelperModal("ideaBoard");
+            leantime.helperController.showHelperModal("ideaBoard");
         <?php
         //Only show once per session
         $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
@@ -370,7 +291,6 @@ $canvasTitle = "";
 
         <?php } ?>
     });
-
 
 </script>
 

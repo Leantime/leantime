@@ -84,25 +84,23 @@ namespace leantime\domain\repositories {
                 $query.= " AND (zp_timesheets.userId= :userId)";
             }
 
+
+
             if($invComp == '1' && $invEmpl == '1') {
 
+                $query.= " AND (zp_timesheets.invoicedComp = 1 AND zp_timesheets.invoicedEmpl = 1)";
 
             }elseif($invComp == '1' && $invEmpl != '1') {
 
-                $query.= " AND (zp_timesheets.invoicedComp = '1')";
-
+                $query.= " AND (zp_timesheets.invoicedComp = 1 AND (zp_timesheets.invoicedEmpl <> 1 OR zp_timesheets.invoicedEmpl IS NULL) )";
 
             }elseif($invComp != '1' && $invEmpl == '1') {
 
-                $query.= " AND (zp_timesheets.invoicedComp <> '1')";
-
-            }else{
-
-                $query.= " AND ((zp_timesheets.invoicedComp = '0' OR zp_timesheets.invoicedComp IS NULL) AND (zp_timesheets.invoicedEmpl = '0' OR zp_timesheets.invoicedEmpl IS NULL))";
+                $query.= " AND ((zp_timesheets.invoicedComp <> 1 OR zp_timesheets.invoicedComp IS NULL)  AND zp_timesheets.invoicedEmpl = 1)";
 
             }
 
-            $query.= "GROUP BY
+            $query.= " GROUP BY
 		                zp_timesheets.id, 
                         zp_timesheets.userId, 
                         zp_timesheets.ticketId,
@@ -110,6 +108,7 @@ namespace leantime\domain\repositories {
                         zp_timesheets.hours,
                         zp_timesheets.description,
                         zp_timesheets.kind";
+
 
 
             $stmn = $this->db->database->prepare($query);
@@ -568,11 +567,11 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_INT);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_INT);
-            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_INT);
-            $stmn->bindValue(':ticketId', $values['ticket'], PDO::PARAM_INT);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_INT);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
+            $stmn->bindValue(':ticketId', $values['ticket'], PDO::PARAM_STR);
+            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
 
 
             $stmn->execute();
@@ -874,6 +873,82 @@ namespace leantime\domain\repositories {
             }
 
             return $onTheClock;
+        }
+
+        /**
+         * getTicketHours - get the Ticket hours for a specific ticket
+         *
+         * @access public
+         */
+        public function getTicketHours($ticketId)
+        {
+            /*
+
+            $sql = "SELECT * FROM `zp_timesheets`
+                        WHERE ticketId = :ticketId ORDER BY workDate asc";
+
+            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn->bindValue(':ticketId',$ticketId,PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+
+            $hours = 0;
+
+            $results = $this->db->dbQuery($sql)->dbFetchResults();
+
+
+            foreach($results as $timesheet) {
+                $hours += $timesheet['hours'];
+            }
+            */
+
+
+
+            $query = "SELECT
+				YEAR(zp_timesheets.workDate) AS year,
+				DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
+				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
+				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
+				(zp_timesheets.hours) AS summe
+			
+			FROM 
+				zp_timesheets 
+			WHERE 
+				zp_timesheets.ticketId = :ticketId
+			ORDER BY utc
+			";
+
+            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+
+            $returnValues = array();
+
+            if(count($values) >0) {
+                $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
+                $endDate = "".$values[(count($values)-1)]['utc']."";
+
+
+                $returnValues = $this->dateRange($startDate, $endDate);
+
+                foreach($values as $row) {
+
+                    $returnValues[$row['utc']]["summe"] = $row['summe'];
+
+                }
+            }else{
+                $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
+                $returnValues[date("%Y-%m-%d")]["summe"] = 0;
+            }
+
+            return $returnValues;
         }
 
 

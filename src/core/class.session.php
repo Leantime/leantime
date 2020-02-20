@@ -40,18 +40,19 @@ class session
         
         $this->sessionpassword = $config->sessionpassword;
 
-        //Get sid
+        //Get sid from cookie
         if(isset($_COOKIE['sid']) === true) {
             
             self::$sid=htmlspecialchars($_COOKIE['sid']);
-            
+
         }
 
         $testSession = explode('-', self::$sid);
 
+        //Don't allow session ids from user.
         if(is_array($testSession) === true && count($testSession) > 1) {
 
-            $testMD5 = md5($testSession[0].$this->sessionpassword);
+            $testMD5 = hash('sha1', $testSession[0].$this->sessionpassword);
 
             if($testMD5 !== $testSession[1]) {
 
@@ -64,8 +65,7 @@ class session
             self::makeSID();
 
         }
-        
-        
+
         session_name("sid");
         session_id(self::$sid);
         session_start();
@@ -113,12 +113,11 @@ class session
     private function makeSID()
     {
 
-        $tmp = md5((string)mt_rand() . $_SERVER['REMOTE_ADDR'] . time());
+        $tmp = hash('sha1', (string)mt_rand(32,32) . $_SERVER['REMOTE_ADDR'] . time());
 
-        self::$sid=$tmp .'-'.md5($tmp.$this->sessionpassword);
+        self::$sid=$tmp .'-'.hash('sha1', $tmp.$this->sessionpassword);
 
     }
-
 
 }
 

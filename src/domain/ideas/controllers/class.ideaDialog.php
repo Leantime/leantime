@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
                     "id"=>"",
                     "box" => $params['type'],
                     "description" => "",
-                    "status" => "danger",
+                    "status" => "idea",
                     "assumptions" => "",
                     "data" => "",
                     "conclusion" => "",
