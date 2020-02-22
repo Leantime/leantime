@@ -847,6 +847,8 @@ namespace leantime\domain\repositories {
                 $query .= " ORDER BY zp_tickets.sortindex ASC";
             }else if($sort == "kanbansort") {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC";
+            }else if($sort == "duedate") {
+                    $query .= " ORDER BY zp_tickets.dateToFinish ASC";
             }
 
             $stmn = $this->db->database->prepare($query);

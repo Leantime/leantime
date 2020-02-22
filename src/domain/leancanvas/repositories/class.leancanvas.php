@@ -98,6 +98,7 @@ namespace leantime\domain\repositories {
                 if($values !== false) {
                     $labels = unserialize($values['value']);
                     $_SESSION["projectsettings"]["researchlabels"] = $labels;
+
                 }else{
 
                     foreach($this->canvasTypes as $key => $typeLabel){

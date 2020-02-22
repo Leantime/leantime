@@ -125,6 +125,8 @@ leantime.ticketsController = (function () {
                         gantt_chart.change_view_mode(mode);
                         $btn.parent().parent().find('a').removeClass('active');
                         $btn.addClass('active');
+                        var label = $btn.text();
+                        jQuery(".viewText").text(label);
                     }
                 );
 

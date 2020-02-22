@@ -2,13 +2,12 @@
 
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
-define('DOMAIN', $_SERVER['SERVER_NAME']);
 
 include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
-define('SITE_URL', $settings->getSiteURL());
+define('BASE_URL', $settings->getBaseURL());
 define('CURRENT_URL', $settings->getFullURL());
 
 $login = new leantime\core\login(leantime\core\session::getSID());

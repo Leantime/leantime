@@ -27,24 +27,21 @@ namespace leantime\domain\controllers {
         {
 
             $tpl = new core\template();
-            $leancanvasRepo = new repositories\leancanvas();
+            $retroRepo = new repositories\retrospectives();
+            $language = new core\language();
 
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
-            $msgKey = '';
-
             if (isset($_POST['del']) && isset($id)) {
 
-                $leancanvasRepo->delCanvasItem($id);
+                $retroRepo->delCanvasItem($id);
 
-                $msgKey = 'TICKET_DELETED';
+                $tpl->setNotification($language->__("notification.retrospective_item_deleted"), "success");
+                $tpl->redirect("/retrospectives/showBoards");
 
-                $_SESSION["msg"] = "CANVAS_ITEM_DELETED";
-                $_SESSION["msgT"] = "success";
-                header("Location: /retrospectives/showBoards/");
 
             }
 

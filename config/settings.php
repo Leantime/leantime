@@ -53,7 +53,7 @@ class settings {
 
 	}
 
-	public function getSiteURL () {
+	public function getBaseURL () {
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'].'';
@@ -63,7 +63,7 @@ class settings {
 
     public function getFullURL () {
 
-        return $this->getSiteURL().$_SERVER['REQUEST_URI'];
+        return $this->getBaseURL().$_SERVER['REQUEST_URI'];
 
     }
 

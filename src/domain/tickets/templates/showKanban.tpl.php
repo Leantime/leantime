@@ -174,7 +174,6 @@
 		    </div>
 		</form>
 
-
 		<div id="sortableTicketKanban" class="sortableTicketList">
 			
 			<div class="row-fluid">
@@ -232,7 +231,7 @@
                                                     ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
-                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">

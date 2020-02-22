@@ -147,7 +147,7 @@ namespace leantime\domain\services {
         public function getOpenUserTicketsThisWeekAndLater ($userId, $projectId) {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria);
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $tickets = array(
                 "thisWeek" => array(),

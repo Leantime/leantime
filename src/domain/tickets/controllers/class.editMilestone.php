@@ -112,7 +112,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('helper', new core\helper());
 
                     $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
-                    $actual_link = SITE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
                     $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_comment_milestone_cta")));
 
@@ -125,7 +125,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
 
                     $subject = $this->language->__("email_notifications.milestone_update_subject");
-                    $actual_link = SITE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
                     $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_update_cta")));
 
@@ -145,7 +145,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__("notification.milestone_created_successfully"), "success");
 
                     $subject = $this->language->__("email_notifications.milestone_created_subject");
-                    $actual_link = SITE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
                     $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_created_cta")));
 

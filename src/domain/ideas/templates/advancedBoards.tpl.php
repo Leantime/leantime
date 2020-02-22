@@ -83,10 +83,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                 <div class="row-fluid">
 
-                    <?php foreach($this->get('canvasLabels') as $key => $statusRow){
-
-
-                        ?>
+                    <?php foreach($this->get('canvasLabels') as $key => $statusRow){?>
 
                     <div class="column" style="width:<?=$size?>%;">
 

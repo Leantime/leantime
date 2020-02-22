@@ -17,7 +17,7 @@ namespace leantime\domain\controllers {
         {
 
             $tpl = new core\template();
-            $ideaRepo = new repositories\ideas();
+            $leancanvasRepo = new repositories\leancanvas();
             $language = new core\language();
 
             if (isset($_GET['id'])) {
@@ -26,7 +26,7 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['del']) && isset($id)) {
 
-                $ideaRepo->deleteCanvas($id);
+                $leancanvasRepo->deleteCanvas($id);
 
                 $tpl->setNotification($language->__("notification.research_board_deleted"), "success");
                 $tpl->redirect("/leancanvas/simpleCanvas");

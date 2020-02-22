@@ -26,8 +26,6 @@ namespace leantime\domain\controllers {
                 $id = (int)($_GET['id']);
             }
 
-            $msgKey = '';
-
             if (isset($_POST['del']) && isset($id)) {
 
                 $leancanvasRepo->delCanvasItem($id);

@@ -27,9 +27,9 @@ namespace leantime\domain\repositories {
         private $db='';
 
         public $canvasTypes = array(
-            "well"=>"Continue - What went well?",
-            "notwell"=>"Stop - What should we stop doing?",
-            "startdoing"=>"Start - What should we start doing to improve?"
+            "well"=>"status.continue" ,
+            "notwell"=>"status.stop_doing" ,
+            "startdoing"=>"status.start_doing"
             );
 
         /**
@@ -42,6 +42,8 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->language = new core\language();
+
             $this->canvasTypes = $this->getCanvasLabels();
 
         }
@@ -49,8 +51,8 @@ namespace leantime\domain\repositories {
         public function getCanvasLabels()
         {
 
+            unset($_SESSION["projectsettings"]["retrolabels"]);
             if(isset($_SESSION["projectsettings"]["retrolabels"])) {
-
 
                 return $_SESSION["projectsettings"]["retrolabels"];
 
@@ -68,11 +70,18 @@ namespace leantime\domain\repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-                $labels = $this->canvasTypes;
                 if($values !== false) {
+
                     $labels = unserialize($values['value']);
                     $_SESSION["projectsettings"]["retrolabels"] = $labels;
+
                 }else{
+
+                    foreach($this->canvasTypes as $key => $typeLabel){
+                        $this->canvasTypes[$key] = $this->language->__($typeLabel);
+                    }
+
+                    $labels = $this->canvasTypes;
                     $_SESSION["projectsettings"]["retrolabels"] = $this->canvasTypes;
                 }
 
@@ -251,8 +260,10 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.status,						
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
+						t1.profileId AS authorProfileId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
+						
 						COUNT(DISTINCT zp_comment.id) AS commentCount,
 						SUM(CASE WHEN progressTickets.status = 0 THEN 1 ELSE 0 END) AS doneTickets,
 						COUNT(progressTickets.id) AS allTickets,

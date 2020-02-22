@@ -42,7 +42,7 @@ namespace leantime\domain\services {
 
                 if($this->commentRepository->addComment($mapper, $module)) {
 
-                    $currentUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $currentUrl = CURRENT_URL;
 
                     switch($module) {
                         case "ticket":

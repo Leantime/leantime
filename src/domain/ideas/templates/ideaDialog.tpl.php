@@ -68,7 +68,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php if ($canvasItem['milestoneId'] == '') { ?>
                     <li class="ui-state-default center" id="milestone_0">
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
-                        <?php echo $this->__("text.use_milestone_to_track_retro") ?><br/>
+                        <?php echo $this->__("text.text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
@@ -125,7 +125,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 } else {
 
                     if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
-                        $date = "No Date defined";
+                        $date = $this->__("text.no_date_defined");
                     } else {
                         $date = new DateTime($canvasItem['milestoneEditTo']);
                         $date = $date->format($this->__("language.dateformat"));

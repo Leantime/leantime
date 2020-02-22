@@ -19,7 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $ideaRepo = new repositories\ideas();
-
+            $language = new core\language();
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
 
                 $ideaRepo->deleteCanvas($id);
 
-                $tpl->setNotification("Board successfully deleted", "success");
+                $tpl->setNotification($language->__("notification.idea_board_deleted"), "success");
                 $tpl->redirect("/ideas/showBoards");
 
             }
