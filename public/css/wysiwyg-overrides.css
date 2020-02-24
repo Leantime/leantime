@@ -4,4 +4,5 @@
 
 body .tox-tinymce {
     border-radius:3px;
+    z-index: 10;
 }

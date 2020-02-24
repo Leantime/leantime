@@ -24,24 +24,25 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
 
-
             if (isset($_GET['id']) === true) {
 
                 $id = (int)($_GET['id']);
 
                 $msgKey = '';
 
-
                 if (isset($_POST['del']) === true) {
 
-                    $calendarRepo->delEvent($id);
+                    if($calendarRepo->delPersonalEvent($id) == true) {
 
-                    $msgKey = 'Event was removed';
+                        $tpl->setNotification('notification.event_removed_successfully', 'success');
+
+                    }else{
+
+                        $tpl->setNotification('notification.could_not_delete_event', 'success');
+
+                    }
 
                 }
-
-
-                $tpl->assign('msg', $msgKey);
 
                 $tpl->display('calendar.delEvent');
 

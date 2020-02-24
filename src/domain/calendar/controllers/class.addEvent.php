@@ -23,7 +23,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
-            $helper = new core\helper();
+
 
             $values = array(
                 'description' => '',
@@ -41,12 +41,12 @@ namespace leantime\domain\controllers {
                 }
 
                 if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                    $dateFrom = $helper->date2timestamp($_POST['dateFrom'], $_POST['timeFrom']);
+                    $dateFrom = date('Y-m-d H:i:01', strtotime($_POST['dateFrom']." ".$_POST['timeFrom']));
                 }
 
 
                 if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                    $dateTo = $helper->date2timestamp($_POST['dateTo'], $_POST['timeTo']);
+                    $dateTo = date('Y-m-d H:i:01', strtotime($_POST['dateTo']." ".$_POST['timeTo']));
                 }
 
 
@@ -59,27 +59,20 @@ namespace leantime\domain\controllers {
 
                 if ($values['description'] !== '') {
 
-                    if ($helper->validateTime($_POST['timeFrom']) === true) {
+                    $calendarRepo->addEvent($values);
 
-                        $calendarRepo->addEvent($values);
-
-                        $msgKey = $tpl->setNotification('SAVE_SUCCESS', 'success');
-
-                    } else {
-                        $tpl->setNotification('WRONG_TIME_FORMAT', 'error');
-                    }
+                    $tpl->setNotification('notification.event_created_successfully', 'success');
 
                 } else {
 
-                    $tpl->setNotification('NO_DESCRIPTION', 'error');
+                    $tpl->setNotification('notification.please_enter_title', 'error');
 
                 }
 
                 $tpl->assign('values', $values);
             }
 
-            $tpl->assign('helper', $helper);
-
+            $tpl->assign('values', $values);
             $tpl->display('calendar.addEvent');
 
         }

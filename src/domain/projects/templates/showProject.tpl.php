@@ -73,11 +73,11 @@
                         <ul id='medialist' class='listfile'>
                                 <?php foreach($this->get('files') as $file): ?>
                                                 <li class="<?php echo $file['moduleId'] ?>">
-                                                      <a class="cboxElement" href="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                                      <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                                                         <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
-                                                            <img style='max-height: 50px; max-width: 70px;' src="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                                            <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                                             <?php else: ?>
-                                                            <img style='max-height: 50px; max-width: 70px;' src='/images/thumbs/doc.png' />
+                                                            <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
                                                             <?php endif; ?>
                                                         <span class="filename"><?php echo $file['realName'] ?></span>
                                                       </a>
@@ -93,15 +93,15 @@
                 
                 <div id="comment">
 
-                    <form method="post" action="/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
+                    <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
                         <input type="hidden" name="comment" value="1" />
                         <?php
-                        $this->assign('formUrl', "/projects/showProject/".$project['id']."");
+                        $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
                         $this->displaySubmodule('comments-generalComment') ?>
                     </form>
 
                 </div>
-                
+
                     <div id="integrations">
 
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
@@ -185,6 +185,7 @@
         <?php } ?>
 
         leantime.projectsController.initProjectTabs();
+        leantime.projectsController.initProjectsEditor();
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>

@@ -64,7 +64,7 @@ $helper = $this->get('helper');
                     <h4 class="widgettitle title-light">
                         <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
-                    <textarea name="details" id="details" class="tinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                    <textarea name="details" id="details" class="projectTinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
             </div>
@@ -112,7 +112,7 @@ $helper = $this->get('helper');
             <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span
-                                class="fa fa-dollar-sign"></span><?php echo $this->__('label.budgets'); ?></h4>
+                                class="fa fa-money-bill-alt"></span><?php echo $this->__('label.budgets'); ?></h4>
                     <div class="form-group">
                         <label class="span4 control-label"for="hourBudget"><?php echo $this->__('label.hourly_budget'); ?></label>
                         <div class="span6">

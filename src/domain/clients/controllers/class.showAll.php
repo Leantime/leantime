@@ -25,7 +25,7 @@ namespace leantime\domain\controllers {
             $clientRepo = new repositories\clients();
 
             //Only admins and employees
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'employee') {
+            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
 

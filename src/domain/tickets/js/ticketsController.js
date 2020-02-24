@@ -657,9 +657,9 @@ leantime.ticketsController = (function () {
 
                     xhr.send(formData);
                 },
-                file_browser_callback: function (field_name, url, type, win) {
+                file_picker_callback: function (callback, value, meta) {
 
-                    window.tinyMceUploadFieldname = field_name;
+                    window.filePickerCallback = callback;
 
                     var shortOptions = {
                         afterShowCont: function () {
@@ -672,7 +672,11 @@ leantime.ticketsController = (function () {
                         '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
-                            callbacks: shortOptions
+                            callbacks: shortOptions,
+                            sizes: {
+                                minW: 500,
+                                minH: 500,
+                            }
                         }
                     );
                     jQuery.nmTop().elts.cont.css("zIndex", "1000010");
@@ -680,8 +684,7 @@ leantime.ticketsController = (function () {
                     jQuery.nmTop().elts.load.css("zIndex", "1000010");
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
-                },
-
+                }
             }
         );
 
