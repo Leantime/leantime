@@ -82,7 +82,9 @@ $milestones = $this->get('milestones');
 
     </form>
 
-    <?php if($currentMilestone->id !== '') { ?>
+    <?php
+
+    if(isset($currentMilestone->id) && $currentMilestone->id !== '') { ?>
         <br />
         <input type="hidden" name="comment" value="1" />
 
