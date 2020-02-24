@@ -54,12 +54,19 @@ namespace leantime\domain\controllers {
 
                 $milestone = $this->ticketRepo->getTicket($params['id']);
                 $milestone = (object) $milestone;
+
+                if(!isset($milestone->id)) {
+                    $this->tpl->setNotification("There was an issue retrieving this milestone", "error");
+                    $this->tpl->redirect("/tickets/roadmap/");
+                }
+
                 $milestone->editFrom =  date('m/d/Y', strtotime($milestone->editFrom));
                 $milestone->editTo = date('m/d/Y', strtotime($milestone->editTo));
 
                 $comments = $this->commentsRepo->getComments('ticket', $params['id']);
 
             }else{
+
                 $milestone = new models\tickets();
                 $today = new DateTime();
                 $milestone->editFrom = $today->format("m/d/Y");
@@ -136,9 +143,10 @@ namespace leantime\domain\controllers {
 
             }else{
 
+
                 $result = $this->ticketService->quickAddMilestone($params);
 
-                if($result == true) {
+                if(is_numeric($result)) {
 
                     $this->tpl->setNotification("Milestone Created Successfully", "success");
 
@@ -151,13 +159,13 @@ namespace leantime\domain\controllers {
                     $this->tpl->redirect("/tickets/editMilestone/".$result);
 
                 }else{
-                    $this->tpl->setNotification("There was a problem saving the milestone", "error");
+
+                    $this->tpl->setNotification("There was a problem saving the milestone: ".$result['message'], "error");
+                    $this->tpl->redirect("/tickets/editMilestone/");
+
                 }
 
             }
-
-
-
 
             $this->tpl->assign('milestone', (object) $params);
             $this->tpl->displayPartial('tickets.milestoneDialog');
