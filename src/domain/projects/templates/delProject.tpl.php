@@ -10,7 +10,7 @@ $project = $this->get('project');
             <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5>Administration</h5>
-                <h1><?php printf($language->lang_echo('DELETE_PROJECT'), $project['name']); ?></h1>
+                <h1><?php echo "Delete Project"; ?></h1>
             </div>
         </div><!--pageheader-->
         

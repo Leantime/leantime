@@ -54,7 +54,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
             <?php if($canvasItem['milestoneId'] == '') { ?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4>You don't have a milestone attached!</h4>
-                    Use a milestone to track progress towards your retrospectives.<br />
+                    Use a milestone to track progress towards your ideas.<br />
                         <div class="row" id="milestoneSelectors">
                             <div class="col-md-12">
                                 <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');">Create and attach a new Milestone</a>
@@ -121,7 +121,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
                                     <strong><a href="/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="/retrospectives/retroDialog/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="ideaModal delete"><i class="fa fa-close"></i> Remove</a>
+                                    <a href="/ideas/ideaDialog/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="ideaModal delete"><i class="fa fa-close"></i> Remove</a>
                                 </div>
                             </div>
                             <div class="row">

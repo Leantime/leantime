@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class delProject
     {
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
+            $projectService = new services\projects();
 
             //Only admins
             if ($_SESSION['userdata']['role'] == 'admin') {
@@ -38,6 +40,9 @@ namespace leantime\domain\controllers {
 
                             $projectRepo->deleteProject($id);
                             $projectRepo->deleteAllUserRelations($id);
+
+                            $projectService->resetCurrentProject();
+                            $projectService->setCurrentProject();
 
                             $msgKey = 'PROJECT_DELETED';
 
