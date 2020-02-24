@@ -18,7 +18,7 @@ if($login->logged_in()!==true){
 	ob_start();
 }
 
-$application = new leantime\core\application();
+$application = new leantime\core\application($login);
 $application->start();
 
 if(ob_get_length() > 0) {

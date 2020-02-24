@@ -30,11 +30,11 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
         
-        if(jQuery('.login-alert .alert').text() != ''){
-            jQuery('.login-alert').fadeIn();
+        if(jQuery('.login-alert .alert-error').text() != ''){
+            jQuery('.login-error').fadeIn();
         }
         
-        if(jQuery('.login-success .alert').text() != ''){
+        if(jQuery('.login-alert .alert-success').text() != ''){
             jQuery('.login-success').fadeIn();
         }
 
@@ -82,11 +82,10 @@
         
                     <form id="resetPassword" action="" method="post">
             
-                        <div class="inputwrapper login-alert">
+                        <div class="inputwrapper login-alert login-error">
                             <div class="alert alert-error"><?php echo $login->error;?></div>
                         </div>
-
-                        <div class="inputwrapper login-success">
+                        <div class="inputwrapper login-alert login-success">
                             <div class="alert alert-success"><?php echo $login->success;?></div>
                         </div>
 
