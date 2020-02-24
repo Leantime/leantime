@@ -19,11 +19,11 @@ class application
     private $frontController;
     private $projectService;
 
-    public function __construct()
+    public function __construct(login $login)
     {
         $this->config = new config();// Used in template
         $this->settings = new settings(); //Used in templates to show app version
-        $this->login = new login(session::getSID());
+        $this->login = $login;
         $this->frontController = frontcontroller::getInstance(ROOT);
 
     }
