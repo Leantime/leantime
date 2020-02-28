@@ -100,8 +100,6 @@
             <?php endforeach; ?>
 
         </div>
-        <br />
-        <br />
     </div>
 
 </form>

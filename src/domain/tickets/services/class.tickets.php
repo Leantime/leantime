@@ -147,7 +147,7 @@ namespace leantime\domain\services {
         public function getOpenUserTicketsThisWeekAndLater ($userId, $projectId) {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria);
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $tickets = array(
                 "thisWeek" => array(),
@@ -228,7 +228,7 @@ namespace leantime\domain\services {
 
             if($result > 0) {
 
-                $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/showTicket/" . $result;
+                $actual_link = BASE_URL."/tickets/showTicket/" . $result;
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"]);
                 $this->projectService->notifyProjectUsers($message, $this->language->__("email_notifications.new_todo_subject"), $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
 

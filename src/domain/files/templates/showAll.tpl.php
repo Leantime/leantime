@@ -4,8 +4,6 @@
     	<div >
     		
     		<?php echo $this->displayNotification() ?>
-    		
-
 
 			<div class='mediamgr'>
 			 <div class='mediamgr_left'>
@@ -34,7 +32,6 @@
 					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 		
 					</form>	
-					
 
 					</div> 
                     
@@ -52,11 +49,11 @@
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
-                              	<a class="imageLink" href="https://<?=$_SERVER['SERVER_NAME']?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                              	<a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                               		<?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
-                              			<img style='max-height: 50px; max-width: 70px;' src="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                              			<img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                               		<?php else: ?>
-                              			<img style='max-height: 50px; max-width: 70px;' src='/images/thumbs/doc.png' />
+                              			<img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
                               		<?php endif; ?>
                             		<span class="filename"><?php echo substr($file['realName'], 0, 10)."(...).".$file['extension'] ?></span>
                               	</a>
@@ -121,12 +118,14 @@
 
             <?php if(isset($_GET['modalPopUp'])) { ?>
                 jQuery('#medialist a.imageLink').click(function(event){
-                    console.log("Loading Image");
+
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
                     var url = jQuery(this).attr("href");
-                    jQuery("#"+window.tinyMceUploadFieldname).val(url);
+
+                    //File picker upload callback from tinymce
+                    window.filePickerCallback(url, {text: "file"});
 
                     jQuery.nmTop().close();
                 });

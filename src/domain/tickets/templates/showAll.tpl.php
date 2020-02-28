@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th"></i> &nbsp; Add <span class="caret"></span></button>
+                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
@@ -76,8 +76,6 @@
                                 <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
                             <?php } ?>
                         </small>
-                        <?php }else{ ?>
-                            <br /><h4> <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_first_sprint") ?></a></h4>
                         <?php } ?>
                     </span>
                 </div>
@@ -219,10 +217,10 @@
                 <tr>
                     <th><?= $this->__("label.title"); ?></th>
                     <th><?= $this->__("label.todo_status"); ?></th>
-                    <th><?= $this->__("label.sprint"); ?></th>
                     <th><?= $this->__("label.milestone"); ?></th>
                     <th><?= $this->__("label.effort"); ?></th>
                     <th><?= $this->__("label.editor"); ?>.</th>
+                    <th><?= $this->__("label.sprint"); ?></th>
                     <th><?= $this->__("label.due_date"); ?></th>
                     <th><?= $this->__("label.planned_hours"); ?></th>
                     <th><?= $this->__("label.estimated_hours_remaining"); ?></th>
@@ -252,31 +250,7 @@
                                 </div>
                             </td>
 
-                            <?php
-                            if($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1){
-                                $sprintHeadline = $this->escape($row['sprintName']);
-                            }else{
-                                $sprintHeadline = $this->__("label.backlog");
-                            }?>
 
-                            <td data-order="<?=$sprintHeadline?>">
-
-                                <div class="dropdown ticketDropdown sprintDropdown show">
-                                    <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="text"><?=$sprintHeadline?></span>
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.choose_sprint")?></li>
-                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$this->__("label.backlog")?>" data-value='<?=$row['id']."_0"?>'> <?=$this->__("label.backlog")?> </a></li>
-                                        <?php foreach($this->get('sprints') as $sprint){
-                                            echo"<li class='dropdown-item'>
-                                                    <a href='javascript:void(0);' data-label='".$this->escape($sprint->name)."' data-value='".$row['id']."_".$sprint->id."' id='ticketSprintChange".$row['id'].$sprint->id."' >".$this->escape($sprint->name)."</a>";
-                                            echo"</li>";
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
 
                             <?php
                             if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
@@ -344,6 +318,34 @@
                                             echo"<li class='dropdown-item'>
                                                                 <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
                                             echo"</li>";
+                                        }?>
+                                    </ul>
+                                </div>
+                            </td>
+                            <?php
+
+                            if($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1){
+                                $sprintHeadline = $this->escape($row['sprintName']);
+                            }else{
+                                $sprintHeadline = $this->__("label.backlog");
+                            }?>
+
+                            <td data-order="<?=$sprintHeadline?>">
+
+                                <div class="dropdown ticketDropdown sprintDropdown show">
+                                    <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="text"><?=$sprintHeadline?></span>
+                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
+                                        <li class="nav-header border"><?=$this->__("dropdown.choose_sprint")?></li>
+                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$this->__("label.backlog")?>" data-value='<?=$row['id']."_0"?>'> <?=$this->__("label.backlog")?> </a></li>
+                                        <?php if($this->get('sprints')) {
+                                            foreach ($this->get('sprints') as $sprint) {
+                                                echo "<li class='dropdown-item'>
+                                                        <a href='javascript:void(0);' data-label='" . $this->escape($sprint->name) . "' data-value='" . $row['id'] . "_" . $sprint->id . "' id='ticketSprintChange" . $row['id'] . $sprint->id . "' >" . $this->escape($sprint->name) . "</a>";
+                                                echo "</li>";
+                                            }
                                         }?>
                                     </ul>
                                 </div>

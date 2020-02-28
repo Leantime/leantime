@@ -1,6 +1,5 @@
 <?php
 
-$install = new leantime\core\install();
 $config = new leantime\core\config();
 $settings = new leantime\core\settings();
 $install = new leantime\core\install($config, $settings);

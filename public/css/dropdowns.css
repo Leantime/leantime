@@ -2,9 +2,13 @@
 
 .dropdown-menu {
     margin-top: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 0;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border:0px;
+    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .dropdown-menu > li > a {

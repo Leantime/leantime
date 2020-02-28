@@ -188,7 +188,7 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification($this->leanCanvasRepo->canvasTypes[$params['box']].' successfully created', 'success');
 
-                        $subject = $this->language->__("email_notifications.canvas_board_item_created ");
+                        $subject = $this->language->__("email_notifications.canvas_board_item_created");
                         $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$params['itemId'];
                         $message = sprintf($this->language->__("email_notifications.canvas_item_created_message"),$_SESSION["userdata"]["name"],  $canvasItem['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));

@@ -1823,7 +1823,7 @@ h1, h2, h3, h4, h5 {
 
 .label-important, .label-warning,
 .label-success, .label-info, .label-inverse,
-.label-default, .label-primary {
+.label-default, .label-primary, .label-danger {
     padding: 2px 8px;
     color: #fff;
     margin-left: 5px;
@@ -8267,11 +8267,6 @@ div.color-picker ul li {
     border-bottom: 0px solid #000;
 }
 
-.nyroModalCont, .nyroModalBg {
-    z-index: 1000005;
-    overflow-x: hidden !important;
-    padding: 30px 40px 20px 35px
-}
 
 #sortableSprint {
     border: 5px dotted #ccc;

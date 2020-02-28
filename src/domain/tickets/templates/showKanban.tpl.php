@@ -40,7 +40,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th"></i> &nbsp; Add <span class="caret"></span></button>
+                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
@@ -84,8 +84,6 @@
                                 <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
                             <?php } ?>
                         </small>
-                        <?php }else{ ?>
-                            <br /><h4> <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_first_sprint") ?></a></h4>
                         <?php } ?>
                     </span>
                 </div>
@@ -176,7 +174,6 @@
 		    </div>
 		</form>
 
-
 		<div id="sortableTicketKanban" class="sortableTicketList">
 			
 			<div class="row-fluid">
@@ -234,7 +231,7 @@
                                                     ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
-                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">

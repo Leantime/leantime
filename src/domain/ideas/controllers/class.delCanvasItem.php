@@ -17,24 +17,20 @@ namespace leantime\domain\controllers {
         {
 
             $tpl = new core\template();
-            $leancanvasRepo = new repositories\leancanvas();
-
+            $ideasRepo = new repositories\ideas();
+            $language = new core\language();
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
-            $msgKey = '';
-
             if (isset($_POST['del']) && isset($id)) {
 
-                $leancanvasRepo->delCanvasItem($id);
+                $ideasRepo->delCanvasItem($id);
 
-                $msgKey = 'TICKET_DELETED';
+                $tpl->setNotification($language->__("notification.idea_board_item_deleted"), "success");
 
-                $_SESSION["msg"] = "CANVAS_ITEM_DELETED";
-                $_SESSION["msgT"] = "success";
-                header("Location: /ideas/showBoards/");
+                $tpl->redirect(" /ideas/showBoards");
 
             }
 

@@ -23,6 +23,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->language = new core\language();
 
         }
 
@@ -105,11 +106,11 @@ namespace leantime\domain\repositories {
 
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
-                        $context = "Due: ";
+                        $context = $this->language->__("label.due_todo");
                     }else{
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
-                        $context = "Editing: ";
+                        $context =  $this->language->__("label.planned_edit");
                     }
 
 
@@ -340,7 +341,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
         }
 
-        public function delEvent($id)
+        public function delPersonalEvent($id)
         {
 
             $query = "DELETE FROM zp_calendar WHERE id = :id AND userId = :userId LIMIT 1";
@@ -349,8 +350,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
-            $stmn->execute();
+            $value = $stmn->execute();
             $stmn->closeCursor();
+
+            return $value;
 
         }
 

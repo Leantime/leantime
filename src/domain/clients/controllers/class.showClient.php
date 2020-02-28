@@ -10,9 +10,26 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class showClient
     {
+
+        /**
+         * run - display template and edit data
+         *
+         * @access public
+         */
+        public function __construct () {
+            $this->settingsRepo = new repositories\setting();
+            $this->projectService = new services\projects();
+            $this->language = new core\language();
+            $this->commentService = new services\comments();
+
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/clients/showAll";
+            }
+        }
 
         /**
          * run - display template and edit data
@@ -31,11 +48,7 @@ namespace leantime\domain\controllers {
                 $id = (int)($_GET['id']);
             }
 
-
-
             $row = $clientRepo->getClient($id);
-
-            $msgKey = '';
 
             $clientValues = array(
                 'name' => $row['name'],
@@ -50,12 +63,11 @@ namespace leantime\domain\controllers {
             );
 
 
-            if (empty($row) === false) {
+            if (empty($row) === false && ($_SESSION['userdata']['role'] === 'admin' || $_SESSION['userdata']['role'] === 'manager')) {
 
                 $file = new repositories\files();
                 $project = new repositories\projects();
 
-                $msgKey = '';
                 if ($_SESSION['userdata']['role'] == 'admin') {
                     $tpl->assign('admin', true);
                 }
@@ -63,26 +75,24 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['upload'])) {
 
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
-                        $msgKey = $file->upload($_FILES, 'client', $id);
+                        $return = $file->upload($_FILES, 'client', $id);
+                        $tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
+
                     }else{
-                        $tpl->setNotification('No File specified', 'error');
+                        $tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
                 }
-                $comment = new repositories\comments();
+
 
                 //Add comment
                 if (isset($_POST['comment']) === true) {
 
-                    $mail = new core\mailer();
-                    $values = array(
-                        'text' => $_POST['text'],
-                        'date' => date("Y-m-d H:i:s"),
-                        'userId' => ($_SESSION['userdata']['id']),
-                        'moduleId' => $id,
-                        'commentParent' => ($_POST['father'])
-                    );
+                    if($this->commentService->addComment($_POST, "client", $id, $row)) {
 
-                    $comment->addComment($values, 'client');
+                        $tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                    }else {
+                        $tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                    }
                 }
 
                 if (isset($_POST['save']) === true) {
@@ -103,25 +113,22 @@ namespace leantime\domain\controllers {
 
                         $clientRepo->editClient($clientValues, $id);
 
-                        $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success');
+                        $tpl->setNotification($this->language->__("notification.client_saved_successfully"), 'success');
 
                     } else {
 
-                        $tpl->setNotification('NO_NAME', 'error');
+                        $tpl->setNotification($this->language->__("notification.client_name_not_specified"), 'error');
                     }
                 }
 
-
                 $tpl->assign('userClients', $clientRepo->getClientsUsers($id));
-                $tpl->assign('comments', $comment->getComments('client', $id));
+                $tpl->assign('comments', $this->commentService->getComments('client', $id));
                 $tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-                $tpl->assign('info', $msgKey);
                 $tpl->assign('client', $clientValues);
                 $tpl->assign('users', new repositories\users());
                 $tpl->assign('clientProjects', $project->getClientProjects($id));
-                $tpl->assign('files', $file->getFilesByModule('client'));
+                $tpl->assign('files', $file->getFilesByModule('client', $id));
                 $tpl->assign('helper', new core\helper());
-                //var_dump($file->getFilesByModule('client')); die();
 
                 $tpl->display('clients.showClient');
 
@@ -130,7 +137,6 @@ namespace leantime\domain\controllers {
                 $tpl->display('general.error');
 
             }
-
 
         }
 

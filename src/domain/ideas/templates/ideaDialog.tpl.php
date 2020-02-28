@@ -20,7 +20,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <div class="showDialogOnLoad" style="display:none;">
 
     <h4 class="widgettitle title-light"><i
-                class="iconfa iconfa-columns"></i> <?php echo $canvasTypes[$canvasItem['box']]; ?> <?php echo $canvasItem['description']; ?>
+                class="iconfa iconfa-columns"></i>
+        <?php
+        if($canvasItem['description'] == "") {
+                echo $this->__("headlines.ideas");
+        }else{
+            $this->e($canvasItem['description']);
+        } ?>
     </h4>
 
     <?php echo $this->displayNotification(); ?>
@@ -31,13 +37,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
         <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
+        <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
         <label><?php echo $this->__("label.name") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']); ?>"
                placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
 
 
-        <label>Describe your idea in details</label>
-        <textarea rows="3" cols="10" name="data" class="modalTextArea tinymce"
+        <label><?php echo $this->__("label.description") ?></label>
+        <textarea rows="3" cols="10" name="data" class="ideaTextEditor"
                   placeholder=""><?php echo $canvasItem['data'] ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
@@ -61,7 +68,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php if ($canvasItem['milestoneId'] == '') { ?>
                     <li class="ui-state-default center" id="milestone_0">
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
-                        <?php echo $this->__("text.use_milestone_to_track_retro") ?><br/>
+                        <?php echo $this->__("text.text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
@@ -112,14 +119,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 </a>
                             </div>
                         </div>
-
                     </li>
                     <?php
 
                 } else {
 
                     if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
-                        $date = "No Date defined";
+                        $date = $this->__("text.no_date_defined");
                     } else {
                         $date = new DateTime($canvasItem['milestoneEditTo']);
                         $date = $date->format($this->__("language.dateformat"));
