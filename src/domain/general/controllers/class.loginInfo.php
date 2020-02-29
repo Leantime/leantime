@@ -39,8 +39,10 @@ namespace leantime\domain\controllers {
                     "clients/showAll" => "showClients",
                 );
 
-                $url = $_SERVER['REQUEST_URI'];
-                $urlParts = explode('/', $url);
+                $url = CURRENT_URL;
+
+                $requestParams = explode(BASE_URL, $url);
+                $urlParts = explode('/', $requestParams[1]);
                 $modal = "";
 
                 if(count($urlParts) > 2) {

@@ -386,7 +386,8 @@
                                     <?php
                                     if(count($this->get('milestones')) == 0){
                                         echo"<div class='center'><br /><h4>You don't have any Milestones yet!</h4>
-                                        Milestones organize your Project into larger stages. <br />Start planning your roadmap<br /><br /><a href='<?=BASE_URL ?>/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> Go to Roadmap Planner</a>";
+                                        Milestones organize your Project into larger stages. <br />Start planning your roadmap<br /><br /><a href='".BASE_URL."/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> Go to Roadmap Planner</a>";
+
                                     }
                                     ?>
                                     <?php foreach($this->get('milestones') as $row){

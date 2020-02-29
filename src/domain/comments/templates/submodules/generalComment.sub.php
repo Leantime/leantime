@@ -5,7 +5,7 @@ $comments = new leantime\domain\repositories\comments();
 $language->setModule('tickets');
 $language->readIni();
 
-$formUrl = $this->get('formUrl');
+$formUrl = CURRENT_URL;
 $deleteUrlBase = "";
 if($formUrl == "") {
     $formUrl = "#comments";

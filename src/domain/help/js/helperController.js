@@ -205,7 +205,7 @@ leantime.helperController = (function () {
                     text:"Go to Projects",
                     events: {
                         'click':function () {
-                            window.location.href = "/projects/newProject/";
+                            window.location.href = leantime.appUrl+"/projects/newProject/";
                         }
                     }
                 }
