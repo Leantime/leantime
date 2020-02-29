@@ -130,7 +130,7 @@ function getFileFromS3(){
         $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
         $presignedUrl = (string)$request->getUri();
 
-        header("Location: ".$presignedUrl);
+        header("Location:".BASE_URL."".$presignedUrl);
 
         exit();
 

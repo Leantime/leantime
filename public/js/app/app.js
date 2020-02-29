@@ -2,8 +2,11 @@
 
 var leantime = leantime || {};
 
-var themeColor = $('meta[name=theme-color]').attr("content");
-leantime.companyColor = "#"+themeColor;
+var themeColor = jQuery('meta[name=theme-color]').attr("content");
+leantime.companyColor = themeColor;
+
+var appURL = jQuery('meta[name=identifier-URL]').attr("content");
+leantime.appUrl = appURL;
 
 jQuery(document).on('click', function (e) {
     jQuery('[data-toggle="popover"],[data-original-title]').each(function () {

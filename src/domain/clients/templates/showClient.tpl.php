@@ -149,7 +149,7 @@ $users = $this->get('users');
                             <?php endforeach; ?>
 
                             <?php if(count($this->get('userClients')) == 0) {
-                                echo "<tr><td colspan='3'>No contacts have been added to this client. Add and assign users <a href='/users/showAll'>here</a></td></tr>";
+                                echo "<tr><td colspan='3'>No contacts have been added to this client. Add and assign users <a href='<?=BASE_URL ?>/users/showAll'>here</a></td></tr>";
                             }?>
                             </tbody>
                         </table>
@@ -164,7 +164,7 @@ $users = $this->get('users');
                                value="<?php echo $language->lang_echo('SAVE') ?>" class="btn btn-primary" />
                     </div>
                     <div class="col-md-6 align-right">
-                        <a href="/clients/delClient/<?php $this->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> Delete Client</a>
+                        <a href="<?=BASE_URL ?>/clients/delClient/<?php $this->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> Delete Client</a>
                     </div>
                 </div>
 
@@ -173,7 +173,7 @@ $users = $this->get('users');
 
         <div id='comment'>
 
-            <form method="post" action="/clients/showClient/<?php echo $this->e($_GET['id']); ?>#comment">
+            <form method="post" action="<?=BASE_URL ?>/clients/showClient/<?php echo $this->e($_GET['id']); ?>#comment">
                 <input type="hidden" name="comment" value="1" />
                 <?php
                 $this->assign('formUrl', "/clients/showClient/".$this->escape($_GET['id'])."");
@@ -216,11 +216,11 @@ $users = $this->get('users');
                 <ul id='medialist' class='listfile'>
                                 <?php foreach($this->get('files') as $file): ?>
                                     <li class="<?php echo $file['moduleId'] ?>">
-                                          <a class="cboxElement" href="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>">
+                                          <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>">
                                               <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
-                                                  <img style='max-height: 50px; max-width: 70px;' src="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>" alt="" />
+                                                  <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>" alt="" />
                                                 <?php else: ?>
-                                                  <img style='max-height: 50px; max-width: 70px;' src='/includes/templates/zypro/images/thumbs/doc.png' />
+                                                  <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/includes/templates/zypro/images/thumbs/doc.png' />
                                                 <?php endif; ?>
                                             <span class="filename"><?php $this->e($file['realName']); ?></span>
                                           </a>
@@ -258,7 +258,7 @@ $users = $this->get('users');
                 <?php if(isset($project['id']) && $project['id'] > 0) : ?>
                     <tr>
                         <td><?php echo $project['id'] ?></td>
-                        <td><a href="/projects/showProject/<?php echo $project['id']?>"><?php $this->e($project['name']); ?></a></td>
+                        <td><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']?>"><?php $this->e($project['name']); ?></a></td>
                         <td><?php echo $project['numberOfTickets'] ?></td>
                         <td><?php $this->e($project['hourBudget']) ?></td>
                     </tr>

@@ -155,12 +155,12 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification('Idea successfully updated', 'success');
 
                         $subject = "An idea was edited on one of your idea boards: ". $params['headline'];
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/ideas/ideaDialog/".$params['itemId'];
+                        $actual_link = BASE_URL."/ideas/ideaDialog/".$params['itemId'];
                         $message = "An idea was updated by " . $_SESSION["userdata"]["name"] . "";
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
 
-                        header("Location: /ideas/ideaDialog/".$params['itemId']);
+                        header("Location:".BASE_URL."/ideas/ideaDialog/".$params['itemId']);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -187,13 +187,13 @@ namespace leantime\domain\controllers {
                         $id = $this->ideaRepo->addCanvasItem($canvasItem);
 
                         $subject = "A new idea was added to one of your idea boards";
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/ideas/ideaDialog/".$id;
+                        $actual_link = BASE_URL."/ideas/ideaDialog/".$id;
                         $message = "A new idea was added by " . $_SESSION["userdata"]["name"] . ": ".$params['description'];
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
                         $this->tpl->setNotification('Idea successfully created', 'success');
 
-                        header("Location: /ideas/ideaDialog/".$id);
+                        header("Location:".BASE_URL."/ideas/ideaDialog/".$id);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -219,12 +219,12 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('helper', new core\helper());
 
                 $subject = "A new comment was added to an idea";
-                $actual_link = "https://$_SERVER[HTTP_HOST]/ideas/ideaDialog/".(int)$_GET['id'];
+                $actual_link = BASE_URL."/ideas/ideaDialog/".(int)$_GET['id'];
                 $message = "" . $_SESSION["userdata"]["name"] . " added a comment to an idea:
                 ".$params['text'];
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
-                header("Location: /ideas/ideaDialog/".$_GET['id']);
+                header("Location:".BASE_URL."/ideas/ideaDialog/".$_GET['id']);
 
             }
 

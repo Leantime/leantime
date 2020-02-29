@@ -61,7 +61,7 @@ namespace leantime\domain\controllers {
 
                             $id = $clientRepo->addClient($values);
                             $tpl->setNotification('ADD_CLIENT_SUCCESS', 'success');
-                            $tpl->redirect("/clients/showClient/".$id);
+                            $tpl->redirect(BASE_URL."/clients/showClient/".$id);
 
                         } else {
 

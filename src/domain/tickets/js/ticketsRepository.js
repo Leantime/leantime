@@ -18,7 +18,7 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/tickets',
+                url: leantime.appUrl+'/api/tickets',
                 data:
                 {
                     id : id,
@@ -40,7 +40,7 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/tickets',
+                url: leantime.appUrl+'/api/tickets',
                 data:
                 {
                     id : id,
@@ -61,7 +61,7 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/tickets',
+                url: leantime.appUrl+'/api/tickets',
                 data:
                     {
                         id : id,

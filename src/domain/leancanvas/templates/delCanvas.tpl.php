@@ -17,10 +17,10 @@ defined('RESTRICTED') or die('Restricted access');
 
         <h4 class="widget widgettitle"><i class="iconfa iconfa-trash"></i> Delete</h4>
         <div class="widgetcontent">
-            <form method="post" action="/leancanvas/delCanvas/<?php echo $_GET['id']?>">
+            <form method="post" action="<?=BASE_URL ?>/leancanvas/delCanvas/<?php echo $_GET['id']?>">
                 <p><?php echo $lang['CONFIRM_DELETE_CANVAS_ITEM']; ?></p><br />
                 <input type="submit" value="Yes, delete!" name="del" class="button" />
-                <a class="btn btn-secondary" href="/leancanvas/showCanvas"><?php echo $lang['BACK']; ?></a>
+                <a class="btn btn-secondary" href="<?=BASE_URL ?>/leancanvas/showCanvas"><?php echo $lang['BACK']; ?></a>
             </form>
         </div>
 

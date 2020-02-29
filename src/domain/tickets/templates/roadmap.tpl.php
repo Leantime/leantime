@@ -28,7 +28,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <div class="row">
             <div class="col-md-6">
-                <a href="/tickets/editMilestone" class="milestoneModal btn btn-primary"><span class="fa fa-plus"></span> Add Milestone</a>
+                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><span class="fa fa-plus"></span> Add Milestone</a>
             </div>
             <div class="col-md-6" style="text-align:right;">
 
@@ -50,7 +50,7 @@ echo"
 <h4>You don't have any milestones yet<br/>
 
 <br />
-<a href=\"/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\"><span class=\"fa fa-map\"></span> Add a Milestone</a></h4></div>";
+<a href='".BASE_URL."/tickets/editMilestone' class=\"milestoneModal addCanvasLink btn btn-primary\"><span class=\"fa fa-map\"></span> Add a Milestone</a></h4></div>";
 
         }
         ?>
@@ -60,7 +60,7 @@ echo"
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><br /><em>Once you are done adding your Milestone you can jump into your To-Dos</em> <br /><a href="/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> Backlog</a></p>
+            <p class="align-center"><br /><em>Once you are done adding your Milestone you can jump into your To-Dos</em> <br /><a href="<?=BASE_URL ?>/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> Backlog</a></p>
         <?php } ?>
 
     </div>
@@ -83,8 +83,8 @@ jQuery(document).ready(function(){
     }
     ?>
 
-    leantime.ticketsController.openMilestoneModalManually("/tickets/editMilestone<?php echo $modalUrl; ?>");
-    window.history.pushState({},document.title, '/tickets/roadmap');
+    leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL?>/tickets/editMilestone<?php echo $modalUrl; ?>");
+    window.history.pushState({},document.title, '<?=BASE_URL?>/tickets/roadmap');
 
     <?php } ?>
 

@@ -9,7 +9,7 @@ $formUrl = $this->get('formUrl');
 $deleteUrlBase = "";
 if($formUrl == "") {
     $formUrl = "#comments";
-    $deleteUrlBase = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."&delComment=";
+    $deleteUrlBase = "".CURRENT_URL."&delComment=";
 }else{
     $deleteUrlBase = $formUrl."&delComment=";
 }
@@ -70,9 +70,9 @@ if($formUrl == "") {
                             $files = new leantime\domain\repositories\files;
                             $file = $files->getFile($row['profileId']);
 
-                            $img = '/images/default-user.png';
+                            $img = BASE_URL.'/images/default-user.png';
                     if ($file) {
-                        $img = "/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
+                        $img = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
                     }
                     ?>
 
@@ -114,10 +114,10 @@ if($formUrl == "") {
                             $files = new leantime\domain\repositories\files;
                             $file = $files->getFile($comment['profileId']);
 
-                            $img = '/images/default-user.png';
+                            $img = BASE_URL.'/images/default-user.png';
                             if ($file) {
 
-                                $img = "/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
+                                $img = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
                             }
                             ?>
 

@@ -24,7 +24,7 @@ $project = $this->get('project');
         <?php if($this->get('msg') !== '') { ?>
                         <span class="info">
             <?php echo $lang[$this->get('msg')]; ?><br />
-                            <a href="/projects/showAll/">Back to all projects</a>
+                            <a href="<?=BASE_URL ?>/projects/showAll/">Back to all projects</a>
                         </span>
         <?php }else { ?>
                     

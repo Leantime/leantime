@@ -5,7 +5,7 @@ $ticket = $this->get('ticket');
 ?>
 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"><?php echo $language->lang_echo('COMMENT') ?></a>	
 
-<form method="post" accept-charset="utf-8" action="index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>#comment">
+<form method="post" accept-charset="utf-8" action="<?=BASE_URL ?>/index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>#comment">
 
 	<br /><br />
 
@@ -42,7 +42,7 @@ $openSpan = 0;
 		
 		$img = '/includes/modules/general/templates/img/default-user.png';
 		if ($file)
-			$img = "/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
+			$img = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
 			
 		?>	
 		<br />
@@ -53,7 +53,7 @@ $openSpan = 0;
 
 		
 		<?php if($this->get('role') === 'admin'){ ?> | 
-			<a href="index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>&amp;delComment=<?php echo $row['id']; ?>#commentList">
+			<a href="<?=BASE_URL?>/index.php?act=tickets.showTicket&amp;id=<?php echo $ticket['id']; ?>&amp;delComment=<?php echo $row['id']; ?>#commentList">
 				<?php echo $language->lang_echo('DELETE'); ?>
 			</a>
 		<?php } ?>

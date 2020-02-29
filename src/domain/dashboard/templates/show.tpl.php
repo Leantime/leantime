@@ -23,7 +23,7 @@
                     <div class="col-lg-4" style="text-align:right;padding-top:15px">
                         <?php if(count($this->get('allUsers')) == 1) {?>
 
-                                <a href="/users/newUser/" >
+                                <a href="<?=BASE_URL ?>/users/newUser/" >
                                     <i class="fa fa-users" style="font-size:25px; margin-right:10px; vertical-align: middle"></i>
                                     <span style="font-size:14px; line-height:25px;">Don’t do it alone! Add more users here!</span>
                                 </a>
@@ -99,13 +99,13 @@
                                         echo "<div class='emptyChartContainer'>
                                         <h4>You don't have an active Sprint!</h4>
                                         A sprint is a short iteration during which To-Dos are completed and released.<br /><br />
-                                        <a href='/sprints/editSprint' class=\"sprintModal btn btn-primary\" class=''><span class=\"fa fa-rocket\"></span> Create a new Sprint</a>
+                                        <a href='<?=BASE_URL ?>/sprints/editSprint' class=\"sprintModal btn btn-primary\" class=''><span class=\"fa fa-rocket\"></span> Create a new Sprint</a>
                                         </div>";
                                     } else {
                                         echo "<div class='emptyChartContainer'>
                                         <h4>Your sprint starts on <strong>" . date("m/d/Y", strtotime($this->get('upcomingSprint')->startDate)) . "</strong> </h4>                                        
                                         This chart will be updated then. In the meantime start adding To-Dos to your sprint.<br /><br />
-                                        <a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>
+                                        <a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>
                                         </div>";
                                     }
                                 }
@@ -139,7 +139,7 @@
                                     </li>
                                     <?php
                                     if(count($this->get('tickets')["thisWeek"]) == 0){
-                                        echo"<div class='center'><br /><h4>You don't have anymore To-Dos for this week!</h4>Take the day off or start working through the backlog.<br/><br/><h4><a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
+                                        echo"<div class='center'><br /><h4>You don't have anymore To-Dos for this week!</h4>Take the day off or start working through the backlog.<br/><br/><h4><a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
                                     }
                                     ?>
                                     <?php foreach($this->get('tickets')["thisWeek"] as $row){
@@ -156,7 +156,7 @@
                                                 <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
                                                     <div class="row">
                                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                            <strong><a href="/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                            <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                             <?php
 
@@ -165,13 +165,13 @@
                                                             ?>
 
                                                             <div class="inlineDropDownContainer">
-                                                                <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                                <a href="<?=BASE_URL ?>/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                                 </a>
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header">To-Do</li>
-                                                                    <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                                    <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
                                                                     <li class="nav-header border">Track Time</li>
                                                                     <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                         <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>
@@ -255,7 +255,7 @@
 
                                     <?php
                                     if(count($this->get('tickets')["later"]) == 0){
-                                        echo"<div class='center'><br /><h4>You don't have any To-Dos yet!</h4>Start filling your backlog and assign a few To-Dos to yourself.<br/><br/><h4><a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
+                                        echo"<div class='center'><br /><h4>You don't have any To-Dos yet!</h4>Start filling your backlog and assign a few To-Dos to yourself.<br/><br/><h4><a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
                                     }
                                     ?>
                                     <?php foreach($this->get('tickets')["later"] as $row){
@@ -272,7 +272,7 @@
                                             <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
                                                 <div class="row">
                                                     <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                        <strong><a href="/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                        <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                         <?php
                                                         $clockedIn = $this->get("onTheClock");
@@ -281,13 +281,13 @@
 
 
                                                         <div class="inlineDropDownContainer">
-                                                            <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                            <a href="<?=BASE_URL ?>/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header">To-Do</li>
-                                                                <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                                <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
                                                                 <li class="nav-header border">Track Time</li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                     <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>
@@ -386,7 +386,7 @@
                                     <?php
                                     if(count($this->get('milestones')) == 0){
                                         echo"<div class='center'><br /><h4>You don't have any Milestones yet!</h4>
-                                        Milestones organize your Project into larger stages. <br />Start planning your roadmap<br /><br /><a href='/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> Go to Roadmap Planner</a>";
+                                        Milestones organize your Project into larger stages. <br />Start planning your roadmap<br /><br /><a href='<?=BASE_URL ?>/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> Go to Roadmap Planner</a>";
                                     }
                                     ?>
                                     <?php foreach($this->get('milestones') as $row){
@@ -408,7 +408,7 @@
 
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <strong><a href="/tickets/showKanban&milestone=<?php echo $row->id;?>" ><?php $this->e($row->headline); ?></a></strong>
+                                                            <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $row->id;?>" ><?php $this->e($row->headline); ?></a></strong>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -518,7 +518,7 @@
 
             jQuery.ajax({
                 type: 'POST',
-                url: '/tickets/showAll&raw=true&changeStatus=true',
+                url: leantime.appUrl+'/tickets/showAll&raw=true&changeStatus=true',
                 data:
                     {
                         id: ticket[1],

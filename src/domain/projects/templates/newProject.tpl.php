@@ -25,7 +25,7 @@ $project = $this->get('values');
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> Go Back</a>
+        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> Go Back</a>
     </div>
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>

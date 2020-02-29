@@ -52,7 +52,7 @@ $canvasTitle = "";
         <div class="row">
             <div class="col-md-4">
                 <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
                 <?php } ?>
             </div>
 
@@ -85,8 +85,8 @@ $canvasTitle = "";
             <div class="col-md-4">
                 <div class="pull-right">
                     <div class="btn-group mt-1 mx-auto" role="group">
-                        <a href="/ideas/showBoards" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Idea Wall</a>
-                        <a href="/ideas/advancedBoards" class="btn btn-sm btn-secondary "><i class='iconfa-list'></i> Idea Kanban</a>
+                        <a href="<?=BASE_URL ?>/ideas/showBoards" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Idea Wall</a>
+                        <a href="<?=BASE_URL ?>/ideas/advancedBoards" class="btn btn-sm btn-secondary "><i class='iconfa-list'></i> Idea Kanban</a>
                     </div>
 
                 </div>
@@ -104,7 +104,7 @@ $canvasTitle = "";
 
                     <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
-                        <h4><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
+                        <h4><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
                         <br />
                         <div class="mainIdeaContent">
                             <?php echo $row["data"];?>
@@ -149,7 +149,7 @@ $canvasTitle = "";
 
         <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
             <br />
-            <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+            <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
         <?php } ?>
 
     <?php } else {
@@ -275,8 +275,8 @@ Start collecting all of your brilliant ideas right here.<br /><br /><a href=\"ja
             }
             ?>
 
-            leantime.ideasController.openModalManually("/ideas/ideaDialog<?php echo $modalUrl; ?>");
-            window.history.pushState({},document.title, '/ideas/showBoards');
+            leantime.ideasController.openModalManually("<?=BASE_URL?>/ideas/ideaDialog<?php echo $modalUrl; ?>");
+            window.history.pushState({},document.title, '<?=BASE_URL?>/ideas/showBoards');
 
         <?php } ?>
     });

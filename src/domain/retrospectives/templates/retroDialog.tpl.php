@@ -11,7 +11,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="/retrospectives/showBoards&showRetroModal=<?php echo $canvasItem['id']; ?>";
+            location.href="<?=BASE_URL ?>/retrospectives/showBoards&showRetroModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -22,7 +22,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
 
     <?php echo $this->displayNotification(); ?>
 
-    <form class="canvasModal" method="post" action="/retrospectives/retroDialog/<?php echo $id;?>">
+    <form class="canvasModal" method="post" action="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $id;?>">
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
@@ -39,7 +39,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
-            <a href="/retrospectives/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class="fa fa-trash"></i> Delete</a>
+            <a href="<?=BASE_URL ?>/retrospectives/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class="fa fa-trash"></i> Delete</a>
         <?php } ?>
         <input type="submit" value="Save" id="primaryCanvasSubmitButton"/>
         <input type="submit" value="Save & Close" id="saveAndClose" onclick="leantime.leanCanvasController.setCloseModal();"/>
@@ -122,10 +122,10 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="/retrospectives/retroDialog/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="canvasModal delete"><i class="fa fa-close"></i> Remove</a>
+                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="canvasModal delete"><i class="fa fa-close"></i> Remove</a>
                                 </div>
                             </div>
                             <div class="row">

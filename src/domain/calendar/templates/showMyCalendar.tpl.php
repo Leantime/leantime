@@ -65,10 +65,10 @@
                             allDay: false,
         <?php endif; ?>
                         <?php if(isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-                            url: '/calendar/editEvent/<?php echo $calendar['id'] ?>',
+                            url: leantime.appUrl+'/calendar/editEvent/<?php echo $calendar['id'] ?>',
                             color: '#00814A'
         <?php else: ?>
-                            url: '/tickets/showTicket/<?php echo $calendar['id'] ?>',
+                            url: leantime.appUrl+'/tickets/showTicket/<?php echo $calendar['id'] ?>',
                             color:'#BC3600'
         <?php endif; ?>
                         },

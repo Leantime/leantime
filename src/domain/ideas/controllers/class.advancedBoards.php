@@ -55,7 +55,7 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    header("Location: /ideas/advancedBoards/");
+                    header("Location:".BASE_URL."/ideas/advancedBoards/");
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -72,7 +72,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect("/ideas/advancedBoards/");
+                    $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
 
 
                 } else {
@@ -103,7 +103,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /ideas/advancedBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/ideas/advancedBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -132,7 +132,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /ideas/advancedBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/ideas/advancedBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

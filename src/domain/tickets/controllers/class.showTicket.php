@@ -65,7 +65,7 @@ namespace leantime\domain\controllers {
                         $tpl->setNotification($message["msg"], $message["type"]);
 
                         $subject = "New file in ToDo [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
-                        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]#files";
+                        $actual_link = "".CURRENT_URL."#files";
                         $message = "" . $_SESSION["userdata"]["name"] . " a new file in To-Do: ".$ticket['headline'];
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
 
@@ -84,7 +84,7 @@ namespace leantime\domain\controllers {
                         $tpl->setNotification($message["msg"], $message["type"]);
 
                         $subject = "New comment in ToDo [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
-                        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]#comments";
+                        $actual_link = "".CURRENT_URL."#comments";
                         $message = "" . $_SESSION["userdata"]["name"] . " added a new comment to To-Do:
                         ".$_POST['text']."
                         ";
@@ -113,13 +113,13 @@ namespace leantime\domain\controllers {
                         $ticket = $ticketRepo->getTicket($id);
 
                         $subject = "One of your To-Dos was updated. [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
-                        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                        $actual_link = CURRENT_URL;
                         $message = "" . $_SESSION["userdata"]["name"] . " updated  To-Do ";
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
 
                         if(isset($_POST["saveAndCloseTicket"]) === true) {
 
-                            $tpl->redirect($_SESSION['lastPage']);
+                            $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
                         }
                     }
 

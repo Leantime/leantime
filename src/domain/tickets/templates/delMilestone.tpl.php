@@ -7,10 +7,10 @@ defined('RESTRICTED') or die('Restricted access');
 
         <?php if($this->get('info') === '') { ?>
                     
-                        <form method="post" action="/tickets/delMilestone/<?php echo $this->get('id') ?>">
+                        <form method="post" action="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $this->get('id') ?>">
                             <p>Are you sure you would like to delete this Milestone?</p><br />
                             <input type="submit" value="Yes, delete" name="del" class="button" />
-                            <a class="btn btn-secondary" href="/tickets/roadmap/">No, Cancel</a>
+                            <a class="btn btn-secondary" href="<?=BASE_URL ?>/tickets/roadmap/">No, Cancel</a>
                         </form>
                         
         <?php }else{ ?>

@@ -67,12 +67,12 @@ namespace leantime\domain\controllers {
 
                     $mailer->setSubject("A new idea board was created in one of your projects");
 
-                    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $actual_link = "".CURRENT."";
                     $mailer->setHtml("A new idea board was created by " . $_SESSION["userdata"]["name"] . ": <a href='" . $actual_link . "'>" . $values['title'] . "</a>.<br />");
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    header("Location: /ideas/showBoards/");
+                    header("Location:".BASE_URL."/ideas/showBoards/");
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -89,7 +89,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect("/ideas/showBoards/");
+                    $tpl->redirect(BASE_URL."/ideas/showBoards/");
 
 
                 } else {
@@ -123,7 +123,7 @@ namespace leantime\domain\controllers {
 
 
 
-                    header("Location: /ideas/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/ideas/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -152,7 +152,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /ideas/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/ideas/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

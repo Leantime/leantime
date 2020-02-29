@@ -70,7 +70,7 @@ namespace leantime\domain\controllers {
                                         $mailer = new core\mailer();
 
                                         $mailer->setSubject("Your Leantime Account is Ready");
-                                        $actual_link = "https://$_SERVER[HTTP_HOST]";
+                                        $actual_link = BASE_URL;
                                         $mailer->setHtml($_SESSION["userdata"]["name"] . " created a new user account for you. You can access your account at: <a href='" . $actual_link . "'>" . $actual_link . "</a><br/><br/>Your username is: " . $values["user"] . "<br/>And your password is: " . $tempPasswordVar . "<br /><br />Please make sure to update your password once you login.<br />Have fun!<br />");
 
                                         $to = array($values["user"]);
@@ -79,7 +79,7 @@ namespace leantime\domain\controllers {
 
                                         $tpl->setNotification('USER_ADDED', 'success');
 
-                                        $tpl->redirect(" /users/showAll");
+                                        $tpl->redirect(BASE_URL." /users/showAll");
 
                                     } else {
 

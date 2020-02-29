@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 
         <?php if($this->get('info') === '') { ?>
                     
-                        <form method="post" action="/sprints/delSprint/<?php echo $this->get('id') ?>">
+                        <form method="post" action="<?=BASE_URL ?>/sprints/delSprint/<?php echo $this->get('id') ?>">
                             <p>Are you sure you would like to delete this Sprint?</p><br />
                             <input type="submit" value="Yes, delete" name="del" class="button" />
                             <a class="btn btn-secondary" href="<?php echo $_SESSION['lastPage'] ?>">No, Cancel</a>

@@ -33,7 +33,7 @@ namespace leantime\domain\controllers {
                     $ticketRepo->delMilestone($id);
 
                     $tpl->setNotification("Milestone successfully deleted", "success");
-                    $tpl->redirect("/tickets/roadmap");
+                    $tpl->redirect(BASE_URL."/tickets/roadmap");
 
                 }
 

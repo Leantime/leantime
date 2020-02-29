@@ -25,7 +25,7 @@ $ticket = $this->get('ticket');
                         <form method="post">
                             <p><?php echo $lang['CONFIRM_DELETE_TICKET']; ?></p><br />
                             <input type="submit" value="<?php echo $lang['DELETE']; ?>" name="del" class="button" />
-                            <a class="btn btn-primary" href="/tickets/showTicket/<?php echo $ticket['id']?>"><?php echo $lang['BACK']; ?></a>
+                            <a class="btn btn-primary" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket['id']?>"><?php echo $lang['BACK']; ?></a>
                         </form>
                         
         <?php }else{ ?>

@@ -1,7 +1,7 @@
 <?php $account = $this->get('account') ?>
 
 <div class="pageheader">
-            <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
+            <form action="<?=BASE_URL ?>/index.php?act=tickets.showAll" method="post" class="searchbar">
                 <input type="text" name="term" placeholder="To search type and hit enter..." />
             </form>
             

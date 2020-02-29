@@ -31,7 +31,7 @@ $role = $this->get('roles');
         <img src='<?php echo $file; ?>' class='profileImg' width='150px'
         alt='<?php echo $_SESSION['userdata']['firstname']." ".$_SESSION['userdata']['lastname']; ?>s profile pic' />
     <?php } else { ?>
-        <img src='/userdata/default.png' class='profileImg' width='150px'
+        <img src='<?=BASE_URL ?>/userdata/default.png' class='profileImg' width='150px'
         alt='<?php echo $language->lang_echo('Default_Profile_Pic'); ?>' />        
     <?php } ?>
 </div>

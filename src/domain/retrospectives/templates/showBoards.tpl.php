@@ -57,7 +57,7 @@ $canvasTitle = "";
              // POST to server using $.post or $.ajax
             jQuery.ajax({
                 type: 'POST',
-                url: '#',            
+                url: leantime.appUrl+'#',
                 data: 
                 {
                     
@@ -290,7 +290,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="/setting/editBoxLabel&module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php echo $canvasLabels["well"]; ?>
                         </h4>
@@ -299,7 +299,7 @@ $canvasTitle = "";
                                 <?php if($row["box"] == "well") {?>
                                     <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
-                                        <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+                                        <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
                                         <br />
                                         <?php echo nl2br($row["data"]);?>
                                         <br /><br />
@@ -334,7 +334,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="/retrospectives/retroDialog&type=well" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=well" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -342,7 +342,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="/setting/editBoxLabel&module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php echo $canvasLabels["notwell"]; ?>
                         </h4>
@@ -353,7 +353,7 @@ $canvasTitle = "";
                                         <div class="ticketBox" id="item_<?php echo $row["id"];?>">
                                             
 
-                                            <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
                                             <br />
                                             <?php echo nl2br($row["data"]);?>
                                             <br /><br />
@@ -390,7 +390,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="/retrospectives/retroDialog&type=notwell" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=notwell" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>            
                 </div>
@@ -401,7 +401,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="/setting/editBoxLabel&module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
                                     <?php echo $canvasLabels["startdoing"]; ?>
                                 </h4>
@@ -411,7 +411,7 @@ $canvasTitle = "";
                                             <div class="ticketBox" id="item_<?php echo $row["id"];?>">
                                             
 
-                                            <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
                                             <br />
                                             <?php echo nl2br($row["data"]);?>
                                             <br /><br />
@@ -444,7 +444,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="/retrospectives/retroDialog&type=startdoing" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a
+                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=startdoing" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a
                                 </div>
                             </div>
                         </div>
@@ -465,7 +465,7 @@ $canvasTitle = "";
 
         <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
             <br />
-            <a href="/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+            <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
         <?php } ?>
 
     <?php } else {
@@ -492,8 +492,8 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
             ?>
             <script type="text/javascript">
                 jQuery(document).ready(function(){
-                    leantime.ideasController.openModalManually("/retrospectives/retroDialog<?php echo $modalUrl; ?>");
-                    window.history.pushState({},document.title, '/retrospectives/showBoards');
+                    leantime.ideasController.openModalManually("<?=BASE_URL?>/retrospectives/retroDialog<?php echo $modalUrl; ?>");
+                    window.history.pushState({},document.title, '<?=BASE_URL?>/retrospectives/showBoards');
                 });
             </script>
 

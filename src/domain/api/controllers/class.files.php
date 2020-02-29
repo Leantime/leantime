@@ -55,7 +55,7 @@ namespace leantime\domain\controllers {
 
                 $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
 
-                echo "https://".$_SERVER['SERVER_NAME']."/download.php?module=private&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName']."";
+                echo BASE_URL."/download.php?module=private&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName']."";
 
             }
 
