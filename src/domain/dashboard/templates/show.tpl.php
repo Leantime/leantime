@@ -99,13 +99,13 @@
                                         echo "<div class='emptyChartContainer'>
                                         <h4>You don't have an active Sprint!</h4>
                                         A sprint is a short iteration during which To-Dos are completed and released.<br /><br />
-                                        <a href='<?=BASE_URL ?>/sprints/editSprint' class=\"sprintModal btn btn-primary\" class=''><span class=\"fa fa-rocket\"></span> Create a new Sprint</a>
+                                        <a href='".BASE_URL."/sprints/editSprint' class=\"sprintModal btn btn-primary\" class=''><span class=\"fa fa-rocket\"></span> Create a new Sprint</a>
                                         </div>";
                                     } else {
                                         echo "<div class='emptyChartContainer'>
                                         <h4>Your sprint starts on <strong>" . date("m/d/Y", strtotime($this->get('upcomingSprint')->startDate)) . "</strong> </h4>                                        
                                         This chart will be updated then. In the meantime start adding To-Dos to your sprint.<br /><br />
-                                        <a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>
+                                        <a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>
                                         </div>";
                                     }
                                 }
@@ -139,7 +139,7 @@
                                     </li>
                                     <?php
                                     if(count($this->get('tickets')["thisWeek"]) == 0){
-                                        echo"<div class='center'><br /><h4>You don't have anymore To-Dos for this week!</h4>Take the day off or start working through the backlog.<br/><br/><h4><a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
+                                        echo"<div class='center'><br /><h4>You don't have anymore To-Dos for this week!</h4>Take the day off or start working through the backlog.<br/><br/><h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
                                     }
                                     ?>
                                     <?php foreach($this->get('tickets')["thisWeek"] as $row){

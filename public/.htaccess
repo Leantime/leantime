@@ -1,4 +1,6 @@
 RewriteEngine On
+
+#Uncomment and update if Leantime runs in a subfolder
 #RewriteBase /leantime/
 
 RewriteCond %{HTTP:X-Forwarded-Proto} =http
