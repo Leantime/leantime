@@ -255,7 +255,7 @@
 
                                     <?php
                                     if(count($this->get('tickets')["later"]) == 0){
-                                        echo"<div class='center'><br /><h4>You don't have any To-Dos yet!</h4>Start filling your backlog and assign a few To-Dos to yourself.<br/><br/><h4><a href='<?=BASE_URL ?>/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
+                                        echo"<div class='center'><br /><h4>You don't have any To-Dos yet!</h4>Start filling your backlog and assign a few To-Dos to yourself.<br/><br/><h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Go to your Backlog</a>";
                                     }
                                     ?>
                                     <?php foreach($this->get('tickets')["later"] as $row){
