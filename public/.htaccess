@@ -1,6 +1,5 @@
-Options -MultiViews
 RewriteEngine On
-RewriteBase /leantime/
+#RewriteBase /leantime/
 
 RewriteCond %{HTTP:X-Forwarded-Proto} =http
 RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
@@ -11,7 +10,7 @@ RewriteRule ^resetPassword/([^/\.]+)/?$ index.php?resetPassword=true&hash=$1
 RewriteRule ^install$ index.php?install=true
 RewriteRule ^install/([^/\.]+)/?$ index.php?install=true
 
-RewriteRule ^update /index.php?update=true
+RewriteRule ^update index.php?update=true
 RewriteRule ^update/([^/\.]+)/?$ index.php?update=true
 
 RewriteRule ^/?$ index.php?act=dashboard.show

@@ -79,7 +79,7 @@ namespace leantime\domain\controllers {
 
                                         $tpl->setNotification('USER_ADDED', 'success');
 
-                                        $tpl->redirect(BASE_URL." /users/showAll");
+                                        $tpl->redirect(BASE_URL."/users/showAll");
 
                                     } else {
 

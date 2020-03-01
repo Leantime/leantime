@@ -391,7 +391,8 @@ namespace leantime\core {
         public function redirect($url)
         {
 
-            header("Location:".$url);
+
+            header("Location:".trim($url));
             exit();
         }
 

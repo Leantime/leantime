@@ -8,6 +8,7 @@ class config
 	public $language = "en"; //Default language
     public $mainColor = "1b75bb"; //Default color, can be changed later
     public $logoPath = "/images/logo.png"; //Default logo path, can be changed later
+    public $appUrl = ""; //Base URL, trailing slash not needed
 
     /* Database */
     public $dbHost="localhost"; //Database host

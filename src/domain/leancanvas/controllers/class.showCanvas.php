@@ -72,7 +72,7 @@ namespace leantime\domain\controllers {
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $_SESSION['currentLeanCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL." /leancanvas/simpleCanvas/");
+                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
                 } else {
 
