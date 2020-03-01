@@ -94,7 +94,6 @@ namespace leantime\domain\controllers {
                     $ticketId = $tempData[0];
                     $isCurrentTimesheetEntry = $tempData[1];
                     $currentDate = $tempData[2];
-
                     $hours = $dateEntry;
 
                     //No ticket ID set, ticket id comes from form fields

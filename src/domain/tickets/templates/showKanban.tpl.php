@@ -425,7 +425,7 @@ $efforts = $this->get('efforts');
                                             <textarea name="headline"></textarea><br />
 
                                             <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
-                                            <input type="hidden" name="status" value="<?php echo $key; ?> " />
+                                            <input type="hidden" name="status" value="<?php echo $key; ?>" />
                                             <input type="hidden" name="sprint" value="<?php echo $this->get("currentSprint"); ?> " />
                                             <input type="submit" value="Save" name="quickadd">
                                             <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
