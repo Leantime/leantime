@@ -82,10 +82,18 @@ class application
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
             $logoPath = $settings->getSetting("companysettings.logoPath");
+
             if ($logoPath !== false) {
-                $_SESSION["companysettings.logoPath"] = $logoPath;
+                $_SESSION["companysettings.logoPath"] = BASE_URL.$logoPath;
+
             }else{
-                $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
+
+                if (strpos($this->config->logoPath, 'http') === 0) {
+                    $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
+                }else{
+                    $_SESSION["companysettings.logoPath"] = BASE_URL.$this->config->logoPath;
+                }
+
             }
         }
 
