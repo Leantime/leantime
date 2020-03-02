@@ -58,7 +58,7 @@ $companySettings= $this->get('companySettings');
                                             <label>Logo</label>
                                         </div>
                                         <div class="col-md-4">
-                                            <img src='<?php echo BASE_URL.$companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
+                                            <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
                                             <div id="logoImg" style="height:auto;">
                                             </div>
 
