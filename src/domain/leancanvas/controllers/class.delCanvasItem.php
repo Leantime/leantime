@@ -34,7 +34,7 @@ namespace leantime\domain\controllers {
 
                 $_SESSION["msg"] = "CANVAS_ITEM_DELETED";
                 $_SESSION["msgT"] = "success";
-                header("Location: /leancanvas/showCanvas/");
+                header("Location:".BASE_URL."/leancanvas/showCanvas/");
 
             }
 

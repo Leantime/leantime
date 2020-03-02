@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
                 $retroRepo->deleteCanvas($id);
 
                 $tpl->setNotification("Board successfully deleted", "success");
-                $tpl->redirect("/retrospectives/showBoards");
+                $tpl->redirect(BASE_URL."/retrospectives/showBoards");
 
             }
 

@@ -84,7 +84,7 @@ namespace leantime\domain\controllers {
                                 $users = $projectRepo->getUsersAssignedToProject($id);
 
                                 $mailer->setSubject("One of your projects was updated");
-                                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                                $actual_link = CURRENT_URL;
                                 $mailer->setHtml("Project <a href='" . $actual_link . "'>[" . $id . "] - " . $values['name'] . "</a> was updated by " . $_SESSION["userdata"]["name"] . "<br />");
 
                                 $to = array();

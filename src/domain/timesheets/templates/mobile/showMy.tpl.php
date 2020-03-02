@@ -65,7 +65,7 @@ else {
 
 
 <div id="loader">&nbsp;</div>
-<form action="index.php?act=timesheets.showMy" method="post">
+<form action="<?=BASE_URL ?>/index.php?act=timesheets.showMy" method="post">
 
 
 <br /><br />

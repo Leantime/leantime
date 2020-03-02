@@ -197,7 +197,7 @@ namespace leantime\core {
 		</tr>
 		<tr>
 			
-			<td align="center">To <a href="https://'.$_SERVER['HTTP_HOST'].'/users/editOwn/">unsubscribe</a> from these types of notifications please login and edit your notifications settings</td>
+			<td align="center">To <a href="'.BASE_URL.'/users/editOwn/">unsubscribe</a> from these types of notifications please login and edit your notifications settings</td>
 			
 		</tr>
 		</table>';

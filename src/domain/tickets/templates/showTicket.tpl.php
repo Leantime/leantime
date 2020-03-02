@@ -37,7 +37,7 @@ $tickets = $objTicket;
                 var newStatus = jQuery("#status-select-" + id + " option:selected").val();
 
                 jQuery.ajax({
-                    url: '/index.php?act=general.ajaxRequest&module=tickets.showAll&export=true',
+                    url: leantime.appUrl+'/index.php?act=general.ajaxRequest&module=tickets.showAll&export=true',
                     type: 'post',
                     data: {ticketId: id, newStatus: newStatus},
                     success: function (msg) {
@@ -96,7 +96,7 @@ $tickets = $objTicket;
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="/tickets/showTicket/<?php echo $ticket['id']?>" method="post">
+                <form class="ticketModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket['id']?>" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
 
 
@@ -116,7 +116,7 @@ $tickets = $objTicket;
             </div>
 
             <div id="comments">
-                <form method="post" action="/tickets/showTicket/<?php echo $ticket['id']; ?>#comments" class="ticketModal">
+                <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket['id']; ?>#comments" class="ticketModal">
                     <input type="hidden" name="comment" value="1" />
                     <?php
                     $this->assign('formUrl', "/tickets/showTicket/".$ticket['id']."");

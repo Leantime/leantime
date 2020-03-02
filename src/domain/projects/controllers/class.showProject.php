@@ -188,7 +188,7 @@ namespace leantime\domain\controllers {
                             $tpl->setNotification('Project successfully saved', 'success');
 
                             $subject = "One of your projects was updated";
-                            $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                            $actual_link = CURRENT_URL;
                             $message = "" . $_SESSION["userdata"]["name"] . " updated the project details for '" . $values['name'] . "''. ";
                             $this->projectService->notifyProjectUsers($message, $subject, $id, array("link"=>$actual_link, "text"=> "Click here to see it."));
 
@@ -217,7 +217,7 @@ namespace leantime\domain\controllers {
                     $comments->addComment($values, 'project');
 
                     $subject = "A new comment was added to one of your projects";
-                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]#comment";
+                    $actual_link = "".CURRENT_URL."#comment";
                     $message = "" . $_SESSION["userdata"]["name"] . " added a new comment on a project. ";
                     $this->projectService->notifyProjectUsers($message, $subject, $id, array("link"=>$actual_link, "text"=> "Click here to see it."));
 

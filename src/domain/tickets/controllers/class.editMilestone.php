@@ -57,7 +57,7 @@ namespace leantime\domain\controllers {
 
                 if(!isset($milestone->id)) {
                     $this->tpl->setNotification("There was an issue retrieving this milestone", "error");
-                    $this->tpl->redirect("/tickets/roadmap/");
+                    $this->tpl->redirect(BASE_URL."/tickets/roadmap/");
                 }
 
                 $milestone->editFrom =  date('m/d/Y', strtotime($milestone->editFrom));
@@ -119,11 +119,11 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('helper', new core\helper());
 
                     $subject = "A new comment was added to a milestone";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$_GET['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
                     $message = "" . $_SESSION["userdata"]["name"] . " added a comment to a milestone. ";
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
-                    $this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
                 }
 
@@ -131,7 +131,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification("Milestone Edited Successfully", "success");
 
                     $subject = "A milestone was updated in one of your projects";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$params['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$params['id'];
                     $message = "" . $_SESSION["userdata"]["name"] . " edited a new milestone. ";
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
@@ -139,7 +139,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification("There was a problem saving the milestone", "error");
                 }
 
-                //$this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                //$this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
             }else{
 
@@ -151,17 +151,17 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification("Milestone Created Successfully", "success");
 
                     $subject = "A new milestone was created in one of your projects";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$result;
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$result;
                     $message = "" . $_SESSION["userdata"]["name"] . " created a new milestone ";
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
 
-                    $this->tpl->redirect("/tickets/editMilestone/".$result);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$result);
 
                 }else{
 
                     $this->tpl->setNotification("There was a problem saving the milestone: ".$result['message'], "error");
-                    $this->tpl->redirect("/tickets/editMilestone/");
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/");
 
                 }
 

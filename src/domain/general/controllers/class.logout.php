@@ -14,7 +14,7 @@ namespace leantime\domain\controllers {
 
             if ($login->logged_in() === true) {
 
-                header("Location: /index.php?logout=1");
+                header("Location:".BASE_URL."/index.php?logout=1");
             }
         }
     }

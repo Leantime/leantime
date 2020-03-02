@@ -15,7 +15,7 @@ class settings {
 	 */
 	private $debug = 1;
 
-	public $appVersion = "2.0.11";
+	public $appVersion = "2.0.12";
 
     public $dbVersion = "2.0.4";
 
@@ -53,6 +53,20 @@ class settings {
 
 
 	}
+
+    public function getBaseURL () {
+
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $domainName = $_SERVER['HTTP_HOST'].'';
+        return $protocol.$domainName;
+
+    }
+
+    public function getFullURL () {
+
+        return $this->getBaseURL().$_SERVER['REQUEST_URI'];
+
+    }
 
 }
 

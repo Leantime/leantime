@@ -78,8 +78,12 @@ function getFileLocally(){
             if(ob_get_length() > 0) {
                 ob_end_clean();
             }
+            $chunkSize = 1024*1024;
 
-            fpassthru($fd);
+            while (!feof($fd)) {
+                $buffer = fread($fd, $chunkSize);
+                echo $buffer;
+            }
             fclose($fd);
 
         }
@@ -130,7 +134,7 @@ function getFileFromS3(){
         $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
         $presignedUrl = (string)$request->getUri();
 
-        header("Location: ".$presignedUrl);
+        header("Location:".$presignedUrl);
 
         exit();
 

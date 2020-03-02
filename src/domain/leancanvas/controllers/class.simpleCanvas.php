@@ -61,14 +61,14 @@ namespace leantime\domain\controllers {
 
                     $mailer->setSubject("A new research canvas was created");
 
-                    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $actual_link = BASE_URL."/leancanvas/simpleCanvas/";
                     $mailer->setHtml("A new lean canvas was created by " . $_SESSION["userdata"]["name"] . ": <a href='" . $actual_link . "'>" . $values['title'] . "</a>.<br />");
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $tpl->setNotification('New canvas created successfully. Now who is your customer?', 'success');
 
                     $_SESSION['currentLeanCanvas'] = $currentCanvasId;
-                    $tpl->redirect("/leancanvas/simpleCanvas/");
+                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -85,7 +85,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $leancanvasRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect("/leancanvas/simpleCanvas/");
+                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
 
                 } else {
@@ -119,7 +119,7 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification('New item created successfully.', 'success');
 
-                    $tpl->redirect("/leancanvas/showCanvas/" . $currentCanvasId);
+                    $tpl->redirect(BASE_URL."/leancanvas/showCanvas/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -148,7 +148,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /leancanvas/showCanvas/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/leancanvas/showCanvas/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

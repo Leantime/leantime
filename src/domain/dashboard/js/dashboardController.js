@@ -259,7 +259,7 @@ leantime.dashboardController = (function () {
                     {
                         data: "ticketId="+ticketId,
                         type: 'POST',
-                        url: '/tickets/showAll&raw=true&punchIn=true'
+                        url: leantime.appUrl+'/tickets/showAll&raw=true&punchIn=true'
                     }
                 ).done(function(msg){
                     jQuery.jGrowl("Timer started!");
@@ -286,7 +286,7 @@ leantime.dashboardController = (function () {
                     {
                         data: "ticketId="+ticketId,
                         type: 'POST',
-                        url: '/tickets/showAll&raw=true&punchOut=true',
+                        url: leantime.appUrl+'/tickets/showAll&raw=true&punchOut=true',
 
                     }
                 ).done(

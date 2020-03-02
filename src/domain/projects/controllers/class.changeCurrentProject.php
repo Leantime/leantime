@@ -48,18 +48,18 @@ namespace leantime\domain\controllers {
 
                         $this->projectService->changeCurrentSessionProject($id);
 
-                        $this->tpl->redirect("/dashboard/show");
+                        $this->tpl->redirect(BASE_URL."/dashboard/show");
 
                     }else{
-                        $this->tpl->redirect("/404/");
+                        $this->tpl->redirect(BASE_URL."/404/");
                     }
                 }else{
-                    $this->tpl->redirect("/404/");
+                    $this->tpl->redirect(BASE_URL."/404/");
                 }
 
             }else{
 
-                //$this->tpl->redirect("/404/");
+                //$this->tpl->redirect(BASE_URL."/404/");
 
             }
 
@@ -78,7 +78,7 @@ namespace leantime\domain\controllers {
             if(isset($_GET['id'])) {
 
                 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
-                $this->tpl->redirect("/projects/changeCurrentProject/".$id);
+                $this->tpl->redirect(BASE_URL."/projects/changeCurrentProject/".$id);
 
             }
 

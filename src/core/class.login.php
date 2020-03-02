@@ -184,7 +184,7 @@ namespace leantime\core {
             if (isset($_GET['logout'])===true && $_GET['logout']==='1') {
 
                 $this->logout();
-                header("Location: /");
+                header("Location:".BASE_URL."/");
 
             }
 
@@ -525,7 +525,7 @@ namespace leantime\core {
             if($count > 0) {
                 $mailer = new mailer();
                 $mailer->setSubject("Leantime Password Reset");
-                $actual_link = "http://$_SERVER[HTTP_HOST]/resetPassword/".$resetLink;
+                $actual_link = "".BASE_URL."/resetPassword/".$resetLink;
                 $mailer->setHtml("We've received your e-mail requesting your Leantime password be reset.<br /><br />If you would like to reset your password, please click on this link: <br />".$actual_link."<br /><br />If you did not request a password reset, please ignore this message.<br/><br />Thank you.");
                 $to = array($username);
                 $mailer->sendMail($to, "Leantime System");

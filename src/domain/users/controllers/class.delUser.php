@@ -37,7 +37,7 @@ namespace leantime\domain\controllers {
 
                         $msgKey = 'USER_DELETED';
 
-                        header("Location:/users/showAll");
+                        header("Location:".BASE_URL."/users/showAll");
 
                     }
 

@@ -11,7 +11,7 @@ if(isset($currentSprint->id)) {$id = $currentSprint->id;
 }
 ?>
 
-<form class="formModal" method="post" action="/sprints/editSprint/<?php echo $id;?>" style="min-width: 320px;">
+<form class="formModal" method="post" action="<?=BASE_URL ?>/sprints/editSprint/<?php echo $id;?>" style="min-width: 320px;">
 
     <label>Sprint Name</label>
     <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="Sprint X"/><br />
@@ -33,7 +33,7 @@ if(isset($currentSprint->id)) {$id = $currentSprint->id;
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (isset($currentSprint->id) && $currentSprint->id != '' && ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager')) { ?>
-                <a href="/sprints/delSprint/<?php echo $currentSprint->id; ?>" class="delete formModal sprintModal"><i class="fa fa-trash"></i> Delete Sprint</a>
+                <a href="<?=BASE_URL ?>/sprints/delSprint/<?php echo $currentSprint->id; ?>" class="delete formModal sprintModal"><i class="fa fa-trash"></i> Delete Sprint</a>
             <?php } ?>
         </div>
     </div>

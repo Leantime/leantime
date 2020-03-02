@@ -111,13 +111,13 @@ class application
         if($this->login->logged_in()===false) {
 
             if($settings->checkIfInstalled() === false && isset($_GET['install']) === false){
-                header("Location: /install");
+                header("Location:".BASE_URL."/install");
                 exit();
             }
 
             $dbVersion = $settings->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
-                header("Location: /update");
+                header("Location:".BASE_URL."/update");
                 exit();
             }
         }

@@ -153,7 +153,7 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification('Canvas successfully updated', 'success');
 
-                        header("Location: /retrospectives/retroDialog/".$params['itemId']);
+                        header("Location:".BASE_URL."/retrospectives/retroDialog/".$params['itemId']);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -181,7 +181,7 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification('Canvas successfully created', 'success');
 
-                        header("Location: /retrospectives/retroDialog/".$id);
+                        header("Location:".BASE_URL."/retrospectives/retroDialog/".$id);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -206,7 +206,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->setNotification($message["msg"], $message["type"]);
                 $this->tpl->assign('helper', new core\helper());
 
-                header("Location: /retrospectives/retroDialog/".$_GET['id']);
+                header("Location:".BASE_URL."/retrospectives/retroDialog/".$_GET['id']);
 
             }
 

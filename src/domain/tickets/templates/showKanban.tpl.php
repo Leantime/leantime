@@ -70,7 +70,7 @@ $efforts = $this->get('efforts');
 			 // POST to server using $.post or $.ajax
 	        jQuery.ajax({
 	        	type: 'POST',
-	            url: '/tickets/showKanban&raw=true&sort=true',            
+	            url: leantime.appUrl+'/tickets/showKanban&raw=true&sort=true',
 	            data: 
 	            {
 		        	<?php foreach($this->get('allTicketStates') as $key => $statusRow){ ?>
@@ -119,7 +119,7 @@ $efforts = $this->get('efforts');
 	        jQuery.ajax({
 	            data: "ticketId="+ticketId,
 	            type: 'POST',
-	            url: '/tickets/showAll&raw=true&punchIn=true'
+	            url: leantime.appUrl+'/tickets/showAll&raw=true&punchIn=true'
 	        });
 	        
 	        var currentdate = new Date();
@@ -141,7 +141,7 @@ $efforts = $this->get('efforts');
 		        jQuery.ajax({
 		            data: "ticketId="+ticketId,
 		            type: 'POST',
-		            url: '/tickets/showAll&raw=true&punchOut=true',
+		            url: leantime.appUrl+'/tickets/showAll&raw=true&punchOut=true',
 		            
 		        });
 		        
@@ -249,7 +249,7 @@ $efforts = $this->get('efforts');
             echo $this->displayNotification();
         ?>
 
-		<form action="/tickets/showKanban" method="post">
+		<form action="<?=BASE_URL ?>/tickets/showKanban" method="post">
 
             <input type="hidden" value="1" name="search"/>
             <div class="row">
@@ -257,9 +257,9 @@ $efforts = $this->get('efforts');
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th"></i> &nbsp; Add <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="/tickets/newTicket"><span class="iconfa-pushpin "></span> Add ToDo</a></li>
-                            <li><a href="/tickets/editMilestone" class="milestoneModal"><span class="fa fa-map"></span> Add Milestone</a></li>
-                            <li><a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Add Sprint</a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"><span class="iconfa-pushpin "></span> Add ToDo</a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><span class="fa fa-map"></span> Add Milestone</a></li>
+                            <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Add Sprint</a></li>
                         </ul>
                     </div>
                     <a href="javascript:void(0);" onclick="leantime.ticketsController.toggleFilterBar();" class="formLink btn btn-default"><i class="fas fa-filter"></i> Filters</a>
@@ -290,21 +290,21 @@ $efforts = $this->get('efforts');
                             <br/>
                         <small>
                             <?php if($dates != "") {
-                                echo $dates; ?> - <a href="/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal">edit Sprint</a>
+                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal">edit Sprint</a>
                             <?php }else{ ?>
-                                <a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create a new Sprint</a>
+                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create a new Sprint</a>
                             <?php } ?>
                         </small>
                         <?php }else{ ?>
-                            <br /><h4> <a href="/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create your first Sprint</a></h4>
+                            <br /><h4> <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><span class="fa fa-rocket"></span> Create your first Sprint</a></h4>
                         <?php } ?>
                     </span>
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group mt-1 mx-auto" role="group">
-                            <a href="/tickets/showKanban" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Kanban</a>
-                            <a href="/tickets/showAll" class="btn btn-sm btn-secondary"><i class='iconfa-list'></i> List</a>
+                            <a href="<?=BASE_URL ?>/tickets/showKanban" class="btn btn-sm btn-secondary active"><i class="fas fa-columns"></i> Kanban</a>
+                            <a href="<?=BASE_URL ?>/tickets/showAll" class="btn btn-sm btn-secondary"><i class='iconfa-list'></i> List</a>
                         </div>
 
                     </div>
@@ -412,7 +412,7 @@ $efforts = $this->get('efforts');
 							
                             <h4 class="widgettitle title-primary" style="border-bottom:5px solid <?php echo $color; ?>">
                                 <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="/setting/editBoxLabel&module=ticketlabels&label=<?=$statusRow?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=ticketlabels&label=<?=$statusRow?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                 <?php } ?>
                                 <strong class="count">0</strong>
                                 <?php echo $tickets->stateLabels[$statusRow]; ?></h4>
@@ -425,7 +425,7 @@ $efforts = $this->get('efforts');
                                             <textarea name="headline"></textarea><br />
 
                                             <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
-                                            <input type="hidden" name="status" value="<?php echo $key; ?> " />
+                                            <input type="hidden" name="status" value="<?php echo $key; ?>" />
                                             <input type="hidden" name="sprint" value="<?php echo $this->get("currentSprint"); ?> " />
                                             <input type="submit" value="Save" name="quickadd">
                                             <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
@@ -450,13 +450,13 @@ $efforts = $this->get('efforts');
                                                     ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
-                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <a href="<?=BASE_URL ?>/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header">To-Do</li>
-                                                            <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                            <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
                                                             <li class="nav-header border">Track Time</li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                 <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>
@@ -473,7 +473,7 @@ $efforts = $this->get('efforts');
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[$row['type']]; ?>"></i> <?php echo $row['type']; ?></small>
 
-                                                <h4><a href="/tickets/showTicket/<?php echo $row["id"];?>"><?php echo $row["headline"];?></a></h4>
+                                                <h4><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php echo $row["headline"];?></a></h4>
                                                 <p class="description"><?php echo substr(strip_tags($row["description"]), 0, 100);?><?php if(strlen($row["description"]) > 0) echo" (...)";?></p>
 
 
@@ -534,8 +534,8 @@ $efforts = $this->get('efforts');
 
 										<div class="left" style="float:left;">
 
-											&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comment"><span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?></a>
-											&nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>
+											&nbsp;<a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#comment"><span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?></a>
+											&nbsp;<a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>
 											&nbsp;<?php
 											$tagArray = explode(",", $row["tags"]);
 

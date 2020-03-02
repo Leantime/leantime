@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification("To-Do successfully added", "success");
                     $subject = "A new To-Do was added";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/showTicket/". $result;
+                    $actual_link = BASE_URL."/tickets/showTicket/". $result;
                     $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".strip_tags($_POST['headline'])."'";
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 

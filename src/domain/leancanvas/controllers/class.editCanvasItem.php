@@ -157,12 +157,12 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification('Canvas successfully updated', 'success');
 
                         $subject = "One of your research boards was edited.";
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$params['itemId'];
+                        $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$params['itemId'];
                         $message = "'".$canvasItem['description']."' was edited by " . $_SESSION["userdata"]["name"] . "";
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
 
-                        $this->tpl->redirect("/leancanvas/editCanvasItem/".$params['itemId']);
+                        $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$params['itemId']);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -191,11 +191,11 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->leanCanvasRepo->canvasTypes[$params['box']].' successfully created', 'success');
 
                         $subject = "A new item was added to one of your canvases";
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".$id;
+                        $actual_link = BASE_URL."/leancanvas/editCanvasItem/".$id;
                         $message = "A new item was added by " . $_SESSION["userdata"]["name"] . ": ";
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
-                        $this->tpl->redirect("/leancanvas/editCanvasItem/".$id);
+                        $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$id);
 
                     } else {
                         $this->tpl->setNotification('ENTER_TITLE', 'error');
@@ -221,11 +221,11 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('helper', new core\helper());
 
                 $subject = "A new comment was added to one of your canvases";
-                $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$_GET['id'];
+                $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$_GET['id'];
                 $message = "A comment was added to one of your research canvas. ";
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
-                $this->tpl->redirect(" /leancanvas/editCanvasItem/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL." /leancanvas/editCanvasItem/".$_GET['id']);
 
             }
 

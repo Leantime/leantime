@@ -62,7 +62,7 @@ leantime.usersController = (function () {
 
         jQuery('#save-picture').addClass('running');
 
-        jQuery('#profileImg').attr('src', '/images/loaders/loader28.gif');
+        jQuery('#profileImg').attr('src', leantime.appUrl+'/images/loaders/loader28.gif');
         _uploadResult.croppie(
             'result', {
                 type: "blob",

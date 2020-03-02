@@ -100,9 +100,9 @@ namespace leantime\domain\services {
 
             $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
             if($numberOfClosedTickets < 10) {
-                $returnValue['estimatedCompletionDate'] = "<a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
             }else if($finalPercent == 100) {
-                $returnValue['estimatedCompletionDate'] = "<a href='/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
 
             }
             return $returnValue;
@@ -344,7 +344,7 @@ namespace leantime\domain\services {
 
                         $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
                         if($route != "projects.newProject") {
-                            $this->tpl->redirect("/projects/newProject");
+                            $this->tpl->redirect(BASE_URL."/projects/newProject");
                         }
 
                     }else{
@@ -352,7 +352,7 @@ namespace leantime\domain\services {
                         $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.", "info");
 
                         if($route != "users.editOwn") {
-                            $this->tpl->redirect("/users/editOwn");
+                            $this->tpl->redirect(BASE_URL."/users/editOwn");
                         }
 
                     }

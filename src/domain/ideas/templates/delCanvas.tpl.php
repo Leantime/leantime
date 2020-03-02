@@ -17,10 +17,10 @@
 
         <h4 class="widget widgettitle"><i class="iconfa iconfa-trash"></i> Delete</h4>
         <div class="widgetcontent">
-            <form method="post" action="/ideas/delCanvas/<?php echo $_GET['id']?>">
+            <form method="post" action="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $_GET['id']?>">
                 <p><?php echo $lang['CONFIRM_DELETE_CANVAS_ITEM']; ?></p><br />
                 <input type="submit" value="Yes, delete!" name="del" class="button" />
-                <a class="btn btn-secondary" href="/ideas/showBoards"><?php echo $lang['BACK']; ?></a>
+                <a class="btn btn-secondary" href="<?=BASE_URL ?>/ideas/showBoards"><?php echo $lang['BACK']; ?></a>
             </form>
         </div>
 

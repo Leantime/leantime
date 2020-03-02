@@ -37,7 +37,7 @@ $helper = $this->get('helper');
                             <?php } ?>
 
                             </select>
-                            <a href="/clients/newClient" target="_blank">Client not listed? Create a new one.</a>
+                            <a href="<?=BASE_URL ?>/clients/newClient" target="_blank">Client not listed? Create a new one.</a>
                         </div>
                     </div>
 
@@ -76,7 +76,7 @@ $helper = $this->get('helper');
                     <h4 class="widgettitle title-light"><span
                                 class="iconfa iconfa-group"></span>Team Members</h4>
                     <div class="form-group">
-                        Choose the users that will have access to this project. <a href="/users/showAll/">Add more users here</a><br />
+                        Choose the users that will have access to this project. <a href="<?=BASE_URL ?>/users/showAll/">Add more users here</a><br />
 
                         <div class="assign-container">
                             <?php foreach($this->get('availableUsers') as $row){ ?>
@@ -139,7 +139,7 @@ $helper = $this->get('helper');
     <div class="row-fluid padding-top">
         <?php if ($project['id'] != '') : ?>
             <div class="pull-right padding-top">
-                <a href="/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> Delete</a>
+                <a href="<?=BASE_URL ?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> Delete</a>
 
             </div>
         <?php endif; ?>

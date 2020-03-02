@@ -61,7 +61,7 @@ leantime.ticketsController = (function () {
     };
 
     var triggerMilestoneModal = function (id) {
-        jQuery.nmManual('/tickets/editMilestone/'+id, milestoneModalConfig);
+        jQuery.nmManual(leantime.appUrl+'/tickets/editMilestone/'+id, milestoneModalConfig);
 
     };
 
@@ -85,11 +85,11 @@ leantime.ticketsController = (function () {
                             // dates and progress value
                             var end_date = task._end.format('MMM D');
                             return '<div class="details-container"> ' +
-                            '<h4><a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
+                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
                             '<p>Expected to finish by <strong>'+end_date+'</strong><br /> ' +
                             ''+Math.round(task.progress)+'% completed!</p> ' +
-                            '<a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> Edit Milestone</a> | ' +
-                            '<a href="/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> View To-Dos</a> ' +
+                            '<a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> Edit Milestone</a> | ' +
+                            '<a href="'+leantime.appUrl+'/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> View To-Dos</a> ' +
 
                             '</div>';
                         },
@@ -343,7 +343,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -386,7 +386,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -425,7 +425,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -463,7 +463,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -552,7 +552,7 @@ leantime.ticketsController = (function () {
                     };
 
                     jQuery.nmManual(
-                        '/files/showAll&modalPopUp=true',
+                        leantime.appUrl+'/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions
