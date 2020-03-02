@@ -66,7 +66,7 @@
 
             </div>
             <div class="col-md-6" style="position:relative;">
-                <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?=BASE_URL ?><?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
+                <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
                 <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;">Drive Impact</h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
