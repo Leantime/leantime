@@ -54,7 +54,7 @@ function getFileLocally(){
 
 	if (file_exists(realpath($fullPath))) {
 
-		if ($fd = fopen(realpath($fullPath), 'r')) {
+		if ($fd = fopen(realpath($fullPath), 'rb')) {
 
             $path_parts = pathinfo($fullPath);
 
@@ -79,7 +79,10 @@ function getFileLocally(){
                 ob_end_clean();
             }
 
-            fpassthru($fd);
+            while (!feof($fd)) {
+                $buffer = fread($fd, 2048);
+                echo $buffer;
+            }
             fclose($fd);
 
         }
