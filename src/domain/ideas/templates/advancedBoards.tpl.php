@@ -10,8 +10,6 @@ $numberofColumns = count($this->get('canvasLabels'));
 $size = floor((100 / $numberofColumns)* 100) / 100;
 ?>
 
-
-
 <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
@@ -27,7 +25,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
         <div class="row">
             <div class="col-md-4">
                 <?php if (count($this->get('allCanvas')) > 0) { ?>
-                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea"); ?></a>
 
                 <?php } ?>
@@ -67,8 +65,8 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                 <div class="pull-right">
                     <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.idea_kanban") ?> <?=$this->__("links.view") ?></button>
                     <ul class="dropdown-menu">
-                        <li><a href="/ideas/showBoards" ><?php echo $this->__("buttons.idea_wall") ?></a></li>
-                        <li><a href="/ideas/advancedBoards" class="active"><?php echo $this->__("buttons.idea_kanban") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/ideas/showBoards" ><?php echo $this->__("buttons.idea_wall") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/ideas/advancedBoards" class="active"><?php echo $this->__("buttons.idea_kanban") ?></a></li>
                     </ul>
 
                 </div>
@@ -89,7 +87,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                <a href="/setting/editBoxLabel&module=idealabels&label=<?=$key?>"
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=<?=$key?>"
                                    class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php $this->e($statusRow["name"]); ?>
@@ -107,7 +105,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                 <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
-                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">
@@ -119,7 +117,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                     </div>
                                                 <?php } ?>
 
-                                                <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
+                                                <h4><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
                                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                                 <div class="mainIdeaContent">
@@ -132,9 +130,9 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -193,7 +191,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
             <?php if ($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager') { ?>
                 <br/>
-                <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
+                <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>
             <?php } ?>
 
@@ -207,7 +205,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                 <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>
                 <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
-                <a href="javascript:void(0)"
+                <a href="javascript:void(0);"
                    class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_new_idea_board") ?></a>
             </div>
 

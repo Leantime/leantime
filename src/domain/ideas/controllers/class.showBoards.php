@@ -74,7 +74,7 @@ namespace leantime\domain\controllers {
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $tpl->redirect("/ideas/showBoards/");
+                    $tpl->redirect(BASE_URL."/ideas/showBoards/");
 
                 } else {
                     $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
@@ -91,7 +91,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->updateCanvas($values);
 
                     $tpl->setNotification($language->__("notification.board_edited"), "success");
-                    $tpl->redirect("/ideas/showBoards/");
+                    $tpl->redirect(BASE_URL."/ideas/showBoards/");
 
 
                 } else {

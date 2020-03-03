@@ -90,9 +90,13 @@ class application
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
             $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
             if ($logoPath !== false) {
-                $_SESSION["companysettings.logoPath"] = $logoPath;
+                $_SESSION["companysettings.logoPath"] = BASE_URL.$logoPath;
             }else{
-                $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
+                if (strpos($this->config->logoPath, 'http') === 0) {
+                    $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
+                }else{
+                    $_SESSION["companysettings.logoPath"] = BASE_URL.$this->config->logoPath;
+                }
             }
         }
 
@@ -118,13 +122,13 @@ class application
         if($this->login->logged_in()===false) {
 
             if($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false){
-                header("Location: /install");
+                header("Location:".BASE_URL."/install");
                 exit();
             }
 
             $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
-                header("Location: /update");
+                header("Location:".BASE_URL."/update");
                 exit();
             }
         }

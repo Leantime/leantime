@@ -267,6 +267,7 @@ namespace leantime\domain\services {
                 'editTo' => date('Y-m-d 00:00:01', strtotime($params['editTo']))
             );
 
+
             if($values['headline'] == "") {
                 $error = array("status"=>"error", "message"=>"Headline Missing");
                 return $error;

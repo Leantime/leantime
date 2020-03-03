@@ -22,7 +22,7 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
 
             if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/projects/showAll";
+                $_SESSION['lastPage'] = CURRENT_URL;
             }
         }
 
@@ -179,7 +179,7 @@ namespace leantime\domain\controllers {
                             $message = sprintf($this->language->__("email_notifications.project_update_message"), $_SESSION["userdata"]["name"], $values['name']);
                             $linkLabel = $this->language->__("email_notifications.project_update_cta");
 
-                            $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                            $actual_link = CURRENT_URL;
 
                             $this->projectService->notifyProjectUsers($message, $subject, $id, array("link"=>$actual_link, "text"=> $linkLabel));
 
@@ -218,15 +218,11 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-
                 $timesheets = new repositories\timesheets();
-
-
 
                 $data = array();
                 $months = array();
                 $results = $timesheets->getProjectHours($id);
-
 
                 $allHours = 0;
                 $max = 0;

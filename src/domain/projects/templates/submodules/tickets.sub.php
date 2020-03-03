@@ -50,7 +50,7 @@ var ganttData = [
                         
                         jQuery.ajax({
                             type: 'POST',
-                            url: '/tickets/editTicket&raw=true&changeDate=true',            
+                            url: leantime.appUrl+'/tickets/editTicket&raw=true&changeDate=true',
                             data: 
                             {
                                 id : data.id,
@@ -66,7 +66,7 @@ var ganttData = [
                         
                         jQuery.ajax({
                             type: 'POST',
-                            url: '/tickets/editTicket&raw=true&changeDate=true',            
+                            url: leantime.appUrl+'/tickets/editTicket&raw=true&changeDate=true',
                             data: 
                             {
                                 id : data.id,

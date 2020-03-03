@@ -157,7 +157,7 @@
 
             </div>
         </div>
-        <a href="/users/delUser/<?php echo $this->get("id") ?>">Delete User</a>
+        <a href="<?=BASE_URL ?>/users/delUser/<?php echo $this->get("id") ?>">Delete User</a>
         
     </span>
     

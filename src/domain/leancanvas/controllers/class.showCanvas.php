@@ -64,13 +64,11 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $leancanvasRepo->addCanvas($values);
                     $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-
-
                     $mailer = new core\mailer();
                     $projectService = new services\projects();
                     $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
 
-                    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $actual_link = "".CURRENT_URL."";
                     $message = sprintf($language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
                     $mailer->setHtml($message);
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
@@ -78,7 +76,7 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');
 
                     $_SESSION['currentLeanCanvas'] = $currentCanvasId;
-                    $tpl->redirect(" /leancanvas/simpleCanvas/");
+                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
                 } else {
 
@@ -97,7 +95,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $leancanvasRepo->updateCanvas($values);
 
                     $tpl->setNotification($language->__("notification.board_edited"), "success");
-                    $tpl->redirect("/leancanvas/simpleCanvas/");
+                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
                 } else {
 

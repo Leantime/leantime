@@ -3,14 +3,14 @@
 ?>
 
 <div class="pageheader">
-                        
+
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.my_calendar'); ?></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -55,10 +55,10 @@
                 allDay: false,
                 <?php endif; ?>
                 <?php if(isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-                url: '/calendar/editEvent/<?php echo $calendar['id'] ?>',
+                url: '<?=BASE_URL ?>/calendar/editEvent/<?php echo $calendar['id'] ?>',
                 color: '#00814A'
                 <?php else: ?>
-                url: '/tickets/showTicket/<?php echo $calendar['id'] ?>',
+                url: '<?=BASE_URL ?>/tickets/showTicket/<?php echo $calendar['id'] ?>',
                 color:'#BC3600'
                 <?php endif; ?>
             },

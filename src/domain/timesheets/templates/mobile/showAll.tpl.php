@@ -64,7 +64,7 @@ $helper = $this->get('helper');
 
 <h1><?php echo $lang['ALL_TIMES']; ?></h1>
 <div id="loader">&nbsp;</div>
-<form action="index.php?act=timesheets.showAll" method="post" id="form" name="form">
+<form action="<?=BASE_URL ?>/index.php?act=timesheets.showAll" method="post" id="form" name="form">
 
 
 

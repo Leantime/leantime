@@ -20,7 +20,7 @@ $canvasLabels = $this->get('canvasLabels');
         <div class="row">
             <div class="col-md-4">
                 <?php if (count($this->get('allCanvas')) > 0) { ?>
-                    <a href="/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea") ?></a>
                 <?php } ?>
             </div>
@@ -60,8 +60,8 @@ $canvasLabels = $this->get('canvasLabels');
                     <div class="btn-group viewDropDown">
                         <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.idea_wall") ?> <?=$this->__("links.view") ?></button>
                         <ul class="dropdown-menu">
-                            <li><a href="/ideas/showBoards" class="active"><?php echo $this->__("buttons.idea_wall") ?></a></li>
-                            <li><a href="/ideas/advancedBoards" class=""><?php echo $this->__("buttons.idea_kanban") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/ideas/showBoards" class="active"><?php echo $this->__("buttons.idea_wall") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/ideas/advancedBoards" class=""><?php echo $this->__("buttons.idea_kanban") ?></a></li>
                         </ul>
                     </div>
 
@@ -86,19 +86,19 @@ $canvasLabels = $this->get('canvasLabels');
                                 <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
                                     <div class="inlineDropDownContainer" style="float:right;">
 
-                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
-                                            <li><a href="/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
-                                            <li><a href="/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+                                            <li><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                            <li><a href="<?=BASE_URL ?>/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
 
                                         </ul>
                                     </div>
                                 <?php } ?>
 
-                                <h4><a href="/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
+                                <h4><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"]; ?>" class="ideaModal"
                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                 <div class="mainIdeaContent">
@@ -184,7 +184,7 @@ $canvasLabels = $this->get('canvasLabels');
 
             <?php if ($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager') { ?>
                 <br/>
-                <a href="/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
+                <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>
             <?php } ?>
 
@@ -286,8 +286,8 @@ $canvasLabels = $this->get('canvasLabels');
         }
         ?>
 
-        leantime.ideasController.openModalManually("/ideas/ideaDialog<?php echo $modalUrl; ?>");
-        window.history.pushState({}, document.title, '/ideas/showBoards');
+        leantime.ideasController.openModalManually("<?=BASE_URL ?>/ideas/ideaDialog<?php echo $modalUrl; ?>");
+        window.history.pushState({}, document.title, '<?=BASE_URL ?>/ideas/showBoards');
 
         <?php } ?>
     });

@@ -36,9 +36,9 @@
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
-                            <li><a href="/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
-                            <li><a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
                     <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
@@ -71,9 +71,9 @@
                             <br/>
                             <small>
                             <?php if($dates != "") {
-                                echo $dates; ?> - <a href="/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
+                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
                             <?php }else{ ?>
-                                <a href="/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
                             <?php } ?>
                         </small>
                         <?php } ?>
@@ -99,8 +99,8 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
-                                <li><a href="/tickets/showKanban" ><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="/tickets/showAll" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showKanban" ><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showAll" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
                     </div>
@@ -230,7 +230,7 @@
                 <tbody>
                     <?php foreach($this->get('allTickets') as $row){?>
                         <tr>
-                            <td><a href="/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                            <td><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                             <td>
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
                                     <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -379,7 +379,7 @@
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><br /> <?=$this->__("tour.once_done_go_to_kanban")?><br /><a href="/tickets/showKanban/" class="btn btn-primary"><span class="fas fa-columns"></span> Kanban Board</a></p>
+            <p class="align-center"><br /> <?=$this->__("tour.once_done_go_to_kanban")?><br /><a href="<?=BASE_URL ?>/tickets/showKanban/" class="btn btn-primary"><span class="fas fa-columns"></span> Kanban Board</a></p>
         <?php } ?>
 
 	</div>
@@ -387,7 +387,7 @@
 
 <script type="text/javascript">
 
-    leantime.ticketsController.initTicketSearchSubmit("/tickets/showAll");
+    leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
     leantime.ticketsController.initUserDropdown();
     leantime.ticketsController.initMilestoneDropdown();

@@ -49,7 +49,7 @@ $roles = $this->get('roles');
                                 <td><?php echo $this->displayLink('users.editUser', $row['firstname'].' '.$row['lastname'], array('id' => $row['id'])) ?></td>
                                 <td><?php echo $row['username']; ?></td>
                                 <td><?php echo $row['roleName']; ?></td>
-                                <td><a href="/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> Delete User</a></td>
+                                <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> Delete User</a></td>
                             </tr>
         <?php endforeach; ?>
                     </tbody>

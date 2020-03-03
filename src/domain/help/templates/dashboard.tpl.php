@@ -51,7 +51,7 @@
             <p>
                 <br /></p>
             <a href="javascript:void(0);" class="btn btn-primary" onclick="leantime.helperController.startDashboardTour()"><i class="fas fa-map-signs"></i> Take the Full Tour</a><br />
-            <a href="/projects/newProject">Skip the tour and Start a Project</a><br />
+            <a href="<?=BASE_URL ?>/projects/newProject">Skip the tour and Start a Project</a><br />
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('dashboard')">Skip the tour & don't show again</a>
         </div>
     </div>

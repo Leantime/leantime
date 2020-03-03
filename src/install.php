@@ -15,18 +15,19 @@ $install = new leantime\core\install($config, $settings);
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="theme-color" content="<?php echo $_SESSION["companysettings.mainColor"] ?>" />
+    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>">
+    <meta name="identifier-URL" content="<?=BASE_URL?>">
 
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="shortcut icon" href="<?=BASE_URL?>/favicon.ico" />
+    <link rel="apple-touch-icon" href="<?=BASE_URL?>/apple-touch-icon.png">
 
     <?php echo $frontController->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
-    <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-    <script src="/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <script type="text/javascript">
             jQuery(document).ready(function(){
@@ -45,7 +46,7 @@ $install = new leantime\core\install($config, $settings);
 <div class="header hidden-gt-sm">
 
     <div class="logo" style="margin-left:0px;">
-        <a href="/" style="background-image:url(<?php echo $config->logoPath; ?>">&nbsp;</a>
+        <a href="<?=BASE_URL?>" style="background-image:url(<?php echo $config->logoPath; ?>">&nbsp;</a>
     </div>
 
 </div>
@@ -57,7 +58,7 @@ $install = new leantime\core\install($config, $settings);
 
             </div>
             <div class="col-md-6" style="position:relative;">
-                <a href="/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
+                <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
                 <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;">Drive Impact</h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
@@ -122,7 +123,7 @@ $install = new leantime\core\install($config, $settings);
                                         The installation was successful<br />
                                         <br />
                                         You can now login using your workspace URL:
-                                        <a href='http://" . $_SERVER['HTTP_HOST'] . "'>" . $_SERVER['HTTP_HOST'] . "</a>
+                                        <a href='" . BASE_URL . "'>" . BASE_URL . "</a>
                                         </div>
                                    </div>";
                                 }else{
@@ -136,8 +137,11 @@ $install = new leantime\core\install($config, $settings);
                                    </div>";
                                 }
                             }
+
                         }else{
+
                             $error = "Database already installed. Please login";
+
                         }
 
 
@@ -153,7 +157,7 @@ $install = new leantime\core\install($config, $settings);
                     }
                 ?>
 
-                    <form action="/install" method="post" class="registrationForm">
+                    <form action="<?=BASE_URL ?>/install" method="post" class="registrationForm">
                         <h3 class="subtitle">Login Info</h3>
                         <input type="email" name="email" class="form-control" placeholder="Email Address" value=""/><br />
                         <input type="password" name="password" class="form-control" placeholder="Password" />

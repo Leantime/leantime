@@ -92,10 +92,10 @@ namespace leantime\domain\controllers {
                 if (isset($result["status"])) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 } else {
-                    $this->tpl->setNotification("To-Do successfully added", "success");
+                    $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
                 }
 
-                $this->tpl->redirect("/dashboard/show");
+                $this->tpl->redirect(BASE_URL."/dashboard/show");
             }
 
 

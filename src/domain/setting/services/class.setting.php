@@ -39,7 +39,12 @@ namespace leantime\domain\services {
                 if ($url!==false) {
 
                     $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
-                    $_SESSION["companysettings.logoPath"] = $url;
+
+                    if (strpos($url, 'http') === 0) {
+                        $_SESSION["companysettings.logoPath"] = $url;
+                    }else{
+                        $_SESSION["companysettings.logoPath"] = BASE_URL.$url;
+                    }
 
                     return true;
 

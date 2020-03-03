@@ -64,7 +64,7 @@ leantime.ticketsController = (function () {
     };
 
     var triggerMilestoneModal = function (id) {
-        jQuery.nmManual('/tickets/editMilestone/'+id, milestoneModalConfig);
+        jQuery.nmManual(leantime.appUrl+'/tickets/editMilestone/'+id, milestoneModalConfig);
 
     };
 
@@ -88,11 +88,11 @@ leantime.ticketsController = (function () {
                             // dates and progress value
                             var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
                             return '<div class="details-container"> ' +
-                            '<h4><a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
+                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
                             '<p>'+leantime.i18n.__("text.expected_to_finish_by")+' <strong>'+end_date+'</strong><br /> ' +
                             ''+Math.round(task.progress)+'%</p> ' +
-                            '<a href="/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
-                            '<a href="/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> '+leantime.i18n.__("links.view_todos")+'</a> ' +
+                            '<a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
+                            '<a href="'+leantime.appUrl+'/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> '+leantime.i18n.__("links.view_todos")+'</a> ' +
 
                             '</div>';
                         },
@@ -383,7 +383,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -464,7 +464,7 @@ leantime.ticketsController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/tickets',
+                            url: leantime.appUrl+'/api/tickets',
                             data:
                                 {
                                     id : ticketId,
@@ -501,7 +501,7 @@ leantime.ticketsController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/tickets',
+                            url: leantime.appUrl+'/api/tickets',
                             data:
                                 {
                                     id : ticketId,
@@ -541,7 +541,7 @@ leantime.ticketsController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/tickets',
+                            url: leantime.appUrl+'/api/tickets',
                             data:
                                 {
                                     id : ticketId,
@@ -577,7 +577,7 @@ leantime.ticketsController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/tickets',
+                            url: leantime.appUrl+'/api/tickets',
                             data:
                                 {
                                     id : ticketId,
@@ -623,8 +623,8 @@ leantime.ticketsController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: '/css/tinymceSkin/oxide',
-                content_css: '/css/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
+                content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
                 height:"300",
                 content_style: "img { max-width: 100%; }",
                 plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
@@ -669,7 +669,7 @@ leantime.ticketsController = (function () {
                     };
 
                     jQuery.nmManual(
-                        '/files/showAll&modalPopUp=true',
+                        leantime.appUrl+'/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -894,7 +894,7 @@ leantime.ticketsController = (function () {
                 // POST to server using $.post or $.ajax
                 jQuery.ajax({
                     type: 'POST',
-                    url: '/api/tickets',
+                    url: leantime.appUrl+'/api/tickets',
                     data: statusPostData
 
                 });

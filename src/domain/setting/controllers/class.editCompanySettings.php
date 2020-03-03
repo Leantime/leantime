@@ -91,7 +91,7 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
 
-                header("Location:/setting/editCompanySettings");
+                header("Location:".BASE_URL."/setting/editCompanySettings");
 
             }
 

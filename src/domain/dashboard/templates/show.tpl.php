@@ -19,7 +19,7 @@
             <div class="col-lg-4" style="text-align:right;padding-top:15px">
                 <?php if(count($this->get('allUsers')) == 1) {?>
 
-                        <a href="/users/newUser/" >
+                        <a href="<?=BASE_URL ?>/users/newUser/" >
                             <i class="fa fa-users" style="font-size:25px; margin-right:10px; vertical-align: middle"></i>
                             <span style="font-size:14px; line-height:25px;">
                                 <?php echo $this->__("links.dont_do_it_alone"); ?>
@@ -140,7 +140,7 @@
 
                                     echo"<div class='center'><br /><h4>".$this->__("headlines.no_todos_this_week")."</h4>
                                         ".$this->__("text.take_the_day_off")."<br/><br/>
-                                        <h4><a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
+                                        <h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
                                 }
 
                                 foreach($this->get('tickets')["thisWeek"] as $row){
@@ -160,7 +160,7 @@
                                         <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
                                             <div class="row">
                                                 <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                    <strong><a href="/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                    <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                     <?php
 
@@ -169,13 +169,13 @@
                                                     ?>
 
                                                         <div class="inlineDropDownContainer">
-                                                            <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                                <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                                                <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                     <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> <?php echo $this->__("links.start_work"); ?></a>
@@ -275,7 +275,7 @@
 
                             <?php
                             if(count($this->get('tickets')["later"]) == 0){
-                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_todos")."</h4>".$this->__("text.start_filling_backlog")."<br/><br/><h4><a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
+                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_todos")."</h4>".$this->__("text.start_filling_backlog")."<br/><br/><h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
                             }
                             ?>
                             <?php foreach($this->get('tickets')["later"] as $row){
@@ -292,7 +292,7 @@
                                     <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
                                         <div class="row">
                                             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                <strong><a href="/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                 <?php
 
@@ -301,13 +301,13 @@
                                                     ?>
 
                                                     <div class="inlineDropDownContainer">
-                                                        <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                            <li><a href="/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                                            <li><a href="/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                 <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> <?php echo $this->__("links.start_work"); ?></a>
@@ -424,7 +424,7 @@
                             <?php
                             if(count($this->get('milestones')) == 0){
                                 echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
-                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> ".$this->__("links.goto_milestones")."</a>";
+                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> ".$this->__("links.goto_milestones")."</a>";
                             }
                             ?>
                             <?php foreach($this->get('milestones') as $row){
@@ -446,7 +446,7 @@
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <strong><a href="/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
                                                 </div>
                                             </div>
                                             <div class="row">

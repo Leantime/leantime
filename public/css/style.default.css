@@ -1625,12 +1625,10 @@ body.loginpage {
 }
 
 body {
-    height:auto;
-    min-height: 100%;
+    height: 100%;
 }
 
 body {
-    background: url(../images/leftpanelbg.png) repeat-y 0 0;
     font-size: 12px;
     font-family: 'RobotoRegular', 'Helvetica Neue', Helvetica, sans-serif;
 }
@@ -1722,6 +1720,11 @@ h1, h2, h3, h4, h5 {
     float: left;
     clear: both;
     min-height: 800px;
+	background-color: #282828;
+	position:fixed;
+	padding-top:60px;
+	height:100%;
+    z-index: 5;
 }
 
 /* Action for tabwidget fix */
@@ -2232,6 +2235,9 @@ a .label-default:after, a .label-primary:after {
     background: #0866c6;
     clear: both;
     height: 60px;
+	position: fixed;
+	z-index: 10;
+	width: 100%;
 }
 
 .headerinner {
@@ -2684,6 +2690,7 @@ a .label-default:after, a .label-primary:after {
 .rightpanel {
     margin-left: 260px;
     background: url(../images/bg1.png);
+	padding-top: 60px;
 }
 
 .rightpanel:after {
@@ -2821,8 +2828,6 @@ a .label-default:after, a .label-primary:after {
     color: #777;
     margin-bottom: 10px;
     font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;
-    
-
 }
 
 .subtitle2 {
@@ -8507,10 +8512,6 @@ body::after {
 
 .tooltip {
     z-index: 1000010;
-}
-
-.leftpanel {
-    position: relative;
 }
 
 .leftpanel .promotion {

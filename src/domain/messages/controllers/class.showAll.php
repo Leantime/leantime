@@ -38,7 +38,7 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification('MESSAGE_SENT', 'success');
 
                     $mailer->setSubject("You received a new message from " . $_SESSION["userdata"]["name"]);
-                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $actual_link = BASE_URL;
                     $mailer->setHtml("" . $_SESSION["userdata"]["name"] . " send you a new message <br /><a href='" . $actual_link . "'>Click here</a> to read it.");
                     $user = new repositories\users();
                     $userinfo = $user->getUser($_POST['username']);
@@ -66,7 +66,7 @@ namespace leantime\domain\controllers {
 
 
                     $mailer->setSubject("You received a new message from " . $_SESSION["userdata"]["name"]);
-                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $actual_link = BASE_URL;
                     $mailer->setHtml("" . $_SESSION["userdata"]["name"] . " send you a new message <br /><a href='" . $actual_link . "'>Click here</a> to read it.");
                     $user = new repositories\users();
                     $userinfo = $user->getUser($_POST['to_id']);

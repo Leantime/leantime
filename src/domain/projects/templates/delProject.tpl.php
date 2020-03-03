@@ -24,11 +24,11 @@ $project = $this->get('project');
             <form method="post">
                 <p><?php echo $this->__('text.confirm_project_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-primary" href="/projects/showProject/<?php echo $project['id'] ?>"><?php echo $this->__('buttons.back'); ?></a>
+                <a class="btn btn-primary" href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id'] ?>"><?php echo $this->__('buttons.back'); ?></a>
             </form>
 
         </div>
-                
+
 
     </div>
 </div>

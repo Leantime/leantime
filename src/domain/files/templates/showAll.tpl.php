@@ -9,7 +9,7 @@
 			 <div class='mediamgr_left'>
                     <div class="mediamgr_category">
                     	
-		        	<form action='/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+		        	<form action='<?=BASE_URL ?>/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
 						<div class="par f-left" style="margin-right: 15px;">
 						
 					   	 <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -31,7 +31,7 @@
 					   
 					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 		
-					</form>	
+					</form>
 
 					</div> 
                     

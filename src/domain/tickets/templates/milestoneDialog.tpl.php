@@ -9,7 +9,7 @@ $milestones = $this->get('milestones');
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="/tickets/roadmap&showMilestoneModal=<?php echo $currentMilestone->id; ?>";
+            location.href="<?=BASE_URL ?>/tickets/roadmap&showMilestoneModal=<?php echo $currentMilestone->id; ?>";
 
         }
     }
@@ -21,7 +21,7 @@ $milestones = $this->get('milestones');
 
     <?php echo $this->displayNotification(); ?>
 
-    <form class="formModal" method="post" action="/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
+    <form class="formModal" method="post" action="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
 
         <label><?=$this->__("label.milestone_title"); ?></label>
         <input type="text" name="headline" value="<?php echo $currentMilestone->headline?>" placeholder="<?=$this->__("label.milestone_title"); ?>"/><br />
@@ -75,14 +75,16 @@ $milestones = $this->get('milestones');
             </div>
             <div class="col-md-6 align-right padding-top-sm">
                 <?php if (isset($currentMilestone->id) && $currentMilestone->id != '' && ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager')) { ?>
-                    <a href="/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
+                    <a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>
         </div>
 
     </form>
 
-    <?php if($currentMilestone->id != '') { ?>
+        <?php
+            if(isset($currentMilestone->id) && $currentMilestone->id !== '') {
+        ?>
         <br />
         <input type="hidden" name="comment" value="1" />
 

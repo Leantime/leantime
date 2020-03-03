@@ -55,12 +55,19 @@ namespace leantime\domain\controllers {
 
                 $milestone = $this->ticketRepo->getTicket($params['id']);
                 $milestone = (object) $milestone;
+
+                if(!isset($milestone->id)) {
+                    $this->tpl->setNotification($this->language->__("notifications.could_not_find_milestone"), "error");
+                    $this->tpl->redirect(BASE_URL."/tickets/roadmap/");
+                }
+
                 $milestone->editFrom =  date($this->language->__("language.dateformat"), strtotime($milestone->editFrom));
                 $milestone->editTo = date($this->language->__("language.dateformat"), strtotime($milestone->editTo));
 
                 $comments = $this->commentsRepo->getComments('ticket', $params['id']);
 
             }else{
+
                 $milestone = new models\tickets();
                 $today = new DateTime();
                 $milestone->editFrom = $today->format($this->language->__("language.dateformat"));
@@ -116,7 +123,7 @@ namespace leantime\domain\controllers {
                     $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_comment_milestone_cta")));
 
-                    $this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
                 }
 
@@ -134,13 +141,14 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                 }
 
-                $this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
             }else{
 
+
                 $result = $this->ticketService->quickAddMilestone($params);
 
-                if($result == true) {
+                if(is_numeric($result)) {
 
                     $this->tpl->setNotification($this->language->__("notification.milestone_created_successfully"), "success");
 
@@ -149,11 +157,12 @@ namespace leantime\domain\controllers {
                     $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_created_cta")));
 
-                    $this->tpl->redirect("/tickets/editMilestone/".$result);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$result);
 
                 }else{
 
                     $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/");
 
                 }
 

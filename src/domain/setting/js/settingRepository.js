@@ -17,7 +17,7 @@ leantime.settingRepository = (function () {
         jQuery.ajax(
             {
                 type: 'POST',
-                url: '/api/setting',
+                url: leantime.appUrl+'/api/setting',
                 data: formData,
                 processData: false,
                 contentType: false

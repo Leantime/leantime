@@ -453,9 +453,9 @@ namespace leantime\domain\repositories {
             $files = new files();
             $file = $files->getFile($value['profileId']);
 
-            $return = '/images/default-user.png';
+            $return = BASE_URL.'/images/default-user.png';
             if ($file) {
-                $return = "/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
+                $return = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
             }
 
 

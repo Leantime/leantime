@@ -31,7 +31,7 @@ namespace leantime\domain\controllers {
                 $leancanvasRepo->delCanvasItem($id);
 
                 $tpl->setNotification($language->__("notification.research_board_item_deleted"), "success");
-                $tpl->redirect("/leancanvas/simpleCanvas");
+                $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas");
 
             }
 

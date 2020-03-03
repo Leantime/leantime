@@ -16,7 +16,7 @@ leantime.helperController = (function () {
     var showHelperModal = function (module, minW, minH) {
 
         jQuery.nmManual(
-            "/help/showOnboardingDialog&module="+module,
+            leantime.appUrl+"/help/showOnboardingDialog&module="+module,
             {sizes: {
                 minW: minW || 200,
                 minH: minH || 500,
@@ -205,7 +205,7 @@ leantime.helperController = (function () {
                     text:"Go to Projects",
                     events: {
                         'click':function () {
-                            window.location.href = "/projects/newProject/";
+                            window.location.href = leantime.appUrl+"/projects/newProject/";
                         }
                     }
                 }

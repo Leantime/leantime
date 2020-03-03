@@ -206,7 +206,7 @@ namespace leantime\core {
             }
 
             if ($currentDBVersion == $newDBVersion) {
-                $errors[0] = "Database is up to date! <a href='/'> Login to continue</a>";
+                $errors[0] = "Database is up to date! <a href='".BASE_URL."/'> Login to continue</a>";
                 return $errors;
             }
 

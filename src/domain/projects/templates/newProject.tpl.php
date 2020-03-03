@@ -8,7 +8,7 @@ $project = $this->get('values');
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
+        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
     </div>
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
@@ -24,7 +24,6 @@ $project = $this->get('values');
 
         <?php echo $this->displayNotification(); ?>
 
-
         <div class="tabbedwidget tab-primary">
 
             <ul>
@@ -39,7 +38,6 @@ $project = $this->get('values');
         </div>
     </div>
 </div>
-
 
 <script type="text/javascript">
     jQuery(document).ready(function() {

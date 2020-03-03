@@ -12,7 +12,7 @@ $bookedHours = $this->get('bookedHours');
 	<div id="my_chart">&nbsp;</div>
 </div>-->
 
-<form action="/projects/showProject/<?php echo $project['id']; ?>#timesheets" method="post">
+<form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#timesheets" method="post">
 
 <h4>
 	<?php echo $bookedHours; ?> hours of <?php echo $project['hourBudget'] ?> estimated hours used.

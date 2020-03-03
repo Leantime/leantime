@@ -32,14 +32,14 @@ if ($login->logged_in()!==true) {
 }
 
 function getFileLocally(){
-	
+
 	$config = new leantime\core\config();
-	
+
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
  	$ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
  	$module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
- 
+
 	$mimes = array
     (
         'jpg' => 'image/jpg',
@@ -47,7 +47,8 @@ function getFileLocally(){
         'gif' => 'image/gif',
         'png' => 'image/png'
     );
-	
+
+	//TODO: Replace with ROOT
   	$path = realpath(__DIR__."/../".$config->userFilePath."/");
 
   	$fullPath = $path."/".$encName.'.'.$ext;
@@ -79,8 +80,10 @@ function getFileLocally(){
                 ob_end_clean();
             }
 
+            $chunkSize = 1024*1024;
+
             while (!feof($fd)) {
-                $buffer = fread($fd, 2048);
+                $buffer = fread($fd, $chunkSize);
                 echo $buffer;
             }
             fclose($fd);
@@ -133,7 +136,7 @@ function getFileFromS3(){
         $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
         $presignedUrl = (string)$request->getUri();
 
-        header("Location: ".$presignedUrl);
+        header("Location:".$presignedUrl);
 
         exit();
 

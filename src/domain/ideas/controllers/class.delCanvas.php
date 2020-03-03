@@ -30,7 +30,7 @@ namespace leantime\domain\controllers {
                 $ideaRepo->deleteCanvas($id);
 
                 $tpl->setNotification($language->__("notification.idea_board_deleted"), "success");
-                $tpl->redirect("/ideas/showBoards");
+                $tpl->redirect(BASE_URL."/ideas/showBoards");
 
             }
 

@@ -2,7 +2,7 @@
 
 <div class="userinfo">
 
-    <a href='/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
+    <a href='<?=BASE_URL ?>/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
         <img src="<?php echo $this->get('profilePicture'); ?>" alt="Picture of <?php $this->get('userName'); ?>" class="profilePicture"/><?php echo $this->get('userName'); ?>
 
         <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -10,7 +10,7 @@
     <ul class="dropdown-menu">
 
         <li>
-            <a href='/users/editOwn/'>
+            <a href='<?=BASE_URL ?>/users/editOwn/'>
                 <span class="fa fa-user"></span> My Profile
             </a>
         </li>
@@ -50,7 +50,7 @@
         </li>
 
         <li class="border">
-            <a href='/index.php?logout=1'>
+            <a href='<?=BASE_URL ?>/index.php?logout=1'>
                 <i class="fa fa-sign-out-alt" aria-hidden="true"></i> Sign Out
             </a>
         </li>

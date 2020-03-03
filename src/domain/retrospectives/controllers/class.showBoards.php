@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification("New Board added", "success");
                     $_SESSION['currentRetroCanvas'] = $currentCanvasId;
-                    $tpl->redirect("/retrospectives/showBoards/");
+                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
@@ -74,7 +74,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $retroRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect("/retrospectives/showBoards/");
+                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
@@ -105,7 +105,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /retrospectives/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -134,7 +134,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /retrospectives/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');

@@ -42,7 +42,7 @@ leantime.ideasController = (function () {
 
                             xhr = new XMLHttpRequest();
                             xhr.withCredentials = false;
-                            xhr.open('POST', '/api/files');
+                            xhr.open('POST', leantime.appUrl+'/api/files');
 
                             xhr.onload = function () {
                                 var json;
@@ -72,7 +72,7 @@ leantime.ideasController = (function () {
                             };
 
                             jQuery.nmManual(
-                                '/files/showAll&modalPopUp=true',
+                                leantime.appUrl+'/files/showAll&modalPopUp=true',
                                 {
                                     stack: true,
                                     callbacks: shortOptions,

@@ -40,15 +40,11 @@ namespace leantime\domain\controllers {
                 $retroRepo->delCanvasItem($id);
 
                 $tpl->setNotification($language->__("notification.retrospective_item_deleted"), "success");
-                $tpl->redirect("/retrospectives/showBoards");
-
+                $tpl->redirect(BASE_URL."/retrospectives/showBoards");
 
             }
 
             $tpl->displayPartial('retrospectives.delCanvasItem');
-
         }
-
     }
-
 }

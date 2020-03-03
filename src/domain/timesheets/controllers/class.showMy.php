@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
         public function saveTimeSheet($postData)
         {
             $ticketId = "";
-            $kind = "GENERAL_BILLABLE";
+
             $currentTimesheetId = -1;
             $user = new repositories\users();
             $userinfo = $user->getUser($_SESSION["userdata"]["id"]);
@@ -94,12 +94,14 @@ namespace leantime\domain\controllers {
                     $ticketId = $tempData[0];
                     $isCurrentTimesheetEntry = $tempData[1];
                     $currentDate = $tempData[2];
-                    $kind = $tempData[3];
                     $hours = $dateEntry;
 
                     //No ticket ID set, ticket id comes from form fields
                     if ($ticketId == "new") {
                         $ticketId = $postData["ticketId"];
+                        $kind = $postData["kindId"];
+                    }else{
+                        $kind = $tempData[3];
                     }
 
                     $values = array(

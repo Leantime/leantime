@@ -9,7 +9,7 @@
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
+        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
     </div>
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
@@ -107,14 +107,14 @@
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
                         <div class="row">
                             <div class="col-md-3">
-                                <img src="/images/mattermost-logoHorizontal.png" width="200" />
+                                <img src="<?=BASE_URL ?>/images/mattermost-logoHorizontal.png" width="200" />
                             </div>
                             <div class="col-md-5">
                                 <?=$this->__('text.mattermost_instructions'); ?>
                             </div>
                             <div class="col-md-4">
                                 <strong><?=$this->__('label.webhook_url'); ?></strong><br />
-                                <form action="/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                                <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                                     <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $this->get("mattermostWebhookURL"); ?>"/>
                                     <br />
                                     <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="mattermostSave" />
@@ -133,7 +133,7 @@
                             </div>
                             <div class="col-md-4">
                                 <strong><?=$this->__('label.webhook_url'); ?></strong><br />
-                                <form action="/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                                <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                                     <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $this->get("slackWebhookURL"); ?>"/>
                                     <br />
                                     <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="slackSave" />
@@ -144,7 +144,7 @@
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Zulip</h4>
                         <div class="row">
                             <div class="col-md-3">
-                                <img src="/images/zulip-org-logo.png" width="200"/>
+                                <img src="<?=BASE_URL ?>/images/zulip-org-logo.png" width="200"/>
                             </div>
 
                             <div class="col-md-5">
@@ -152,7 +152,7 @@
                             </div>
                             <div class="col-md-4">
 
-                                <form action="/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                                <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                                     <strong><?=$this->__('label.base_url'); ?></strong><br />
                                     <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$this->__('input.placeholders.zulip_url'); ?>" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
                                     <br />
@@ -181,7 +181,7 @@
 
     jQuery(document).ready(function() {
         <?php if(isset($_GET['integrationSuccess'])) {?>
-            window.history.pushState({},document.title, '/projects/showProject/<?php echo (int)$project['id']; ?>');
+            window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
         <?php } ?>
 
         leantime.projectsController.initProjectTabs();

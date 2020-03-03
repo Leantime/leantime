@@ -156,11 +156,11 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->language->__("notifications.canvas_item_updates"), 'success');
 
                         $subject = $this->language->__("email_notifications.canvas_board_edited");
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$params['itemId'];
+                        $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$params['itemId'];
                         $message = sprintf($this->language->__("email_notifications.canvas_item_update_message"),$_SESSION["userdata"]["name"],  $canvasItem['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
 
-                        $this->tpl->redirect("/leancanvas/editCanvasItem/".$params['itemId']);
+                        $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$params['itemId']);
 
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_hypothesis"), 'error');
@@ -189,14 +189,14 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->leanCanvasRepo->canvasTypes[$params['box']].' successfully created', 'success');
 
                         $subject = $this->language->__("email_notifications.canvas_board_item_created");
-                        $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$params['itemId'];
+                        $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$params['itemId'];
                         $message = sprintf($this->language->__("email_notifications.canvas_item_created_message"),$_SESSION["userdata"]["name"],  $canvasItem['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
 
 
                         $this->tpl->setNotification($this->language->__("notification.hypothesis_created"), 'success');
 
-                        $this->tpl->redirect("/leancanvas/editCanvasItem/".$id);
+                        $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$id);
 
                     } else {
 
@@ -223,12 +223,12 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('helper', new core\helper());
 
                 $subject = $this->language->__("email_notifications.canvas_board_comment_created ");
-                $actual_link = "https://$_SERVER[HTTP_HOST]/leancanvas/editCanvasItem/".(int)$params['itemId'];
+                $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$params['itemId'];
                 $message = sprintf($this->language->__("email_notifications.canvas_item__comment_created_message"),$_SESSION["userdata"]["name"]);
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
 
 
-                $this->tpl->redirect(" /leancanvas/editCanvasItem/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL." /leancanvas/editCanvasItem/".$_GET['id']);
 
             }
 

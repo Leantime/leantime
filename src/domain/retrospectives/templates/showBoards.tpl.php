@@ -73,7 +73,7 @@ $canvasTitle = "";
 
                     <h4 class="widgettitle title-primary">
                         <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                            <a href="/setting/editBoxLabel&module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["well"]; ?>
                     </h4>
@@ -89,19 +89,19 @@ $canvasTitle = "";
                                             <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
-                                                    <a href="/users/editOwn/" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
-                                                        <li><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
-                                                        <li><a href="/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
 
                                                     </ul>
                                                 </div>
                                             <?php } ?>
 
-                                            <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
 
                                             <div class="mainIdeaContent">
                                                 <?php  $this->e($row["data"]); ?>
@@ -161,7 +161,7 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
-                        <a href="/retrospectives/retroDialog&type=well" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=well" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
                     </div>
 
 
@@ -171,7 +171,7 @@ $canvasTitle = "";
 
                     <h4 class="widgettitle title-primary">
                         <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                            <a href="/setting/editBoxLabel&module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["notwell"]; ?>
                     </h4>
@@ -192,8 +192,8 @@ $canvasTitle = "";
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
-                                                        <li><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
-                                                        <li><a href="/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
 
                                                     </ul>
                                                 </div>
@@ -259,7 +259,7 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
-                        <a href="/retrospectives/retroDialog&type=notwell" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=notwell" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
                     </div>
 
 
@@ -269,7 +269,7 @@ $canvasTitle = "";
 
                     <h4 class="widgettitle title-primary">
                         <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                            <a href="/setting/editBoxLabel&module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["startdoing"]; ?>
                     </h4>
@@ -297,7 +297,7 @@ $canvasTitle = "";
                                                 </div>
                                             <?php } ?>
 
-                                            <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
 
                                             <div class="mainIdeaContent">
                                                 <?php  $this->e($row["data"]); ?>
@@ -357,10 +357,12 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
-                        <a href="/retrospectives/retroDialog&type=startdoing" class="retroModal" id="startdoing"><?=$this->__('links.add_more');?></a>
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=startdoing" class="retroModal" id="startdoing"><?=$this->__('links.add_more');?></a>
                     </div>
 
                 </div>
+
+
 
             </div>    
 
@@ -373,7 +375,7 @@ $canvasTitle = "";
 
         <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
             <br />
-            <a href="/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?=$this->__('links.delete_board') ?></a>
+            <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?=$this->__('links.delete_board') ?></a>
         <?php } ?>
 
     <?php } else {
@@ -476,8 +478,8 @@ $canvasTitle = "";
             ?>
 
             jQuery(document).ready(function(){
-                leantime.retroController.openModalManually("/retrospectives/retroDialog<?php echo $modalUrl; ?>");
-                window.history.pushState({},document.title, '/retrospectives/showBoards');
+                leantime.retroController.openModalManually("<?=BASE_URL ?>/retrospectives/retroDialog<?php echo $modalUrl; ?>");
+                window.history.pushState({},document.title, '<?=BASE_URL ?>/retrospectives/showBoards');
             });
 
         <?php } ?>

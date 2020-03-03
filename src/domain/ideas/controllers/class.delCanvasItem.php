@@ -30,7 +30,7 @@ namespace leantime\domain\controllers {
 
                 $tpl->setNotification($language->__("notification.idea_board_item_deleted"), "success");
 
-                $tpl->redirect(" /ideas/showBoards");
+                $tpl->redirect(BASE_URL."/ideas/showBoards");
 
             }
 

@@ -28,7 +28,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <div class="row">
             <div class="col-md-6">
-                <a href="/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
+                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
@@ -66,7 +66,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             <h4>".$this->__("headlines.no_milestones")."<br/>
             
             <br />
-            <a href=\"/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">".$this->__("links.add_milestone")."</a></h4></div>";
+            <a href=\"".BASE_URL."/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">".$this->__("links.add_milestone")."</a></h4></div>";
 
         }
         ?>
@@ -76,7 +76,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><?=$this->__("headlines.no_milestones") ?><br /></em> <br /><a href="/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> <?=$this->__("links.backlog") ?></a></p>
+            <p class="align-center"><?=$this->__("headlines.no_milestones") ?><br /></em> <br /><a href="<?=BASE_URL ?>/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> <?=$this->__("links.backlog") ?></a></p>
         <?php } ?>
 
     </div>
@@ -100,8 +100,8 @@ jQuery(document).ready(function(){
         }
         ?>
 
-        leantime.ticketsController.openMilestoneModalManually("/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '/tickets/roadmap');
+        leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL ?>/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/roadmap');
 
     <?php } ?>
 
@@ -117,8 +117,8 @@ jQuery(document).ready(function(){
                 echo"{
                     id :'".$mlst->id."',
                     name :".json_encode("".$mlst->headline." (".$progress."% Done)").",
-                    start :'".(($mlst->editFrom != '0000-00-00 00:00:00') ? $mlst->editFrom :  date('Y-m-d'))."',
-                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && $mlst->editTo != '1969-12-31 00:00:01') ? $mlst->editTo : date('Y-m-d', strtotime("+1 day", time())))."',
+                    start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31')? $mlst->editFrom :  date('Y-m-d'))."',
+                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time())))."',
                     progress :'".$progress."',
                     dependencies :'".($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '')."',
                     custom_class :'',

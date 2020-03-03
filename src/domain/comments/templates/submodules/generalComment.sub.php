@@ -2,12 +2,13 @@
 
     $comments = new leantime\domain\repositories\comments();
 
+    //TODO: verify formURL behavior
     $formUrl = $this->get('formUrl');
     $deleteUrlBase = "";
 
     if($formUrl == "") {
         $formUrl = "#comments";
-        $deleteUrlBase = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."&delComment=";
+        $deleteUrlBase = "".CURRENT_URL."&delComment=";
     }else{
         $deleteUrlBase = $formUrl."&delComment=";
     }
@@ -38,7 +39,7 @@
 
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
 
-                            <img src="/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+                            <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div class="right"><?php printf(
                                     $this->__('text.written_on'),
                                     date($this->__('language.dateformat'), strtotime($row['date'])),
@@ -72,7 +73,7 @@
                         <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
 
 
-                            <img src="/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+                            <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div class="right"><?php printf(
                                     $this->__('text.written_on'),
                                     date($this->__('language.dateformat'), strtotime($row['date'])),

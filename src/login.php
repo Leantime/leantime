@@ -7,19 +7,21 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="theme-color" content="<?php echo $_SESSION["companysettings.mainColor"] ?>" />
+    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>">
+    <meta name="identifier-URL" content="<?=BASE_URL?>">
 
-    <link rel="shortcut icon" href="/favicon.ico"/>
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="shortcut icon" href="<?=BASE_URL ?>/favicon.ico"/>
+    <link rel="apple-touch-icon" href="<?=BASE_URL ?>/apple-touch-icon.png">
 
     <title><?php echo  $_SESSION["companysettings.sitename"]; ?></title>
 
     <?php echo $frontController->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
-    <link rel="stylesheet" href="/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL ?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-    <script src="/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL ?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
 
 </head>
@@ -50,7 +52,7 @@
 <div class="header hidden-gt-sm">
 
     <div class="logo" style="margin-left:0px;">
-        <a href="/" style="background-image:url(<?php echo $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+        <a href="<?=BASE_URL ?>/" style="background-image:url(<?=BASE_URL ?><?php echo $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
     </div>
 
 </div>
@@ -63,7 +65,7 @@
 
             </div>
             <div class="col-md-6" style="position:relative;">
-                <a href="/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
+                <a href="<?=BASE_URL ?>" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
                 <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
@@ -95,7 +97,7 @@
                             <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_password"); ?>" value=""/>
                         </div>
                         <div class="">
-                            <a href="/resetPassword" style="float:right; margin-top:10px;"><?php echo $language->__("links.forgot_password"); ?></a>
+                            <a href="<?=BASE_URL ?>/resetPassword" style="float:right; margin-top:10px;"><?php echo $language->__("links.forgot_password"); ?></a>
                             <input type="submit" name="login" value="<?php echo $language->__("buttons.login"); ?>" class="btn btn-primary"/>
                         </div>
 

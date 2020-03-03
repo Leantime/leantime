@@ -12,7 +12,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function () {
         if (!window.jQuery) {
             //It's not a modal
-            location.href = "/ideas/showBoards&showIdeaModal=<?php echo $canvasItem['id']; ?>";
+            location.href = "<?=BASE_URL ?>/ideas/showBoards&showIdeaModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -31,7 +31,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     <?php echo $this->displayNotification(); ?>
 
-    <form class="ideaModal" method="post" action="/ideas/ideaDialog/<?php echo $id; ?>">
+    <form class="ideaModal" method="post" action="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
@@ -51,7 +51,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1"/>
 
         <?php if ($id != '') { ?>
-            <a href="/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
+            <a href="<?=BASE_URL ?>/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
                         class="fa fa-trash"></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
         <input type="submit" value="<?php echo $this->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
@@ -139,10 +139,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="/retrospectives/retroDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
+                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
                                        class="ideaModal delete"><i class="fa fa-close"></i> <?php echo $this->__("links.remove")?></a>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="comment" value="1"/>
 
         <?php
-        $this->assign("formUrl", "/ideas/ideaDialog/" . $id . "");
+        $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
         $this->displaySubmodule('comments-generalComment'); ?>
     <?php } ?>
 
