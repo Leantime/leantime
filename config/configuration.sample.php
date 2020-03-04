@@ -36,6 +36,7 @@ class config
 	public $smtpHosts = ""; //SMTP host
 	public $smtpUsername =""; //SMTP username
 	public $smtpPassword = ""; //SMTP password
+	public $smtpAutoTLS = true; //SMTP Enable TLS encryption automatically if a server supports it
 	public $smtpSecure =""; //SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
 	public $smtpPort = ""; //Port (usually one of 25, 465, 587, 2526)
 
