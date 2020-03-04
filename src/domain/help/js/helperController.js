@@ -16,7 +16,7 @@ leantime.helperController = (function () {
     var showHelperModal = function (module, minW, minH) {
 
         jQuery.nmManual(
-            leantime.appUrl+"/help/showOnboardingDialog&module="+module,
+            leantime.appUrl+"/help/showOnboardingDialog?module="+module,
             {sizes: {
                 minW: minW || 200,
                 minH: minH || 500,

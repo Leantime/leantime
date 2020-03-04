@@ -149,7 +149,7 @@ $users = $this->get('users');
                             <?php endforeach; ?>
 
                             <?php if(count($this->get('userClients')) == 0) {
-                                echo "<tr><td colspan='3'>No contacts have been added to this client. Add and assign users <a href='<?=BASE_URL ?>/users/showAll'>here</a></td></tr>";
+                                echo "<tr><td colspan='3'>No contacts have been added to this client. Add and assign users <a href='".BASE_URL."/users/showAll'>here</a></td></tr>";
                             }?>
                             </tbody>
                         </table>
