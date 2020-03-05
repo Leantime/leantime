@@ -20,7 +20,7 @@ namespace leantime\domain\controllers {
             $ticketRepo = new repositories\tickets();
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' || $_SESSION['userdata']['role'] == 'developer') {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);

@@ -6,13 +6,7 @@ $language->setModule('tickets');
 $language->readIni();
 
 $formUrl = CURRENT_URL;
-$deleteUrlBase = "";
-if($formUrl == "") {
-    $formUrl = "#comments";
-    $deleteUrlBase = "".CURRENT_URL."&delComment=";
-}else{
-    $deleteUrlBase = $formUrl."&delComment=";
-}
+$deleteUrlBase = $formUrl."?delComment=";
 ?>
 
 <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $language->lang_echo('Discussion', false); ?></h4>
@@ -91,7 +85,7 @@ if($formUrl == "") {
                     </small>
 
                     | <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                        <span class="fa fa-reply"></span> <?php echo $language->lang_echo('Reply', false) ?>
+                        <span class="fa fa-reply"></span> Reply
                     </a>
 
                     <?php if($row['userId'] == $_SESSION['userdata']['id']) { ?>

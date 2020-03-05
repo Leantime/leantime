@@ -291,13 +291,12 @@ namespace leantime\domain\controllers {
 
                     $file = $_GET['delFile'];
                     $upload = new core\fileupload();
+                    $files = new repositories\files();
 
                     $upload->initFile($file);
-                    $upload->deleteFile($file);
+                    $files->deleteFile($file);
 
-                    $this->deleteFile($file);
-
-                    $this->setNotification('FILE_DELETED', 'success');
+                    $tpl->setNotification('FILE_DELETED', 'success');
 
                 }
 
@@ -306,20 +305,9 @@ namespace leantime\domain\controllers {
 
                     $commentId = (int)($_GET['delComment']);
 
-                    $this->deleteComment($commentId);
+                    $comments->deleteComment($commentId);
 
-                    $this->setNotification('COMMENT_DELETED');
-
-                }
-
-                //Delete account
-                if (isset($_GET['delAccount']) === true) {
-
-                    $accountId = (int)($_GET['delAccount']);
-
-                    $this->deleteAccount($accountId);
-
-                    $this->setNotification('ACCOUNT_DELETED');
+                    $tpl->setNotification('COMMENT_DELETED', 'success');
 
                 }
 
