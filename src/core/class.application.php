@@ -88,15 +88,25 @@ class application
     public function overrideThemeSettings() {
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
+
             $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
+
             if ($logoPath !== false) {
-                $_SESSION["companysettings.logoPath"] = BASE_URL.$logoPath;
+
+                if (strpos($logoPath, 'http') === 0) {
+                    $_SESSION["companysettings.logoPath"] =  $logoPath;
+                }else{
+                    $_SESSION["companysettings.logoPath"] =  BASE_URL.$logoPath;
+                }
+
             }else{
+
                 if (strpos($this->config->logoPath, 'http') === 0) {
                     $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
                 }else{
                     $_SESSION["companysettings.logoPath"] = BASE_URL.$this->config->logoPath;
                 }
+
             }
         }
 

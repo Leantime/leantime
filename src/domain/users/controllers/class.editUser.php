@@ -25,6 +25,7 @@ namespace leantime\domain\controllers {
 
                     $project = new repositories\projects();
                     $userRepo =  new repositories\users();
+                    $language = new core\language();
 
                     $id = (int)($_GET['id']);
                     $row = $userRepo->getUser($id);
@@ -76,7 +77,7 @@ namespace leantime\domain\controllers {
 
                                     } else {
 
-                                        $tpl->setNotification('USERNAME_EXISTS', 'error');
+                                        $tpl->setNotification($language->__("notification.user_exists"), 'error');
                                     }
                                 } else {
 
@@ -84,11 +85,11 @@ namespace leantime\domain\controllers {
                                 }
                             } else {
 
-                                $tpl->setNotification('NO_VALID_EMAIL', 'error');
+                                $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
                             }
                         } else {
 
-                            $tpl->setNotification('NO_USERNAME', 'error');
+                            $tpl->setNotification($language->__("notification.enter_email"), 'error');
                         }
                     }
 
@@ -107,7 +108,7 @@ namespace leantime\domain\controllers {
                             //If projects is not set, all project assignments have been removed.
                             $project->deleteAllProjectRelations($id);
                         }
-                        $tpl->setNotification('EDIT_SUCCESS', 'success');
+                        $tpl->setNotification($language->__("notifications.user_edited"), 'success');
                     }
 
                     // Get relations to projects

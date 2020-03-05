@@ -7,7 +7,7 @@
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration') ?></h5>
+        <h5><?php echo $this->__('label.administration');  $this->__("") ?></h5>
         <h1><?php echo $this->__('headline.all_projects') ?></h1>
     </div>
 

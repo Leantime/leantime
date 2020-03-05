@@ -2908,12 +2908,17 @@ a .label-default:after, a .label-primary:after {
     color: #fff;
     padding: 12px 14px;
     font-size: 14px;
+    line-height:17px;
 }
 
 .widgettitle span {
     vertical-align: middle;
     display: inline-block;
     margin-right: 8px;
+}
+
+.widgettitle strong {
+    line-height:normal;
 }
 
 .widgetcontent {
