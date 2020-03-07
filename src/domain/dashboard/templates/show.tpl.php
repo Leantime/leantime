@@ -171,7 +171,7 @@
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header">To-Do</li>
                                                                     <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
+                                                                    <?php if($_SESSION['userdata']['role'] != "user"){?><li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li><?php } ?>
                                                                     <li class="nav-header border">Track Time</li>
                                                                     <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                         <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>
@@ -287,7 +287,7 @@
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header">To-Do</li>
                                                                 <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> Edit To-Do</a></li>
-                                                                <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li>
+                                                                <?php if($_SESSION['userdata']['role'] != "user"){?><li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> Delete To-Do</a></li><?php } ?>
                                                                 <li class="nav-header border">Track Time</li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                     <a class="punchIn" href="javascript:void(0);" value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> Start Work</a>

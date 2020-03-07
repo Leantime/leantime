@@ -15,7 +15,7 @@ class settings {
 	 */
 	private $debug = 1;
 
-	public $appVersion = "2.0.12";
+	public $appVersion = "2.0.13";
 
     public $dbVersion = "2.0.4";
 
@@ -64,7 +64,7 @@ class settings {
 
     public function getFullURL () {
 
-        return $this->getBaseURL().$_SERVER['REQUEST_URI'];
+        return $this->getBaseURL().rtrim($_SERVER['REQUEST_URI'],"/");;
 
     }
 

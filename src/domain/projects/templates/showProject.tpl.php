@@ -147,7 +147,7 @@ function toggleCommentBoxes(id){
                     <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
                         <input type="hidden" name="comment" value="1" />
                         <?php
-                        $this->assign('formUrl', "/projects/showProject/".$project['id']."");
+                        $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
                         $this->displaySubmodule('comments-generalComment') ?>
                     </form>
 
