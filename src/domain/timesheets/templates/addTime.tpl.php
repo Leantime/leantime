@@ -43,7 +43,7 @@ function removeOptions(className){
 
 <div class="pageheader">
             <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
-                <input type="text" name="term" placeholder="To search type and hit enter..." />
+                <input type="text" name="term" placeholder="<?php echo $this->__('input.placeholders.search_type_hit_enter')?>" />
             </form>
             
             <div class="pageicon"><span class="iconfa-laptop"></span></div>
