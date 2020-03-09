@@ -8,6 +8,7 @@ leantime.menuController = (function () {
             function () {
                 _initProjectSelector();
                 _initLeftMenuHamburgerButton();
+                _initProjectSelectorToggle();
             }
         );
 
@@ -75,7 +76,31 @@ leantime.menuController = (function () {
 
     }
 
+    var _initProjectSelectorToggle = function (id, element) {
+
+        jQuery(document).on('click', '.project-selector .dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
+
+    };
+
+    var toggleClientList = function  (id, element) {
+
+        jQuery(".client_"+id).toggle("fast");
+
+        if(jQuery(element).find("i").hasClass("fa-caret-down")){
+            jQuery(element).find("i").removeClass("fa-caret-down");
+            jQuery(element).find("i").addClass("fa-caret-up");
+        }else{
+            jQuery(element).find("i").removeClass("fa-caret-up");
+            jQuery(element).find("i").addClass("fa-caret-down");
+        }
+
+    }
+
     // Make public what you want to have public, everything else is private
-    return {};
+    return {
+        toggleClientList:toggleClientList,
+    };
 
 })();
