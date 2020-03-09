@@ -51,7 +51,12 @@ namespace leantime\domain\controllers {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
                 if($logoPath !== false){
-                    $companySettings["logo"] = $logoPath;
+
+                    if (strpos($logoPath, 'http') === 0) {
+                        $companySettings["logo"] = $logoPath;
+                    }else{
+                        $companySettings["logo"] = BASE_URL.$logoPath;
+                    }
                 }
 
                 $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
