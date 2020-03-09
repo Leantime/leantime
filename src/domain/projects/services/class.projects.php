@@ -15,6 +15,7 @@ namespace leantime\domain\services {
         private $projectRepository;
         private $ticketRepository;
         private $settingsRepo;
+        private $language;
 
         public function __construct()
         {
@@ -24,6 +25,7 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
+            $this->language = new core\language();
         }
 
         public function getProject($id) {
@@ -100,9 +102,9 @@ namespace leantime\domain\services {
 
             $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
             if($numberOfClosedTickets < 10) {
-                $returnValue['estimatedCompletionDate'] = "<a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
             }else if($finalPercent == 100) {
-                $returnValue['estimatedCompletionDate'] = "<a href='/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
 
             }
             return $returnValue;
@@ -157,7 +159,7 @@ namespace leantime\domain\services {
                 'color'    => '#1b75bb',
                 'fields'   => array(
                     [
-                        'title' => "Project: ".$projectName,
+                        'title' => $this->language->__("headlines.project_with_name")." ".$projectName,
                         'value' => $prepareChatMessage,
                         'short' => false
                     ]
@@ -211,6 +213,51 @@ namespace leantime\domain\services {
 
                 //Execute CURL
                 $result = curl_exec($ch);
+            }
+
+
+            //Test Zulip
+            $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".zulipHook");
+
+            if($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== ""){
+
+                $zulipWebhook = unserialize($zulipWebhookSerialized);
+
+                $botEmail = $zulipWebhook['zulipEmail'];
+                $botKey = $zulipWebhook['zulipBotKey'];
+                $botURL = $zulipWebhook['zulipURL']."/api/v1/messages";
+
+                $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
+                if($url !== false){
+                    $prepareChatMessage .= "".$url['link']."";
+                }
+
+                $data = array(
+                    "type" => "stream",
+                    "to" => $zulipWebhook['zulipStream'],
+                    "topic" => $zulipWebhook['zulipTopic'],
+                    'content' => $prepareChatMessage
+                );
+
+                $curlUrl = $botURL . '?' . http_build_query($data);
+
+                $ch = curl_init($curlUrl);
+
+                $data_string = json_encode($data);
+
+                curl_setopt($ch, CURLOPT_USERPWD, "$botEmail:$botKey");
+                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($data_string))
+                );
+
+                //Execute CURL
+                $result = curl_exec($ch);
+
             }
 
         }
@@ -299,7 +346,7 @@ namespace leantime\domain\services {
 
                         $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
                         if($route != "projects.newProject") {
-                            $this->tpl->redirect("/projects/newProject");
+                            $this->tpl->redirect(BASE_URL."/projects/newProject");
                         }
 
                     }else{
@@ -307,7 +354,7 @@ namespace leantime\domain\services {
                         $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.", "info");
 
                         if($route != "users.editOwn") {
-                            $this->tpl->redirect("/users/editOwn");
+                            $this->tpl->redirect(BASE_URL."/users/editOwn");
                         }
 
                     }

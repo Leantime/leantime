@@ -17,21 +17,19 @@ leantime.usersRepository = (function () {
         jQuery.ajax(
             {
                 type: 'POST',
-                url: '/api/users',
+                url: leantime.appUrl+'/api/users',
                 data: formData,
                 processData: false,
-                contentType: false
-            }
-        ).success(
-            function (resp) {
-                    console.log(resp);
+                contentType: false,
+                success: function (resp) {
+
                     jQuery('#save-picture').removeClass('running');
 
                     location.reload();
-            }
-        ).error(
-            function (err) {
+                },
+                error:  function (err) {
                     console.log(err);
+                }
             }
         );
     };
@@ -41,7 +39,7 @@ leantime.usersRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/users',
+                url: leantime.appUrl+'/api/users',
                 data:
                 {
                     patchViewSettings : module,

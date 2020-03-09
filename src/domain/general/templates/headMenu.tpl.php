@@ -18,7 +18,7 @@
             <ul class="dropdown-menu">
 
                 <li>
-                    <a href='/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
+                    <a href='<?=BASE_URL ?>/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
                         <span class="fa fa-thumb-tack"></span> View To-Do
                     </a>
                 </li>
@@ -32,7 +32,7 @@
         </li>
 
         <li>
-            <a href='/timesheets/showMy/'>
+            <a href='<?=BASE_URL ?>/timesheets/showMy/'>
                 <span class="head-icon fa fa-clock-o"></span>
                 <span class='headmenu-label'>My Timesheets</span>
             </a>
@@ -40,14 +40,14 @@
     <?php } ?>
 
     <li>
-        <a href='/calendar/showMyCalendar'>
+        <a href='<?=BASE_URL ?>/calendar/showMyCalendar'>
             <span class='head-icon iconfa-calendar'></span>
             <span class='headmenu-label'>My Calendar</span>
         </a>
     </li>
 
     <li class="hidden-gt-sm">
-        <a href='/general/logout/'>
+        <a href='<?=BASE_URL ?>/general/logout/'>
             <span class="head-icon fa fa-sign-out-alt"></span>
         </a>
     </li>

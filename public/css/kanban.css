@@ -41,6 +41,8 @@
     border: 2px dotted #ccc;
     visibility:visible;
     display:block;
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
 }
 
 .portlet {
@@ -72,7 +74,7 @@
 }
 
 .titleBorderColor3 {
-    border-bottom:5px solid #b94a48;
+    border-bottom:5px solid #2d6987;
 }
 
 .titleBorderColor4 {
@@ -90,4 +92,78 @@
 .titleBorderColor-1 {
     border-bottom:5px solid #999999;
 }
+
+.sortableTicketList li{
+    list-style:none;
+}
+
+.sortableTicketList li:hover {
+    background:#f9f9f9;
+}
+
+.sortableTicketList .ticketBox {
+    background:#fff;
+    border:1px solid #ddd;
+    padding:10px;
+    padding-bottom:10px;
+    margin-bottom:5px;
+    cursor:move;
+}
+
+.sortableTicketList.disabled .ticketBox {
+    cursor:auto;
+}
+
+.sortableTicketList .ticketBox textarea {
+    max-width:100%;
+}
+.sortableTicketList .ticketBox.fixed {
+    cursor:default;
+}
+
+.sortableTicketList li:hover .ticketBox {
+    background:#f9f9f9;
+}
+
+.sortableTicketList li:hover .ticketBox.fixed {
+    background:#fff;
+}
+
+.sortableTicketList .ticketBox p.description {
+    padding-bottom:10px;
+    overflow:hidden;
+}
+
+.sortableTicketList li .ticketBox h6,
+.sortableTicketList li .ticketBox h6 a {
+    line-height:16px;
+}
+
+.sortableTicketList li .ticketBox h3,
+.sortableTicketList li .ticketBox h3 a{
+    font-size:18px;
+}
+
+.sortableTicketList li .ticketBox .label-important,
+.sortableTicketList li .ticketBox .label-warning,
+.sortableTicketList li .ticketBox .label-success,
+.sortableTicketList li .ticketBox .label-info,
+.sortableTicketList li .ticketBox .label-inverse,
+.sortableTicketList li .ticketBox .label-default,
+.sortableTicketList li .ticketBox .label-primary{
+    padding-top:0px;
+    padding-bottom:0px;
+}
+
+.sortableTicketList li .ticketBox .timerContainer .btn{
+    padding-top:1px;
+    padding-bottom:1px;
+}
+
+.sortableTicketList .empty {
+    text-align:center;
+    color:#999;
+    padding:20px 0px;
+}
+
 

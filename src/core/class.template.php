@@ -326,11 +326,11 @@ namespace leantime\core {
             }else{
 
                 $mod = array();
+                return false;
 
             }
 
             $returnLink = false;
-
 
             $url = "/".$module."/".$action."/";
 
@@ -341,7 +341,7 @@ namespace leantime\core {
                 }
             }
 
-                $attr = '';
+            $attr = '';
 
             if ($attribute!=null) {
 
@@ -350,9 +350,7 @@ namespace leantime\core {
                 }
             }
 
-                $returnLink = "<a href='".$url."' ".$attr.">".$name."</a>";
-
-
+            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
 
             return $returnLink;
         }
@@ -397,7 +395,7 @@ namespace leantime\core {
         public function redirect($url)
         {
 
-            header("Location: ".$url);
+            header("Location:".trim($url));
             exit();
         }
 

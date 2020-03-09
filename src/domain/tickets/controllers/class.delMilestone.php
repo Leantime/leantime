@@ -57,7 +57,7 @@ namespace leantime\domain\controllers {
 
                     if($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
-                        $this->tpl->redirect("/tickets/roadmap");
+                        $this->tpl->redirect(BASE_URL."/tickets/roadmap");
                     }else{
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));

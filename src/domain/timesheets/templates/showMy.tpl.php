@@ -192,7 +192,7 @@ jQuery(document).ready(function(){
                 echo $this->displayNotification();
                 ?>
 
-<form action="/timesheets/showMy" method="post" id="timesheetList">
+<form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
 
 <div class="headtitle" style="margin:0px; background: #eee;">
 	<h4 class="widgettitle title-primary"><?php echo $this->__('headline.my_timesheet'); ?></h4>
@@ -400,7 +400,7 @@ jQuery(document).ready(function(){
 		$sum = $sum + $row['hours'];?>
 		<tr>
 			<td>
-				<a href="/timesheets/editTime/<?php echo $row['id']; ?>">#<?php echo $row['id']; ?></a>
+				<a href="<?=BASE_URL ?>/timesheets/editTime/<?php echo $row['id']; ?>">#<?php echo $row['id']; ?></a>
 			</td>
 			<td><?php echo $helper->timestamp2date($row['workDate'], 2); ?></td>
 			<td><?php echo $row['hours']; ?></td>
@@ -415,8 +415,8 @@ jQuery(document).ready(function(){
 			<td><?php echo $row['planHours']; ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
 			<td <?php if($diff<0)echo'class="new" ';?>><?php echo $diff; ?></td>
-			<td><a href="/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
-			<td><a href="/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
+			<td><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
+			<td><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
 			<td><?php echo $lang[$row['kind']]; ?></td>
 			<td><?php echo $row['description']; ?></td>
 			

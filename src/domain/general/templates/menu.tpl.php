@@ -38,7 +38,7 @@
                                 }
 
                                 if ($this->get('currentProject') !== $projectRow["id"]) {
-                                    echo "<li><a href='/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
+                                    echo "<li><a href='".BASE_URL."/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
                                 }
 
                             }
@@ -48,9 +48,9 @@
                         ?>
                         <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
                             <li class='nav-header border'></li>
-                            <li><a href="/projects/newProject/"><span class="fa fa-plus"></span> Create new Project</a></li>
-                            <li><a href="/projects/showAll"><span class="fa fa-suitcase"></span> View All Projects</a></li>
-                            <li><a href="/clients/showAll"><span class="fa fa-address-book"></span> View All Clients/Products</a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/newProject/"><span class="fa fa-plus"></span> Create new Project</a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/showAll"><span class="fa fa-suitcase"></span> View All Projects</a></li>
+                            <li><a href="<?=BASE_URL ?>/clients/showAll"><span class="fa fa-address-book"></span> View All Clients/Products</a></li>
                         <?php } ?>
                     </ul>
                 </form>
@@ -77,7 +77,7 @@
                 <?php echo $this->displayLink('ideas.showBoards', '<span class="far fa-lightbulb"></span>'.$this->__('Ideas', false).'') ?>
             </li>
             <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
-                <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Progress Review'); ?>
+                <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Retrospectives'); ?>
             </li>
             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
                 <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>

@@ -33,6 +33,7 @@ namespace leantime\domain\controllers {
             $this->ticketRepo = new repositories\tickets();
             $this->ticketService = new services\tickets();
             $this->commentsRepo = new repositories\comments();
+            $this->language = new core\language();
         }
 
         /**
@@ -49,14 +50,14 @@ namespace leantime\domain\controllers {
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification("Comment successfully deleted", "success");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), "success");
                 }
 
                 //Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
                     $milestoneId = (int)($params['removeMilestone']);
                     $this->retroRepo->patchCanvasItem($params['id'], array("milestoneId" => ''));
-                    $this->tpl->setNotification("Milestone successfully detached", "success");
+                    $this->tpl->setNotification($this->language->__("notifications.milestone_detached"), "success");
                 }
 
                 $canvasItem = $this->retroRepo->getSingleCanvasItem($params['id']);
@@ -151,12 +152,12 @@ namespace leantime\domain\controllers {
                         $this->tpl->assign('numComments', $this->commentsRepo->countComments('leancanvasitem', $params['itemId']));
                         $this->tpl->assign('comments', $comments);
 
-                        $this->tpl->setNotification('Canvas successfully updated', 'success');
+                        $this->tpl->setNotification($this->language->__("notifications.canvas_item_updates"), 'success');
 
-                        header("Location: /retrospectives/retroDialog/".$params['itemId']);
+                        $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$params['itemId']);
 
                     } else {
-                        $this->tpl->setNotification('ENTER_TITLE', 'error');
+                        $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
 
                     }
 
@@ -179,12 +180,13 @@ namespace leantime\domain\controllers {
 
                         $id = $this->retroRepo->addCanvasItem($canvasItem);
 
-                        $this->tpl->setNotification('Canvas successfully created', 'success');
+                        $this->tpl->setNotification($this->language->__("notification.feedback_successfully_created"), 'success');
 
-                        header("Location: /retrospectives/retroDialog/".$id);
+                        $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$id);
+
 
                     } else {
-                        $this->tpl->setNotification('ENTER_TITLE', 'error');
+                        $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
 
                     }
                 }
@@ -203,10 +205,10 @@ namespace leantime\domain\controllers {
                 );
 
                 $message = $this->commentsRepo->addComment($values, 'retrospective');
-                $this->tpl->setNotification($message["msg"], $message["type"]);
+                $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), "success");
                 $this->tpl->assign('helper', new core\helper());
 
-                header("Location: /retrospectives/retroDialog/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$id);
 
             }
 

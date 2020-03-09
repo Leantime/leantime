@@ -24,11 +24,8 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
 
-            $dateFrom = date("Y-m-d");
-            $dateTo = date("Y-m-d");
-
             $tpl->assign('calendar', $calendarRepo->getCalendar($_SESSION['userdata']['id']));
-            $tpl->assign('gCalLink', $calendarRepo->getMyGoogleCalendars());
+            //$tpl->assign('gCalLink', $calendarRepo->getMyGoogleCalendars());
 
             $_SESSION['lastPage'] = "/calendar/showMyCalendar/";
 

@@ -19,6 +19,7 @@
   text-transform: none;
   vertical-align: initial;
   white-space: normal;
+  z-index:1000005;
 }
 .tox *:not(svg) {
   box-sizing: inherit;

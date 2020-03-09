@@ -18,6 +18,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $userRepo =  new repositories\users();
+            $language = new core\language();
 
             //Only Admins
             if ($_SESSION['userdata']['role'] == 'admin') {
@@ -28,21 +29,18 @@ namespace leantime\domain\controllers {
 
                     $user = $userRepo->getUser($id);
 
-                    $msgKey = '';
-
                     //Delete User
                     if (isset($_POST['del']) === true) {
 
                         $userRepo->deleteUser($id);
 
-                        $msgKey = 'USER_DELETED';
+                        $tpl->setNotification($language->__("notifications.user_deleted"), "success");
 
-                        header("Location:/users/showAll");
+                        $tpl->redirect(BASE_URL."/users/showAll");
 
                     }
 
                     //Assign variables
-                    $tpl->assign('msg', $msgKey);
                     $tpl->assign('user', $user);
 
                     $tpl->display('users.delUser');

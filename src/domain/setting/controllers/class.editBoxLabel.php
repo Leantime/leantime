@@ -45,7 +45,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if($_SESSION['userdata']['role'] == 'admin') {
+            if($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
 
                 $currentLabel = "";
 
@@ -99,10 +99,16 @@ namespace leantime\domain\controllers {
 
                     //Move to settings service
                     if ($_GET['module'] == "ticketlabels") {
-                        $stateLabels = $this->ticketsRepo->getStateLabels();
-                        $stateLabels[$_GET['label']] = $sanatizedString;
+
+                        $currentStateLabels = $this->ticketsRepo->getStateLabels();
+                        $newStateLabels = array();
+                        foreach($currentStateLabels as $key=>$label) {
+                            $newStateLabels[$key] = $label["name"];
+                        }
+                        $newStateLabels[$_GET['label']] = $sanatizedString;
+
                         unset($_SESSION["projectsettings"]["ticketlabels"]);
-                        $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels", serialize($stateLabels));
+                        $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels", serialize($newStateLabels));
                     }
 
                     if ($_GET['module'] == "retrolabels") {

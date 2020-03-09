@@ -2,9 +2,13 @@
 
 .dropdown-menu {
     margin-top: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 0;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border:0px;
+    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .dropdown-menu > li > a {
@@ -101,7 +105,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown ul li a.label-warning,
 .maincontentinner .ticketDropdown ul li a.label-important,
 .maincontentinner .ticketDropdown ul li a.label-success,
-.maincontentinner .ticketDropdown ul li a.label-default {
+.maincontentinner .ticketDropdown ul li a.label-default,
+.maincontentinner .ticketDropdown ul li a.label-info{
     padding: 5px 10px;
     display:block;
     border-radius: 0px;
@@ -111,7 +116,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     background:#f89406;
 }
 
-.maincontentinner .ticketDropdown a.label-important {
+.maincontentinner .ticketDropdown a.label-info {
+    background:#2d6987;
+}
+
+.maincontentinner .ticketDropdown a.label-important,
+.maincontentinner .ticketDropdown a.label-danger {
     background:#b94a48;
 }
 
@@ -156,7 +166,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .viewDropDown .dropdown-menu li a.active{
-    font-weight:bold;
+
 }
 
 .viewDropDown .dropdown-menu li a.active:hover {

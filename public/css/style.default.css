@@ -1569,8 +1569,19 @@ table, caption, tbody, tfoot, thead, tr, th, td {
     outline: none;
 }
 
+tox-edit-area,
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     height: auto;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+    border-radius: 3px;
 }
 
 ::selection {
@@ -1614,12 +1625,10 @@ body.loginpage {
 }
 
 body {
-    height:auto;
-    min-height: 100%;
+    height: 100%;
 }
 
 body {
-    background: url(../images/leftpanelbg.png) repeat-y 0 0;
     font-size: 12px;
     font-family: 'RobotoRegular', 'Helvetica Neue', Helvetica, sans-serif;
 }
@@ -1711,6 +1720,11 @@ h1, h2, h3, h4, h5 {
     float: left;
     clear: both;
     min-height: 800px;
+	background-color: #282828;
+	position:fixed;
+	padding-top:60px;
+	height:100%;
+    z-index: 5;
 }
 
 /* Action for tabwidget fix */
@@ -1812,7 +1826,7 @@ h1, h2, h3, h4, h5 {
 
 .label-important, .label-warning,
 .label-success, .label-info, .label-inverse,
-.label-default, .label-primary {
+.label-default, .label-primary, .label-danger {
     padding: 2px 8px;
     color: #fff;
     margin-left: 5px;
@@ -2221,6 +2235,9 @@ a .label-default:after, a .label-primary:after {
     background: #0866c6;
     clear: both;
     height: 60px;
+	position: fixed;
+	z-index: 10;
+	width: 100%;
 }
 
 .headerinner {
@@ -2240,6 +2257,7 @@ a .label-default:after, a .label-primary:after {
     height: 60px;
     background-position: left center;
     display: block;
+    background-size:260px auto;
 }
 
 .header .logo a.barmenu {
@@ -2672,6 +2690,7 @@ a .label-default:after, a .label-primary:after {
 .rightpanel {
     margin-left: 260px;
     background: url(../images/bg1.png);
+	padding-top: 60px;
 }
 
 .rightpanel:after {
@@ -2809,8 +2828,6 @@ a .label-default:after, a .label-primary:after {
     color: #777;
     margin-bottom: 10px;
     font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;
-    
-
 }
 
 .subtitle2 {
@@ -2891,12 +2908,17 @@ a .label-default:after, a .label-primary:after {
     color: #fff;
     padding: 12px 14px;
     font-size: 14px;
+    line-height:17px;
 }
 
 .widgettitle span {
     vertical-align: middle;
     display: inline-block;
     margin-right: 8px;
+}
+
+.widgettitle strong {
+    line-height:normal;
 }
 
 .widgetcontent {
@@ -8153,7 +8175,7 @@ a.filter-term {
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
-    padding:15px;
+
 }
 
 .nyroModalCloseButton {
@@ -8196,6 +8218,7 @@ a.filter-term {
     background: none;
     border: 0px;
     margin-bottom: 0px;
+    box-shadow:none;
 }
 
 .mainSprintSelector small {
@@ -8254,10 +8277,6 @@ div.color-picker ul li {
     border-bottom: 0px solid #000;
 }
 
-.nyroModalCont, .nyroModalBg {
-    z-index: 1000005;
-    overflow-x: hidden !important;
-}
 
 #sortableSprint {
     border: 5px dotted #ccc;
@@ -8282,8 +8301,11 @@ div.color-picker ul li {
 
 .ui-state-highlight {
     background: #aaa;
-    border: 1px dotted #eee;
+    border: 1px dashed #eee;
     visibility: visible;
+    /* transition position changing */
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
 }
 
 .currentSprint {
@@ -8495,10 +8517,6 @@ body::after {
 
 .tooltip {
     z-index: 1000010;
-}
-
-.leftpanel {
-    position: relative;
 }
 
 .leftpanel .promotion {

@@ -23,19 +23,18 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
+            $language = new core\language();
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if ($_SESSION['userdata']['role'] === 'admin' || $_SESSION['userdata']['role'] === 'manager') {
 
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
 
-                    $msgKey = '';
-
                     if ($clientRepo->hasTickets($id) === true) {
 
-                        $msgKey = 'CLIENT_HAS_TICKETS';
+                        $tpl->setNotification($language->__('notification.client_has_todos'), 'error');
 
                     } else {
 
@@ -43,16 +42,14 @@ namespace leantime\domain\controllers {
 
                             $clientRepo->deleteClient($id);
 
-                            $msgKey = 'CLIENT_DELETED';
+                            $tpl->setNotification($language->__('notification.client_deleted'), 'success');
+                            $tpl->redirect(BASE_URL."/clients/showAll");
 
                         }
 
                     }
 
-                    //Assign vars
                     $tpl->assign('client', $clientRepo->getClient($id));
-                    $tpl->assign('msg', $msgKey);
-
                     $tpl->display('clients.delClient');
 
                 } else {

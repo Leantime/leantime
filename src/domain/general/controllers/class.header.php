@@ -13,10 +13,6 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
 
-            $login = new core\login(core\session::getSID());
-
-            $tpl->assign('login', $login);
-
             $tpl->displayPartial('general.header');
         }
     }

@@ -1,7 +1,7 @@
 {
   "name": "leantime",
   "version": "2.1.0",
-  "description": "Project Management Tools",
+  "description": "Open source project management system",
   "main": "gruntfile.js",
   "dependencies": {
     "chart.js": "^2.9.2",
@@ -16,6 +16,7 @@
     "jquery-ui-dist": "^1.12.1",
     "jquery.uniform": "^4.3.0",
     "masonry-layout": "^4.2.2",
+    "packery": "^2.1.2",
     "tether-shepherd": "^1.8.1",
     "tinymce": "^5.0.16"
   },

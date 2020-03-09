@@ -1,1 +1,1 @@
-<p><a href="http://leantime.io">Copyright Leantime Systems Inc</a> - <?=$this->get("version");?></p>
+<p><a href="http://leantime.io" target="_blank">Powered By Leantime Systems Inc</a> - <?=$this->get("version");?></p>

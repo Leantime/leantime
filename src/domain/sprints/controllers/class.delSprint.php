@@ -33,7 +33,7 @@ namespace leantime\domain\controllers {
                     $sprintRepo->delSprint($id);
 
                     $tpl->setNotification("Sprint successfully deleted", "success");
-                    $tpl->redirect($_SESSION['lastPage']);
+                    $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
 
                 }
 

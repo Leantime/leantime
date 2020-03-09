@@ -33,6 +33,10 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
             $this->timesheetService = new services\timesheets();
             $this->userService = new services\users();
+
+            if(!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = "/tickets/showKanban/";
+            }
         }
 
         /**
@@ -59,10 +63,6 @@ namespace leantime\domain\controllers {
                 $searchCriteria = unserialize($_COOKIE['searchCriteria']);
 
             }
-
-            //$language->setModule('tickets');
-
-            //$lang = $language->readIni();
 
 
             $msgKey = '';
@@ -139,7 +139,7 @@ namespace leantime\domain\controllers {
 
 
                     $subject = "New To-Do has been added to one of your projects.";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/showTicket/". $id;
+                    $actual_link = BASE_URL."/tickets/showTicket/". $id;
                     $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".$values['headline']."'";
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
@@ -147,12 +147,12 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification('To-Do created successfully', 'success');
 
                     if (isset($_POST['saveTicket'])) {
-                        $tpl->redirect("/tickets/showTicket/" . $id);
+                        $tpl->redirect(BASE_URL."/tickets/showTicket/" . $id);
                     }
 
 
                     if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $tpl->redirect($_SESSION['lastPage']);
+                        $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
                     }
                 }
 

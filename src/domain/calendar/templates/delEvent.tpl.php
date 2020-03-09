@@ -3,18 +3,25 @@ defined('RESTRICTED') or die('Restricted access');
 
 ?>
 
-<h1>Delete Event</h1>
+<div class="pageheader">
 
-<?php if($this->get('msg') === '') { ?>
+    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('headline.calendar'); ?></h5>
+        <h1><?php echo $this->__('headline.delete_event'); ?></h1>
+    </div>
+</div><!--pageheader-->
 
-<form action="" method="post">
-<fieldset><legend>Confirm</legend>
-<p>Are you sure you want to delete this event?<br />
-</p>
-<input type="submit" value="Delete" name="del"
-    class="button"></fieldset>
-</form>
+<div class="maincontent">
+    <div class="maincontentinner">
 
-<?php }else{ ?>
-<span class="info"><?php echo $this->get('msg'); ?></span>
-<?php } ?>
+        <h4 class="widget widgettitle"><?php echo $this->__("subtitles.delete") ?></h4>
+        <div class="widgetcontent">
+            <form method="post">
+                <p><?php echo $this->__('text.confirm_event_deletion'); ?></p><br />
+                <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
+                <a class="btn btn-primary" href="<?=BASE_URL ?>/calendar/showMyCalendar"><?php echo $this->__('buttons.back'); ?></a>
+            </form>
+        </div>
+    </div>
+</div>

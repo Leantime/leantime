@@ -31,7 +31,7 @@ namespace leantime\domain\controllers {
             $this->projectRepo = new repositories\projects();
             $this->commentsRepo = new repositories\comments();
             $this->projectService = new services\projects();
-
+            $this->language = new core\language();
         }
 
 
@@ -49,26 +49,34 @@ namespace leantime\domain\controllers {
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification("Comment successfully deleted", "success");
+
+                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
                 }
 
                 $milestone = $this->ticketRepo->getTicket($params['id']);
                 $milestone = (object) $milestone;
-                $milestone->editFrom =  date('m/d/Y', strtotime($milestone->editFrom));
-                $milestone->editTo = date('m/d/Y', strtotime($milestone->editTo));
+
+                if(!isset($milestone->id)) {
+                    $this->tpl->setNotification($this->language->__("notifications.could_not_find_milestone"), "error");
+                    $this->tpl->redirect(BASE_URL."/tickets/roadmap/");
+                }
+
+                $milestone->editFrom =  date($this->language->__("language.dateformat"), strtotime($milestone->editFrom));
+                $milestone->editTo = date($this->language->__("language.dateformat"), strtotime($milestone->editTo));
 
                 $comments = $this->commentsRepo->getComments('ticket', $params['id']);
 
             }else{
+
                 $milestone = new models\tickets();
                 $today = new DateTime();
-                $milestone->editFrom = $today->format("m/d/Y");
+                $milestone->editFrom = $today->format($this->language->__("language.dateformat"));
 
                 //Add 1 week
                 $interval = new DateInterval('P1W');
                 $next_week = $today->add($interval);
 
-                $milestone->editTo = $next_week->format("m/d/Y");
+                $milestone->editTo = $next_week->format($this->language->__("language.dateformat"));
 
                 $comments = [];
             }
@@ -80,7 +88,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
             $this->tpl->assign('milestone', $milestone);
             $this->tpl->displayPartial('tickets.milestoneDialog');
-
 
         }
 
@@ -111,53 +118,55 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($message["msg"], $message["type"]);
                     $this->tpl->assign('helper', new core\helper());
 
-                    $subject = "A new comment was added to a milestone";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$_GET['id'];
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a comment to a milestone. ";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
+                    $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_comment_milestone_cta")));
 
-                    $this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
                 }
 
                 if($this->ticketService->quickUpdateMilestone($params) == true) {
-                    $this->tpl->setNotification("Milestone Edited Successfully", "success");
 
-                    $subject = "A milestone was updated in one of your projects";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$params['id'];
-                    $message = "" . $_SESSION["userdata"]["name"] . " edited a new milestone. ";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
+                    $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
+
+                    $subject = $this->language->__("email_notifications.milestone_update_subject");
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_update_cta")));
+
 
                 }else{
-                    $this->tpl->setNotification("There was a problem saving the milestone", "error");
+                    $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                 }
 
-                //$this->tpl->redirect("/tickets/editMilestone/".$params['id']);
+                $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
             }else{
 
+
                 $result = $this->ticketService->quickAddMilestone($params);
 
-                if($result == true) {
+                if(is_numeric($result)) {
 
-                    $this->tpl->setNotification("Milestone Created Successfully", "success");
+                    $this->tpl->setNotification($this->language->__("notification.milestone_created_successfully"), "success");
 
-                    $subject = "A new milestone was created in one of your projects";
-                    $actual_link = "https://$_SERVER[HTTP_HOST]/tickets/editMilestone/".(int)$result;
-                    $message = "" . $_SESSION["userdata"]["name"] . " created a new milestone ";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
+                    $subject = $this->language->__("email_notifications.milestone_created_subject");
+                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_created_cta")));
 
-
-                    $this->tpl->redirect("/tickets/editMilestone/".$result);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$result);
 
                 }else{
-                    $this->tpl->setNotification("There was a problem saving the milestone", "error");
+
+                    $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/");
+
                 }
 
             }
-
-
-
 
             $this->tpl->assign('milestone', (object) $params);
             $this->tpl->displayPartial('tickets.milestoneDialog');
@@ -171,7 +180,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -182,7 +190,6 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-            //ToDO
         }
 
     }

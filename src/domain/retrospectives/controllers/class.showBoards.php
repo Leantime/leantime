@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class showBoards
     {
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $retroRepo = new repositories\retrospectives();
+            $projectService = new services\projects();
 
             $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -54,7 +56,7 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification("New Board added", "success");
                     $_SESSION['currentRetroCanvas'] = $currentCanvasId;
-                    $tpl->redirect("/retrospectives/showBoards/");
+                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
@@ -72,7 +74,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $retroRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect("/retrospectives/showBoards/");
+                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
@@ -103,7 +105,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /retrospectives/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -132,7 +134,7 @@ namespace leantime\domain\controllers {
 
                     $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
                     $_SESSION["msgT"] = "success";
-                    header("Location: /retrospectives/showBoards/" . $currentCanvasId);
+                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
 
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
@@ -145,6 +147,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $retroRepo->getCanvasItemsById($currentCanvasId));
             $tpl->assign('canvasLabels', $retroRepo->canvasTypes);
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
             if (isset($_GET["raw"]) === false) {
                 $tpl->display('retrospectives.showBoards');

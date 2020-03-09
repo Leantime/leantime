@@ -30,11 +30,11 @@
     <ul id='medialist' class='listfile'>
     <?php foreach($this->get('files') as $file): ?>
         <li class="<?php echo $file['moduleId'] ?>">
-              <a class="cboxElement" href="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+              <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                   <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
-                      <img style='max-height: 50px; max-width: 70px;' src="/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                      <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                     <?php else: ?>
-                      <img style='max-height: 50px; max-width: 70px;' src='/images/thumbs/doc.png' />
+                      <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
                     <?php endif; ?>
                 <span class="filename"><?php echo $file['realName'] ?></span>
               </a>

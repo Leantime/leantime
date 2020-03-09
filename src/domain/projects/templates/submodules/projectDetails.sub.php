@@ -37,7 +37,7 @@ $helper = $this->get('helper');
                             <?php } ?>
 
                             </select>
-                            <a href="/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
+                            <a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
                         </div>
                     </div>
 
@@ -64,7 +64,7 @@ $helper = $this->get('helper');
                     <h4 class="widgettitle title-light">
                         <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
-                    <textarea name="details" id="details" class="tinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                    <textarea name="details" id="details" class="projectTinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
             </div>
@@ -112,7 +112,7 @@ $helper = $this->get('helper');
             <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span
-                                class="fa fa-dollar-sign"></span><?php echo $this->__('label.budgets'); ?></h4>
+                                class="fa fa-money-bill-alt"></span><?php echo $this->__('label.budgets'); ?></h4>
                     <div class="form-group">
                         <label class="span4 control-label"for="hourBudget"><?php echo $this->__('label.hourly_budget'); ?></label>
                         <div class="span6">
@@ -138,7 +138,7 @@ $helper = $this->get('helper');
     <div class="row-fluid padding-top">
         <?php if ($project['id'] != '') : ?>
             <div class="pull-right padding-top">
-                <a href="/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__('buttons.delete'); ?></a>
+                <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__('buttons.delete'); ?></a>
             </div>
         <?php endif; ?>
         <input type="submit" name="save" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />

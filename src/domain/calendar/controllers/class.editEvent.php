@@ -23,8 +23,6 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
-            $msgKey = '';
-            $helper = new core\helper();
 
             if (isset($_GET['id']) === true) {
 
@@ -39,6 +37,7 @@ namespace leantime\domain\controllers {
                     'allDay' => $row['allDay']
                 );
 
+
                 if (isset($_POST['save']) === true) {
 
                     if (isset($_POST['allDay']) === true) {
@@ -52,19 +51,13 @@ namespace leantime\domain\controllers {
                     }
 
                     if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-
-                        $dateFrom = $helper->date2timestamp($_POST['dateFrom'], $_POST['timeFrom']);
-                        //                        $dateFrom = ''.($helper->timestamp2date($_POST['dateFrom'],6)).' '.($_POST['timeFrom']).'';    
-
+                        $dateFrom = date('Y-m-d H:i:01', strtotime($_POST['dateFrom']." ".$_POST['timeFrom']));
                     }
+
 
                     if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-
-                        $dateTo = $helper->date2timestamp($_POST['dateTo'], $_POST['timeTo']);
-                        //                        $dateTo = ''.($helper->timestamp2date($_POST['dateTo'],6)).' '.($_POST['timeTo']).'';    
-
+                        $dateTo = date('Y-m-d H:i:01', strtotime($_POST['dateTo']." ".$_POST['timeTo']));
                     }
-
 
                     $values = array(
                         'description' => ($_POST['description']),
@@ -75,29 +68,19 @@ namespace leantime\domain\controllers {
 
                     if ($values['description'] !== '') {
 
-                        if ($helper->validateTime($_POST['timeFrom']) === true) {
+                        $calendarRepo->editEvent($values, $id);
 
-                            $calendarRepo->editEvent($values, $id);
-
-                            $msgKey = 'Termin bearbeitet';
-
-                        } else {
-                            $msgKey = 'Zeit hat falsches Format hh:mm';
-                        }
+                        $tpl->setNotification('notification.event_edited_successfully', 'success');
 
                     } else {
 
-                        $msgKey = 'Keine Beschreibung angegeben';
+                        $tpl->setNotification('notification.please_enter_title', 'error');
 
                     }
-
 
                 }
 
                 $tpl->assign('values', $values);
-                $tpl->assign('helper', $helper);
-                $tpl->assign('info', $msgKey);
-
                 $tpl->display('calendar.editEvent');
 
             } else {

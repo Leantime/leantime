@@ -109,7 +109,8 @@ namespace leantime\core {
 
             }else{
 
-                throw new \Exception("Language file not found");
+                //Default to english US
+                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
 
             }
 
@@ -136,6 +137,8 @@ namespace leantime\core {
             }
 
             $langCode = explode("-", $language);
+
+            var_dump($langCode);
 
             if(isset($this->langlist[$langCode[0]]) === true) {
 

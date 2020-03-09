@@ -27,16 +27,22 @@ namespace leantime\domain\repositories {
         private $db='';
 
         public $canvasTypes = array(
-            "problem"=>"Describe the Problem",
-            "solution"=>"Describe the Solution",
-            "keymetrics"=>"Describe the Key Metrics",
-            "uniquevalue"=>"Unique Value Proposition",
-            "unfairadvantage"=>"Unfair Advantage",
-            "channels"=>"What are the Channels",
-            "customersegment"=>"Who are the Customers",
-            "cost"=>"Cost Structure",
-            "revenue"=>"Revenue Streams"
+            "problem"=>"status.problem",
+            "solution"=>"status.solution",
+            "keymetrics"=>"status.keymetrics",
+            "uniquevalue"=>"status.uniquevalue",
+            "unfairadvantage"=>"status.unfairadvantage",
+            "channels"=>"status.channels",
+            "customersegment"=>"status.customersegment",
+            "cost"=>"status.cost",
+            "revenue"=>"status.revenue"
             );
+
+        public $statusLabels = array(
+            "danger" => "status.not_validated",
+            "info" => "status.validated_false",
+            "success" => "status.validated_true"
+        );
 
         /**
          * __construct - get db connection
@@ -48,9 +54,23 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->language = new core\language();
+
             $this->canvasTypes = $this->getCanvasLabels();
 
+
         }
+
+        public function getStatusLabels () {
+            foreach($this->statusLabels as $key => $statusLabel){
+                $this->statusLabels[$key] = $this->language->__($statusLabel);
+            }
+
+            return $this->statusLabels;
+
+
+        }
+
 
         public function getCanvasLabels()
         {
@@ -74,11 +94,18 @@ namespace leantime\domain\repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-                $labels = $this->canvasTypes;
+
                 if($values !== false) {
                     $labels = unserialize($values['value']);
                     $_SESSION["projectsettings"]["researchlabels"] = $labels;
+
                 }else{
+
+                    foreach($this->canvasTypes as $key => $typeLabel){
+                        $this->canvasTypes[$key] = $this->language->__($typeLabel);
+                    }
+
+                    $labels = $this->canvasTypes;
                     $_SESSION["projectsettings"]["researchlabels"] = $this->canvasTypes;
                 }
 
@@ -214,6 +241,8 @@ namespace leantime\domain\repositories {
 
         }
 
+
+
         public function patchCanvasItem($id, $params)
         {
 
@@ -257,6 +286,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.status,						
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
+						t1.profileId AS authorProfileId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						COUNT(DISTINCT zp_comment.id) AS commentCount,

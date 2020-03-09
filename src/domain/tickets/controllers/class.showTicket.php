@@ -33,7 +33,7 @@ namespace leantime\domain\controllers {
             $this->userService = new services\users();
 
             if(isset($_SESSION['lastPage']) === false){
-                $_SESSION['lastPage'] = "/tickets/showKanban";
+                $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban";
             }
         }
 
@@ -57,7 +57,7 @@ namespace leantime\domain\controllers {
 
                     if($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $this->tpl->redirect("/tickets/showTicket/".$id);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
                     }else {
                         $this->tpl->setNotification($result["msg"], "success");
                     }
@@ -70,7 +70,7 @@ namespace leantime\domain\controllers {
 
                     if($this->commentService->deleteComment($commentId)){
                         $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                        $this->tpl->redirect("/tickets/showTicket/".$id);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
                     }else{
                         $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
                     }
@@ -201,7 +201,7 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                $this->tpl->redirect("/tickets/showTicket/".$id);
+                $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
 
             } else {
 
