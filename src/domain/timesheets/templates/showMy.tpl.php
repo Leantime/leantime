@@ -182,7 +182,7 @@ jQuery(document).ready(function(){
             <div class="pageicon"><span class="iconfa-time"></span></div>
             <div class="pagetitle">
                 <h5><?php echo $this->__('headline.overview'); ?></h5>
-                <h1><?php echo $this->__('headline.my_timesheet'); ?></h1>
+                <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -195,7 +195,7 @@ jQuery(document).ready(function(){
 <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
 
 <div class="headtitle" style="margin:0px; background: #eee;">
-	<h4 class="widgettitle title-primary"><?php echo $this->__('headline.my_timesheet'); ?></h4>
+	<h4 class="widgettitle title-primary"><?php echo $this->__('headline.my_timesheets'); ?></h4>
 	<div class="padding10">
 		<span><?php echo $this->__('label.week_from')?></span>
         <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
