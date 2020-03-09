@@ -14,7 +14,8 @@ body.loginpage, .header, .leftmenu .nav-tabs.nav-stacked > li.active > a, .leftm
 { background-color: <?php echo $color; ?>; }
 
 
-.loginpanelinner {
+.loginpanelinner,
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
 	background-color: <?php echo $color; ?> !important;
 }
 

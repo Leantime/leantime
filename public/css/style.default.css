@@ -2628,6 +2628,26 @@ a .label-default:after, a .label-primary:after {
     font-size: 14px;
 }
 
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a {
+    background-image:none;
+    color:#fff;
+}
+
+.project-selector .dropdown-menu .openToggle,
+.project-selector .dropdown-menu .closeToggle{
+    cursor:pointer;
+}
+
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.nav-header.openToggle:hover,
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.nav-header.closeToggle:hover {
+    color:#333;
+}
+
+.leftpanel .leftmenu .nav-tabs ul.project-selector .dropdown-menu .openToggle i,
+.leftpanel .leftmenu .nav-tabs ul.project-selector .dropdown-menu .closeToggle i {
+
+}
+
 .leftmenu .nav-tabs.nav-stacked a span {
     margin-right: 10px;
 }
