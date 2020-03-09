@@ -28,8 +28,7 @@ $companySettings= $this->get('companySettings');
                             <h4 class="widgettitle title-primary">Company Settings</h4>
                             <div class="widgetcontent">
 
-                                <?php if($companySettings !== false) {?>
-                                    <p>These are system wide settings that will affect the look & feel of your leantime experience.</p>
+                                <p>These are system wide settings that will affect the look & feel of your leantime experience.</p>
                                 <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveSettings" />
 
@@ -97,13 +96,7 @@ $companySettings= $this->get('companySettings');
                                     <input type="submit" value="Save Settings" id="saveBtn"/>
 
                                 </form>
-                                <?php } else {?>
-                                    <div class="align-center">
-                                        <i class="fa fa-cogs" style="font-size:48px"></i>
-                                        <h4>Premium Feature!</h4> <br />We would love to show you this page, but this is a premium feature. <br />Sign for a paid subscription to change your logo and color scheme.
-                                    <br /><br /><a href="<?=BASE_URL ?>/billing/subscriptions" class="btn btn-primary">Sign Up for the Emerging Plan</a>
-                                    </div>
-                                <?php } ?>
+
 
                             </div>
                         </div>

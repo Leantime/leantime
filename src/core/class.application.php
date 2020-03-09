@@ -81,10 +81,16 @@ class application
         $settings = new \leantime\domain\repositories\setting();
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
+
             $logoPath = $settings->getSetting("companysettings.logoPath");
 
             if ($logoPath !== false) {
-                $_SESSION["companysettings.logoPath"] = BASE_URL.$logoPath;
+
+                if (strpos($logoPath, 'http') === 0) {
+                    $_SESSION["companysettings.logoPath"] =  $logoPath;
+                }else{
+                    $_SESSION["companysettings.logoPath"] =  BASE_URL.$logoPath;
+                }
 
             }else{
 
