@@ -32,7 +32,7 @@ class config
 
 	/* Email */
 	public $email = ""; //Return email address
-	public $useSMTP = true; //Use SMTP? If set to false, the default php mail() function will be used
+	public $useSMTP = false; //Use SMTP? If set to false, the default php mail() function will be used
 	public $smtpHosts = ""; //SMTP host
 	public $smtpUsername =""; //SMTP username
 	public $smtpPassword = ""; //SMTP password

@@ -245,7 +245,7 @@ $canvasTitle = "";
         <div class="row">
             <div class="col-md-4">
                 <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
 
                 <?php } ?>
             </div>
@@ -301,7 +301,7 @@ $canvasTitle = "";
                     <div class="column bgColumn">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=idea" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=idea" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php $this->e($canvasLabels["idea"]); ?>
                         </h4>
@@ -345,7 +345,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -354,7 +354,7 @@ $canvasTitle = "";
                     <div class="column bgColumn">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=research" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=research" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php echo $canvasLabels["research"]; ?>
                         </h4>
@@ -401,7 +401,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=research" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=research" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -410,7 +410,7 @@ $canvasTitle = "";
                     <div class="column bgColumn">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=prototype" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=prototype" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php echo $canvasLabels["prototype"]; ?>
                         </h4>
@@ -456,7 +456,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=prototype" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=prototype" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -466,7 +466,7 @@ $canvasTitle = "";
                             <div class="column bgColumn">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=validation" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=validation" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
                                     <?php echo $canvasLabels["validation"]; ?>
                                 </h4>
@@ -480,10 +480,6 @@ $canvasTitle = "";
                                                 <br />
                                                 <?php echo nl2br($row["data"]);?>
                                                 <br /><br />
-
-
-
-
                                                 <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
                                                 <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
                                                 <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
@@ -512,7 +508,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=validation" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=validation" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                                 </div>
                             </div>
 
@@ -523,7 +519,7 @@ $canvasTitle = "";
                             <div class="column bgColumn">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=implemented" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=implemented" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
                                     <?php echo $canvasLabels["implemented"]; ?>
                                 </h4>
@@ -569,7 +565,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=implemented" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=implemented" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                                 </div>
                             </div>
                 </div>
@@ -579,7 +575,7 @@ $canvasTitle = "";
                     <div class="column bgColumn">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=deferred" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=deferred" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php echo $canvasLabels["deferred"]; ?>
                         </h4>
@@ -625,7 +621,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=deferred" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=deferred" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>

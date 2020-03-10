@@ -105,7 +105,7 @@ namespace leantime\domain\controllers {
                     $values['details'] = $_POST['details'];
 
                     $msgKey = 'PROJECT_ADDED';
-                    $tpl->setNotification('Your new project was created successfully. Go to <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas/">Research</a> to continue your journey.', 'success');
+                    $tpl->setNotification('Your new project was created successfully. Go to <a href="'.BASE_URL.'/leancanvas/simpleCanvas/">Research</a> to continue your journey.', 'success');
 
                     $tpl->redirect(BASE_URL."/projects/showProject/". $id);
 

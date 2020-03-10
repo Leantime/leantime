@@ -336,7 +336,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             Step 1. <br />
                             <?php echo $canvasLabels["customersegment"]; ?>
@@ -397,7 +397,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>
                 </div>
@@ -409,7 +409,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             Step 2. <br/>
@@ -474,7 +474,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>            
                 </div>
@@ -485,7 +485,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
                                     Step 3. <br />
                                     <?php echo $canvasLabels["solution"]; ?>
@@ -546,7 +546,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add Solution</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add Solution</a>
                                 </div>
                             </div>
                         </div>

@@ -8,7 +8,7 @@
 
 ?>
 
-<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel&module=<?php echo $_GET['module']?>&label=<?php echo $_GET['label']?>" style="min-width: 320px;">
+<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php echo $_GET['module']?>&label=<?php echo $_GET['label']?>" style="min-width: 320px;">
 
     <?php if($currentLabel !== false) {?>
     <label>Label</label>

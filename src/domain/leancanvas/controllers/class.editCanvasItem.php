@@ -225,7 +225,7 @@ namespace leantime\domain\controllers {
                 $message = "A comment was added to one of your research canvas. ";
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
 
-                $this->tpl->redirect(BASE_URL." /leancanvas/editCanvasItem/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$_GET['id']);
 
             }
 

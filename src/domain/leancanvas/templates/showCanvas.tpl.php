@@ -324,7 +324,7 @@ $canvasTitle = "";
                         <h4 class="widgettitle title-primary">
 
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             <?php echo $canvasLabels["problem"]; ?>
@@ -389,7 +389,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>            
                 </div>
@@ -400,7 +400,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
 
                                     <?php echo $canvasLabels["solution"]; ?>
@@ -461,7 +461,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add New</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add New</a>
                                 </div>
                             </div>
                         </div>
@@ -471,7 +471,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=keymetrics" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=keymetrics" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
 
                                     <?php echo $canvasLabels["keymetrics"]; ?>
@@ -532,7 +532,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=keymetrics" class="canvasModal" id="keymetrics"><span class="iconfa iconfa-plus"></span>  Add New</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=keymetrics" class="canvasModal" id="keymetrics"><span class="iconfa iconfa-plus"></span>  Add New</a>
                                 </div>
                             </div>
                         </div>
@@ -543,7 +543,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=uniquevalue" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=uniquevalue" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             <?php echo $canvasLabels["uniquevalue"]; ?>
@@ -604,7 +604,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>    
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=uniquevalue" class="canvasModal" id="uniquevalue"><span class="iconfa iconfa-plus"></span>  Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=uniquevalue" class="canvasModal" id="uniquevalue"><span class="iconfa iconfa-plus"></span>  Add New</a>
                         </div>
                     </div>            
                 </div>
@@ -615,7 +615,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=unfairadvantage" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=unfairadvantage" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
 
                                     <?php echo $canvasLabels["unfairadvantage"]; ?>
@@ -676,7 +676,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=unfairadvantage" class="canvasModal" id="unfairadvantage"><span class="iconfa iconfa-plus"></span>  Add New</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=unfairadvantage" class="canvasModal" id="unfairadvantage"><span class="iconfa iconfa-plus"></span>  Add New</a>
                                 </div>
                             </div>
                         </div>
@@ -686,7 +686,7 @@ $canvasTitle = "";
                             <div class="column">
                                 <h4 class="widgettitle title-primary">
                                     <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=channels" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=channels" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                     <?php } ?>
 
                                     <?php echo $canvasLabels["channels"]; ?>
@@ -747,7 +747,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=channels" class="canvasModal" id="channels"><span class="iconfa iconfa-plus"></span> Add New</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=channels" class="canvasModal" id="channels"><span class="iconfa iconfa-plus"></span> Add New</a>
                                 </div>
                             </div>
                         </div>
@@ -758,7 +758,7 @@ $canvasTitle = "";
                     <div class="column">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             <?php echo $canvasLabels["customersegment"]; ?>
@@ -819,7 +819,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>        
                 </div>
@@ -831,7 +831,7 @@ $canvasTitle = "";
                     <div class="column full">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=cost" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=cost" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             <?php echo $canvasLabels["cost"]; ?>
@@ -892,7 +892,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=cost" class="canvasModal" id="cost"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=cost" class="canvasModal" id="cost"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>        
                 </div>
@@ -900,7 +900,7 @@ $canvasTitle = "";
                     <div class="column full">
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=researchlabels&label=revenue" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=revenue" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
 
                             <?php echo $canvasLabels["revenue"]; ?>
@@ -961,7 +961,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=revenue" class="canvasModal" id="revenue"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=revenue" class="canvasModal" id="revenue"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>        
                 </div>

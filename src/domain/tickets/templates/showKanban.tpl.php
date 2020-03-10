@@ -412,7 +412,7 @@ $efforts = $this->get('efforts');
 							
                             <h4 class="widgettitle title-primary" style="border-bottom:5px solid <?php echo $color; ?>">
                                 <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=ticketlabels&label=<?=$statusRow?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$statusRow?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                                 <?php } ?>
                                 <strong class="count">0</strong>
                                 <?php echo $tickets->stateLabels[$statusRow]; ?></h4>

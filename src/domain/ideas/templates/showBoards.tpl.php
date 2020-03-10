@@ -52,7 +52,7 @@ $canvasTitle = "";
         <div class="row">
             <div class="col-md-4">
                 <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
                 <?php } ?>
             </div>
 
