@@ -228,7 +228,7 @@ namespace leantime\domain\controllers {
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
 
 
-                $this->tpl->redirect(BASE_URL." /leancanvas/editCanvasItem/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL."/leancanvas/editCanvasItem/".$_GET['id']);
 
             }
 

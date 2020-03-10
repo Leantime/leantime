@@ -266,9 +266,10 @@ namespace leantime\domain\controllers {
 
                     $file = $_GET['delFile'];
                     $upload = new core\fileupload();
+                    $files = new repositories\files();
 
                     $upload->initFile($file);
-                    $upload->deleteFile($file);
+                    $files->deleteFile($file);
 
                     $this->deleteFile($file);
 
@@ -281,7 +282,7 @@ namespace leantime\domain\controllers {
 
                     $commentId = (int)($_GET['delComment']);
 
-                    $this->deleteComment($commentId);
+                    $comments->deleteComment($commentId);
 
                     $this->setNotification($this->language->__("notifications.comment_deleted"), "success");
 

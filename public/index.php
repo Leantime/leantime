@@ -8,6 +8,7 @@ include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
 $config = new leantime\core\config();
+
 if(isset($config->appUrl) && $config->appUrl != ""){
     define('BASE_URL', $config->appUrl);
 } else{

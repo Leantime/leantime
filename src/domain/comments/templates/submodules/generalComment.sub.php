@@ -2,15 +2,14 @@
 
     $comments = new leantime\domain\repositories\comments();
 
-    //TODO: verify formURL behavior
-    $formUrl = $this->get('formUrl');
-    $deleteUrlBase = "";
+    $formUrl = CURRENT_URL;
 
-    if($formUrl == "") {
-        $formUrl = "#comments";
-        $deleteUrlBase = "".CURRENT_URL."&delComment=";
+    //Controller may not redirect. Make sure delComment is only added once
+    if (strpos($formUrl, '?delComment=') !== false) {
+        $urlParts = explode('?delComment=', $formUrl);
+        $deleteUrlBase = $urlParts[0]."?delComment=";
     }else{
-        $deleteUrlBase = $formUrl."&delComment=";
+        $deleteUrlBase = $formUrl."?delComment=";
     }
 
 ?>

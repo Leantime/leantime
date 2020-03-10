@@ -36,12 +36,14 @@
 
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
-                                    echo "<li class='nav-header border'>" . $this->escape($projectRow['clientName']) . "</li>";
+                                    echo "<li class='nav-header border openToggle' onclick='leantime.menuController.toggleClientList(".$projectRow['clientId'].", this)'>" . $this->escape($projectRow['clientName']) . " <i class=\"fa fa-caret-down\"></i></li>";
                                 }
 
-                                if ($this->get('currentProject') !== $projectRow["id"]) {
-                                    echo "<li><a href='".BASE_URL."/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
-                                }
+
+                                echo "<li class='client_".$projectRow['clientId']."";
+                                    if ($this->get('currentProject') == $projectRow["id"]) { echo " active "; }
+                                echo"'><a href='".BASE_URL."/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
+
 
                             }
                         }else{

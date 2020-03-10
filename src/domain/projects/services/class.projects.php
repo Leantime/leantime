@@ -315,14 +315,15 @@ namespace leantime\domain\services {
             //Find project if nothing is set
             //Login experience. If nothing is set look for the last set project
             //If there is none (new feature, new user) use the first project in the list.
-            if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '') {
+            //Check that the user is still assigned to the project
+            if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '' || $this->isUserAssignedToProject($_SESSION['userdata']['id'], $_SESSION['currentProject']) === false) {
 
                 $_SESSION['currentProject'] = '';
 
                 //If last project setting is set use that
                 $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject");
 
-                if($lastProject !== false && $lastProject != ''){
+                if($lastProject !== false && $lastProject != '' && $this->isUserAssignedToProject($_SESSION['userdata']['id'], $lastProject) !== false){
 
                     if($this->changeCurrentSessionProject($lastProject) === true) {
                         return;

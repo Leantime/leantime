@@ -25,7 +25,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
         <div class="row">
             <div class="col-md-4">
                 <?php if (count($this->get('allCanvas')) > 0) { ?>
-                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea"); ?></a>
 
                 <?php } ?>
@@ -87,7 +87,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                         <h4 class="widgettitle title-primary">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=idealabels&label=<?=$key?>"
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
                                    class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php $this->e($statusRow["name"]); ?>

@@ -55,15 +55,15 @@
                                     <a href="javascript:void(0)" id="HourlyChartButton" class="btn btn-sm btn-secondary"><?php echo $this->__("links.hourly"); ?></a>
                                 </div>
 
-                            </div>
-                            <?php
-                            $dates = date($this->__("language.dateformat"), strtotime($this->get('currentSprint')->startDate)) ." - " .date($this->__("language.dateformat"), strtotime($this->get('currentSprint')->endDate));
-                            echo "<h4 class='inline'>".$this->get('currentSprint')->name."</h4> - ".$dates; ?>
-                            <div style="width:100%; height:350px;">
-                                <canvas id="sprintBurndown"></canvas>
-                            </div>
-                            <div style="clear:both;"></div>
-                            <br /><br /><br />
+                                    </div>
+                                    <?php
+                                    $dates = date("m/d/Y", strtotime($this->get('currentSprint')->startDate)) ." - " .date("m/d/Y", strtotime($this->get('currentSprint')->endDate));
+                                    echo "<h4 class='inline'>".$this->get('currentSprint')->name."</h4> - ".$dates; ?>
+                                    <div style="width:100%; height:350px;">
+                                        <canvas id="sprintBurndown"></canvas>
+                                    </div>
+                                    <div style="float:clear;"></div>
+                                    <br /><br /><br />
 
 
                         <?php }else if($backlogBurndown != []) { ?>

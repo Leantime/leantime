@@ -190,7 +190,7 @@
 							
                             <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
                             <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel&module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                                 <strong class="count">0</strong>
                             <?php $this->e($statusRow['name']); ?></h4>

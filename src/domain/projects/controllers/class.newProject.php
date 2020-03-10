@@ -84,18 +84,6 @@ namespace leantime\domain\controllers {
                     $id = $projectRepo->addProject($values);
                     $projectService->changeCurrentSessionProject($id);
 
-                    //With a new project create a canvas and an idea board:
-                    $canvasValues = array("title" => $projectName." Research", "author" => $_SESSION['userdata']["id"], "projectId" =>$_SESSION["currentProject"]);
-                    $leancanvasRepo->addCanvas($canvasValues);
-
-                    //Create new Idea Board
-                    $ideaValues = array("title" =>  $projectName. " Ideas", "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
-                    $currentCanvasId = $ideaRepo->addCanvas($ideaValues);
-
-                    //Create Todos to research projects and plan roadmap
-                    $ticketService->quickAddTicket(array("headline" =>"Conduct project research", "description" => "Go to the <a href='<?=BASE_URL ?>/leancanvas/simpleCanvas/'>research section</a> and fill out Customer, Problem and a Solution.<br /> This will help your frame your roadmap and be targeted in your solution approach.", "status"=>"3", "sprint"=> ""));
-                    $ticketService->quickAddTicket(array("headline" =>"Create milestones", "description" => "It is time to plan your <a href='<?=BASE_URL ?>/tickets/roadmap/'>milestones</a>. Milestones are features that provide value to your users. They span over multiple months and contain many ToDos.", "status"=>"3", "sprint"=> ""));
-
                     $users = $projectRepo->getUsersAssignedToProject($id);
 
                     $mailer->setSubject("You have been added to a new project");
@@ -117,7 +105,7 @@ namespace leantime\domain\controllers {
                     $values['details'] = $_POST['details'];
 
                     $msgKey = 'PROJECT_ADDED';
-                    $tpl->setNotification('Your new project was created successfully. Go to <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas/">Research</a> to continue your journey.', 'success');
+                    $tpl->setNotification('Your new project was created successfully. Go to <a href="'.BASE_URL.'/leancanvas/simpleCanvas/">Research</a> to continue your journey.', 'success');
 
                     $tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
