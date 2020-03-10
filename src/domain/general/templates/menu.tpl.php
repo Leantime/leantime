@@ -1,3 +1,5 @@
+<?php defined('RESTRICTED') or die('Restricted access'); ?>
+
 <?php
     $currentLink = $this->get('current');
     $module = '';

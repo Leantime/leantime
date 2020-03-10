@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
 <head>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>">
-    <meta name="identifier-URL" content="<?=BASE_URL?>">
-
-    <link rel="shortcut icon" href="<?=BASE_URL?>/favicon.ico"/>
-    <link rel="apple-touch-icon" href="<?=BASE_URL?>/apple-touch-icon.png">
-
     <title><?php echo $_SESSION["companysettings.sitename"]; ?></title>
 
     <?php echo $frontController->includeAction('general.header'); ?>

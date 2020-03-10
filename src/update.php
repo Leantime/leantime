@@ -8,17 +8,7 @@ $install = new leantime\core\install($config, $settings);
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>">
-    <meta name="identifier-URL" content="<?=BASE_URL?>">
-
-<link rel="shortcut icon" href="<?=BASE_URL ?>/favicon.ico" />
-<link rel="apple-touch-icon" href="<?=BASE_URL ?>/apple-touch-icon.png">
-
-<title><?php echo $_SESSION["companysettings.sitename"]; ?></title>
-
-<?php echo $frontController->includeAction('general.header'); ?>
+    <?php echo $frontController->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
     <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
