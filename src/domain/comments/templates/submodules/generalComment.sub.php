@@ -6,7 +6,15 @@ $language->setModule('tickets');
 $language->readIni();
 
 $formUrl = CURRENT_URL;
-$deleteUrlBase = $formUrl."?delComment=";
+
+//Controller may not redirect. Make sure delComment is only added once
+if (strpos($formUrl, '?delComment=') !== false) {
+    $urlParts = explode('?delComment=', $formUrl);
+    $deleteUrlBase = $urlParts[0]."?delComment=";
+}else{
+    $deleteUrlBase = $formUrl."?delComment=";
+}
+
 ?>
 
 <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $language->lang_echo('Discussion', false); ?></h4>

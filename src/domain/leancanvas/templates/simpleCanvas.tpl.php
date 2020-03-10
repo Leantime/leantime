@@ -397,7 +397,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>
                 </div>
@@ -474,7 +474,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
+                            <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=problem" class="canvasModal" id="problem"><span class="iconfa iconfa-plus"></span> Add New</a>
                         </div>
                     </div>            
                 </div>
@@ -546,7 +546,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem&type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add Solution</a>
+                                    <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=solution"  class="canvasModal" id="solution"><span class="iconfa iconfa-plus"></span> Add Solution</a>
                                 </div>
                             </div>
                         </div>

@@ -334,7 +334,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=well" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=well" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -390,7 +390,7 @@ $canvasTitle = "";
             <?php } ?>
         <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=notwell" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=notwell" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>            
                 </div>
@@ -444,7 +444,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>    
                                     <br />
-                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog&type=startdoing" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a
+                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=startdoing" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a
                                 </div>
                             </div>
                         </div>

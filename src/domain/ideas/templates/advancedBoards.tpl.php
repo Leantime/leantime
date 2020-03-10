@@ -245,7 +245,7 @@ $canvasTitle = "";
         <div class="row">
             <div class="col-md-4">
                 <?php if(count($this->get('allCanvas')) > 0) {?>
-                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
+                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span class="far fa-lightbulb" ></span> Add Idea</a>
 
                 <?php } ?>
             </div>
@@ -345,7 +345,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=idea" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -401,7 +401,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=research" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=research" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -456,7 +456,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=prototype" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=prototype" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
@@ -508,7 +508,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=validation" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=validation" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                                 </div>
                             </div>
 
@@ -565,7 +565,7 @@ $canvasTitle = "";
                                         <?php } ?>
                                     <?php } ?>
                                     <br />
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=implemented" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=implemented" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                                 </div>
                             </div>
                 </div>
@@ -621,7 +621,7 @@ $canvasTitle = "";
                                 <?php } ?>
                             <?php } ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/ideas/ideaDialog&type=deferred" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
+                            <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=deferred" class="ideaModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
                         </div>
                     </div>
                 </div>
