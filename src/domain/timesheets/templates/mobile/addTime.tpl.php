@@ -28,10 +28,10 @@ $values = $this->get('values');
         
             $("#date, #invoicedCompDate, #invoicedEmplDate").datepicker({
                 
-                dateFormat: 'dd.mm.yy',
-                dayNames: [<?php echo''.$lang['DAYNAMES'].'' ?>],
-                dayNamesMin:  [<?php echo''.$lang['DAYNAMES_MIN'].'' ?>],
-                monthNames: [<?php echo''.$lang['MONTHS'].'' ?>]
+                dateFormat: <?php echo $this->__('language.dateFormat') ?>,
+                dayNames: [<?php echo''.$this->__('language.dayNames').'' ?>],
+                dayNamesMin:  [<?php echo''.$this->__('language.dayNamesMin').'' ?>],
+                monthNames: [<?php echo''.$this->__('language.monthNames').'' ?>]
             });
            
             
@@ -41,10 +41,10 @@ $values = $this->get('values');
 </script>
 
 
-<h1><?php echo $lang['MY_TIMESHEETS']; ?></h1>
+<h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
 
 <div class="fail"><?php if($this->get('info') != '') { ?> <span
-    class="info"><?php echo $lang[$this->get('info')] ?></span> <?php 
+    class="info"><?php echo $this->displayNotification() ?></span> <?php
                     } ?>
 
 </div>
@@ -52,12 +52,12 @@ $values = $this->get('values');
 <div id="loader">&nbsp;</div>
 <form action="" method="post">
 
-<fieldset ><legend><?php echo $lang['OVERVIEW']; ?></legend>
+<fieldset ><legend><?php echo $this->__('label.overview'); ?></legend>
 
 
 
 
-<label for="tickets"><?php echo $lang['TICKET']?></label><br /> <select
+<label for="tickets"><?php echo $this->__('label.overview') ?></label><br /> <select
     name="tickets" id="tickets">
 
 <?php foreach($this->get('allProjects') as $rowProject) {?>
@@ -74,7 +74,7 @@ $values = $this->get('values');
 <?php } ?>
 </select> <br />
 <br />
-<label for="kind"><?php echo $lang['KIND']?></label><br /> <select id="kind"
+<label for="kind"><?php echo $this->__('label.kind') ?></label><br /> <select id="kind"
     name="kind">
     <?php foreach($this->get('kind') as $row){
         echo'<option value="'.$row.'"';
@@ -86,36 +86,36 @@ $values = $this->get('values');
     ?>
 
 </select><br />
-<label for="date"><?php echo $lang['DATE']?></label><br /> <input type="text"
+<label for="date"><?php echo $this->__('label.date') ?></label><br /> <input type="text"
     id="date" name="date" value="<?php echo $values['date'] ?>" size="7" />
 <br />
-<label for="hours"><?php echo $lang['HOURS']?></label><br /> <input
+<label for="hours"><?php echo $this->__('label.hours') ?></label><br /> <input
     type="text" id="hours" name="hours"
     value="<?php echo $values['hours'] ?>" size="7" /> <br />
-<label for="description"><?php echo $lang['DESCRIPTION']?></label><br /> <textarea
+<label for="description"><?php echo $this->__('label.description') ?></label><br /> <textarea
     rows="5" cols="30" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
 <br />
 <br />
-<label for="invoicedEmpl"><?php echo $lang['INVOICED_EMPL']?></label><br /> <input
+<label for="invoicedEmpl"><?php echo $this->__('label.invoiced_emp') ?></label><br /> <input
     type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
     <?php if(isset($values['invoicedEmpl']) === true && $values['invoicedEmpl'] == '1') { echo ' checked="checked"';
     } ?> />
-    <?php echo $lang['ONDATE']?>&nbsp;<input type="text"
+    <?php echo $this->__('label.ondate')?>&nbsp;<input type="text"
     id="invoicedEmplDate" name="invoicedEmplDate"
     value="<?php echo $values['invoicedEmplDate'] ?>" size="7" /><br />
 
 
     <?php if($_SESSION['userdata']['role'] == 'admin') { ?> <br />
-<label for="invoicedComp"><?php echo $lang['INVOICED_COMP']?></label><br /> <input
+<label for="invoicedComp"><?php echo $this->__('label.invoiced_comp') ?></label><br /> <input
     type="checkbox" name="invoicedComp" id="invoicedComp"
         <?php if($values['invoicedComp'] == '1') { echo ' checked="checked"';
         } ?> />
-        <?php echo $lang['ONDATE']?>&nbsp;<input type="text"
+        <?php echo $this->__('label.ondate')?>&nbsp;<input type="text"
     id="invoicedCompDate" name="invoicedCompDate"
     value="<?php echo $values['invoicedCompDate'] ?>" size="7" /><br />
-    <?php } ?> <input type="submit" value="<?php echo $lang['SAVE']; ?>"
+    <?php } ?> <input type="submit" value="<?php echo $this->__('buttons.save') ?>"
     name="save" class="button" /> <input type="submit"
-    value="<?php echo $lang['SAVE_NEW']; ?>" name="saveNew" class="button" />
+    value="<?php echo $this->__('buttons.save_and_new') ?>" name="saveNew" class="button" />
 
 
 
@@ -124,4 +124,4 @@ $values = $this->get('values');
 <br />
 </form>
 <br />
-<a href="index.php?act=timesheets.showAll" class="link"><?php echo $lang['BACK']?></a>
+<a href="index.php?act=timesheets.showAll" class="link"><?php echo $this->__('buttons.back') ?></a>

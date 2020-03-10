@@ -25,11 +25,11 @@ $helper = $this->get('helper');
     	{ 
 
 			$("#dateFrom, #dateTo").datepicker({
-				
-				dateFormat: 'dd.mm.yy',
-				dayNames: [<?php echo''.$lang['DAYNAMES'].'' ?>],
-				dayNamesMin:  [<?php echo''.$lang['DAYNAMES_MIN'].'' ?>],
-				monthNames: [<?php echo''.$lang['MONTHS'].'' ?>]
+
+                dateFormat: <?php echo $this->__('language.dateFormat') ?>,
+                dayNames: [<?php echo''.$this->__('language.dayNames').'' ?>],
+                dayNamesMin:  [<?php echo''.$this->__('language.dayNamesMin').'' ?>],
+                monthNames: [<?php echo''.$this->__('language.monthNames').'' ?>]
 			});
 		
         	$("#allTickets").tablesorter({
@@ -62,17 +62,17 @@ $helper = $this->get('helper');
 
 
 
-<h1><?php echo $lang['ALL_TIMES']; ?></h1>
+<h1><?php echo $this->__('headlines.all_times') ?></h1>
 <div id="loader">&nbsp;</div>
 <form action="<?=BASE_URL ?>/index.php?act=timesheets.showAll" method="post" id="form" name="form">
 
 
 
 
-<div id="pager"><span class="prev button">&laquo;<?php echo $lang['BACK']; ?></span>
+<div id="pager"><span class="prev button">&laquo;<?php echo $this->__('buttons.back') ?></span>
 
 - <input class="pagedisplay" type="text" readonly="readonly" /> - <span
-	class="next button"><?php echo $lang['NEXT']; ?> &raquo;</span> <select
+	class="next button"><?php echo $this->__('language.nextText') ?> &raquo;</span> <select
 	class="pagesize">
 	<option value="5">5</option>
 	<option value="10" selected="selected">10</option>
@@ -87,11 +87,11 @@ $helper = $this->get('helper');
 	id="allTickets">
 	<thead>
 		<tr>
-			<th><?php echo $lang['ID']; ?></th>
-			<th><?php echo $lang['DATE']; ?></th>
-			<th><?php echo $lang['HOURS']; ?></th>
-			<th><?php echo $lang['PLANHOURS']; ?></th>
-			<th><?php echo $lang['DIFFERENCE_HOURS']; ?></th>
+			<th><?php echo $this->__('label.id'); ?></th>
+            <th><?php echo $this->__('label.date'); ?></th>
+            <th><?php echo $this->__('label.hours'); ?></th>
+            <th><?php echo $this->__('label.plan_hours'); ?></th>
+            <th><?php echo $this->__('label.difference'); ?></th>
 			
 		</tr>
 	</thead>
@@ -113,14 +113,14 @@ $helper = $this->get('helper');
 		<?php } ?>
 		<?php if(count($this->get('allTimesheets')) === 0){ ?>
 		<tr>
-			<td colspan="5"><p><?php echo $lang['NO_RESULTS']; ?></p></td>
+			<td colspan="5"><p><?php echo $this->__('label.no_results') ?></p></td>
 		</tr>
 
 		<?php } ?>
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="2"><strong><?php echo $lang['ALL_HOURS']; ?>:</strong></td>
+			<td colspan="2"><strong><?php echo $this->__('label.all_hours'); ?>:</strong></td>
 			<td colspan="3"><strong><p><?php echo $sum; ?></p></strong></td>
 		</tr>
 	</tfoot>
@@ -128,22 +128,22 @@ $helper = $this->get('helper');
 
 
 
-<fieldset><legend><?php echo $lang['FILTER']; ?></legend>
+<fieldset><legend><?php echo $this->__('label.filter'); ?></legend>
 
-<label for="dateFrom"><?php echo $lang['DATE_FROM']; ?></label><br />
+<label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label><br />
 <input type="text" id="dateFrom" name="dateFrom"
 			value="<?php echo $this->get('dateFrom'); ?>" size="7" /><br />
 			
 			
-<label for="dateTo"><?php echo $lang['DATE_TO']; ?></label><br />
+<label for="dateTo"><?php echo $this->__('label.date_to'); ?></label><br />
 <input type="text" id="dateTo" name="dateTo"
 			value="<?php echo $this->get('dateTo'); ?>" size="7" /><br />
 			
 
-<label for="projectFilter"><?php echo $lang['PROJECT']; ?></label><br />
+<label for="projectFilter"><?php echo $this->__('label.project'); ?></label><br />
 <select name="projectFilter" id="projectFilter"
 			onchange="submit();">
-			<option value="0"><?php echo $lang['ALL_PROJECTS']; ?></option>
+			<option value="0"><?php echo $this->__('headline.all_projects'); ?></option>
 
 			<?php foreach($this->get('allProjects') as $row) {
 				echo'<option value="'.$row['id'].'"';
@@ -154,9 +154,9 @@ $helper = $this->get('helper');
 			?>
 		</select>
 		<br />
-		<label for="userId"><?php echo $lang['EMPLOYEE']; ?></label><br />
+		<label for="userId"><?php echo $this->__('label.employee'); ?></label><br />
 		<select name="userId" id="userId" onchange="submit();">
-			<option value="all"><?php echo $lang['ALL_EMPLOYEES']; ?></option>
+			<option value="all"><?php echo $this->__('label.all_employees'); ?></option>
 
 			<?php foreach($this->get('employees') as $row) {
 				echo'<option value="'.$row['id'].'"';
@@ -166,9 +166,9 @@ $helper = $this->get('helper');
 
 			?>
 		</select><br />
-		<label for="kind"><?php echo $lang['KIND']; ?></label><br />
+		<label for="kind"><?php echo $this->__('label.kind'); ?></label><br />
 		<select id="kind" name="kind" onchange="submit();">
-			<option value="all"><?php echo $lang['ALL_KINDS']; ?></option>
+			<option value="all"><?php echo $this->__('label.all_kinds') ?></option>
 			<?php foreach($this->get('kind') as $row){
 				echo'<option value="'.$row.'"';
 				if($row == $this->get('actKind')) echo ' selected="selected"';
@@ -179,26 +179,26 @@ $helper = $this->get('helper');
 
 		</select> 
 		<br />
-		<label for="invEmpl"><?php echo $lang['INVOICED']; ?></label><br />
+		<label for="invEmpl"><?php echo $this->__('label.invoiced'); ?></label><br />
 		<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onchange="submit();" 
 			<?php 
 			if($this->get('invEmpl') == '1') echo ' checked="checked"';
 			?>
 		/><br />
-		<label for="invEmpl"><?php echo $lang['INVOICED_COMP']; ?></label><br /><br />
+		<label for="invEmpl"><?php echo $this->__('label.invoiced_comp'); ?></label><br /><br />
 		<input type="checkbox" value="on" name="invComp" id="invComp" onchange="submit();" 
 			<?php 
 			if($this->get('invComp') == '1') echo ' checked="checked"';
 			?>
 		/><br /><br />
-		<input type="submit" value="<?php echo $lang['RELOAD']; ?>" class="button" />
+		<input type="submit" value="<?php echo $this->__('buttons.reload'); ?>" class="button" />
 	
 </fieldset>
 
 
 <p>
-<a href="index.php?act=timesheets.addTime" class="link"><?php echo $lang['BOOK_HOURS']; ?></a>
-<a href="index.php?act=timesheets.showMy" class="link"><?php echo $lang['MY_TIMESHEETS']; ?></a>
+<a href="index.php?act=timesheets.addTime" class="link"><?php echo $this->__('links.book_hours'); ?></a>
+<a href="index.php?act=timesheets.showMy" class="link"><?php echo $this->__('links.my_timesheets'); ?></a>
 </p>
 
 
