@@ -35,7 +35,7 @@ namespace leantime\domain\controllers {
             $this->userService = new services\users();
 
             if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/tickets/showKanban/";
+                $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban/";
             }
         }
 
@@ -152,7 +152,7 @@ namespace leantime\domain\controllers {
 
 
                     if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
+                        $tpl->redirect($_SESSION['lastPage']);
                     }
                 }
 

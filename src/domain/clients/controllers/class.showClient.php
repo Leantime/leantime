@@ -27,7 +27,7 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
 
             if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/clients/showAll";
+                $_SESSION['lastPage'] = BASE_URL."/clients/showAll";
             }
         }
 

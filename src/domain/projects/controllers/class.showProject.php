@@ -110,7 +110,7 @@ namespace leantime\domain\controllers {
                 $slackWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".slackWebhookURL");
                 $tpl->assign('slackWebhookURL', $slackWebhook);
 
-                $_SESSION['lastPage'] = "/projects/showProject/".$id;
+                $_SESSION['lastPage'] = BASE_URL."/projects/showProject/".$id;
                 
                 $project = $projectRepo->getProject($id);
                 $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);

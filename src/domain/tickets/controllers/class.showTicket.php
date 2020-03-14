@@ -105,6 +105,8 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('numFiles', count($files));
                 $this->tpl->assign('files', $files);
 
+                $this->tpl->assign("timesheetValues", array("kind"=>"", "date"=>date($this->language->__("language.dateformat")), "hours"=>"", "description"=>""));
+
                 //TODO: Refactor thumbnail generation in file manager
                 $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
 

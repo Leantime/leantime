@@ -28,7 +28,7 @@ namespace leantime\domain\controllers {
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
 
-            $_SESSION['lastPage'] = "/dashboard/show";
+            $_SESSION['lastPage'] = BASE_URL."/dashboard/show";
 
             $reportService = new services\reports();
             $reportService->dailyIngestion();

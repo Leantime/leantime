@@ -1584,6 +1584,10 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     border-radius: 3px;
 }
 
+select {
+    min-height:30px;
+}
+
 ::selection {
     background: #ccc;
     color: #fff;
@@ -1724,7 +1728,7 @@ h1, h2, h3, h4, h5 {
 	position:fixed;
 	padding-top:60px;
 	height:100%;
-    z-index: 5;
+    z-index: 7;
 }
 
 /* Action for tabwidget fix */
@@ -3208,18 +3212,17 @@ a .label-default:after, a .label-primary:after {
 /*** FORM STYLES ***/
 
 .stdform input {
-    padding: 5px;
+
     border: 1px solid #bbb;
 }
 
 .stdform textarea {
-    padding: 6px 5px;
+
     border: 1px solid #bbb;
 }
 
 .stdform select {
     border: 1px solid #bbb;
-    padding: 5px 2px;
 }
 
 .stdform p, .stdform div.par {

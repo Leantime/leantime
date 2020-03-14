@@ -27,7 +27,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('calendar', $calendarRepo->getCalendar($_SESSION['userdata']['id']));
             //$tpl->assign('gCalLink', $calendarRepo->getMyGoogleCalendars());
 
-            $_SESSION['lastPage'] = "/calendar/showMyCalendar/";
+            $_SESSION['lastPage'] = BASE_URL."/calendar/showMyCalendar/";
 
             //ToDO: This should come from the ticket repo...
             //$tpl->assign('ticketEditDates', $calendarRepo->getTicketEditDates());

@@ -1,5 +1,5 @@
 <?php 
-    $values = $this->get('values');
+    $values = $this->get('timesheetValues');
     $ticket = $this->get('ticket');
     $userInfo = $this->get('userInfo');
     $remainingHours = $this->get('remainingHours');
@@ -23,14 +23,14 @@
                         echo'<option value="'.$row.'"';
                         if($row == $values['kind']) { echo ' selected="selected"';
                         }
-                        echo'>'.$this->__("label.".strtolower($row)).'</option>';
+                        echo'>'.$this->__(strtolower($row)).'</option>';
 
                     } ?>
                     </select>
                     </span>
 
                     <label for="timesheetdate"><?php echo $this->__('label.date') ?>:</label>
-                    <input type="text" id="timesheetdate" name="date" class="dates" value="" /><br/>
+                    <input type="text" id="timesheetdate" name="date" class="dates" value="<?php echo $values['date'] ?>" /><br/>
 
                     <label for="hours"><?php echo $this->__('label.hours') ?></label>
                     <span class="field">

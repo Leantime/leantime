@@ -296,20 +296,6 @@ leantime.ticketsController = (function () {
 
         jQuery(".regularModal").nyroModal(regularModelConfig);
 
-        var editLabelModalConfig = {
-            callbacks: {
-                afterShowCont: function () {
-
-                    jQuery(".editLabelModal").nyroModal(editLabelModalConfig);
-                },
-                beforeClose: function () {
-                    location.reload();
-                }
-            }
-        };
-
-        jQuery(".editLabelModal").nyroModal(editLabelModalConfig);
-
         var sprintModalConfig = {
             sizes: {
                 minW: 400,

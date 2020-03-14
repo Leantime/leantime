@@ -2,13 +2,12 @@
 $companySettings= $this->get('companySettings');
 ?>
 
-
 <div class="pageheader">
 
     <div class="pageicon"><span class="fa fa-cogs"></span></div>
     <div class="pagetitle">
-        <h5>Administration</h5>
-        <h1>Company Settings</h1>
+        <h5><?=$this->__("label.administration")?></h5>
+        <h1><?=$this->__("headlines.company_settings")?></h1>
     </div>
 </div>
 
@@ -23,28 +22,27 @@ $companySettings= $this->get('companySettings');
                 <div class="row">
                     <div class="col-md-12">
 
-
                         <div id="subscriptionUpdate">
-                            <h4 class="widgettitle title-primary">Company Settings</h4>
+                            <h4 class="widgettitle title-primary"><?=$this->__("headlines.company_settings")?></h4>
                             <div class="widgetcontent">
 
-                                <p>These are system wide settings that will affect the look & feel of your leantime experience.</p>
+                                <p><?=$this->__("text.these_are_system_wide_settings")?></p>
                                 <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveSettings" />
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>Company Name</label>
+                                            <label><?=$this->__("label.company_name")?></label>
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" name="name" id="companyName"  value="<?php echo $companySettings['name']; ?>"/>
-                                            <small>Appears in the page title and in emails</small>
+                                            <small><?=$this->__("text.company_name_helper")?></small>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>Theme Color</label>
+                                            <label><?=$this->__("label.theme_color")?></label>
                                         </div>
                                         <div class="col-md-8">
                                             <input type="text" id="colorpicker" name="color" class="form-control input-sm" value="<?php echo $companySettings['color']; ?>"/>
@@ -54,7 +52,7 @@ $companySettings= $this->get('companySettings');
 
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label>Logo</label>
+                                            <label><?=$this->__("label.logo")?></label>
                                         </div>
                                         <div class="col-md-4">
                                             <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
@@ -63,7 +61,7 @@ $companySettings= $this->get('companySettings');
 
                                             <div class="par">
 
-                                                <label>Upload a new logo (260px x 60px)</label>
+                                                <label><?=$this->__("label.upload_new_logo")?></label>
 
                                                 <div class='fileupload fileupload-new' data-provides='fileupload'>
                                                     <input type="hidden"/>
@@ -73,8 +71,8 @@ $companySettings= $this->get('companySettings');
                                                             <span class="fileupload-preview"></span>
                                                         </div>
                                                         <span class="btn btn-file">
-                                                        <span class="fileupload-new">Select file</span>
-                                                        <span class='fileupload-exists'>Change</span>
+                                                        <span class="fileupload-new"><?=$this->__("buttons.select_file")?></span>
+                                                        <span class='fileupload-exists'><?=$this->__("buttons.change")?></span>
                                                         <input type='file' name='file' onchange="leantime.settingController.readURL(this)" />
                                                     </span>
 
@@ -86,14 +84,14 @@ $companySettings= $this->get('companySettings');
                                                             <span class="ld ld-ring ld-spin"> </span>
                                                         </span>
 
-                                                        <input id="picSubmit" type="submit" name="savePic" class="hidden" value="Upload" />
+                                                        <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$this->__("buttons.upload")?>" />
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <input type="submit" value="Save Settings" id="saveBtn"/>
+                                    <input type="submit" value="<?=$this->__("buttons.save")?>" id="saveBtn"/>
 
                                 </form>
 

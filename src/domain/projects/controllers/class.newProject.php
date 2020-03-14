@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
         {
 
             if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/projects/showAll";
+                $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
             }
 
             $tpl = new core\template();
