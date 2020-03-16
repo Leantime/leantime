@@ -10,7 +10,7 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
                 echo"</div>";?>
             <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_organized_idea_board') ?></h3><br />
-            <p><?php echo $this->__('text.ideas_evolve') ?>
+            <p><?php echo $this->__('text.advanced_boards_helper_content') ?>
             <br /><br />
         </div>
     </div>

@@ -10,7 +10,7 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_scrum_board_cesn.svg");
                 echo"</div>";?>
             <h3 class="primaryColor"><?php echo $this->__('headlines.the_kanban_board') ?></h3><br />
-            <p><?php echo $this->__('text.kanban_is_the_japanese_word_for') ?></p>
+            <p><?php echo $this->__('text.kanban_helper_content') ?></p>
             <br /><br />
         </div>
     </div>

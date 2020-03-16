@@ -10,7 +10,7 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
                 echo"</div>";?>
             <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_research_board') ?></h3><br />
-            <p><?php echo $this->__('text.the_full_research_board') ?></p>
+            <p><?php echo $this->__('text.full_lean_canvas_helper_content') ?></p>
             <br /><br />
         </div>
     </div>

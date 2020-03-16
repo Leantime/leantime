@@ -10,7 +10,7 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_schedule_pnbk.svg");
                 echo"</div>";?><br />
             <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_backlog') ?></h3><br />
-            <p><?php echo $this->__('text.a_backlog_is_the_home') ?></p>
+            <p><?php echo $this->__('text.backlog_helper_content') ?></p>
             <br /><br />
         </div>
     </div>
