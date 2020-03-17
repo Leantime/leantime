@@ -9,8 +9,8 @@
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_new_ideas_jdea.svg");
                 echo"</div>";?>
-            <h3 class="primaryColor">Welcome to the Idea Board!</h3><br />
-            <p>This is the place to collect all of your ideas. Discuss new ones with your team and attach Milestones to see progress towards your ideas.<br /></p>
+            <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_idea_board') ?></h3><br />
+            <p><?php echo $this->__('text.idea_board_helper_content') ?><br /></p>
             <br /><br />
         </div>
     </div>
@@ -20,8 +20,8 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('ideaBoard')">Close and don't show this screen again</a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('ideaBoard')"><?php echo $this->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

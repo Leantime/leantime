@@ -9,12 +9,8 @@
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_schedule_pnbk.svg");
                 echo"</div>";?><br />
-            <h3 class="primaryColor">Welcome to Your Backlog!</h3><br />
-            <p>A backlog is the home of all of your to-dos; those you are working on currently and plan to work on.<br />
-                <br/>To make progress towards completing your backlog we recommend working in short iterations - Sprints.<br />
-                Sprints are two week timed intervals that allow you to focus on smaller, deliverable chunks of work. <br/>At the end of two weeks you should have something to "demo". Something that provides value to your users or clients.
-                <br/><br/>On this screen, you'll be able to organize and manage your to-do list, prioritize your backlog via drag and drop and move Backlog items into your current Sprint.<br/>
-            Want more info? Start the tour or close to get started!</p>
+            <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_backlog') ?></h3><br />
+            <p><?php echo $this->__('text.backlog_helper_content') ?></p>
             <br /><br />
         </div>
     </div>
@@ -24,9 +20,9 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="leantime.helperController.startBacklogTour();" class="btn btn-primary"><i class="fas fa-map-signs"></i> Take the Backlog Tour</a><br />
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('backlog')">Close and don't show this screen again</a>
+            <a href="javascript:void(0);"  onclick="leantime.helperController.startBacklogTour();" class="btn btn-primary"><?php echo $this->__('buttons.take_backlog_tour') ?></a><br />
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('backlog')"><?php echo $this->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 
