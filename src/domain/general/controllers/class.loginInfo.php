@@ -10,10 +10,6 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $login = new core\login(core\session::getSID());
-
-            if ($login->logged_in() === true) {
-
                 $user = new repositories\users();
 
                 $profilePicture = $user->getProfilePicture($_SESSION['userdata']['id']);
@@ -65,11 +61,8 @@ namespace leantime\domain\controllers {
                 $tpl->assign("userEmail", $user["username"]);
                 $tpl->assign("profileId", $user["profileId"]);
 
-
                 $tpl->displayPartial("general.loginInfo");
 
-
-            }
         }
     }
 }

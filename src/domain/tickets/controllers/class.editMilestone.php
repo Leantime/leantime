@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
             $this->ticketService = new services\tickets();
             $this->ticketRepo = new repositories\tickets();
             $this->projectRepo = new repositories\projects();
-            $this->commentsRepo = new repositories\comments();
+            $this->commentsService = new services\comments();
             $this->projectService = new services\projects();
             $this->language = new core\language();
         }
@@ -48,7 +48,7 @@ namespace leantime\domain\controllers {
                 //Delete comment
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
-                    $this->commentsRepo->deleteComment($commentId);
+                    $this->commentsService->deleteComment($commentId);
 
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
                 }
@@ -64,7 +64,7 @@ namespace leantime\domain\controllers {
                 $milestone->editFrom =  date($this->language->__("language.dateformat"), strtotime($milestone->editFrom));
                 $milestone->editTo = date($this->language->__("language.dateformat"), strtotime($milestone->editTo));
 
-                $comments = $this->commentsRepo->getComments('ticket', $params['id']);
+                $comments = $this->commentsService->getComments('ticket', $params['id']);
 
             }else{
 
@@ -100,9 +100,10 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             //If ID is set its an update
-            if(isset($_GET['id']) && $_GET['id'] > 0) {
+            if(isset($_GET['id']) && (int) $_GET['id'] > 0) {
 
                 $params['id'] = (int)$_GET['id'];
+                $milestone = $this->ticketRepo->getTicket($params['id']);
 
                 if (isset($params['comment']) === true) {
 
@@ -111,11 +112,17 @@ namespace leantime\domain\controllers {
                         'date' => date("Y-m-d H:i:s"),
                         'userId' => ($_SESSION['userdata']['id']),
                         'moduleId' => $params['id'],
-                        'commentParent' => ($params['father'])
+                        'father' => ($params['father'])
                     );
 
-                    $message = $this->commentsRepo->addComment($values, 'ticket');
-                    $this->tpl->setNotification($message["msg"], $message["type"]);
+
+                    $message = $this->commentsService->addComment($values, 'ticket',  $params['id'], $milestone);
+
+                    if($message === true) {
+                        $this->tpl->setNotification($this->language->__("notifications.comment_added_successfully"), "success");
+                    }else{
+                        $this->tpl->setNotification($this->language->__("notifications.problem_saving_your_comment"), "error");
+                    }
                     $this->tpl->assign('helper', new core\helper());
 
                     $subject = $this->language->__("email_notifications.new_comment_milestone_subject");

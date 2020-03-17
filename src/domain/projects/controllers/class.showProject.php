@@ -24,6 +24,8 @@ namespace leantime\domain\controllers {
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
             }
+
+
         }
 
 
@@ -34,6 +36,12 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
             $config = new core\config();
+
+            if(!core\login::userIsAtLeast("clientManager")) {
+                $tpl->display('general.error');
+                exit();
+            }
+
 
             if (isset($_GET['id'])) {
 
@@ -117,7 +125,10 @@ namespace leantime\domain\controllers {
 
                 $helper = new core\helper();
 
-
+                if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
+                    $tpl->display('general.error');
+                    exit();
+                }
 
                 //Calculate projectdetails
                 //TODO: Change to be from ticketRepo!!!
@@ -358,8 +369,14 @@ namespace leantime\domain\controllers {
                 $clients = new repositories\clients();
 
                 $user = new repositories\users();
-                $tpl->assign('availableUsers', $user->getAll());
 
+                if(core\login::userIsAtLeast("manager")) {
+                    $tpl->assign('availableUsers', $user->getAll());
+                    $tpl->assign('clients', $clients->getAll());
+                }else{
+                    $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
+                    $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
+                }
                 $tpl->assign('employeeFilter', $userId);
                 $tpl->assign('employees', $employees);
                 $tpl->assign('dateFrom', $helper->timestamp2date($dateFrom, 2));
@@ -370,7 +387,7 @@ namespace leantime\domain\controllers {
                 $tpl->assign('invEmpl', $invEmplCheck);
                 $tpl->assign('helper', $helper);
                 $tpl->assign('projectFilter', $projectFilter);
-                $tpl->assign('clients', $clients->getAll());
+
 
                 $tpl->assign('allTimesheets', $timesheets->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
 

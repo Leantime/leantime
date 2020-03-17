@@ -343,7 +343,7 @@ namespace leantime\domain\services {
 
                     $route = core\FrontController::getCurrentRoute();
 
-                    if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
+                    if(core\login::userIsAtLeast("manager")) {
 
                         $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
                         if($route != "projects.newProject") {

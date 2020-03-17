@@ -150,7 +150,7 @@ $values = $this->get('values');
                                                                           size="7"/><br/>
 
 
-                            <?php if ($_SESSION['userdata']['role'] == 'admin') { ?> <br/>
+                            <?php if ($login::userIsAtLeast("clientManager")) { ?> <br/>
                                 <label for="invoicedComp"><?php echo $this->__('INVOICED_COMP') ?></label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
                                     <?php if ($values['invoicedComp'] == '1') {

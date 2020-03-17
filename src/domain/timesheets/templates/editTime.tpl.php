@@ -97,25 +97,6 @@ function removeOptions(className){
     rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
 <br />
 <br />
-<!--
-<label for="invoicedEmpl"><?php echo $lang['INVOICED_EMPL']?></label> <input
-    type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
-    <?php if($values['invoicedEmpl'] == '1') { echo ' checked="checked"';
-    } ?> />
-    <?php echo $lang['ONDATE']?>&nbsp;<input type="text"
-    id="invoicedEmplDate" name="invoicedEmplDate"
-    value="<?php echo $values['invoicedEmplDate'] ?>" size="7" /><br />
-
-    <?php if($_SESSION['userdata']['role'] == 'admin') { ?> <br />
-<label for="invoicedComp"><?php echo $lang['INVOICED_COMP']?></label> <input
-    type="checkbox" name="invoicedComp" id="invoicedComp"
-        <?php if($values['invoicedComp'] == '1') { echo ' checked="checked"';
-        } ?> />
-        <?php echo $lang['ONDATE']?>&nbsp;<input type="text"
-    id="invoicedCompDate" name="invoicedCompDate"
-    value="<?php echo $values['invoicedCompDate'] ?>" size="7" /><br />
-    <?php } ?> 
--->    
     <p class="stdformbutton">
     <input type="submit" value="<?php echo $this->__('buttons.save'); ?>"
     name="save" class="button" /></fieldset>

@@ -102,18 +102,23 @@ $projects = $this->get('relations');
 
                         <label for="role"><?php echo $this->__('label.role'); ?></label>
                         <select name="role" id="role">
-                            <?php foreach($roles as $role){ ?>
 
-                                <option value="<?php echo $role['id']; ?>" title="<?php echo $role['roleDescription']; ?>">
-                                    <?php echo $role['roleDescription']; ?>
-                                </option>
 
-                            <?php } ?>
+                                <?php foreach($this->get('roles') as $key => $role){ ?>
+                                    <option value="<?php  echo $key; ?>"
+                                        <?php if($key == $values['role']) { ?> selected="selected" <?php
+                                        } ?>>
+                                        <?=$this->__("label.roles.".$role) ?>
+                                       </option>
+                                <?php } ?>
+
                         </select> <br />
 
                         <label for="client"><?php echo $this->__('label.client') ?></label>
                         <select name='client' id="client">
-                            <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
+                            <?php if($login::userIsAtLeast("manager")){?>
+                                <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
+                            <?php } ?>
                             <?php foreach($this->get('clients') as $client): ?>
                                 <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
                                endif; ?>><?php echo $client['name'] ?></option>

@@ -17,7 +17,7 @@ class settings {
 
 	public $appVersion = "2.1.0-Beta";
 
-    public $dbVersion = "2.0.4";
+    public $dbVersion = "2.1.0";
 
 	/**
 	 * __construct
@@ -47,9 +47,7 @@ class settings {
 		ini_set('session.use_trans_sid',0);
 
 		ini_set("log_errors", 1);
-
-        ini_set('error_log', '../resource/logs/error.log');
-
+        ini_set('error_log', ROOT.'/../resources/logs/error.log');
 
 	}
 

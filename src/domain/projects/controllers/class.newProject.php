@@ -27,12 +27,18 @@ namespace leantime\domain\controllers {
             $ideaRepo = new repositories\ideas();
             $ticketService = new services\tickets();
             $projectService = new services\projects();
+            $language = new core\language();
+
+            if(!core\login::userIsAtLeast("clientManager")) {
+                $tpl->display('general.error');
+                exit();
+            }
 
             $msgKey = '';
             $values = array(
                 'id' => '',
                 'name' => '',
-                'details' => '<strong>Summary</strong><br /><i>{{Describe the project in a few words}}</i><br /><br/><strong>Business Justification</strong><br /><i>{{Why are you doing this project?}}</i><br /><br/><strong>Objectives/Goals</strong><ul><li><i>{{What are your goals with this project?}}</i></li></ul><br /><br/>  ',
+                'details' => '',
                 'clientId' => '',
                 'hourBudget' => '',
                 'assignedUsers' => array($_SESSION['userdata']['id']),
@@ -70,13 +76,11 @@ namespace leantime\domain\controllers {
 
                 if ($values['name'] === '') {
 
-                    $msgKey = 'NO_PROJECTNAME';
-                    $tpl->setNotification('NO_PROJECTNAME', 'error');
+                    $tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
 
                 } elseif ($values['clientId'] === '') {
 
-                    $msgKey = 'ERROR_NO_CLIENT';
-                    $tpl->setNotification('ERROR_NO_CLIENT', 'error');
+                    $tpl->setNotification($this->language->__("notification.no_client"), 'error');
 
                 } else {
 
@@ -86,9 +90,10 @@ namespace leantime\domain\controllers {
 
                     $users = $projectRepo->getUsersAssignedToProject($id);
 
-                    $mailer->setSubject("You have been added to a new project");
-                    $actual_link = CURRENT_URL;
-                    $mailer->setHtml("A new project was created and you are on it! Project name is <a href='" . $actual_link . "/projects/showProject/" . $id . "/'>[" . $id . "] - " . $projectName . "</a> and it was created by " . $_SESSION["userdata"]["name"] . "<br />");
+                    $mailer->setSubject($language->__('email_notifications.project_created_subject'));
+                    $actual_link = BASE_URL."/projects/showProject/" . $id . "";
+                    $message = sprintf($language->__('email_notifications.project_created_subject'),$actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $mailer->setHtml($message);
 
                     $to = array();
 
@@ -104,8 +109,7 @@ namespace leantime\domain\controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $msgKey = 'PROJECT_ADDED';
-                    $tpl->setNotification('Your new project was created successfully. Go to <a href="'.BASE_URL.'/leancanvas/simpleCanvas/">Research</a> to continue your journey.', 'success');
+                    $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
 
                     $tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
@@ -119,12 +123,19 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('project', $values);
             $user = new repositories\users();
-            $tpl->assign('availableUsers', $user->getAll());
-
             $clients = new repositories\clients();
 
+
+
+            if(core\login::userIsAtLeast("manager")) {
+                $tpl->assign('availableUsers', $user->getAll());
+                $tpl->assign('clients', $clients->getAll());
+            }else{
+                $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
+                $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
+            }
+
             $tpl->assign('info', $msgKey);
-            $tpl->assign('clients', $clients->getAll());
 
             $tpl->display('projects.newProject');
 

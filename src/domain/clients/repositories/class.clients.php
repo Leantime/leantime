@@ -52,7 +52,28 @@ namespace leantime\domain\repositories {
         public function getClient($id)
         {
 
-            $query = "SELECT * FROM zp_clients WHERE id = :id LIMIT 1";
+            $query = "SELECT 
+                 zp_clients.id,
+                 zp_clients.name,
+                 zp_clients.street,
+                 zp_clients.zip,
+                 zp_clients.city,
+                 zp_clients.state,
+                 zp_clients.country,
+                 zp_clients.phone,
+                 zp_clients.internet,
+                 zp_clients.email,
+              COUNT(zp_projects.clientId) AS numberOfProjects
+					FROM zp_clients 
+					LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId
+				WHERE  zp_clients.id = :id
+				GROUP BY 
+						zp_clients.id,
+						zp_clients.name,
+						zp_clients.internet
+				ORDER BY zp_clients.name
+				LIMIT 1
+				";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);

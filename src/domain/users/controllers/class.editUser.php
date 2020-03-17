@@ -19,7 +19,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
 
             //Only admins
-            if($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if(isset($_GET['id'])===true) {
 
@@ -31,6 +31,11 @@ namespace leantime\domain\controllers {
                     $row = $userRepo->getUser($id);
                     $edit = false;
                     $infoKey = '';
+
+                    if(core\login::userHasRole("clientManager") && $row['clientId'] != core\login::getUserClientId()) {
+                        $tpl->display('general.error');
+                        exit();
+                    }
 
 
                     //Build values array
@@ -122,11 +127,22 @@ namespace leantime\domain\controllers {
 
                     //Assign vars
                     $clients = new repositories\clients();
-                    $tpl->assign('clients', $clients->getAll());
-                    $tpl->assign('allProjects', $project->getAll());
+
+
+                    if(core\login::userIsAtLeast("manager")) {
+                        $tpl->assign('allProjects', $project->getAll());
+                        $tpl->assign('roles', core\login::$userRoles);
+                        $tpl->assign('clients', $clients->getAll());
+                    }else{
+                        $tpl->assign('allProjects', $project->getClientProjects($values['clientId']));
+                        $tpl->assign('roles', core\login::$clientManagerRoles);
+                        $tpl->assign('clients', array($clients->getClient($values['clientId'])));
+                    }
+
+
                     $tpl->assign('values', $values);
                     $tpl->assign('relations', $projectrelation);
-                    $tpl->assign('roles', $userRepo->getRoles());
+
                     $tpl->assign('status', $userRepo->status);
                     $tpl->assign('id', $id);
 

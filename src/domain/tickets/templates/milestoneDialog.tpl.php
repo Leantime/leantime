@@ -74,7 +74,10 @@ $milestones = $this->get('milestones');
                 <input type="submit" value="<?=$this->__("buttons.save"); ?>"/>
             </div>
             <div class="col-md-6 align-right padding-top-sm">
-                <?php if (isset($currentMilestone->id) && $currentMilestone->id != '' && ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager')) { ?>
+                <?php if (isset($currentMilestone->id) && $currentMilestone->id != ''
+
+
+                ) { ?>
                     <a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>

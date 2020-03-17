@@ -178,10 +178,28 @@ namespace leantime\domain\repositories {
         public function getClientProjects($clientId)
         {
 
-            $sql = "SELECT count(ticket.id) AS numberOfTickets, project.id, project.name, project.hourBudget, project.details, state, clientId
+            $sql = "SELECT
+					project.id,
+					project.name,
+					project.clientId,
+					project.hourBudget,
+					project.dollarBudget,
+					project.state,
+					COUNT(ticket.projectId) AS numberOfTickets,
+					client.name AS clientName,
+					client.id AS clientId 
 				FROM zp_projects as project
-					LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId 
-				WHERE clientId = :clientId GROUP BY project.id";
+				LEFT JOIN zp_clients as client ON project.clientId = client.id
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
+				WHERE 
+				  (project.active > '-1' OR project.active IS NULL)
+				  AND clientId = :clientId
+				GROUP BY 
+					project.id,
+					project.name,
+					project.clientId
+				ORDER BY clientName, project.name";
+
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);

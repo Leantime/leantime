@@ -2,10 +2,10 @@
 
 <ul class="headmenu">
 
-    <?php if ($_SESSION['userdata']['role'] != "user") {
+    <?php if ($login::userIsAtLeast("developer")) {
 
-           echo "<li class='timerHeadMenu' id='timerHeadMenu'";
-            if($this->get('onTheClock') === false){ echo " style='display:none;' " ;}
+        if($this->get('onTheClock') !== false){
+        echo "<li class='timerHeadMenu' id='timerHeadMenu'";
            echo"><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
                 ".sprintf($this->__('text.timer_on_todo'), $this->get('onTheClock')['totalTime'], substr($this->escape($this->get('onTheClock')['headline']), 0, 10))."
             </a>";
@@ -25,6 +25,7 @@
             </ul>
 
         </li>
+        <?php } ?>
         <li>
             <a href='<?=BASE_URL ?>/timesheets/showMy/'>
                 <?=$this->__("menu.my_timesheets")?>

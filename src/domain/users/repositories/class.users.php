@@ -52,18 +52,6 @@ namespace leantime\domain\repositories {
         public $status = array('active' => 'label.active', 'inactive' => 'label.inactive');
 
         /**
-         * Available user roles id => alias
-         *
-         * @access public
-         * @var    array
-         */
-        public $roles = array(
-            2   => 'admin',
-            3   => 'user',
-            4   => 'developer',
-            5   => 'manager');
-
-        /**
          * @access public
          * @var    object
          */
@@ -158,12 +146,40 @@ namespace leantime\domain\repositories {
         public function getAll()
         {
 
-            $query = "SELECT zp_user.id, lastname, firstname, role, role.roleName, profileId, username
+            $query = "SELECT zp_user.id, lastname, firstname, role, profileId, username
 					FROM `zp_user` 
-					INNER JOIN zp_roles as role ON zp_user.role = role.id
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        /**
+         * getAll - get all user
+         *
+         * @access public
+         * @return array
+         */
+        public function getAllClientUsers($clientId)
+        {
+
+            $query = "SELECT 
+                        zp_user.id, 
+                        lastname, 
+                        firstname, 
+                        role, 
+                        profileId, 
+                        username
+					FROM `zp_user` WHERE clientId = :clientId 
+					ORDER BY lastname";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -460,26 +476,6 @@ namespace leantime\domain\repositories {
 
 
             return $return;
-        }
-
-        /**
-         * getRoles - get all the roles that are available
-         *
-         * @access public
-         */
-        public function getRoles()
-        {
-
-            $sql = "SELECT * FROM `zp_roles`";
-
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->execute();
-            $results = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $results;
-
         }
 
         /**

@@ -113,22 +113,24 @@
         
         <label for="role"><?php echo $this->__('label.role'); ?></label> <select
             name="role" id="role">
-    <?php foreach($this->get('roles') as $role){ ?>
-                <option value="<?php  echo $role['id']; ?>"
-        <?php if($role['id'] == $values['role']) { ?> selected="selected" <?php 
+    <?php foreach($this->get('roles') as $key => $role){ ?>
+                <option value="<?php  echo $key; ?>"
+        <?php if($key == $values['role']) { ?> selected="selected" <?php
         } ?>>
-        <?php echo $role['roleDescription']; ?>
+        <?=$this->__("label.roles.".$role) ?>
                 </option>
     <?php } ?>
         </select> <br />
         
         <label for="client"><?php echo $this->__('label.client') ?></label>
         <select name='client' id="client">
-            <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
-    <?php foreach($this->get('clients') as $client): ?>
-                <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php 
-               endif; ?>>
-        <?php echo $client['name'] ?>
+             <?php if($login::userIsAtLeast("manager")){?>
+                 <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
+             <?php } ?>
+                <?php foreach($this->get('clients') as $client): ?>
+                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
+                           endif; ?>>
+                    <?php echo $client['name'] ?>
                 </option>
     <?php endforeach; ?>
         </select><br/>

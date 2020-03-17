@@ -16,7 +16,7 @@ if(isset($config->appUrl) && $config->appUrl != ""){
 }
 define('CURRENT_URL', $settings->getFullURL());
 
-$login = new leantime\core\login(leantime\core\session::getSID());
+$login = leantime\core\login::getInstance(leantime\core\session::getSID());
 
 ob_start();
 

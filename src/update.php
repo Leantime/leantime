@@ -10,18 +10,11 @@ $install = new leantime\core\install($config, $settings);
 <head>
     <?php echo $frontController->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/main.css"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-migrate-1.1.1.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-ui-1.9.2.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/modernizr.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery.cookie.js"></script>
-
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="<?=BASE_URL ?>/js/libs/excanvas.min.js"></script><![endif]-->
+    <script src="<?=BASE_URL?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <script type="text/javascript">
         jQuery(document).ready(function(){
@@ -102,7 +95,7 @@ $install = new leantime\core\install($config, $settings);
                         if($success === true) {
                             echo "
                                 <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-success'>Update was successful you can now login. <br /><a href='<?=BASE_URL ?>/'>Go to login</a></div>
+                                    <div class='alert alert-success'>Update was successful you can now login. <br /><a href='".BASE_URL."'>Go to login</a></div>
                                 </div>";
                         }
                     ?>

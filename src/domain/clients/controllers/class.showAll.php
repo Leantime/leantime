@@ -25,7 +25,7 @@ namespace leantime\domain\controllers {
             $clientRepo = new repositories\clients();
 
             //Only admins and employees
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
 
@@ -33,7 +33,11 @@ namespace leantime\domain\controllers {
 
                 }
 
-                $tpl->assign('allClients', $clientRepo->getAll());
+                if(core\login::userIsAtLeast("manager")) {
+                    $tpl->assign('allClients', $clientRepo->getAll());
+                }else{
+                    $tpl->assign('allClients', array($clientRepo->getClient(core\login::getUserClientId())));
+                }
 
                 $tpl->display('clients.showAll');
 

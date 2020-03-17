@@ -428,7 +428,7 @@ namespace leantime\domain\services {
                 'type' => 'milestone',
                 'description' => '',
                 'projectId' => $_SESSION['currentProject'],
-                'editorId' => $_SESSION['userdata']['id'],
+                'editorId' => $params['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",

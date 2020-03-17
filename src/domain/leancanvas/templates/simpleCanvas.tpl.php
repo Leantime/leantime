@@ -114,7 +114,7 @@ $statusLabels = $this->get("statusLabels");
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["customersegment"]; ?>
@@ -127,7 +127,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php  if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -230,7 +230,7 @@ $statusLabels = $this->get("statusLabels");
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
 
@@ -244,7 +244,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -347,7 +347,7 @@ $statusLabels = $this->get("statusLabels");
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php  if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["solution"]; ?>
@@ -360,7 +360,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -469,7 +469,7 @@ $statusLabels = $this->get("statusLabels");
         </div>
         <div class="clearfix"></div>
 
-        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager'){ ?>
+        <?php  if ($login::userIsAtLeast("clientManager")) { ?>
             <br />
             <a href="<?=BASE_URL ?>/leancanvas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
         <?php } ?>

@@ -10,7 +10,7 @@ include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
-$login = new leantime\core\login(leantime\core\session::getSID());
+$login = leantime\core\login::getInstance(leantime\core\session::getSID());
 $config = new leantime\core\config();
 
 if ($login->logged_in()!==true) {

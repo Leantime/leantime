@@ -25,7 +25,7 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
@@ -49,7 +49,7 @@ namespace leantime\domain\controllers {
             }
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if (isset($params['del'])) {
 

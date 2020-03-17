@@ -24,7 +24,7 @@ $project = $this->get('values');
 
         <?php echo $this->displayNotification(); ?>
 
-        <div class="tabbedwidget tab-primary">
+        <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
                 <li><a href="#projectdetails"><?php echo $this->__('tabs.projectdetails'); ?></a></li>
@@ -41,7 +41,8 @@ $project = $this->get('values');
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
-            jQuery('.tabbedwidget').tabs();
+            leantime.projectsController.initProjectTabs();
+            leantime.projectsController.initProjectsEditor();
 
             <?php if((isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) && $_SESSION['currentProject'] != '') {     ?>
 

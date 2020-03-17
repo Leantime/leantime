@@ -46,7 +46,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 $currentLabel = "";
 

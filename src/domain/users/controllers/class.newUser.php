@@ -33,7 +33,7 @@ namespace leantime\domain\controllers {
             );
 
             //only Admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                     $projectrelation = array();
 
@@ -49,6 +49,11 @@ namespace leantime\domain\controllers {
                             'password' => (password_hash($_POST['password'], PASSWORD_DEFAULT )),
                             'clientId' => ($_POST['client'])
                         );
+
+                        //Choice is an illusion for client managers
+                        if(core\login::userHasRole("clientManager")) {
+                            $values['clientId'] = core\login::getUserClientId();
+                        }
 
                         //Validation
                         if ($values['user'] !== '') {
@@ -106,10 +111,19 @@ namespace leantime\domain\controllers {
 
                     $tpl->assign('values', $values);
                     $clients = new repositories\clients();
-                    $tpl->assign('clients', $clients->getAll());
-                    $tpl->assign('allProjects', $project->getAll());
+
+                    if(core\login::userIsAtLeast("manager")) {
+                        $tpl->assign('clients', $clients->getAll());
+                        $tpl->assign('allProjects', $project->getAll());
+                        $tpl->assign('roles', core\login::$userRoles);
+                    }else{
+
+                        $tpl->assign('clients', array($clients->getClient( core\login::getUserClientId())));
+                        $tpl->assign('allProjects', $project->getClientProjects( core\login::getUserClientId()));
+                        $tpl->assign('roles', core\login::$clientManagerRoles);
+                    }
                     $tpl->assign('relations', $projectrelation);
-                    $tpl->assign('roles', $userRepo->getRoles());
+
 
                     $tpl->display('users.newUser');
 

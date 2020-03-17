@@ -27,6 +27,7 @@ namespace leantime\domain\controllers {
             $this->ticketService = new services\tickets();
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
+            $this->language = new core\language();
 
             $_SESSION['lastPage'] = BASE_URL."/dashboard/show";
 

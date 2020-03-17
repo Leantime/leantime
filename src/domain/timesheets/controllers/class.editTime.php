@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
 
             $info = '';
             //Only admins and employees
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'employee') {
+            if(core\login::userIsAtLeast("developer")) {
 
 
                 if (isset($_GET['id']) === true) {
@@ -50,7 +50,7 @@ namespace leantime\domain\controllers {
                         'invoicedCompDate' => $timesheet['invoicedCompDate']
                     );
 
-                    if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['id'] == $values['userId']) {
+                    if(core\login::userIsAtLeast("admin") || $_SESSION['userdata']['id'] == $values['userId']) {
 
                         if (isset($_POST['save']) === true) {
 
@@ -116,7 +116,7 @@ namespace leantime\domain\controllers {
 
                             }
 
-                            if ($_SESSION['userdata']['role'] == 'admin') {
+                            if(core\login::userIsAtLeast("clientManager")) {
 
                                 if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
 

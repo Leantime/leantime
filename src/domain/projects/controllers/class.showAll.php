@@ -19,12 +19,17 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
 
-            if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 $projectRepo = new repositories\projects();
 
                 $tpl->assign('role', $_SESSION['userdata']['role']);
-                $tpl->assign('allProjects', $projectRepo->getAll());
+
+                if(core\login::userIsAtLeast("manager")) {
+                    $tpl->assign('allProjects', $projectRepo->getAll());
+                }else{
+                    $tpl->assign('allProjects', $projectRepo->getClientProjects(core\login::getUserClientId()));
+                }
 
                 $tpl->display('projects.showAll');
             }else{

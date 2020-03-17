@@ -67,23 +67,7 @@
                     
                 </div><!--mediamgr_left -->
                 
-                <div class="mediamgr_right">
-                	<!--<div class="mediamgr_rightinner">
-                        <h4>Type</h4>
-                        <ul class="menuright">
-                        	<?php foreach($this->get('modules') as $key => $module): ?>
-                        		<?php if ( 
-                        				($key != 'client' || ($_SESSION['userdata']['role'] == 2 || $_SESSION['userdata']['role'] == 4)) 
-                        				&& ($key != 'lead' || ($_SESSION['userdata']['role'] == 2 || $_SESSION['userdata']['role'] == 4)) 
-									): ?>
-	                        		<li class="<?php if($this->get('currentModule') == $key): ?>current<?php endif; ?>">
-	                        			<?php echo $this->displayLink('files.showAll', $module, array('id' => $key)); ?>
-	                        		</li>
-                        	<?php endif; ?>
-                        	<?php endforeach; ?>
-                        </ul>
-                    </div><!-- mediamgr_rightinner -->
-                </div><!-- mediamgr_right -->
+
                 <br class="clearall" />
             </div><!--mediamgr-->      		 	
 

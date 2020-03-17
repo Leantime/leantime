@@ -72,7 +72,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["well"]; ?>
@@ -86,7 +86,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -170,7 +170,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["notwell"]; ?>
@@ -184,7 +184,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -268,7 +268,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["startdoing"]; ?>
@@ -282,7 +282,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -373,7 +373,7 @@ $canvasTitle = "";
 
         <div class="clearfix"></div>
 
-        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
+        <?php if ($login::userIsAtLeast("clientManager")) { ?>
             <br />
             <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?=$this->__('links.delete_board') ?></a>
         <?php } ?>

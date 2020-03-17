@@ -23,7 +23,7 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if (isset($_GET['id']) === true) {
 

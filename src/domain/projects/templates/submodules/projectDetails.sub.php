@@ -37,7 +37,9 @@ $helper = $this->get('helper');
                             <?php } ?>
 
                             </select>
+                            <?php if($login::userIsAtLeast("manager")) { ?>
                             <a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -79,19 +81,6 @@ $helper = $this->get('helper');
 
                         <div class="assign-container">
                             <?php foreach($this->get('availableUsers') as $row){ ?>
-                                <?php if($_SESSION['userdata']['role'] == "user") { ?>
-
-                                    <?php if(in_array($row['id'], explode(',', $project['editorId'])) || ($row['id'] == $_SESSION['userdata']["id"])) { ?>
-                                        <p class="half">
-
-                                            <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                                <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php 
-                                                endif; ?>/>
-
-                                            <label for="user-<?php echo $row['id'] ?>"><?php echo $row['lastname'] .', '. $row['firstname'] ?></label>
-                                        </p>
-                                    <?php } ?>
-                                <?php }else{ ?>
 
                                     <p class="half">
                                         <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
@@ -100,8 +89,6 @@ $helper = $this->get('helper');
 
                                         <label for="user-<?php echo $row['id'] ?>"><?php echo $row['lastname'] .', '. $row['firstname'] ?></label>
                                     </p>
-                                <?php } ?>
-
                             <?php } ?>
                         </div>
                     </div>

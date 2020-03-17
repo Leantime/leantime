@@ -164,7 +164,7 @@
 
                                                     <?php
 
-                                                    if ($_SESSION['userdata']['role'] !== 'user') {
+                                                    if ($login::userIsAtLeast("developer")) {
                                                         $clockedIn = $this->get("onTheClock");
                                                     ?>
 
@@ -296,7 +296,7 @@
 
                                                 <?php
 
-                                                if ($_SESSION['userdata']['role'] !== 'user') {
+                                                if ($login::userIsAtLeast("developer")) {
                                                     $clockedIn = $this->get("onTheClock");
                                                     ?>
 

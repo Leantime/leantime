@@ -189,7 +189,7 @@
 						<div class="column" style="width:<?=$size?>%;">
 							
                             <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
-                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                            <?php if ($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                                 <strong class="count">0</strong>
@@ -223,7 +223,7 @@
                                             <div class="col-md-12">
                                                 <?php
 
-                                                if ($_SESSION['userdata']['role'] !== 'user') {
+                                                if ($login::userIsAtLeast("developer")) {
                                                     $clockedIn = $this->get("onTheClock");
 
                                                     ?>

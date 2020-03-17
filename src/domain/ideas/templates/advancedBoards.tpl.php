@@ -86,7 +86,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                     <div class="column" style="width:<?=$size?>%;">
 
                         <h4 class="widgettitle title-primary">
-                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') { ?>
+                            <?php if($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
                                    class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
@@ -102,7 +102,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                         <div class="row">
                                             <div class="col-md-12">
 
-                                                <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                                <?php if($login::userIsAtLeast("developer")) { ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
                                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -189,7 +189,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
             </div>
             <div class="clearfix"></div>
 
-            <?php if ($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager') { ?>
+            <?php if($login::userIsAtLeast("clientManager")) { ?>
                 <br/>
                 <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>

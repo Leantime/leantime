@@ -83,7 +83,7 @@ $canvasLabels = $this->get('canvasLabels');
                         <div class="row">
                             <div class="col-md-12">
 
-                                <?php if ($_SESSION['userdata']['role'] !== 'user') { ?>
+                                <?php  if ($login::userIsAtLeast("developer")) { ?>
                                     <div class="inlineDropDownContainer" style="float:right;">
 
                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -182,7 +182,7 @@ $canvasLabels = $this->get('canvasLabels');
             </div>
             <div class="clearfix"></div>
 
-            <?php if ($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager') { ?>
+            <?php  if ($login::userIsAtLeast("clientManager")) { ?>
                 <br/>
                 <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>

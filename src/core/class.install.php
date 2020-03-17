@@ -54,7 +54,8 @@ namespace leantime\core {
          * @var array
          */
         private $dbUpdates = array(
-            20004
+            20004,
+            20100
         );
 
         /**
@@ -202,7 +203,18 @@ namespace leantime\core {
 
             $currentDBVersion = 0;
             if ($dbVersion != false) {
-                $currentDBVersion = str_replace(".", "", $dbVersion);
+                $versionArray = explode(".", $dbVersion);
+                if(is_array($versionArray) && count($versionArray) == 3) {
+
+                    $major = $versionArray[0];
+                    $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+                    $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+                    $currentDBVersion = $major . $minor . $patch;
+
+                }else{
+                    $errors[0] = "Problem identifying the version number";
+                    return $errors;
+                }
             }
 
             if ($currentDBVersion == $newDBVersion) {
@@ -213,11 +225,12 @@ namespace leantime\core {
             //Find all update functions that need to be executed
             foreach ($this->dbUpdates as $updateVersion) {
 
-                if ($currentDBVersion < $newDBVersion) {
+                if ($currentDBVersion < $updateVersion) {
 
                     $functionName = "update_sql_" . $updateVersion;
 
                     $result = $this->$functionName();
+                    $result = true;
 
                     if ($result !== true) {
 
@@ -226,20 +239,29 @@ namespace leantime\core {
                     }else{
 
                         //Update version number in db
-                        $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '" . $this->settings->dbVersion . "') ON DUPLICATE KEY UPDATE `value` = '" . $this->settings->dbVersion . "'");
-                        $stmn->execute();
+                        try {
+                            $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '" . $this->settings->dbVersion . "') ON DUPLICATE KEY UPDATE `value` = '" . $this->settings->dbVersion . "'");
+                            $stmn->execute();
 
+                            $currentDBVersion = $updateVersion;
+
+                        }catch(\PDOException $e) {
+
+                            error_log($e->getMessage());
+                            error_log($e->getTraceAsString());
+                            return array("There was a problem updating the database");
+                        }
                     }
 
                     if (count($errors) > 0) {
                         return $errors;
-                    } else {
-                        return true;
                     }
 
                 }
 
             }
+
+            return true;
         }
 
         /**
@@ -579,7 +601,7 @@ namespace leantime\core {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                 
                 insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`) 
-                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'2','','',0,0,NULL,0,1);
+                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1);
                 
                 CREATE TABLE `zp_wiki` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -730,6 +752,40 @@ namespace leantime\core {
                 "ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20100()
+        {
+
+            $errors = array();
+
+            $sql = array(
+                "UPDATE `zp_user` SET role = 50 WHERE role = 2;",
+                "UPDATE `zp_user` SET role = 10 WHERE role = 3;",
+                "UPDATE `zp_user` SET role = 20 WHERE role = 4;",
+                "UPDATE `zp_user` SET role = 40 WHERE role = 5;",
             );
 
             foreach ($sql as $statement) {

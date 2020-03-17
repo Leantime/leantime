@@ -136,6 +136,7 @@ namespace leantime\core {
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new settings();
+            $login = login::getInstance();
 
             $this->template = $template;
 
@@ -178,6 +179,7 @@ namespace leantime\core {
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new settings();
+            $login = login::getInstance();
 
             $this->template = $template;
 
@@ -262,6 +264,7 @@ namespace leantime\core {
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new settings();
+            $login = login::getInstance();
 
 
             $submodule = array("module"=>'', "submodule"=>'');

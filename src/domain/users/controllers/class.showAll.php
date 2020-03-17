@@ -22,12 +22,18 @@ namespace leantime\domain\controllers {
             $userRepo =  new repositories\users();
 
             //Only Admins
-            if($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 //Assign vars
-                $tpl->assign('allUsers', $userRepo->getAll());
+
+                if(core\login::userIsAtLeast("manager")) {
+                    $tpl->assign('allUsers', $userRepo->getAll());
+                }else{
+                    $tpl->assign('allUsers', $userRepo->getAllClientUsers(core\login::getUserClientId()));
+                }
+
                 $tpl->assign('admin', true);
-                $tpl->assign('roles', $userRepo->getRoles());
+                $tpl->assign('roles', core\login::$userRoles);
 
                 $tpl->display('users.showAll');
 
