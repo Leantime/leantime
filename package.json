@@ -4,7 +4,7 @@
   "description": "Open source project management system",
   "main": "gruntfile.js",
   "dependencies": {
-    "chart.js": "^2.9.2",
+    "chart.js": "^2.9.3",
     "croppie": "^2.6.4",
     "datatables.net": "^1.10.20",
     "datatables.net-rowgroup": "^1.1.1",
@@ -18,10 +18,10 @@
     "masonry-layout": "^4.2.2",
     "packery": "^2.1.2",
     "tether-shepherd": "^1.8.1",
-    "tinymce": "^5.0.16"
+    "tinymce": "^5.2.0"
   },
   "devDependencies": {
-    "grunt": "^1.0.4",
+    "grunt": "^1.1.0",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-uglify": "^4.0.1",
