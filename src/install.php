@@ -6,7 +6,7 @@ $install = new leantime\core\install($config, $settings);
 
 ?>
 <!DOCTYPE html>
-<html>
+<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
 <head>
     <?php echo $frontController->includeAction('general.header'); ?>
 

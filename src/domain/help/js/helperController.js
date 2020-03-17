@@ -116,26 +116,6 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Sprint Burndown', {
-                title: 'Sprint Burndown',
-                text: 'This burn down chart shows tasks versus time.<br /> You can sort by effort, by hours, and by # of To Dos.<br />To learn more about agile sprints and burn down charts <a href="http://help.leantime.io/knowledge-base/what-is-a-sprint" target="_blank">click here</a>',
-                attachTo: '#sprintBurndownChart bottom',
-                advanceOn: '.headmenu click',
-                buttons: [
-                {
-                    text: 'Back',
-                    classes: 'shepherd-button-secondary',
-                    action: tour.back
-                },
-                {
-                    text: 'Next',
-                    action: tour.next
-                }
-                ]
-            }
-        );
-
-        tour.addStep(
             'Project Status', {
                 title: 'Project Progress',
                 text: 'Using items such as Effort, Hours, and # of To Dos, we\'ll<br />help predict estimated project completion.<br />',

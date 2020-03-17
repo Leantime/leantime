@@ -137,6 +137,7 @@ namespace leantime\core {
             $config = new config();
             $settings = new settings();
             $login = login::getInstance();
+            $language = $this->language;
 
             $this->template = $template;
 
