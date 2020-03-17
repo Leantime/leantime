@@ -93,7 +93,7 @@ $install = new leantime\core\install($config, $settings);
                         if($success === true) {
                             echo "
                                 <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-success'>".sprintf($language->__("text.new_db_version"),BASE_URL)."</div>
+                                    <div class='alert alert-success'>".sprintf($language->__("text.update_was_successful"),BASE_URL)."</div>
                                 </div>";
                         }
                     ?>
