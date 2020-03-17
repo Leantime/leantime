@@ -6,6 +6,7 @@ namespace leantime\domain\services {
     use leantime\domain\repositories;
     use \DateTime;
     use \DateInterval;
+    use PHPMailer\PHPMailer\PHPMailer;
 
     class projects
     {
@@ -14,6 +15,7 @@ namespace leantime\domain\services {
         private $projectRepository;
         private $ticketRepository;
         private $settingsRepo;
+        private $language;
 
         public function __construct()
         {
@@ -22,6 +24,8 @@ namespace leantime\domain\services {
             $this->projectRepository = new repositories\projects();
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
+            $this->filesRepository = new repositories\files();
+            $this->language = new core\language();
         }
 
         public function getProject($id) {
@@ -59,7 +63,6 @@ namespace leantime\domain\services {
                 $percentNum = ($numberOfClosedTickets / $numberOfTotalTickets) * 100;
             }
 
-
             $effortOfClosedTickets = $this->ticketRepository->getEffortOfClosedTickets($projectId, $averageStorySize);
             $effortOfTotalTickets = $this->ticketRepository->getEffortOfAllTickets($projectId, $averageStorySize);
 
@@ -68,7 +71,6 @@ namespace leantime\domain\services {
             }else{
                 $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
             }
-            
 
             $finalPercent = ($percentNum + $percentEffort) / 2;
 
@@ -157,7 +159,7 @@ namespace leantime\domain\services {
                 'color'    => '#1b75bb',
                 'fields'   => array(
                     [
-                        'title' => "Project: ".$projectName,
+                        'title' => $this->language->__("headlines.project_with_name")." ".$projectName,
                         'value' => $prepareChatMessage,
                         'short' => false
                     ]
@@ -273,10 +275,10 @@ namespace leantime\domain\services {
         public function getProjectIdAssignedToUser($userId)
         {
 
-            $project = $this->projectRepository->getUserProjectRelation($userId);
+            $projects = $this->projectRepository->getUserProjectRelation($userId);
 
-            if($project) {
-                return $project;
+            if($projects) {
+                return $projects;
             }else{
                 return false;
             }
@@ -341,7 +343,7 @@ namespace leantime\domain\services {
 
                     $route = core\FrontController::getCurrentRoute();
 
-                    if($_SESSION['userdata']['role'] == "manager" || $_SESSION['userdata']['role'] == "admin") {
+                    if(core\login::userIsAtLeast("manager")) {
 
                         $this->tpl->setNotification("You are not assigned to any projects. Please create a new one", "info");
                         if($route != "projects.newProject") {
@@ -423,7 +425,29 @@ namespace leantime\domain\services {
 
         public function getUsersAssignedToProject($projectId)
         {
-            return $this->projectRepository->getUsersAssignedToProject($projectId);
+            $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            if($users) {
+
+                foreach ($users as &$user) {
+
+                    $file = $this->filesRepository->getFile($user['profileId']);
+
+                    $return = '/images/default-user.png';
+                    if ($file) {
+                        $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                    }
+
+                    $user["profilePicture"] = $return;
+
+                }
+
+                return $users;
+
+            }
+
+            return false;
+
         }
 
         public function isUserAssignedToProject($userId, $projectId) {

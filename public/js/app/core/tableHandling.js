@@ -103,13 +103,13 @@ jQuery(function($) {
 			var sValue = removeHTMLTags(aData[iColumn]);
 			
 			// ignore empty values?
-			if (bIgnoreEmpty == true && sValue.length == 0) continue;
+			if (bIgnoreEmpty == true && sValue.length == 0) {
 
-			// ignore unique values?
-			else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) continue;
-			
-			// else push the value onto the result data array
-			else asResultData.push(sValue);
+                // ignore unique values?
+            } else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) {
+
+                // else push the value onto the result data array
+            }else asResultData.push(sValue);
 		}
 		
 		return asResultData;

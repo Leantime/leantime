@@ -21,8 +21,8 @@ $bookedHours = $this->get('bookedHours');
 <table cellpadding="0" cellspacing="0" width="60%" class="table table-bordered">
 	<thead>
 		<tr id="toggleBody">
-			<th class="head0"><label for="dateFrom"><?php echo $language->lang_echo('DATE_FROM') ?></label></th>
-			<th class="head1"><label for="dateTo"><?php echo $language->lang_echo('DATE_TO') ?></label></th>
+			<th class="head0"><label for="dateFrom"><?php echo $this->__('DATE_FROM') ?></label></th>
+			<th class="head1"><label for="dateTo"><?php echo $this->__('DATE_TO') ?></label></th>
 			<th class="head0"><label></label></th>
 			<th class="head1"><label></label></th>
 			<th class="head0">&nbsp;</th>
@@ -34,7 +34,7 @@ $bookedHours = $this->get('bookedHours');
 		<td><input type="text" id="dateTo" name="dateTo"
 			value="<?php echo $this->get('dateTo'); ?>" size="7" /></td>
 		<td>
-		<label for="userId"><?php echo $language->lang_echo('EMPLOYEE'); ?></label>
+		<label for="userId"><?php echo $this->__('EMPLOYEE'); ?></label>
 		<select name="userId" id="userId" onchange="submit();">
 			<option value="all"><?php echo $lang['ALL_EMPLOYEES']; ?></option>
 
@@ -47,9 +47,9 @@ $bookedHours = $this->get('bookedHours');
 			?>
 		</select>
 		<br />
-		<label for="kind"><?php echo $language->lang_echo('KIND') ?></label>
+		<label for="kind"><?php echo $this->__('KIND') ?></label>
 		<select id="kind" name="kind" onchange="submit();">
-			<option value="all"><?php echo $language->lang_echo('ALL_KINDS') ?></option>
+			<option value="all"><?php echo $this->__('ALL_KINDS') ?></option>
 			<?php foreach($this->get('kind') as $row){
 				echo'<option value="'.$row.'"';
 				if($row == $this->get('actKind')) echo ' selected="selected"';
@@ -60,20 +60,20 @@ $bookedHours = $this->get('bookedHours');
 
 		</select> </td>
 		<td>
-		<label for="invEmpl"><?php echo $language->lang_echo('INVOICED') ?></label>
+		<label for="invEmpl"><?php echo $this->__('INVOICED') ?></label>
 		<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();" 
 			<?php 
 			if($this->get('invEmpl') == '1') echo ' checked="checked"';
 			?>
 		/><br />
-		<label for="invEmpl"><?php echo $language->lang_echo('INVOICED_COMP'); ?></label>
+		<label for="invEmpl"><?php echo $this->__('INVOICED_COMP'); ?></label>
 		<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();" 
 			<?php 
 			if($this->get('invComp') == '1') echo ' checked="checked"';
 			?>
 		/>
 		</td>
-		<td><input type="submit" value="<?php echo $language->lang_echo('FILTER') ?>" class="reload" /></td>
+		<td><input type="submit" value="<?php echo $this->__('FILTER') ?>" class="reload" /></td>
 	</tr>
 
 </table>
@@ -99,18 +99,18 @@ $bookedHours = $this->get('bookedHours');
 	</colgroup>
 	<thead>
 		<tr>
-			<th><?php echo $language->lang_echo('ID'); ?></th>
-			<th><?php echo $language->lang_echo('DATE'); ?></th>
-			<th><?php echo $language->lang_echo('HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('PLANHOURS'); ?></th>
-			<th><?php echo $language->lang_echo('DIFFERENCE_HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('TICKET'); ?></th>
-			<th><?php echo $language->lang_echo('PROJECT'); ?></th>
-			<th><?php echo $language->lang_echo('EMPLOYEE'); ?></th>
-			<th><?php echo $language->lang_echo('KIND'); ?></th>
-			<th><?php echo $language->lang_echo('DESCRIPTION'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED_COMP'); ?></th>
+			<th><?php echo $this->__('ID'); ?></th>
+			<th><?php echo $this->__('DATE'); ?></th>
+			<th><?php echo $this->__('HOURS'); ?></th>
+			<th><?php echo $this->__('PLANHOURS'); ?></th>
+			<th><?php echo $this->__('DIFFERENCE_HOURS'); ?></th>
+			<th><?php echo $this->__('TICKET'); ?></th>
+			<th><?php echo $this->__('PROJECT'); ?></th>
+			<th><?php echo $this->__('EMPLOYEE'); ?></th>
+			<th><?php echo $this->__('KIND'); ?></th>
+			<th><?php echo $this->__('DESCRIPTION'); ?></th>
+			<th><?php echo $this->__('INVOICED'); ?></th>
+			<th><?php echo $this->__('INVOICED_COMP'); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -139,13 +139,13 @@ $bookedHours = $this->get('bookedHours');
 		<?php } ?>
 		<?php if(count($this->get('allTimesheets')) === 0): ?>
 		<tr>
-			<td colspan="8"><?php echo $language->lang_echo('NO_RESULTS'); ?></td>
+			<td colspan="8"><?php echo $this->__('NO_RESULTS'); ?></td>
 		</tr>
 		<?php endif; ?>
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="2"><strong><?php echo $language->lang_echo('ALL_HOURS') ?>:</strong></td>
+			<td colspan="2"><strong><?php echo $this->__('ALL_HOURS') ?>:</strong></td>
 			<td colspan="8"><strong><?php echo $sum; ?></strong></td>
 			<td colspan="2"></td>
 		</tr>

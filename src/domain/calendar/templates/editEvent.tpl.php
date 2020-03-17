@@ -1,81 +1,73 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 $values = $this->get('values');
-$helper = $this->get('helper');
 ?>
-
-<script type="text/javascript">
-        jQuery(document).ready(function() { 
-            jQuery("#datepicker").datepicker();
-            jQuery("#datepicker2").datepicker();
-            jQuery('#timepicker').timepicker();
-            jQuery('#timepicker2').timepicker();
-        }); 
-        
-</script>
 
 <div class="pageheader">
             
-            <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
-            <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('EDIT_EVENT'); ?></h1>
-            </div>
-        </div><!--pageheader-->
-        
-        <div class="maincontent">
-            <div class="maincontentinner">
+    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('headline.calendar'); ?></h5>
+        <h1><?php echo $this->__('headline.new_event'); ?></h1>
+    </div>
+</div><!--pageheader-->
 
-                <?php echo $this->displayNotification() ?>
-                 <div class="widget">
-                    <h4 class="widgettitle"><?php echo $language->lang_echo('EVENT'); ?></h4>
-                    <div class="widgetcontent">
 
-                
+<div class="maincontent">
+    <div class="maincontentinner">
+        <?php echo $this->displayNotification() ?>
+         <div class="widget">
+            <h4 class="widgettitle"><?php echo $this->__('subtitles.event'); ?></h4>
+            <div class="widgetcontent">
+
+
                 <form action="" method="post">
-                
-                
-                    <label for="description"><?php echo $language->lang_echo('TITLE') ?>:</label>
-                    <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
-                    
-                    <label for="dateFrom"><?php echo $language->lang_echo('START') ?>:</label>
-                    <input type="text" id="datepicker" name="dateFrom" value="<?php echo $helper->timestamp2date($values['dateFrom'], 2); ?>" />
-        <?php echo $language->lang_echo('AT') ?> 
-                    <div class="par">
-                        <div class="input-append bootstrap-timepicker">
-                                <input type="text" id="timepicker" name="timeFrom" value="" />
-                                <span class="add-on"><i class="iconfa-time"></i></span>
-                           </div>
-                    </div>
-                    <small>(hh:mm)</small><br />
-                    
-                    <label for="dateTo"><?php echo $language->lang_echo('END') ?>:</label>
-                    <input type="text" id="datepicker2" name="dateTo" value="<?php echo $helper->timestamp2date($values['dateTo'], 2); ?>" />
-        <?php echo $language->lang_echo('AT') ?> 
-                    <div class="par">
-                        <div class="input-append bootstrap-timepicker">
-                                <input type="text" id="timepicker2" name="timeTo" value="" />
-                                <span class="add-on"><i class="iconfa-time"></i></span>
-                           </div>
-                    </div>
-                    <small>(hh:mm)</small><br />
-                    
-                    <label for="allDay"><?php echo $language->lang_echo('ALL_DAY') ?></label>
-                    <input type="checkbox" id="allDay" name="allDay" 
-        <?php if($values['allDay'] === 'true') {
-            echo 'checked="checked" ';
-        }?>
-                    /><br />
-                    <input type="submit" name="save" id="save" value="<?php echo $language->lang_echo('SAVE') ?>" class="button" />
-                    
-                    <div>
-                        
-        <?php echo $this->displayLink('calendar.delEvent', $language->lang_echo('DELETE_EVENT'), array('id' => (int)$_GET['id'])); ?>
-                    </div>
-                
-                </form>
-                </div>
-                </div>
 
+
+                    <label for="description"><?php echo $this->__('label.title') ?></label>
+                    <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
+
+                    <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>
+                    <input type="text" id="event_date_from" name="dateFrom" value="<?php echo date($this->__('language.dateformat'), strtotime($values['dateFrom'])); ?>" />
+
+                    <div class="par">
+                        <label> <?php echo $this->__('label.start_time') ?></label>
+                        <div class="input-append bootstrap-timepicker">
+                                <input type="text" id="event_time_from" name="timeFrom" value="<?php echo date($this->__('language.timeformat') , strtotime($values['dateFrom'])); ?>" />
+                           </div>
+                    </div>
+
+                    <label for="dateTo"><?php echo $this->__('label.end_date') ?></label>
+                    <input type="text" id="event_date_to" name="dateTo" value="<?php echo date($this->__('language.dateformat') , strtotime($values['dateTo'])); ?>" />
+
+                    <div class="par">
+                        <label for=""><?php echo $this->__('label.end_time') ?> </label>
+                        <div class="input-append bootstrap-timepicker">
+                                <input type="text" id="event_time_to" name="timeTo" value="<?php echo date($this->__('language.timeformat') , strtotime($values['dateTo'])); ?>" />
+                           </div>
+                    </div>
+
+                    <label for="allDay"><?php echo $this->__('label.all_day') ?></label>
+                    <input type="checkbox" id="allDay" name="allDay"
+                    <?php if($values['allDay'] === 'true') {
+                        echo 'checked="checked" ';
+                    }?>
+                    />
+                    <div class="clear"></div>
+                    <br />
+                    <a href="<?=BASE_URL?>/calendar/delEvent/<?=(int)$_GET['id'] ?>" class="delete right"><i class="fa fa-trash"></i> <?=$this->__('links.delete')?></a>
+                    <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save') ?>" class="button" />
+
+                    <div class="clear"></div>
+
+                </form>
         </div>
     </div>
+</div>
+</div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        leantime.calendarController.initEventDatepickers();
+    });
+</script>

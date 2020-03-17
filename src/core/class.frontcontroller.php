@@ -11,7 +11,7 @@ namespace leantime\core {
     use leantime\domain\repositories;
 
 
-    class FrontController
+    class frontcontroller
     {
 
         /**
@@ -73,7 +73,7 @@ namespace leantime\core {
         }
 
         /**
-         * run - executesx the action depending on Request or firstAction
+         * run - executes the action depending on Request or firstAction
          *
          * @access public
          * @return

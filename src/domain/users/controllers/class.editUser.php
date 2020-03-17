@@ -19,17 +19,23 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
 
             //Only admins
-            if($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if(isset($_GET['id'])===true) {
 
                     $project = new repositories\projects();
                     $userRepo =  new repositories\users();
+                    $language = new core\language();
 
                     $id = (int)($_GET['id']);
                     $row = $userRepo->getUser($id);
                     $edit = false;
                     $infoKey = '';
+
+                    if(core\login::userHasRole("clientManager") && $row['clientId'] != core\login::getUserClientId()) {
+                        $tpl->display('general.error');
+                        exit();
+                    }
 
 
                     //Build values array
@@ -76,7 +82,7 @@ namespace leantime\domain\controllers {
 
                                     } else {
 
-                                        $tpl->setNotification('USERNAME_EXISTS', 'error');
+                                        $tpl->setNotification($language->__("notification.user_exists"), 'error');
                                     }
                                 } else {
 
@@ -84,11 +90,11 @@ namespace leantime\domain\controllers {
                                 }
                             } else {
 
-                                $tpl->setNotification('NO_VALID_EMAIL', 'error');
+                                $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
                             }
                         } else {
 
-                            $tpl->setNotification('NO_USERNAME', 'error');
+                            $tpl->setNotification($language->__("notification.enter_email"), 'error');
                         }
                     }
 
@@ -107,7 +113,7 @@ namespace leantime\domain\controllers {
                             //If projects is not set, all project assignments have been removed.
                             $project->deleteAllProjectRelations($id);
                         }
-                        $tpl->setNotification('EDIT_SUCCESS', 'success');
+                        $tpl->setNotification($language->__("notifications.user_edited"), 'success');
                     }
 
                     // Get relations to projects
@@ -121,11 +127,22 @@ namespace leantime\domain\controllers {
 
                     //Assign vars
                     $clients = new repositories\clients();
-                    $tpl->assign('clients', $clients->getAll());
-                    $tpl->assign('allProjects', $project->getAll());
+
+
+                    if(core\login::userIsAtLeast("manager")) {
+                        $tpl->assign('allProjects', $project->getAll());
+                        $tpl->assign('roles', core\login::$userRoles);
+                        $tpl->assign('clients', $clients->getAll());
+                    }else{
+                        $tpl->assign('allProjects', $project->getClientProjects($values['clientId']));
+                        $tpl->assign('roles', core\login::$clientManagerRoles);
+                        $tpl->assign('clients', array($clients->getClient($values['clientId'])));
+                    }
+
+
                     $tpl->assign('values', $values);
                     $tpl->assign('relations', $projectrelation);
-                    $tpl->assign('roles', $userRepo->getRoles());
+
                     $tpl->assign('status', $userRepo->status);
                     $tpl->assign('id', $id);
 

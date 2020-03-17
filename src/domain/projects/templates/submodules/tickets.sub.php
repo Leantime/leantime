@@ -83,7 +83,7 @@ var ganttData = [
         });
     </script>
 
-    <?php echo $this->displayLink('tickets.newTicket', "<i class='iconfa-plus'></i> ".$language->lang_echo('NEW_TICKET'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+    <?php echo $this->displayLink('tickets.newTicket', "<i class='iconfa-plus'></i> ".$this->__('NEW_TICKET'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
     <div id="eventMessage" class="alert alert-success" style="display:none;"></div>
     <div id="ganttChart"></div>
     

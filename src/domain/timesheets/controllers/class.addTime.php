@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
 
             $info = '';
             //Only admins and employees
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'employee') {
+            if(core\login::userIsAtLeast("developer")) {
 
                 $projects = new repositories\projects();
                 $helper = new core\helper();
@@ -89,7 +89,7 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
 
-                        if ($_SESSION['userdata']['role'] == 'admin') {
+                        if(core\login::userIsAtLeast("clientManager")) {
 
                             if ($_POST['invoicedComp'] == 'on') {
 

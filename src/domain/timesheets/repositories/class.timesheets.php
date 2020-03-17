@@ -19,7 +19,7 @@ namespace leantime\domain\repositories {
          * @var    array
          */
 
-        public $kind = array('GENERAL_BILLABLE', 'GENERAL_NOT_BILLABLE', 'PROJECTMANAGEMENT', 'DEVELOPMENT', 'BUGFIXING_NOT_BILLABLE', 'TESTING');
+        public $kind = array('label.general_billable', 'label.general_not_billable', 'label.projectmanagement', 'label.development', 'label.bugfixing_not_billable', 'label.testing');
 
         /**
          * __construct - get database connection
@@ -93,7 +93,6 @@ namespace leantime\domain\repositories {
             }elseif($invComp == '1' && $invEmpl != '1') {
 
                 $query.= " AND (zp_timesheets.invoicedComp = 1 AND (zp_timesheets.invoicedEmpl <> 1 OR zp_timesheets.invoicedEmpl IS NULL) )";
-
 
             }elseif($invComp != '1' && $invEmpl == '1') {
 

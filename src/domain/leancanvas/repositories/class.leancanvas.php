@@ -27,16 +27,22 @@ namespace leantime\domain\repositories {
         private $db='';
 
         public $canvasTypes = array(
-            "problem"=>"Describe the Problem",
-            "solution"=>"Describe the Solution",
-            "keymetrics"=>"Describe the Key Metrics",
-            "uniquevalue"=>"Unique Value Proposition",
-            "unfairadvantage"=>"Unfair Advantage",
-            "channels"=>"What are the Channels",
-            "customersegment"=>"Who are the Customers",
-            "cost"=>"Cost Structure",
-            "revenue"=>"Revenue Streams"
+            "problem"=>"status.problem",
+            "solution"=>"status.solution",
+            "keymetrics"=>"status.keymetrics",
+            "uniquevalue"=>"status.uniquevalue",
+            "unfairadvantage"=>"status.unfairadvantage",
+            "channels"=>"status.channels",
+            "customersegment"=>"status.customersegment",
+            "cost"=>"status.cost",
+            "revenue"=>"status.revenue"
             );
+
+        public $statusLabels = array(
+            "danger" => "status.not_validated",
+            "info" => "status.validated_false",
+            "success" => "status.validated_true"
+        );
 
         /**
          * __construct - get db connection
@@ -48,9 +54,23 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->language = new core\language();
+
             $this->canvasTypes = $this->getCanvasLabels();
 
+
         }
+
+        public function getStatusLabels () {
+            foreach($this->statusLabels as $key => $statusLabel){
+                $this->statusLabels[$key] = $this->language->__($statusLabel);
+            }
+
+            return $this->statusLabels;
+
+
+        }
+
 
         public function getCanvasLabels()
         {
@@ -67,18 +87,25 @@ namespace leantime\domain\repositories {
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($sql);
+                $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".researchlabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-                $labels = $this->canvasTypes;
+
                 if($values !== false) {
                     $labels = unserialize($values['value']);
                     $_SESSION["projectsettings"]["researchlabels"] = $labels;
+
                 }else{
+
+                    foreach($this->canvasTypes as $key => $typeLabel){
+                        $this->canvasTypes[$key] = $this->language->__($typeLabel);
+                    }
+
+                    $labels = $this->canvasTypes;
                     $_SESSION["projectsettings"]["researchlabels"] = $this->canvasTypes;
                 }
 
@@ -104,7 +131,7 @@ namespace leantime\domain\repositories {
 				WHERE type = 'leancanvas' AND projectId = :projectId
 				ORDER BY zp_canvas.title, zp_canvas.created";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -120,13 +147,13 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
             $query = "DELETE FROM zp_canvas WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
@@ -151,7 +178,7 @@ namespace leantime\domain\repositories {
 						:projectId
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
@@ -162,7 +189,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            return $this->db->{'database'}->lastInsertId();
+            return $this->db->database->lastInsertId();
 
         }
 
@@ -198,7 +225,7 @@ namespace leantime\domain\repositories {
 					milestoneId =			:milestoneId
 					WHERE id = :id LIMIT 1	";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $values['itemId'], PDO::PARAM_STR);
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
@@ -214,6 +241,8 @@ namespace leantime\domain\repositories {
 
         }
 
+
+
         public function patchCanvasItem($id, $params)
         {
 
@@ -225,7 +254,7 @@ namespace leantime\domain\repositories {
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
@@ -257,6 +286,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.status,						
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
+						t1.profileId AS authorProfileId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						COUNT(DISTINCT zp_comment.id) AS commentCount,
@@ -281,7 +311,7 @@ namespace leantime\domain\repositories {
 				GROUP BY zp_canvas_items.id
 				ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -330,7 +360,7 @@ namespace leantime\domain\repositories {
 				WHERE zp_canvas_items.id = :id 
 				";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -368,7 +398,7 @@ namespace leantime\domain\repositories {
 						:status
 				)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
@@ -380,7 +410,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
 
             $stmn->execute();
-            $id = $this->db->{'database'}->lastInsertId();
+            $id = $this->db->database->lastInsertId();
             $stmn->closeCursor();
 
             return $id;
@@ -391,7 +421,7 @@ namespace leantime\domain\repositories {
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 

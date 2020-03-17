@@ -51,14 +51,22 @@ a,a:hover,a:link,a:active,a:focus,
 .optionLink,
 .inlineDropDownContainer .ticketDropDown:hover,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
-input.secretInput
+input.secretInput,
+.maincontentinner .ticketDropdown.noBg >a,
+.maincontentinner .ticketDropdown.noBg >a:link,
+.viewDropDown .dropdown-menu li a.active,
+.paginate_button.current:hover
 { color: <?php echo $color; ?>; }
 
 
 input[type='submit'],
 button,
 .shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
-.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header
+.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
+.table th,
+.dropdown-menu span.radio:hover,
+.paginate_button.current,
+.dropdown-menu > li > a.active
 { background-color:  <?php echo $color; ?>;  }
 
 input[type='submit']:hover, 
@@ -173,74 +181,6 @@ div.tagsinput span.tag
 .ui-weekpicker td a.ui-state-highlight {
 	background-color: <?php echo $color; ?>;
 }
-.sortableTicketList li{
-	list-style:none;
-}
-
-.sortableTicketList li:hover {
-	background:#f9f9f9;
-}
-
-.sortableTicketList .ticketBox {
-	background:#fff;
-	border:1px solid #ddd;
-	padding:10px;
-	padding-bottom:5px;
-	margin-bottom:5px;
-	cursor:move;
-}
-
-.sortableTicketList .ticketBox textarea {
-    max-width:100%;
-}
-.sortableTicketList .ticketBox.fixed {
-cursor:default;
-}
-
-.sortableTicketList li:hover .ticketBox {
-	background:#f9f9f9;
-}
-
-.sortableTicketList li:hover .ticketBox.fixed {
-  background:#fff;
-}
-
-.sortableTicketList .ticketBox p.description {
-	padding-bottom:10px;
-    overflow:hidden;
-}
-
-.sortableTicketList li .ticketBox h6,
-.sortableTicketList li .ticketBox h6 a {
-	line-height:16px;
-}
-
-.sortableTicketList li .ticketBox h3,
-.sortableTicketList li .ticketBox h3 a{
-	font-size:18px;	
-}
-
-.sortableTicketList li .ticketBox .label-important, 
-.sortableTicketList li .ticketBox .label-warning, 
-.sortableTicketList li .ticketBox .label-success, 
-.sortableTicketList li .ticketBox .label-info, 
-.sortableTicketList li .ticketBox .label-inverse, 
-.sortableTicketList li .ticketBox .label-default,
-.sortableTicketList li .ticketBox .label-primary{
-	padding-top:0px;
-	padding-bottom:0px;
-}
-
-.sortableTicketList li .ticketBox .timerContainer .btn{
-	padding-top:1px;
-	padding-bottom:1px;
-}
-
-.sortableTicketList .empty {
-    text-align:center;
-color:#999;
-padding:20px 0px;
-}
 
 
 .ui-state-highlight {
@@ -257,8 +197,8 @@ padding:20px 0px;
 	
 	border:1px solid #ccc;
 	padding:10px;
-	margin-bottom:10px;
-	background:#fff;
+	margin-bottom:5px;
+	background:#eee;
 	padding-top:15px;
 }
 

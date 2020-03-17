@@ -15,16 +15,15 @@ class settings {
 	 */
 	private $debug = 1;
 
-	public $appVersion = "2.0.14";
+	public $appVersion = "2.1.0-Beta";
 
-    public $dbVersion = "2.0.4";
+    public $dbVersion = "2.1.0";
 
 	/**
 	 * __construct
 	 *
 	 */
 	public function __construct(){
-
 	}
 
 	/**
@@ -48,19 +47,17 @@ class settings {
 		ini_set('session.use_trans_sid',0);
 
 		ini_set("log_errors", 1);
-
-        ini_set('error_log', '../resource/logs/error.log');
-
+        ini_set('error_log', ROOT.'/../resources/logs/error.log');
 
 	}
 
-    public function getBaseURL () {
+	public function getBaseURL () {
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 
-    }
+	}
 
     public function getFullURL () {
 

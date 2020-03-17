@@ -6,8 +6,8 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h3 class="primaryColor">Welcome to Leantime!</h3>
-            <p>We're glad you're here.  Let's take a minute to get acquainted.<br />
+            <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_leantime') ?></h3>
+            <p><?php echo $this->__('text.glad_youre_here') ?><br />
                  </p>
             <br /><br />
         </div>
@@ -20,9 +20,9 @@
                 echo"</div>";?>
 
                 <br />
-            <h4 class="primaryColor">1. Discover!</h4>
+            <h4 class="primaryColor"><?php echo $this->__('headlines.step_one_discover') ?></h4>
 
-            <p>Our Business Research section is your new home for your ideas. This section is designed to take you through the steps of customer development, problem research, and solution ideation. </p>
+            <p><?php echo $this->__('text.business_research_section') ?></p>
 
         </div>
         <div class="col-md-4">
@@ -30,18 +30,18 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_scrum_board_cesn.svg");
                 echo"</div>";?>
                 <br />
-            <h4 class="primaryColor">2. Plan!</h4>
+            <h4 class="primaryColor"><?php echo $this->__('headlines.step_two_plan') ?></h4>
 
-            <p>Our roadmap is designed to take you from smaller manageable milestones to big picture completion.  Plan for milestones about 3 months long and use these project markers to stay on target.</p>
+            <p><?php echo $this->__('text.our_roadmap_design') ?></p>
         </div>
         <div class="col-md-4">
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_time_management_30iu.svg");
                 echo"</div>";?>
                 <br />
-            <h4 class="primaryColor">3. Track!</h4>
+            <h4 class="primaryColor"><?php echo $this->__('headlines.step_three_track') ?></h4>
 
-            <p>This is where you’ll spend most of your time - doing.  Plan your 2 week Sprints and execute successfully with the Kanban Board and our Backlog tools.  Use Retrospectives to grow for the next Sprint.</p>
+            <p><?php echo $this->__('text.this_is_where_you_spend_most_time') ?></p>
         </div>
     </div>
 
@@ -50,9 +50,9 @@
             <br /><br />
             <p>
                 <br /></p>
-            <a href="javascript:void(0);" class="btn btn-primary" onclick="leantime.helperController.startDashboardTour()"><i class="fas fa-map-signs"></i> Take the Full Tour</a><br />
-            <a href="<?=BASE_URL ?>/projects/newProject">Skip the tour and Start a Project</a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('dashboard')">Skip the tour & don't show again</a>
+            <a href="javascript:void(0);" class="btn btn-primary" onclick="leantime.helperController.startDashboardTour()"><?php echo $this->__('buttons.take_full_tour') ?></a><br />
+            <a href="<?=BASE_URL ?>/projects/newProject"><?php echo $this->__('links.skip_tour_start_project') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('dashboard')"><?php echo $this->__('links.skip_tour_dont_show_again') ?></a>
         </div>
     </div>
 

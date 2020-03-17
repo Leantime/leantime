@@ -1,9 +1,0 @@
-1.3
----
-
-* leverage advanced background-styling, eg. see http://www.google.com/intl/en_ALL/mapfiles/iw2.png
-* add ability to display remote tooltip for other elements, eg. an invalid input
-* Add stop-queue stuff for fadein/out without nasty queues
-* add delay on hide
-* add stick on hover of tooltip (with track:false)
-* offer hoverIntent support

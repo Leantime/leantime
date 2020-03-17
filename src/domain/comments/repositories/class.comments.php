@@ -36,7 +36,7 @@ namespace leantime\domain\repositories {
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
 				ORDER BY comment.date DESC";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             $stmn->bindvalue(':parent', $parent, PDO::PARAM_INT);
@@ -55,7 +55,7 @@ namespace leantime\domain\repositories {
 				FROM zp_comment as comment
 				WHERE moduleId = :moduleId AND module = :module";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
 
@@ -76,7 +76,7 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_user as user ON comment.userId = user.id 
 				WHERE commentParent = :id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -96,21 +96,21 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE comment.id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
             $stmn->closeCursor();
         }
 
-        public function addComment($values,$module)
+        public function addComment($values, $module)
         {
 
             $sql = "INSERT INTO zp_comment (
 			text, userId, date, moduleId, module, commentParent
 		) VALUES (:text, :userId, NOW(), :moduleId, :module, :commentParent)";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':moduleId', $values['moduleId'], PDO::PARAM_INT);
             $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_INT);
@@ -118,32 +118,37 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
 
-
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
         public function deleteComment($id)
         {
 
             $sql = "DELETE FROM zp_comment WHERE id = :id";
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
-        public function editComment($text,$id)
+        public function editComment($text, $id)
         {
 
             $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':text', $text, PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
     }

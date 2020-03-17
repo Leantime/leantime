@@ -2,52 +2,45 @@
 
 <ul class="headmenu">
 
-    <?php if ($_SESSION['userdata']['role'] != "user") { ?>
+    <?php if ($login::userIsAtLeast("developer")) {
 
-        <?php if($this->get('onTheClock') !== false){
-           echo "<li class='timerHeadMenu'><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
-                <span class='head-icon fa fa-stop'></span>
-                ".$this->get('onTheClock')['totalTime']."
-                Timer on ".substr($this->escape($this->get('onTheClock')['headline']), 0, 10)."...
+        if($this->get('onTheClock') !== false){
+        echo "<li class='timerHeadMenu' id='timerHeadMenu'";
+           echo"><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
+                ".sprintf($this->__('text.timer_on_todo'), $this->get('onTheClock')['totalTime'], substr($this->escape($this->get('onTheClock')['headline']), 0, 10))."
             </a>";
 
                 ?>
             <ul class="dropdown-menu">
-
                 <li>
                     <a href='<?=BASE_URL ?>/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
-                        <span class="fa fa-thumb-tack"></span> View To-Do
+                        <?=$this->__("links.view_todo")?>
                     </a>
                 </li>
                 <li>
-                    <a href='javascript:void(0);' class="punchOut" value="<?php $this->e($this->get('onTheClock')['id']); ?>">
-                        <span class="fa fa-stop"></span> Stop Timer
+                    <a href='javascript:void(0);' class="punchOut" data-value="<?php $this->e($this->get('onTheClock')['id']); ?>">
+                        <?=$this->__("links.stop_timer")?>
                     </a>
                 </li>
             </ul>
 
-<?php
-           echo"</li>";
-        }?>
+        </li>
+        <?php } ?>
         <li>
             <a href='<?=BASE_URL ?>/timesheets/showMy/'>
-                <span class="head-icon fa fa-clock-o"></span>
-                <span class='headmenu-label'>My Timesheets</span>
+                <?=$this->__("menu.my_timesheets")?>
             </a>
         </li>
     <?php } ?>
-
     <li>
         <a href='<?=BASE_URL ?>/calendar/showMyCalendar'>
-            <span class='head-icon iconfa-calendar'></span>
-            <span class='headmenu-label'>My Calendar</span>
+            <?=$this->__("menu.my_calendar")?>
         </a>
     </li>
-
     <li class="hidden-gt-sm">
         <a href='<?=BASE_URL ?>/general/logout/'>
-            <span class="head-icon fa fa-sign-out-alt"></span>
+            <?=$this->__("menu.sign_out_icon")?>
         </a>
     </li>
 
-</ul><!--headmenu-->
+</ul>

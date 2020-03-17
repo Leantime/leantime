@@ -29,6 +29,7 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
+            $this->language = new core\language();
 
 
         }
@@ -41,7 +42,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("admin")) {
 
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
@@ -96,7 +97,9 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
 
-                header("Location:".BASE_URL."/setting/editCompanySettings");
+                $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
+                $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
+                    
 
             }
 

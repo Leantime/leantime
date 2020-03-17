@@ -6,230 +6,12 @@ $canvasLabels = $this->get("canvasLabels");
 $canvasTitle = "";
 ?>
 
- <script type="text/javascript">
-    
-  
-  jQuery(window).bind("load", function () {
-          jQuery(".loading").fadeOut();
-        jQuery(".filterBar .row-fluid").css("opacity", "1");
-        
-        var maxHeight = 0;
-        
-        jQuery("#firstRow > div").each(function(){
-            if(jQuery(this).height() > maxHeight){
-                maxHeight = jQuery(this).height();
-            }
-        });
-        
-        jQuery("#firstRow > div").css("height", maxHeight);
-        
-      
-  });
-      
-  jQuery(function() {
-
-    jQuery( "#sortableBacklog" ).disableSelection();
-    
-    jQuery(".canvas-select").chosen();
-    
-    jQuery(".ticketBox").hover(function(){
-        jQuery(this).css("background", "#f9f9f9");
-    },function(){
-        jQuery(this).css("background", "#ffffff");
-    });
-    
-    jQuery(".contentInner").sortable({
-        
-         placeholder: "ui-state-highlight",
-         forcePlaceholderSize: true,
-        cancel: ".portlet-toggle",
-        start: function (event, ui) {
-            ui.item.addClass('tilt');
-            tilt_direction(ui.item);
-        },
-        stop: function (event, ui) {
-            ui.item.removeClass("tilt");
-            jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-            ui.item.removeData("move_handler");
-        },
-        update: function (event, ui) {
-            
-             // POST to server using $.post or $.ajax
-            jQuery.ajax({
-                type: 'POST',
-                url: leantime.appUrl+'#',
-                data: 
-                {
-                    
-                    problem: jQuery(".contentInner.status_problem").sortable('serialize'),
-
-                    statusX: ""
-                }
-            });
-                                    
-        }
-    });
-    
-    function tilt_direction(item) {
-        var left_pos = item.position().left,
-            move_handler = function (e) {
-                if (e.pageX >= left_pos) {
-                    item.addClass("right");
-                    item.removeClass("left");
-                } else {
-                    item.addClass("left");
-                    item.removeClass("right");
-                }
-                left_pos = e.pageX;
-            };
-        jQuery("html").bind("mousemove", move_handler);
-        item.data("move_handler", move_handler);
-    }  
-    
-    jQuery( ".portlet" )
-        .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-        .find( ".portlet-header" )
-        .addClass( "ui-widget-header ui-corner-all" )
-        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-    
-    jQuery( ".portlet-toggle" ).click(function() {
-        var icon = jQuery( this );
-        icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-        icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-    });
-    
-    
-    jQuery(".addItem").click(function(){
-        jQuery("#box").val(jQuery(this).attr("id"));
-        jQuery('#addItem').modal('show');
-        
-    });
-
-
-    jQuery(".addCanvasLink").click(function() {
-
-        jQuery('#addCanvas').modal('show');
-
-    });
-
-      jQuery(".editCanvasLink").click(function() {
-
-          jQuery('#editCanvas').modal('show');
-
-      });
-
-
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["retrospectives"]) === false || $_SESSION['userdata']['settings']["modals"]["retrospectives"] == 0) {     ?>
-      leantime.helperController.showHelperModal("retrospectives");
-            <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["retrospectives"] = 1;
-        } ?>
-       
-  });
-  
-  </script>
-  <style type="text/css">
-  #addItem, #editItem {
-      display:none;
-  }
-  
-  @media (min-width:900px) {
-      .row-fluid .span2,
-      .row-fluid .span3 {
-          margin-left: 0.5%;
-        width: 19.6%;
-      }
-  }
-
-  
-     .modal-body {
-         max-height:550px;    
-     }
-     
-     .modalTextArea {
-         width:100%;    
-     }
-     
-    .tilt.right {
-        transform: rotate(3deg);
-        -moz-transform: rotate(3deg);
-        -webkit-transform: rotate(3deg);
-    }
-    .tilt.left {
-        transform: rotate(-3deg);
-        -moz-transform: rotate(-3deg);
-        -webkit-transform: rotate(-3deg);
-    }
-
-      .column {
-          box-sizing: border-box;
-          height:auto;
-          width:100%;
-          
-      }
-      
-      .column.full {
-          width:100%;
-      }
-      
-      .bgColumn {
-          background:#f0f0f0;
-          border:1px solid #ccc;
-          padding:0px;
-      }
-      
-      .column .contentInner {
-          
-          padding:10px 5px;
-          min-height:200px;
-          overflow:auto;
-      }
-      
-      .column.full .contentInner {
-          min-height:100px;
-      }
-      
-      .ticketBox:hover {
-          background:#f9f9f9;
-      }
-      
-      .ui-state-highlight {
-          background:#aaa;
-          border:1px dotted #eee;
-          visibility:visible;
-      }
-      
-    .portlet {
-        margin: 0 1em 1em 0;
-        padding: 0.3em;
-    }
-    .portlet-header {
-        padding: 0.2em 0.3em;
-        margin-bottom: 0.5em;
-        position: relative;
-    }
-    .portlet-toggle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        margin-top: -8px;
-    }
-    .portlet-content {
-        padding: 0.4em;
-    }
-    .portlet-placeholder {
-        border: 1px dotted black;
-        margin: 0 1em 1em 0;
-        height: 50px;
-    }
-  </style>
- <div class="pageheader">           
-    <div class="pageicon"><i class="far fa-hand-spock"></i></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Retrospectives</h1>
-    </div>
+<div class="pageheader">
+   <div class="pageicon"><i class="far fa-hand-spock"></i></div>
+   <div class="pagetitle">
+       <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
+       <h1><?=$this->__('headline.retrospective') ?></h1>
+   </div>
 </div><!--pageheader-->
            
 <div class="maincontent">
@@ -245,7 +27,7 @@ $canvasTitle = "";
                 <span class="currentSprint">
                     <form action="" method="post">
                         <?php if(count($this->get('allCanvas')) > 0) {?>
-                        <select data-placeholder="Filter by Sprint..." name="searchCanvas" class="mainSprintSelector" onchange="form.submit()">
+                        <select name="searchCanvas" class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
                             $i=0;
@@ -262,8 +44,8 @@ $canvasTitle = "";
 
                             <?php }     ?>
                         </select><br />
-                        <small><a href="javascript:void(0)" class="addCanvasLink "><i class="fa fa-plus"></i> Create Retrospective Board</a></small> |
-                        <small><a href="javascript:void(0)" class="editCanvasLink "><i class="fa fa-edit"></i> Edit Board</a></small>
+                        <small><a href="javascript:void(0)" class="addCanvasLink "><?=$this->__('links.create_plan'); ?></a></small> |
+                        <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__('links.edit_board'); ?></a></small>
                         <?php } ?>
                     </form>
 
@@ -283,171 +65,299 @@ $canvasTitle = "";
         <div class="clearfix"></div>             
     <?php if(count($this->get('allCanvas')) > 0) {?>
 
-        <div id="sortableBacklog" class="sortableTicketList" style="padding-top:10px;">
+        <div id="sortableRetroKanban" class="sortableTicketList disabled" >
             
-            <div class="row-fluid" id="firstRow">
-                <div class="span4 bgColumn">
-                    <div class="column">
-                        <h4 class="widgettitle title-primary">
-                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                            <?php } ?>
-                            <?php echo $canvasLabels["well"]; ?>
-                        </h4>
-                        <div class="contentInner status_uniquevalue">
-                            <?php foreach($this->get('canvasItems') as $row) { ?>
-                                <?php if($row["box"] == "well") {?>
-                                    <div class="ticketBox" id="item_<?php echo $row["id"];?>">
+            <div class="row-fluid" >
 
-                                        <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
-                                        <br />
-                                        <?php echo nl2br($row["data"]);?>
-                                        <br /><br />
+                <div class="column" style="width:33.33%">
 
+                    <h4 class="widgettitle title-primary">
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                        <?php } ?>
+                        <?php echo $canvasLabels["well"]; ?>
+                    </h4>
 
+                    <div class="contentInner status_well">
+                        <?php foreach($this->get('canvasItems') as $row) { ?>
+                            <?php if($row["box"] == "well") {?>
+                                <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
-                                        <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                        <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                        <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
-                                        <?php if($row['milestoneHeadline'] != '') {?>
-                                            <br /> <hr />
-                                            <div class="row">
+                                    <div class="row">
+                                        <div class="col-md-12">
 
-                                                <div class="col-md-5" >
-                                                    <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                </div>
-                                                <div class="col-md-7" style="text-align:right">
-                                                    <?php echo $row['percentDone']; ?>% Complete
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                            <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php } ?>
-                                    </div>
-                                <?php } ?>
-                            <?php } ?>
-                            <br />
-                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=well" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="span4 bgColumn">
-                    <div class="column">
-                        <h4 class="widgettitle title-primary">
-                            <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                            <?php } ?>
-                            <?php echo $canvasLabels["notwell"]; ?>
-                        </h4>
-                        <div class="contentInner status_problem">
-        <?php foreach($this->get('canvasItems') as $row) { ?>
-            <?php if($row["box"] == "notwell") {?>
-                                        
-                                        <div class="ticketBox" id="item_<?php echo $row["id"];?>">
-                                            
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                                <div class="inlineDropDownContainer" style="float:right;">
 
-                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
-                                            <br />
-                                            <?php echo nl2br($row["data"]);?>
-                                            <br /><br />
-                                            
-                                            
-                                            
-                                            <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                            <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                            <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
-                                            <?php if($row['milestoneHeadline'] != '') {?>
-                                                <br /><hr />
-                                                <div class="row">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
 
-                                                    <div class="col-md-5" >
-                                                        <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                    </div>
-                                                    <div class="col-md-7" style="text-align:right">
-                                                        <?php echo $row['percentDone']; ?>% Complete
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="progress">
-                                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                                <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    </ul>
                                                 </div>
                                             <?php } ?>
 
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+
+                                            <div class="mainIdeaContent">
+                                                <?php  $this->e($row["data"]); ?>
+                                            </div>
+
+                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+
+                                            <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">
+                                                                        <?php if($row["authorFirstname"] != ""){
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }else {
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }?>
+                                                                    </span>
+
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+
+                                                    <?php foreach($this->get('users') as $user){
+                                                        echo"<li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
+
                                         </div>
-                                        
-            <?php } ?>
-        <?php } ?>
-                            <br />
-                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=notwell" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a>
-                        </div>
-                    </div>            
-                </div>
-                
-                <div class="span4 bgColumn">
-                    <div class="row-fluid">
-                        <div class="span12">
-                            <div class="column">
-                                <h4 class="widgettitle title-primary">
-                                    <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                                        <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+
+                                    </div>
+
+                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                        <br /> <hr />
+                                        <div class="row">
+
+                                            <div class="col-md-5" >
+                                                <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
+                                            </div>
+                                            <div class="col-md-7" style="text-align:right">
+                                                <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
+                                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     <?php } ?>
-                                    <?php echo $canvasLabels["startdoing"]; ?>
-                                </h4>
-                                <div class="contentInner status_problem">
-                                    <?php foreach($this->get('canvasItems') as $row) { ?>
-                                        <?php if($row["box"] == "startdoing") {?>
-                                            <div class="ticketBox" id="item_<?php echo $row["id"];?>">
-                                            
 
-                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="canvasModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
-                                            <br />
-                                            <?php echo nl2br($row["data"]);?>
-                                            <br /><br />
-
-                                            <span class="author"><span class="iconfa-user"></span> <?php echo $row["authorFirstname"];?> <?php echo $row["authorLastname"];?></span>&nbsp;
-                                                <span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?> Comments
-                                            <br />Last modified on <?php echo date_format(new DateTime($row["modified"]), "m/d/Y");?>
-                                                <?php if($row['milestoneHeadline'] != '') {?>
-                                                    <br /><hr />
-                                                    <div class="row">
-
-                                                        <div class="col-md-5" >
-                                                            <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
-                                                        </div>
-                                                        <div class="col-md-7" style="text-align:right">
-                                                            <?php echo $row['percentDone']; ?>% Complete
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="progress">
-                                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                                                    <span class="sr-only"><?php echo $row['percentDone']; ?>% Complete</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php } ?>
-                                        </div>
-                                        <?php } ?>
-                                    <?php } ?>    
-                                    <br />
-                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=startdoing" class="canvasModal" id="customersegment"><span class="iconfa iconfa-plus"></span> Add More</a
                                 </div>
-                            </div>
-                        </div>
+                            <?php } ?>
+                        <?php } ?>
+                        <br />
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=well" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                    </div>
+
+
+                </div>
+
+                <div class="column" style="width:33.33%">
+
+                    <h4 class="widgettitle title-primary">
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                        <?php } ?>
+                        <?php echo $canvasLabels["notwell"]; ?>
+                    </h4>
+
+                    <div class="contentInner status_notwell">
+                        <?php foreach($this->get('canvasItems') as $row) { ?>
+                            <?php if($row["box"] == "notwell") {?>
+                                <div class="ticketBox" id="item_<?php echo $row["id"];?>">
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                                <div class="inlineDropDownContainer" style="float:right;">
+
+                                                    <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+
+                                                    </ul>
+                                                </div>
+                                            <?php } ?>
+
+                                            <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+
+                                            <div class="mainIdeaContent">
+                                                <?php  $this->e($row["data"]); ?>
+                                            </div>
+
+                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+
+                                            <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">
+                                                                        <?php if($row["authorFirstname"] != ""){
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }else {
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }?>
+                                                                    </span>
+
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+
+                                                    <?php foreach($this->get('users') as $user){
+                                                        echo"<li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                        <br /> <hr />
+                                        <div class="row">
+
+                                            <div class="col-md-5" >
+                                                <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
+                                            </div>
+                                            <div class="col-md-7" style="text-align:right">
+                                                <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
+                                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
+                        <br />
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=notwell" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                    </div>
+
+
+                </div>
+
+                <div class="column" style="width:33.33%">
+
+                    <h4 class="widgettitle title-primary">
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                            <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                        <?php } ?>
+                        <?php echo $canvasLabels["startdoing"]; ?>
+                    </h4>
+
+                    <div class="contentInner status_startdoing">
+                        <?php foreach($this->get('canvasItems') as $row) { ?>
+                            <?php if($row["box"] == "startdoing") {?>
+                                <div class="ticketBox" id="item_<?php echo $row["id"];?>">
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+
+                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                                <div class="inlineDropDownContainer" style="float:right;">
+
+                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
+                                                        <li><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
+                                                        <li><a href="/retrospectives/delCanvasItem/<?php echo $row["id"]; ?>" class="delete retroModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.delete_canvas_item"); ?></a></li>
+
+                                                    </ul>
+                                                </div>
+                                            <?php } ?>
+
+                                            <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php echo $row["description"];?></a></h4>
+
+                                            <div class="mainIdeaContent">
+                                                <?php  $this->e($row["data"]); ?>
+                                            </div>
+
+                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
+
+                                            <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text">
+                                                                        <?php if($row["authorFirstname"] != ""){
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }else {
+                                                                            echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        }?>
+                                                                    </span>
+
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+
+                                                    <?php foreach($this->get('users') as $user){
+                                                        echo"<li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                        echo"</li>";
+                                                    }?>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                        <br /> <hr />
+                                        <div class="row">
+
+                                            <div class="col-md-5" >
+                                                <?php echo substr($row['milestoneHeadline'], 0, 10); ?>[...]
+                                            </div>
+                                            <div class="col-md-7" style="text-align:right">
+                                                <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
+                                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
+                        <br />
+                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=startdoing" class="retroModal" id="startdoing"><?=$this->__('links.add_more');?></a>
                     </div>
 
                 </div>
@@ -463,51 +373,29 @@ $canvasTitle = "";
 
         <div class="clearfix"></div>
 
-        <?php if($_SESSION['userdata']['role'] == "admin" || $_SESSION['userdata']['role'] == 'manager' ){ ?>
+        <?php if ($login::userIsAtLeast("clientManager")) { ?>
             <br />
-            <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+            <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?=$this->__('links.delete_board') ?></a>
         <?php } ?>
 
     <?php } else {
 
          echo "<br /><br /><div class='center'>";
         echo"<div style='width:50%' class='svgContainer'>";
-        echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
+            echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
         echo"</div>";
 
-echo"<h4>You don't have any previous retrospectives yet.</h4><br />
-Start one now and discuss what went well and what you can improve on.<br/> 
-We suggest you have one every sprint or at the end of each milestone.<br /><br />
-<a href=\"javascript:void(0)\" class=\"addCanvasLink btn btn-primary\"><i class=\"fa fa-plus\"></i> Start a retrospective</a></div>";
+        ?>
 
+        <br/><h4><?php echo $this->__("headline.no_retrospectives_yet") ?></h4><br/>
+        <?php echo $this->__("subtitles.start_retro_and_discuss_improvements") ?><br/><br/>
+        <a href="javascript:void(0)"
+           class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_retrospective") ?></a>
+        </div>
+
+    <?php
     }
     ?>
-
-        <?php if(isset($_GET['showRetroModal'])) {
-            if($_GET['showRetroModal'] == "") {
-                $modalUrl = "&type=well";
-            }else{
-                $modalUrl = "/".(int)$_GET['showRetroModal'];
-            }
-            ?>
-            <script type="text/javascript">
-                jQuery(document).ready(function(){
-                    leantime.ideasController.openModalManually("<?=BASE_URL?>/retrospectives/retroDialog<?php echo $modalUrl; ?>");
-                    window.history.pushState({},document.title, '<?=BASE_URL?>/retrospectives/showBoards');
-                });
-            </script>
-
-
-        <?php } ?>
-
-
-
-
-
-
-
-
-
 
         <!-- Modals -->
 
@@ -518,23 +406,24 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Start a new retrospective</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headline.start_a_new_retrospective") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your retrospective?</label>
-                            <input type="text" name="canvastitle" placeholder="You can use the Sprint or Milestone Name (e.g. Milestone 1 Review)" style="width:90%"/>
+                            <label><?php echo $this->__("label.title_retrospective_board") ?></label>
+                            <input type="text" name="canvastitle" placeholder="<?php echo $this->__("input.placeholders.you_can_use_milestone_or_sprint") ?>" style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit"  class="btn btn-default" value="Start" name="newCanvas" />
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
+                            <input type="submit" class="btn btn-default"
+                                   value="<?php echo $this->__("buttons.create_board") ?>" name="newCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-
 
         <div class="modal fade bs-example-modal-lg" id="editCanvas">
             <div class="modal-dialog modal-lg">
@@ -542,17 +431,19 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
                     <form action="" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Edit Board Name</h4>
+                            <h4 class="modal-title"><?php echo $this->__("headlines.edit_board_name") ?></h4>
                         </div>
                         <div class="modal-body">
-                            <label>What is the title of your retrospective?</label>
+                            <label><?php echo $this->__("label.title_retrospective_board") ?></label>
                             <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width:90%"/>
 
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit"  class="btn btn-default" value="Save" name="editCanvas" />
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal"><?php echo $this->__("buttons.close") ?></button>
+                            <input type="submit" class="btn btn-default" value="<?php echo $this->__("buttons.save") ?>"
+                                   name="editCanvas"/>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -561,4 +452,38 @@ We suggest you have one every sprint or at the end of each milestone.<br /><br /
 
     </div>
 </div>
-        
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+
+        leantime.retroController.initModals();
+        leantime.retroController.initBoardControlModal();
+        leantime.retroController.initUserDropdown();
+        leantime.retroController.setKanbanHeights();
+
+        <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
+        leantime.helperController.showHelperModal("ideaBoard");
+        <?php
+        //Only show once per session
+        $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
+        } ?>
+
+        <?php if(isset($_GET['showRetroModal'])) {
+            if($_GET['showRetroModal'] == "") {
+                $modalUrl = "&type=well";
+            }else{
+                $modalUrl = "/".(int)$_GET['showRetroModal'];
+            }
+            ?>
+
+            jQuery(document).ready(function(){
+                leantime.retroController.openModalManually("<?=BASE_URL ?>/retrospectives/retroDialog<?php echo $modalUrl; ?>");
+                window.history.pushState({},document.title, '<?=BASE_URL ?>/retrospectives/showBoards');
+            });
+
+        <?php } ?>
+
+    });
+
+</script>

@@ -1,0 +1,8 @@
+.mce-content-body  {
+    font-size:13px;
+}
+
+body .tox-tinymce {
+    border-radius:3px;
+    z-index: 10;
+}

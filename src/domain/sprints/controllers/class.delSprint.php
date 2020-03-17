@@ -18,26 +18,29 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $sprintRepo = new repositories\sprints();
+            $language = new core\language();
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
-                $msgKey = '';
-
                 if (isset($_POST['del'])) {
 
                     $sprintRepo->delSprint($id);
 
-                    $tpl->setNotification("Sprint successfully deleted", "success");
-                    $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
+                    $tpl->setNotification($language->__('notifications.sprint_deleted_successfully'), "success");
+
+                    if(isset($_SESSION['lastPage'])) {
+                        $tpl->redirect($_SESSION['lastPage']);
+                    }else{
+                        $tpl->redirect(BASE_URL."/tickets/showKanban");
+                    }
 
                 }
 
-                $tpl->assign('info', $msgKey);
                 $tpl->assign('id', $id);
                 $tpl->displayPartial('sprints.delSprint');
 

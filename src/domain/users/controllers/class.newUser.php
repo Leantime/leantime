@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $userRepo =  new repositories\users();
             $project = new repositories\projects();
+            $language = new core\language();
 
             $values = array(
                 'firstname' =>"",
@@ -32,7 +33,7 @@ namespace leantime\domain\controllers {
             );
 
             //only Admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                     $projectrelation = array();
 
@@ -48,6 +49,11 @@ namespace leantime\domain\controllers {
                             'password' => (password_hash($_POST['password'], PASSWORD_DEFAULT )),
                             'clientId' => ($_POST['client'])
                         );
+
+                        //Choice is an illusion for client managers
+                        if(core\login::userHasRole("clientManager")) {
+                            $values['clientId'] = core\login::getUserClientId();
+                        }
 
                         //Validation
                         if ($values['user'] !== '') {
@@ -69,44 +75,55 @@ namespace leantime\domain\controllers {
 
                                         $mailer = new core\mailer();
 
-                                        $mailer->setSubject("Your Leantime Account is Ready");
+                                        $mailer->setSubject($language->__("email_notifications.new_user_subject"));
                                         $actual_link = BASE_URL;
-                                        $mailer->setHtml($_SESSION["userdata"]["name"] . " created a new user account for you. You can access your account at: <a href='" . $actual_link . "'>" . $actual_link . "</a><br/><br/>Your username is: " . $values["user"] . "<br/>And your password is: " . $tempPasswordVar . "<br /><br />Please make sure to update your password once you login.<br />Have fun!<br />");
+
+                                        $message = sprintf($language->__("email_notifications.new_user_message"), $_SESSION["userdata"]["name"], $actual_link,  $values["user"], $tempPasswordVar);
+                                        $mailer->setHtml($message);
 
                                         $to = array($values["user"]);
 
                                         $mailer->sendMail($to, $_SESSION["userdata"]["name"]);
 
-                                        $tpl->setNotification('USER_ADDED', 'success');
+                                        $tpl->setNotification($language->__("notification.user_created"), 'success');
 
                                         $tpl->redirect(BASE_URL."/users/showAll");
 
                                     } else {
 
-                                        $tpl->setNotification('USERNAME_EXISTS', 'error');
+                                        $tpl->setNotification($language->__("notification.user_exists"), 'error');
 
                                     }
                                 } else {
 
-                                    $tpl->setNotification('PASSWORDS_DONT_MATCH', 'error');
+                                    $tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
                                 }
                             } else {
 
-                                $tpl->setNotification('NO_VALID_EMAIL', 'error');
+                                $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
                             }
                         } else {
 
-                            $tpl->setNotification('NO_USERNAME', 'error');
+                            $tpl->setNotification($language->__("notification.enter_email"), 'error');
                         }
 
                     }
 
                     $tpl->assign('values', $values);
                     $clients = new repositories\clients();
-                    $tpl->assign('clients', $clients->getAll());
-                    $tpl->assign('allProjects', $project->getAll());
+
+                    if(core\login::userIsAtLeast("manager")) {
+                        $tpl->assign('clients', $clients->getAll());
+                        $tpl->assign('allProjects', $project->getAll());
+                        $tpl->assign('roles', core\login::$userRoles);
+                    }else{
+
+                        $tpl->assign('clients', array($clients->getClient( core\login::getUserClientId())));
+                        $tpl->assign('allProjects', $project->getClientProjects( core\login::getUserClientId()));
+                        $tpl->assign('roles', core\login::$clientManagerRoles);
+                    }
                     $tpl->assign('relations', $projectrelation);
-                    $tpl->assign('roles', $userRepo->getRoles());
+
 
                     $tpl->display('users.newUser');
 

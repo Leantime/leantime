@@ -4,14 +4,12 @@
     	<div >
     		
     		<?php echo $this->displayNotification() ?>
-    		
-
 
 			<div class='mediamgr'>
 			 <div class='mediamgr_left'>
                     <div class="mediamgr_category">
                     	
-		        	<form action='/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+		        	<form action='<?=BASE_URL ?>/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
 						<div class="par f-left" style="margin-right: 15px;">
 						
 					   	 <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -31,10 +29,9 @@
 					  	 </div>		
 					   	</div>
 					   
-					   <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
+					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
 		
-					</form>	
-					
+					</form>
 
 					</div> 
                     
@@ -52,7 +49,7 @@
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
-                              	<a class="imageLink" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                              	<a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                               		<?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
                               			<img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                               		<?php else: ?>
@@ -70,23 +67,7 @@
                     
                 </div><!--mediamgr_left -->
                 
-                <div class="mediamgr_right">
-                	<!--<div class="mediamgr_rightinner">
-                        <h4>Type</h4>
-                        <ul class="menuright">
-                        	<?php foreach($this->get('modules') as $key => $module): ?>
-                        		<?php if ( 
-                        				($key != 'client' || ($_SESSION['userdata']['role'] == 2 || $_SESSION['userdata']['role'] == 4)) 
-                        				&& ($key != 'lead' || ($_SESSION['userdata']['role'] == 2 || $_SESSION['userdata']['role'] == 4)) 
-									): ?>
-	                        		<li class="<?php if($this->get('currentModule') == $key): ?>current<?php endif; ?>">
-	                        			<?php echo $this->displayLink('files.showAll', $module, array('id' => $key)); ?>
-	                        		</li>
-                        	<?php endif; ?>
-                        	<?php endforeach; ?>
-                        </ul>
-                    </div><!-- mediamgr_rightinner -->
-                </div><!-- mediamgr_right -->
+
                 <br class="clearall" />
             </div><!--mediamgr-->      		 	
 
@@ -121,12 +102,14 @@
 
             <?php if(isset($_GET['modalPopUp'])) { ?>
                 jQuery('#medialist a.imageLink').click(function(event){
-                    console.log("Loading Image");
+
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
                     var url = jQuery(this).attr("href");
-                    jQuery("#"+window.tinyMceUploadFieldname).val(url);
+
+                    //File picker upload callback from tinymce
+                    window.filePickerCallback(url, {text: "file"});
 
                     jQuery.nmTop().close();
                 });

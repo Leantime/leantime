@@ -14,7 +14,7 @@ jQuery(document).ready(function(){
         window.setTimeout(function () {
             jQuery('.ui-weekpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
         }, 1);
-    }
+    };
 
     var setDates = function (input) {
         var $input = jQuery(input);
@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
             jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
             jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         }
-    }
+    };
 
 
 
@@ -116,7 +116,7 @@ jQuery(document).ready(function(){
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
 
-    })
+    });
     
     jQuery(".timesheetTable input").change(function(){
     	
@@ -181,8 +181,8 @@ jQuery(document).ready(function(){
 
             <div class="pageicon"><span class="iconfa-time"></span></div>
             <div class="pagetitle">
-                <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
-                <h1><?php echo $language->lang_echo('MY_TIMESHEETS'); ?></h1>
+                <h5><?php echo $this->__('headline.overview'); ?></h5>
+                <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -195,12 +195,12 @@ jQuery(document).ready(function(){
 <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
 
 <div class="headtitle" style="margin:0px; background: #eee;">
-	<h4 class="widgettitle title-primary">My TimeSheet</h4>
+	<h4 class="widgettitle title-primary"><?php echo $this->__('headline.my_timesheets'); ?></h4>
 	<div class="padding10">
-		<span>Week from</span>
+		<span><?php echo $this->__('label.week_from')?></span>
         <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-		<input type="text" class="week-picker" name="startDate" id="startDate" placeholder="mm/dd/yyyy" value="" style="margin-top:5px;"/> <?php echo $lang["UNTIL"]; ?>
-		<input type="text" class="week-picker" name="endDate" id="endDate" placeholder="mm/dd/yyyy" style="margin-top:6px;"/>
+		<input type="text" class="week-picker" name="startDate" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
+		<input type="text" class="week-picker" name="endDate" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
         <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
         <input type="hidden" name="search" value="1" />
 
@@ -226,20 +226,22 @@ jQuery(document).ready(function(){
     <?php
 
     $dateFromHeader = clone $this->get("dateFrom");
-    $currentDate = $dateFromHeader->format('m/d/Y');
+    $currentDate = $dateFromHeader->format($this->__('language.dateformat'));
+    $days = explode(',', $this->__('language.dayNamesShort'));
+
     ?>
 	<tr>
-		<th>Client/Project</th>
-		<th>To-Do</th>
-		<th>Type</th>
-		<th>Mo <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Tu <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>We <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Th <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Fr <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Sa <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Su <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format('m/d/Y'); ?></th>
-		<th>Total</th>
+        <th><?php echo $this->__('label.client_product')?></th>
+		<th><?php echo $this->__('subtitles.todo')?></th>
+		<th><?php echo $this->__('label.type')?></th>
+		<th><?php echo $days[1]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[2]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[3]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[4]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[5]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[6]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $days[0]?> <?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+		<th><?php echo $this->__('label.total')?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -276,7 +278,7 @@ jQuery(document).ready(function(){
 			<tr class="gradeA timesheetRow">
 				<td width="14%"><?php echo $timeRow["name"]; ?></td>
 				<td width="14%"><?php echo $timeRow["headline"]; ?></td>
-				<td width="10%"><?php echo $lang[$timeRow['kind']]; ?></td>
+				<td width="10%"><?php echo $this->__($timeRow['kind']); ?></td>
 				<?php $currentDate = $dateFrom->format('Y-m-d'); ?>
 				<td width="7%" class="rowMo"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursMonday"]; ?>" /></td>
 				<?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
@@ -322,7 +324,7 @@ jQuery(document).ready(function(){
 				<td width="14%">
 					<select class="kind-select" name="kindId">
                             <?php foreach($this->get('kind') as $kindRow){ ?>
-                            	<?php echo"<option value=".$kindRow.">".$lang[$kindRow]."</option>"; ?>
+                            	<?php echo"<option value=".$kindRow.">".$this->__($kindRow)."</option>"; ?>
                             <?php }?>
                         </select>
 				</td>
@@ -339,7 +341,7 @@ jQuery(document).ready(function(){
 		
 	<tfoot>
 		<tr style="font-weight:bold;">
-			<td colspan="3">Total:</td>
+			<td colspan="3"><?php echo $this->__('label.total')?></td>
 			<td id="sumMo"><?php echo $sumMon; ?></td>
 			<td id="sumTu"><?php echo $sumTu; ?></td>
 			<td id="sumWe"><?php echo $sumWe; ?></td>

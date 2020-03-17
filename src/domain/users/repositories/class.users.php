@@ -49,19 +49,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $status = array('active' => 'ACTIVE', 'inactive' => 'INACTIVE');
-
-        /**
-         * Available user roles id => alias
-         *
-         * @access public
-         * @var    array
-         */
-        public $roles = array(
-            2   => 'admin',
-            3   => 'user',
-            4   => 'developer',
-            5   => 'manager');
+        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive');
 
         /**
          * @access public
@@ -93,7 +81,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM `zp_user` WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -108,7 +96,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT COUNT(id) AS userCount FROM `zp_user`";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -139,7 +127,7 @@ namespace leantime\domain\repositories {
 			zp_roles.roleName AS role
 		 FROM zp_user LEFT JOIN zp_roles ON zp_user.role = zp_roles.id WHERE zp_roles.roleName IN('developer','admin','manager') ORDER BY lastname";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -158,12 +146,40 @@ namespace leantime\domain\repositories {
         public function getAll()
         {
 
-            $query = "SELECT zp_user.id, lastname, firstname, role, role.roleName, profileId, username
+            $query = "SELECT zp_user.id, lastname, firstname, role, profileId, username
 					FROM `zp_user` 
-					INNER JOIN zp_roles as role ON zp_user.role = role.id
 					ORDER BY lastname";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        /**
+         * getAll - get all user
+         *
+         * @access public
+         * @return array
+         */
+        public function getAllClientUsers($clientId)
+        {
+
+            $query = "SELECT 
+                        zp_user.id, 
+                        lastname, 
+                        firstname, 
+                        role, 
+                        profileId, 
+                        username
+					FROM `zp_user` WHERE clientId = :clientId 
+					ORDER BY lastname";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -177,7 +193,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT role FROM zp_user WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -214,7 +230,7 @@ namespace leantime\domain\repositories {
 				clientId = :clientId
 			 WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
             $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
@@ -244,17 +260,30 @@ namespace leantime\domain\repositories {
 
             if ($userId != '') {
 
-                $queryOwn = " AND id != '".$userId."' ";
+                $queryOwn = " AND id != :id ";
+
             } else {
 
                 $queryOwn = "";
             }
 
-            $query = "SELECT COUNT(username) AS numUser FROM `zp_user` WHERE username = '".$username."' ".$queryOwn." LIMIT 1";
+            $query = "SELECT COUNT(username) AS numUser FROM `zp_user` WHERE username = :username ".$queryOwn." LIMIT 1";
 
-            $row = $this->db->dbQuery($query)->dbFetchRow();
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':username', $username, PDO::PARAM_STR);
 
-            if($row['numUser'] == 1) {
+            if ($userId != '') {
+                $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+
+            $result = $stmn->fetch();
+            $stmn->closeCursor();
+
+
+
+            if($result['numUser'] == 1) {
 
                 return true;
 
@@ -294,7 +323,7 @@ namespace leantime\domain\repositories {
 				notifications = :notifications			 
 				WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
             $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
@@ -339,7 +368,7 @@ namespace leantime\domain\repositories {
 							:password
 						)";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
@@ -352,7 +381,7 @@ namespace leantime\domain\repositories {
 
 
             $stmn->execute();
-            $userId = $this->db->{'database'}->lastInsertId();
+            $userId = $this->db->database->lastInsertId();
 
             $stmn->closeCursor();
 
@@ -371,7 +400,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM `zp_user` WHERE zp_user.id = :id";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -390,7 +419,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM `zp_user` WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -416,7 +445,7 @@ namespace leantime\domain\repositories {
             if(isset($lastId['fileId'])) {
                 $sql = 'UPDATE `zp_user` SET profileId = :fileId WHERE id = :userId';
 
-                $stmn = $this->db->{'database'}->prepare($sql);
+                $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
                 $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
 
@@ -430,7 +459,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT profileId FROM `zp_user` WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -450,20 +479,6 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * getRoles - get all the roles that are available
-         *
-         * @access public
-         */
-        public function getRoles()
-        {
-
-            $sql = "SELECT * FROM `zp_roles`";
-
-            return $this->db->dbQuery($sql)->dbFetchResults();
-
-        }
-
-        /**
          * getRole - get a role by id
          *
          * @access public
@@ -473,7 +488,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT * FROM `zp_roles` WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindParam(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -545,7 +560,7 @@ namespace leantime\domain\repositories {
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){

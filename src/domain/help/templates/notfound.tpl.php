@@ -6,8 +6,8 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h3 class="primaryColor">Help...</h3><br /><br />
-            <p>We don't have content for this page yet. <br />Please use our "Need Help" link on the bottom to learn more about the things you can do here.</p>
+            <h3 class="primaryColor"><?php echo $this->__('headlines.help') ?></h3><br /><br />
+            <?php echo $this->__('text.not_found_helper_content') ?>
             <br /><br />
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
         </div>
     </div>
 

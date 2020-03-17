@@ -1,31 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#<?php echo $_SESSION["companysettings.mainColor"] ?>">
-    <meta name="identifier-URL" content="<?=BASE_URL?>">
+    <title><?php echo $_SESSION["companysettings.sitename"]; ?></title>
 
-<link rel="shortcut icon" href="<?=BASE_URL ?>/favicon.ico" />
-<link rel="apple-touch-icon" href="<?=BASE_URL ?>/apple-touch-icon.png">
+    <?php echo $frontController->includeAction('general.header'); ?>
 
-<title><?php echo $_SESSION["companysettings.sitename"]; ?></title>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-<?php echo $frontController->includeAction('general.header'); ?>
+    <script src="<?=BASE_URL?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
-    <link rel="stylesheet" href="<?=BASE_URL ?>/css/main.css"/>
-
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-migrate-1.1.1.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery-ui-1.9.2.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/modernizr.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/jquery.cookie.js"></script>
-    <script type="text/javascript" src="<?=BASE_URL ?>/js/libs/custom.js"></script>
-
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="<?=BASE_URL ?>/js/libs/excanvas.min.js"></script><![endif]-->
 </head>
 
 <script type="text/javascript">
@@ -48,7 +33,7 @@
 <div class="header hidden-gt-sm">
 
     <div class="logo" style="margin-left:0px;">
-        <a href="<?=BASE_URL ?>/" style="background-image:url(<?php echo $config->logoPath; ?>">&nbsp;</a>
+        <a href="<?=BASE_URL ?>" style="background-image:url(<?php echo $config->logoPath; ?>">&nbsp;</a>
     </div>
 
 </div>

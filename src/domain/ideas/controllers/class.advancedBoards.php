@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class advancedBoards
     {
@@ -18,6 +19,8 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $ideaRepo = new repositories\ideas();
+            $projectService = new services\projects();
+            $language = new core\language();
 
             $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -52,14 +55,25 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $ideaRepo->addCanvas($values);
                     $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $tpl->setNotification('NEW_CANVAS_ADDED', 'success');
+                    $tpl->setNotification($language->__('notification.idea_board_created'), 'success');
+
+                    $mailer = new core\mailer();
+                    $projectService = new services\projects();
+                    $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
+
+                    $mailer->setSubject($language->__('email_notifications.idea_board_created_subject'));
+                    $message = sprintf($language->__('email_notifications.idea_board_created_message'), $_SESSION["userdata"]["name"], "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
+
+                    $mailer->setHtml($message);
+                    $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    header("Location:".BASE_URL."/ideas/advancedBoards/");
+                    $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
 
                 } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
+                    $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
                 }
+
 
             }
 
@@ -71,94 +85,13 @@ namespace leantime\domain\controllers {
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $ideaRepo->updateCanvas($values);
 
-                    $tpl->setNotification("Board edited", "success");
+                    $tpl->setNotification($language->__("notification.board_edited"), "success");
                     $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
 
 
                 } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
 
-            }
-
-            //Add Canvas Item
-            if (isset($_POST["addItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentIdeaCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => "",
-                        "assumptions" =>"",
-                        "data" => "",
-                        "conclusion" => $_POST['conclusion'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $ideaRepo->addCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location:".BASE_URL."/ideas/advancedBoards/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
-            }
-
-            if (isset($_POST["editItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentIdeaoCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => "",
-                        "assumptions" =>"",
-                        "data" => "",
-                        "conclusion" => $_POST['conclusion'],
-                        "itemId" => $_POST['itemId'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $ideaRepo->editCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location:".BASE_URL."/ideas/advancedBoards/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
-
-            }
-
-            //Updating the status & orting
-            if(isset($_GET["sort"]) === true) {
-
-                $sortedTicketArray = array();
-
-                foreach($_POST as $status=>$ideaArray){
-
-                    $params = explode("&", $ideaArray);
-
-                    if(is_array($params)=== true) {
-                        foreach($params as $key => $ideaString){
-
-                            //comes through as item[]=ID, parse item[]= out and get id
-                            $id = substr($ideaString, 7);
-
-                            $ideaRepo->updateIdeaStatus($id, $status);
-
-                        }
-                    }
+                    $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
 
                 }
 
@@ -166,9 +99,10 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('currentCanvas', $currentCanvasId);
 
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $ideaRepo->getCanvasItemsById($currentCanvasId));
-            $tpl->assign('canvasLabels', $ideaRepo->canvasTypes);
+            $tpl->assign('canvasLabels', $ideaRepo->getCanvasLabels());
 
             if (isset($_GET["raw"]) === false) {
                 $tpl->display('ideas.advancedBoards');

@@ -10,7 +10,7 @@ include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
-$login = new leantime\core\login(leantime\core\session::getSID());
+$login = leantime\core\login::getInstance(leantime\core\session::getSID());
 $config = new leantime\core\config();
 
 if ($login->logged_in()!==true) {
@@ -33,14 +33,14 @@ if ($login->logged_in()!==true) {
 
 function getFileLocally(){
 
-    $config = new leantime\core\config();
+	$config = new leantime\core\config();
 
-    $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
-    $realName = $_GET['realName'];
-    $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
-    $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
+	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
+ 	$realName = $_GET['realName'];
+ 	$ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
+ 	$module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $mimes = array
+	$mimes = array
     (
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpg',
@@ -48,13 +48,14 @@ function getFileLocally(){
         'png' => 'image/png'
     );
 
-    $path = realpath(__DIR__."/../".$config->userFilePath."/");
+	//TODO: Replace with ROOT
+  	$path = realpath(__DIR__."/../".$config->userFilePath."/");
 
-    $fullPath = $path."/".$encName.'.'.$ext;
+  	$fullPath = $path."/".$encName.'.'.$ext;
 
-    if (file_exists(realpath($fullPath))) {
+	if (file_exists(realpath($fullPath))) {
 
-        if ($fd = fopen(realpath($fullPath), 'r')) {
+		if ($fd = fopen(realpath($fullPath), 'rb')) {
 
             $path_parts = pathinfo($fullPath);
 
@@ -78,6 +79,7 @@ function getFileLocally(){
             if(ob_get_length() > 0) {
                 ob_end_clean();
             }
+
             $chunkSize = 1024*1024;
 
             while (!feof($fd)) {

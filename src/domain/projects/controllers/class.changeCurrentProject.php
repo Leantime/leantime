@@ -15,6 +15,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->projectService = new services\projects();
+            $this->settingService = new services\setting();
 
         }
 
@@ -30,17 +31,7 @@ namespace leantime\domain\controllers {
 
                 $id = filter_var($params['id'], FILTER_SANITIZE_NUMBER_INT);
 
-                $projects = $this->projectService->getProjectIdAssignedToUser($_SESSION['userdata']['id']);
-
-                $isAllowed = false;
-                foreach($projects as $item){
-                    if($item['projectId'] == $id) {
-                        $isAllowed = true;
-                        break;
-                    }
-                }
-
-                if($isAllowed) {
+                if($this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $id)) {
 
                     $project = $this->projectService->getProject($id);
 

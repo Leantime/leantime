@@ -74,7 +74,7 @@ leantime.menuController = (function () {
             }
         });
 
-    }
+    };
 
     var _initProjectSelectorToggle = function (id, element) {
 

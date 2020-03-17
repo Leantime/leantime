@@ -20,19 +20,18 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
             $projectService = new services\projects();
+            $language = new core\language();
 
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if(core\login::userIsAtLeast("clientManager")) {
 
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
 
-                    $msgKey = '';
-
                     if ($projectRepo->hasTickets($id)) {
 
-                        $msgKey = 'PROJECT_HAS_TICKETS';
+                       $tpl->setNotification($language->__("notification.project_has_tasks"), "error");
 
                     } else {
 
@@ -44,14 +43,14 @@ namespace leantime\domain\controllers {
                             $projectService->resetCurrentProject();
                             $projectService->setCurrentProject();
 
-                            $msgKey = 'PROJECT_DELETED';
+                            $tpl->setNotification($language->__("notification.project_deleted"), "success");
+                            $tpl->redirect(BASE_URL."/projects/showAll");
 
                         }
 
                     }
 
                     //Assign vars
-                    $tpl->assign('msg', $msgKey);
                     $tpl->assign('project', $projectRepo->getProject($id));
 
                     $tpl->display('projects.delProject');

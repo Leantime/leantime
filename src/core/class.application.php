@@ -3,33 +3,41 @@
 namespace leantime\core;
 
 use leantime\domain\services;
+use leantime\domain\repositories;
 
 class application
 {
-    
-    /**
-     * @access private
-     * @var    string - array of scripts to render (currently only CSS and Javascript)
-     */
-    private static $sections = array();
 
     private $config;
     private $settings;
     private $login;
     private $frontController;
+    private $language;
     private $projectService;
+    private $settingsRepo;
 
-    public function __construct(login $login)
+
+    public function __construct(config $config,
+                                settings $settings,
+                                login $login,
+                                FrontController $frontController,
+                                language $language,
+                                services\projects $projectService,
+                                repositories\setting $settingRepo)
     {
-        $this->config = new config();// Used in template
-        $this->settings = new settings(); //Used in templates to show app version
+
+        $this->config = $config;
+        $this->settings = $settings;
         $this->login = $login;
-        $this->frontController = frontcontroller::getInstance(ROOT);
+        $this->frontController = $frontController;
+        $this->language = $language;
+        $this->projectService = $projectService;
+        $this->settingsRepo = $settingRepo;
 
     }
 
     /**
-     * start - renders applicaiton and routes to correct template, writes content to output buffer
+     * start - renders application and routes to correct template, writes content to output buffer
      *
      * @access public static
      * @return void
@@ -49,7 +57,10 @@ class application
         
         if($this->login->logged_in()===false) {
 
-            //Hard coded routes for a few pages that can be access without login
+            //Language is usually initialized by template engine. But template is not loaded on log in / install case
+            $language = $this->language;
+
+            //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
                 include '../src/resetPassword.php';
             }else if(isset($_GET['install']) === true) {
@@ -61,8 +72,6 @@ class application
             }    
         
         }else{
-
-            $this->projectService = new services\projects();
 
             //Set current/default project
             $this->projectService->setCurrentProject();
@@ -78,11 +87,9 @@ class application
 
     public function overrideThemeSettings() {
 
-        $settings = new \leantime\domain\repositories\setting();
-
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
 
-            $logoPath = $settings->getSetting("companysettings.logoPath");
+            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
 
             if ($logoPath !== false) {
 
@@ -104,7 +111,7 @@ class application
         }
 
         if(isset($_SESSION["companysettings.mainColor"]) === false) {
-            $mainColor = $settings->getSetting("companysettings.mainColor");
+            $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
             if ($mainColor !== false) {
                 $_SESSION["companysettings.mainColor"] = $mainColor;
             }else{
@@ -113,7 +120,7 @@ class application
         }
 
         if(isset($_SESSION["companysettings.sitename"]) === false) {
-            $sitename = $settings->getSetting("companysettings.sitename");
+            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
             if ($sitename !== false) {
                 $_SESSION["companysettings.sitename"] = $sitename;
             }else{
@@ -124,19 +131,16 @@ class application
         //Only run this if the user is not logged in (db should be updated/installed before user login)
         if($this->login->logged_in()===false) {
 
-            if($settings->checkIfInstalled() === false && isset($_GET['install']) === false){
+            if($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false){
                 header("Location:".BASE_URL."/install");
                 exit();
             }
 
-            $dbVersion = $settings->getSetting("db-version");
+            $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
                 header("Location:".BASE_URL."/update");
                 exit();
             }
         }
-
-
     }
-
 }

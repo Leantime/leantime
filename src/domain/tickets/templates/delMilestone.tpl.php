@@ -1,20 +1,13 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-
+$ticket = $this->get("ticket");
 ?>
 
-<h4 class="widgettitle title-light"><i class="fa fa-rocket"></i> Delete Milestone</h4>
+<h4 class="widgettitle title-light"><?php echo $this->__("subtitles.delete_milestone") ?></h4>
 
-        <?php if($this->get('info') === '') { ?>
-                    
-                        <form method="post" action="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $this->get('id') ?>">
-                            <p>Are you sure you would like to delete this Milestone?</p><br />
-                            <input type="submit" value="Yes, delete" name="del" class="button" />
-                            <a class="btn btn-secondary" href="<?=BASE_URL ?>/tickets/roadmap/">No, Cancel</a>
-                        </form>
-                        
-        <?php }else{ ?>
-                    
-                        <span class="info"><?php echo $lang[$this->get('info')] ?></span>
-                    
-        <?php } ?>
+<form method="post" action="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $ticket->id ?>">
+    <p><?php echo $this->__('text.confirm_milestone_deletion'); ?></p><br />
+    <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
+    <a class="btn btn-secondary" href="<?=BASE_URL ?>/tickets/roadmap/"><?php echo $this->__('buttons.back'); ?></a>
+</form>
+

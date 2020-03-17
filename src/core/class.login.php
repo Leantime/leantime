@@ -23,6 +23,12 @@ namespace leantime\core {
 
         /**
          * @access private
+         * @var    integer user id from DB
+         */
+        private $clientId = null;
+
+        /**
+         * @access private
          * @var    string username from db
          */
         private $username = null;
@@ -73,27 +79,9 @@ namespace leantime\core {
 
         /**
          * @access public
-         * @var    string userrole (admin, client, employee)
-         */
-        public $sysOrgs = '';
-
-        /**
-         * @access public
          * @var    integer time for cookie
          */
         public $cookieTime = 7200;
-
-        /**
-         * @access private
-         * @var    object userobject
-         */
-        private $userObj;
-
-        /**
-         * @access private
-         * @var    string Name of the table with the accounts
-         */
-        private $accountTable = 'zp_user';
 
         /**
          * @access public
@@ -119,13 +107,34 @@ namespace leantime\core {
          */
         public $hasher;
 
+
+        public static $userRoles = array(
+            10   => 'client',
+            20   => 'developer',
+            30   => 'clientManager',
+            40   => 'manager',
+            50   => 'admin'
+        );
+
+        /*
+         * Clientmanager roles
+         * ClientManagers can only add and remove a set of rules
+         */
+        public static $clientManagerRoles = array(
+            10   => 'client',
+            20   => 'developer',
+            30   => 'clientManager'
+        );
+
+        private static $instance;
+
         /**
          * __construct - getInstance of session and get sessionId and refers to login if post is set
          *
          * @param  $sessionid
          * @return boolean
          */
-        public function __construct($sessionid)
+        private function __construct($sessionid)
         {
 
             $this->db = db::getInstance();
@@ -137,20 +146,19 @@ namespace leantime\core {
 
             if (isset($_POST['login'])===true && isset($_POST['username'])===true && isset($_POST['password'])===true) {
 
-                $this->username = ($_POST['username']);
+                $this->username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
 
                 $this->password = ($_POST['password']);
 
-                if(isset($_POST['language']) === true) {
+                $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
 
-                    $_SESSION['language'] = htmlentities($_POST['language']);
+                //If login successful redirect to the correct url to avoid post on reload
+                if($this->login() === true){
 
+                    $this->checkSessions();
+                    header("Location:".$redirectUrl);
+                    exit();
                 }
-
-                $this->login();
-
-                //Check the sessions in the DB and delete sessionid if user hasn't done anything since $cookieTime
-                $this->checkSessions();
 
             }
 
@@ -190,6 +198,18 @@ namespace leantime\core {
 
         }
 
+        public static function getInstance($sessionid="")
+        {
+
+            if (self::$instance === null) {
+
+                self::$instance = new self($sessionid);
+
+            }
+
+            return self::$instance;
+        }
+
         /**
          * login - Validate POST-data with DB
          *
@@ -206,6 +226,7 @@ namespace leantime\core {
                 $_SESSION['userdata']['id'] = $this->userId;
                 $_SESSION['userdata']['name'] = $this->name;
                 $_SESSION['userdata']['mail'] = $this->mail;
+                $_SESSION['userdata']['clientId'] = $this->clientId;
                 $_SESSION['userdata']['settings'] = $this->settings;
                 $this->updateUserSession($this->session, time());
 
@@ -319,7 +340,7 @@ namespace leantime\core {
             $query = "UPDATE zp_user SET session = '' 
 				 WHERE session = :sessionid LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':sessionid', $this->session, PDO::PARAM_STR);
             $stmn->execute();
@@ -353,7 +374,7 @@ namespace leantime\core {
 
             $query = "UPDATE zp_user SET session = '' WHERE (".time()." - sessionTime) > ".$this->cookieTime." ";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->execute();
             $stmn->closeCursor();
 
@@ -387,13 +408,14 @@ namespace leantime\core {
 					role,
 					firstname AS firstname,
 					lastname AS name,
-					settings
-					
+					settings,
+					profileId,
+					clientId
 						FROM zp_user 
 			          WHERE username = :username
 			          LIMIT 1";
 
-                $stmn = $this->db->{'database'}->prepare($query);
+                $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':username', $username, PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -404,10 +426,11 @@ namespace leantime\core {
                 $this->mail = filter_var($returnValues['username'], FILTER_SANITIZE_EMAIL);
                 $this->userId = $returnValues['id'];
                 $this->settings = unserialize($returnValues['settings']);
+                $this->clientId = $returnValues['clientId'];
 
-                $user = new repositories\users();
-                $roles = $user->getRole($returnValues['role']);
-                $this->role = $roles['roleName'];
+
+                $roles = self::$userRoles[$returnValues['role']];
+                $this->role = self::$userRoles[$returnValues['role']];
 
                 return true;
             }
@@ -434,7 +457,8 @@ namespace leantime\core {
 					id =  :id 
 				LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+
+            $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':id', $this->userId, PDO::PARAM_INT);
             $stmn->bindValue(':sessionid', $sessionid, PDO::PARAM_STR);
@@ -458,7 +482,7 @@ namespace leantime\core {
 
             $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':resetLink', $link, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -514,7 +538,7 @@ namespace leantime\core {
 				LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':user', $username, PDO::PARAM_STR);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
             $stmn->bindValue(':link', $resetLink, PDO::PARAM_STR);
@@ -548,7 +572,7 @@ namespace leantime\core {
 				LIMIT 1";
 
 
-            $stmn = $this->db->{'database'}->prepare($query);
+            $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
             $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
             $stmn->bindValue(':password', password_hash($password, PASSWORD_DEFAULT), PDO::PARAM_STR);
@@ -558,6 +582,47 @@ namespace leantime\core {
 
 
 
+        }
+
+        public static function userIsAtLeast($role) {
+
+            $testKey = array_search($role, self::$userRoles);
+
+            if($role == "" || $testKey === false){
+                throw new Exception("Role not defined");
+            }
+
+            $currentUserKey = array_search($_SESSION['userdata']['role'], self::$userRoles);
+
+            if($testKey <= $currentUserKey){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+
+        public static function userHasRole ($role) {
+
+            if($role == $_SESSION['userdata']['role']){
+                return true;
+            }
+
+            return false;
+
+        }
+
+        public static function getRole () {
+
+        }
+
+        public static function getUserClientId () {
+            return $_SESSION['userdata']['clientId'];
+        }
+
+
+        public static function getUserId () {
+            return $_SESSION['userdata']['id'];
         }
 
 

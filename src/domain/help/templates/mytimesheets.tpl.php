@@ -9,9 +9,8 @@
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_time_management_30iu.svg");
                 echo"</div>";?><br />
-            <h3 class="primaryColor">The Timesheets!</h3>
-            <p>Timesheets are the place to track the actual hours worked on a To-Do.<br /> This is helpful for billing purpose but also to validate how well you are planning your tasks upfront. <br />
-            Overtime leantime can adjust due dates to account for planning discrepencies.</p>
+            <h3 class="primaryColor"><?php echo $this->__('headlines.the_timesheets') ?></h3>
+            <p><?php echo $this->__('text.my_timesheets_helper_content') ?></p>
             <br /><br />
         </div>
     </div>
@@ -21,8 +20,8 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><i class="fa fa-close"></i> Close</a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('mytimesheets')">Close and don't show this screen again</a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('mytimesheets')"><?php echo $this->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

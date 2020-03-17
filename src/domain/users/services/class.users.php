@@ -28,6 +28,16 @@ namespace leantime\domain\services {
             return $this->userRepo->getNumberOfUsers();
         }
 
+        public function getAll()
+        {
+            return $this->userRepo->getAll();
+        }
+
+        public function getUser($id)
+        {
+            return $this->userRepo->getUser($id);
+        }
+
 
         //POST
         public function setProfilePicture($photo, $id)

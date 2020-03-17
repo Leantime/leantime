@@ -40,7 +40,7 @@ $helper = $this->get('helper');
     <div class="pageicon"><span class="iconfa-time"></span></div>
             <div class="pagetitle">
                 <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-                <h1>Project Timesheets</h1>
+                <h1><?php echo $this->__("headline.project_timesheets") ?></h1>
             </div>
         </div><!--pageheader-->
         
@@ -54,12 +54,12 @@ $helper = $this->get('helper');
 
 
 <div class="headtitle" style="margin:0px; background: #eee;">
-	<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('FILTER'); ?></h4>
+	<h4 class="widgettitle title-primary"><?php echo $this->__('label.filter'); ?></h4>
 	<table class='table table-bordered' cellpadding="0" cellspacing="0" width="90%" id="">
 	<thead>
 		<tr id='toggleBody'>
-			<th><label for="dateFrom"><?php echo $language->lang_echo('DATE_FROM'); ?></label></th>
-			<th><label for="dateTo"><?php echo $language->lang_echo('DATE_TO'); ?></label></th>
+			<th><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label></th>
+			<th><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label></th>
 			<th><label></label></th>
 			<th><label></label></th>
 			<th></th>
@@ -72,9 +72,9 @@ $helper = $this->get('helper');
 			<td><input type="text" id="dateTo" class="dateTo" name="dateTo"
 				value="<?php echo $this->get('dateTo'); ?>" size="7" /></td>
 			<td>
-			<label for="userId"><?php echo $lang['EMPLOYEE']; ?></label>
+			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
 			<select name="userId" id="userId" onchange="submit();">
-				<option value="all"><?php echo $lang['ALL_EMPLOYEES']; ?></option>
+				<option value="all"><?php echo $this->__("label.all_employees"); ?></option>
 	
 				<?php foreach($this->get('employees') as $row) {
 					echo'<option value="'.$row['id'].'"';
@@ -85,26 +85,26 @@ $helper = $this->get('helper');
 				?>
 			</select>
 			<br />
-			<label for="kind">Type</label>
+			<label for="kind"><?php echo $this->__("label.type")?></label>
 			<select id="kind" name="kind" onchange="submit();">
-				<option value="all"><?php echo $lang['ALL_KINDS']; ?></option>
+				<option value="all"><?php echo $this->__("label.all_types"); ?></option>
 				<?php foreach($this->get('kind') as $row){
 					echo'<option value="'.$row.'"';
 					if($row == $this->get('actKind')) echo ' selected="selected"';
-					echo'>'.$language->lang_echo($row).'</option>';
+					echo'>'.$this->__($row).'</option>';
 	
 				}
 				?>
 	
 			</select> </td>
 			<td>
-			<label for="invEmpl"><?php echo $lang['INVOICED']; ?></label>
+			<label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label>
 			<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();" 
 				<?php 
 				if($this->get('invEmpl') == '1') echo ' checked="checked"';
 				?>
 			/><br />
-			<label for="invEmpl"><?php echo $lang['INVOICED_COMP']; ?></label>
+			<label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
 			<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();" 
 				<?php 
 				if($this->get('invComp') == '1') echo ' checked="checked"';
@@ -112,12 +112,12 @@ $helper = $this->get('helper');
 			/>
 			</td>
 			<td>
-				<input type="submit" value="Search" class="reload" />
+				<input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
 			</td>
 		</tr>
 	</tbody>
 </table>
-<h4 class="widgettitle title-primary"><?php echo $language->lang_echo('ALL_TIMESHEETS'); ?></h4>
+<h4 class="widgettitle title-primary"><?php echo $this->__('headline.all_timesheets'); ?></h4>
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="dyntableX">
 	<colgroup>
@@ -137,18 +137,18 @@ $helper = $this->get('helper');
 	</colgroup>
 	<thead>
 		<tr>
-			<th><?php echo $language->lang_echo('DATE'); ?></th>
-			<th><?php echo $language->lang_echo('HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('BILLABLE_HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('PLANHOURS'); ?></th>
-			<th><?php echo $language->lang_echo('DIFFERENCE_HOURS'); ?></th>
-			<th><?php echo $language->lang_echo('TICKET'); ?></th>
-			<th><?php echo $language->lang_echo('PROJECT'); ?></th>
-			<th><?php echo $language->lang_echo('EMPLOYEE'); ?></th>
-			<th>Type</th>
-			<th><?php echo $language->lang_echo('DESCRIPTION'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED'); ?></th>
-			<th><?php echo $language->lang_echo('INVOICED_COMP'); ?></th>
+			<th><?php echo $this->__('label.date'); ?></th>
+			<th><?php echo $this->__('label.hours'); ?></th>
+			<th><?php echo $this->__('label.billable_hours'); ?></th>
+			<th><?php echo $this->__('label.plan_hours'); ?></th>
+			<th><?php echo $this->__('label.difference'); ?></th>
+			<th><?php echo $this->__('label.ticket'); ?></th>
+			<th><?php echo $this->__('label.project'); ?></th>
+			<th><?php echo $this->__('label.employee'); ?></th>
+			<th><?php echo $this->__("label.type")?></th>
+			<th><?php echo $this->__('label.description'); ?></th>
+			<th><?php echo $this->__('label.invoiced'); ?></th>
+			<th><?php echo $this->__('label.invoiced_comp'); ?></th>
 		</tr>
 		<tr class='filter'>
 
@@ -193,7 +193,7 @@ $helper = $this->get('helper');
 			<td><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
 			<td><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
 			<td><?php echo $row['firstname']; ?>, <?php echo $row['lastname']; ?></td>
-			<td><?php echo $language->lang_echo($row['kind']); ?></td>
+			<td><?php echo $this->__($row['kind']); ?></td>
 			<td><?php echo $row['description']; ?></td>
 			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedEmplDate'], 2); ?>
 			<?php }else{ ?> <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
@@ -205,21 +205,21 @@ $helper = $this->get('helper');
 		<?php } ?>
 		<?php if(count($this->get('allTimesheets')) === 0){ ?>
 		<tr>
-			<td colspan="13"><?php echo $lang['NO_RESULTS']; ?></td>
+			<td colspan="13"><?php echo $this->__("label.no_results"); ?></td>
 		</tr>
 
 		<?php } ?>
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="1"><strong>Total Hours:</strong></td>
+			<td colspan="1"><strong><?php echo $this->__("label.total_hours")?></strong></td>
 			<td colspan="1"><strong><?php echo $sum; ?></strong></td>
 			<td colspan="7"><strong><?php echo $billableSum; ?></strong></td>
 			<td>
-				<input type="submit" class="button" value="<?php echo $lang['SAVE']; ?>" name="saveInvoice" />
+				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
 			</td>
-			<td><input type="checkbox" id="checkAllEmpl" />↑ Select all</td>
-			<td><input type="checkbox"  id="checkAllComp" />↑ Select all</td>
+			<td><input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
+			<td><input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?></td>
 		</tr>
 	</tfoot>
 </table>

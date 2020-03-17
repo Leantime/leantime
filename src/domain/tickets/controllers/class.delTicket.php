@@ -3,51 +3,74 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class delTicket
     {
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
+        private $ticketService;
+        private $tpl;
+        private $language;
+
+        public function __construct()
+        {
+            $this->tpl = new core\template();
+            $this->language = new core\language();
+            $this->ticketService = new services\tickets();
+
+        }
+
+
+        public function get()
         {
 
-            $tpl = new core\template();
-            $ticketRepo = new repositories\tickets();
-
             //Only admins
-            if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' || $_SESSION['userdata']['role'] == 'developer') {
+            if(core\login::userIsAtLeast("developer")) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
-                $msgKey = '';
-
-                if (isset($_POST['del'])) {
-
-
-                    $ticketRepo->delTicket($id);
-
-                    $msgKey = 'TICKET_DELETED';
-
-                }
-
-                $tpl->assign('info', $msgKey);
-                $tpl->assign('ticket', $ticketRepo->getTicket($id));
-
-                $tpl->display('tickets.delTicket');
+                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                $this->tpl->display('tickets.delTicket');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('general.error');
 
             }
 
+        }
+
+        public function post($params) {
+
+            if (isset($_GET['id'])) {
+                $id = (int)($_GET['id']);
+            }
+
+            //Only admins
+            if(core\login::userIsAtLeast("developer")) {
+
+                if (isset($params['del'])) {
+
+                    $result = $this->ticketService->deleteTicket($id);
+
+                    if($result === true) {
+                        $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");
+                        $this->tpl->redirect($_SESSION['lastPage']);
+                    }else{
+                        $this->tpl->setNotification($this->language->__($result['msg']), "error");
+                        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                        $this->tpl->display('tickets.delTicket');
+                    }
+
+                }else{
+                    $this->tpl->display('general.error');
+                }
+
+            }else{
+                $this->tpl->display('general.error');
+            }
         }
 
     }

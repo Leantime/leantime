@@ -24,11 +24,10 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
             $user = new repositories\users();
+            $language = new core\language();
 
             //Only admins
-            if ($user->isAdmin($_SESSION['userdata']['id'])) {
-
-                $msgKey = '';
+            if(core\login::userIsAtLeast("manager")) {
 
                 $values = array(
                     'name' => '',
@@ -60,23 +59,23 @@ namespace leantime\domain\controllers {
                         if ($clientRepo->isClient($values) !== true) {
 
                             $id = $clientRepo->addClient($values);
-                            $tpl->setNotification('ADD_CLIENT_SUCCESS', 'success');
+                            $tpl->setNotification($language->__('notification.client_added_successfully'), 'success');
                             $tpl->redirect(BASE_URL."/clients/showClient/".$id);
 
                         } else {
 
-                            $tpl->setNotification('CLIENT_EXISTS', 'error');
+                            $tpl->setNotification($language->__('notification.client_exists_already'), 'error');
                         }
                     } else {
 
-                        $tpl->setNotification('NO_NAME', 'error');
+                        $tpl->setNotification($language->__('notification.client_name_not_specified'), 'error');
                     }
-
 
                 }
 
                 $tpl->assign('values', $values);
                 $tpl->display('clients.newClient');
+
             } else {
 
                 $tpl->display('general.error');

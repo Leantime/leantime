@@ -481,4 +481,4 @@
 		ColorPickerShow: ColorPicker.showPicker,
 		ColorPickerSetColor: ColorPicker.setColor
 	});
-})(jQuery)
+})(jQuery);

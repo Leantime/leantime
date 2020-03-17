@@ -1,0 +1,128 @@
+
+.nyroModalCont, .nyroModalBg {
+	z-index: 100;
+	overflow-x: hidden !important;
+	padding: 30px 40px 20px 35px
+}
+
+.nyroModalBg {
+	position: fixed;
+	overflow: hidden;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: #000;
+	opacity: 0.7;
+}
+.nmReposition {
+	position: absolute;
+}
+.nyroModalCloseButton {
+	top: -13px;
+	right: -13px;
+	width: 12px;
+	height: 12px;
+	text-indent: -9999em;
+	background: url(../js/libs/jquery.nyroModal/img/close.gif);
+}
+.nyroModalTitle {
+	top: -26px;
+	left: 0;
+	margin: 0;
+    font-size: 1.1em;
+	color: #ddd;
+}
+.nyroModalCont {
+	position: absolute;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
+	background: #fff;
+	border-radius:5px;
+}
+.nyroModalCont iframe {
+	width: 600px;
+	height: 400px;
+}
+.nyroModalError {
+	border: 4px solid red;
+	color: red;
+	width: 250px;
+	height: 250px;
+}
+.nyroModalError div {
+	min-width: 0;
+	min-height: 0;
+	padding: 10px;
+}
+.nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
+	position: relative;
+	min-height: 100px;
+	min-width: 250px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+.nyroModalImage, .nyroModalSwf, .nyroModalIframe, .nyroModalIframeForm {
+	position: relative;
+	overflow: hidden;
+}
+.nyroModalImage img {
+    vertical-align: top;
+}
+.nyroModalHidden {
+	left: -9999em;
+	top: -9999em;
+}
+.nyroModalLoad {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	background: #fff url(../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
+	padding: 0;
+	background-size: 100px 100px;
+}
+.nyroModalPrev, .nyroModalNext {
+	outline: none;
+	position: absolute;
+	top: 0;
+	height: 60%;
+	width: 150px;
+	min-height: 50px;
+	max-height: 300px;
+	cursor: pointer;
+	text-indent: -9999em;
+	background: transparent url('data:image/gif;base64,AAAA') left 20% no-repeat;
+}
+.nyroModalImage .nyroModalPrev, .nyroModalImage .nyroModalNext {
+	height: 100%;
+	width: 40%;
+	max-height: none;
+}
+.nyroModalPrev {
+	left: 0;
+}
+.nyroModalPrev:hover {
+	background-image: url(../js/libs/jquery.nyroModal/img/prev.gif);
+}
+.nyroModalNext {
+	right: 0;
+	background-position: right 20%;
+}
+.nyroModalNext:hover {
+	background-position: right 20%;
+	background-image: url(../js/libs/jquery.nyroModal/img/next.gif);
+}
+
+.nyroModalCont textarea,
+.nyroModalCont input[type="text"],
+.nyroModalCont select {
+	width:100%;
+}
+
+.nyroModalCont select {
+	max-width:50%;
+	height: 28px;
+}
+
+.nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
+
+}

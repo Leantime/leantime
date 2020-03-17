@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class showBoards
     {
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $retroRepo = new repositories\retrospectives();
+            $projectService = new services\projects();
 
             $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
 
@@ -145,6 +147,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $retroRepo->getCanvasItemsById($currentCanvasId));
             $tpl->assign('canvasLabels', $retroRepo->canvasTypes);
+            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
             if (isset($_GET["raw"]) === false) {
                 $tpl->display('retrospectives.showBoards');

@@ -1,0 +1,221 @@
+.dataTable {
+    margin-bottom: 0;
+}
+
+.dataTable th, .dataTable td {
+    font-size: 12px;
+}
+
+.dataTables_wrapper {
+    position: relative;
+}
+
+.dataTables_length, .dataTables_info {
+    background: #eee;
+    padding: 10px;
+    font-size: 11px;
+    border: 1px solid #ddd;
+}
+
+.dataTables_length {
+    border-bottom: 0;
+    padding-bottom: 20px;
+}
+
+.dataTables_info {
+    border-top: 0;
+}
+
+.dataTables_filter {
+    position: absolute;
+    margin-top: -45px;
+    right: 10px;
+}
+
+.dataTables_filter input {
+    width: 150px;
+    margin: 0 0 0 10px;
+}
+
+.dataTables_paginate {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
+.dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    background: #eee;
+    cursor: pointer;
+}
+
+.dataTables_paginate span:hover {
+    background-color: #ddd;
+}
+
+.dataTables_paginate .first {
+    border-left: 1px solid #ccc;
+}
+
+.dataTables_paginate .paginate_active {
+    background: #fff;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: #eee;
+}
+
+.dataTables_paginate .paginate_button_disabled {
+    cursor: default;
+    color: #ccc;
+    background: #eee;
+}
+
+.dataTables_paginate a {
+    color: #666;
+    font-size:12px;
+}
+
+.dataTables_paginate a:hover {
+    text-decoration: none;
+}
+
+.dataTables_length select {
+    width: auto !important;
+    margin: 0;
+}
+
+.dataTables_scrollHead {
+    background: #333;
+}
+
+.dataTables_scrollHead table {
+    border-bottom: 0;
+}
+
+.dataTable thead th.sorting,
+.dataTable thead th.sorting_asc,
+.dataTable thead th.sorting_desc {
+    cursor: pointer;
+
+}
+
+.dataTable thead th.sorting:hover,
+.dataTable thead th.sorting_asc:hover,
+.dataTable thead th.sorting_desc:hover {
+    background: #555;
+}
+
+.dataTable thead th.sorting:after {
+    font-family: FontAwesome;
+    content: "\00a0\00a0\f0dc";
+}
+
+.dataTable thead th.sorting_asc:after {
+    font-family: FontAwesome;
+    content: "\00a0\00a0\f0de";
+}
+
+.dataTable thead th.sorting_desc:after {
+    font-family: FontAwesome;
+
+    content: "\00a0\00a0\f0dd";
+
+}
+
+.maincontentinner .table th,
+.maincontentinner .table.table-bordered th,
+.maincontentinner .table tr.dtrg-group td{
+    font-weight: normal;
+    text-transform:none;
+    font-size: 14px;
+    border-top: 0;
+    color: #fff;
+    font-weight: normal;
+    text-rendering: optimizelegibility;
+    padding: 12px 14px;
+    border:0px;
+    border-right:1px solid #ccc;
+    border-color:#ccc;
+    line-height: 17px;
+}
+
+
+.maincontentinner .table th.sorting_desc,
+.maincontentinner .table th.sorting_asc {
+    background:#555;
+}
+
+
+.maincontentinner .table tr.dtrg-group td {
+    background:#555;
+    color: #fff;
+    padding: 6px 14px;
+}
+
+.maincontentinner .table {
+    margin-top:5px;
+}
+
+.maincontentinner .table td {
+    padding:3px 5px 1px 10px;
+    vertical-align: middle;
+    min-height:17px;
+}
+
+.maincontentinner .table td input {
+    margin-bottom:0px;
+}
+
+.maincontentinner .table td .ticketDropdown {
+    margin-top:2px;
+}
+
+.maincontentinner .table td .small-input {
+    width:40px;
+}
+
+.maincontentinner .dataTables_wrapper  .bottom {
+    position:relative;
+    background: #eee;
+    border: 1px solid #ddd;
+    height:60px;
+}
+
+.maincontentinner .dataTables_wrapper  .dataTables_info {
+    position:absolute;
+    left:0px;
+    top:10px;
+    border:0px;
+    font-size:12px;
+}
+
+.maincontentinner .dataTables_wrapper  .dataTables_length{
+    position:absolute;
+    left:50%;
+    top:10px;
+    margin-left:-65px;
+    border:0px;
+    padding:5px;
+    font-size:12px;
+}
+
+.maincontentinner .dataTables_wrapper .dataTables_paginate{
+    position:absolute;
+    right:0px;
+    top:10px;
+    border:0px;
+    padding:10px;
+    font-size:12px;
+}
+
+.maincontentinner .table tr.dt-rowReorder-moving {
+    outline:2px solid #333;
+}
+
+.paginate_button.current {
+    color:#fff;
+}

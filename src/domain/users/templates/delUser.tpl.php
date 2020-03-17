@@ -4,36 +4,28 @@ $user = $this->get('user');
 ?>
 
 <div class="pageheader">
-           
-            
-            <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
-            <div class="pagetitle">
-                <h5>Administration</h5>
-                <h1><?php printf("".$language->lang_echo('DELETE_USER')."", $user['firstname'], $user['lastname']); ?></h1>
-            </div>
-        </div><!--pageheader-->
+    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('label.administration') ?></h5>
+        <h1><h1><?php echo $this->__('headlines.delete_user'); ?></h1></h1>
+    </div>
+</div><!--pageheader-->
         
-        <div class="maincontent">
-            <div class="maincontentinner">
-                
-                <h4 class="widget widgettitle"><?php echo $lang['CONFIRM_DELETE']; ?></h4>
-                <div class="widgetcontent">
-                    
+<div class="maincontent">
+    <div class="maincontentinner">
+
+        <?php echo $this->displayNotification() ?>
+
+        <h4 class="widget widgettitle"><?php echo $this->__("subtitles.delete"); ?></h4>
+        <div class="widgetcontent">
+
+            <form method="post">
+                <p><?php echo $this->__('text.confirm_user_deletion'); ?></p><br />
+                <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
+                <a class="btn btn-primary" href="<?=BASE_URL ?>/users/showAll"><?php echo $this->__('buttons.back'); ?></a>
+            </form>
 
 
-<?php if($this->get('msg') === '') { ?>
-
-<form method="post" accept-charset="utf-8">
-<fieldset><legend><?php echo $language->lang_echo('CONFIRM_DELETE'); ?></legend>
-<p><?php echo $language->lang_echo('CONFIRM_DELETE_QUE'); ?><br />
-</p>
-<input type="submit" value="<?php echo $language->lang_echo('DELETE'); ?>" name="del"
-    class="button"></fieldset>
-</form>
-
-<?php }else{ ?>
-
-<span class="info"><?php echo $language->lang_echo($this->get('msg')); ?></span>
-
-<?php } ?>
-</div></div>
+        </div>
+    </div>
+</div>

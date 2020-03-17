@@ -1,3 +1,5 @@
+<?php defined('RESTRICTED') or die('Restricted access'); ?>
+
 <?php
     $currentLink = $this->get('current');
     $module = '';
@@ -22,7 +24,7 @@
 
                     <ul class="dropdown-menu projectselector">
                         <li class="intro">
-                            <span class="sub">Current Project</span><br />
+                            <span class="sub"><?=$this->__("menu.current_project") ?></span><br />
                             <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
                         </li>
 
@@ -36,59 +38,54 @@
                                     $lastClient = $projectRow['clientName'];
                                     echo "<li class='nav-header border openToggle' onclick='leantime.menuController.toggleClientList(".$projectRow['clientId'].", this)'>" . $this->escape($projectRow['clientName']) . " <i class=\"fa fa-caret-down\"></i></li>";
                                 }
-
-
                                 echo "<li class='client_".$projectRow['clientId']."";
                                     if ($this->get('currentProject') == $projectRow["id"]) { echo " active "; }
                                 echo"'><a href='".BASE_URL."/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
-
-
                             }
                         }else{
-                            echo "<li class='nav-header border'></li><li><span class='info'>You don't have any other projects</span></li>";
+                            echo "<li class='nav-header border'></li><li><span class='info'>".$this->__("menu.you_dont_have_projects")."</span></li>";
                         }
                         ?>
-                        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
+                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
                             <li class='nav-header border'></li>
-                            <li><a href="<?=BASE_URL ?>/projects/newProject/"><span class="fa fa-plus"></span> Create new Project</a></li>
-                            <li><a href="<?=BASE_URL ?>/projects/showAll"><span class="fa fa-suitcase"></span> View All Projects</a></li>
-                            <li><a href="<?=BASE_URL ?>/clients/showAll"><span class="fa fa-address-book"></span> View All Clients/Products</a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/newProject/"><?=$this->__("menu.create_project") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/showAll"><?=$this->__("menu.view_all_projects") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/clients/showAll"><?=$this->__("menu.view_all_clients") ?></a></li>
                         <?php } ?>
                     </ul>
                 </form>
             </div>
         </li>
-        <li class="dropdown">
-            <ul style='display:block'>
-                <li <?php if($module == 'dashboard') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('dashboard.show', '<span class="fa fa-home"></span>'.$language->lang_echo('Project Dashboard', false).'') ?>
+    <li class="dropdown">
+        <ul style='display:block'>
+            <li <?php if($module == 'dashboard') echo" class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
+            </li>
+            <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll')) echo"class=' active '"; ?>>
+                <a href="<?=BASE_URL ?>/tickets/showKanban"><?=$this->__("menu.todos") ?></a>
+            </li>
+            <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>
+            </li>
+            <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
+            </li>
+            <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
+            </li>
+            <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/ideas/showBoards"><?=$this->__("menu.ideas") ?></a>
+            </li>
+            <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
+                <a href="<?=BASE_URL ?>/retrospectives/showBoards"><?=$this->__("menu.retrospectives") ?></a>
+            </li>
+            <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
                 </li>
-                <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll')) echo"class=' active '"; ?>>
-                    <?php echo $this->displayLink('tickets.showKanban', '<span class="fa fa-thumb-tack"></span>'.$language->lang_echo('To-Dos', false).'') ?>
-                </li>
-                <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('tickets.roadmap', '<span class="fa fa-sliders" ></span>'.$language->lang_echo('Milestones', false).'') ?>
-                </li>
-                <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('timesheets.showAll', '<span class="fa fa-clock-o"></span>'.$language->lang_echo('Timesheets', false).'') ?>
-                </li>
-                <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
-                    <?php echo $this->displayLink('leancanvas.simpleCanvas', '<span class="fas fa-flask"></span>'.$language->lang_echo('Research', false).'') ?>
-                </li>
-                <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
-                    <?php echo $this->displayLink('ideas.showBoards', '<span class="far fa-lightbulb"></span>'.$language->lang_echo('Ideas', false).'') ?>
-                </li>
-                <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
-                    <?php echo $this->displayLink('retrospectives.showBoards', '<span class="far fa-hand-spock"></span> Retrospectives'); ?>
-                </li>
-                <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-                    <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>
-                        <?php echo $this->displayLink('projects.showProject', '<span class="fa fa-cog"></span>Project Settings', array("id"=>$_SESSION['currentProject'])) ?>
-                    </li>
-                <?php } ?>
-
-            </ul>
-        </li>
+            <?php } ?>
+        </ul>
+    </li>
     <?php } ?>
 </ul>
 

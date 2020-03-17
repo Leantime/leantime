@@ -1,0 +1,32 @@
+[16-Mar-2020 23:34:47 America/Los_Angeles] PHP Notice:  Undefined variable: language in D:\xampp\htdocs\leantimeos\src\content.php on line 2
+[16-Mar-2020 23:34:47 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function __() on null in D:\xampp\htdocs\leantimeos\src\content.php:2
+Stack trace:
+#0 D:\xampp\htdocs\leantimeos\src\core\class.template.php(143): include()
+#1 D:\xampp\htdocs\leantimeos\src\domain\dashboard\controllers\class.show.php(82): leantime\core\template->display('dashboard.show')
+#2 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(164): leantime\domain\controllers\show->get(Array)
+#3 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('dashboard.show')
+#4 D:\xampp\htdocs\leantimeos\src\core\class.application.php(80): leantime\core\frontcontroller->run()
+#5 D:\xampp\htdocs\leantimeos\public\index.php(40): leantime\core\application->start()
+#6 {main}
+  thrown in D:\xampp\htdocs\leantimeos\src\content.php on line 2
+[16-Mar-2020 23:34:51 America/Los_Angeles] PHP Notice:  Undefined variable: language in D:\xampp\htdocs\leantimeos\src\content.php on line 2
+[16-Mar-2020 23:34:51 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function __() on null in D:\xampp\htdocs\leantimeos\src\content.php:2
+Stack trace:
+#0 D:\xampp\htdocs\leantimeos\src\core\class.template.php(143): include()
+#1 D:\xampp\htdocs\leantimeos\src\domain\dashboard\controllers\class.show.php(82): leantime\core\template->display('dashboard.show')
+#2 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(164): leantime\domain\controllers\show->get(Array)
+#3 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('dashboard.show')
+#4 D:\xampp\htdocs\leantimeos\src\core\class.application.php(80): leantime\core\frontcontroller->run()
+#5 D:\xampp\htdocs\leantimeos\public\index.php(40): leantime\core\application->start()
+#6 {main}
+  thrown in D:\xampp\htdocs\leantimeos\src\content.php on line 2
+[16-Mar-2020 23:38:29 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:38:34 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:38:51 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:38:54 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:38:56 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:40:31 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:41:28 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:43:35 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:43:47 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314
+[16-Mar-2020 23:44:43 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\dashboard\templates\show.tpl.php on line 314

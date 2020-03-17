@@ -107,41 +107,6 @@ class db
 
     }
 
-    /**
-     * dbQuery - fires SQL-query and checks results
-     *
-     * @access public
-     * @param  $sql SQL-String
-     * @return object returns result-object
-     */
-    public function dbQuery($sql)
-    {
-
-        try{
-
-            $this->result = $this->database->query($sql);
-
-        }catch(Exception $e){
-            
-            echo 'Error: '.nl2br($sql).'';
-            echo $e->getMessage();
-
-        }
-
-        $this->counter=null;
-
-        if(empty($this->result)) {
-
-            throw new Exception('SQL-Error: Failed String: '.nl2br($sql).'<br /><br />MySQL says: '.mysql_error().'');
-
-            return false;
-
-        }else{
-
-            return $this;
-
-        }
-    }
 
     /**
      * Count - True counter of results

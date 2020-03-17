@@ -1,74 +1,23 @@
 <?php
-
-defined('RESTRICTED') or die('Restricted access');
-$project = $this->get('project');
-$bookedHours = $this->get('bookedHours');
-$helper = $this->get('helper');
-$state = $this->get('state');
+    defined('RESTRICTED') or die('Restricted access');
+    $project = $this->get('project');
+    $bookedHours = $this->get('bookedHours');
+    $helper = $this->get('helper');
+    $state = $this->get('state');
 ?>
-
-
-<script type="text/javascript">
-    jQuery(document).ready(function() { 
-             toggleCommentBoxes(0);
-         
-            jQuery('.tabbedwidget').tabs();
-            
-/*            jQuery('#commentList').pager('div');*/
-             
-            jQuery("#progressbar").progressbar({
-                value: <?php echo $this->get('projectPercentage') ?>
-            });
-        
-            jQuery("#accordion").accordion({
-                autoHeight: false,
-                navigation: true
-            });
-
-            jQuery("#dateFrom, #dateTo").datepicker({
-                
-                dateFormat: 'dd.mm.yy',
-                dayNames: [<?php echo''.$lang['DAYNAMES'].'' ?>],
-                dayNamesMin:  [<?php echo''.$lang['DAYNAMES_MIN'].'' ?>],
-                monthNames: [<?php echo''.$lang['MONTHS'].'' ?>]
-            });
-
-
-            <?php
-            if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
-                leantime.helperController.showHelperModal("projectSuccess");
-            <?php } ?>
-
-        } 
-    ); 
-
-function toggleCommentBoxes(id){
-        
-        jQuery('.commentBox').hide('fast',function(){
-
-            jQuery('.commentBox textarea').remove(); 
-
-            jQuery('#comment'+id+'').prepend('<textarea rows="5" cols="50" name="text"></textarea>');
-                
-        }); 
-
-        jQuery('#comment'+id+'').show('slow');        
-
-        
-    }
-</script>
 
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> Go Back</a>
+        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
     </div>
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
-            <div class="pagetitle">
-                <h5>Administration</h5>
-                <h1><?php echo $language->lang_echo('PROJECT') ?> <?php echo $project['name']; ?></h1>
-            </div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('label.administration') ?></h5>
+        <h1><?php echo sprintf($this->__('headline.project'),$project['name']); ?>
+        </h1>
+    </div>
 </div><!--pageheader-->
         
         <div class="maincontent">
@@ -76,13 +25,13 @@ function toggleCommentBoxes(id){
 
                 <?php echo $this->displayNotification() ?>
 
-                <div class="tabbedwidget tab-primary">
+                <div class="tabbedwidget tab-primary projectTabs">
 
                 <ul>
-                    <li><a href="#projectdetails"><?php echo $language->lang_echo('PROJECT_DETAILS'); ?></a></li>
-                    <li><a href="#integrations">Integrations</a></li>
-                    <li><a href="#files"><?php echo $language->lang_echo('FILES'); ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
-                    <li><a href="#comment">Discussion (<?php echo $this->get('numComments'); ?>)</a></li>
+                    <li><a href="#projectdetails"><?php echo $this->__('tabs.projectdetails'); ?></a></li>
+                    <li><a href="#integrations"><?php echo $this->__('tabs.Integrations'); ?></a></li>
+                    <li><a href="#files"><?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
+                    <li><a href="#comment"><?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
 
                 </ul>
 
@@ -104,16 +53,16 @@ function toggleCommentBoxes(id){
                                                 <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                             </div>
                                             <span class="btn btn-file">
-                                                <span class="fileupload-new">Select file</span>
-                                                <span class='fileupload-exists'>Change</span>
+                                                <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>
+                                                <span class='fileupload-exists'><?=$this->__('label.change'); ?></span>
                                                 <input type='file' name='file' />
                                             </span>
-                                            <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+                                            <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?=$this->__('buttons.remove'); ?></a>
                                         </div>
                                       </div>
                                    </div>
 
-                                   <input type="submit" name="upload" class="button" value="<?php echo $language->lang_echo('UPLOAD'); ?>" />
+                                   <input type="submit" name="upload" class="button" value="<?=$this->__('buttons.upload'); ?>" />
 
                                 </form>
                     </div>
@@ -152,7 +101,7 @@ function toggleCommentBoxes(id){
                     </form>
 
                 </div>
-                
+
                     <div id="integrations">
 
                         <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
@@ -161,16 +110,14 @@ function toggleCommentBoxes(id){
                                 <img src="<?=BASE_URL ?>/images/mattermost-logoHorizontal.png" width="200" />
                             </div>
                             <div class="col-md-5">
-                                This integration will post update notifications to the channel of your choice.<br />
-                                Follow the instructions <a href="https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook" target="_blank">here to get an Incoming Webhook URL</a> from Mattermost. Then paste the link into the form to the right and click Save.
-
+                                <?=$this->__('text.mattermost_instructions'); ?>
                             </div>
                             <div class="col-md-4">
-                                <strong>Webhook URL</strong><br />
+                                <strong><?=$this->__('label.webhook_url'); ?></strong><br />
                                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                                     <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $this->get("mattermostWebhookURL"); ?>"/>
                                     <br />
-                                    <input type="submit" value="Save" name="mattermostSave" />
+                                    <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="mattermostSave" />
                                 </form>
                             </div>
                         </div>
@@ -182,15 +129,14 @@ function toggleCommentBoxes(id){
                             </div>
 
                             <div class="col-md-5">
-                                This integration will post update notifications to the channel of your choice.<br />
-                                Follow the instructions <a href="https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack" target="_blank">here to get an Incoming Webhook URL</a> from Slack. Then paste the link into the form to the right and click Save.
+                                <?=$this->__('text.slack_instructions'); ?>
                             </div>
                             <div class="col-md-4">
-                                <strong>Webhook URL</strong><br />
+                                <strong><?=$this->__('label.webhook_url'); ?></strong><br />
                                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                                     <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $this->get("slackWebhookURL"); ?>"/>
                                     <br />
-                                    <input type="submit" value="Save" name="slackSave" />
+                                    <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="slackSave" />
                                 </form>
                             </div>
                         </div>
@@ -202,28 +148,27 @@ function toggleCommentBoxes(id){
                             </div>
 
                             <div class="col-md-5">
-                                This integration will post update notifications to the stream and topic of your choice.<br />
-                                Follow the instructions <a href="https://zulipchat.com/help/add-a-bot-or-integration" target="_blank">here to create a new Bot</a>. Then paste the information into the form to the right and click Save.
+                                <?=$this->__('text.zulip_instructions'); ?>
                             </div>
                             <div class="col-md-4">
 
                                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                                    <strong>Base URL</strong><br />
-                                    <input type="text" name="zulipURL" id="zulipURL" placeholder="Example: https://company.zulipchat.com" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
+                                    <strong><?=$this->__('label.base_url'); ?></strong><br />
+                                    <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$this->__('input.placeholders.zulip_url'); ?>" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
                                     <br />
-                                    <strong>Bot Email</strong><br />
+                                    <strong><?=$this->__('label.bot_email'); ?></strong><br />
                                     <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $this->get("zulipHook")['zulipEmail']; ?>"/>
                                     <br />
-                                    <strong>Bot Key</strong><br />
+                                    <strong><?=$this->__('label.botkey'); ?></strong><br />
                                     <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $this->get("zulipHook")['zulipBotKey']; ?>"/>
                                     <br />
-                                    <strong>Stream</strong><br />
+                                    <strong><?=$this->__('label.stream'); ?></strong><br />
                                     <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $this->get("zulipHook")['zulipStream']; ?>"/>
                                     <br />
-                                    <strong>Topic</strong><br />
+                                    <strong><?=$this->__('label.topic'); ?></strong><br />
                                     <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $this->get("zulipHook")['zulipTopic']; ?>"/>
                                     <br />
-                                    <input type="submit" value="Save" name="zulipSave" />
+                                    <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="zulipSave" />
                                 </form>
                             </div>
                         </div>
@@ -233,9 +178,19 @@ function toggleCommentBoxes(id){
         </div>
 
 <script type='text/javascript'>
+
     jQuery(document).ready(function() {
         <?php if(isset($_GET['integrationSuccess'])) {?>
-            window.history.pushState({},document.title, '/projects/showProject/<?php echo (int)$project['id']; ?>');
+            window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
+        <?php } ?>
+
+        leantime.projectsController.initProjectTabs();
+        leantime.projectsController.initProjectsEditor();
+
+        <?php
+        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
+        leantime.helperController.showHelperModal("projectSuccess");
         <?php } ?>
     });
+
 </script>

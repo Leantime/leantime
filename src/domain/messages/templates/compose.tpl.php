@@ -1,6 +1,6 @@
 <?php if($this->get('msg') != '') { ?>
 <div class="fail"> 
-    <span class="info"><?php echo $language->lang_echo($this->get('info')) ?></span> 
+    <span class="info"><?php echo $this->__($this->get('info')) ?></span>
 </div>
 <?php } ?>
 
@@ -13,9 +13,9 @@
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
      <div class="pagetitle">
     
-        <h5><?php echo $language->lang_echo('OVERVIEW'); ?></h5>
+        <h5><?php echo $this->__('OVERVIEW'); ?></h5>
     
-        <h1><?php echo $language->lang_echo('COMPOSE'); ?></h1>
+        <h1><?php echo $this->__('COMPOSE'); ?></h1>
     
     </div>
 </div><!--pageheader-->
@@ -43,7 +43,7 @@
                 
                 <p class="stdformbutton">
                     <input type='submit' value='Send' name='send' />
-                    <input type="reset" class="btn" value="<?php echo $language->lang_echo('RESET_BUTTON') ?>" />
+                    <input type="reset" class="btn" value="<?php echo $this->__('RESET_BUTTON') ?>" />
                 </p>
                 
             </form>

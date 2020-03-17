@@ -16,7 +16,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
     <div class="pageicon"><span class="fa fa-sliders"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1>Milestones</h1>
+        <h1><?=$this->__("headline.milestones"); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -28,15 +28,31 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <div class="row">
             <div class="col-md-6">
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><span class="fa fa-plus"></span> Add Milestone</a>
+                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
             </div>
-            <div class="col-md-6" style="text-align:right;">
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <div class="btn-group dropRight">
 
-                <div class="btn-group mt-1 mx-auto" role="group">
-                    <button type="button" class="btn btn-sm btn-secondary <?php if($roadmapView == 'Day') echo "active";?>">Day</button>
-                    <button type="button" class="btn btn-sm btn-secondary <?php if($roadmapView == 'Week') echo "active";?>">Week</button>
-                    <button type="button" class="btn btn-sm btn-secondary <?php if($roadmapView == 'Month') echo "active";?>">Month</button>
+                        <?php
+                            $currentView = "";
+                            if($roadmapView == 'Day') {
+                                $currentView = $this->__("buttons.day");
+                            }elseif($roadmapView == 'Week') {
+                                $currentView = $this->__("buttons.week");
+                            }elseif($roadmapView == 'Month') {
+                                $currentView = $this->__("buttons.month");
+                            }
+                        ?>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?> <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="ganttTimeControl">
+                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if($roadmapView == 'Day') echo "active";?>"> <?=$this->__("buttons.day"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if($roadmapView == 'Week') echo "active";?>"><?=$this->__("buttons.week"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if($roadmapView == 'Month') echo "active";?>"><?=$this->__("buttons.month"); ?></a></li>
+                        </ul>
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -46,21 +62,21 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             echo"<div style='width:50%' class='svgContainer'>";
             echo file_get_contents(ROOT."/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
-echo"
-<h4>You don't have any milestones yet<br/>
-
-<br />
-<a href='".BASE_URL."/tickets/editMilestone' class=\"milestoneModal addCanvasLink btn btn-primary\"><span class=\"fa fa-map\"></span> Add a Milestone</a></h4></div>";
+            echo"
+            <h4>".$this->__("headlines.no_milestones")."<br/>
+            
+            <br />
+            <a href=\"".BASE_URL."/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">".$this->__("links.add_milestone")."</a></h4></div>";
 
         }
         ?>
-        <div class="gantt-container" style="overflow: auto;">
+        <div class="gantt-container" style="height:100%; overflow: auto;">
             <svg id="gantt"></svg>
         </div>
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><br /><em>Once you are done adding your Milestone you can jump into your To-Dos</em> <br /><a href="<?=BASE_URL ?>/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> Backlog</a></p>
+            <p class="align-center"><?=$this->__("headlines.no_milestones") ?><br /></em> <br /><a href="<?=BASE_URL ?>/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> <?=$this->__("links.backlog") ?></a></p>
         <?php } ?>
 
     </div>
@@ -76,21 +92,21 @@ jQuery(document).ready(function(){
     } ?>
 
     <?php if(isset($_GET['showMilestoneModal'])) {
-    if($_GET['showMilestoneModal'] == "") {
-        $modalUrl = "";
-    }else{
-        $modalUrl = "/".(int)$_GET['showMilestoneModal'];
-    }
-    ?>
 
-    leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL?>/tickets/editMilestone<?php echo $modalUrl; ?>");
-    window.history.pushState({},document.title, '<?=BASE_URL?>/tickets/roadmap');
+        if($_GET['showMilestoneModal'] == "") {
+            $modalUrl = "";
+        }else{
+            $modalUrl = "/".(int)$_GET['showMilestoneModal'];
+        }
+        ?>
+
+        leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL ?>/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/roadmap');
 
     <?php } ?>
 
 
 });
-
 
     <?php if(count($milestones) > 0) {?>
         var tasks = [
@@ -114,11 +130,8 @@ jQuery(document).ready(function(){
             ?>
         ];
 
-
         leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>');
     <?php } ?>
-
-
 
 </script>
 

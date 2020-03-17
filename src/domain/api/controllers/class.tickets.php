@@ -50,6 +50,26 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
+            if(isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true){
+
+                $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"]);
+
+                if($results === true) {
+
+                    echo "{status:ok}";
+
+                }else{
+
+                    echo "{status:failure}";
+
+                }
+
+            }else{
+
+                echo "{status:failure}";
+
+            }
+
         }
 
         /**

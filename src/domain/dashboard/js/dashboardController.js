@@ -19,11 +19,19 @@ leantime.dashboardController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
-                initTicketTimers();
+                _initDueDateTimePickers();
+
             });
     })();
 
     //Functions
+
+    var prepareHiddenDueDate = function() {
+
+        var thisFriday = moment().startOf('week').add(5, 'days');
+        jQuery("#dateToFinish").val(thisFriday.format("YYYY-MM-DD"));
+
+    };
 
     var initProgressChart = function (complete, incomplete ) {
         var config = {
@@ -38,7 +46,7 @@ leantime.dashboardController = (function () {
                     ],
                     backgroundColor: [
                             leantime.dashboardController.chartColors.green,
-                            leantime.dashboardController.chartColors.grey,
+                            leantime.dashboardController.chartColors.grey
 
                         ],
                     label: 'Project Done'
@@ -248,66 +256,23 @@ leantime.dashboardController = (function () {
 
     };
 
-    var initTicketTimers = function () {
-        jQuery(".punchIn").on(
-            "click", function () {
+    var _initDueDateTimePickers = function () {
+        jQuery(".duedates").datepicker(
+            {
+                dateFormat: leantime.i18n.__("language.jsdateformat"),
+                onSelect: function(date) {
 
-                var ticketId = jQuery(this).attr("value");
+                    var dateTime = new Date(date);
+                    dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax(
-                    {
-                        data: "ticketId="+ticketId,
-                        type: 'POST',
-                        url: leantime.appUrl+'/tickets/showAll&raw=true&punchIn=true'
-                    }
-                ).done(function(msg){
-                    jQuery.jGrowl("Timer started!");
-                });
-                var currentdate = new Date();
+                    var id = jQuery(this).attr("data-id");
+                    var newDate = dateTime;
 
-                var datetime = currentdate.getHours() + ":" + currentdate.getMinutes() + " ";
+                    leantime.ticketsRepository.updateDueDates(id, newDate, function() {
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"));
+                    });
 
-                jQuery(".timerContainer .punchIn").hide();
-                jQuery("#timerContainer-"+ticketId+" .punchOut").show();
-                jQuery(".timerContainer .working").show();
-                jQuery("#timerContainer-"+ticketId+" .working").hide();
-                jQuery("#timerContainer-"+ticketId+" span.time").text(datetime);
-            }
-        );
-
-        jQuery(".punchOut").on(
-            "click", function () {
-
-                var ticketId = jQuery(this).attr("value");
-
-                // POST to server using $.post or $.ajax
-                jQuery.ajax(
-                    {
-                        data: "ticketId="+ticketId,
-                        type: 'POST',
-                        url: leantime.appUrl+'/tickets/showAll&raw=true&punchOut=true',
-
-                    }
-                ).done(
-                    function (msg) {
-                        //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
-
-                        if(msg == 0) {
-                            jQuery.jGrowl("You worked less than 6 minutes. Hours not logged");
-                        }else{
-                            jQuery.jGrowl("You logged "+msg+" hours");
-                        }
-
-                    }
-                );
-
-
-                jQuery(".timerContainer .punchIn").show();
-                jQuery(".timerContainer .punchOut").hide();
-                jQuery(".timerContainer .working").hide();
-                jQuery(".timerHeadMenu").hide("slow");
-
+                }
             }
         );
     };
@@ -320,7 +285,7 @@ leantime.dashboardController = (function () {
         initBacklogBurndown:initBacklogBurndown,
         initBacklogChartButtonClick:initBacklogChartButtonClick,
         initProgressChart:initProgressChart,
-        initTicketTimers:initTicketTimers
+        prepareHiddenDueDate:prepareHiddenDueDate
 
     };
 })();

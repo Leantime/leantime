@@ -56,6 +56,27 @@ leantime.ticketsRepository = (function () {
 
     };
 
+    var updatePlannedHours = function (id, planhours, callbackSuccess) {
+
+        jQuery.ajax(
+            {
+                type: 'PATCH',
+                url: '/api/tickets',
+                data:
+                    {
+                        id : id,
+                        planHours:planhours
+                    }
+            }
+        ).done(
+            function () {
+
+                callbackSuccess();
+            }
+        );
+
+    };
+
     var updateDueDates = function (id, date, callbackSuccess) {
 
         jQuery.ajax(
@@ -82,6 +103,7 @@ leantime.ticketsRepository = (function () {
     return {
         updateMilestoneDates: updateMilestoneDates,
         updateRemainingHours:updateRemainingHours,
+        updatePlannedHours:updatePlannedHours,
         updateDueDates:updateDueDates
     };
 })();

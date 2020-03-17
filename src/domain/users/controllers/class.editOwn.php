@@ -17,6 +17,7 @@ namespace leantime\domain\controllers {
         {
 
             $tpl = new core\template();
+            $language = new core\language();
 
             $userId = $_SESSION['userdata']['id'];
             $userRepo = new repositories\users();
@@ -86,11 +87,11 @@ namespace leantime\domain\controllers {
 
                                     $userRepo->editOwn($values, $userId);
 
-                                    $tpl->setNotification('EDIT_SUCCESS', 'success');
+                                    $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
                                 } else {
 
-                                    $tpl->setNotification('USERNAME_EXISTS', 'error');
+                                    $tpl->setNotification($language->__("notification.user_exists"), 'error');
 
                                 }
 
@@ -98,25 +99,25 @@ namespace leantime\domain\controllers {
 
                                 $userRepo->editOwn($values, $userId);
 
-                                $tpl->setNotification('EDIT_SUCCESS', 'success');
+                                $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
                             }
 
                         } else {
 
-                            $tpl->setNotification('PASSWORDS_DONT_MATCH', 'ERROR');
+                            $tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
 
                         }
 
                     } else {
 
-                        $tpl->setNotification('NO_VALID_EMAIL', 'error');
+                        $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
 
                     }
 
                 } else {
 
-                    $tpl->setNotification('NO_USERNAME', 'error');
+                    $tpl->setNotification($language->__("notification.enter_email"), 'error');
 
                 }
 

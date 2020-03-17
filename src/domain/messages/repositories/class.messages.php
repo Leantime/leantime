@@ -33,7 +33,7 @@ namespace leantime\domain\repositories {
                 $sql .= " LIMIT :limit";
             }
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -64,7 +64,7 @@ namespace leantime\domain\repositories {
 				WHERE (msg.parent_id=:parent_id OR msg.id=:parent_id) OR (msg.parent_id=:id OR msg.id=:id)
 				ORDER BY id ASC";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':parent_id', $parentId, PDO::PARAM_INT);
@@ -90,7 +90,7 @@ namespace leantime\domain\repositories {
 				INNER JOIN zp_user as toUser ON msg.to_id = toUser.id
 				WHERE parent_id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $parentId, PDO::PARAM_INT);
 
@@ -112,7 +112,7 @@ namespace leantime\domain\repositories {
 				 	AND msg.last_message = 1
 				 ORDER BY msg.id DESC LIMIT :limit";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -140,7 +140,7 @@ namespace leantime\domain\repositories {
 				 	AND msg.last_message = 1
 				 ORDER BY msg.id DESC";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -156,7 +156,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT id FROM zp_message WHERE parent_id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -176,7 +176,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT id FROM zp_message WHERE id=:id LIMIT 1";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $parentId, PDO::PARAM_INT);
 
@@ -211,7 +211,7 @@ namespace leantime\domain\repositories {
 					1
 				)';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             if (strpos($values['to_id'], ',') !== false) {
                 $users = explode(',', $values['to_id']);
@@ -232,7 +232,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            $lastID =  $this->db->{'database'}->lastInsertId();
+            $lastID =  $this->db->database->lastInsertId();
         }
 
         public function getParent($id)
@@ -240,7 +240,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'SELECT parent_id from zp_message WHERE id=:id';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -263,7 +263,7 @@ namespace leantime\domain\repositories {
                 $users = array($values['to_id']);
             }
 
-            $this->db->{'database'}->beginTransaction();
+            $this->db->database->beginTransaction();
 
             $parent = $this->getParent($parentId);
             if ($parent!=false) {
@@ -271,7 +271,7 @@ namespace leantime\domain\repositories {
 
                 $update = "UPDATE zp_message SET last_message = 0 WHERE parent_id = :parentId OR id = :parentId";
 
-                $stmn = $this->db->{'database'}->prepare($update);
+                $stmn = $this->db->database->prepare($update);
                 $stmn->bindValue(':parentId', $parentId, PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -280,7 +280,7 @@ namespace leantime\domain\repositories {
 
             $sql = 'SELECT subject FROM zp_message WHERE id=:id';
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $parentId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -308,7 +308,7 @@ namespace leantime\domain\repositories {
 				)';
 
 
-            $stmn = $this->db->{'database'}->prepare($insert);
+            $stmn = $this->db->database->prepare($insert);
 
             foreach($users as $to) {
                 if ($to && $to > 0) {
@@ -324,7 +324,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
 
-            $this->db->{'database'}->commit();
+            $this->db->database->commit();
 
 
         }
@@ -342,7 +342,7 @@ namespace leantime\domain\repositories {
 					SET zp_message.read=1 
 					WHERE id=:id";
 
-            $stmn = $this->db->{'database'}->prepare($update);
+            $stmn = $this->db->database->prepare($update);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -363,7 +363,7 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_user ON zp_user.id =  friends.userId
 		WHERE relation.userId = '".$_SESSION['userdata']['id']."' AND friends.userId <> '".$_SESSION['userdata']['id']."' ";
 
-            $stmn = $this->db->{'database'}->prepare($sql);
+            $stmn = $this->db->database->prepare($sql);
 
             $stmn->execute();
             $values = $stmn->fetchAll();

@@ -3,58 +3,67 @@
 <div class="userinfo">
 
     <a href='<?=BASE_URL ?>/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
-        <img src="<?php echo $this->get('profilePicture'); ?>" alt="Picture of <?php $this->get('userName'); ?>" class="profilePicture"/><?php echo $this->get('userName'); ?>
-
+        <img src="<?php echo $this->get('profilePicture'); ?>" alt="Picture of <?php $this->get('userName'); ?>" class="profilePicture"/>
+        <?php echo $this->get('userName'); ?>
         <i class="fa fa-caret-down" aria-hidden="true"></i>
     </a>
     <ul class="dropdown-menu">
-
         <li>
             <a href='<?=BASE_URL ?>/users/editOwn/'>
-                <span class="fa fa-user"></span> My Profile
+                <?=$this->__("menu.my_profile")?>
             </a>
         </li>
-        <?php if ($_SESSION['userdata']['role'] == 'admin' || $_SESSION['userdata']['role'] == 'manager' ) { ?>
-        <li class="nav-header border">Administration</li>
+        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+
+        <li class="nav-header border"><?=$this->__("label.administration")?></li>
+
             <li <?php if($module == 'projects') echo" class='active' "; ?>>
-                <?php echo $this->displayLink('projects.showAll', '<span class="fa fa-suitcase"></span>'.$language->lang_echo('All Projects', false).'') ?>
+                <a href='<?=BASE_URL ?>/projects/showAll/'>
+                    <?=$this->__("menu.all_projects")?>
+                </a>
             </li>
-            <?php if ($_SESSION['userdata']['role'] == 'admin'){ ?>
-                <li <?php if($module == 'clients') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('clients.showAll', '<span class="fa fa-address-book"></span>'.$language->lang_echo('All Clients/Products', false).'') ?>
-                </li>
-                <li <?php if($module == 'users') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('users.showAll', '<span class="fa fa-users"></span>'.$language->lang_echo('User Management', false).'') ?>
-                </li>
+
+            <li <?php if($module == 'clients') echo" class='active' "; ?>>
+                <a href='<?=BASE_URL ?>/clients/showAll/'>
+                    <?=$this->__("menu.all_clients")?>
+                </a>
+            </li>
+            <li <?php if($module == 'users') echo" class='active' "; ?>>
+                <a href='<?=BASE_URL ?>/users/showAll/'>
+                    <?=$this->__("menu.all_users")?>
+                </a>
+            </li>
+
+            <?php if ($login::userIsAtLeast("admin")) { ?>
                 <li <?php if($module == 'setting') echo" class='active' "; ?>>
-                    <?php echo $this->displayLink('setting.editCompanySettings', '<span class="fa fa-cogs"></span>'.$language->lang_echo('Company Settings', false).'') ?>
+                    <a href='<?=BASE_URL ?>/setting/editCompanySettings/'>
+                        <?=$this->__("menu.company_settings")?>
+                    </a>
                 </li>
             <?php } ?>
+
         <?php } ?>
-        <li class="nav-header border">Help & Support</li>
+        <li class="nav-header border"><?=$this->__("menu.help_support")?></li>
         <li>
             <a href='javascript:void(0);'
                onclick="leantime.helperController.showHelperModal('<?php echo $this->get('modal'); ?>');">
-                <span class="fa fa-map-signs"></span> Show me around
+                <?=$this->__("menu.show_me_around")?>
             </a>
         </li>
         <li>
             <a href='http://help.leantime.io' target="_blank">
-                <span class="fa fa-question"></span> Knowledge Base
+                <?=$this->__("menu.knowledge_base")?>
             </a>
         </li>
         <li>
             <a href='https://leantime.io/contact-us' target="_blank">
-                <span class="fa fa-phone"></span> Contact Us
+                <?=$this->__("menu.contact_us")?>
             </a>
         </li>
-
         <li class="border">
             <a href='<?=BASE_URL ?>/index.php?logout=1'>
-                <i class="fa fa-sign-out-alt" aria-hidden="true"></i> Sign Out
+                <?=$this->__("menu.sign_out")?>
             </a>
         </li>
     </ul>
-
-
 </div>
