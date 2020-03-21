@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
-                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;">Drive Impact</h1>
+                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
                 </span>
@@ -61,7 +61,7 @@
                     <div class="pageicon"><span class="iconfa-signin"></span></div>
                     <div class="pagetitle">
                         <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
-                        <h1>Reset Password</h1>
+                        <h1><?php echo $language->__("headlines.reset_password"); ?></h1>
                     </div>
                 </div>
                 <div class="regcontent"  style="margin-left: 90px;">
@@ -78,27 +78,27 @@
                         <?php
                         if((isset($_GET["hash"]) === true && $login->validateResetLink()) || $login->resetInProgress === true) { ?>
 
-                            <p>Enter your new password to reset it. <br /><br /></p>
+                            <p><?php echo $language->__("text.enter_new_password"); ?><br /><br /></p>
                             <div class="">
-                                <input type="password" name="password" id="password" placeholder="Enter New Password" />
+                                <input type="password" name="password" id="password" placeholder="<?php echo $language->__("input.placeholders.enter_new_password"); ?>" />
                             </div>
                             <div class=" ">
-                                <input type="password" name="password2" id="password2" placeholder="Confirm Password" />
+                                <input type="password" name="password2" id="password2" placeholder="<?php echo $language->__("input.placeholders.confirm_password"); ?>" />
                             </div>
                             <div class="">
-                                <a href="<?=BASE_URL ?>/" style="float:right; margin-top:10px;">Back to login</a>
-                                <input type="submit" name="resetPassword" value="Reset Password" />
+                                <a href="<?=BASE_URL ?>/" style="float:right; margin-top:10px;"><?php echo $language->__("links.back_to_login"); ?></a>
+                                <input type="submit" name="resetPassword" value="<?php echo $language->__("buttons.reset_password"); ?>" />
                             </div>
 
                         <?php }else{ ?>
-                            <p>Enter your email address to reset your password. <br /><br /></p>
+                            <p><?php echo $language->__("text.enter_email_address_to_reset"); ?><br /><br /></p>
                             <div class="">
-                                <input type="text" name="username" id="username" placeholder="Enter Email Address" />
+                                <input type="text" name="username" id="username" placeholder="<?php echo $language->__("input.placeholders.enter_email"); ?>" />
                             </div>
 
                             <div class="">
-                                <a href="<?=BASE_URL ?>/" style="float:right; margin-top:10px;">Back to login</a>
-                                <input type="submit" name="resetPassword" value="Reset Password" />
+                                <a href="<?=BASE_URL ?>/" style="float:right; margin-top:10px;"><?php echo $language->__("links.back_to_login"); ?></a>
+                                <input type="submit" name="resetPassword" value="<?php echo $language->__("buttons.reset_password"); ?>" />
                             </div>
                         <?php } ?>
 

@@ -7,7 +7,6 @@
 ?>
 
 <div class="pageheader">
-
     <div class="pull-right padding-top">
         <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
     </div>
@@ -32,7 +31,6 @@
                     <li><a href="#integrations"><?php echo $this->__('tabs.Integrations'); ?></a></li>
                     <li><a href="#files"><?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
                     <li><a href="#comment"><?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
-
                 </ul>
 
                 <div id="projectdetails">

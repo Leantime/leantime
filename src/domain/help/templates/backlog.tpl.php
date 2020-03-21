@@ -18,9 +18,6 @@
 
     <div class="row">
         <div class="col-md-12">
-            <p>
-             </p>
-            <a href="javascript:void(0);"  onclick="leantime.helperController.startBacklogTour();" class="btn btn-primary"><?php echo $this->__('buttons.take_backlog_tour') ?></a><br />
             <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('backlog')"><?php echo $this->__('links.close_dont_show_again') ?></a>
         </div>
