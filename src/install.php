@@ -46,7 +46,7 @@ $install = new leantime\core\install($config, $settings);
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?php echo $_SESSION["companysettings.logoPath"]; ?>" /></a>
-                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;">Drive Impact</h1>
+                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
                 </span>
@@ -61,8 +61,8 @@ $install = new leantime\core\install($config, $settings);
                 <div class="pageicon"><span class="iconfa-signin"></span></div>
                 <div class="pagetitle">
                     <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
-                    <h1>Install Database</h1>
-                    <p>This script will set up your database and create an administrator account</p><br />
+                    <h1><?php echo $language->__("headlines.installation"); ?></h1>
+                    <p><?php echo $language->__("text.this_script_will_set_up_leantime"); ?></p><br />
                 </div>
             </div>
             <div class="regcontent"  id="login" style="margin-left: 90px;">
@@ -89,15 +89,15 @@ $install = new leantime\core\install($config, $settings);
                         if($install->checkIfInstalled() === false) {
 
                             if (isset($_POST['email']) == false || $_POST['email'] == '') {
-                                $error = "Please enter an email address";
+                                $error = $language->__("notification.enter_email");
                             } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
-                                $error = "Please enter a password";
+                                $error = $language->__("notification.enter_password");
                             } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
-                                $error = "Please enter a firstname";
+                                $error = $language->__("notification.enter_firstname");
                             } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
-                                $error = "Please enter a lastname";
+                                $error = $language->__("notification.enter_lastname");
                             } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
-                                $error = "Please enter a company";
+                                $error = $language->__("notification.enter_company");
                             } else {
 
                                 $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -107,19 +107,13 @@ $install = new leantime\core\install($config, $settings);
 
                                     echo "<div class='inputwrapper login-alert'>
                                         <div class='alert alert-success' style='padding:10px;'>
-                                        The installation was successful<br />
-                                        <br />
-                                        You can now login using your workspace URL:
-                                        <a href='" . BASE_URL . "'>" . BASE_URL . "</a>
+                                            ".sprintf($language->__("notifications.installation_success"),BASE_URL)."
                                         </div>
                                    </div>";
                                 }else{
                                     echo "<div class='inputwrapper login-alert'>
                                         <div class='alert alert-error' style='padding:10px;'>
-                                        Something went wrong
-                                        <br />
-                                        ".$dbSetupResults."<br /><br />
-                                        Before continuing you should delete all tables from your database.                                            
+                                            ".sprintf($language->__("notifications.installation_success"),$dbSetupResults)."   
                                         </div>
                                    </div>";
                                 }
@@ -127,11 +121,9 @@ $install = new leantime\core\install($config, $settings);
 
                         }else{
 
-                            $error = "Database already installed. Please login";
+                            $error = $language->__("notification.database_exists");
 
                         }
-
-
                 }
 
                 ?>
@@ -143,22 +135,20 @@ $install = new leantime\core\install($config, $settings);
                             </div>";
                     }
                 ?>
-
                     <form action="<?=BASE_URL ?>/install" method="post" class="registrationForm">
-                        <h3 class="subtitle">Login Info</h3>
-                        <input type="email" name="email" class="form-control" placeholder="Email Address" value=""/><br />
-                        <input type="password" name="password" class="form-control" placeholder="Password" />
+                        <h3 class="subtitle"><?=$language->__("subtitles.login_info");?></h3>
+                        <input type="email" name="email" class="form-control" placeholder="<?=$language->__("label.email");?>" value=""/><br />
+                        <input type="password" name="password" class="form-control" placeholder="<?=$language->__("label.password");?>" />
                         <br /><br />
-                        <h3 class="subtitle">User Info</h3>
-                        <input type="text" name="firstname" class="form-control" placeholder="Firstname" value=""/><br />
-                        <input type="text" name="lastname" class="form-control" placeholder="Lastname" value=""/>
-                        <input type="text" name="company" class="form-control" placeholder="Company" value=""/>
+                        <h3 class="subtitle"><?=$language->__("subtitles.user_info");?></h3>
+                        <input type="text" name="firstname" class="form-control" placeholder="<?=$language->__("label.firstname");?>" value=""/><br />
+                        <input type="text" name="lastname" class="form-control" placeholder="<?=$language->__("label.lastname");?>" value=""/>
+                        <input type="text" name="company" class="form-control" placeholder="<?=$language->__("label.company_name");?>" value=""/>
                         <br /><br />
                         <input type="hidden" name="install" value="Install" />
-                        <p><input type="submit" name="installAction" class="btn btn-primary" value="Install" onClick="this.form.submit(); this.disabled=true; this.value='Installing…'; "/></p>
+                        <p><input type="submit" name="installAction" class="btn btn-primary" value="<?=$language->__("buttons.install");?>" onClick="this.form.submit(); this.disabled=true; this.value='<?=$language->__("buttons.install");?>'; "/></p>
 
                     </form>
-
             </div>
         </div>
     </div>

@@ -50,6 +50,8 @@ namespace leantime\core {
 
         private $emailDomain;
 
+        private $language;
+
         /**
          * __construct - get configurations
          *
@@ -93,6 +95,8 @@ namespace leantime\core {
 
             $this->logo = $_SESSION["companysettings.logoPath"];
             $this->companyColor = $_SESSION["companysettings.mainColor"];
+
+            $this->language = new language();
 
         }
 
@@ -187,7 +191,8 @@ namespace leantime\core {
 					</tr>
 					<tr>
 						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
-							Hi,<br /><br />
+							'.$this->language->__('email_notifications.hi').'
+							<br /><br />
 							' . nl2br($this->html) . '
 							<br /><br />
 						</td>
@@ -197,9 +202,9 @@ namespace leantime\core {
 			</td>
 		</tr>
 		<tr>
-			
-			<td align="center">To <a href="'.BASE_URL.'/users/editOwn/">unsubscribe</a> from these types of notifications please login and edit your notifications settings</td>
-			
+			<td align="center">
+			'.sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/').'
+			</td>
 		</tr>
 		</table>';
 

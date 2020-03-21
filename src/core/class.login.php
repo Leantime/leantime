@@ -141,6 +141,7 @@ namespace leantime\core {
 
             $config = new config();
             $this->cookieTime = $config->sessionExpiration;
+            $this->language = new language();
 
             $this->session = $sessionid;
 
@@ -171,19 +172,19 @@ namespace leantime\core {
 
                     if($userFromDB !== false && count($userFromDB) > 0) {
                         $this->generateLinkAndSendEmail($_POST["username"]);
-                        $this->success = "An email was sent to you to reset your password";
+                        $this->success = $this->language->__('notifications.email_was_sent_to_reset');
                     }else{
-                        $this->error = "Could not find the username";
+                        $this->error =  $this->language->__('notifications.could_not_find_username');
                     }
                 }
 
                 if(isset($_POST['password']) === true && isset($_POST['password2']) === true) {
 
                     if(strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
-                        $this->error = "Your passwords do not match";
+                        $this->error = $this->language->__('notification.passwords_dont_match');
                     }else{
                         $this->changePW($_POST['password'], $_GET['hash']);
-                        $this->success = "Password successfully changed. ";
+                        $this->success = $this->language->__('notifications.passwords_changed_successfully');
                     }
                 }
 
@@ -193,6 +194,7 @@ namespace leantime\core {
 
                 $this->logout();
                 header("Location:".BASE_URL."/");
+                exit();
 
             }
 
@@ -236,7 +238,7 @@ namespace leantime\core {
 
             }else{
 
-                $this->error = 'Username or password incorrect!';
+                $this->error = $this->language->__('notifications.username_or_password_incorrect');
 
                 return false;
 
@@ -548,9 +550,9 @@ namespace leantime\core {
 
             if($count > 0) {
                 $mailer = new mailer();
-                $mailer->setSubject("Leantime Password Reset");
+                $mailer->setSubject($this->language->__('notifications.password_reset_subject'));
                 $actual_link = "".BASE_URL."/resetPassword/".$resetLink;
-                $mailer->setHtml("We've received your e-mail requesting your Leantime password be reset.<br /><br />If you would like to reset your password, please click on this link: <br /><a href='".$actual_link."' target='_blank'>Reset Password</a><br /><br />If you did not request a password reset, please ignore this message.<br/><br />Thank you.");
+                $mailer->setHtml(sprintf($this->language->__('notifications.password_reset_message'), $actual_link));
                 $to = array($username);
                 $mailer->sendMail($to, "Leantime System");
             }
