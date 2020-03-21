@@ -2854,6 +2854,13 @@ a .label-default:after, a .label-primary:after {
     font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;
 }
 
+.subtitle {
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 5px;
+}
+
 .subtitle2 {
     font-size: 13px;
     text-transform: uppercase;

@@ -55,7 +55,7 @@
 
                         <?php if($row['userId'] == $_SESSION['userdata']['id']) { ?>
                         |
-                            <a href="<?php echo $deleteUrlBase.$row['id'] ?>#comments" class="deleteComment">
+                            <a href="<?php echo $deleteUrlBase.$row['id'] ?>" class="deleteComment">
                                 <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
                             </a>
                         <?php } ?>
@@ -85,7 +85,7 @@
                             <div style="padding-left:60px">
                             <?php if($comment['userId'] == $_SESSION['userdata']['id']) { ?>
 
-                                <a href="<?php echo $deleteUrlBase.$comment['id'] ?>#comments" class="deleteComment">
+                                <a href="<?php echo $deleteUrlBase.$comment['id'] ?>" class="deleteComment">
                                     <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
                                 </a>
 

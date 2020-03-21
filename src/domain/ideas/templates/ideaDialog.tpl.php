@@ -68,7 +68,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php if ($canvasItem['milestoneId'] == '') { ?>
                     <li class="ui-state-default center" id="milestone_0">
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
-                        <?php echo $this->__("text.text.use_milestone_to_track_idea") ?><br/>
+                        <?php echo $this->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
@@ -97,16 +97,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                         name="existingMilestone" class="user-select">
                                     <option value=""><?php echo $this->__("text.all_milestones")?></option>
                                     <?php foreach ($this->get('milestones') as $milestoneRow) {
-                                        if ($milestoneRow->leanCanvasId == '') {
+                                        echo "<option value='" . $milestoneRow->id . "'";
 
-                                            echo "<option value='" . $milestoneRow->id . "'";
-
-                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                echo " selected='selected' ";
-                                            }
-
-                                            echo ">" . $this->escape($milestoneRow->headline) . "</option>";
+                                        if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                            echo " selected='selected' ";
                                         }
+
+                                        echo ">" . $this->escape($milestoneRow->headline) . "</option>";
                                     } ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone"/>

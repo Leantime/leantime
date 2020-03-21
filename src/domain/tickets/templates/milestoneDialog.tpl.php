@@ -1,6 +1,7 @@
 <?php
 $currentMilestone = $this->get('milestone');
 $milestones = $this->get('milestones');
+$statusLabels = $this->get('statusLabels');
 
 
 ?>
@@ -25,6 +26,19 @@ $milestones = $this->get('milestones');
 
         <label><?=$this->__("label.milestone_title"); ?></label>
         <input type="text" name="headline" value="<?php echo $currentMilestone->headline?>" placeholder="<?=$this->__("label.milestone_title"); ?>"/><br />
+
+        <label><?php echo $this->__('label.todo_status'); ?></label>
+        <select id="status-select" name="status" class="span11"
+                data-placeholder="<?php echo $statusLabels[$currentMilestone->status]["name"]; ?>">
+
+            <?php  foreach($statusLabels as $key=>$label){?>
+                <option value="<?php echo $key; ?>"
+                    <?php if ($currentMilestone->status == $key) {
+                        echo "selected='selected'";
+                    } ?>
+                ><?php echo $this->escape($label["name"]); ?></option>
+            <?php } ?>
+        </select>
 
         <label><?=$this->__("label.dependent_on"); ?></label>
         <select name="dependentMilestone"  class="span11">

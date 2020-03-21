@@ -33,6 +33,8 @@ namespace leantime\domain\models {
         public $editorFirstname;
         public $editorLastname;
 
+        public $doneTickets;
+
         public function __construct($values = false)
         {
 
@@ -48,7 +50,7 @@ namespace leantime\domain\models {
 
                 $this->date = $values["date"] ?? date('Y-m-d  H:i:s');
                 $this->dateToFinish = $values["dateToFinish"] ?? '';
-                $this->status = $values["status"] ?? '';
+                $this->status = $values["status"] ?? '3';
                 $this->storypoints = $values["storypoints"] ?? '';
                 $this->hourRemaining = $values["hourRemaining"] ?? '';
                 $this->planHours = $values["planHours"] ?? '';

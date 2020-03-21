@@ -14,7 +14,7 @@ $install = new leantime\core\install($config, $settings);
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-    <script src="<?=BASE_URL?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <script type="text/javascript">
         jQuery(document).ready(function(){
@@ -93,7 +93,7 @@ $install = new leantime\core\install($config, $settings);
                         if($success === true) {
                             echo "
                                 <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-success'>".sprintf($language->__("text.new_db_version"),BASE_URL)."</div>
+                                    <div class='alert alert-success'>".sprintf($language->__("text.update_was_successful"),BASE_URL)."</div>
                                 </div>";
                         }
                     ?>

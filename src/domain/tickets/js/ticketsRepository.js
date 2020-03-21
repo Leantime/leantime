@@ -61,7 +61,7 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/tickets',
+                url: leantime.appUrl+'/api/tickets',
                 data:
                     {
                         id : id,
@@ -98,12 +98,57 @@ leantime.ticketsRepository = (function () {
 
     };
 
+    var updateEditFromDates = function (id, date, callbackSuccess) {
+
+        jQuery.ajax(
+            {
+                type: 'PATCH',
+                url: leantime.appUrl+'/api/tickets',
+                data:
+                    {
+                        id : id,
+                        editFrom:date
+                    }
+            }
+        ).done(
+            function () {
+
+                callbackSuccess();
+            }
+        );
+
+    };
+
+    var updateEditToDates = function (id, date, callbackSuccess) {
+
+        jQuery.ajax(
+            {
+                type: 'PATCH',
+                url: leantime.appUrl+'/api/tickets',
+                data:
+                    {
+                        id : id,
+                        editTo:date
+                    }
+            }
+        ).done(
+            function () {
+
+                callbackSuccess();
+            }
+        );
+
+    };
+
 
     // Make public what you want to have public, everything else is private
     return {
         updateMilestoneDates: updateMilestoneDates,
         updateRemainingHours:updateRemainingHours,
         updatePlannedHours:updatePlannedHours,
-        updateDueDates:updateDueDates
+        updateDueDates:updateDueDates,
+        updateEditFromDates:updateEditFromDates,
+        updateEditToDates:updateEditToDates
+
     };
 })();

@@ -219,3 +219,93 @@
 .paginate_button.current {
     color:#fff;
 }
+
+.maincontentinner .dt-buttons .dt-button-collection {
+    position:absolute;
+    z-index:3;
+    float: left;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    background-color: #ffffff;
+    margin-top: 10px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: 0px;
+    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button {
+    display:block;
+    width:95%;
+    margin:0px;
+    background:#fff;
+    font-size: 12px;
+    color: #aaa;
+    margin: 0 5px;
+    padding: 5px 10px;
+    border:0px;
+    text-align:left;
+    text-decoration: line-through;
+
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button.active{
+    text-decoration: none;
+    color: #444;
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button:hover,
+.maincontentinner .dt-buttons .dt-button-collection button.active:hover{
+    color:#fff;
+}
+
+.maincontentinner .dt-buttons>.dt-button {
+    display: inline-block;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-color: #bbb;
+    border: 1px solid #ddd;
+    margin: 0 0 9px;
+    padding: 3px 15px;
+    font-family: 'LatoBold', arial;
+    word-spacing: 2px;
+    line-height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    color: #333333;
+    background: #eee;
+    text-shadow: none;
+    line-height:20px;
+}
+
+.maincontentinner .dt-buttons>.dt-button span {
+    line-height:20px;
+}
+
+.maincontentinner .dt-buttons>.dt-button:hover {
+    background:#e1e1e1;
+}
+
+
+.timesheetTable td.active,
+.timesheetTable th.active{
+   background:#555;
+}
+
+.maincontentinner .timesheetTable td input {
+    margin-bottom:5px;
+}
+
+.maincontentinner .timesheetTable tfoot td {
+    padding:10px;
+}
+
+
+
+

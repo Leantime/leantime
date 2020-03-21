@@ -20,7 +20,8 @@ body.loginpage, .header, .leftmenu .nav-tabs.nav-stacked > li.active > a, .leftm
 }
 
 .header .logo,
-.cr-boundary {
+.cr-boundary,
+.maincontentinner .dt-buttons .dt-button-collection button:hover{
 	background-color: <?php echo $color; ?>;
 }
 
@@ -244,7 +245,8 @@ div.tagsinput {
 }
 
 .btn-primary:hover, .btn-primary:active, .btn-primary:focus,
-.btn-group.open .btn-primary.dropdown-toggle { background: #ccc; color:#000 }
+.btn-group.open .btn-primary.dropdown-toggle,
+{ background: #ccc; color:#000 }
 
 .btn-primary, .btn-primary:link { 
 	

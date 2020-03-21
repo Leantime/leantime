@@ -260,17 +260,27 @@ leantime.dashboardController = (function () {
         jQuery(".duedates").datepicker(
             {
                 dateFormat: leantime.i18n.__("language.jsdateformat"),
-                onSelect: function(date) {
+                onClose: function(date) {
+
+                    var newDate = "";
+
+                    if(date == "") {
+
+                        jQuery(this).val(leantime.i18n.__("text.anytime"));
+
+                    }
 
                     var dateTime = new Date(date);
                     dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
 
                     var id = jQuery(this).attr("data-id");
-                    var newDate = dateTime;
+                    newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function() {
                         jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"));
                     });
+
+
 
                 }
             }

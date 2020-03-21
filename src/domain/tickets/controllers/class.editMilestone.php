@@ -69,6 +69,8 @@ namespace leantime\domain\controllers {
             }else{
 
                 $milestone = new models\tickets();
+                $milestone->status = 3;
+
                 $today = new DateTime();
                 $milestone->editFrom = $today->format($this->language->__("language.dateformat"));
 
@@ -81,6 +83,7 @@ namespace leantime\domain\controllers {
                 $comments = [];
             }
 
+            $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('comments', $comments);
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
             $this->tpl->assign('milestones', $allProjectMilestones);
@@ -176,6 +179,7 @@ namespace leantime\domain\controllers {
 
             }
 
+            $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('milestone', (object) $params);
             $this->tpl->displayPartial('tickets.milestoneDialog');
         }

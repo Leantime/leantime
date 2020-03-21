@@ -430,8 +430,8 @@
                             <?php foreach($this->get('milestones') as $row){
                                 $percent = 0;
 
-                                if($row->allTickets != 0 ) {
-                                    $percent = round(($row->doneTickets/$row->allTickets)*100);
+                                if($row->allTicketsEffort != 0 ) {
+                                    $percent = round(($row->doneTicketsEffort/$row->allTicketsEffort)*100);
                                 }
                                 if($row->editTo == "0000-00-00 00:00:00") {
                                     $date = $this->__("text.no_date_defined");

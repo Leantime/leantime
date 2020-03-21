@@ -196,11 +196,12 @@ namespace leantime\domain\controllers {
 
             if (isset($params['comment']) === true) {
 
+                $id = (int) $_GET['id'];
                 $values = array(
                     'text' => $params['text'],
                     'date' => date("Y-m-d H:i:s"),
                     'userId' => ($_SESSION['userdata']['id']),
-                    'moduleId' => $_GET['id'],
+                    'moduleId' => $id,
                     'commentParent' => ($params['father'])
                 );
 

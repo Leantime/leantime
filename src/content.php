@@ -10,12 +10,11 @@
     <script src="<?=BASE_URL?>/api/i18n"></script>
 
     <!-- libs -->
-    <script src="<?=BASE_URL?>/js/compiled-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL?>/js/compiled-extended-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <!-- app -->
     <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
-
-    <!--###HEAD##-->
 
 </head>
 
@@ -52,7 +51,6 @@
     <div class="rightpanel" style="position: relative; <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
 
         <!--###MAINCONTENT###-->
-
 
         <div class='footer'>
             <?php echo $frontController->includeAction('general.footer'); ?>

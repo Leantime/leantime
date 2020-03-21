@@ -44,11 +44,19 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
                                 $currentView = $this->__("buttons.month");
                             }
                         ?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?> <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
                             <li><a href="javascript:void(0);" data-value="Day" class="<?php if($roadmapView == 'Day') echo "active";?>"> <?=$this->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if($roadmapView == 'Week') echo "active";?>"><?=$this->__("buttons.week"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Month" class="<?php if($roadmapView == 'Month') echo "active";?>"><?=$this->__("buttons.month"); ?></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.gantt_view") ?> <?=$this->__("links.view") ?></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?=BASE_URL ?>/tickets/roadmap" class="active"><?=$this->__("links.gantt_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
                         </ul>
                     </div>
                 </div>
@@ -113,7 +121,7 @@ jQuery(document).ready(function(){
 
             <?php foreach($milestones as $mlst){
 
-                $progress = round($mlst->allTickets ? (($mlst->doneTickets / $mlst->allTickets)* 100) : 0);
+                $progress = round($mlst->allTicketsEffort ? (($mlst->doneTicketsEffort / $mlst->allTicketsEffort)* 100) : 0);
                 echo"{
                     id :'".$mlst->id."',
                     name :".json_encode("".$mlst->headline." (".$progress."% Done)").",
