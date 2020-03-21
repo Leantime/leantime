@@ -29,6 +29,8 @@ $helper = $this->get('helper');
 	    		jQuery(".invoicedComp").parent().removeClass("checked");
 	    	}
 	    });
+
+	    leantime.timesheetsController.initTimesheetsTable();
 	});		
         
     
@@ -47,30 +49,23 @@ $helper = $this->get('helper');
         <div class="maincontent">
             <div class="maincontentinner">
 
-
-<div id="loader">&nbsp;</div>
 <form action="<?=BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
 
 
+<a onclick="jQuery('.headtitle').toggle();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+    <div id="tableButtons" style="float:right;"></div>
 
 <div class="headtitle" style="margin:0px; background: #eee;">
-	<h4 class="widgettitle title-primary"><?php echo $this->__('label.filter'); ?></h4>
-	<table class='table table-bordered' cellpadding="0" cellspacing="0" width="90%" id="">
-	<thead>
-		<tr id='toggleBody'>
-			<th><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label></th>
-			<th><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label></th>
-			<th><label></label></th>
-			<th><label></label></th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody id='body'>
+
+	<table cellpadding="10" cellspacing="0" width="90%" style=" border: 1px solid #ccc; margin-top:0px;" class="table dataTable filterTable">
+
 		<tr>
-			<td><input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-				value="<?php echo $this->get('dateFrom'); ?>" size="7" /></td>
-			<td><input type="text" id="dateTo" class="dateTo" name="dateTo"
-				value="<?php echo $this->get('dateTo'); ?>" size="7" /></td>
+			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
+                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
+				value="<?php echo $this->get('dateFrom'); ?>" size="7" style="margin-bottom:10px"/></td>
+			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
+                <input type="text" id="dateTo" class="dateTo" name="dateTo"
+				value="<?php echo $this->get('dateTo'); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
 			<select name="userId" id="userId" onchange="submit();">
@@ -84,13 +79,14 @@ $helper = $this->get('helper');
 	
 				?>
 			</select>
-			<br />
+            </td>
+            <td>
 			<label for="kind"><?php echo $this->__("label.type")?></label>
 			<select id="kind" name="kind" onchange="submit();">
 				<option value="all"><?php echo $this->__("label.all_types"); ?></option>
-				<?php foreach($this->get('kind') as $row){
-					echo'<option value="'.$row.'"';
-					if($row == $this->get('actKind')) echo ' selected="selected"';
+				<?php foreach($this->get('kind') as $key => $row){
+					echo'<option value="'.$key.'"';
+					if($key == $this->get('actKind')) echo ' selected="selected"';
 					echo'>'.$this->__($row).'</option>';
 	
 				}
@@ -98,28 +94,29 @@ $helper = $this->get('helper');
 	
 			</select> </td>
 			<td>
-			<label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label>
+
 			<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();" 
 				<?php 
 				if($this->get('invEmpl') == '1') echo ' checked="checked"';
 				?>
-			/><br />
-			<label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
+			/><label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label></td>
+            <td>
+
 			<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();" 
 				<?php 
 				if($this->get('invComp') == '1') echo ' checked="checked"';
 				?>
-			/>
+			/><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
 			</td>
 			<td>
 				<input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
 			</td>
 		</tr>
-	</tbody>
+
 </table>
-<h4 class="widgettitle title-primary"><?php echo $this->__('headline.all_timesheets'); ?></h4>
+
 </div>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="dyntableX">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
 	<colgroup>
       	  <col class="con0"/>
           <col class="con1" />
@@ -139,7 +136,6 @@ $helper = $this->get('helper');
 		<tr>
 			<th><?php echo $this->__('label.date'); ?></th>
 			<th><?php echo $this->__('label.hours'); ?></th>
-			<th><?php echo $this->__('label.billable_hours'); ?></th>
 			<th><?php echo $this->__('label.plan_hours'); ?></th>
 			<th><?php echo $this->__('label.difference'); ?></th>
 			<th><?php echo $this->__('label.ticket'); ?></th>
@@ -150,21 +146,7 @@ $helper = $this->get('helper');
 			<th><?php echo $this->__('label.invoiced'); ?></th>
 			<th><?php echo $this->__('label.invoiced_comp'); ?></th>
 		</tr>
-		<tr class='filter'>
 
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-		</tr>
 	</thead>
 	<tbody>
 
@@ -177,28 +159,23 @@ $helper = $this->get('helper');
 		$sum = $sum + $row['hours'];?>
 		<tr>
 
-			<td><?php echo $helper->timestamp2date($row['workDate'], 2); ?></td>
-			<td><?php echo $row['hours']; ?></td>
 			<td>
-			<?php 
-				if ($row['kind'] != 'GENERAL_NOT_BILLABLE' && $row['kind'] != 'BUGFIXING_NOT_BILLABLE') {
-					echo $row['hours'];
-					$billableSum += $row['hours'];
-				}
-			?>
-			</td>
-			<td><?php echo $row['planHours']; ?></td>
+                <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
+            </td>
+			<td><?php $this->e($row['hours']); ?></td>
+			<td><?php $this->e($row['planHours']); ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
-			<td <?php if($diff<0)echo'class="new" ';?>><?php echo $diff; ?></td>
-			<td><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
-			<td><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
-			<td><?php echo $row['firstname']; ?>, <?php echo $row['lastname']; ?></td>
-			<td><?php echo $this->__($row['kind']); ?></td>
-			<td><?php echo $row['description']; ?></td>
-			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedEmplDate'], 2); ?>
+			<td><?php echo $diff; ?></td>
+			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
+
+			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
+			<td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
+			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
+			<td><?php $this->e($row['description']); ?></td>
+			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo "true"; }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
 			<?php }else{ ?> <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
 				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
-			<td><?php if($row['invoicedComp'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedCompDate'], 2); ?>
+			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo "true"; }?>"><?php if($row['invoicedComp'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
 			<?php }else{ ?> <input type="checkbox" name="invoicedComp[]" class="invoicedComp"
 				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
 		</tr>
@@ -213,8 +190,8 @@ $helper = $this->get('helper');
 	<tfoot>
 		<tr>
 			<td colspan="1"><strong><?php echo $this->__("label.total_hours")?></strong></td>
-			<td colspan="1"><strong><?php echo $sum; ?></strong></td>
-			<td colspan="7"><strong><?php echo $billableSum; ?></strong></td>
+			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
+
 			<td>
 				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
 			</td>
@@ -226,14 +203,6 @@ $helper = $this->get('helper');
 
 </form>
 
-
-<script type='text/javascript'>
-	jQuery(document).ready(function() {
-		jQuery('#toggleBody').click(function() {
-			jQuery('#body').toggle();	
-		});
-	});
-</script>
 
 			</div>
 		</div>

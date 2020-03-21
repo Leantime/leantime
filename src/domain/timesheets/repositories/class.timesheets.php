@@ -19,7 +19,16 @@ namespace leantime\domain\repositories {
          * @var    array
          */
 
-        public $kind = array('label.general_billable', 'label.general_not_billable', 'label.projectmanagement', 'label.development', 'label.bugfixing_not_billable', 'label.testing');
+
+
+        public $kind = array(
+                'GENERAL_BILLABLE' => 'label.general_billable',
+                'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
+                'PROJECTMANAGEMENT' => 'label.projectmanagement',
+                'DEVELOPMENT' => 'label.development',
+                'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
+                'TESTING' => 'label.testing',
+            );
 
         /**
          * __construct - get database connection
@@ -370,7 +379,7 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 		WHERE 
-			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateStart) + 7)))
+			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStart) + 7)))
 			AND (zp_timesheets.userId = :userId)
 		";
 
@@ -477,15 +486,26 @@ namespace leantime\domain\repositories {
 			kind, 
 			rate) 
 			VALUES
-			('".$values['userId']."', 
-			'".$values['ticket']."', 
-			'".$values['date']."', 
-			'".$values['hours']."', 
-			'".$values['kind']."', 
-			'".$values['rate']."')
-			 ON DUPLICATE KEY UPDATE hours = '".$values['hours']."'";
+			(:userId,
+             :ticket,
+             :date,
+             :hours,
+             :kind,
+             :rate)
+			 ON DUPLICATE KEY UPDATE hours = :hours";
 
-            $this->db->dbQuery($query);
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
+            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
+            $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
+
+            $stmn->execute();
+
+            $stmn->closeCursor();
         }
 
 

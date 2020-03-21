@@ -94,7 +94,6 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                     <option value=""><?=$this->__("label.all_milestones") ?></option>
                                     <?php foreach($this->get('milestones') as $milestoneRow){
-                                        if($milestoneRow->leanCanvasId == '') {
                                             ?>
 
                                             <?php echo"<option value='".$milestoneRow->id."'";
@@ -103,8 +102,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                             }
 
                                             echo">".$milestoneRow->headline."</option>"; ?>
-
-                                        <?php }
+                                        <?php
                                     }     ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />

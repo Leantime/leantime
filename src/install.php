@@ -14,7 +14,7 @@ $install = new leantime\core\install($config, $settings);
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>" type="text/css" />
 
-    <script src="<?=BASE_URL?>/js/compiled-libs-login.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+    <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
     <script type="text/javascript">
             jQuery(document).ready(function(){

@@ -21,26 +21,11 @@ module.exports = function (grunt) {
                 ]
                 , dest: "public/js/compiled-app.min.js"
             },
-            login_lib_src: {
+            base_lib_src: {
                 options: {
                     sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapLIBS.map"
-                    , sourceMapUrl: "jsSourceMapLIBS.map"
-                    , mangle: false
-                }
-                , src: [
-                    "node_modules/jquery/dist/jquery.js",
-                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
-                    "node_modules/jquery-ui-dist/jquery-ui.js",
-                    "public/js/libs/bootstrap.min.js",
-                ]
-                , dest: "public/js/compiled-libs-login.min.js"
-            },
-            lib_src: {
-                options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapLIBS.map"
-                    , sourceMapUrl: "jsSourceMapLIBS.map"
+                    , sourceMapName: "public/js/jsSourceMapBaseLIBS.map"
+                    , sourceMapUrl: "jsSourceMapBaseLIBS.map"
                     , mangle: false
                 }
                 , src: [
@@ -48,6 +33,25 @@ module.exports = function (grunt) {
                     "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
+                    "public/js/libs/bootstrap.min.js",
+                    "public/js/libs/bootstrap-timepicker.min.js",
+                    "public/js/libs/bootstrap-fileupload.min.js",
+                    "public/js/libs/jquery.jgrowl.js",
+                    "public/js/libs/chosen.jquery.min.js",
+                    "public/js/libs/jquery.form.js",
+                    "public/js/libs/jquery.tagsinput.min.js"
+
+                ]
+                , dest: "public/js/compiled-base-libs.min.js"
+            },
+            extended_lib_src: {
+                options: {
+                    sourceMap: true
+                    , sourceMapName: "public/js/jsSourceMapExtendedLIBS.map"
+                    , sourceMapUrl: "jsSourceMapExtendedLIBS.map"
+                    , mangle: false
+                }
+                , src: [
                     "node_modules/croppie/croppie.js",
                     "node_modules/chart.js/dist/Chart.bundle.js",
                     "node_modules/packery/dist/packery.pkgd.js",
@@ -57,6 +61,10 @@ module.exports = function (grunt) {
                     "node_modules/datatables.net/js/jquery.dataTables.js",
                     "node_modules/datatables.net-rowgroup/js/dataTables.rowGroup.js",
                     "node_modules/datatables.net-rowreorder/js/dataTables.rowReorder.js",
+                    "node_modules/datatables.net-buttons/js/dataTables.buttons.js",
+                    "node_modules/datatables.net-buttons/js/buttons.html5.js",
+                    "node_modules/datatables.net-buttons/js/buttons.print.js",
+                    "node_modules/datatables.net-buttons/js/buttons.colVis.js",
                     "node_modules/tinymce/tinymce.js",
                     "node_modules/tinymce/jquery.tinymce.js",
                     "node_modules/tinymce/themes/silver/theme.js",
@@ -82,13 +90,6 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/template/plugin.js",
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
-                    "public/js/libs/bootstrap.min.js",
-                    "public/js/libs/bootstrap-timepicker.min.js",
-                    "public/js/libs/bootstrap-fileupload.min.js",
-                    "public/js/libs/jquery.jgrowl.js",
-                    "public/js/libs/chosen.jquery.min.js",
-                    "public/js/libs/jquery.form.js",
-                    "public/js/libs/jquery.tagsinput.min.js",
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
                     "public/js/libs/colorpicker.js",
@@ -97,7 +98,7 @@ module.exports = function (grunt) {
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"
                 ]
-                , dest: "public/js/compiled-libs.min.js"
+                , dest: "public/js/compiled-extended-libs.min.js"
             }
         }
         , jshint: {

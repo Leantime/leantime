@@ -89,7 +89,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
                                 <select data-placeholder="Filter by Milestone..." name="existingMilestone"  class="user-select">
                                     <option value=""><?php echo $this->__("text.all_milestones")?></option>
                                     <?php foreach($this->get('milestones') as $milestoneRow){
-                                        if($milestoneRow->leanCanvasId == '') {
+
                                             ?>
 
                                             <?php echo"<option value='".$milestoneRow->id."'";
@@ -99,7 +99,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
 
                                             echo">".$milestoneRow->headline."</option>"; ?>
 
-                                        <?php }
+                                        <?php
                                     }     ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />

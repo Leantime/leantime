@@ -9,6 +9,7 @@
     "datatables.net": "^1.10.20",
     "datatables.net-rowgroup": "^1.1.1",
     "datatables.net-rowreorder": "^1.2.6",
+    "datatables.net-buttons":"^1.6.1",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "^3.4.1",

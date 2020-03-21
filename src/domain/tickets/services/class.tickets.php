@@ -178,11 +178,11 @@ namespace leantime\domain\services {
 
         }
 
-        public function getAllMilestones($projectId)
+        public function getAllMilestones($projectId, $includeArchived = false)
         {
 
             if($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId);
+                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived);
             }
 
             return false;
@@ -432,7 +432,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
-                'status' => "new",
+                'status' => $params['status'],
                 'storypoints' => '',
                 'hourRemaining' => '',
                 'planHours' => '',

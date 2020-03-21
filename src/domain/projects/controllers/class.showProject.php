@@ -186,7 +186,7 @@ namespace leantime\domain\controllers {
 
                             $tpl->setNotification($this->language->__("notification.project_saved"), 'success');
 
-                            $subject = sprintf($this->language->__("email_notifications.project_update_subject "), $id, $values['name']);
+                            $subject = sprintf($this->language->__("email_notifications.project_update_subject"), $id, $values['name']);
                             $message = sprintf($this->language->__("email_notifications.project_update_message"), $_SESSION["userdata"]["name"], $values['name']);
                             $linkLabel = $this->language->__("email_notifications.project_update_cta");
 

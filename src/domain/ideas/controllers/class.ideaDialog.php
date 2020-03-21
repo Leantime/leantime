@@ -121,9 +121,9 @@ namespace leantime\domain\controllers {
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
                             "status" => $params['status'],
-                            "assumptions" => $params['assumptions'],
+                            "assumptions" => "",
                             "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
+                            "conclusion" => "",
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
                             "milestoneId" => $params['milestoneId']
@@ -158,7 +158,7 @@ namespace leantime\domain\controllers {
                         $message = sprintf($this->language->__('notification.idea_edited'), $_SESSION["userdata"]["name"], $params['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__('email_notifications.idea_edited_cta')));
 
-                        $this->redirect(BASE_URL."/ideas/ideaDialog/".(int)$params['itemId']);
+                        $this->tpl->redirect(BASE_URL."/ideas/ideaDialog/".(int)$params['itemId']);
 
                     } else {
 
@@ -177,9 +177,9 @@ namespace leantime\domain\controllers {
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
                             "status" => $params['status'],
-                            "assumptions" => $params['assumptions'],
+                            "assumptions" => "",
                             "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
+                            "conclusion" => "",
                             "canvasId" => $currentCanvasId
                         );
 
@@ -192,7 +192,7 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success');
 
-                        $this->redirect(BASE_URL."/ideas/ideaDialog/".(int)$id);
+                        $this->tpl->redirect(BASE_URL."/ideas/ideaDialog/".(int)$id);
 
                     } else {
 
@@ -220,7 +220,7 @@ namespace leantime\domain\controllers {
                 $message = sprintf($this->language->__('email_notifications.new_comment_idea_message'), $_SESSION["userdata"]["name"]);
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__('email_notifications.new_comment_idea_cta')));
 
-                $this->redirect(BASE_URL."/ideas/ideaDialog/".(int)$_GET['id']);
+                $this->tpl->redirect(BASE_URL."/ideas/ideaDialog/".(int)$_GET['id']);
 
             }
 

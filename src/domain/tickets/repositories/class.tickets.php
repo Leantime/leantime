@@ -253,7 +253,7 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_user AS t2 ON ticket.editorId = t2.id
 								
 				WHERE zp_relationuserproject.userId = :id AND ticket.type <> 'Milestone' AND ticket.type <> 'Subtask'
-				
+				GROUP BY ticket.id
 				ORDER BY ticket.id DESC";
 
             if($limit > -1) {
@@ -1179,7 +1179,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getAllMilestones($projectId)
+        public function getAllMilestones($projectId, $includeArchived =false)
         {
 
             $query = "SELECT
@@ -1198,6 +1198,8 @@ namespace leantime\domain\repositories {
 						zp_tickets.storypoints,
 						zp_tickets.hourRemaining,
 						zp_tickets.acceptanceCriteria,
+						depMilestone.headline AS milestoneHeadline,
+						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), '#1b75bb', depMilestone.tags) AS milestoneColor,
 						zp_tickets.userId,
 						zp_tickets.editorId,
 						zp_tickets.planHours,
@@ -1212,25 +1214,36 @@ namespace leantime\domain\repositories {
 						zp_user.lastname AS userLastname,
 						t3.firstname AS editorFirstname,
 						t3.lastname AS editorLastname,
-						SUM(CASE WHEN progressTickets.status = 0 THEN 1 ELSE 0 END) AS doneTickets,
+						t3.profileId AS editorProfileId,
+						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
+						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
+						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
+						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
 						COUNT(progressTickets.id) AS allTickets,
+						
 						CASE WHEN 
 						  COUNT(progressTickets.id) > 0 
 						THEN 
-						  ROUND((SUM(CASE WHEN progressTickets.status = 0 THEN 1 ELSE 0 END) / COUNT(progressTickets.id)) *100) 
+						  ROUND(SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) *100) 
 						ELSE 
 						  0 
 						END AS percentDone
 					FROM 
-						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+						zp_tickets 
+						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+						LEFT JOIN zp_tickets AS depMilestone ON zp_Tickets.dependingTicketId = depMilestone.id 
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
 					WHERE 
-						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId
-					
-					GROUP BY
+						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
+
+                if($includeArchived === false) {
+                    $query .= " AND zp_tickets.status > -1 ";
+                }
+
+				$query .= "	GROUP BY
 						progressTickets.dependingTicketId, zp_tickets.id
 					ORDER BY zp_tickets.editFrom ASC";
 

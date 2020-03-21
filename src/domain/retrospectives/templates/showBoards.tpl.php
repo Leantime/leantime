@@ -462,11 +462,12 @@ $canvasTitle = "";
         leantime.retroController.initUserDropdown();
         leantime.retroController.setKanbanHeights();
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
-        leantime.helperController.showHelperModal("ideaBoard");
+        <?php
+        if(isset($_SESSION['userdata']['settings']["modals"]["retrospectives"]) === false || $_SESSION['userdata']['settings']["modals"]["retrospectives"] == 0) {     ?>
+        leantime.helperController.showHelperModal("retrospectives");
         <?php
         //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
+        $_SESSION['userdata']['settings']["modals"]["retrospectives"] = 1;
         } ?>
 
         <?php if(isset($_GET['showRetroModal'])) {

@@ -32,7 +32,7 @@
 		<form action="" method="get" id="ticketSearch">
             <input type="hidden" value="1" name="search"/>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
@@ -44,7 +44,7 @@
                     <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                 </div>
 
-                <div class="col-md-4 center">
+                <div class="col-md-2 center">
                     <span class="currentSprint">
                         <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
@@ -79,10 +79,10 @@
                         <?php } ?>
                     </span>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <div class="pull-right">
 
-                        <a class="btn" onclick="window.location.reload();"><span class="fa fa-refresh"></span></a>
+                        <div id="tableButtons" style="display:inline-block"></div>
 
                         <div class="btn-group viewDropDown">
 
@@ -217,21 +217,21 @@
                 <tr>
                     <th><?= $this->__("label.title"); ?></th>
                     <th><?= $this->__("label.todo_status"); ?></th>
-                    <th><?= $this->__("label.milestone"); ?></th>
+                    <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                     <th><?= $this->__("label.effort"); ?></th>
-                    <th><?= $this->__("label.editor"); ?>.</th>
-                    <th><?= $this->__("label.sprint"); ?></th>
+                    <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
+                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
                     <th><?= $this->__("label.due_date"); ?></th>
-                    <th><?= $this->__("label.planned_hours"); ?></th>
-                    <th><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                    <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
+                    <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
 
                 </tr>
                 </thead>
                 <tbody>
                     <?php foreach($this->get('allTickets') as $row){?>
                         <tr>
-                            <td><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
-                            <td>
+                            <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                            <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
                                     <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
@@ -277,7 +277,7 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td>
+                            <td data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
                                 <div class="dropdown ticketDropdown effortDropdown show">
                                     <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
@@ -367,8 +367,12 @@
                                 <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
 
                             </td>
-                            <td><input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>');" /></td>
-                            <td><input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');"/></td>
+                            <td data-order="<?=$this->e($row['planHours']); ?>">
+                                <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
+                            </td>
+                            <td data-order="<?=$this->e($row['hourRemaining']); ?>">
+                                <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
+                            </td>
 
                         </tr>
 
