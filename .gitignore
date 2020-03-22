@@ -10,10 +10,11 @@ resources/logs/*
 node_modules/*
 vendor/*
 public/js/compiled-app.min.js
-public/js/compiled-libs.min.js
-public/js/compiled-libs-login.min.js
+public/js/compiled-base-libs.min.js
+public/js/compiled-extended-libs.min.js
 public/js/jsSourceMapAPP.map
-public/js/jsSourceMapLIBS.map
+public/js/jsSourceMapBaseLIBS.map
+public/js/jsSourceMapExtendedLIBS.map
 public/css/main.css
 public/css/main.css.map
 

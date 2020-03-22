@@ -115,6 +115,19 @@
                             <?php echo sprintf($this->__("subtitles.todos_this_week"), count($this->get('tickets')["thisWeek"])); ?>
                         </h5>
 
+                        <?php
+                        if(count($this->get('tickets')["thisWeek"]) == 0){
+
+                            echo"<div class='center'>";
+                            echo"<div  style='width:30%' class='svgContainer'>";
+                            echo file_get_contents(ROOT."/images/svg/undraw_a_moment_to_relax_bbpa.svg");
+                            echo"</div>";
+                            echo"<br /><h4>".$this->__("headlines.no_todos_this_week")."</h4>
+                                        ".$this->__("text.take_the_day_off")."
+                                        <a href='".BASE_URL."/tickets/showAll'>".$this->__("links.goto_backlog")."</a><br/><br/>
+                            </div>";
+                        }
+                        ?>
 
                         <ul class="sortableTicketList" >
                             <li class="">
@@ -136,12 +149,7 @@
                                 </div>
                             </li>
                             <?php
-                                if(count($this->get('tickets')["thisWeek"]) == 0){
 
-                                    echo"<div class='center'><br /><h4>".$this->__("headlines.no_todos_this_week")."</h4>
-                                        ".$this->__("text.take_the_day_off")."<br/><br/>
-                                        <h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
-                                }
 
                                 foreach($this->get('tickets')["thisWeek"] as $row){
 
@@ -269,15 +277,14 @@
                         </ul>
 
                         <br /><br />
+                        <?php
+                        if(count($this->get('tickets')["later"]) > 0){
+                        ?>
+
                         <h5 class="subtitle"><?php echo sprintf($this->__("subtitles.todos_later"), count($this->get('tickets')["later"])) ?></h5>
 
                         <ul class="sortableTicketList" >
 
-                            <?php
-                            if(count($this->get('tickets')["later"]) == 0){
-                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_todos")."</h4>".$this->__("text.start_filling_backlog")."<br/><br/><h4><a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>";
-                            }
-                            ?>
                             <?php foreach($this->get('tickets')["later"] as $row){
 
                                 if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
@@ -398,6 +405,7 @@
                             } ?>
 
                         </ul>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -424,7 +432,7 @@
                             <?php
                             if(count($this->get('milestones')) == 0){
                                 echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
-                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap' class='btn btn-primary'><span class=\"fas fa-map\"></span> ".$this->__("links.goto_milestones")."</a>";
+                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap'>".$this->__("links.goto_milestones")."</a>";
                             }
                             ?>
                             <?php foreach($this->get('milestones') as $row){
