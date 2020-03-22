@@ -6,13 +6,14 @@ Leantime is an open source project management system for small teams and startup
 Features:
 * Idea boards
 * Research boards using the Lean Canvas
-* Task management using Kanban boards, list and calendar views
+* Task management using Kanban boards, table and calendar views
 * Milestone management using Gantt charts
 * Timesheet management
 * Retrospectives
 * Project dashboards
-* Multiple user roles (client, developer, manager, admin)
-* Integrations with Mattermost & Slack
+* Multiple user roles (client, team member, client manager, manager, administrator)
+* Integrations with Mattermost, Slack & Zulip
+* Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
 
 ### Screenshots ###
