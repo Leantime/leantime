@@ -205,12 +205,6 @@
                 </tbody>
 
             </table>
-
-        <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><br /> <?=$this->__("tour.once_done_go_to_kanban")?><br /><a href="<?=BASE_URL ?>/tickets/showKanban/" class="btn btn-primary"><span class="fas fa-columns"></span> Kanban Board</a></p>
-        <?php } ?>
-
 	</div>
 </div>
 
@@ -229,13 +223,5 @@
     leantime.ticketsController.initMilestoneDatesAsyncUpdate();
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
-
-    <?php if(isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0){     ?>
-    leantime.helperController.showHelperModal("backlog");
-    <?php
-    //Only show once per session
-    $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
-    } ?>
-
 
 </script>
