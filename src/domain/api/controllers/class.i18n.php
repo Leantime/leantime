@@ -37,6 +37,8 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+            header('Content-Type: application/javascript');
             echo "
                 var leantime = leantime || {};
                 var leantime = {

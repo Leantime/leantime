@@ -1231,7 +1231,7 @@ namespace leantime\domain\repositories {
 					FROM 
 						zp_tickets 
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						LEFT JOIN zp_tickets AS depMilestone ON zp_Tickets.dependingTicketId = depMilestone.id 
+						LEFT JOIN zp_tickets AS depMilestone ON zp_tickets.dependingTicketId = depMilestone.id 
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id

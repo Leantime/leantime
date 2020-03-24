@@ -332,7 +332,9 @@ leantime.ticketsController = (function () {
                         dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditToDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"));
+                            jQuery.jGrowl(
+
+                            );
                         });
 
                         var dateFrom = jQuery(".fromDateTicket-"+id).val();
