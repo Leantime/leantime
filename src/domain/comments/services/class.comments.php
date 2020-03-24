@@ -30,8 +30,7 @@ namespace leantime\domain\services {
 
         public function addComment($values, $module, $entityId, $entity) {
 
-            var_dump($entity);
-            if(isset($values['text']) && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)){
+            if(isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)){
 
                 $mapper = array(
                     'text' => $values['text'],

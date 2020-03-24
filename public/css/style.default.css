@@ -6089,19 +6089,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     border-radius: 0 !important;
 }
 
-.btn {
-    font-size: 13px;
-    padding: 5px 12px 5px;
-    background: #eee;
-    text-shadow: none;
-}
-
-.btn-group>.btn {
-}
-
-.btn-file {
-    padding: 4px 12px 3px 12px;
-}
 
 .fileupload .btn {
     vertical-align: top;
@@ -6183,6 +6170,26 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     border-color: #0866c6;
 }
 
+
+.btn,
+input[type='submit'].btn-default{
+    font-size: 13px;
+    padding: 3px 15px;
+    background: #eee;
+    text-shadow: none;
+    color: #333;
+    font-family: 'LatoBold', arial;
+    display: inline-block;
+    word-spacing: 2px;
+}
+
+.btn-group>.btn {
+}
+
+.btn-file {
+    padding: 4px 12px 3px 12px;
+}
+
 .btn {
     display: inline-block;
     -moz-box-shadow: none;
@@ -6194,7 +6201,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     padding: 3px 15px;
     font-family: 'LatoBold', arial;
     word-spacing: 2px;
-
 }
 
 .btn .caret {
@@ -6223,9 +6229,13 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     color: #fff;
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus,
-.btn-group.open .btn-primary.dropdown-toggle {
-    background: #0a76e5;
+body .btn-primary:hover,
+body .btn-primary:active,
+body .btn-primary:focus,
+body .btn-group.open .btn-primary.dropdown-toggle {
+    /*background: #0a76e5;*/
+    background:#555;
+
 }
 
 .btn-danger, .btn-danger:link {

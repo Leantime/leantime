@@ -72,8 +72,8 @@ button,
 
 input[type='submit']:hover, 
 button:hover {
-	background-color:  #ddd;
-	color:#000;
+	background-color:  #555;
+	color:#fff;
 } 	
 
 .chzn-container-multi .chzn-choices .search-choice {

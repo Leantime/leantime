@@ -84,10 +84,24 @@ jQuery(document).ready(function(){
     jQuery(".ticket-select").chosen();
     
     jQuery(".project-select").change(function(){
+
+            jQuery(".ticket-select").removeAttr("selected");
+            jQuery(".ticket-select").val("");
+            jQuery(".ticket-select").trigger("liszt:updated");
+
     		jQuery(".ticket-select option").show();
     		jQuery("#ticketSelect .chzn-results li").show();
     		var selectedValue = jQuery(this).find("option:selected").val();
     		jQuery("#ticketSelect .chzn-results li").not(".project_"+selectedValue).hide();
+
+
+    });
+
+    jQuery(".ticket-select").change(function() {
+        console.log("asdf");
+        var selectedValue = jQuery(this).find("option:selected").attr("data-value");
+        jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
+        jQuery(".project-select").trigger("liszt:updated");
     });
 
     jQuery("#nextWeek").click(function() {
@@ -306,7 +320,7 @@ jQuery(document).ready(function(){
 			<tr class="gradeA timesheetRow">
 				<td width="14%">
 					<div class="form-group">                    
-                    	<select data-placeholder="Choose a Project..." style="" class="project-select" >
+                    	<select data-placeholder="<?php echo $this->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                          	<option value=""></option> 
                             <?php foreach($this->get('allProjects') as $projectRow){ ?>
                             	<?php echo"<option value=".$projectRow["id"].">".$this->escape($projectRow["clientName"])." / ".$this->escape($projectRow["name"])."</option>"; ?>
@@ -316,10 +330,10 @@ jQuery(document).ready(function(){
 				</td>
 				<td width="14%">
 					<div class="form-group" id="ticketSelect">                    
-                    	<select data-placeholder="Choose a To-Do..." style="" class="ticket-select" name="ticketId">
+                    	<select data-placeholder="<?php echo $this->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
                          	<option value=""></option> 
                             <?php foreach($this->get('allTickets') as $ticketRow){ ?>
-                            	<?php echo"<option value=".$ticketRow["id"]." class='project_".$ticketRow["projectId"]."'>".$ticketRow["id"]." ".$this->escape($ticketRow["headline"])."</option>"; ?>
+                            	<?php echo"<option value=".$ticketRow["id"]." data-value='".$ticketRow["projectId"]."' class='project_".$ticketRow["projectId"]."'>".$ticketRow["id"]." ".$this->escape($ticketRow["headline"])."</option>"; ?>
                             <?php }?>
                         </select>
                     </div>

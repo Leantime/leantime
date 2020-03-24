@@ -211,7 +211,7 @@
                     <col class="con1">
                     <col class="con0">
                     <col class="con1">
-
+                    <col class="con0">
                 </colgroup>
                 <thead>
                 <tr>
@@ -221,9 +221,10 @@
                     <th><?= $this->__("label.effort"); ?></th>
                     <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
                     <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
-                    <th><?= $this->__("label.due_date"); ?></th>
+                    <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
                     <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
                     <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                    <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
 
                 </tr>
                 </thead>
@@ -372,6 +373,11 @@
                             </td>
                             <td data-order="<?=$this->e($row['hourRemaining']); ?>">
                                 <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
+                            </td>
+
+                            <td data-order="<?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>">
+
+                                <?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>
                             </td>
 
                         </tr>

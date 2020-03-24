@@ -70,7 +70,7 @@ namespace leantime\domain\controllers {
 
                     if ($params['module'] == "idealabels") {
                         $stateLabels = $this->ideaRepo->getCanvasLabels();
-                        $currentLabel = $stateLabels[$params['label']];
+                        $currentLabel = $stateLabels[$params['label']]["name"];
                     }
 
                 }
@@ -131,11 +131,17 @@ namespace leantime\domain\controllers {
                 }
 
                 if ($_GET['module'] == "idealabels") {
+
                     $stateLabels = $this->ideaRepo->getCanvasLabels();
-                    $stateLabels[$_GET['label']] = $sanatizedString;
+                    $newStateLabels = array();
+                    foreach ($stateLabels as $key => $label) {
+                        $newStateLabels[$key] = $label["name"];
+                    }
+                    $newStateLabels[$_GET['label']] = $sanatizedString;
+
                     unset($_SESSION["projectsettings"]["idealabels"]);
                     $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".idealabels",
-                        serialize($stateLabels));
+                        serialize($newStateLabels));
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.label_changed_successfully"), "success");

@@ -62,13 +62,17 @@
         </form>
             <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
                 <colgroup>
-                    <col class="con1" width="20%">
+                    <col class="con1" width="15%">
                     <col class="con0">
                     <col class="con1">
-                    <col class="con0">
+                    <col class="con0" width="120px">
                     <col class="con1">
                     <col class="con0">
-                    <col class="con1" width="20%">
+                    <col class="con1" width="50px">
+                    <col class="con0" width="50px">
+                    <col class="con1" width="50px">
+                    <col class="con0" width="15%">
+
 
                 </colgroup>
                 <thead>
@@ -82,6 +86,9 @@
                     <th class="user-col"><?=$this->__("label.owner"); ?></th>
                     <th><?= $this->__("label.planned_start_date"); ?></th>
                     <th><?= $this->__("label.planned_end_date"); ?></th>
+                    <th><?= $this->__("label.planned_hours"); ?></th>
+                    <th><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                    <th><?= $this->__("label.booked_hours"); ?></th>
                     <th><?= $this->__("label.progress"); ?></th>
 
                 </tr>
@@ -170,12 +177,21 @@
 
                             </td>
 
-                            <td data-order="">
-                                <?php
+                            <td data-order="<?=$row->planHours?>" >
+                                <?php echo $row->planHours ?>
+                            </td>
+                            <td data-order="<?=$row->hourRemaining?>" >
+                                <?php echo $row->hourRemaining ?>
+                            </td>
+                            <td data-order="<?=$row->bookedHours?>" >
+                                <?php echo $row->bookedHours ?>
+                            </td>
 
-                                if($row->allTicketsEffort > 0){  $percent = round(($row->doneTicketsEffort / $row->allTicketsEffort) * 100); }else {$percent=0;} ; ?>
+                            <?php if($row->allTicketsEffort > 0){  $percent = round(($row->doneTicketsEffort / $row->allTicketsEffort) * 100); }else {$percent=0;} ; ?>
+                            <td data-order="<?=$percent?>">
                                 <?=sprintf($this->__("text.percent_complete"), $percent)?>
-                                <div class="progress">
+                                <a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
+                                <div class="progress" style="width: 100%;">
 
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percent; ?>%">
                                         <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percent)?></span>

@@ -23,7 +23,7 @@
         <img src="/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
         <textarea rows="5" cols="50" name="text"></textarea><br />
         
-        <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="button" style="margin-left: 60px;"/>
+        <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-default" style="margin-left: 60px;"/>
         <input type="hidden" name="comment"  value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         
@@ -60,7 +60,7 @@
                             </a>
                         <?php } ?>
                         <div style="display:none;" id="comment<?php echo $row['id'];?>" class="commentBox">
-                            <br/><input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="button" />
+                            <br/><input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default" />
                         </div>
                     </div>
 
