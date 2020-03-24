@@ -910,13 +910,13 @@ leantime.ticketsController = (function () {
 
     var initTicketKanban = function (ticketStatusList) {
 
-        jQuery(window).bind("load", function () {
+        jQuery(document).ready(function () {
 
-            jQuery(".loading").fadeOut();
+            countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
             var height = jQuery("html").height()-320;
             jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
-            countTickets();
+
         });
 
         jQuery("#sortableTicketKanban .ticketBox").hover(function(){
