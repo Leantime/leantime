@@ -96,9 +96,7 @@ namespace leantime\domain\controllers {
 
             if (isset($_GET['module']) && isset($_GET['label'])) {
 
-                //$sanatizedString = preg_replace("/[^a-zA-Z0-9 ]+/", '', $params['newLabel']);
-
-                $sanatizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
+                $sanitizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
                 //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {
 
@@ -107,7 +105,7 @@ namespace leantime\domain\controllers {
                     foreach ($currentStateLabels as $key => $label) {
                         $newStateLabels[$key] = $label["name"];
                     }
-                    $newStateLabels[$_GET['label']] = $sanatizedString;
+                    $newStateLabels[$_GET['label']] = $sanitizedString;
 
                     unset($_SESSION["projectsettings"]["ticketlabels"]);
                     $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
@@ -116,7 +114,7 @@ namespace leantime\domain\controllers {
 
                 if ($_GET['module'] == "retrolabels") {
                     $stateLabels = $this->retroRepo->getCanvasLabels();
-                    $stateLabels[$_GET['label']] = $sanatizedString;
+                    $stateLabels[$_GET['label']] = $sanitizedString;
                     unset($_SESSION["projectsettings"]["retrolabels"]);
                     $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".retrolabels",
                         serialize($stateLabels));
@@ -124,7 +122,7 @@ namespace leantime\domain\controllers {
 
                 if ($_GET['module'] == "researchlabels") {
                     $stateLabels = $this->canvasRepo->getCanvasLabels();
-                    $stateLabels[$_GET['label']] = $sanatizedString;
+                    $stateLabels[$_GET['label']] = $sanitizedString;
                     unset($_SESSION["projectsettings"]["researchlabels"]);
                     $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".researchlabels",
                         serialize($stateLabels));
@@ -137,7 +135,7 @@ namespace leantime\domain\controllers {
                     foreach ($stateLabels as $key => $label) {
                         $newStateLabels[$key] = $label["name"];
                     }
-                    $newStateLabels[$_GET['label']] = $sanatizedString;
+                    $newStateLabels[$_GET['label']] = $sanitizedString;
 
                     unset($_SESSION["projectsettings"]["idealabels"]);
                     $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".idealabels",
@@ -148,7 +146,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->assign('currentLabel', $sanatizedString);
+            $this->tpl->assign('currentLabel', $sanitizedString);
             $this->tpl->displayPartial('setting.editBoxDialog');
 
         }

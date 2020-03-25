@@ -62,7 +62,7 @@
                 <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
             </li>
             <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll')) echo"class=' active '"; ?>>
-                <a href="<?=BASE_URL ?>/tickets/showKanban"><?=$this->__("menu.todos") ?></a>
+                <a href="<?=$this->get('ticketMenuLink');?>"><?=$this->__("menu.todos") ?></a>
             </li>
             <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>

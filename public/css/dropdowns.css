@@ -193,5 +193,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .dropdown-menu span.radio label {
-    display:inline;
+    display:inline-block;
+    width:100%;
 }

@@ -563,6 +563,27 @@ namespace leantime\domain\services {
 
         }
 
+        public function getLastTicketViewUrl() {
+
+            $url = BASE_URL."/tickets/showKanban";
+
+            if(isset($_SESSION['lastTicketView'])) {
+
+                if($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView'])){
+                    return $_SESSION['lastFilterdTicketKanbanView'];
+                }
+
+                if($_SESSION['lastTicketView'] == "table" && isset($_SESSION['lastFilterdTicketTableView'])){
+                    return $_SESSION['lastFilterdTicketTableView'];
+                }
+
+            }else{
+                return $url;
+            }
+
+
+        }
+
 
     }
 

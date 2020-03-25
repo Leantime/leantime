@@ -41,7 +41,7 @@
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+
                 </div>
 
                 <div class="col-md-2 center">
@@ -83,7 +83,7 @@
                     <div class="pull-right">
 
                         <div id="tableButtons" style="display:inline-block"></div>
-
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
 
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
@@ -99,8 +99,8 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showKanban" ><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/showAll" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView'])){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" ><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView'])){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
                     </div>
@@ -113,10 +113,6 @@
 
                 <div class="row-fluid">
 
-                    <div class="pull-right">
-                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
-                        <input type="submit" value="<?=$this->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
-                    </div>
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
@@ -140,7 +136,7 @@
 
                         <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  class="user-select" id="milestoneSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
                                 <option value=""><?=$this->__("label.all_milestones") ?></option>
                                 <?php foreach($this->get('milestones') as $milestoneRow){ 	?>
 
@@ -195,6 +191,13 @@
                         </div>
 
                     </div>
+
+                    <div class="filterBoxLeft">
+                        <label class="inline"><?=$this->__("label.search_term") ?></label><br />
+                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
+                        <input type="submit" value="<?=$this->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
+                    </div>
+
 
                 </div>
 

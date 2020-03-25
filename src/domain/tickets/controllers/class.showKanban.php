@@ -22,6 +22,8 @@ namespace leantime\domain\controllers {
             $this->timesheetService = new services\timesheets();
 
             $_SESSION['lastPage'] = CURRENT_URL;
+            $_SESSION['lastTicketView'] = "kanban";
+            $_SESSION['lastFilterdTicketKanbanView'] = CURRENT_URL;
 
         }
 
