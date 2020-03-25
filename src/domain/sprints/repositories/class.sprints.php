@@ -69,7 +69,8 @@ namespace leantime\domain\repositories {
 					zp_sprints.startDate,
 					zp_sprints.endDate
 				FROM zp_sprints 
-				WHERE zp_sprints.projectId = :id";
+				WHERE zp_sprints.projectId = :id
+				ORDER BY zp_sprints.startDate DESC";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
@@ -99,7 +100,8 @@ namespace leantime\domain\repositories {
 					zp_sprints.startDate,
 					zp_sprints.endDate
 				FROM zp_sprints 
-				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW() ";
+				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW() 
+				ORDER BY zp_sprints.startDate DESC";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);

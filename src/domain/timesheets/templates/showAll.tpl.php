@@ -49,13 +49,17 @@ $helper = $this->get('helper');
         <div class="maincontent">
             <div class="maincontentinner">
 
+
+
 <form action="<?=BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
 
-
-<a onclick="jQuery('.headtitle').toggle();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
-    <div id="tableButtons" style="float:right;"></div>
-
-<div class="headtitle" style="margin:0px; background: #eee;">
+    <div class="pull-right">
+        
+        <div id="tableButtons" style="display:inline-block"></div>
+        <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
+    </div>
+    <div class="clearfix"></div>
+    <div class="headtitle" style="margin:0px; background: #eee; display:none;">
 
 	<table cellpadding="10" cellspacing="0" width="90%" style=" border: 1px solid #ccc; margin-top:0px;" class="table dataTable filterTable">
 
@@ -129,8 +133,6 @@ $helper = $this->get('helper');
       	  <col class="con0"/>
           <col class="con1" />
       	  <col class="con0"/>
-          <col class="con1" />
-      	  <col class="con0"/>
 	</colgroup>
 	<thead>
 		<tr>
@@ -179,12 +181,6 @@ $helper = $this->get('helper');
 			<?php }else{ ?> <input type="checkbox" name="invoicedComp[]" class="invoicedComp"
 				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
 		</tr>
-		<?php } ?>
-		<?php if(count($this->get('allTimesheets')) === 0){ ?>
-		<tr>
-			<td colspan="13"><?php echo $this->__("label.no_results"); ?></td>
-		</tr>
-
 		<?php } ?>
 	</tbody>
 	<tfoot>

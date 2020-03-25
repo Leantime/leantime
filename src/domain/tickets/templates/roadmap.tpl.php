@@ -82,11 +82,6 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             <svg id="gantt"></svg>
         </div>
 
-        <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><?=$this->__("headlines.no_milestones") ?><br /></em> <br /><a href="<?=BASE_URL ?>/tickets/showAll/" class="btn btn-primary"><span class="iconfa-pushpin"></span> <?=$this->__("links.backlog") ?></a></p>
-        <?php } ?>
-
     </div>
 </div>
 

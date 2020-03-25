@@ -207,7 +207,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : "",
-                'status' => isset($params['status']) ? (int) $params['status'] : "",
+                'status' => isset($params['status']) ? (int) $params['status'] : 3,
                 'storypoints' => '',
                 'hourRemaining' => '',
                 'planHours' => '',
@@ -229,7 +229,7 @@ namespace leantime\domain\services {
             if($result > 0) {
 
                 $actual_link = BASE_URL."/tickets/showTicket/" . $result;
-                $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"]);
+                $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
                 $this->projectService->notifyProjectUsers($message, $this->language->__("email_notifications.new_todo_subject"), $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
 
                 return $result;
@@ -333,7 +333,7 @@ namespace leantime\domain\services {
 
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
-                    $actual_link = "http://$_SERVER[HTTP_HOST]/tickets/showTicket/".$addTicketResponse;
+                    $actual_link = BASE_URL."/tickets/showTicket/".$addTicketResponse;
                     $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['id'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_todo_cta")));
@@ -398,8 +398,8 @@ namespace leantime\domain\services {
                 if($this->ticketRepository->updateTicket($values, $id) === true){
 
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
-                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['id'], $values['headline']);
+                    $actual_link = CURRENT_URL;
+                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.todo_update_cta")));
 
@@ -560,6 +560,27 @@ namespace leantime\domain\services {
             }
 
             return false;
+
+        }
+
+        public function getLastTicketViewUrl() {
+
+            $url = BASE_URL."/tickets/showKanban";
+
+            if(isset($_SESSION['lastTicketView'])) {
+
+                if($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView'])){
+                    return $_SESSION['lastFilterdTicketKanbanView'];
+                }
+
+                if($_SESSION['lastTicketView'] == "table" && isset($_SESSION['lastFilterdTicketTableView'])){
+                    return $_SESSION['lastFilterdTicketTableView'];
+                }
+
+            }else{
+                return $url;
+            }
+
 
         }
 

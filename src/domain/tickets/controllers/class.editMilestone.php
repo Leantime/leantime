@@ -123,33 +123,39 @@ namespace leantime\domain\controllers {
 
                     if($message === true) {
                         $this->tpl->setNotification($this->language->__("notifications.comment_added_successfully"), "success");
+
+                        $this->tpl->assign('helper', new core\helper());
+
+                        $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
+                        $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                        $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_comment_milestone_cta")));
+
+
                     }else{
                         $this->tpl->setNotification($this->language->__("notifications.problem_saving_your_comment"), "error");
                     }
-                    $this->tpl->assign('helper', new core\helper());
-
-                    $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
-                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
-                    $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_comment_milestone_cta")));
 
                     $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
 
                 }
 
-                if($this->ticketService->quickUpdateMilestone($params) == true) {
+                if (isset($params['headline']) === true) {
 
-                    $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
+                    if($this->ticketService->quickUpdateMilestone($params) == true) {
 
-                    $subject = $this->language->__("email_notifications.milestone_update_subject");
-                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
-                    $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_update_cta")));
-                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
+                        $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
 
-                }else{
-                    $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
-                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
+                        $subject = $this->language->__("email_notifications.milestone_update_subject");
+                        $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                        $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_update_cta")));
+                        $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
+
+                    }else{
+                        $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
+                        $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);
+                    }
                 }
 
                 $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$params['id']);

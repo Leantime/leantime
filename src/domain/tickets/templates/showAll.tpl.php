@@ -41,7 +41,7 @@
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+
                 </div>
 
                 <div class="col-md-2 center">
@@ -83,7 +83,7 @@
                     <div class="pull-right">
 
                         <div id="tableButtons" style="display:inline-block"></div>
-
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
 
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
@@ -99,8 +99,8 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showKanban" ><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/showAll" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView'])){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" ><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView'])){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
                     </div>
@@ -113,10 +113,6 @@
 
                 <div class="row-fluid">
 
-                    <div class="pull-right">
-                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
-                        <input type="submit" value="<?=$this->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
-                    </div>
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
@@ -140,7 +136,7 @@
 
                         <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  class="user-select" id="milestoneSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
                                 <option value=""><?=$this->__("label.all_milestones") ?></option>
                                 <?php foreach($this->get('milestones') as $milestoneRow){ 	?>
 
@@ -196,196 +192,202 @@
 
                     </div>
 
+                    <div class="filterBoxLeft">
+                        <label class="inline"><?=$this->__("label.search_term") ?></label><br />
+                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
+                        <input type="submit" value="<?=$this->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
+                    </div>
+
+
                 </div>
 
             </div>
         </form>
-            <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
-                <colgroup>
-                    <col class="con1" width="20%">
-                    <col class="con0">
-                    <col class="con1">
-                    <col class="con0">
-                    <col class="con1">
-                    <col class="con0">
-                    <col class="con1">
-                    <col class="con0">
-                    <col class="con1">
+        <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
+            <colgroup>
+                <col class="con1" width="20%">
+                <col class="con0">
+                <col class="con1">
+                <col class="con0">
+                <col class="con1">
+                <col class="con0">
+                <col class="con1">
+                <col class="con0">
+                <col class="con1">
+                <col class="con0">
+            </colgroup>
+            <thead>
+            <tr>
+                <th><?= $this->__("label.title"); ?></th>
+                <th><?= $this->__("label.todo_status"); ?></th>
+                <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
+                <th><?= $this->__("label.effort"); ?></th>
+                <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
+                <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
+                <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
+                <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
 
-                </colgroup>
-                <thead>
-                <tr>
-                    <th><?= $this->__("label.title"); ?></th>
-                    <th><?= $this->__("label.todo_status"); ?></th>
-                    <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
-                    <th><?= $this->__("label.effort"); ?></th>
-                    <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
-                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
-                    <th><?= $this->__("label.due_date"); ?></th>
-                    <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
-                    <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
-
-                </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($this->get('allTickets') as $row){?>
-                        <tr>
-                            <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
-                            <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
-                                <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="text">
-                                            <?php echo $statusLabels[$row['status']]["name"]; ?>
-                                        </span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
-                                        <?php foreach($statusLabels as $key=>$label){
-                                            echo"<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$row['id']."_".$key."_".$label["class"]."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label["name"])."</a>";
-                                            echo"</li>";
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
-
-
-
-                            <?php
-                            if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
-                                $milestoneHeadline = $this->escape($row['milestoneHeadline']);
-                            }else{
-                                $milestoneHeadline = $this->__("label.no_milestone");
-                            }?>
-
-                            <td data-order="<?=$milestoneHeadline?>">
-                                <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                    <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text"><?=$milestoneHeadline?></span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
-
-                                        <?php foreach($this->get('milestones') as $milestone){
-                                            echo"<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
-                                            echo"</li>";
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
-                            <td data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
-                                <div class="dropdown ticketDropdown effortDropdown show">
-                                    <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text"><?php
-                                                                    if($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                        echo $efforts[$row['storypoints']];
-                                                                    }else{
-                                                                        echo $this->__("label.story_points_unkown");
-                                                                    }?>
-                                                                </span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
-                                        <?php foreach($efforts as $effortKey => $effortValue){
-                                            echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-value='".$row['id']."_".$effortKey."' id='ticketEffortChange".$row['id'].$effortKey."'>".$effortValue."</a>";
-                                            echo"</li>";
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
-                            <td data-order="<?=$row["editorFirstname"] != "" ?  $row["editorFirstname"] : $this->__("dropdown.not_assigned")?>">
-                                <div class="dropdown ticketDropdown userDropdown noBg show ">
-                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">
-                                                                    <?php if($row["editorFirstname"] != ""){
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
-                                                                    }else {
-                                                                        echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
-                                                                    }?>
-                                                                </span>
-                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
-
-                                        <?php foreach($this->get('users') as $user){
-                                            echo"<li class='dropdown-item'>
-                                                                <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
-                                            echo"</li>";
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
-                            <?php
-
-                            if($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1){
-                                $sprintHeadline = $this->escape($row['sprintName']);
-                            }else{
-                                $sprintHeadline = $this->__("label.backlog");
-                            }?>
-
-                            <td data-order="<?=$sprintHeadline?>">
-
-                                <div class="dropdown ticketDropdown sprintDropdown show">
-                                    <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="text"><?=$sprintHeadline?></span>
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$this->__("dropdown.choose_sprint")?></li>
-                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$this->__("label.backlog")?>" data-value='<?=$row['id']."_0"?>'> <?=$this->__("label.backlog")?> </a></li>
-                                        <?php if($this->get('sprints')) {
-                                            foreach ($this->get('sprints') as $sprint) {
-                                                echo "<li class='dropdown-item'>
-                                                        <a href='javascript:void(0);' data-label='" . $this->escape($sprint->name) . "' data-value='" . $row['id'] . "_" . $sprint->id . "' id='ticketSprintChange" . $row['id'] . $sprint->id . "' >" . $this->escape($sprint->name) . "</a>";
-                                                echo "</li>";
-                                            }
-                                        }?>
-                                    </ul>
-                                </div>
-                            </td>
-
-                            <?php
-                            if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                                $date = $this->__("text.anytime");
-
-                            }else {
-                                $date = new DateTime($row['dateToFinish']);
-                                $date = $date->format($this->__("language.dateformat"));
-
-                            }
-                            ?>
-                            <td data-order="<?=$date?>" >
+            </tr>
+            </thead>
+            <tbody>
+                <?php foreach($this->get('allTickets') as $row){?>
+                    <tr>
+                        <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
+                            <div class="dropdown ticketDropdown statusDropdown colorized show">
+                                <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="text">
+                                        <?php echo $statusLabels[$row['status']]["name"]; ?>
+                                    </span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
+                                    <?php foreach($statusLabels as $key=>$label){
+                                        echo"<li class='dropdown-item'>
+                                            <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$row['id']."_".$key."_".$label["class"]."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label["name"])."</a>";
+                                        echo"</li>";
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
 
 
-                                <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
 
-                            </td>
-                            <td data-order="<?=$this->e($row['planHours']); ?>">
-                                <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
-                            </td>
-                            <td data-order="<?=$this->e($row['hourRemaining']); ?>">
-                                <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
-                            </td>
+                        <?php
+                        if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
+                            $milestoneHeadline = $this->escape($row['milestoneHeadline']);
+                        }else{
+                            $milestoneHeadline = $this->__("label.no_milestone");
+                        }?>
 
-                        </tr>
+                        <td data-order="<?=$milestoneHeadline?>">
+                            <div class="dropdown ticketDropdown milestoneDropdown colorized show">
+                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text"><?=$milestoneHeadline?></span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
+                                    <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
-                    <?php } ?>
-                </tbody>
+                                    <?php foreach($this->get('milestones') as $milestone){
+                                        echo"<li class='dropdown-item'>
+                                            <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
+                                        echo"</li>";
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
+                        <td data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
+                            <div class="dropdown ticketDropdown effortDropdown show">
+                                <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text"><?php
+                                                                if($row['storypoints'] != '' && $row['storypoints'] > 0) {
+                                                                    echo $efforts[$row['storypoints']];
+                                                                }else{
+                                                                    echo $this->__("label.story_points_unkown");
+                                                                }?>
+                                                            </span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
+                                    <?php foreach($efforts as $effortKey => $effortValue){
+                                        echo"<li class='dropdown-item'>
+                                                                        <a href='javascript:void(0);' data-value='".$row['id']."_".$effortKey."' id='ticketEffortChange".$row['id'].$effortKey."'>".$effortValue."</a>";
+                                        echo"</li>";
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
+                        <td data-order="<?=$row["editorFirstname"] != "" ?  $row["editorFirstname"] : $this->__("dropdown.not_assigned")?>">
+                            <div class="dropdown ticketDropdown userDropdown noBg show ">
+                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text">
+                                                                <?php if($row["editorFirstname"] != ""){
+                                                                    echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
+                                                                }else {
+                                                                    echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
+                                                                }?>
+                                                            </span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-            </table>
+                                    <?php foreach($this->get('users') as $user){
+                                        echo"<li class='dropdown-item'>
+                                                            <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                        echo"</li>";
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
+                        <?php
 
-        <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1){     ?>
-            <p class="align-center"><br /> <?=$this->__("tour.once_done_go_to_kanban")?><br /><a href="<?=BASE_URL ?>/tickets/showKanban/" class="btn btn-primary"><span class="fas fa-columns"></span> Kanban Board</a></p>
-        <?php } ?>
+                        if($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1){
+                            $sprintHeadline = $this->escape($row['sprintName']);
+                        }else{
+                            $sprintHeadline = $this->__("label.backlog");
+                        }?>
 
+                        <td data-order="<?=$sprintHeadline?>">
+
+                            <div class="dropdown ticketDropdown sprintDropdown show">
+                                <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="text"><?=$sprintHeadline?></span>
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.choose_sprint")?></li>
+                                    <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$this->__("label.backlog")?>" data-value='<?=$row['id']."_0"?>'> <?=$this->__("label.backlog")?> </a></li>
+                                    <?php if($this->get('sprints')) {
+                                        foreach ($this->get('sprints') as $sprint) {
+                                            echo "<li class='dropdown-item'>
+                                                    <a href='javascript:void(0);' data-label='" . $this->escape($sprint->name) . "' data-value='" . $row['id'] . "_" . $sprint->id . "' id='ticketSprintChange" . $row['id'] . $sprint->id . "' >" . $this->escape($sprint->name) . "</a>";
+                                            echo "</li>";
+                                        }
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
+
+                        <?php
+                        if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
+                            $date = $this->__("text.anytime");
+
+                        }else {
+                            $date = new DateTime($row['dateToFinish']);
+                            $date = $date->format($this->__("language.dateformat"));
+
+                        }
+                        ?>
+                        <td data-order="<?=$date?>" >
+
+
+                            <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+
+                        </td>
+                        <td data-order="<?=$this->e($row['planHours']); ?>">
+                            <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
+                        </td>
+                        <td data-order="<?=$this->e($row['hourRemaining']); ?>">
+                            <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
+                        </td>
+
+                        <td data-order="<?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>">
+
+                            <?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>
+                        </td>
+
+                    </tr>
+
+                <?php } ?>
+            </tbody>
+        </table>
 	</div>
 </div>
 

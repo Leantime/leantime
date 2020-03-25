@@ -18,6 +18,7 @@ $statusLabels = $this->get('statusLabels');
 
 <div class="showDialogOnLoad" style="display:none;">
 
+
     <h4 class="widgettitle title-light"><?=$this->__("headline.milestone"); ?> </h4>
 
     <?php echo $this->displayNotification(); ?>
@@ -85,7 +86,7 @@ $statusLabels = $this->get('statusLabels');
 
         <div class="row">
             <div class="col-md-6">
-                <input type="submit" value="<?=$this->__("buttons.save"); ?>"/>
+                <input type="submit" value="<?=$this->__("buttons.save"); ?>" class="btn btn-primary"/>
             </div>
             <div class="col-md-6 align-right padding-top-sm">
                 <?php if (isset($currentMilestone->id) && $currentMilestone->id != ''

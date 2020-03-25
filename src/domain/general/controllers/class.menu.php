@@ -14,6 +14,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
 
             $projectService = new services\projects();
+            $ticketService = new services\tickets();
 
             $allprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
@@ -21,11 +22,12 @@ namespace leantime\domain\controllers {
             $tpl->assign('allProjects', $allprojects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
 
+
+            $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
+
             $tpl->displayPartial('general.menu');
 
         }
-
-
 
     }
 }

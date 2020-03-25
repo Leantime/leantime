@@ -774,7 +774,7 @@ namespace leantime\domain\repositories {
 							zp_tickets.dependingTicketId,
 							zp_tickets.planHours,
 							zp_tickets.hourRemaining,
-							
+							SUM(timesheets.hours) AS bookedHours,
 							zp_projects.name AS projectName,
 							zp_clients.name AS clientName,
 							zp_clients.id AS clientId,
@@ -799,7 +799,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
 						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
 						LEFT JOIN zp_tickets AS milestone ON zp_tickets.dependingTicketId = milestone.id AND zp_tickets.dependingTicketId > 0 AND milestone.type = 'milestone'
-						
+						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
 						WHERE zp_relationuserproject.userId = :userId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
             if($_SESSION['currentProject']  != "") {
@@ -1215,6 +1215,9 @@ namespace leantime\domain\repositories {
 						t3.firstname AS editorFirstname,
 						t3.lastname AS editorLastname,
 						t3.profileId AS editorProfileId,
+						SUM(progressTickets.planHours) AS planHours,
+						SUM(progressTickets.hourRemaining) AS hourRemaining,
+						SUM(timesheets.hours) AS bookedHours,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
 						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
@@ -1231,11 +1234,12 @@ namespace leantime\domain\repositories {
 					FROM 
 						zp_tickets 
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						LEFT JOIN zp_tickets AS depMilestone ON zp_Tickets.dependingTicketId = depMilestone.id 
+						LEFT JOIN zp_tickets AS depMilestone ON zp_tickets.dependingTicketId = depMilestone.id 
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
+						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 					WHERE 
 						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
 

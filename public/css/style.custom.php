@@ -72,8 +72,8 @@ button,
 
 input[type='submit']:hover, 
 button:hover {
-	background-color:  #ddd;
-	color:#000;
+	background-color:  #555;
+	color:#fff;
 } 	
 
 .chzn-container-multi .chzn-choices .search-choice {
@@ -200,18 +200,19 @@ div.tagsinput span.tag
 	padding:10px;
 	margin-bottom:5px;
 	background:#eee;
-	padding-top:15px;
+	padding-top:5px;
+
 }
 
 .filterBar .filterBoxLeft {
 	float:left;
 	margin-right:15px;
-	min-width:250px;
+min-width:50px;
 }
 
 .filterBar .filterBoxLeft input,
 .filterBar .filterBoxLeft select {
-	width:100%;
+	float:left;
 }
 
 label.inline {

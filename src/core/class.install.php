@@ -801,7 +801,6 @@ namespace leantime\core {
 
             }
 
-
             if(count($errors) > 0) {
                 return $errors;
             }else{

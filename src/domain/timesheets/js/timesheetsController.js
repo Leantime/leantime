@@ -129,6 +129,7 @@ leantime.timesheetsController = (function () {
 
             });
 
+
             var buttons = new jQuery.fn.dataTable.Buttons(allTimesheets, {
                 buttons: [
                     {
@@ -154,7 +155,7 @@ leantime.timesheetsController = (function () {
 
             jQuery('#allTimesheetsTable').on( 'column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
-            } );
+            });
 
 
 

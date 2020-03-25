@@ -8,10 +8,7 @@ module.exports = function (grunt) {
         uglify: {
             app_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapAPP.map"
-                    , sourceMapUrl: "jsSourceMapAPP.map"
-                    , mangle: false
+                    mangle: false
                 }
                 , src: [
                     "public/js/app/app.js",
@@ -23,10 +20,7 @@ module.exports = function (grunt) {
             },
             base_lib_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapBaseLIBS.map"
-                    , sourceMapUrl: "jsSourceMapBaseLIBS.map"
-                    , mangle: false
+                    mangle: false
                 }
                 , src: [
                     "node_modules/jquery/dist/jquery.js",
@@ -46,10 +40,7 @@ module.exports = function (grunt) {
             },
             extended_lib_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapExtendedLIBS.map"
-                    , sourceMapUrl: "jsSourceMapExtendedLIBS.map"
-                    , mangle: false
+                    mangle: false
                 }
                 , src: [
                     "node_modules/croppie/croppie.js",
@@ -124,7 +115,6 @@ module.exports = function (grunt) {
                     compress: true
                     , yuicompress: true
                     , optimization: 2
-                    , sourceMap: true
                     , autoPrefix: ">1%"
                     , cssComb: "none"
                     , ieCompat: true
@@ -132,8 +122,6 @@ module.exports = function (grunt) {
                     , strictUnits: false
                     , relativeUrls: true
                     , rootPath: ""
-                    , sourceMapRoot: "public/css/"
-                    , sourceMapBasePath: "public/less/"
                 }
                 , files: {
                     "public/css/main.css": "public/less/main.less"

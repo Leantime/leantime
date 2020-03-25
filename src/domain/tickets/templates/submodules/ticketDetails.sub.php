@@ -15,7 +15,7 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.ticket_title'); ?>*</label>
                     <div class="span6">
-                        <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" autocomplete="off"  style="width:220px;"/>
+                        <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" autocomplete="off"  style="width:99%;"/>
 
                     </div>
                 </div>

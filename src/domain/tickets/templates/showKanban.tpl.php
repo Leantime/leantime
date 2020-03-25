@@ -47,7 +47,7 @@
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
-                    <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+
                 </div>
 
                 <div class="col-md-4 center">
@@ -88,11 +88,12 @@
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showKanban" class="active"><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/showAll" ><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView'])){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" class="active"><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView'])){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" ><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
 
@@ -103,12 +104,7 @@
 			<div class="clearfix"></div>			
 			<div class="filterBar <?php
             if($searchCriteria['users'] == '' && $searchCriteria['milestone'] == '' && $searchCriteria['type'] == '') { echo "hideOnLoad"; } ?>">
-				<div class="loading"></div>
 				<div class="row-fluid" style="opacity:0.4">
-                    <div class="pull-right">
-                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['term']; ?>">
-                        <input type="submit" value="Search" class="form-control btn btn-primary" />
-                    </div>
 
 					<div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
@@ -133,7 +129,7 @@
 
                         <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  class="user-select" id="milestoneSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  id="milestoneSelect">
                                 <option value=""><?=$this->__("label.all_milestones") ?></option>
                                 <?php foreach($this->get('milestones') as $milestoneRow){ 	?>
 
@@ -169,7 +165,13 @@
 
                     </div>
 
-			    </div>
+                    <div class="filterBoxLeft">
+                        <label class="inline"><?=$this->__("label.search_term") ?></label><br />
+                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['term']; ?>">
+                        <input type="submit" value="Search" class="form-control btn btn-primary pull-left" />
+                    </div>
+
+                </div>
 		    </div>
 		</form>
 

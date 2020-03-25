@@ -307,7 +307,7 @@ leantime.ticketsController = (function () {
                         var dateTimeTo = new Date(dateTo);
                         dateTimeTo = moment(dateTimeTo).format("YYYY-MM-DD HH:mm:ss");
                         var newDateTo = dateTimeTo;
-                        leantime.ticketsRepository.updateEditFromDates(id, newDateTo, function() {
+                        leantime.ticketsRepository.updateEditToDates(id, newDateTo, function() {
 
                         });
                     }
@@ -321,8 +321,6 @@ leantime.ticketsController = (function () {
                 .on(
                     "change", function () {
 
-
-
                         var id = jQuery(this).attr("data-id");
                         var fromDateTicket = jQuery(".fromDateTicket-"+id);
                         fromDateTicket.datepicker("option", "maxDate", getDate(this));
@@ -332,7 +330,8 @@ leantime.ticketsController = (function () {
                         dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditToDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated")
+                            );
                         });
 
                         var dateFrom = jQuery(".fromDateTicket-"+id).val();
@@ -911,13 +910,13 @@ leantime.ticketsController = (function () {
 
     var initTicketKanban = function (ticketStatusList) {
 
-        jQuery(window).bind("load", function () {
+        jQuery(document).ready(function () {
 
-            jQuery(".loading").fadeOut();
+            countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
             var height = jQuery("html").height()-320;
             jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
-            countTickets();
+
         });
 
         jQuery("#sortableTicketKanban .ticketBox").hover(function(){
@@ -1035,6 +1034,8 @@ leantime.ticketsController = (function () {
 
             var plannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
             var remainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
+            var loggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
+            var dueDateCol = jQuery("#allTicketsTable thead").find(".duedate-col").index();
 
             var rowGroupOption = false;
             var orderFixedOption = false;
@@ -1060,9 +1061,17 @@ leantime.ticketsController = (function () {
                                 return parseInt(a) + parseInt(b["@data-order"]);
                             }, "0");
 
+                        var sumLogged = rows
+                            .data()
+                            .pluck(loggedHoursIndex)
+                            .reduce(function (a, b) {
+
+                                return parseInt(a) + parseInt(b["@data-order"]);
+                            }, "0");
+
                         var visiblePlannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
                         var visibleRemainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
-
+                        var visibleLoggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
 
 
                         var totalColumns = jQuery("#allTicketsTable thead th").length;
@@ -1071,6 +1080,10 @@ leantime.ticketsController = (function () {
                         }
 
                         if(visibleRemainingHoursIndex > -1) {
+                            totalColumns--;
+                        }
+
+                        if(visibleLoggedHoursIndex > -1) {
                             totalColumns--;
                         }
 
@@ -1084,6 +1097,10 @@ leantime.ticketsController = (function () {
                             groupOutput.append('<td>' + sumRemaining + '</td>');
                         }
 
+                        if(visibleLoggedHoursIndex > -1) {
+                            groupOutput.append('<td>' + sumLogged + '</td>');
+                        }
+
                         return groupOutput;
 
 
@@ -1093,8 +1110,8 @@ leantime.ticketsController = (function () {
                     }
                 };
 
-                orderFixedOption = [[columnIndex, 'asc']];
-                defaultOrder = [[columnIndex, 'asc'], [6, 'asc']];
+                orderFixedOption = {"pre":[[columnIndex, 'asc']]};
+                defaultOrder = [[columnIndex, 'asc'], [dueDateCol, 'asc']];
             }
 
             var allTickets = jQuery("#allTicketsTable").DataTable({
@@ -1131,6 +1148,7 @@ leantime.ticketsController = (function () {
                     "searching": false,
                     "stateSave": true,
                     "displayLength":100,
+                    "orderFixed": orderFixedOption,
                     "order": defaultOrder,
                     "rowGroup": rowGroupOption,
 
@@ -1170,7 +1188,16 @@ leantime.ticketsController = (function () {
                 console.log(jQuery(this).parent().attr('data-order'));
                 allTickets.draw();
 
-            } );
+            });
+
+            var asc = true;
+            if(groupBy != "") {
+                jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
+                    asc = !asc;
+                    var orderFixed= {"pre":[[columnIndex, asc === true? 'asc' : 'desc']]};
+                    allTickets.order.fixed(orderFixed).draw();
+                });
+            }
 
 
         });
