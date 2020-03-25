@@ -567,15 +567,17 @@ namespace leantime\domain\services {
 
             $url = BASE_URL."/tickets/showKanban";
 
-            if(isset($_SESSION['lastTicketView'])) {
+            if(isset($_SESSION['lastTicketView']) && $_SESSION['lastTicketView'] != "") {
 
-                if($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView'])){
+                if($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != ""){
                     return $_SESSION['lastFilterdTicketKanbanView'];
                 }
 
-                if($_SESSION['lastTicketView'] == "table" && isset($_SESSION['lastFilterdTicketTableView'])){
+                if($_SESSION['lastTicketView'] == "table" && isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){
                     return $_SESSION['lastFilterdTicketTableView'];
                 }
+
+                return $url;
 
             }else{
                 return $url;
