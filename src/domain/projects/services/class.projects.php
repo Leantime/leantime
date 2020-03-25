@@ -388,6 +388,9 @@ namespace leantime\domain\services {
                     $_SESSION['currentLeanCanvas'] = "";
                     $_SESSION['currentIdeaCanvas'] = "";
                     $_SESSION['currentRetroCanvas'] = "";
+                    $_SESSION['lastTicketView'] = "";
+                    $_SESSION['lastFilterdTicketTableView'] = "";
+                    $_SESSION['lastFilterdTicketKanbanView'] = "";
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 

@@ -92,8 +92,8 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView'])){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" class="active"><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView'])){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" ><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != ""){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" class="active"><?=$this->__("links.kanban") ?></a></li>
+                                <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" ><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
 
