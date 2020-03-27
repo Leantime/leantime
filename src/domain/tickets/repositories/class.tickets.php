@@ -775,8 +775,10 @@ namespace leantime\domain\repositories {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
+
             if($searchCriteria["users"]  != "") {
-                $query .= " AND zp_tickets.editorId IN(".strip_tags($searchCriteria["users"]).")";
+                $editorIdIn = core\db::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
+                $query .= " AND zp_tickets.editorId IN(" . $editorIdIn. ")";
             }
 
             if($searchCriteria["milestone"]  != "") {
@@ -838,6 +840,12 @@ namespace leantime\domain\repositories {
 
             if($searchCriteria["searchType"]  != "") {
                 $stmn->bindValue(':searchType', $searchCriteria["searchType"], PDO::PARAM_STR);
+            }
+
+            if($searchCriteria["users"]  != "") {
+                foreach(explode(",", $searchCriteria["users"]) as $key => $user) {
+                    $stmn->bindValue(":users" . $key, $user, PDO::PARAM_STR);
+                }
             }
 
             if($searchCriteria["searchterm"]  != "") {

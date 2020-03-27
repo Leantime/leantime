@@ -294,4 +294,28 @@ class db
         
     }
 
+    /**
+     * This function will generate a pdo binding string (":editors0,:editors1,:editors2,:editors3") to be used in a PDO
+     * query that uses the IN() clause, to assist in proper PDO array bindings to avoid SQL injection.
+     *
+     * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
+     * arbitrary keys
+     *
+     * @param $name string
+     * @param $count int
+     * @return string
+     */
+    public static function arrayToPdoBindingString($name, $count)
+    {
+        $bindingStatement = "";
+        for ($i = 0; $i < $count; $i++) {
+            $bindingStatement .= ":" . $name . $i;
+            if ($i != $count-1) {
+                $bindingStatement .= ",";
+            }
+        }
+
+        return $bindingStatement;
+    }
+
 }
