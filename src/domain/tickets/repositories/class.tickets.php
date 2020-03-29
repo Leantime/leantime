@@ -185,23 +185,7 @@ namespace leantime\domain\repositories {
         public function getStatusList() {
             return $this->statusList;
         }
-        public function getUnreadTickets($userId,$limit = 9999)
-        {
 
-            $read = new read();
-            $unreadTickets = array();
-            $count = 0;
-            $values = $this->getAllBySearch("", "", 0);
-
-            foreach ($values as $ticket) {
-                if (!$read->isRead('ticket', $ticket['id'], $userId) && $count < $limit) {
-                    $unreadTickets[] = $ticket;
-                    $count++;
-                }
-            }
-
-            return $unreadTickets;
-        }
 
         /**
          * getAll - get all Tickets, depending on userrole
@@ -399,7 +383,7 @@ namespace leantime\domain\repositories {
             $sql = "UPDATE zp_tickets SET ";
 
             foreach($params as $key=>$value){
-                $sql .= "".$key."=:".$key.", ";
+                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -408,7 +392,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
-                $stmn->bindValue(':'.$key, $value, PDO::PARAM_STR);
+                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
@@ -456,108 +440,8 @@ namespace leantime\domain\repositories {
             return $total;
         }
 
-        public function countMyTickets($id)
-        {
-
-            $sql = 'SELECT count(*) as count FROM zp_tickets 
-				WHERE editorId LIKE "%'.$id.'%"';
-
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $values['count'];
-        }
-
-        public function getAssignedTickets($id,$limit=null)
-        {
-
-            $sql = 'SELECT id, headline, dateToFinish FROM zp_tickets 
-				WHERE editorId LIKE "%'.$id.'%" ORDER BY id DESC';
-
-            if($limit!=null) {
-                $sql .= " LIMIT :limit";
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if ($limit!=null) {
-                $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-        }
-
-        /**
-         * getUSerTickets - get Tickets related to a user and state
-         *
-         * @param  $status
-         * @param  $id
-         * @return array
-         */
-        public function getUserTickets($status, $id)
-        {
-            $query = "SELECT
-						SQL_CALC_FOUND_ROWS
-						zp_tickets.id,
-						zp_tickets.headline, 
-						zp_tickets.description,
-						zp_tickets.date,
-						zp_tickets.dateToFinish,
-						zp_tickets.projectId,
-						zp_tickets.priority,
-						zp_tickets.status,
-						zp_projects.name AS projectName,
-						zp_clients.name AS clientName,
-						t1.lastname AS authorLastname,
-						t1.firstname AS authorFirstname, 
-						t2.firstname AS editorFirstname,
-						t2.lastname AS editorLastname
-					FROM 
-						zp_tickets JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-						LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
-						LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
-						
-					WHERE 
-						(zp_tickets.userId = '".$id."'
-							OR
-						zp_tickets.editorId = '".$id."')
-					AND zp_tickets.status IN( ".$status." )
-					GROUP BY
-						zp_tickets.id
-						
-					ORDER BY ".$this->sortBy." DESC ".$this->limitSelect."";
-
-            $this->db->dbQuery($query);
-
-            return $this->db->dbFetchResults();
-        }
-
         public function getAvailableUsersForTicket()
         {
-            /*
-             *  A user is not an "editor"
-            $sql = "SELECT
-                        Distinct(projectRelation.userId),
-                        user.username, user.firstname, user.lastname, user.id
-                    FROM zp_relationuserproject as projectRelation
-                    INNER JOIN zp_user as user ON projectRelation.userId = user.id
-                    WHERE projectId=:id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $users = $stmn->fetchAll();
-            $stmn->closeCursor();
-            */
 
             //Get the projects the current user is assigned to
 
@@ -584,163 +468,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $admin;
-        }
-
-        /**
-         * getNumPages - get REAL number of pages even with LIMIT in SELECT-statement
-         *
-         * @access public
-         * @return integer
-         */
-        public function getNumPages()
-        {
-
-            $row = $this->db->dbQuery("SELECT FOUND_ROWS()")->dbFetchResults();
-
-            $numRows = (int)$row[0]['FOUND_ROWS()'];
-
-            $numPages = ceil($numRows / $this->rowsPerPage);
-
-            return $numPages;
-        }
-
-        /**
-         * pageLimiter - set the LIMIT-statement for a query
-         *
-         * @access public
-         */
-        public function pageLimiter()
-        {
-
-            $this->limitSelect = " LIMIT 0, 10";
-
-            $begin = $this->page * $this->rowsPerPage;
-
-            $end = $this->rowsPerPage;
-
-            $this->limitSelect = " LIMIT ".$begin.", ".$end."";
-
-        }
-
-        /**
-         * setPage - set the page that is displayed
-         *
-         * @access public
-         * @param  $page
-         */
-        public function setPage($page)
-        {
-            if(is_numeric($page) && $page > 0) {
-                $this->page = $page - 1;
-            }else{
-                $this->page = 0;
-            }
-        }
-
-        /**
-         * setRowsPerPage - set the rows that are displayed per page
-         *
-         * @access public
-         * @param  $rows
-         */
-        public function setRowsPerPage($rows)
-        {
-
-            if(is_numeric($page) === true) {
-
-                $this->rowsPerPage = $rows;
-
-            }
-        }
-
-        /**
-         * getAllBySearch - get Tickets by a serach term and/or a filter
-         *
-         * @access public
-         * @param  $term
-         * @param  $filter
-         * @return array
-         */
-        public function getAllBySearch($term, $filter, $closedTickets = 1)
-        {
-
-            if($filter == ''  && $term != '') {
-
-                $whereClause = "AND (zp_tickets.id LIKE:term OR :term IN(zp_tickets.tags) OR zp_tickets.headline LIKE :term OR zp_tickets.description LIKE :term)";
-
-            }elseif($filter != '' && $term == '') {
-
-                $whereClause = "AND (zp_tickets.projectId = :filter)";
-
-            }elseif($filter != '' && $term != '') {
-
-                $whereClause = "AND ((zp_tickets.id LIKE :term OR :term IN(zp_tickets.tags) OR zp_tickets.headline LIKE :term OR zp_tickets.description LIKE :term) AND (zp_tickets.projectId = :filter))";
-            }else {
-                $whereClause = "";
-            }
-
-            if($closedTickets == 0) {
-                $whereClause .= " AND zp_tickets.status <> 0 ";
-            }
-
-
-            $query = "SELECT
-							zp_tickets.id,
-							zp_tickets.headline, 
-							zp_tickets.description,
-							zp_tickets.date,
-							zp_tickets.sprint,
-							zp_tickets.storypoints,
-							zp_tickets.sortindex,
-							zp_tickets.dateToFinish,
-							zp_tickets.projectId,
-							zp_tickets.priority,
-							zp_tickets.type,
-							zp_tickets.status,
-							zp_tickets.dependingTicketId,
-							zp_projects.name AS projectName,
-							zp_clients.name AS clientName,
-							zp_clients.id AS clientId,
-							t1.lastname AS authorLastname,
-							t1.firstname AS authorFirstname, 
-							t2.firstname AS editorFirstname,
-							t2.lastname AS editorLastname,
-							COUNT(DISTINCT zp_comment.id) AS commentCount,
-							COUNT(DISTINCT zp_file.id) AS fileCount
-						FROM 
-							zp_tickets 
-							LEFT JOIN zp_relationuserproject USING (projectId)
-							LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-							LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-							LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
-							LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
-							LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
-							LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
-							WHERE zp_relationuserproject.userId = :userId AND (zp_projects.state > '-1' OR zp_projects.state IS NULL)
-						 ".$whereClause ."
-						GROUP BY zp_tickets.id ORDER BY date DESC";
-
-
-            $stmn = $this->db->database->prepare($query);
-
-            if($term != '') {
-                $stmn->bindValue(':term', "%".$term."%", PDO::PARAM_STR);
-            }
-
-            if($filter != '') {
-                $stmn->bindValue(':filter', $filter, PDO::PARAM_STR);
-            }
-
-
-            $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-
-            return $values;
-
         }
 
         /**
@@ -820,10 +547,12 @@ namespace leantime\domain\repositories {
             if($searchCriteria["status"]  != "") {
 
                 $statusArray = explode(",", $searchCriteria['status']);
+
                 if(array_search("not_done", $statusArray) !== false) {
                     $query .= " AND zp_tickets.status > 0";
                 }else {
-                    $query .= " AND zp_tickets.status IN('" . implode("','", explode(",", strip_tags($searchCriteria["status"]))) . "')";
+                    $statusIn = core\db::arrayToPdoBindingString("status", count(explode(",", $searchCriteria["status"])));
+                    $query .= " AND zp_tickets.status IN(".$statusIn.")";
                 }
             }
 
@@ -836,7 +565,8 @@ namespace leantime\domain\repositories {
             }
 
             if($searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
-                $query .= " AND zp_tickets.sprint IN(".strip_tags($searchCriteria["sprint"]).")";
+                $sprintIn = core\db::arrayToPdoBindingString("sprint", count(explode(",", $searchCriteria["sprint"])));
+                $query .= " AND zp_tickets.sprint IN(".$sprintIn.")";
             }
 
             if($searchCriteria["sprint"]  == "backlog" ) {
@@ -872,6 +602,19 @@ namespace leantime\domain\repositories {
             if($searchCriteria["users"]  != "") {
                 foreach(explode(",", $searchCriteria["users"]) as $key => $user) {
                     $stmn->bindValue(":users" . $key, $user, PDO::PARAM_STR);
+                }
+            }
+
+            $statusArray = explode(",", $searchCriteria['status']);
+            if($searchCriteria["status"]  != "" && array_search("not_done", $statusArray) === false) {
+                foreach(explode(",", $searchCriteria["status"]) as $key => $status) {
+                    $stmn->bindValue(":status" . $key, $status, PDO::PARAM_STR);
+                }
+            }
+
+            if($searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
+                foreach(explode(",", $searchCriteria["sprint"]) as $key => $sprint) {
+                    $stmn->bindValue(":sprint" . $key, $sprint, PDO::PARAM_STR);
                 }
             }
 
@@ -973,45 +716,6 @@ namespace leantime\domain\repositories {
 
         }
 
-        /**
-         *
-         * @access public
-         * @param  id
-         */
-        public function sendAlert($id)
-        {
-
-            $mail = new mailer();
-            $user = new users();
-
-            // send alert email !
-            $row = $user->getUser($id);
-
-            $emailTo = $row['user'];
-
-            $to[] = $emailTo;
-
-            $subject = "Alert: Hours spent have exceeded planned hours";
-
-            $mail->setSubject($subject);
-
-            $text = "Hello ".$emailTo.",
-								
-			This is a friendly reminder that you have surpassed
-								
-			the estimated hours for this project. While we 
-									
-			understand it is impossible to meet every deadline
-									
-			we encourage you to be as diligent as possible with
-									
-			your workload.";
-
-            $mail->setText($text);
-
-            $mail->sendMail($to);
-
-        }
 
         public function addTicketChange($userId,$ticketId,$values)
         {
@@ -1520,7 +1224,7 @@ namespace leantime\domain\repositories {
         public function delticket($id)
         {
 
-            $query = "DELETE FROM zp_tickets WHERE id = '".$id."'";
+            $query = "DELETE FROM zp_tickets WHERE id = :id";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);

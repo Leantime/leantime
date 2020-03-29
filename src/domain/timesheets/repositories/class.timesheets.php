@@ -222,129 +222,11 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllByProject($kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1')
-        {
 
 
 
-            $query = "
-		SELECT 
-			zp_projects.id AS id,
-			zp_projects.name AS project, 
-			SUM( zp_timesheets.hours ) AS hours, 
-			IF(zp_timesheets.invoicedEmpl = '0', SUM( zp_timesheets.hours ) , 0 ) AS hoursInvEmpl, 
-			IF( zp_timesheets.invoicedComp = '0', SUM( zp_timesheets.hours ) , 0 ) AS hoursInvComp
-		FROM zp_tickets, 
-			zp_timesheets, 
-			zp_projects
-		WHERE 
-		((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS('".$dateFrom."')) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS('".$dateTo."')))) AND
-		zp_timesheets.ticketId = zp_tickets.id
-		AND zp_tickets.projectId = zp_projects.id";
-
-            if($kind != 'all') {
-                $query.= " AND (zp_timesheets.kind = '".$kind."')";
-            }
-
-            if($userId != 'all') {
-                $query.= " AND (zp_timesheets.userId= '".$userId."')";
-            }
-
-            $query .= " GROUP BY zp_projects.name
-		ORDER BY zp_projects.name			
-		";
-
-            return $this->db->dbQuery($query)->dbFetchResults();
-        }
-
-        function getTicketSummaryForProject($id, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1')
-        {
-
-            $query = "SELECT 
-				zp_tickets.headline, 
-				zp_tickets.id, 
-				SUM( zp_timesheets.hours ) AS hours, 
-				IF( zp_timesheets.invoicedEmpl = '0', SUM( zp_timesheets.hours ) , 0 ) AS hoursInvEmpl, 
-				IF( zp_timesheets.invoicedComp = '0', SUM( zp_timesheets.hours ) , 0 ) AS hoursInvComp
-			FROM 
-				zp_tickets, 
-				zp_timesheets, 
-				zp_projects
-			WHERE 
-			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS('".$dateFrom."')) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS('".$dateTo."')))) AND
-				zp_timesheets.ticketId = zp_tickets.id
-				AND zp_tickets.projectId = zp_projects.id
-				AND zp_projects.id = '".$id."'
-			GROUP BY zp_tickets.headline, zp_tickets.id
-			ORDER BY zp_projects.name";
-
-            return $this->db->dbQuery($query)->dbFetchResults();
-
-        }
-
-        /**
-         * getMy - get user specific timesheet entries
-         *
-         * @access public
-         */
-        public function getMy($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $invEmpl = '1', $invComp = '1')
-        {
-
-            $query = "SELECT
-			zp_timesheets.id, 
-			zp_timesheets.userId, 
-			zp_timesheets.ticketId,
-			zp_timesheets.workDate,
-			zp_timesheets.hours,
-			zp_timesheets.description,
-			zp_timesheets.kind,
-			zp_timesheets.invoicedEmpl,
-			zp_timesheets.invoicedComp,
-			zp_timesheets.invoicedEmplDate,
-			zp_timesheets.invoicedCompDate,
-			zp_timesheets.kind,
-			zp_timesheets.kind,
-			zp_tickets.headline,
-			zp_tickets.planHours,
-			zp_projects.name,
-			zp_projects.id AS projectId
-		FROM
-			zp_timesheets
-		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
-		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-		WHERE 
-			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS('".$dateFrom."')) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS('".$dateTo."'))))
-			AND (zp_timesheets.userId = '".$_SESSION['userdata']['id']."')
-		";
-
-            if($projectId > 0) {
-                $query.=" AND zp_tickets.projectId = '".$projectId."'";
-            }
-
-            if($kind != 'all') {
-                $query.= " AND zp_timesheets.kind = '".$kind."'";
-            }
 
 
-
-            if($invComp == '1' && $invEmpl == '1') {
-
-            }elseif($invComp == '1' && $invEmpl != '1') {
-
-                $query.= " AND (zp_timesheets.invoicedComp = '1' OR (zp_timesheets.invoicedComp = '0' AND zp_timesheets.invoicedEmpl = '0'))";
-
-            }elseif($invEmpl == '1' && $invComp != '1') {
-                $query.= " AND (zp_timesheets.invoicedEmpl = '1' OR (zp_timesheets.invoicedComp = '0' AND zp_timesheets.invoicedEmpl = '0'))";
-
-            }else{
-
-                $query.= " AND (zp_timesheets.invoicedComp = '0' AND zp_timesheets.invoicedEmpl = '0')";
-            }
-
-            $query.="";
-
-            return $this->db->dbQuery($query)->dbFetchResults();
-        }
 
         public function getWeeklyTimesheets($projectId=-1, $dateStart='0000-01-01 00:00:00', $userId)
         {
@@ -533,9 +415,18 @@ namespace leantime\domain\repositories {
 		FROM zp_timesheets 
 		LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-		WHERE zp_timesheets.id = '".$id."'";
+		WHERE zp_timesheets.id = :id";
 
-            return $this->db->dbQuery($query)->dbFetchRow();
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $value = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $value;
 
         }
 
@@ -550,19 +441,34 @@ namespace leantime\domain\repositories {
             $query = "UPDATE
 					zp_timesheets 
 				SET
-			ticketId = '".$values['ticket']."',
-			workDate = '".$values['date']."',
-			hours = '".$values['hours']."', 
-			kind = '".$values['kind']."',
-			description ='".$values['description']."',
-			invoicedEmpl ='".$values['invoicedEmpl']."',
-			invoicedComp ='".$values['invoicedComp']."',
-			invoicedEmplDate ='".$values['invoicedEmplDate']."',
-			invoicedCompDate ='".$values['invoicedCompDate']."'
+			ticketId = :ticket,
+			workDate = :date,
+			hours = :hours, 
+			kind = :kind,
+			description =:description,
+			invoicedEmpl =:invoicedEmpl,
+			invoicedComp =:invoicedComp,
+			invoicedEmplDate =:invoicedEmplDate,
+			invoicedCompDate =:invoicedCompDate
 			WHERE 
-				id = '".$values['id']."' ";
+				id = :id";
 
-            $this->db->dbQuery($query);
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedEmpl', $values['invoicedEmpl'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedComp', $values['invoicedComp'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'], PDO::PARAM_STR);
+            $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
+            $stmn->bindValue(':id', $values['id'], PDO::PARAM_STR);
+
+
+            $stmn->execute();
+            $stmn->closeCursor();
         }
 
         /**
@@ -715,9 +621,15 @@ namespace leantime\domain\repositories {
         public function deleteTime($id)
         {
 
-            $query = "DELETE FROM zp_timesheets WHERE id = '".$id."' LIMIT 1";
+            $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
 
-            $this->db->dbQuery($query);
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            $stmn->execute();
+
+            $stmn->closeCursor();
+
         }
 
 
@@ -734,10 +646,11 @@ namespace leantime\domain\repositories {
                 foreach($invEmpl as $row1){
 
                     $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
-					WHERE id = '".$row1."' ";
+					WHERE id = :id ";
 
-                    $this->db->dbQuery($query);
-
+                    $stmn = $this->db->database->prepare($query);
+                    $stmn->bindValue(':id',  $row1, PDO::PARAM_STR);
+                    $stmn->execute();
 
                 }
             }
@@ -747,9 +660,11 @@ namespace leantime\domain\repositories {
                 foreach($invComp as $row2){
 
                     $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
-				WHERE id = '".$row2."' ";
+				    WHERE id = :id ";
 
-                    $this->db->dbQuery($query2);
+                    $stmn = $this->db->database->prepare($query2);
+                    $stmn->bindValue(':id',  $row2, PDO::PARAM_STR);
+                    $stmn->execute();
 
 
                 }
@@ -902,30 +817,6 @@ namespace leantime\domain\repositories {
          */
         public function getTicketHours($ticketId)
         {
-            /*
-
-            $sql = "SELECT * FROM `zp_timesheets`
-                        WHERE ticketId = :ticketId ORDER BY workDate asc";
-
-            $stmn = $this->db->{'database'}->prepare($sql);
-            $stmn->bindValue(':ticketId',$ticketId,PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-
-            $hours = 0;
-
-            $results = $this->db->dbQuery($sql)->dbFetchResults();
-
-
-            foreach($results as $timesheet) {
-                $hours += $timesheet['hours'];
-            }
-            */
-
-
 
             $query = "SELECT
 				YEAR(zp_timesheets.workDate) AS year,
@@ -970,8 +861,6 @@ namespace leantime\domain\repositories {
 
             return $returnValues;
         }
-
-
 
     }
 

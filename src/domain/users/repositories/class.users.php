@@ -306,7 +306,7 @@ namespace leantime\domain\repositories {
 
             if($values['password'] != '') {
 
-                $chgPW = " password = '".$values['password']."', ";
+                $chgPW = " password = :password, ";
 
             }else{
 
@@ -331,6 +331,12 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':notifications', $values['notifications'], PDO::PARAM_STR);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            if($values['password'] != '') {
+
+                $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
+
+            }
 
             $stmn->execute();
             $stmn->closeCursor();
@@ -363,7 +369,6 @@ namespace leantime\domain\repositories {
 							:phone,
 							:user,
 							:role,
-					
 							:clientId,
 							:password
 						)";
@@ -439,9 +444,6 @@ namespace leantime\domain\repositories {
 
             $lastId = $files->upload($_FILE, 'user', $id, true, 200, 200);
 
-            var_dump($lastId);
-            var_dump($id);
-
             if(isset($lastId['fileId'])) {
                 $sql = 'UPDATE `zp_user` SET profileId = :fileId WHERE id = :userId';
 
@@ -478,76 +480,6 @@ namespace leantime\domain\repositories {
             return $return;
         }
 
-        /**
-         * getRole - get a role by id
-         *
-         * @access public
-         */
-        public function getRole($id)
-        {
-
-            $sql = "SELECT * FROM `zp_roles` WHERE id=:id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindParam(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $values;
-
-        }
-
-        /**
-         * getMailRecipients - get mail addresses from a specific project
-         *
-         * @access public
-         * @param  $id
-         * @return array
-         */
-        public function getMailRecipients($id)
-        {
-
-            $query = "SELECT zp_user.username FROM `zp_user` JOIN zp_relationuserproject ON zp_relationuserproject.userId = zp_user.id WHERE zp_relationuserproject.projectId = '".$id."'";
-
-            return $this->db->dbQuery($query)->dbFetchResults();
-
-        }
-
-        public function getSpecificMailRecipients($id)
-        {
-
-            $query = "SELECT 
-				t1.username AS user1,
-				t2.username AS user2 
-			FROM zp_tickets 
-			LEFT JOIN zp_user AS t1 ON zp_tickets.editorId = t1.id
-			LEFT JOIN zp_user AS t2 ON zp_tickets.userId = t2.id
-			WHERE zp_tickets.id = '".$id."'";
-
-            $arr = $this->db->dbQuery($query)->dbFetchResults();
-
-            if(is_array($arr)==true) {
-
-                foreach($arr as $row){
-                    if($row['user1'] == $row['user2']) {
-
-                        $results[0]['user'] = $row['user1'];
-
-                    }else{
-                        $results[0]['user'] = $row['user1'];
-                        $results[1]['user'] = $row['user2'];
-
-                    }
-                }
-            }else{
-                $results = array();
-            }
-
-            return $results;
-
-        }
 
         public function patchUser($id,$params)
         {
@@ -555,7 +487,7 @@ namespace leantime\domain\repositories {
             $sql = "UPDATE zp_user SET ";
 
             foreach($params as $key=>$value){
-                $sql .= "".$key."=:".$key.", ";
+                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -564,7 +496,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
-                $stmn->bindValue(':'.$key, $value, PDO::PARAM_STR);
+                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();

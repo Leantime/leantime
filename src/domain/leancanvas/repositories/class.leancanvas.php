@@ -249,7 +249,7 @@ namespace leantime\domain\repositories {
             $sql = "UPDATE zp_canvas_items SET ";
 
             foreach($params as $key=>$value){
-                $sql .= "".$key."=:".$key.", ";
+                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -258,7 +258,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
-                $stmn->bindValue(':'.$key, $value, PDO::PARAM_STR);
+                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
