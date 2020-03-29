@@ -5921,7 +5921,7 @@ table td.center, table th.center {
 }
 
 .hidden-gt-sm {
-    display: none;
+    display: none !important;
 }
 
 
