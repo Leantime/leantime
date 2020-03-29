@@ -286,62 +286,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getUsersWithRelation($menu)
-        {
 
-            if ($menu != '') {
-
-
-                $sql_nutzer = "SELECT 
-				ac.id AS id,
-				ac.username AS username,
-				a.zp_person_name_given as vorname, 
-				a.zp_person_name_family as nachname
-				FROM zp_user AS ac
-				LEFT JOIN zp_persons AS a ON ac.id = a.zp_person_account_id ORDER BY nachname";
-
-                $stmn = $this->db->database->prepare($sql_nutzer);
-
-
-                $stmn->execute();
-
-                $array = $stmn->fetchAll();
-                $stmn->closeCursor();
-
-                for ($i = 0; $i < count($array); $i++) {
-
-
-                    $query2 = "SELECT * 
-								FROM 
-									zp_usermenu
-								WHERE 
-									(menuId = '" . $menu . "') 
-									AND
-									(username = '" . $array[$i]['id'] . "')";
-
-                    $row2 = $this->db->dbQuery($query2)->hasResults();
-
-                    if ($row2 === true) {
-
-                        $array[$i]['isRelated'] = '1';
-
-                    } else {
-
-                        $array[$i]['isRelated'] = '0';
-
-                    }
-
-
-                }
-
-
-                return $array;
-            } else {
-                $array = array();
-                return $array;
-            }
-
-        }
 
 
         public function getRoles()
@@ -859,64 +804,6 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getSysOrgsStringByRoles($array)
-        {
-
-            $query = "SELECT 
-				DISTINCT(zp_system_organisations.id), 
-				zp_system_organisations.name,
-				zp_system_organisations.alias 
-			FROM zp_roles
-			LEFT JOIN zp_system_organisations ON zp_roles.sysOrg = zp_system_organisations.id
-			WHERE (";
-
-            $i = 0;
-            foreach ($array as $row) {
-
-                $query .= "zp_roles.roleName = :role_" . $i . "";
-
-
-                $i++;
-
-                if ($i < count($array)) {
-                    $query .= " OR ";
-                }
-            }
-
-            $query .= ")";
-            $stmn = $this->db->database->prepare($query);
-
-            for ($i = 0; $i < count($array); $i++) {
-                $stmn->bindValue(':role_' . $i . '', $array[$i], PDO::PARAM_STR);
-            }
-
-            $stmn->execute();
-
-            $values = $stmn->fetchAll();
-
-            $stmn->closeCursor();
-            $sysOrgs['name'] = '';
-            $sysOrgs['description'] = '';
-
-            $sysOrgs['id'] = '';
-            $k = 0;
-            foreach ($values as $row) {
-                $sysOrgs['name'] .= $row['alias'];
-                $sysOrgs['description'] .= $row['name'];
-                $sysOrgs['id'] .= $row['id'];
-
-                $k++;
-                if ($k < count($values)) {
-                    $sysOrgs['name'] .= ',';
-                    $sysOrgs['id'] .= ',';
-                    $sysOrgs['description'] .= ', ';
-                }
-            }
-
-            return $sysOrgs;
-
-        }
-
         public function getAllTemplates()
         {
 
@@ -1044,68 +931,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function isAllowedToSeeTab($tab)
-        {
 
-            $act = $_GET["act"];
-
-            $actArr = explode('.', $act);
-
-            $action = $actArr[0] . '/class.' . $actArr[1] . '.php';
-
-            $role = $_SESSION['userdata']['role'];
-
-
-            $query = "SELECT id FROM zp_action_tabs WHERE 
-		action = :action AND tab = :tab AND
-		(";
-
-            $array = explode(',', $role);
-
-            $i = 0;
-            foreach ($array as $row) {
-
-                $query .= "tabRights LIKE :role_" . $i . "";
-
-                $i++;
-
-                if ($i < count($array)) {
-                    $query .= " OR ";
-                }
-            }
-
-            $query .= ")";
-
-            $stmn = $this->db->database->prepare($query);
-
-            $stmn->bindValue(':action', $action, PDO::PARAM_STR);
-            $stmn->bindValue(':tab', $tab, PDO::PARAM_STR);
-
-            for ($i = 0; $i < count($array); $i++) {
-
-
-                $role = "%{$array[$i]}%";
-                $stmn->bindValue(':role_' . $i . '', $role, PDO::PARAM_STR);
-
-            }
-
-            $stmn->execute();
-
-            $values = $stmn->fetch();
-
-            if ($values !== false) {
-
-                return true;
-
-            } else {
-
-                return false;
-
-            }
-
-            $stmn->closeCursor();
-
-        }
 
         public function getAllSubmodulesInDB()
         {

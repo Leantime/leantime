@@ -283,4 +283,16 @@ class db
         return $bindingStatement;
     }
 
+    /**
+     * Sanitizes a string to only contain letters, numbers and underscore.
+     * Used for patch statements with variable column keys values
+     *
+     *
+     * @param $name string
+     * @return string
+     */
+    public static function sanitizeToColumnString($string) {
+        return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
+    }
+
 }
