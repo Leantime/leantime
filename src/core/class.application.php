@@ -20,7 +20,7 @@ class application
     public function __construct(config $config,
                                 settings $settings,
                                 login $login,
-                                FrontController $frontController,
+                                frontcontroller $frontController,
                                 language $language,
                                 services\projects $projectService,
                                 repositories\setting $settingRepo)
