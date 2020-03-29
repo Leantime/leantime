@@ -55,7 +55,8 @@ namespace leantime\core {
          */
         private $dbUpdates = array(
             20004,
-            20100
+            20100,
+            20101
         );
 
         /**
@@ -354,7 +355,7 @@ namespace leantime\core {
                 
                 CREATE TABLE `zp_comment` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `module` enum('project', 'ticket', 'client', 'user', 'lead', 'leancanvasitem', 'idea', 'retrospective') DEFAULT NULL,
+                  `module` varchar(200) DEFAULT NULL,
                   `userId` int(11) DEFAULT NULL,
                   `commentParent` int(11) DEFAULT NULL,
                   `date` datetime DEFAULT NULL,
@@ -786,6 +787,36 @@ namespace leantime\core {
                 "UPDATE `zp_user` SET role = 10 WHERE role = 3;",
                 "UPDATE `zp_user` SET role = 20 WHERE role = 4;",
                 "UPDATE `zp_user` SET role = 40 WHERE role = 5;",
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20101() {
+
+
+              $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
             );
 
             foreach ($sql as $statement) {
