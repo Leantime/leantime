@@ -33,6 +33,10 @@ namespace leantime\domain\controllers {
 
             $reportService = new services\reports();
             $reportService->dailyIngestion();
+
+
+            $reportRepo = new repositories\reports();
+            $reportRepo->runTicketReport($_SESSION['currentProject'], "");
         }
 
         /**
