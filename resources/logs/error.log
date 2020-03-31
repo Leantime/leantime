@@ -1,0 +1,29 @@
+[31-Mar-2020 15:38:57 America/Los_Angeles] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND progressTickets.type <> 'subtask'
+				GROUP BY zp_canvas_items.id
+				ORDE' at line 50 in D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php:340
+Stack trace:
+#0 D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php(340): PDOStatement->execute()
+#1 D:\xampp\htdocs\leantimeos\src\domain\ideas\controllers\class.showBoards.php(108): leantime\domain\repositories\ideas->getCanvasItemsById('35')
+#2 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(168): leantime\domain\controllers\showBoards->run()
+#3 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('ideas.showBoard...')
+#4 D:\xampp\htdocs\leantimeos\src\core\class.application.php(80): leantime\core\frontcontroller->run()
+#5 D:\xampp in D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php on line 340
+[31-Mar-2020 15:38:59 America/Los_Angeles] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND progressTickets.type <> 'subtask'
+				GROUP BY zp_canvas_items.id
+				ORDE' at line 50 in D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php:340
+Stack trace:
+#0 D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php(340): PDOStatement->execute()
+#1 D:\xampp\htdocs\leantimeos\src\domain\ideas\controllers\class.showBoards.php(108): leantime\domain\repositories\ideas->getCanvasItemsById('35')
+#2 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(168): leantime\domain\controllers\showBoards->run()
+#3 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('ideas.showBoard...')
+#4 D:\xampp\htdocs\leantimeos\src\core\class.application.php(80): leantime\core\frontcontroller->run()
+#5 D:\xampp in D:\xampp\htdocs\leantimeos\src\domain\ideas\repositories\class.ideas.php on line 340
+[31-Mar-2020 15:41:56 America/Los_Angeles] PHP Notice:  Undefined index: status in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 174
+[31-Mar-2020 15:41:56 America/Los_Angeles] PHP Notice:  Undefined index: assumptions in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 175
+[31-Mar-2020 15:41:56 America/Los_Angeles] PHP Notice:  Undefined index: conclusion in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 177
+[31-Mar-2020 15:42:02 America/Los_Angeles] PHP Notice:  Undefined index: status in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 123
+[31-Mar-2020 15:42:02 America/Los_Angeles] PHP Notice:  Undefined index: assumptions in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 124
+[31-Mar-2020 15:42:02 America/Los_Angeles] PHP Notice:  Undefined index: conclusion in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 126
+[31-Mar-2020 15:42:10 America/Los_Angeles] PHP Notice:  Undefined index: status in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 123
+[31-Mar-2020 15:42:10 America/Los_Angeles] PHP Notice:  Undefined index: assumptions in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 124
+[31-Mar-2020 15:42:10 America/Los_Angeles] PHP Notice:  Undefined index: conclusion in D:\xampp\htdocs\leantimeos\src\domain\retrospectives\controllers\class.retroDialog.php on line 126

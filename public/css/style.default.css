@@ -6576,3 +6576,12 @@ input.secretInput:active {
     max-width: 100%;
     height: auto;
 }
+
+.loading {
+    width:100%;
+    text-align:center;
+    background:url(../images/ajaxLoader.gif) center center no-repeat;
+    min-height:31px;
+    background-size:31px 31px;
+    display:none;
+}

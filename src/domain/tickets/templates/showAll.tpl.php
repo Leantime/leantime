@@ -203,6 +203,7 @@
 
             </div>
         </form>
+
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
                 <col class="con1" width="20%">
