@@ -12,7 +12,7 @@ leantime.dashboardController = (function () {
     };
 
     var _burndownConfig = '';
-    var _burndownChart = '';
+
     var _progressChart = '';
 
     //Constructor
@@ -49,7 +49,7 @@ leantime.dashboardController = (function () {
                             leantime.dashboardController.chartColors.grey
 
                         ],
-                    label: 'Project Done'
+                    label: leantime.i18n.__("label.project_done")
                 }],
                 labels: [
                             complete+'% Done',
@@ -87,7 +87,7 @@ leantime.dashboardController = (function () {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Ideal',
+                        label: leantime.i18n.__("label.ideal"),
                         backgroundColor: leantime.dashboardController.chartColors.blue,
                         borderColor: leantime.dashboardController.chartColors.blue,
                         data: plannedData,
@@ -128,14 +128,18 @@ leantime.dashboardController = (function () {
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Day of the Sprint'
+                            labelString: leantime.i18n.__("label.date"),
+                        },
+                        type: 'time',
+                        time: {
+                            unit: 'day'
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Effort'
+                            labelString: leantime.i18n.__("label.effort")
                         },
                         ticks: {
                             beginAtZero:true
@@ -148,19 +152,21 @@ leantime.dashboardController = (function () {
         var ctx2 = document.getElementById('sprintBurndown').getContext('2d');
         _burndownChart = new Chart(ctx2, config);
 
+        return _burndownChart;
+
     };
 
-    var initChartButtonClick = function (id, plannedData, actualData) {
+    var initChartButtonClick = function (id, plannedData, actualData, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
-                _burndownChart.data.datasets[0].data = plannedData;
-                _burndownChart.data.datasets[1].data = actualData;
-                _burndownChart.options.scales.yAxes[0].scaleLabel.labelString = "Open To-Dos";
-                jQuery("#NumChartButton, #EffortChartButton, #HourlyChartButton").removeClass('active');
+                chart.data.datasets[0].data = plannedData;
+                chart.data.datasets[1].data = actualData;
+                chart.options.scales.yAxes[0].scaleLabel.labelString = leantime.i18n.__("label.open_todos");
+                jQuery(".chartButtons").removeClass('active');
                 jQuery(this).addClass('active');
-                _burndownChart.update();
+                chart.update();
 
             }
         );
@@ -177,7 +183,7 @@ leantime.dashboardController = (function () {
                 datasets: [
 
                     {
-                        label: 'Open To-Dos',
+                        label: leantime.i18n.__("label.open_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.red,
                         borderColor: leantime.dashboardController.chartColors.red,
                         data: actualData,
@@ -218,14 +224,17 @@ leantime.dashboardController = (function () {
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Date'
-                        }
+                            labelString: leantime.i18n.__("label.date"),
+
+                        },
+                        type: 'time',
+
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: '# of open To-Dos'
+                            labelString: leantime.i18n.__("label.num_tickets")
                         },
                         ticks: {
                             beginAtZero:true
@@ -238,18 +247,20 @@ leantime.dashboardController = (function () {
         var ctx2 = document.getElementById('backlogBurndown').getContext('2d');
         _burndownChart = new Chart(ctx2, config);
 
+        return _burndownChart;
+
     };
 
-    var initBacklogChartButtonClick = function (id, actualData) {
+    var initBacklogChartButtonClick = function (id, actualData, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
-                _burndownChart.data.datasets[0].data = actualData;
-                _burndownChart.options.scales.yAxes[0].scaleLabel.labelString = "Open To-Dos";
-                jQuery("#NumChartButton, #EffortChartButton, #HourlyChartButton").removeClass('active');
+                chart.data.datasets[0].data = actualData;
+                chart.options.scales.yAxes[0].scaleLabel.labelString = leantime.i18n.__("label.open_todos");
+                jQuery(".backlogChartButtons").removeClass('active');
                 jQuery(this).addClass('active');
-                _burndownChart.update();
+                chart.update();
 
             }
         );

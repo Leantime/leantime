@@ -59,6 +59,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getFullReport($projectId) {
+            return $this->reportRepository->getFullReport($projectId);
+        }
+
     }
 
 }

@@ -49,18 +49,44 @@ namespace leantime\domain\controllers {
                 $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Sprint Burndown
-            if (isset($_GET['sprint'])) {
-                $sprintChart = $this->sprintService->getSprintBurndown((int)$_GET['sprint']);
-            } else {
-                $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
-                $sprintChart = $this->sprintService->getSprintBurndown($currentSprint);
+
+            $allSprints = $this->sprintService->getAllSprints($_SESSION['currentProject']);
+
+            if($allSprints !== false && count($allSprints) > 0) {
+
+                if (isset($_GET['sprint'])) {
+                    $sprintObject = $this->sprintService->getSprint((int)$_GET['sprint']);
+                    $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                    $this->tpl->assign('currentSprint', (int)$_GET['sprint']);
+                } else {
+
+                    $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
+
+                    if ($currentSprint !== false ) {
+                        $sprintObject = $this->sprintService->getSprint($currentSprint);
+                        $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                        $this->tpl->assign('currentSprint', $currentSprint->id);
+                    } else {
+
+                        $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);
+                        $this->tpl->assign('currentSprint', $allSprints[0]->id);
+                    }
+                }
             }
 
             $this->tpl->assign('sprintBurndown', $sprintChart);
-            $this->tpl->assign('backlogBurndown',
-                $this->sprintService->getBacklogBurndown($_SESSION['currentProject']));
+            $this->tpl->assign('backlogBurndown', $this->sprintService->getBacklogBurndown($_SESSION['currentProject']));
 
             $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION['currentProject']));
+
+            $fullReport =  $this->reportService->getFullReport($_SESSION['currentProject']);
+
+            $this->tpl->assign("fullReport", $fullReport);
+            if(count($fullReport) > 0) {
+                $this->tpl->assign("fullReportLatest", $fullReport[count($fullReport)-1]);
+            }else{
+                $this->tpl->assign("fullReportLatest", false);
+            }
 
             //Milestones
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);

@@ -1,0 +1,246 @@
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 106
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 106
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 141
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 141
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 268
+[30-Mar-2020 15:27:50 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 268
+[30-Mar-2020 15:50:41 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 59
+[30-Mar-2020 15:50:47 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 59
+[30-Mar-2020 15:53:10 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:53:10 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Notice:  Trying to get property 'startDate' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 147
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Notice:  Trying to get property 'endDate' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 147
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Notice:  Trying to get property 'name' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 148
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 270
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 270
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 270
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 271
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 271
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 272
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 272
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 273
+[30-Mar-2020 15:53:11 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 273
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Notice:  Trying to get property 'startDate' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 139
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Notice:  Trying to get property 'endDate' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 139
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Notice:  Trying to get property 'name' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 140
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 265
+[30-Mar-2020 15:53:23 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 265
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:09 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 260
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:54 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:54:54 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:54:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:27 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 76
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:43 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 74
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 76
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:56:52 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:56:53 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 76
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:10 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 76
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:12 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 76
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:57:14 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 78
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:05 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 55
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 78
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:06 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 56
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Notice:  Undefined variable: sprintChart in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 79
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 261
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 262
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 263
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:22 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 264
+[30-Mar-2020 15:59:39 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 68
+[30-Mar-2020 15:59:39 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 15:59:50 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 68
+[30-Mar-2020 15:59:50 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:00:43 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 68
+[30-Mar-2020 16:00:43 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:01:13 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:07:03 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:07:05 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:07:14 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:08:00 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:08:03 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:08:39 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:08:42 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:08:54 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:12:05 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:12:08 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:13:08 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:13:47 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:14:04 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 102
+[30-Mar-2020 16:14:53 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:15:30 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:16:47 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:16:50 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:17:07 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:17:10 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:17:13 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:18:23 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:18:26 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:18:33 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:05 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:07 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:46 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:53 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:55 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:20:58 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:21:02 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:21:19 America/Los_Angeles] PHP Notice:  Trying to get property 'id' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\controllers\class.show.php on line 68
+[30-Mar-2020 16:21:19 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:21:21 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:21:58 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:29:41 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:33:08 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:33:53 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 34
+[30-Mar-2020 16:41:56 America/Los_Angeles] PHP Notice:  Undefined index: sum_logged_hours in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 39
+[30-Mar-2020 16:41:56 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 44
+[30-Mar-2020 16:42:50 America/Los_Angeles] PHP Notice:  Trying to get property 'sum_logged_hours' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 39
+[30-Mar-2020 16:42:50 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 44
+[30-Mar-2020 16:43:23 America/Los_Angeles] PHP Notice:  Trying to get property 'sum_logged_hours' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 40
+[30-Mar-2020 16:43:23 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 45
+[30-Mar-2020 16:54:37 America/Los_Angeles] PHP Notice:  Trying to get property 'sum_logged_hours' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 40
+[30-Mar-2020 16:54:37 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 45
+[30-Mar-2020 16:55:53 America/Los_Angeles] PHP Notice:  Trying to get property 'sum_logged_hours' of non-object in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 40
+[30-Mar-2020 16:55:53 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 45
+[30-Mar-2020 16:56:29 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 45
+[30-Mar-2020 16:56:55 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 45
+[30-Mar-2020 16:58:14 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 54
+[30-Mar-2020 17:01:13 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 61
+[30-Mar-2020 17:04:03 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 61
+[30-Mar-2020 17:06:14 America/Los_Angeles] PHP Notice:  Undefined variable: allSprints in D:\xampp\htdocs\leantimeos\src\domain\reports\templates\show.tpl.php on line 61

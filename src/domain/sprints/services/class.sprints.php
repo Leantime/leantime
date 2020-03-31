@@ -44,7 +44,7 @@ namespace leantime\domain\services {
         public function getCurrentSprint($projectId)
         {
 
-            if(isset($_SESSION["currentSprint"])) {
+            if(isset($_SESSION["currentSprint"]) && $_SESSION["currentSprint"] != "") {
                 return $_SESSION["currentSprint"];
             }
 
@@ -187,7 +187,7 @@ namespace leantime\domain\services {
             $i = 0;
             foreach ($period as $key => $value) {
 
-                    $burnDown[$i]['date'] = $value->format('m/d/Y');
+                    $burnDown[$i]['date'] = $value->format('Y-m-d');
 
                 if ($i == 0) {
                     $burnDown[$i]["plannedHours"] = $plannedHoursStart;
