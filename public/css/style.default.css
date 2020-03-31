@@ -6091,6 +6091,7 @@ a.filter-term {
     padding: 5px;
     text-align: center;
     margin-bottom: 5px;
+    border-radius:5px;
 }
 
 .quickAddLink:hover {
