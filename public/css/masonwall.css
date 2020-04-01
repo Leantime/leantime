@@ -1,7 +1,8 @@
 #ideaMason .ticketBox {
     width: 250px;
     cursor:move;
-    z-index:5;
+
+    position:absolute;
 
 }
 
@@ -11,6 +12,7 @@
 
 .packery-drop-placeholder {
     background:#ddd;
+    opacity:0.2;
     border: 2px dotted #ccc;
     visibility:visible;
     /* transition position changing */

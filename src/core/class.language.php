@@ -138,8 +138,6 @@ namespace leantime\core {
 
             $langCode = explode("-", $language);
 
-            var_dump($langCode);
-
             if(isset($this->langlist[$langCode[0]]) === true) {
 
                 return $langCode[0];

@@ -930,6 +930,8 @@ namespace leantime\domain\repositories {
 						SUM(progressTickets.planHours) AS planHours,
 						SUM(progressTickets.hourRemaining) AS hourRemaining,
 						SUM(timesheets.hours) AS bookedHours,
+						
+						
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
 						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
@@ -939,7 +941,11 @@ namespace leantime\domain\repositories {
 						CASE WHEN 
 						  COUNT(progressTickets.id) > 0 
 						THEN 
-						  ROUND(SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) *100) 
+						  ROUND(
+						    (
+						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
+						    ) *100) 
 						ELSE 
 						  0 
 						END AS percentDone
@@ -953,7 +959,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 					WHERE 
-						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
+						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask' ";
 
                 if($includeArchived === false) {
                     $query .= " AND zp_tickets.status > -1 ";

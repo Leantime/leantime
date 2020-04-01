@@ -150,7 +150,8 @@ $canvasLabels = $this->get('canvasLabels');
                             </div>
                         </div>
 
-                        <?php if ($row['milestoneHeadline'] != '') { ?>
+                        <?php if ($row['milestoneHeadline'] != '') {
+                            ?>
                             <br/>
                             <hr/>
                             <div class="row">

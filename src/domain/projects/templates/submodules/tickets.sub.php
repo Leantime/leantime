@@ -36,7 +36,7 @@ var ganttData = [
         jQuery(function () {
             
             var width = jQuery(".maincontentinner").width() - 500;
-            console.log(width);
+
             jQuery("#ganttChart").ganttView({ 
                 data: ganttData,
                 slideWidth: width,
