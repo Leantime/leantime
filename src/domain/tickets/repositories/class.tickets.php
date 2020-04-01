@@ -959,7 +959,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 					WHERE 
-						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask' ";
+						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
 
                 if($includeArchived === false) {
                     $query .= " AND zp_tickets.status > -1 ";
