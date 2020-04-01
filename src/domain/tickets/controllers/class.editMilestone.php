@@ -170,7 +170,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__("notification.milestone_created_successfully"), "success");
 
                     $subject = $this->language->__("email_notifications.milestone_created_subject");
-                    $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
+                    $actual_link = BASE_URL."/tickets/editMilestone/".$result;
                     $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.milestone_created_cta")));
 
