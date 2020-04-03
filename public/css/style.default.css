@@ -6091,6 +6091,7 @@ a.filter-term {
     padding: 5px;
     text-align: center;
     margin-bottom: 5px;
+    border-radius:5px;
 }
 
 .quickAddLink:hover {
@@ -6574,4 +6575,13 @@ input.secretInput:active {
 .svgContainer svg {
     max-width: 100%;
     height: auto;
+}
+
+.loading {
+    width:100%;
+    text-align:center;
+    background:url(../images/ajaxLoader.gif) center center no-repeat;
+    min-height:31px;
+    background-size:31px 31px;
+    display:none;
 }

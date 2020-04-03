@@ -930,6 +930,8 @@ namespace leantime\domain\repositories {
 						SUM(progressTickets.planHours) AS planHours,
 						SUM(progressTickets.hourRemaining) AS hourRemaining,
 						SUM(timesheets.hours) AS bookedHours,
+						
+						
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
 						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
@@ -939,7 +941,11 @@ namespace leantime\domain\repositories {
 						CASE WHEN 
 						  COUNT(progressTickets.id) > 0 
 						THEN 
-						  ROUND(SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) *100) 
+						  ROUND(
+						    (
+						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
+						    ) *100) 
 						ELSE 
 						  0 
 						END AS percentDone

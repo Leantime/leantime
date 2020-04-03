@@ -98,7 +98,7 @@ jQuery(document).ready(function(){
     });
 
     jQuery(".ticket-select").change(function() {
-        console.log("asdf");
+
         var selectedValue = jQuery(this).find("option:selected").attr("data-value");
         jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
         jQuery(".project-select").trigger("liszt:updated");
