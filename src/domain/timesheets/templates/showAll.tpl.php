@@ -31,6 +31,10 @@ $helper = $this->get('helper');
 	    });
 
 	    leantime.timesheetsController.initTimesheetsTable();
+
+        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+            leantime.timesheetsController.initEditTimeModal();
+        <?php } ?>
 	});		
         
     
@@ -122,7 +126,7 @@ $helper = $this->get('helper');
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
 	<colgroup>
-      	  <col class="con0"/>
+      	  <col class="con0" width="100px"/>
           <col class="con1" />
       	  <col class="con0"/>
           <col class="con1" />
@@ -133,9 +137,11 @@ $helper = $this->get('helper');
       	  <col class="con0"/>
           <col class="con1" />
       	  <col class="con0"/>
+           <col class="con1"/>
 	</colgroup>
 	<thead>
 		<tr>
+            <th><?php echo $this->__('label.id'); ?></th>
 			<th><?php echo $this->__('label.date'); ?></th>
 			<th><?php echo $this->__('label.hours'); ?></th>
 			<th><?php echo $this->__('label.plan_hours'); ?></th>
@@ -160,8 +166,14 @@ $helper = $this->get('helper');
 	foreach($this->get('allTimesheets') as $row) {
 		$sum = $sum + $row['hours'];?>
 		<tr>
-
-			<td>
+            <td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a>
+                <?php }else{ ?>
+                    #<?=$row['id']?>
+                <?php } ?>
+            </td>
+            <td>
                 <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
             </td>
 			<td><?php $this->e($row['hours']); ?></td>
@@ -175,24 +187,42 @@ $helper = $this->get('helper');
 			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
 			<td><?php $this->e($row['description']); ?></td>
 			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo "true"; }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
-			<?php }else{ ?> <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
-				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
-			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo "true"; }?>"><?php if($row['invoicedComp'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
-			<?php }else{ ?> <input type="checkbox" name="invoicedComp[]" class="invoicedComp"
-				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
+			<?php }else{ ?>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
+				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
+			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo "true"; }?>">
+
+                <?php if($row['invoicedComp'] == '1'){?>
+                    <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
+			    <?php }else{ ?>
+                    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
+                    <?php } ?>
+                    <?php } ?>
+            </td>
 		</tr>
 		<?php } ?>
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="1"><strong><?php echo $this->__("label.total_hours")?></strong></td>
+			<td colspan="2"><strong><?php echo $this->__("label.total_hours")?></strong></td>
 			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
 
 			<td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
 				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
-			</td>
-			<td><input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
-			<td><input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?></td>
+                <?php } ?>
+            </td>
+			<td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
+            <?php } ?>
+            <td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?>
+                <?php } ?>
+            </td>
 		</tr>
 	</tfoot>
 </table>

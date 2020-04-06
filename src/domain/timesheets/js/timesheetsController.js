@@ -1,5 +1,5 @@
 leantime.timesheetsController = (function () {
-
+    var closeModal = false;
 
     //Constructor
     (function () {
@@ -7,6 +7,7 @@ leantime.timesheetsController = (function () {
             function () {
                 _initTicketTimers();
             });
+
     })();
 
     //Functions
@@ -163,9 +164,46 @@ leantime.timesheetsController = (function () {
         });
     };
 
+    var initEditTimeModal = function () {
+
+        var canvasoptions = {
+            sizes: {
+                minW:  700,
+                minH: 1000,
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                beforeShowCont: function() {
+                    jQuery(".showDialogOnLoad").show();
+                    if(closeModal == true){
+                        closeModal = false;
+                        location.reload();
+                    }
+                },
+                afterShowCont: function () {
+
+                    jQuery(".editTimeModal").nyroModal(canvasoptions);
+                },
+                beforeClose: function () {
+                    location.reload();
+                }
+            },
+            titleFromIframe: true
+
+        };
+
+
+        jQuery(".editTimeModal").nyroModal(canvasoptions);
+
+
+    };
+
+
     // Make public what you want to have public, everything else is private
     return {
-        initTimesheetsTable:initTimesheetsTable
+        initTimesheetsTable:initTimesheetsTable,
+        initEditTimeModal:initEditTimeModal
 
     };
 })();

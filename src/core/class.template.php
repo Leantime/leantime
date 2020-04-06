@@ -437,6 +437,13 @@ namespace leantime\core {
 
         }
 
+        //Echos and escapes content
+        public function getFormattedDateString($date) {
+
+           return  $this->language->getFormattedDateString($date);
+
+        }
+
     }
 
 }

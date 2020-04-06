@@ -117,6 +117,7 @@ namespace leantime\domain\controllers {
                     if ($isCurrentTimesheetEntry == "new") {
 
                         if ($values["hours"] > 0) {
+
                             $timesheetRepo->simpleInsert($values);
                         }
 

@@ -171,6 +171,15 @@ namespace leantime\core {
 
         }
 
+        public function getFormattedDateString($date)
+        {
+
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00") {
+                return date($this->__("language.dateformat"), strtotime($date));
+            }
+
+        }
+
     }
 
 }
