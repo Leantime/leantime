@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
             $this->projectService = new services\projects();
             $this->language = new core\language();
             $this->commentService = new services\comments();
+            $this->fileService = new services\files();
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -275,16 +276,14 @@ namespace leantime\domain\controllers {
                 //Delete File
                 if (isset($_GET['delFile']) === true) {
 
-                    $file = $_GET['delFile'];
-                    $upload = new core\fileupload();
-                    $files = new repositories\files();
+                    $result = $this->fileService->deleteFile($_GET['delFile']);
 
-                    $upload->initFile($file);
-                    $files->deleteFile($file);
-
-                    $this->deleteFile($file);
-
-                    $this->setNotification($this->language->__("notifications.file_deleted"), 'success');
+                    if($result === true) {
+                        $tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
+                        $tpl->redirect(BASE_URL."/projects/showProject/".$id."#files");
+                    }else {
+                        $tpl->setNotification($result["msg"], "success");
+                    }
 
                 }
 
