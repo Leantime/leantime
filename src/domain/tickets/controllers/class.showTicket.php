@@ -57,9 +57,9 @@ namespace leantime\domain\controllers {
 
                     if($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."#files");
                     }else {
-                        $this->tpl->setNotification($result["msg"], "success");
+                        $this->tpl->setNotification($result["msg"], "error");
                     }
                 }
 

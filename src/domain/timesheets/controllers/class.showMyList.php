@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function get()
+        public function run()
         {
 
 

@@ -111,7 +111,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                     <?php
                                                     if($row["conclusion"] != "") {
-                                                        $this->e($row["conclusion"]);
+                                                        echo ($row["conclusion"]);
                                                     }else {
                                                         echo $this->__("text.no_conclusion_yet");
                                                     }
@@ -228,7 +228,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -343,7 +343,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -460,7 +460,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -577,7 +577,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -692,7 +692,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -809,7 +809,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -929,7 +929,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
                                                     echo $this->__("text.no_conclusion_yet");
                                                 }
@@ -1046,9 +1046,11 @@ $statusLabels = $this->get("statusLabels");
 
                                                 <?php
                                                 if($row["conclusion"] != "") {
-                                                    $this->e($row["conclusion"]);
+                                                    echo ($row["conclusion"]);
                                                 }else {
-                                                    echo $this->__("text.no_conclusion_yet");
+                                                    echo $this->__("text.no_
+                                                    
+                                                    usion_yet");
                                                 }
                                                 ?>
                                                 <div class="clearfix" style="padding-bottom: 8px;"></div>

@@ -32,7 +32,7 @@ namespace leantime\domain\controllers {
             $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-            $searchCriteria["orderBy"] = "kanbanSortIndex";
+            $searchCriteria["orderBy"] = "kanbansort";
 
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());

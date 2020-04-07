@@ -5,6 +5,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 $helper = $this->get('helper');
 ?>
 <script type="text/javascript">
+
 jQuery(document).ready(function(){
 
  	var startDate;
@@ -145,34 +146,37 @@ jQuery(document).ready(function(){
     	
     	
     	jQuery(".timesheetRow").each(function(i){
+
     		var rowSum = 0;
+
     		jQuery(this).find("input.hourCell").each(function(){
-    			var currentValue = parseInt(jQuery(this).val());
+    			var currentValue = parseFloat(jQuery(this).val());
     			rowSum = rowSum + currentValue;
     			
     			var currentClass = jQuery(this).parent().attr('class');
-    			
-    			switch(currentClass){
-    				case "rowMo": colSumMo = colSumMo + currentValue; break;
-    				case "rowTu": colSumTu = colSumTu + currentValue; break;
-    				case "rowWe": colSumWe = colSumWe + currentValue; break;
-    				case "rowTh": colSumTh = colSumTh + currentValue; break;
-    				case "rowFr": colSumFr = colSumFr + currentValue; break;
-    				case "rowSa": colSumSa = colSumSa + currentValue; break;
-    				case "rowSu": colSumSu = colSumSu + currentValue; break;
-    			}
+                console.log(currentClass);
+    			if(currentClass.indexOf("rowMo") > -1){ colSumMo = colSumMo + currentValue; }
+                if(currentClass.indexOf("rowTu") > -1){ colSumTu = colSumTu + currentValue; }
+                if(currentClass.indexOf("rowWe") > -1){ colSumWe = colSumWe + currentValue;  }
+                if(currentClass.indexOf("rowTh") > -1){ colSumTh = colSumTh + currentValue; }
+                if(currentClass.indexOf("rowFr") > -1){ colSumFr = colSumFr + currentValue;  }
+                if(currentClass.indexOf("rowSa") > -1){ colSumSa = colSumSa + currentValue;  }
+                if(currentClass.indexOf("rowSu") > -1){ colSumSu = colSumSu + currentValue;  }
+
     			
     		});
+
     		jQuery(this).find(".rowSum strong").text(rowSum);
     	});
-    	
-    	jQuery("#sumMo").text(colSumMo);
-    	jQuery("#sumTu").text(colSumTu);
-    	jQuery("#sumWe").text(colSumWe);
-    	jQuery("#sumTh").text(colSumTh);
-    	jQuery("#sumFr").text(colSumFr);
-    	jQuery("#sumSa").text(colSumSa);
-    	jQuery("#sumSu").text(colSumSu);
+
+    	console.log(colSumMo);
+    	jQuery("#sumMo").text(colSumMo.toFixed(2));
+    	jQuery("#sumTu").text(colSumTu.toFixed(2));
+    	jQuery("#sumWe").text(colSumWe.toFixed(2));
+    	jQuery("#sumTh").text(colSumTh.toFixed(2));
+    	jQuery("#sumFr").text(colSumFr.toFixed(2));
+    	jQuery("#sumSa").text(colSumSa.toFixed(2));
+    	jQuery("#sumSu").text(colSumSu.toFixed(2));
     	
     	var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
     	
