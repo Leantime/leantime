@@ -19,8 +19,8 @@
                     <label for="kind"><?php echo $this->__('label.timesheet_kind') ?></label>
                     <span class="field">
                     <select id="kind" name="kind">
-                    <?php foreach ($this->get('kind') as $row) {
-                        echo'<option value="'.$row.'"';
+                    <?php foreach ($this->get('kind') as $key => $row) {
+                        echo'<option value="'.$key.'"';
                         if($row == $values['kind']) { echo ' selected="selected"';
                         }
                         echo'>'.$this->__(strtolower($row)).'</option>';

@@ -23,26 +23,29 @@ namespace leantime\domain\controllers {
 
             if (isset($_GET['id']) === true) {
 
-                $id = ($_GET['id']);
+                $id = (int)($_GET['id']);
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
 
                     $timesheetsRepo->deleteTime($id);
 
-                    $msgKey = 'TIME_DELETED';
+                   $tpl->setNotification("notifications.time_deleted_successfully", "success");
+
+                    if(isset($_SESSION['lastPage'])) {
+                        $tpl->redirect($_SESSION['lastPage']);
+                    }else{
+                        $tpl->redirect(BASE_URL."/timsheets/showMyList");
+                    }
 
                 }
 
-                //Assign variables
-                $tpl->assign('msg', $msgKey);
-
-
-                $tpl->display('timesheets.delTime');
+                $tpl->assign("id", $id);
+                $tpl->displayPartial('timesheets.delTime');
 
             } else {
 
-                $tpl->display('general.error');
+                $tpl->displayPartial('general.error');
 
             }
 

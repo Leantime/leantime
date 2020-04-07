@@ -141,5 +141,9 @@ namespace leantime\domain\services {
             return $this->timesheetsRepo->kind;
         }
 
+        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1'){
+            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter);
+        }
+
     }
 }
