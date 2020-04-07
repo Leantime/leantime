@@ -554,6 +554,11 @@ namespace leantime\domain\repositories {
                     $statusIn = core\db::arrayToPdoBindingString("status", count(explode(",", $searchCriteria["status"])));
                     $query .= " AND zp_tickets.status IN(".$statusIn.")";
                 }
+
+            }else{
+
+                $query .= " AND zp_tickets.status <> -1";
+
             }
 
             if($searchCriteria["type"]  != "") {
@@ -576,11 +581,11 @@ namespace leantime\domain\repositories {
             $query .= " GROUP BY zp_tickets.id ";
 
             if($sort == "standard") {
-                $query .= " ORDER BY zp_tickets.sortindex ASC";
+                $query .= " ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }else if($sort == "kanbansort") {
-                $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC";
+                $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
             }else if($sort == "duedate") {
-                    $query .= " ORDER BY zp_tickets.dateToFinish ASC";
+                    $query .= " ORDER BY zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }
 
             $stmn = $this->db->database->prepare($query);
@@ -1101,7 +1106,9 @@ namespace leantime\domain\repositories {
 						editFrom, 
 						editTo, 
 						editorId,
-						dependingTicketId
+						dependingTicketId,
+						sortindex,
+						kanbanSortindex
 				) VALUES (
 						:headline,
 						:type,
@@ -1120,7 +1127,9 @@ namespace leantime\domain\repositories {
 						:editFrom,
 						:editTo,
 						:editorId,
-						:dependingTicketId
+						:dependingTicketId,
+						0,
+						0
 				)";
 
             $stmn = $this->db->database->prepare($query);

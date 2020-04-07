@@ -187,7 +187,7 @@
                                 <?php echo $row->bookedHours ?>
                             </td>
 
-                            <td data-order="<?=$percent?>">
+                            <td data-order="<?=$row->percentDone?>">
                                 <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
                                 <a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
                                 <div class="progress" style="width: 100%;">

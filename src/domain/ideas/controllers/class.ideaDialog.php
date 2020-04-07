@@ -65,7 +65,7 @@ namespace leantime\domain\controllers {
                 $canvasItem = $this->ideaRepo->getSingleCanvasItem($params['id']);
                 if($canvasItem['box'] == "0"){$canvasItem['box'] = "idea";}
                 $comments = $this->commentsRepo->getComments('idea', $canvasItem['id']);
-                $this->tpl->assign('numComments', $this->commentsRepo->countComments('retrospective', $canvasItem['id']));
+                $this->tpl->assign('numComments', $this->commentsRepo->countComments('ideas', $canvasItem['id']));
 
             }else{
 
@@ -129,36 +129,42 @@ namespace leantime\domain\controllers {
                             "milestoneId" => $params['milestoneId']
                         );
 
-                        if(isset($params['newMilestone']) && $params['newMilestone'] != '' ) {
+                        if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
 
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = "#ccc";
                             $params['editFrom'] = date("Y-m-d");
                             $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
                             $id = $this->ticketService->quickAddMilestone($params);
-                            if($id !== false) {
+                            if ($id !== false) {
                                 $canvasItem['milestoneId'] = $id;
                             }
                         }
 
-                        if(isset($params['existingMilestone']) && $params['existingMilestone'] != '' ) {
+                        if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
                             $canvasItem['milestoneId'] = $params['existingMilestone'];
                         }
 
                         $this->ideaRepo->editCanvasItem($canvasItem);
 
                         $comments = $this->commentsRepo->getComments('leancanvasitem', $params['itemId']);
-                        $this->tpl->assign('numComments', $this->commentsRepo->countComments('leancanvasitem', $params['itemId']));
+                        $this->tpl->assign('numComments',
+                            $this->commentsRepo->countComments('leancanvasitem', $params['itemId']));
                         $this->tpl->assign('comments', $comments);
 
                         $this->tpl->setNotification($this->language->__('notification.idea_edited'), 'success');
 
                         $subject = $this->language->__('email_notifications.idea_edited_subject');
-                        $actual_link = BASE_URL."/ideas/ideaDialog/".(int)$params['itemId'];
-                        $message = sprintf($this->language->__('notification.idea_edited'), $_SESSION["userdata"]["name"], $params['description']);
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__('email_notifications.idea_edited_cta')));
+                        $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId'];
+                        $message = sprintf($this->language->__('notification.idea_edited'),
+                            $_SESSION["userdata"]["name"], $params['description']);
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'],
+                            array(
+                                "link" => $actual_link,
+                                "text" => $this->language->__('email_notifications.idea_edited_cta')
+                            ));
 
-                        $this->tpl->redirect(BASE_URL."/ideas/ideaDialog/".(int)$params['itemId']);
+                        $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
 
                     } else {
 

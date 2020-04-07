@@ -19,6 +19,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
             $_SESSION['lastPage'] = BASE_URL."/timesheets/showAll";
+            $language = new core\language();
 
             //Only admins and employees
 
@@ -49,10 +50,11 @@ namespace leantime\domain\controllers {
             $invCompCheck = '0';
 
             $projectFilter =  $_SESSION['currentProject'];
-            $dateFrom = mktime(0, 0, 0, date("m"), '1', date("Y"));
-            $dateTo = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
-            $dateFrom = date("Y-m-d", $dateFrom);
-            $dateTo = date("Y-m-d 00:00:00", $dateTo);
+            $dateFromMk = mktime(0, 0, 0, date("m"), '1', date("Y"));
+            $dateToMk = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
+
+            $dateFrom = date("Y-m-d", $dateFromMk);
+            $dateTo = date("Y-m-d", $dateToMk);
             $kind = 'all';
             $userId = 'all';
 
@@ -70,13 +72,13 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                $dateFrom = ($helper->timestamp2date($_POST['dateFrom'], 4));
+                $dateFrom = date("Y-m-d", strtotime($_POST['dateFrom']));
 
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                $dateTo = ($helper->timestamp2date($_POST['dateTo'], 4));
+                $dateTo = date("Y-m-d", strtotime($_POST['dateTo']));
 
             }
 
@@ -126,8 +128,10 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('employeeFilter', $userId);
             $tpl->assign('employees', $employees);
-            $tpl->assign('dateFrom', $helper->timestamp2date($dateFrom, 2));
-            $tpl->assign('dateTo', $helper->timestamp2date($dateTo, 2));
+            $tpl->assign('dateFrom', $language->getFormattedDateString($dateFrom));
+            $tpl->assign('dateTo', $language->getFormattedDateString($dateTo)
+
+            );
             $tpl->assign('actKind', $kind);
             $tpl->assign('kind', $timesheetsRepo->kind);
             $tpl->assign('invComp', $invCompCheck);
