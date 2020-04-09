@@ -11,3 +11,7 @@ Stack trace:
 #4 {main}
   thrown in D:\xampp\htdocs\leantimeos\src\domain\projects\controllers\class.newProject.php on line 79
 [09-Apr-2020 15:54:15 America/Los_Angeles] PHP Notice:  Undefined index: id in D:\xampp\htdocs\leantimeos\src\domain\projects\templates\submodules\projectDetails.sub.php on line 126
+[09-Apr-2020 16:17:10 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
+[09-Apr-2020 16:17:10 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
+[09-Apr-2020 16:18:06 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
+[09-Apr-2020 16:18:06 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
