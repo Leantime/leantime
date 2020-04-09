@@ -265,13 +265,10 @@ leantime.dashboardController = (function () {
                     var newDate = "";
 
                     if(date == "") {
-
                         jQuery(this).val(leantime.i18n.__("text.anytime"));
-
                     }
 
-                    var dateTime = new Date(date);
-                    dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+                    var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
 
                     var id = jQuery(this).attr("data-id");
                     newDate = dateTime;

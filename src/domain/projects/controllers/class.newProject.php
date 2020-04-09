@@ -76,11 +76,11 @@ namespace leantime\domain\controllers {
 
                 if ($values['name'] === '') {
 
-                    $tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
+                    $tpl->setNotification($language->__("notification.no_project_name"), 'error');
 
                 } elseif ($values['clientId'] === '') {
 
-                    $tpl->setNotification($this->language->__("notification.no_client"), 'error');
+                    $tpl->setNotification($language->__("notification.no_client"), 'error');
 
                 } else {
 
