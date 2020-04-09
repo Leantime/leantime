@@ -260,6 +260,17 @@ leantime.dashboardController = (function () {
         jQuery(".duedates").datepicker(
             {
                 dateFormat: leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: leantime.i18n.__("language.isRTL"),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
                 onClose: function(date) {
 
                     var newDate = "";
