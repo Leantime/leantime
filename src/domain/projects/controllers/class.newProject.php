@@ -92,7 +92,7 @@ namespace leantime\domain\controllers {
 
                     $mailer->setSubject($language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL."/projects/showProject/" . $id . "";
-                    $message = sprintf($language->__('email_notifications.project_created_subject'),$actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $message = sprintf($language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
                     $mailer->setHtml($message);
 
                     $to = array();
