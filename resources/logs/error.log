@@ -1,17 +1,0 @@
-[09-Apr-2020 07:57:40 America/Los_Angeles] PHP Notice:  Undefined index: id in D:\xampp\htdocs\leantimeos\src\domain\api\controllers\class.tickets.php on line 83
-[09-Apr-2020 07:57:40 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos\src\domain\tickets\repositories\class.tickets.php on line 757
-[09-Apr-2020 11:49:54 America/Los_Angeles] PHP Parse error:  syntax error, unexpected '?>', expecting identifier (T_STRING) in D:\xampp\htdocs\leantimeos\src\domain\general\templates\menu.tpl.php on line 51
-[09-Apr-2020 15:53:18 America/Los_Angeles] PHP Notice:  Undefined property: leantime\domain\controllers\newProject::$language in D:\xampp\htdocs\leantimeos\src\domain\projects\controllers\class.newProject.php on line 79
-[09-Apr-2020 15:53:18 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function __() on null in D:\xampp\htdocs\leantimeos\src\domain\projects\controllers\class.newProject.php:79
-Stack trace:
-#0 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(168): leantime\domain\controllers\newProject->run()
-#1 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('projects.newPro...')
-#2 D:\xampp\htdocs\leantimeos\src\core\class.application.php(80): leantime\core\frontcontroller->run()
-#3 D:\xampp\htdocs\leantimeos\public\index.php(40): leantime\core\application->start()
-#4 {main}
-  thrown in D:\xampp\htdocs\leantimeos\src\domain\projects\controllers\class.newProject.php on line 79
-[09-Apr-2020 15:54:15 America/Los_Angeles] PHP Notice:  Undefined index: id in D:\xampp\htdocs\leantimeos\src\domain\projects\templates\submodules\projectDetails.sub.php on line 126
-[09-Apr-2020 16:17:10 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
-[09-Apr-2020 16:17:10 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
-[09-Apr-2020 16:18:06 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
-[09-Apr-2020 16:18:06 America/Los_Angeles] PHP Notice:  Undefined index: subtaskId in D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php on line 481
