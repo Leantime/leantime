@@ -8,6 +8,7 @@ namespace leantime\domain\controllers {
     class editTime
     {
 
+        public $language;
         /**
          * run - display template and edit data
          *
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
+            $this->language = new core\language();
 
             $info = '';
             //Only admins and employees
@@ -52,16 +54,15 @@ namespace leantime\domain\controllers {
 
                     if(core\login::userIsAtLeast("admin") || $_SESSION['userdata']['id'] == $values['userId']) {
 
-                        if (isset($_POST['save']) === true) {
+                        if (isset($_POST['saveForm']) === true) {
+
+
 
                             if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
 
-                                $temp = ($_POST['tickets']);
 
-                                $tempArr = explode('|', $temp);
-
-                                $values['project'] = $tempArr[0];
-                                $values['ticket'] = $tempArr[1];
+                                $values['project'] = (int) $_POST['projects'];
+                                $values['ticket'] = (int) $_POST['tickets'];
 
 
                             }
@@ -74,14 +75,13 @@ namespace leantime\domain\controllers {
 
                             if (isset($_POST['date']) && $_POST['date'] != '') {
 
-                                $dateFormat = $values['date'];
-                                $values['date'] = $helper->date2timestamp($_POST['date']); //($helper->timestamp2date($_POST['date'], 4));
+                                $values['date'] = date("Y-m-d", strtotime($_POST['date']))." 00:00:00";
 
                             }
 
                             if (isset($_POST['hours']) && $_POST['hours'] != '') {
 
-                                $values['hours'] = ($_POST['hours']);
+                                $values['hours'] = (float)($_POST['hours']);
 
                             }
 
@@ -91,32 +91,34 @@ namespace leantime\domain\controllers {
 
                             }
 
-                            if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
+                            if(core\login::userIsAtLeast("clientManager")) {
 
-                                if ($_POST['invoicedEmpl'] == 'on') {
+                                if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
 
-                                    $values['invoicedEmpl'] = 1;
+                                    if ($_POST['invoicedEmpl'] == 'on') {
 
-                                }
+                                        $values['invoicedEmpl'] = 1;
 
-                                if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
+                                    }
 
-                                    $values['invoicedEmplDate'] = ($helper->timestamp2date($_POST['invoicedEmplDate'], 4));
+                                    if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
+
+                                        $values['invoicedEmplDate'] = date("Y-m-d", strtotime($_POST['invoicedEmplDate']))." 00:00:00";
+
+                                    } else {
+
+                                        $values['invoicedEmplDate'] = date("Y-m-d");
+
+                                    }
 
                                 } else {
 
-                                    $values['invoicedEmplDate'] = date("Y-m-d");
+                                    $values['invoicedEmpl'] = 0;
+                                    $values['invoicedEmplDate'] = '';
 
                                 }
 
-                            } else {
 
-                                $values['invoicedEmpl'] = 0;
-                                $values['invoicedEmplDate'] = '';
-
-                            }
-
-                            if(core\login::userIsAtLeast("clientManager")) {
 
                                 if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
 
@@ -129,7 +131,7 @@ namespace leantime\domain\controllers {
 
                                     if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
 
-                                        $values['invoicedCompDate'] = ($helper->timestamp2date($_POST['invoicedCompDate'], 4));
+                                        $values['invoicedCompDate'] = date("Y-m-d", strtotime($_POST['invoicedCompDate']))." 00:00:00";
 
                                     } else {
 
@@ -157,62 +159,64 @@ namespace leantime\domain\controllers {
                                         if ($values['hours'] != '' && $values['hours'] > 0) {
 
                                             $timesheetsRepo->updateTime($values);
-                                            $tpl->setNotification('SAVE_SUCCESS', 'success');
+                                            $tpl->setNotification('notifications.time_logged_success', 'success');
                                             $values['description'] = $_POST['description'];
 
                                         } else {
 
-                                            $tpl->setNotification('NO_HOURS', 'error');
+                                            $tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
 
 
                                         }
 
 
                                     } else {
-                                        $tpl->setNotification('NO_DATE', 'error');
+                                        $tpl->setNotification('notifications.time_logged_error_no_date', 'error');
 
                                     }
 
                                 } else {
 
-                                    $tpl->setNotification('NO_KIND', 'error');
+                                    $tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
 
                                 }
 
                             } else {
 
-                                $tpl->setNotification('NO_TICKET', 'error');
+                                $tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
 
                             }
 
 
                         }
 
-                        $values['date'] = $helper->timestamp2date($values['date'], 2);
-                        $values['invoicedCompDate'] = $helper->timestamp2date($values['invoicedCompDate'], 2);
-                        $values['invoicedEmplDate'] = $helper->timestamp2date($values['invoicedEmplDate'], 2);
+
+                        $values['date'] = $this->language->getFormattedDateString($values['date']);
+                        $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
+                        $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
 
 
-                        if (isset($dateFormat)) {
-                            $values['date'] = $dateFormat;
-                        }
                         $tpl->assign('values', $values);
 
                         $tpl->assign('info', $info);
                         $tpl->assign('allProjects', $projects->getAll());
                         $tpl->assign('allTickets', $tickets->getAll());
                         $tpl->assign('kind', $timesheetsRepo->kind);
-                        $tpl->display('timesheets.editTime');
+                        $tpl->displayPartial('timesheets.editTime');
 
                     } else {
-                        $tpl->display('general.error');
+
+                        $tpl->displayPartial('general.error');
+
                     }
                 } else {
-                    $tpl->display('general.error');
+                    $tpl->displayPartial('general.error');
                 }
+
+
             } else {
 
-                $tpl->display('general.error');
+                $tpl->displayPartial('general.error');
 
             }
 

@@ -120,10 +120,10 @@ namespace leantime\domain\controllers {
                             "box" => $params['box'],
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
-                            "status" => $params['status'],
-                            "assumptions" => $params['assumptions'],
+                            "status" => "",
+                            "assumptions" => "",
                             "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
+                            "conclusion" => "",
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
                             "milestoneId" => $params['milestoneId']
@@ -171,10 +171,10 @@ namespace leantime\domain\controllers {
                             "box" => $params['box'],
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
-                            "status" => $params['status'],
-                            "assumptions" => $params['assumptions'],
+                            "status" => "",
+                            "assumptions" => "",
                             "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
+                            "conclusion" => "",
                             "canvasId" => $currentCanvasId
                         );
 

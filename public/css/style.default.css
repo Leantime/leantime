@@ -532,11 +532,11 @@ h1, h2, h3, h4, h5 {
 }
 
 .tabbedwidget .dropdown-menu a {
-    color: #333 !important;
+    color: #333;
 }
 
 .tabbedwidget .dropdown-menu {
-    right: 0 !important;
+    right: 0;
     left: auto;
 }
 
@@ -693,13 +693,6 @@ a .label-default:after, a .label-primary:after {
     color: #fff !important;
 }
 
-/* Files */
-#files .mediamgr_content {
-    /*width: 560px;*/
-    max-height: 380px;
-    overflow: auto;
-}
-
 /* .isotope .isotope-item { width: 150px; height: 100px; overflow: hidden; float: left; display: block; } */
 .cboxElement {
     width: 100px;
@@ -715,8 +708,12 @@ a .label-default:after, a .label-primary:after {
     margin-bottom: 10px;
 }
 
-#medialist li {
+#medialist > li {
     float: left;
+}
+
+#medialist > li .nav-header {
+    padding: 3px 15px;
 }
 
 .mediamgr_category ul {
@@ -3699,7 +3696,7 @@ a .label-default:after, a .label-primary:after {
     list-style: none;
 }
 
-.listfile li {
+.listfile > li {
     display: inline-block;
     margin: 5px 10px 5px 0;
     border: 1px solid #ddd;
@@ -3707,26 +3704,26 @@ a .label-default:after, a .label-primary:after {
     background: #fcfcfc;
 }
 
-.listfile li:hover {
+.listfile > li:hover {
     border-color: #bbb;
 }
 
-.listfile li a {
+.listfile > li a {
     display: block;
 }
 
-.listfile li a:hover {
+.listfile > li a:hover {
     cursor: pointer;
 }
 
-.listfile li span.filename {
+.listfile > li span.filename {
     display: block;
     margin-top: 5px;
     font-size: 11px;
     text-align: center;
 }
 
-.listfile li.selected {
+.listfile > li.selected {
     border-color: #3493f5;
     background: #eaf3fd;
 }
@@ -3773,273 +3770,6 @@ ul.edit li {
     margin-right: 5px;
 }
 
-/*** MESSAGES STYLES ***/
-
-.messagepanel {
-}
-
-.messagemenu {
-    background: #0866c6;
-    margin-top: 15px;
-}
-
-.messagemenu ul {
-    list-style: none;
-    overflow: hidden;
-    clear: both;
-}
-
-.messagemenu ul li {
-    display: inline-block;
-    float: left;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    text-transform: uppercase;
-    font-size: 11px;
-}
-
-.messagemenu ul li a {
-    display: block;
-    padding: 12px 16px;
-    color: #fff;
-}
-
-.messagemenu ul li a:hover {
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.messagemenu ul li.active {
-    border: 1px solid #0866c6;
-    border-bottom: 0;
-}
-
-.messagemenu ul li.active a {
-    background: #fff;
-    color: #0866c6;
-}
-
-.messagemenu ul li.pull-right {
-    float: right;
-    border-right: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.messagemenu ul li.back {
-    display: none;
-    border-right: 0;
-}
-
-.messagemenu ul li.back a {
-    cursor: pointer;
-}
-
-.messagecontent {
-    overflow: hidden;
-    clear: both;
-}
-
-.messageleft {
-    width: 325px;
-    border: 1px solid #0866c6;
-    border-top: 0;
-    height: 600px;
-    float: left;
-    background: #f7f7f7;
-}
-
-.messageright {
-    background: #fff;
-    margin-left: 325px;
-    border: 1px solid #0866c6;
-    border-top: 0;
-    border-left: 0;
-    height: 600px;
-}
-
-.messagesearch {
-    padding: 10px;
-    background: #fff;
-    border-bottom: 1px solid #0866c6;
-}
-
-.messagesearch input {
-    margin: 0;
-    padding: 8px 10px;
-    height: auto;
-    background: #fff url(../images/icons/search.png) no-repeat 275px 8px;
-}
-
-.msglist {
-    list-style: none;
-    overflow: auto;
-    height: 540px;
-}
-
-.msglist li {
-    display: block;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    overflow: hidden;
-    clear: both;
-    cursor: pointer;
-}
-
-.msglist li.unread {
-    background: #fff;
-}
-
-.msglist li.selected {
-    background: #0866c6;
-}
-
-.msglist li .thumb {
-    width: 40px;
-    height: 40px;
-    float: left;
-}
-
-.msglist li .summary {
-    margin-left: 50px;
-    color: #666;
-    font-size: 12px;
-    line-height: normal;
-}
-
-.msglist li.selected .summary {
-    color: #fff;
-}
-
-.msglist li h4 {
-    font-size: 13px;
-    color: #0866c6;
-    line-height: 14px;
-}
-
-.msglist li.selected h4 {
-    color: #fff;
-}
-
-.msglist li .date {
-    height: 10px;
-    color: #999;
-    margin-top: -5px;
-}
-
-.msglist li.selected .date {
-    color: #fff;
-    opacity: 0.6;
-}
-
-.msglist li p {
-    line-height: 10px;
-    margin-top: 5px;
-}
-
-.messageview {
-    overflow: auto;
-    height: 450px;
-}
-
-.messageview .subject {
-    padding: 14px 20px 13px 20px;
-    font-size: 16px;
-    line-height: 28px;
-    padding-right: 150px;
-}
-
-.messageview .btn-group {
-    margin-top: 12px;
-    margin-right: 10px;
-}
-
-.messageview .btn-group .btn {
-    font-size: 11px;
-    text-transform: uppercase;
-}
-
-.msgauthor {
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    border-left: 0;
-    border-right: 0;
-    overflow: hidden;
-    clear: both;
-}
-
-.msgauthor .thumb {
-    width: 30px;
-    height: 30px;
-    float: left;
-    margin-top: 5px;
-}
-
-.msgauthor .authorinfo {
-    margin-left: 40px;
-}
-
-.msgauthor .authorinfo h5 {
-    font-size: 12px;
-    line-height: 10px;
-}
-
-.msgauthor .authorinfo h5 span {
-    font-size: 12px;
-    color: #999;
-    margin-left: 5px;
-}
-
-.msgauthor .authorinfo .to {
-    font-size: 11px;
-    color: #999;
-    display: block;
-    margin-top: -3px;
-}
-
-.msgauthor .authorinfo .date {
-    font-size: 12px;
-    color: #999;
-}
-
-.msgbody {
-    padding: 20px;
-    color: #666;
-}
-
-.msgbody p {
-    margin: 20px 0;
-}
-
-.msgbody p:first-child {
-    margin-top: 0;
-}
-
-.msgbody p:last-child {
-    margin-bottom: 0;
-}
-
-.msgreply {
-    padding: 10px;
-    border-top: 1px solid #0866c6;
-}
-
-.msgreply .thumb {
-    width: 40px;
-    height: 40px;
-    float: left;
-}
-
-.msgreply .reply {
-    margin-left: 50px;
-}
-
-.msgreply textarea {
-    display: block;
-    width: 100%;
-    height: 95px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
 
 /*** TABLES ***/
 
@@ -6091,6 +5821,7 @@ a.filter-term {
     padding: 5px;
     text-align: center;
     margin-bottom: 5px;
+    border-radius:5px;
 }
 
 .quickAddLink:hover {
@@ -6200,7 +5931,8 @@ div.color-picker ul li {
     text-decoration: none;
 }
 
-body a.delete {
+body a.delete,
+.ui-tabs-panel .dropdown-menu li a.delete{
     color: red;
 }
 
@@ -6574,4 +6306,13 @@ input.secretInput:active {
 .svgContainer svg {
     max-width: 100%;
     height: auto;
+}
+
+.loading {
+    width:100%;
+    text-align:center;
+    background:url(../images/ajaxLoader.gif) center center no-repeat;
+    min-height:31px;
+    background-size:31px 31px;
+    display:none;
 }

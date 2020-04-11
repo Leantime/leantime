@@ -3,20 +3,11 @@ defined('RESTRICTED') or die('Restricted access');
 
 ?>
 
-<h1><?php printf("".$this->__('headlines.delete_time').""); ?></h1>
+<h4 class="widgettitle title-light"><?php printf("".$this->__('headlines.delete_time').""); ?></h4>
 
-<?php if($this->get('msg') === '') { ?>
-
-<form method="post" accept-charset="utf-8">
-<fieldset><legend><?php echo $this->__('headlines.confirm_delete'); ?></legend>
-<p><?php echo $this->__('text.confirm_delete_timesheet'); ?><br />
-</p>
-<input type="submit" value="<?php echo $this->__('buttons.delete') ?>" name="del"
-    class="button"></fieldset>
+<form method="post" action="<?=BASE_URL ?>/timesheets/delTime/<?php echo $this->get('id') ?>">
+    <p><?=$this->__("text.confirm_delete_timesheet") ?></p><br />
+    <input type="submit" value="<?=$this->__("buttons.yes_delete") ?>" name="del" class="button" />
+    <a class="btn btn-secondary" href="<?php echo $_SESSION['lastPage'] ?>"><?=$this->__("buttons.back") ?></a>
 </form>
 
-<?php }else{ ?>
-
-<span class="info"><?php echo $this->displayNotification(); ?></span>
-
-<?php } ?>

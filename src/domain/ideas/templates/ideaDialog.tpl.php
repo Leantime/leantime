@@ -72,9 +72,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <div class="row" id="milestoneSelectors">
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
-                                   onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
+                                   onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
                                 | <a href="javascript:void(0);"
-                                     onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
+                                     onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
                             </div>
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
@@ -85,7 +85,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="button" value="<?php echo $this->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
-                                   onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                   onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
                                     <i class="fas fa-times"></i> <?php echo $this->__("links.cancel") ?>
                                 </a>
                             </div>
@@ -111,7 +111,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="button" value="<?php echo $this->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
-                                   onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                   onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
                                     <i class="fas fa-times"></i> <?php echo $this->__("links.cancel")?>
                                 </a>
                             </div>
@@ -139,7 +139,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
                                        class="ideaModal delete"><i class="fa fa-close"></i> <?php echo $this->__("links.remove")?></a>
                                 </div>
                             </div>

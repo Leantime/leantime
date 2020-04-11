@@ -234,7 +234,7 @@ leantime.ticketsController = (function () {
                 date = null;
                 console.log(error);
             }
-            console.log(date);
+
             return date;
         }
     };
@@ -273,7 +273,7 @@ leantime.ticketsController = (function () {
                 date = null;
                 console.log(error);
             }
-            console.log(date);
+
             return date;
         }
     };
@@ -355,7 +355,7 @@ leantime.ticketsController = (function () {
                 date = null;
                 console.log(error);
             }
-            console.log(date);
+
             return date;
         }
     };
@@ -867,7 +867,7 @@ leantime.ticketsController = (function () {
                     jQuery('.ticketTabs').css("visibility", "visible");
                 },
                 activate: function(event, ui) {
-                    console.log(ui);
+
                     window.location.hash = ui.newPanel.selector;
                 }
             });
@@ -1184,8 +1184,6 @@ leantime.ticketsController = (function () {
             jQuery('#allTicketsTable input').on( 'change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
-                console.log("change");
-                console.log(jQuery(this).parent().attr('data-order'));
                 allTickets.draw();
 
             });

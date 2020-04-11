@@ -22,13 +22,13 @@ namespace leantime\domain\repositories {
 
 
         public $kind = array(
-                'GENERAL_BILLABLE' => 'label.general_billable',
-                'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
-                'PROJECTMANAGEMENT' => 'label.projectmanagement',
-                'DEVELOPMENT' => 'label.development',
-                'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
-                'TESTING' => 'label.testing',
-            );
+            'GENERAL_BILLABLE' => 'label.general_billable',
+            'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
+            'PROJECTMANAGEMENT' => 'label.projectmanagement',
+            'DEVELOPMENT' => 'label.development',
+            'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
+            'TESTING' => 'label.testing',
+        );
 
         /**
          * __construct - get database connection
@@ -92,8 +92,6 @@ namespace leantime\domain\repositories {
             if($userId != 'all') {
                 $query.= " AND (zp_timesheets.userId= :userId)";
             }
-
-
 
             if($invComp == '1' && $invEmpl == '1') {
 
@@ -335,7 +333,7 @@ namespace leantime\domain\repositories {
                 :invoicedEmplDate,
                 :invoicedCompDate, 
                 :rate)
-			 ON DUPLICATE KEY UPDATE hours = :hours";
+			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -374,7 +372,7 @@ namespace leantime\domain\repositories {
              :hours,
              :kind,
              :rate)
-			 ON DUPLICATE KEY UPDATE hours = :hours";
+			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -683,11 +681,12 @@ namespace leantime\domain\repositories {
         public function punchIn($ticketId)
         {
 
-            $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,UNIX_TIMESTAMP(CURRENT_TIMESTAMP))";
+            $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
             $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            $stmn->bindValue(':time', time(), PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
@@ -737,14 +736,19 @@ namespace leantime\domain\repositories {
                 //At least 1 minutes
                 if($hoursWorked >= 0.016) {
 
+                    $date = date("Y-m-d", $inTimestamp)." 00:00:00";
+
                     $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) 
-				VALUES
-                (:sessionId,:ticketId,CURRENT_TIMESTAMP,:hoursWorked,'GENERAL_BILLABLE');";
+                    VALUES
+                    (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
+                    
+                     ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
                     $stmn = $this->db->database->prepare($query);
                     $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
                     $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
                     $stmn->bindValue(':hoursWorked', $hoursWorked, PDO::PARAM_STR);
+                    $stmn->bindValue(':workDate', date("Y-m-d", $inTimestamp)." 00:00:00", PDO::PARAM_STR);
 
                     $stmn->execute();
                     $stmn->closeCursor();

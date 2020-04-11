@@ -33,6 +33,7 @@ namespace leantime\domain\controllers {
 
             $reportService = new services\reports();
             $reportService->dailyIngestion();
+
         }
 
         /**
@@ -49,20 +50,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('projectProgress', $progress);
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
-            //Sprint Burndown
-            //$currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
-            //$sprintChart = $this->sprintService->getSprintBurndown($currentSprint);
-            /*
-            if ($sprintChart !== false) {
-                $this->tpl->assign('sprintBurndown', $sprintChart);
-                $this->tpl->assign('currentSprint', $currentSprint);
-                $this->tpl->assign('upcomingSprint', false);
-            } else {
-                $this->tpl->assign('backlogBurndown', $this->sprintService->getBacklogBurndown($_SESSION['currentProject']));
-                $this->tpl->assign('currentSprint', false);
-                $this->tpl->assign('upcomingSprint', $this->sprintService->getUpcomingSprint($_SESSION['currentProject']));
-            }
-*/
+
             //Milestones
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
             $this->tpl->assign('milestones', $milestones);
@@ -73,11 +61,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign("types", $this->ticketService->getTicketTypes());
             $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
-
-            // Statistics
-            //$this->tpl->assign('closedTicketsPerWeek', $this->dashboardRepo->getClosedTicketsPerWeek());
-            //$this->tpl->assign('hoursPerTicket', round($this->dashboardRepo->getHoursPerTicket()));
-            //$this->tpl->assign('hoursBugFixing', round($this->dashboardRepo->getHoursBugFixing(), 1));
 
             $this->tpl->display('dashboard.show');
 

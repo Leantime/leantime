@@ -1,3 +1,6 @@
+<?php
+$ticket = $this->get('ticket');
+?>
 <div class="mediamgr_category">
     
     <form action='#files' method='POST' enctype="multipart/form-data" class="">
@@ -30,6 +33,23 @@
     <ul id='medialist' class='listfile'>
     <?php foreach($this->get('files') as $file): ?>
         <li class="<?php echo $file['moduleId'] ?>">
+            <div class="inlineDropDownContainer" style="float:right;">
+
+                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
+                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+
+                    <?php  if ($login::userIsAtLeast("developer")) { ?>
+                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                    <?php  } ?>
+
+                </ul>
+            </div>
+
+
               <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                   <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                       <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
@@ -38,6 +58,7 @@
                     <?php endif; ?>
                 <span class="filename"><?php echo $file['realName'] ?></span>
               </a>
+
            </li>
     <?php endforeach; ?>
     <br class="clearall" />

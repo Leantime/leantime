@@ -138,8 +138,6 @@ namespace leantime\core {
 
             $langCode = explode("-", $language);
 
-            var_dump($langCode);
-
             if(isset($this->langlist[$langCode[0]]) === true) {
 
                 return $langCode[0];
@@ -169,6 +167,22 @@ namespace leantime\core {
                     return $index;
 
                 }
+            }
+
+        }
+
+        /**
+        * getFormattedDateString - returns a language specific formatted date string
+        *
+        * @access public
+        * @param $date string
+        * @return string
+        */
+        public function getFormattedDateString($date)
+        {
+
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00") {
+                return date($this->__("language.dateformat"), strtotime($date));
             }
 
         }

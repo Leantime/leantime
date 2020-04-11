@@ -34,21 +34,27 @@
 					</form>
 
 					</div> 
-                    
-                   	<!--<div class="mediamgr_category">
-                    	<ul id="mediafilter">
-                        	<li class="current"><a href="all">All</a></li>
-                            <?php foreach($this->get('folders') as $folder): ?>
-	                            <li><a href="<?php echo $folder['id'] ?>"><?php echo $folder['title'] ?></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                   	</div>==?<!--mediamgr_category-->
-                    
+
                     <div class="mediamgr_content">          
                     	
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
+                                <div class="inlineDropDownContainer" style="float:right;">
+
+                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
+                                        <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+
+                                        <?php  if ($login::userIsAtLeast("developer")) { ?>
+                                            <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                                        <?php  } ?>
+
+                                    </ul>
+                                </div>
                               	<a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                               		<?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
                               			<img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
@@ -77,7 +83,7 @@
 	
 
 <script type='text/javascript'>
-    jQuery(window).load(function(){
+    jQuery(document).ready(function(){
 
 		jQuery('#widgetAction').click(function(){
 			jQuery('.widgetList').toggle();
@@ -101,7 +107,8 @@
             //jQuery("#medialist a").colorbox();
 
             <?php if(isset($_GET['modalPopUp'])) { ?>
-                jQuery('#medialist a.imageLink').click(function(event){
+
+                jQuery('#medialist a.imageLink').on("click", function(event){
 
                     event.preventDefault();
                     event.stopImmediatePropagation();
@@ -117,15 +124,13 @@
             <?php } ?>
 
 
-        });
-        jQuery(window).load(function(){
             jQuery('#medialist').isotope({
                 itemSelector : 'li',
                 layoutMode : 'fitRows'
             });
 
             // Media Filter
-            jQuery('#mediafilter a').click(function(){
+            jQuery('#mediafilter a').on("click", function(){
 
                 var filter = (jQuery(this).attr('href') != 'all')? '.'+jQuery(this).attr('href') : '*';
                 jQuery('#medialist').isotope({ filter: filter });
@@ -135,6 +140,8 @@
 
                 return false;
             });
+
+            jQuery(".deleteFile").nyroModal();
 
 
         });

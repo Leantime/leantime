@@ -1,0 +1,16 @@
+
+.mainwrapper .btn,
+.dt-button,
+input[type='submit']{
+    border-radius:3px;
+    outline:0;
+}
+
+.mainwrapper .btn-group>.btn {
+    border-radius:3px;
+    outline:0;
+}
+
+.chzn-container-single .chzn-single {
+    border:1px solid #bbb;
+}

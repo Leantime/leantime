@@ -116,13 +116,13 @@ jQuery(document).ready(function(){
 
             <?php foreach($milestones as $mlst){
 
-                $progress = round($mlst->allTicketsEffort ? (($mlst->doneTicketsEffort / $mlst->allTicketsEffort)* 100) : 0);
+
                 echo"{
                     id :'".$mlst->id."',
-                    name :".json_encode("".$mlst->headline." (".$progress."% Done)").",
+                    name :".json_encode("".$mlst->headline." (".$mlst->percentDone."% Done)").",
                     start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31')? $mlst->editFrom :  date('Y-m-d'))."',
                     end :'".(($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time())))."',
-                    progress :'".$progress."',
+                    progress :'".$mlst->percentDone."',
                     dependencies :'".($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '')."',
                     custom_class :'',
                     color: '".$mlst->tags."',

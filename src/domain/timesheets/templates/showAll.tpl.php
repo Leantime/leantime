@@ -31,6 +31,10 @@ $helper = $this->get('helper');
 	    });
 
 	    leantime.timesheetsController.initTimesheetsTable();
+
+        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+            leantime.timesheetsController.initEditTimeModal();
+        <?php } ?>
 	});		
         
     
@@ -59,7 +63,7 @@ $helper = $this->get('helper');
         <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
     </div>
     <div class="clearfix"></div>
-    <div class="headtitle" style="margin:0px; background: #eee; display:none;">
+    <div class="headtitle" style="margin:0px; background: #eee; <?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
 
 	<table cellpadding="10" cellspacing="0" width="90%" style=" border: 1px solid #ccc; margin-top:0px;" class="table dataTable filterTable">
 
@@ -113,7 +117,8 @@ $helper = $this->get('helper');
 			/><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
 			</td>
 			<td>
-				<input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
+                <input type="hidden" name='filterSubmit' value="1"/>
+                <input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
 			</td>
 		</tr>
 
@@ -122,7 +127,7 @@ $helper = $this->get('helper');
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
 	<colgroup>
-      	  <col class="con0"/>
+      	  <col class="con0" width="100px"/>
           <col class="con1" />
       	  <col class="con0"/>
           <col class="con1" />
@@ -133,9 +138,11 @@ $helper = $this->get('helper');
       	  <col class="con0"/>
           <col class="con1" />
       	  <col class="con0"/>
+           <col class="con1"/>
 	</colgroup>
 	<thead>
 		<tr>
+            <th><?php echo $this->__('label.id'); ?></th>
 			<th><?php echo $this->__('label.date'); ?></th>
 			<th><?php echo $this->__('label.hours'); ?></th>
 			<th><?php echo $this->__('label.plan_hours'); ?></th>
@@ -160,39 +167,63 @@ $helper = $this->get('helper');
 	foreach($this->get('allTimesheets') as $row) {
 		$sum = $sum + $row['hours'];?>
 		<tr>
-
-			<td>
+            <td data-order="<?=$this->e($row['id']); ?>">
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a>
+                <?php }else{ ?>
+                    #<?=$row['id']?>
+                <?php } ?>
+            </td>
+            <td data-order="<?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>">
                 <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
             </td>
-			<td><?php $this->e($row['hours']); ?></td>
-			<td><?php $this->e($row['planHours']); ?></td>
+			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
+			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
-			<td><?php echo $diff; ?></td>
+			<td data-order="<?php $diff; ?>"><?php echo $diff; ?></td>
 			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
 			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
 			<td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
 			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
 			<td><?php $this->e($row['description']); ?></td>
-			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo "true"; }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
-			<?php }else{ ?> <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
-				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
-			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo "true"; }?>"><?php if($row['invoicedComp'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
-			<?php }else{ ?> <input type="checkbox" name="invoicedComp[]" class="invoicedComp"
-				value="<?php echo $row['id']; ?>" /> <?php } ?></td>
+			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
+			<?php }else{ ?>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
+				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
+			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); }?>">
+
+                <?php if($row['invoicedComp'] == '1'){?>
+                    <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
+			    <?php }else{ ?>
+                    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
+                    <?php } ?>
+                    <?php } ?>
+            </td>
 		</tr>
 		<?php } ?>
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="1"><strong><?php echo $this->__("label.total_hours")?></strong></td>
+			<td colspan="2"><strong><?php echo $this->__("label.total_hours")?></strong></td>
 			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
 
 			<td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
 				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
-			</td>
-			<td><input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
-			<td><input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?></td>
+                <?php } ?>
+            </td>
+			<td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
+            <?php } ?>
+            <td>
+                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?>
+                <?php } ?>
+            </td>
 		</tr>
 	</tfoot>
 </table>

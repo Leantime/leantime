@@ -187,14 +187,13 @@
                                 <?php echo $row->bookedHours ?>
                             </td>
 
-                            <?php if($row->allTicketsEffort > 0){  $percent = round(($row->doneTicketsEffort / $row->allTicketsEffort) * 100); }else {$percent=0;} ; ?>
-                            <td data-order="<?=$percent?>">
-                                <?=sprintf($this->__("text.percent_complete"), $percent)?>
+                            <td data-order="<?=$row->percentDone?>">
+                                <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
                                 <a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
                                 <div class="progress" style="width: 100%;">
 
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percent; ?>%">
-                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percent)?></span>
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
+                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
                                     </div>
                                 </div>
                             </td>

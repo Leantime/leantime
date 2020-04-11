@@ -31,17 +31,18 @@ namespace leantime\domain\repositories {
         public function runTicketReport($projectId, $sprintId)
         {
 
+            //Ticket Reports
             $query = "SELECT 
                         sprint AS sprintId,
                         projectId,
                         DATE(NOW() - INTERVAL 1 DAY) AS date,
-                        COUNT(zp_tickets.id) AS sum_todos,
+                        COUNT(DISTINCT zp_tickets.id) AS sum_todos,
                         SUM(case when status =3 then 1 else 0 end) as sum_open_todos,
                         SUM(case when (status = 1 OR status = 4 OR status = 2) then 1 else 0 end) as sum_progres_todos,
                         SUM(case when (status < 1) then 1 else 0 end) as sum_closed_todos,
                         SUM(planHours) as sum_planned_hours,
                         SUM(hourRemaining) as sum_estremaining_hours,
-                        SUM(zp_timesheets.hours) as sum_logged_hours,
+                        
                         SUM(zp_tickets.storypoints) as sum_points,
                         SUM(case when status =3 then zp_tickets.storypoints else 0 end) as sum_points_open,
                         SUM(case when (status = 1 OR status = 4 OR status = 2) then zp_tickets.storypoints else 0 end) as sum_points_progress,
@@ -55,9 +56,7 @@ namespace leantime\domain\repositories {
                         SUM(case when (zp_tickets.storypoints = 13) then 1 else 0 end) as sum_todos_xxl,
                         SUM(case when (zp_tickets.storypoints = '') then 1 else 0 end) as sum_todos_none,
                         GROUP_CONCAT(zp_tickets.id SEPARATOR ',') as tickets,
-                        SUM(zp_timesheets.hours) / COUNT(zp_tickets.id)   AS daily_avg_hours_booked_todo,
-                        SUM(zp_timesheets.hours) / SUM(zp_tickets.storypoints) as daily_avg_hours_booked_point,
-                        
+                                                
                         SUM(planHours) / COUNT(zp_tickets.id)   AS daily_avg_hours_planned_todo,
                         SUM(planHours) / SUM(zp_tickets.storypoints) as daily_avg_hours_planned_point,
                         
@@ -65,8 +64,8 @@ namespace leantime\domain\repositories {
                         SUM(hourRemaining) / SUM(zp_tickets.storypoints) as daily_avg_hours_remaining_point
                         
                     FROM zp_tickets 
-                    LEFT JOIN zp_timesheets ON zp_tickets.id = zp_timesheets.ticketId
-                    WHERE projectId = :projectId";
+                    
+                    WHERE projectId = :projectId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
             if($sprintId !== "") {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
@@ -85,11 +84,56 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
 
-            $value = $stmn->fetch();
+            $valuesTickets = $stmn->fetch();
 
             $stmn->closeCursor();
 
-            return $value;
+            if(isset($valuesTickets['sum_points']) && $valuesTickets['sum_points']>0){
+                $storyPoints = $valuesTickets['sum_points'];
+            }else{
+                $storyPoints = 1;
+            }
+
+            //Timesheet Reports
+            $query = "SELECT 
+                        
+                        SUM(zp_timesheets.hours) as sum_logged_hours,
+                        SUM(zp_timesheets.hours) / COUNT(DISTINCT zp_tickets.id) AS daily_avg_hours_booked_todo,
+                        SUM(zp_timesheets.hours) / :storyPoints as daily_avg_hours_booked_point
+                        
+                    FROM zp_tickets 
+                    LEFT JOIN zp_timesheets ON zp_tickets.id = zp_timesheets.ticketId
+                    WHERE projectId = :projectId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
+
+            if($sprintId !== "") {
+                $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
+
+            }else{
+                $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId, sprint";
+            }
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':storyPoints', $storyPoints, PDO::PARAM_STR);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+
+            if($sprintId !== "") {
+                $stmn->bindValue(':sprint', $sprintId, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+
+            $valueTimesheets = $stmn->fetch();
+
+            $stmn->closeCursor();
+
+            if(is_array($valuesTickets) && is_array($valueTimesheets)) {
+                $values = array_merge($valuesTickets, $valueTimesheets);
+            }else{
+                $values = false;
+            }
+
+            return $values;
         }
 
         public function checkLastReportEntries($projectId)

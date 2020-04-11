@@ -550,9 +550,9 @@ namespace leantime\core {
 
             if($count > 0) {
                 $mailer = new mailer();
-                $mailer->setSubject($this->language->__('notifications.password_reset_subject'));
+                $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
                 $actual_link = "".BASE_URL."/resetPassword/".$resetLink;
-                $mailer->setHtml(sprintf($this->language->__('notifications.password_reset_message'), $actual_link));
+                $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
                 $to = array($username);
                 $mailer->sendMail($to, "Leantime System");
             }
