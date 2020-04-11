@@ -183,15 +183,35 @@ leantime.dashboardController = (function () {
                 datasets: [
 
                     {
-                        label: leantime.i18n.__("label.open_todos"),
-                        backgroundColor: leantime.dashboardController.chartColors.red,
-                        borderColor: leantime.dashboardController.chartColors.red,
-                        data: actualData,
-                        fill: false,
+                        label: leantime.i18n.__("label.done_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.green,
+                        borderColor: leantime.dashboardController.chartColors.green,
+                        data: actualData['done']['data'],
+                        fill: true,
+                        lineTension: 0,
+                        pointRadius:0,
+                    },
+                    {
+                        label: leantime.i18n.__("label.progress_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.yellow,
+                        borderColor: leantime.dashboardController.chartColors.yellow,
+                        data: actualData['progress']['data'],
+                        fill: true,
                         lineTension: 0,
                         pointRadius:0,
 
-                    }
+                    },
+                    {
+                        label: leantime.i18n.__("label.new_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.red,
+                        borderColor: leantime.dashboardController.chartColors.red,
+                        data: actualData['open']['data'],
+                        fill: true,
+                        lineTension: 0,
+                        pointRadius:0,
+
+                    },
+
                 ]
             },
             options: {
@@ -238,7 +258,8 @@ leantime.dashboardController = (function () {
                         },
                         ticks: {
                             beginAtZero:true
-                        }
+                        },
+                        stacked: true
                     }]
                 }
             }
@@ -251,13 +272,18 @@ leantime.dashboardController = (function () {
 
     };
 
-    var initBacklogChartButtonClick = function (id, actualData, chart) {
+    var initBacklogChartButtonClick = function (id, actualData, label, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
-                chart.data.datasets[0].data = actualData;
-                chart.options.scales.yAxes[0].scaleLabel.labelString = leantime.i18n.__("label.open_todos");
+                chart.data.datasets[0].data = actualData['done']['data'];
+
+                chart.data.datasets[1].data = actualData['progress']['data'];
+                chart.data.datasets[2].data = actualData['open']['data'];
+
+
+                chart.options.scales.yAxes[0].scaleLabel.labelString = label;
                 jQuery(".backlogChartButtons").removeClass('active');
                 jQuery(this).addClass('active');
                 chart.update();

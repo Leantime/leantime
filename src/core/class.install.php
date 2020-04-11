@@ -659,9 +659,9 @@ namespace leantime\core {
                     `sum_open_todos` INT NULL,
                     `sum_progres_todos` INT NULL,
                     `sum_closed_todos` INT NULL,
-                    `sum_planned_hours` INT NULL,
-                    `sum_estremaining_hours` INT NULL,
-                    `sum_logged_hours` INT NULL,
+                    `sum_planned_hours` FLOAT NULL,
+                    `sum_estremaining_hours` FLOAT NULL,
+                    `sum_logged_hours` FLOAT NULL,
                     `sum_points` INT NULL,
                     `sum_points_done` INT NULL,
                     `sum_points_progress` INT NULL,
@@ -674,12 +674,13 @@ namespace leantime\core {
                     `sum_todos_xxl` INT NULL,
                     `sum_todos_none` INT NULL,
                     `tickets` TEXT NULL,
-                    `daily_avg_hours_booked_todo` INT NULL,
-                    `daily_avg_hours_booked_point` INT NULL,
-                    `daily_avg_hours_planned_todo` INT NULL,
-                    `daily_avg_hours_planned_point` INT NULL,
-                    `daily_avg_hours_remaining_point` INT NULL,
-                    `daily_avg_hours_remaining_todo` INT NULL,
+                    `daily_avg_hours_booked_todo` FLOAT NULL,
+                    `daily_avg_hours_booked_point` FLOAT NULL,
+                    `daily_avg_hours_planned_todo` FLOAT NULL,
+                    `daily_avg_hours_planned_point` FLOAT NULL,
+                    `daily_avg_hours_remaining_point` FLOAT NULL,
+                    `daily_avg_hours_remaining_todo` FLOAT NULL,
+                    `sum_teammembers` INT NULL,
                     INDEX `projectId` (`projectId` ASC, `sprintId` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                     
@@ -817,6 +818,19 @@ namespace leantime\core {
 
             $sql = array(
                 "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
+                "ALTER TABLE `zp_stats`
+                    ADD COLUMN `sum_teammembers` INT(11) NULL DEFAULT NULL AFTER `daily_avg_hours_remaining_todo`,
+                    CHANGE COLUMN `sum_planned_hours` `sum_planned_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `sum_logged_hours` `sum_logged_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `sum_estremaining_hours` `sum_estremaining_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_booked_todo` `daily_avg_hours_booked_todo` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_booked_point` `daily_avg_hours_booked_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_planned_todo` `daily_avg_hours_planned_todo` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;",
+
+
             );
 
             foreach ($sql as $statement) {

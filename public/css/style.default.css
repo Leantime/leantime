@@ -1657,67 +1657,6 @@ a .label-default:after, a .label-primary:after {
     margin-bottom: 5px;
 }
 
-.shortcuts {
-    list-style: none;
-    margin-top: 20px;
-    overflow: hidden;
-    clear: both;
-}
-
-.shortcuts li {
-    display: inline-block;
-    float: left;
-    margin: 0 5px 5px 0;
-    position: relative;
-}
-
-.shortcuts li a {
-    display: block;
-    width: 130px;
-    height: 130px;
-    background: #0866c6;
-    color: #fff;
-    font-size: 16px;
-}
-
-.shortcuts li a:hover {
-    background: #282828;
-    text-decoration: none;
-}
-
-.shortcuts li .shortcuts-label {
-    display: block;
-    padding: 0 12px;
-}
-
-.shortcuts li .shortcuts-icon {
-    display: block;
-    width: 48px;
-    height: 48px;
-    padding: 30px 0 20px 0;
-    margin: 0 auto;
-}
-
-.shortcuts li .iconsi-event {
-    background: url(../images/icons/icon-event.png) no-repeat center center;
-}
-
-.shortcuts li .iconsi-cart {
-    background: url(../images/icons/icon-cart.png) no-repeat center center;
-}
-
-.shortcuts li .iconsi-archive {
-    background: url(../images/icons/icon-archive.png) no-repeat center center;
-}
-
-.shortcuts li .iconsi-help {
-    background: url(../images/icons/icon-help.png) no-repeat center center;
-}
-
-.shortcuts li .iconsi-images {
-    background: url(../images/icons/icon-images.png) no-repeat center center;
-}
-
 .widget,
 .tabbedwidget {
 
@@ -1772,6 +1711,23 @@ a .label-default:after, a .label-primary:after {
 
 .wc1 {
     border-color: #333;
+}
+
+.boxedHighlight{
+    display:block;
+    color:#fff;
+    padding:10px;
+    width:100%;
+    margin-bottom:25px;
+}
+
+.boxedHighlight .value {
+    padding-top:10px;
+    padding-bottom:10px;
+    font-size:36px;
+    display:block;
+    font-family: 'RobotoLight', 'Helvetica Neue', Helvetica, sans-serif;
+
 }
 
 /* Tiny MCE */

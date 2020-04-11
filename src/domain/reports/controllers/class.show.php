@@ -52,6 +52,8 @@ namespace leantime\domain\controllers {
 
             $allSprints = $this->sprintService->getAllSprints($_SESSION['currentProject']);
 
+            $sprintChart = false;
+
             if($allSprints !== false && count($allSprints) > 0) {
 
                 if (isset($_GET['sprint'])) {
@@ -62,10 +64,10 @@ namespace leantime\domain\controllers {
 
                     $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
 
-                    if ($currentSprint !== false ) {
+                    if ($currentSprint !== false && $currentSprint != "all") {
                         $sprintObject = $this->sprintService->getSprint($currentSprint);
                         $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
-                        $this->tpl->assign('currentSprint', $currentSprint->id);
+                        $this->tpl->assign('currentSprint', $sprintObject->id);
                     } else {
 
                         $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);
@@ -75,7 +77,7 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->assign('sprintBurndown', $sprintChart);
-            $this->tpl->assign('backlogBurndown', $this->sprintService->getBacklogBurndown($_SESSION['currentProject']));
+            $this->tpl->assign('backlogBurndown', $this->sprintService->getCummulativeReport($_SESSION['currentProject']));
 
             $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION['currentProject']));
 
@@ -88,8 +90,10 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign("fullReportLatest", false);
             }
 
+            $this->tpl->assign('states', $this->ticketService->getStatusLabels());
+
             //Milestones
-            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
+            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], true, "headline");
             $this->tpl->assign('milestones', $milestones);
 
             $this->tpl->display('reports.show');

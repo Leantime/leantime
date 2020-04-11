@@ -8,7 +8,6 @@
     $statusLabels = $this->get('statusLabels');
     $fullReport = $this->get('fullReport');
     $fullReportLatest = $this->get('fullReportLatest');
-    var_dump($fullReportLatest);
 ?>
 
 <div class="pageheader">
@@ -37,31 +36,48 @@
                             <h5 class="subtitle"><?=$this->__("subtitles.summary")?></h5>
                             <div class="row">
                                 <div class="col-md-3">
-                                    Planned Hours
-                                    <?=$fullReportLatest['sum_planned_hours']; ?>
+                                    <div class="boxedHighlight">
+
+                                        <span class="headline"><?=$this->__("label.planned_hours")?></span>
+                                        <span class="value"><?php if($fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] != null) echo $fullReportLatest['sum_planned_hours']; else echo 0; ?></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
-                                    Estimated Remaining Hours
-                                    <?=$fullReportLatest['sum_estremaining_hours']; ?>
+                                    <div class="boxedHighlight">
+
+
+                                        <span class="headline"><?=$this->__("label.estimated_hours_remaining")?></span>
+                                        <span class="value"><?php if($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) echo $fullReportLatest['sum_estremaining_hours']; else echo 0; ?></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
-                                    Logged Hours
-                                    <?=$fullReportLatest['sum_logged_hours']; ?>
+                                    <div class="boxedHighlight">
+
+
+                                        <span class="headline"><?=$this->__("label.booked_hours")?></span>
+                                        <span class="value"><?php if($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) echo $fullReportLatest['sum_logged_hours']; else echo 0; ?></span>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-3">
-                                    Open To-Dos
-                                    <?=$fullReportLatest['sum_open_todos']; ?>
+                                    <div class="boxedHighlight">
+                                        <span class="headline"><?=$this->__("label.open_todos")?></span>
+                                        <span class="value">
+                                            <?php
+                                                if($fullReportLatest !== false) {
+                                                    echo($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']);
+                                                }
+                                                ?></span>
+                                    </div>
                                 </div>
 
 
                             </div>
 
-
-                            <?php if($allSprints !== false) { ?>
+                            <?php if($this->get('allSprints') !== false) { ?>
                                 <h5 class="subtitle"><?=$this->__("subtitles.sprint_burndown")?></h5>
                                 <br />
-                                <span class="currentSprint pull-left">
+                                <span class="pull-left">
                                 <?php  if($this->get('allSprints') !== false && count($this->get('allSprints'))  > 0) {?>
                                     <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
@@ -106,15 +122,13 @@
                         <div class="clearall"></div>
                         <br />
                         <br />
-                        <h5 class="subtitle">Backlog Burndown</h5>
+                        <h5 class="subtitle"><?=$this->__("subtitles.cummulative_flow")?></h5>
 
                         <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
                                 <a href="javascript:void(0)" id="NumChartButtonBacklog" class="btn btn-sm btn-secondary active backlogChartButtons"><?=$this->__("label.num_tickets")?></a>
                                 <a href="javascript:void(0)" id="EffortChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$this->__("label.effort")?></a>
                                 <a href="javascript:void(0)" id="HourlyChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$this->__("label.hours")?></a>
-
-
                             </div>
 
                         </div>
@@ -230,22 +244,105 @@
 
        <?php if($backlogBurndown !== false){ ?>
 
-           var backlogBurndown = leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
+           var statusBurnupNum = [];
 
-           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButtonBacklog', [ <?php foreach($backlogBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ], backlogBurndown);
-           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButtonBacklog', [ <?php foreach($backlogBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ], backlogBurndown);
-           leantime.dashboardController.initBacklogChartButtonClick('NumChartButtonBacklog', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ], backlogBurndown);
+           <?php
+
+                echo "
+                statusBurnupNum['open'] = {
+                    'label': 'Open',
+                    'data':
+                    [";
+                        foreach($backlogBurndown as $value)  { if($value['open']['actualNum'] !== '') echo "'".$value['open']['actualNum']."',"; };
+                echo"]};";
+
+               echo "
+               statusBurnupNum['progress'] = {
+                            'label': 'Progress',
+                            'data':
+                            [";
+               foreach($backlogBurndown as $value)  { if($value['progress']['actualNum'] !== '') echo "'".$value['progress']['actualNum']."',"; };
+               echo"]};";
+
+               echo "
+               statusBurnupNum['done'] = {
+                                    'label': 'Done',
+                                    'data':
+                                    [";
+               foreach($backlogBurndown as $value)  { if($value['done']['actualNum'] !== '') echo "'".$value['done']['actualNum']."',"; };
+               echo"]};";
+
+           ?>
+
+           var backlogBurndown = leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], statusBurnupNum);
+
+
+           var statusBurnupEffort = [];
+
+           <?php
+
+           echo " 
+           statusBurnupEffort['open'] = {
+                        'label': 'Open',
+                        'data':
+                        [";
+           foreach($backlogBurndown as $value)  { if($value['open']['actualEffort'] !== '') echo "'".$value['open']['actualEffort']."',"; };
+           echo"]};";
+
+           echo " 
+           statusBurnupEffort['progress'] = {
+                                'label': 'Progress',
+                                'data':
+                                [";
+           foreach($backlogBurndown as $value)  { if($value['progress']['actualEffort'] !== '') echo "'".$value['progress']['actualEffort']."',"; };
+           echo"]};";
+
+           echo " 
+           statusBurnupEffort['done'] = {
+                                        'label': 'Done',
+                                        'data':
+                                        [";
+           foreach($backlogBurndown as $value)  { if($value['done']['actualEffort'] !== '') echo "'".$value['done']['actualEffort']."',"; };
+           echo"]};";
+
+           ?>
+
+       var statusBurnupHours = [];
+
+       <?php
+
+       echo " 
+       statusBurnupHours['open'] = {
+                        'label': 'Open',
+                        'data':
+                        [";
+       foreach($backlogBurndown as $value)  { if($value['open']['actualHours'] !== '') echo "'".$value['open']['actualHours']."',"; };
+       echo"]};";
+
+       echo " 
+       statusBurnupHours['progress'] = {
+                                'label': 'Progress',
+                                'data':
+                                [";
+       foreach($backlogBurndown as $value)  { if($value['progress']['actualHours'] !== '') echo "'".$value['progress']['actualHours']."',"; };
+       echo"]};";
+
+       echo " 
+       statusBurnupHours['done'] = {
+                                        'label': 'Done',
+                                        'data':
+                                        [";
+       foreach($backlogBurndown as $value)  { if($value['done']['actualHours'] !== '') echo "'".$value['done']['actualHours']."',"; };
+       echo"]};";
+
+       ?>
+
+           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButtonBacklog', statusBurnupHours, '<?=$this->__('label.hours') ?>', backlogBurndown);
+           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButtonBacklog', statusBurnupEffort, '<?=$this->__('label.effort') ?>', backlogBurndown);
+           leantime.dashboardController.initBacklogChartButtonClick('NumChartButtonBacklog', statusBurnupNum, '<?=$this->__('label.num_tickets') ?>', backlogBurndown);
 
        <?php } ?>
 
-       <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
-
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-       } ?>
 
     });
 

@@ -236,14 +236,14 @@ namespace leantime\domain\services {
 
         }
 
-        public function getBacklogBurndown($project)
+        public function getCummulativeReport($project)
         {
 
             if(!($project)) {
                 return false;
             }
 
-            $sprintValues = $this->reportRepository->getBacklogReport($project);
+            $sprintValues = $this->reportRepository->getFullReport($project);
             $sprintData = array();
             foreach($sprintValues as $row) {
                 $sprintData[$row['date']] = $row;
@@ -258,29 +258,45 @@ namespace leantime\domain\services {
             $period = new DatePeriod(
                 new DateTime($allKeys[0]),
                 new DateInterval('P1D'),
-                new DateTime($allKeys[(count($allKeys)-1)])
+                new DateTime()
             );
 
             $burnDown = [];
             $i = 0;
+
+
             foreach ($period as $key => $value) {
 
-                $burnDown[$i]['date'] = $value->format('m/d/Y');
-
-                $burnDown[$i]["plannedHours"] = 0;
-                $burnDown[$i]["plannedNum"] = 0;
-                $burnDown[$i]["plannedEffort"] = 0;
+                $burnDown[$i]['date'] = $value->format('Y-m-d');
 
                 if (isset($sprintData[$value->format('Y-m-d')." 00:00:00"])) {
-                    $burnDown[$i]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_estremaining_hours'];
-                    $burnDown[$i]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_open_todos'] + $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_progres_todos'];
-                    $burnDown[$i]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_open'] + $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_progress'];
+
+                    $burnDown[$i]["open"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_estremaining_hours'];
+                    $burnDown[$i]["open"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_open_todos'] ;
+                    $burnDown[$i]["open"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_open'];
+
+                    $burnDown[$i]["progress"]["actualHours"] = 0;
+                    $burnDown[$i]["progress"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_progres_todos'];
+                    $burnDown[$i]["progress"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_progress'];
+
+                    $burnDown[$i]["done"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_logged_hours'];
+                    $burnDown[$i]["done"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_closed_todos'];
+                    $burnDown[$i]["done"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_done'];
+
                 }else{
                     if ($i == 0) {
 
-                        $burnDown[$i]["actualHours"] = 0;
-                        $burnDown[$i]["actualNum"] =  0;
-                        $burnDown[$i]["actualEffort"] = 0;
+                        $burnDown[$i]["open"]["actualHours"] = 0;
+                        $burnDown[$i]["open"]["actualNum"] =  0;
+                        $burnDown[$i]["open"]["actualEffort"] = 0;
+
+                        $burnDown[$i]["progress"]["actualHours"] = 0;
+                        $burnDown[$i]["progress"]["actualNum"] =  0;
+                        $burnDown[$i]["progress"]["actualEffort"] = 0;
+
+                        $burnDown[$i]["done"]["actualHours"] = 0;
+                        $burnDown[$i]["done"]["actualNum"] =  0;
+                        $burnDown[$i]["done"]["actualEffort"] = 0;
 
                     }else{
 
@@ -288,13 +304,32 @@ namespace leantime\domain\services {
                         $today = new DateTime();
                         if($value->format('Ymd') < $today->format('Ymd')) {
 
-                            $burnDown[$i]["actualHours"] =  $burnDown[$i-1]["actualHours"];
-                            $burnDown[$i]["actualNum"] =  $burnDown[$i-1]["actualNum"];
-                            $burnDown[$i]["actualEffort"] = $burnDown[$i-1]["actualEffort"];
+                            $burnDown[$i]["open"]["actualHours"] =  $burnDown[$i-1]["open"]["actualHours"];
+                            $burnDown[$i]["open"]["actualNum"] =  $burnDown[$i-1]["open"]["actualNum"];
+                            $burnDown[$i]["open"]["actualEffort"] = $burnDown[$i-1]["open"]["actualEffort"];
+
+                            $burnDown[$i]["progress"]["actualHours"] =  $burnDown[$i-1]["progress"]["actualHours"];
+                            $burnDown[$i]["progress"]["actualNum"] =  $burnDown[$i-1]["progress"]["actualNum"];
+                            $burnDown[$i]["progress"]["actualEffort"] = $burnDown[$i-1]["progress"]["actualEffort"];
+
+                            $burnDown[$i]["done"]["actualHours"] =  $burnDown[$i-1]["done"]["actualHours"];
+                            $burnDown[$i]["done"]["actualNum"] =  $burnDown[$i-1]["done"]["actualNum"];
+                            $burnDown[$i]["done"]["actualEffort"] = $burnDown[$i-1]["done"]["actualEffort"];
+
                         }else{
-                            $burnDown[$i]["actualHours"] =  '';
-                            $burnDown[$i]["actualNum"] = '';
-                            $burnDown[$i]["actualEffort"] = '';
+
+                            $burnDown[$i]["open"]["actualHours"] =  '';
+                            $burnDown[$i]["open"]["actualNum"] = '';
+                            $burnDown[$i]["open"]["actualEffort"] = '';
+
+                            $burnDown[$i]["progress"]["actualHours"] =  '';
+                            $burnDown[$i]["progress"]["actualNum"] = '';
+                            $burnDown[$i]["progress"]["actualEffort"] = '';
+
+                            $burnDown[$i]["done"]["actualHours"] =  '';
+                            $burnDown[$i]["done"]["actualNum"] = '';
+                            $burnDown[$i]["done"]["actualEffort"] = '';
+
                         }
 
                     }

@@ -32,6 +32,7 @@ namespace leantime\domain\models {
         public $daily_avg_hours_planned_point;
         public $daily_avg_hours_remaining_point;
         public $daily_avg_hours_remaining_todo;
+        public $sum_teammembers;
 
         public function __construct()
         {
