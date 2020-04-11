@@ -36,7 +36,7 @@ Features:
 
 ### Installation (Development) ###
 
-* Install composer and npm 
+* Install composer and npm
 * Clone repository to your local server
 * Create MySQL database
 * Run composer to load php dependencies
@@ -49,7 +49,7 @@ npm install
 ```
 to load Javascript dependencies and finally run the grunt task to create the compiled js files
 ```
-grunt default
+./node_modules/grunt/bin/grunt Build-All
 ```
 * Point your local domain to the `public/` directory
 * Rename `config/configuration.sample.php` to `config/configuration.php`
