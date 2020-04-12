@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
 
         public function get(array $params) {
 
-            $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
+            $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
             $searchCriteria["orderBy"] = "kanbansort";

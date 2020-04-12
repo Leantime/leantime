@@ -62,7 +62,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('currentSprint', (int)$_GET['sprint']);
                 } else {
 
-                    $currentSprint = $this->sprintService->getCurrentSprint($_SESSION['currentProject']);
+                    $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
                     if ($currentSprint !== false && $currentSprint != "all") {
                         $sprintObject = $this->sprintService->getSprint($currentSprint);

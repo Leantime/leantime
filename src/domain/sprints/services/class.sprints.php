@@ -24,6 +24,7 @@ namespace leantime\domain\services {
             $this->sprintRepository = new repositories\sprints();
             $this->reportRepository = new repositories\reports();
             $this->ticketRepository = new repositories\tickets();
+            $this->language = new core\language();
         }
 
         public function getSprint($id)
@@ -32,8 +33,8 @@ namespace leantime\domain\services {
             $sprint = $this->sprintRepository->getSprint($id);
 
             if($sprint) {
-                $sprint->startDate = date('m/d/Y', strtotime($sprint->startDate));
-                $sprint->endDate = date('m/d/Y', strtotime($sprint->endDate));
+                $sprint->startDate = $this->language->getFormattedDateString($sprint->startDate);
+                $sprint->endDate = $this->language->getFormattedDateString($sprint->startDate);
                 return $sprint;
             }
 
@@ -41,7 +42,13 @@ namespace leantime\domain\services {
 
         }
 
-        public function getCurrentSprint($projectId)
+        /**
+         * getCurrentSprintId returns the ID of the current sprint in the project provided
+         *
+         * @param $projectId
+         * @return int|bool
+         */
+        public function getCurrentSprintId($projectId)
         {
 
             if(isset($_SESSION["currentSprint"]) && $_SESSION["currentSprint"] != "") {
@@ -52,7 +59,7 @@ namespace leantime\domain\services {
 
             if($sprint) {
                 $_SESSION["currentSprint"] = $sprint->id;
-                return $sprint;
+                return $sprint->id;
             }
 
             $_SESSION["currentSprint"] = "";
@@ -99,7 +106,6 @@ namespace leantime\domain\services {
             return false;
 
         }
-
 
         public function addSprint($params)
         {

@@ -691,6 +691,21 @@ namespace leantime\core {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                 
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', :dbVersion);
+                
+                CREATE TABLE `zp_audit` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `projectId` INT NULL,
+                      `action` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `entityId` INT NULL,
+                      `values` TEXT NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      KEY `projectId` (`projectId` ASC),
+                      KEY `projectAction` (`projectId` ASC, `action` ASC),
+                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                             
             ";
 
@@ -814,7 +829,7 @@ namespace leantime\core {
         private function update_sql_20101() {
 
 
-              $errors = array();
+            $errors = array();
 
             $sql = array(
                 "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
@@ -829,6 +844,20 @@ namespace leantime\core {
                     CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
                     CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
                     CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;",
+                "CREATE TABLE `zp_audit` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `projectId` INT NULL,
+                      `action` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `entityId` INT NULL,
+                      `values` TEXT NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      KEY `projectId` (`projectId` ASC),
+                      KEY `projectAction` (`projectId` ASC, `action` ASC),
+                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
 
             );
