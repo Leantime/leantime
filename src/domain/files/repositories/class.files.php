@@ -155,6 +155,7 @@ namespace leantime\domain\repositories {
 					user.lastname,
 					user.id AS userId
 				FROM zp_file as file
+				
 				INNER JOIN zp_user as user ON file.userId = user.id ";
 
             if ($module!='') {

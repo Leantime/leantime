@@ -561,7 +561,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived =false)
+        public function getAllMilestones($projectId, $includeArchived =false, $sortBy="headline")
         {
 
             $query = "SELECT
@@ -635,9 +635,16 @@ namespace leantime\domain\repositories {
                 $query .= " AND zp_tickets.status > -1 ";
             }
 
-            $query .= "	GROUP BY
-						progressTickets.dependingTicketId, zp_tickets.id
-					ORDER BY zp_tickets.editFrom ASC";
+				$query .= "	GROUP BY
+						progressTickets.dependingTicketId, zp_tickets.id";
+
+                if($sortBy == "date") {
+                    $query .= "	ORDER BY zp_tickets.editFrom ASC";
+                }else if($sortBy == "headline") {
+                    $query .= "	ORDER BY zp_tickets.headline ASC";
+                }
+
+
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);

@@ -38,7 +38,7 @@
                             <option value="<?php echo $key; ?>"
                                 <?php if($subticket['status'] == $key) {echo"selected='selected'";
                                 }?>
-                            ><?php echo $this->escape($statusLabels[$subticket['status']]["name"]); ?></option>
+                            ><?php echo $this->escape($statusLabels[$key]["name"]); ?></option>
                         <?php } ?>
                     </select>
                 </td>

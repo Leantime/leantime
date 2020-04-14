@@ -83,65 +83,6 @@ namespace leantime\domain\controllers {
 
             }
 
-            //Add Canvas Item
-            if (isset($_POST["addItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentRetroCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => "",
-                        "assumptions" =>"",
-                        "data" => "",
-                        "conclusion" => $_POST['conclusion'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $retroRepo->addCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
-            }
-
-            if (isset($_POST["editItem"]) === true) {
-
-                if (isset($_POST['description']) === true) {
-
-                    $currentCanvasId = (int)$_SESSION['currentRetroCanvas'];
-
-                    $values = array(
-                        "box" => $_POST['box'],
-                        "author" => $_SESSION['userdata']["id"],
-                        "description" => $_POST['description'],
-                        "status" => "",
-                        "assumptions" =>"",
-                        "data" => "",
-                        "conclusion" => $_POST['conclusion'],
-                        "itemId" => $_POST['itemId'],
-                        "canvasId" => $currentCanvasId
-                    );
-
-                    $retroRepo->editCanvasItem($values);
-
-                    $_SESSION["msg"] = "NEW_CANVAS_ITEM_ADDED";
-                    $_SESSION["msgT"] = "success";
-                    header("Location:".BASE_URL."/retrospectives/showBoards/" . $currentCanvasId);
-
-                } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
-                }
-
-            }
-
             $tpl->assign('currentCanvas', $currentCanvasId);
 
             $tpl->assign('allCanvas', $allCanvas);

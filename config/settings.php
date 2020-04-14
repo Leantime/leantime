@@ -61,7 +61,13 @@ class settings {
 
     public function getFullURL () {
 
-        return $this->getBaseURL().rtrim($_SERVER['REQUEST_URI'],"/");;
+        return $this->getBaseURL().rtrim($this->getRequestURI(),"/");
+
+    }
+	
+    public function getRequestURI () {
+
+        return $_SERVER['REQUEST_URI'];
 
     }
 

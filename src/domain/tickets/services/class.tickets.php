@@ -178,11 +178,11 @@ namespace leantime\domain\services {
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false)
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="headline")
         {
 
             if($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived);
+                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy);
             }
 
             return false;
