@@ -116,14 +116,12 @@ namespace leantime\domain\services {
             //Check if user is allowed to see ticket
             if($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
 
-                var_dump($ticket);
                 //Fix date conversion
                 //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
-
 
                 return $ticket;
 
@@ -305,16 +303,17 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
-                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
-                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                    $values['editFrom'] =  $this->language->getISODateString($values['editFrom']);
                 }
 
                 if($values['editTo'] != "" && $values['editTo'] != NULL) {
-                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                    $values['editTo'] =  $this->language->getISODateString($values['editTo']);
                 }
+
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
                 if($addTicketResponse !== false){

@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
                 'userId' => $_SESSION['userdata']['id'],
                 'userFirstname' => $userinfo["firstname"],
                 'userLastname' => $userinfo["lastname"],
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $language->getFormattedDateString(date("Y-m-d H:i:s")),
                 'dateToFinish' => "",
                 'status' => 3,
                 'planHours' => "0",
@@ -190,6 +190,8 @@ namespace leantime\domain\controllers {
                     "projectId"=>$_SESSION['currentProject']
                 )
             );
+
+            $ticket->date =  $this->language->getFormattedDateString(date("Y-m-d H:i:s"));
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());

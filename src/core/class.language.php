@@ -198,6 +198,27 @@ namespace leantime\core {
         }
 
         /**
+         * getFormattedTimeString - returns a language specific formatted time string
+         *
+         * @access public
+         * @param $date string
+         * @return string
+         */
+        public function getFormattedTimeString($date)
+        {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+
+                if(is_object($timestamp)) {
+                    return date($this->__("language.timeformat"), $timestamp->getTimestamp());
+                }
+
+            }
+
+        }
+
+        /**
          * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
          *
          * @access public

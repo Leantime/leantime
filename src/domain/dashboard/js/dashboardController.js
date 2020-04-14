@@ -80,6 +80,8 @@ leantime.dashboardController = (function () {
 
     var initBurndown = function (labels, plannedData, actualData) {
 
+        moment.locale(leantime.i18n.__("language.code"));
+
         var MONTHS = labels;
         var config = {
             type: 'line',
@@ -174,6 +176,8 @@ leantime.dashboardController = (function () {
     };
 
     var initBacklogBurndown = function (labels, actualData) {
+
+        moment.locale(leantime.i18n.__("language.code"));
 
         var MONTHS = labels;
         var config = {

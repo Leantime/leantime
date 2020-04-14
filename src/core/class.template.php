@@ -450,6 +450,21 @@ namespace leantime\core {
 
         }
 
+        /**
+         * getFormattedTimeString - returns a language specific formatted time string. wraps language class method
+         *
+         * @access public
+         * @param $date string
+         * @return string
+         */
+        public function getFormattedTimeString($date) {
+
+            return  $this->language->getFormattedTimeString($date);
+
+        }
+
+
+
     }
 
 }

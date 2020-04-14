@@ -191,8 +191,8 @@ $helper = $this->get('helper');
                     #<?=$row['id']?>
                 <?php } ?>
             </td>
-            <td data-order="<?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>">
-                <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
+            <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
+                <?php echo$this->getFormattedDateString($row['workDate']); ?>
             </td>
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
 			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
@@ -204,15 +204,15 @@ $helper = $this->get('helper');
 			<td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
 			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
 			<td><?php $this->e($row['description']); ?></td>
-			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
+			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
 			<?php }else{ ?>
                 <?php if ($login::userIsAtLeast("clientManager")) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
 				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
-			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); }?>">
+			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
 
                 <?php if($row['invoicedComp'] == '1'){?>
-                    <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
+                    <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
 			    <?php }else{ ?>
                     <?php if ($login::userIsAtLeast("clientManager")) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />

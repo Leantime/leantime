@@ -18,6 +18,7 @@ namespace leantime\domain\services {
         {
 
             $this->timesheetsRepo = new repositories\timesheets();
+            $this->language = new core\language();
 
         }
 
@@ -60,7 +61,7 @@ namespace leantime\domain\services {
                 $values['kind'] = $params['kind'];
             }
             if (isset($params['date']) && $params['date'] != '') {
-                $values['date'] = date('Y-m-d', strtotime($params['date']));
+                $values['date'] = $this->language->getISODateString($params['date']);
             }
 
             if (isset($_POST['hours']) && $_POST['hours'] != '') {
