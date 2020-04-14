@@ -68,6 +68,7 @@ namespace leantime\domain\controllers {
                     $projectService = new services\projects();
                     $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
 
+                    $mailer->setSubject($language->__('email_notifications.canvas_board_created'));
                     $actual_link = "".CURRENT_URL."";
                     $message = sprintf($language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
                     $mailer->setHtml($message);

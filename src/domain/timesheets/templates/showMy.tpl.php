@@ -109,7 +109,8 @@ jQuery(document).ready(function(){
 
         var date = jQuery("#endDate").datepicker('getDate');
         var endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
-        var startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+        var startDate =
+            new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
         var inst = jQuery("#endDate").data('datepicker');
         var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;

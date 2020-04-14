@@ -40,7 +40,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');

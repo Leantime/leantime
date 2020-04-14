@@ -501,7 +501,7 @@ namespace leantime\domain\repositories {
 							zp_tickets.dependingTicketId,
 							zp_tickets.planHours,
 							zp_tickets.hourRemaining,
-							SUM(timesheets.hours) AS bookedHours,
+							ROUND(SUM(timesheets.hours), 2) AS bookedHours,
 							zp_projects.name AS projectName,
 							zp_clients.name AS clientName,
 							zp_clients.id AS clientId,
@@ -896,7 +896,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived =false)
+        public function getAllMilestones($projectId, $includeArchived =false, $sortBy="headline")
         {
 
             $query = "SELECT
@@ -971,8 +971,15 @@ namespace leantime\domain\repositories {
                 }
 
 				$query .= "	GROUP BY
-						progressTickets.dependingTicketId, zp_tickets.id
-					ORDER BY zp_tickets.editFrom ASC";
+						progressTickets.dependingTicketId, zp_tickets.id";
+
+                if($sortBy == "date") {
+                    $query .= "	ORDER BY zp_tickets.editFrom ASC";
+                }else if($sortBy == "headline") {
+                    $query .= "	ORDER BY zp_tickets.headline ASC";
+                }
+
+
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
