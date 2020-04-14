@@ -34,7 +34,7 @@ namespace leantime\domain\services {
 
             if($sprint) {
                 $sprint->startDate = $this->language->getFormattedDateString($sprint->startDate);
-                $sprint->endDate = $this->language->getFormattedDateString($sprint->startDate);
+                $sprint->endDate = $this->language->getFormattedDateString($sprint->endDate);
                 return $sprint;
             }
 

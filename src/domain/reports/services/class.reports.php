@@ -50,7 +50,7 @@ namespace leantime\domain\services {
                     if ($backlogReport !== false) {
                         $this->reportRepository->addReport($backlogReport);
 
-                        if(is_array( $_SESSION["reportCompleted"]) === false){
+                        if(!isset($_SESSION["reportCompleted"]) || is_array($_SESSION["reportCompleted"]) === false){
                             $_SESSION["reportCompleted"] = array();
                         }
 
