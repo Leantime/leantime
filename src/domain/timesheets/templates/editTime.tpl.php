@@ -32,7 +32,21 @@ $values = $this->get('values');
         });
 
         jQuery(document).ready(function ($) {
-            jQuery("#datepicker").datepicker();
+            jQuery("#datepicker").datepicker({
+                numberOfMonths: 1,
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: leantime.i18n.__("language.isRTL"),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
+            });
         });
 
     });
@@ -85,7 +99,7 @@ $values = $this->get('values');
 
 </select><br />
 <label for="date"><?php echo $this->__('label.date')?></label> <input type="text"
-    id="datepicker" name="date" value="<?php echo $values['date'] ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo $this->getFormattedDateString($values['date']); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $this->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"

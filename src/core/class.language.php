@@ -180,10 +180,37 @@ namespace leantime\core {
         */
         public function getFormattedDateString($date)
         {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00") {
-                return date($this->__("language.dateformat"), strtotime($date));
+                $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+                if(is_object($timestamp)) {
+                    return date($this->__("language.dateformat"), $timestamp->getTimestamp());
+                }
+
             }
+
+        }
+
+        /**
+         * getFormattedDateString - returns a language specific formatted date string
+         *
+         * @access public
+         * @param $date string
+         * @return string|bool
+         */
+        public function getISODateString($date)
+        {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+
+                if(is_object($timestamp)) {
+                    return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
+                }
+
+            }
+
+            return false;
 
         }
 
