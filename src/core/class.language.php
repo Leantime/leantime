@@ -182,7 +182,13 @@ namespace leantime\core {
         {
             if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-                $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+                //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
+                if(strlen($date) == 10){
+                    $timestamp = date_create_from_format("!Y-m-d", $date);
+                }else {
+                    $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+                }
+
                 if(is_object($timestamp)) {
                     return date($this->__("language.dateformat"), $timestamp->getTimestamp());
                 }
@@ -192,7 +198,7 @@ namespace leantime\core {
         }
 
         /**
-         * getFormattedDateString - returns a language specific formatted date string
+         * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
          *
          * @access public
          * @param $date string

@@ -169,7 +169,7 @@
                     <div class="span6">
 
                         <input type="text" class="dates" id="submittedDate" disabled="disabled"
-                               value="<?php echo date($this->__("language.dateformat"), strtotime($ticket->date)); ?>" name="date"/>
+                               value="<?php echo $ticket->date; ?>" name="date"/>
                     </div>
                 </div>
 

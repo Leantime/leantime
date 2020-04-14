@@ -111,8 +111,8 @@ namespace leantime\domain\services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = date('Y-m-d 00:00:01', strtotime($sprint->startDate));
-            $sprint->endDate = date('Y-m-d 23:59:59', strtotime($sprint->endDate));
+            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -131,8 +131,8 @@ namespace leantime\domain\services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = date('Y-m-d 00:00:01', strtotime($sprint->startDate));
-            $sprint->endDate = date('Y-m-d 23:59:59', strtotime($sprint->endDate));
+            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];

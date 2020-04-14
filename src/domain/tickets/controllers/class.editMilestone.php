@@ -61,9 +61,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->redirect(BASE_URL."/tickets/roadmap/");
                 }
 
-                $milestone->editFrom =  date($this->language->__("language.dateformat"), strtotime($milestone->editFrom));
-                $milestone->editTo = date($this->language->__("language.dateformat"), strtotime($milestone->editTo));
-
                 $comments = $this->commentsService->getComments('ticket', $params['id']);
 
             }else{
@@ -72,13 +69,13 @@ namespace leantime\domain\controllers {
                 $milestone->status = 3;
 
                 $today = new DateTime();
-                $milestone->editFrom = $today->format($this->language->__("language.dateformat"));
+                $milestone->editFrom = $today->format("Y-m-d");
 
                 //Add 1 week
                 $interval = new DateInterval('P1W');
                 $next_week = $today->add($interval);
 
-                $milestone->editTo = $next_week->format($this->language->__("language.dateformat"));
+                $milestone->editTo = $next_week->format("Y-m-d");
 
                 $comments = [];
             }

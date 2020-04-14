@@ -130,6 +130,8 @@ namespace leantime\domain\controllers {
 
                                     if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
 
+                                        var_dump($values['invoicedCompDate']);
+
                                         $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
 
                                     } else {

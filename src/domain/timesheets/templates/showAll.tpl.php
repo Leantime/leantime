@@ -35,6 +35,23 @@ $helper = $this->get('helper');
         <?php if ($login::userIsAtLeast("clientManager")) { ?>
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
+
+
+        jQuery(".dateFrom, .dateTo").datepicker({
+            numberOfMonths: 1,
+            dateFormat:  leantime.i18n.__("language.jsdateformat"),
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+        });
 	});		
         
     
@@ -70,10 +87,10 @@ $helper = $this->get('helper');
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-				value="<?php echo $this->get('dateFrom'); ?>" size="7" style="margin-bottom:10px"/></td>
+				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
 			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo"
-				value="<?php echo $this->get('dateTo'); ?>" size="7" style="margin-bottom:10px" /></td>
+				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
 			<select name="userId" id="userId" onchange="submit();">

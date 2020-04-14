@@ -116,26 +116,14 @@ namespace leantime\domain\services {
             //Check if user is allowed to see ticket
             if($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
 
+                var_dump($ticket);
                 //Fix date conversion
-                $ticket->date = date($this->language->__("language.dateformat"), strtotime($ticket->date));
+                //Todo: Move to views
+                $ticket->date = $this->language->getFormattedDateString($ticket->date);
+                $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
+                $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
+                $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
 
-                if($ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != NULL) {
-                    $ticket->dateToFinish = date($this->language->__("language.dateformat"), strtotime($ticket->dateToFinish));
-                }else{
-                    $ticket->dateToFinish = "";
-                }
-
-                if($ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != NULL) {
-                    $ticket->editFrom = date($this->language->__("language.dateformat"), strtotime($ticket->editFrom));
-                }else{
-                    $ticket->editFrom = "";
-                }
-
-                if($ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != NULL) {
-                    $ticket->editTo = date($this->language->__("language.dateformat"), strtotime($ticket->editTo));
-                }else{
-                    $ticket->editTo = "";
-                }
 
                 return $ticket;
 
@@ -263,8 +251,8 @@ namespace leantime\domain\services {
                 'dependingTicketId' =>$params['dependentMilestone'],
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
-                'editFrom' => date('Y-m-d 00:00:01', strtotime($params['editFrom'])),
-                'editTo' => date('Y-m-d 00:00:01', strtotime($params['editTo']))
+                'editFrom' => $this->language->getISODateString($params['editFrom']),
+                'editTo' => $this->language->getISODateString($params['editTo'])
             );
 
 
@@ -384,15 +372,16 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
-                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
-                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
                 }
 
                 if($values['editTo'] != "" && $values['editTo'] != NULL) {
-                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
                 }
                 //Update Ticket
                 if($this->ticketRepository->updateTicket($values, $id) === true){
@@ -440,8 +429,8 @@ namespace leantime\domain\services {
                 'acceptanceCriteria' => '',
                 'dependingTicketId' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
-                'editFrom' => date('Y-m-d 00:00:01', strtotime($params['editFrom'])),
-                'editTo' => date('Y-m-d 23:59:59', strtotime($params['editTo']))
+                'editFrom' => $this->language->getISODateString($params['editFrom']),
+                'editTo' => $this->language->getISODateString($params['editTo'])
             );
 
             if($values['headline'] == "") {

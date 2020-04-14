@@ -135,7 +135,9 @@ leantime.calendarController = (function () {
                 )
                 .on(
                     "change", function () {
-                        from.datepicker("option", "maxDate", getDate(this));
+                        from.
+
+                        datepicker("option", "maxDate", getDate(this));
                     }
                 );
 

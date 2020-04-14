@@ -42,7 +42,7 @@ $values = $this->get('values');
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: leantime.i18n.__("language.isRTL"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -132,7 +132,6 @@ $values = $this->get('values');
             <?php if ($values['invoicedComp'] == '1') {
                 echo ' checked="checked"';
             } ?> />
-
 
         <label for="invoicedComp"><?php echo $this->__('label.invoiced_comp') ?></label>
         <?php echo $this->__('label.date') ?>&nbsp;<input type="text"

@@ -32,10 +32,6 @@ jQuery(document).ready(function () {
             }
         }
     });
-
-    jQuery(".dateFrom, .dateTo").datepicker();
-
-
     // dynamic table
     jQuery('#dyntable2').dataTable({
         "sPaginationType": "full_numbers",
