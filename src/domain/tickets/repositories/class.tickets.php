@@ -186,7 +186,6 @@ namespace leantime\domain\repositories {
             return $this->statusList;
         }
 
-
         /**
          * getAll - get all Tickets, depending on userrole
          *
@@ -197,13 +196,8 @@ namespace leantime\domain\repositories {
         {
 
             $id = $_SESSION['userdata']['id'];
-            $users = new users();
 
-            if ($users->isAdmin($id)) {
-                $values = $this->getAdminTickets($limit);
-            } else {
-                $values = $this->getUsersTickets($id, $limit);
-            }
+            $values = $this->getUsersTickets($id, $limit);
 
             return $values;
         }
@@ -256,190 +250,6 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAdminTickets($limit)
-        {
-
-            $sql = "SELECT
-						Distinct(ticket.id),
-						ticket.headline,
-						ticket.type, 
-						ticket.description,
-						ticket.date,
-						ticket.dateToFinish,
-						ticket.projectId,
-						ticket.priority,
-						ticket.status,
-						project.name as projectName,
-						client.name as clientName,
-						client.name as clientName,
-						t1.firstname AS authorFirstname, 
-						t1.lastname AS authorLastname,
-						t2.firstname AS editorFirstname,
-						t2.lastname AS editorLastname
-				FROM zp_user as user
-				INNER JOIN zp_clients as client ON user.clientId = client.id
-					RIGHT JOIN zp_projects as project ON client.id = project.clientId  
-					RIGHT JOIN zp_tickets as ticket ON project.id = ticket.projectId 
-						LEFT JOIN zp_user AS t1 ON ticket.userId = t1.id
-						LEFT JOIN zp_user AS t2 ON ticket.editorId = t2.id
-				ORDER BY ticket.id DESC
-				LIMIT :limit";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindvalue(':limit', $limit, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-
-        }
-
-        public function buildJSONTimeline($id)
-        {
-
-            $path = $_SERVER['DOCUMENT_ROOT']."/userdata/timeline/";
-            $file = "timeline-". $id .".json";
-            $sql = "SELECT 
-						th.changeType, th.changeValue, th.dateModified, th.userId, 
-						ticket.headline, ticket.description,
-						user.firstname, user.lastname 
-					FROM zp_tickethistory as th
-					INNER JOIN zp_user as user ON th.userId = user.id
-					INNER JOIN zp_tickets as ticket ON th.ticketId = ticket.id
-					WHERE ticketId = :ticketId";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':ticketId', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $response = array();
-            $posts = array();
-            foreach ($values as $value) {
-                $description = $value['description'];
-                $posts[] = array(
-                    'headline'     => $value['headline'],
-                    'text'        => $value['description'],
-                    'startDate'    => $value['dateModified'],
-                    'asset' => array('caption' => 'Test', 'media' => '', 'credit' => '')
-                );
-            }
-
-            $response['timeline'] = array('headline' => 'Ticket #'.$id, 'type' => 'default', 'text' => $description, 'date' => $posts);
-
-            $fh = fopen($path.$file, 'w');
-            fwrite($fh, json_encode($response));
-            fclose($fh);
-
-        }
-
-        public function changeStatus($id,$status)
-        {
-
-            $newValues = array();
-            $newValues['status'] = $status;
-            $this->addTicketChange($_SESSION['userdata']['id'], $id, $newValues);
-
-
-            $sql = "UPDATE zp_tickets SET status=:status WHERE id=:id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':status', $status, PDO::PARAM_STR);
-
-            $return = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $return;
-        }
-
-        public function updateDates($id,$start,$end)
-        {
-
-
-
-            $sql = "UPDATE zp_tickets SET editFrom=:start, editTo=:end WHERE id=:id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':start', $start, PDO::PARAM_STR);
-            $stmn->bindValue(':end', $end, PDO::PARAM_STR);
-
-            $return = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $return;
-        }
-
-        public function patchTicket($id,$params)
-        {
-
-            $this->addTicketChange($_SESSION['userdata']['id'], $id, $params);
-
-            $sql = "UPDATE zp_tickets SET ";
-
-            foreach($params as $key=>$value){
-                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
-            }
-
-            $sql .= "id=:id WHERE id=:id LIMIT 1";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
-            }
-
-            $return = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $return;
-        }
-
-
-
-
-
-        /**
-         * getTicketCost - adds up how much the current cost of the ticket is
-         *
-         * @param  id
-         * @return int
-         */
-        public function getTicketCost($id)
-        {
-
-            $query = "SELECT * FROM `zp_timesheets` WHERE ticketId=:id";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $total = 0;
-
-            foreach($values as $times) {
-
-                $users = new users();
-
-                $user = $users->getUser($times['userId']);
-
-                $wage = $user['wage'];
-
-                $total += ($wage * $times['hours']);
-
-            }
-
-            return $total;
-        }
-
         public function getAvailableUsersForTicket()
         {
 
@@ -474,13 +284,12 @@ namespace leantime\domain\repositories {
          * getAllBySearchCriteria - get Tickets by a serach term and/or a filter
          *
          * @access public
-         * @param  $criteria array
-         * @param  $filter
-         * @return array
+         * @param  $searchCriteria array
+         * @param  $sort
+         * @return array | bool
          */
         public function getAllBySearchCriteria($searchCriteria, $sort='standard')
         {
-
 
             $query = "SELECT
 							zp_tickets.id,
@@ -585,7 +394,7 @@ namespace leantime\domain\repositories {
             }else if($sort == "kanbansort") {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
             }else if($sort == "duedate") {
-                    $query .= " ORDER BY zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+                $query .= " ORDER BY zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }
 
             $stmn = $this->db->database->prepare($query);
@@ -634,150 +443,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
-        }
-
-        public function getAllSprintsByProject($projectId)
-        {
-
-            $query = "SELECT
-							zp_tickets.sprint
-					FROM 
-						zp_tickets 
-					WHERE  
-						zp_tickets.projectId = :projectId AND zp_tickets.sprint <> ''
-					GROUP BY zp_tickets.sprint ORDER BY zp_tickets.sprint ASC";
-
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-
-        }
-
-        public function updateTicketSorting($project, $ticketSorting)
-        {
-
-            $query = "UPDATE zp_tickets
-					SET sortindex = :sortIndex,
-					sprint = :sprint
-					WHERE projectId = :projectId AND id = :ticketId
-					LIMIT 1";
-
-            foreach($ticketSorting as $ticket){
-                $stmn = $this->db->database->prepare($query);
-                $stmn->bindValue(':projectId', $project, PDO::PARAM_INT);
-                $stmn->bindValue(':sortIndex', $ticket["sortIndex"], PDO::PARAM_INT);
-                $stmn->bindValue(':sprint', $ticket["sprint"], PDO::PARAM_INT);
-                $stmn->bindValue(':ticketId', $ticket["id"], PDO::PARAM_INT);
-                $stmn->execute();
-            }
-
-            $stmn->closeCursor();
-
-        }
-
-        public function updateTicketStatus($ticketId, $status, $ticketSorting=-1)
-        {
-
-            if($ticketSorting > -1) {
-
-                $query = "UPDATE zp_tickets
-					SET 
-						kanbanSortIndex = :sortIndex,
-						status = :status
-					WHERE id = :ticketId
-					LIMIT 1";
-
-
-                $stmn = $this->db->database->prepare($query);
-                $stmn->bindValue(':status', $status, PDO::PARAM_INT);
-                $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
-                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                return $stmn->execute();
-
-            }else{
-
-                $query = "UPDATE zp_tickets
-					SET 
-						status = :status
-					WHERE id = :ticketId
-					LIMIT 1";
-
-
-                $stmn = $this->db->database->prepare($query);
-                $stmn->bindValue(':status', $status, PDO::PARAM_INT);
-                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                return $stmn->execute();
-
-            }
-
-            $stmn->closeCursor();
-
-        }
-
-
-        public function addTicketChange($userId,$ticketId,$values)
-        {
-
-            $fields = array(
-                'headline' => 'headline',
-                'type' => 'type',
-                'description' => 'description',
-                'project' => 'projectId',
-                'priority' => 'priority',
-                'deadline' => 'dateToFinish',
-                'editors' => 'editorId',
-                'fromDate' => 'editFrom',
-                'toDate' => 'editTo',
-                'staging' => 'staging',
-                'production' => 'production',
-                'planHours'    => 'planHours',
-                'status' => 'status');
-
-            $changedFields = array();
-
-            $sql = "SELECT * FROM zp_tickets WHERE id=:ticketId LIMIT 1";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $oldValues = $stmn->fetch();
-            $stmn->closeCursor();
-
-            // compare table
-            foreach($fields as $enum => $dbTable) {
-
-                if (isset($values[$dbTable]) === true && ($oldValues[$dbTable] != $values[$dbTable]) && ($values[$dbTable] != "")) {
-                    $changedFields[$enum] = $values[$dbTable];
-                }
-
-            }
-
-            $sql = "INSERT INTO zp_tickethistory (
-					userId, ticketId, changeType, changeValue, dateModified
-				) VALUES (
-					:userId, :ticketId, :changeType, :changeValue, NOW()
-				)";
-
-            $stmn = $this->db->database->prepare($sql);
-
-            foreach ($changedFields as $field => $value) {
-
-                $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                $stmn->bindValue(':changeType', $field, PDO::PARAM_STR);
-                $stmn->bindValue(':changeValue', $value, PDO::PARAM_STR);
-                $stmn->execute();
-            }
-
-            $stmn->closeCursor();
 
         }
 
@@ -966,9 +631,9 @@ namespace leantime\domain\repositories {
 					WHERE 
 						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
 
-                if($includeArchived === false) {
-                    $query .= " AND zp_tickets.status > -1 ";
-                }
+            if($includeArchived === false) {
+                $query .= " AND zp_tickets.status > -1 ";
+            }
 
 				$query .= "	GROUP BY
 						progressTickets.dependingTicketId, zp_tickets.id";
@@ -992,64 +657,6 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getTicketHistory($id)
-        {
-
-            $sql = "SELECT 
-		 	ticket.headline, history.userId, history.ticketId, history.changeType, history.changeValue, history.ticketId, history.dateModified,
-		 	user.firstname, user.lastname
-		 FROM zp_tickethistory as history
-		  	INNER JOIN zp_user as user ON history.userId = user.id 
-		  	INNER JOIN zp_tickets as ticket ON history.ticketId = ticket.id
-		 WHERE history.ticketId = :ticketId ORDER BY history.id DESC";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-        }
-
-        /**
-         * getStatus - get the Status from the status array
-         *
-         * @access public
-         * @param  $status
-         * @return string
-         */
-        public function getStatus($status)
-        {
-
-            if($status !== null && $status !== '') {
-
-                if(array_key_exists($status, $this->state)=== true) {
-                    return $this->state[$status];
-                }else{
-                    return $this->state[3];
-                }
-
-            }else{
-
-                return $this->state[3];
-            }
-        }
-
-        public function getStatusPlain($status)
-        {
-
-            if($status !== null && $status !== '') {
-
-                return $this->statePlain[$status];
-
-            }else{
-
-                return $this->statePlain[3];
-            }
-        }
-
         /**
          * getType - get the Type from the type array
          *
@@ -1061,7 +668,6 @@ namespace leantime\domain\repositories {
         {
             return $this->type;
         }
-
 
         /**
          * getPriority - get the priority from the priority array
@@ -1083,213 +689,6 @@ namespace leantime\domain\repositories {
 
             }
         }
-
-        /**
-         * addTicket - add a Ticket with postback test
-         *
-         * @access public
-         * @param  array $values
-         * @return boolean|int
-         */
-        public function addTicket(array $values)
-        {
-
-
-            $query = "INSERT INTO zp_tickets (
-						headline, 
-						type, 
-						description, 
-						date, 
-						dateToFinish, 
-						projectId, 
-						status, 
-						userId, 
-						tags, 
-						sprint,
-						storypoints,
-						hourRemaining,
-						planHours,
-						acceptanceCriteria,
-						editFrom, 
-						editTo, 
-						editorId,
-						dependingTicketId,
-						sortindex,
-						kanbanSortindex
-				) VALUES (
-						:headline,
-						:type,
-						:description,
-						:date,
-						:dateToFinish,
-						:projectId,
-						:status,
-						:userId,
-						:tags,
-						:sprint,
-						:storypoints,
-						:hourRemaining,
-						:planHours,
-						:acceptanceCriteria,
-						:editFrom,
-						:editTo,
-						:editorId,
-						:dependingTicketId,
-						0,
-						0
-				)";
-
-            $stmn = $this->db->database->prepare($query);
-
-            $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
-            $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-            $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
-            $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
-            $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
-
-            $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
-            $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
-            $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
-            $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
-            $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
-
-            $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
-            $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
-            $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
-
-            if(isset($values['dependingTicketId'])) {
-                $depending = $values['dependingTicketId'];
-            }else{
-                $depending = "";
-            }
-
-            $stmn->bindValue(':dependingTicketId', $depending, PDO::PARAM_STR);
-
-            $stmn->execute();
-
-            $stmn->closeCursor();
-
-            return $this->db->database->lastInsertId();
-
-        }
-
-        /**
-         * updateTicket - Update Ticketinformation
-         *
-         * @access public
-         * @param  array $values
-         * @param  $id
-         */
-        public function updateTicket(array $values, $id)
-        {
-
-            $this->addTicketChange($_SESSION['userdata']['id'], $id, $values);
-
-            $query = "UPDATE zp_tickets
-			SET 
-				headline = :headline,
-				type = :type,
-				description=:description,
-				projectId=:projectId, 
-				status = :status,			
-				dateToFinish = :dateToFinish,
-				sprint = :sprint,
-				storypoints = :storypoints,
-				hourRemaining = :hourRemaining,
-				planHours = :planHours,
-				tags = :tags,
-				editorId = :editorId,
-				editFrom = :editFrom,
-				editTo = :editTo,
-				acceptanceCriteria = :acceptanceCriteria,
-				dependingTicketId = :dependingTicketId
-			WHERE id = :id LIMIT 1";
-
-            $stmn = $this->db->database->prepare($query);
-
-            $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
-            $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
-            $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
-            $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
-            $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
-            $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
-            $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
-            $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
-            $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
-            $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
-            $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
-
-
-            $result = $stmn->execute();
-
-            $stmn->closeCursor();
-
-            return $result;
-        }
-
-        /**
-         * delTicket - delete a Ticket and all dependencies
-         *
-         * @access public
-         * @param  $id
-         */
-        public function delticket($id)
-        {
-
-            $query = "DELETE FROM zp_tickets WHERE id = :id";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $result = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $result;
-
-        }
-
-        public function delMilestone($id)
-        {
-
-            $query = "UPDATE zp_tickets
-                SET 
-                    dependingTicketId = ''
-                WHERE dependingTicketId = :id";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
-
-
-            $query = "UPDATE zp_canvas_items
-                SET 
-                    milestoneId = ''
-                WHERE milestoneId = :id";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
-
-
-            $query = "DELETE FROM zp_tickets WHERE id = :id";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
-
-            return true;
-
-        }
-
 
         /**
          * Checks whether a user has access to a ticket or not
@@ -1323,70 +722,6 @@ namespace leantime\domain\repositories {
                 return false;
             }
 
-        }
-
-        public function getTimelineHistory($id)
-        {
-
-            $sql = "SELECT 
-						th.changeType, 
-						th.changeValue, 
-						DATE_FORMAT(th.dateModified, '%Y,%m,%e') AS date, 
-						th.userId, 
-						ticket.id as ticketId, 
-						ticket.headline, 
-						ticket.description,
-						user.firstname, 
-						user.lastname,
-						user.id AS userId
-					FROM zp_tickethistory as th
-					INNER JOIN zp_user as user ON th.userId = user.id
-					INNER JOIN zp_tickets as ticket ON th.ticketId = ticket.id
-					WHERE ticketId = :id";
-
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $result = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $result;
-
-        }
-
-        public function getTicketUsers($id)
-        {
-
-            $sql = "SELECT 	
-						user.username AS authorEditor,
-						editors.username AS editorEmail
-					
-					FROM zp_tickets AS tickets
-					LEFT JOIN zp_user AS user ON tickets.userId = user.id AND (user.notifications = 1 || user.notifications IS NULL)
-					LEFT JOIN zp_user AS editors ON tickets.editorId = editors.id AND (editors.notifications = 1 || editors.notifications IS NULL)
-					
-					WHERE tickets.id = :id LIMIT 1";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $result = $stmn->fetch();
-            $stmn->closeCursor();
-
-            $to = array();
-
-            if($result["authorEditor"] != "") {
-                $to[] = $result["authorEditor"];
-            }
-
-            if($result["editorEmail"] != "" && $result["editorEmail"] != $result["authorEditor"]) {
-                $to[] = $result["editorEmail"];
-            }
-
-            return $to;
         }
 
         public function getFirstTicket($projectId)
@@ -1436,7 +771,6 @@ namespace leantime\domain\repositories {
             return $values;
 
         }
-
 
         public function getNumberOfAllTickets($projectId)
         {
@@ -1543,7 +877,6 @@ namespace leantime\domain\repositories {
 
         }
 
-
         public function getAverageTodoSize($projectId)
         {
             $query = "SELECT
@@ -1569,7 +902,336 @@ namespace leantime\domain\repositories {
         }
 
 
+        /**
+         * addTicket - add a Ticket with postback test
+         *
+         * @access public
+         * @param  array $values
+         * @return boolean|int
+         */
+        public function addTicket(array $values)
+        {
 
+
+            $query = "INSERT INTO zp_tickets (
+						headline, 
+						type, 
+						description, 
+						date, 
+						dateToFinish, 
+						projectId, 
+						status, 
+						userId, 
+						tags, 
+						sprint,
+						storypoints,
+						hourRemaining,
+						planHours,
+						acceptanceCriteria,
+						editFrom, 
+						editTo, 
+						editorId,
+						dependingTicketId,
+						sortindex,
+						kanbanSortindex
+				) VALUES (
+						:headline,
+						:type,
+						:description,
+						:date,
+						:dateToFinish,
+						:projectId,
+						:status,
+						:userId,
+						:tags,
+						:sprint,
+						:storypoints,
+						:hourRemaining,
+						:planHours,
+						:acceptanceCriteria,
+						:editFrom,
+						:editTo,
+						:editorId,
+						:dependingTicketId,
+						0,
+						0
+				)";
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
+            $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
+            $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
+            $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
+
+            $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
+            $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
+            $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
+            $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
+            $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
+
+            $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
+            $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
+            $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
+
+            if(isset($values['dependingTicketId'])) {
+                $depending = $values['dependingTicketId'];
+            }else{
+                $depending = "";
+            }
+
+            $stmn->bindValue(':dependingTicketId', $depending, PDO::PARAM_STR);
+
+            $stmn->execute();
+
+            $stmn->closeCursor();
+
+            return $this->db->database->lastInsertId();
+
+        }
+
+
+        public function patchTicket($id,$params)
+        {
+
+            $this->addTicketChange($_SESSION['userdata']['id'], $id, $params);
+
+            $sql = "UPDATE zp_tickets SET ";
+
+            foreach($params as $key=>$value){
+                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            }
+
+            $sql .= "id=:id WHERE id=:id LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            foreach($params as $key=>$value){
+                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            }
+
+            $return = $stmn->execute();
+            $stmn->closeCursor();
+
+            return $return;
+        }
+
+        /**
+         * updateTicket - Update Ticketinformation
+         *
+         * @access public
+         * @param  array $values
+         * @param  $id
+         */
+        public function updateTicket(array $values, $id)
+        {
+
+            $this->addTicketChange($_SESSION['userdata']['id'], $id, $values);
+
+            $query = "UPDATE zp_tickets
+			SET 
+				headline = :headline,
+				type = :type,
+				description=:description,
+				projectId=:projectId, 
+				status = :status,			
+				dateToFinish = :dateToFinish,
+				sprint = :sprint,
+				storypoints = :storypoints,
+				hourRemaining = :hourRemaining,
+				planHours = :planHours,
+				tags = :tags,
+				editorId = :editorId,
+				editFrom = :editFrom,
+				editTo = :editTo,
+				acceptanceCriteria = :acceptanceCriteria,
+				dependingTicketId = :dependingTicketId
+			WHERE id = :id LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':headline', $values['headline'], PDO::PARAM_STR);
+            $stmn->bindValue(':type', $values['type'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
+            $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
+            $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
+            $stmn->bindValue(':hourRemaining', $values['hourRemaining'], PDO::PARAM_STR);
+            $stmn->bindValue(':acceptanceCriteria', $values['acceptanceCriteria'], PDO::PARAM_STR);
+            $stmn->bindValue(':planHours', $values['planHours'], PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
+            $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
+            $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
+            $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
+
+
+            $result = $stmn->execute();
+
+            $stmn->closeCursor();
+
+            return $result;
+        }
+
+        public function updateTicketStatus($ticketId, $status, $ticketSorting=-1)
+        {
+
+            if($ticketSorting > -1) {
+
+                $query = "UPDATE zp_tickets
+					SET 
+						kanbanSortIndex = :sortIndex,
+						status = :status
+					WHERE id = :ticketId
+					LIMIT 1";
+
+
+                $stmn = $this->db->database->prepare($query);
+                $stmn->bindValue(':status', $status, PDO::PARAM_INT);
+                $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
+                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+                return $stmn->execute();
+
+            }else{
+
+                $query = "UPDATE zp_tickets
+					SET 
+						status = :status
+					WHERE id = :ticketId
+					LIMIT 1";
+
+
+                $stmn = $this->db->database->prepare($query);
+                $stmn->bindValue(':status', $status, PDO::PARAM_INT);
+                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+                return $stmn->execute();
+
+            }
+
+            $stmn->closeCursor();
+
+        }
+
+        public function addTicketChange($userId,$ticketId,$values)
+        {
+
+            $fields = array(
+                'headline' => 'headline',
+                'type' => 'type',
+                'description' => 'description',
+                'project' => 'projectId',
+                'priority' => 'priority',
+                'deadline' => 'dateToFinish',
+                'editors' => 'editorId',
+                'fromDate' => 'editFrom',
+                'toDate' => 'editTo',
+                'staging' => 'staging',
+                'production' => 'production',
+                'planHours'    => 'planHours',
+                'status' => 'status');
+
+            $changedFields = array();
+
+            $sql = "SELECT * FROM zp_tickets WHERE id=:ticketId LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $oldValues = $stmn->fetch();
+            $stmn->closeCursor();
+
+            // compare table
+            foreach($fields as $enum => $dbTable) {
+
+                if (isset($values[$dbTable]) === true && ($oldValues[$dbTable] != $values[$dbTable]) && ($values[$dbTable] != "")) {
+                    $changedFields[$enum] = $values[$dbTable];
+                }
+
+            }
+
+            $sql = "INSERT INTO zp_tickethistory (
+					userId, ticketId, changeType, changeValue, dateModified
+				) VALUES (
+					:userId, :ticketId, :changeType, :changeValue, NOW()
+				)";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            foreach ($changedFields as $field => $value) {
+
+                $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+                $stmn->bindValue(':changeType', $field, PDO::PARAM_STR);
+                $stmn->bindValue(':changeValue', $value, PDO::PARAM_STR);
+                $stmn->execute();
+            }
+
+            $stmn->closeCursor();
+
+        }
+
+        /**
+         * delTicket - delete a Ticket and all dependencies
+         *
+         * @access public
+         * @param  $id
+         */
+        public function delticket($id)
+        {
+
+            $query = "DELETE FROM zp_tickets WHERE id = :id";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $result = $stmn->execute();
+            $stmn->closeCursor();
+
+            return $result;
+
+        }
+
+        public function delMilestone($id)
+        {
+
+            $query = "UPDATE zp_tickets
+                SET 
+                    dependingTicketId = ''
+                WHERE dependingTicketId = :id";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->execute();
+
+
+            $query = "UPDATE zp_canvas_items
+                SET 
+                    milestoneId = ''
+                WHERE milestoneId = :id";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->execute();
+
+
+            $query = "DELETE FROM zp_tickets WHERE id = :id";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->execute();
+
+            return true;
+
+        }
 
     }
 

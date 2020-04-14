@@ -25,7 +25,7 @@ namespace leantime\domain\services {
         public function dailyIngestion()
         {
 
-            if(!isset($_SESSION["reportCompleted"]) || $_SESSION["reportCompleted"] != 1) {
+            if(!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
 
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
@@ -39,8 +39,7 @@ namespace leantime\domain\services {
                     $currentSprint = $this->sprintRepository->getCurrentSprint($_SESSION['currentProject']);
 
                     if ($currentSprint !== false) {
-                        $sprintReport = $this->reportRepository->runTicketReport($_SESSION['currentProject'],
-                            $currentSprint->id);
+                        $sprintReport = $this->reportRepository->runTicketReport($_SESSION['currentProject'], $currentSprint->id);
                         if ($sprintReport !== false) {
                             $this->reportRepository->addReport($sprintReport);
                         }
@@ -50,13 +49,22 @@ namespace leantime\domain\services {
 
                     if ($backlogReport !== false) {
                         $this->reportRepository->addReport($backlogReport);
-                        $_SESSION["reportCompleted"] = 1;
+
+                        if(is_array( $_SESSION["reportCompleted"]) === false){
+                            $_SESSION["reportCompleted"] = array();
+                        }
+
+                        $_SESSION["reportCompleted"][$_SESSION['currentProject']] = 1;
                     }
 
                 }
 
             }
 
+        }
+
+        public function getFullReport($projectId) {
+            return $this->reportRepository->getFullReport($projectId);
         }
 
     }

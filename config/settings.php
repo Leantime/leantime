@@ -17,7 +17,7 @@ class settings {
 
 	public $appVersion = "2.1.0-Beta5";
 
-    public $dbVersion = "2.1.0";
+    public $dbVersion = "2.1.1";
 
 	/**
 	 * __construct

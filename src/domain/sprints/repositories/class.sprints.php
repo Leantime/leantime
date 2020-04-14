@@ -115,7 +115,7 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * getCurrentSprint - get current sprint for a project
+         * getCurrentSprintId - get current sprint for a project
          *
          * @access public
          * @return array

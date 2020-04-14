@@ -55,7 +55,8 @@ namespace leantime\core {
          */
         private $dbUpdates = array(
             20004,
-            20100
+            20100,
+            20101
         );
 
         /**
@@ -354,7 +355,7 @@ namespace leantime\core {
                 
                 CREATE TABLE `zp_comment` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `module` enum('project', 'ticket', 'client', 'user', 'lead', 'leancanvasitem', 'idea', 'retrospective') DEFAULT NULL,
+                  `module` varchar(200) DEFAULT NULL,
                   `userId` int(11) DEFAULT NULL,
                   `commentParent` int(11) DEFAULT NULL,
                   `date` datetime DEFAULT NULL,
@@ -658,9 +659,9 @@ namespace leantime\core {
                     `sum_open_todos` INT NULL,
                     `sum_progres_todos` INT NULL,
                     `sum_closed_todos` INT NULL,
-                    `sum_planned_hours` INT NULL,
-                    `sum_estremaining_hours` INT NULL,
-                    `sum_logged_hours` INT NULL,
+                    `sum_planned_hours` FLOAT NULL,
+                    `sum_estremaining_hours` FLOAT NULL,
+                    `sum_logged_hours` FLOAT NULL,
                     `sum_points` INT NULL,
                     `sum_points_done` INT NULL,
                     `sum_points_progress` INT NULL,
@@ -673,12 +674,13 @@ namespace leantime\core {
                     `sum_todos_xxl` INT NULL,
                     `sum_todos_none` INT NULL,
                     `tickets` TEXT NULL,
-                    `daily_avg_hours_booked_todo` INT NULL,
-                    `daily_avg_hours_booked_point` INT NULL,
-                    `daily_avg_hours_planned_todo` INT NULL,
-                    `daily_avg_hours_planned_point` INT NULL,
-                    `daily_avg_hours_remaining_point` INT NULL,
-                    `daily_avg_hours_remaining_todo` INT NULL,
+                    `daily_avg_hours_booked_todo` FLOAT NULL,
+                    `daily_avg_hours_booked_point` FLOAT NULL,
+                    `daily_avg_hours_planned_todo` FLOAT NULL,
+                    `daily_avg_hours_planned_point` FLOAT NULL,
+                    `daily_avg_hours_remaining_point` FLOAT NULL,
+                    `daily_avg_hours_remaining_todo` FLOAT NULL,
+                    `sum_teammembers` INT NULL,
                     INDEX `projectId` (`projectId` ASC, `sprintId` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                     
@@ -689,6 +691,21 @@ namespace leantime\core {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                 
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', :dbVersion);
+                
+                CREATE TABLE `zp_audit` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `projectId` INT NULL,
+                      `action` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `entityId` INT NULL,
+                      `values` TEXT NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      KEY `projectId` (`projectId` ASC),
+                      KEY `projectAction` (`projectId` ASC, `action` ASC),
+                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                             
             ";
 
@@ -786,6 +803,63 @@ namespace leantime\core {
                 "UPDATE `zp_user` SET role = 10 WHERE role = 3;",
                 "UPDATE `zp_user` SET role = 20 WHERE role = 4;",
                 "UPDATE `zp_user` SET role = 40 WHERE role = 5;",
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20101() {
+
+
+            $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
+                "ALTER TABLE `zp_stats`
+                    ADD COLUMN `sum_teammembers` INT(11) NULL DEFAULT NULL AFTER `daily_avg_hours_remaining_todo`,
+                    CHANGE COLUMN `sum_planned_hours` `sum_planned_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `sum_logged_hours` `sum_logged_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `sum_estremaining_hours` `sum_estremaining_hours` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_booked_todo` `daily_avg_hours_booked_todo` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_booked_point` `daily_avg_hours_booked_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_planned_todo` `daily_avg_hours_planned_todo` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;",
+                "CREATE TABLE `zp_audit` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `projectId` INT NULL,
+                      `action` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `entityId` INT NULL,
+                      `values` TEXT NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      KEY `projectId` (`projectId` ASC),
+                      KEY `projectAction` (`projectId` ASC, `action` ASC),
+                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
+
             );
 
             foreach ($sql as $statement) {
