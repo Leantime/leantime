@@ -8,6 +8,8 @@
     $statusLabels = $this->get('statusLabels');
     $fullReport = $this->get('fullReport');
     $fullReportLatest = $this->get('fullReportLatest');
+
+
 ?>
 
 <div class="pageheader">
@@ -33,7 +35,7 @@
                 <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
 
-                            <h5 class="subtitle"><?=$this->__("subtitles.summary")?></h5>
+                            <h5 class="subtitle"><?=$this->__("subtitles.summary")?> (<?=$this->getFormattedDateString($fullReportLatest['date']) ?>) </h5>
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="boxedHighlight">

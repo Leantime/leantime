@@ -348,7 +348,7 @@ namespace leantime\domain\repositories {
                         
                         FROM zp_stats WHERE projectId = :project AND (sprintId < 1 || sprintId IS NULL)
                         GROUP BY date
-                        ORDER BY date ASC LIMIT 95 ";
+                        ORDER BY date DESC LIMIT 120";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':project', $project, PDO::PARAM_INT);
