@@ -56,14 +56,10 @@ namespace leantime\domain\controllers {
 
                         if (isset($_POST['saveForm']) === true) {
 
-
-
                             if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
-
 
                                 $values['project'] = (int) $_POST['projects'];
                                 $values['ticket'] = (int) $_POST['tickets'];
-
 
                             }
 
@@ -75,7 +71,9 @@ namespace leantime\domain\controllers {
 
                             if (isset($_POST['date']) && $_POST['date'] != '') {
 
-                                $values['date'] = date("Y-m-d", strtotime($_POST['date']))." 00:00:00";
+                                $timestamp = date_create_from_format($this->language->__("language.dateformat"), $_POST['date']);
+
+                                $values['date'] = $this->language->getISODateString($_POST['date']);
 
                             }
 
@@ -103,7 +101,8 @@ namespace leantime\domain\controllers {
 
                                     if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
 
-                                        $values['invoicedEmplDate'] = date("Y-m-d", strtotime($_POST['invoicedEmplDate']))." 00:00:00";
+                                        $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate']);
+
 
                                     } else {
 
@@ -131,7 +130,9 @@ namespace leantime\domain\controllers {
 
                                     if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
 
-                                        $values['invoicedCompDate'] = date("Y-m-d", strtotime($_POST['invoicedCompDate']))." 00:00:00";
+                                        var_dump($values['invoicedCompDate']);
+
+                                        $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
 
                                     } else {
 
@@ -187,14 +188,7 @@ namespace leantime\domain\controllers {
 
                             }
 
-
                         }
-
-
-                        $values['date'] = $this->language->getFormattedDateString($values['date']);
-                        $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
-                        $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
-
 
                         $tpl->assign('values', $values);
 

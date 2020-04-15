@@ -6231,7 +6231,7 @@ body::after {
 }
 
 input.secretInput {
-    width: 85px;
+    width:126px;
     border:0px;
     margin-left:3px;
     padding-left:3px;

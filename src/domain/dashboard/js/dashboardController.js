@@ -80,6 +80,8 @@ leantime.dashboardController = (function () {
 
     var initBurndown = function (labels, plannedData, actualData) {
 
+        moment.locale(leantime.i18n.__("language.code"));
+
         var MONTHS = labels;
         var config = {
             type: 'line',
@@ -174,6 +176,8 @@ leantime.dashboardController = (function () {
     };
 
     var initBacklogBurndown = function (labels, actualData) {
+
+        moment.locale(leantime.i18n.__("language.code"));
 
         var MONTHS = labels;
         var config = {
@@ -304,7 +308,7 @@ leantime.dashboardController = (function () {
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: leantime.i18n.__("language.isRTL"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),

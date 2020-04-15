@@ -72,13 +72,13 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                $dateFrom = date("Y-m-d", strtotime($_POST['dateFrom']));
+                $dateFrom = $language->getISODateString($_POST['dateFrom']);
 
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                $dateTo = date("Y-m-d", strtotime($_POST['dateTo']));
+                $dateTo = $language->getISODateString($_POST['dateTo']);
 
             }
 
@@ -128,10 +128,9 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('employeeFilter', $userId);
             $tpl->assign('employees', $employees);
-            $tpl->assign('dateFrom', $language->getFormattedDateString($dateFrom));
-            $tpl->assign('dateTo', $language->getFormattedDateString($dateTo)
+            $tpl->assign('dateFrom', $dateFrom);
+            $tpl->assign('dateTo', $dateTo);
 
-            );
             $tpl->assign('actKind', $kind);
             $tpl->assign('kind', $timesheetsRepo->kind);
             $tpl->assign('invComp', $invCompCheck);

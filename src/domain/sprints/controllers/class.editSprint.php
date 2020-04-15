@@ -30,6 +30,7 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->sprintService = new services\sprints();
+            $this->language = new core\language();
 
         }
 
@@ -48,8 +49,8 @@ namespace leantime\domain\controllers {
                 $startDate = new DateTime();
                 $endDate = new DateTime();
                 $endDate = $endDate->add(new DateInterval("P13D"));
-                $sprint->startDate = $startDate->format("m/d/Y");
-                $sprint->endDate = $endDate->format("m/d/Y");
+                $sprint->startDate = $startDate->format($this->language->__("language.dateformat"));
+                $sprint->endDate = $endDate->format($this->language->__("language.dateformat"));
 
             }
 

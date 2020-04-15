@@ -87,7 +87,7 @@ $helper = $this->get('helper');
                                             <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php 
                                             endif; ?>/>
 
-                                        <label for="user-<?php echo $row['id'] ?>"><?php echo $row['lastname'] .', '. $row['firstname'] ?></label>
+                                        <label for="user-<?php echo $row['id'] ?>"><?php echo $row['lastname'] .' '. $row['firstname'] ?></label>
                                     </p>
                             <?php } ?>
                         </div>

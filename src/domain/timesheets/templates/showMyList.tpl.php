@@ -47,9 +47,9 @@ $helper = $this->get('helper');
                 <div class="filterBoxLeft">
                     <label for="dateFrom"><?php echo $this->__('label.date_from'); ?> <?php echo $this->__('label.date_to'); ?></label>
                     <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-                           value="<?php echo date($this->__('language.dateformat'), strtotime($this->get('dateFrom'))); ?>" style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                           value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
                     <input type="text" id="dateTo" class="dateTo" name="dateTo"
-                           value="<?php echo date($this->__('language.dateformat'), strtotime($this->get('dateTo'))); ?>" style="margin-bottom:10px; width:90px" />
+                           value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" style="margin-bottom:10px; width:90px" />
                 </div>
                 <div class="filterBoxLeft">
                     <label for="kind"><?php echo $this->__("label.type")?></label>
@@ -115,8 +115,8 @@ $helper = $this->get('helper');
                     $sum = $sum + $row['hours'];?>
                     <tr>
                         <td data-order="<?=$this->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>">
-                            <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
+                        <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
+                            <?php echo $this->getFormattedDateString($row['workDate']); ?>
                         </td>
                         <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
                         <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
@@ -128,12 +128,12 @@ $helper = $this->get('helper');
                         <td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
                         <td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
                         <td><?php $this->e($row['description']); ?></td>
-                        <td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
+                        <td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
                         <?php }else{
                                 echo $this->__("label.pending");
                             } ?></td>
-                        <td data-order="<?php if($row['invoicedComp'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); }?>">
-                            <?php if($row['invoicedComp'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
+                        <td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
+                            <?php if($row['invoicedComp'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
                         <?php }else{
                                 echo $this->__("label.pending");
                             } ?></td>
@@ -159,6 +159,21 @@ $helper = $this->get('helper');
     jQuery(document).ready(function(){
         leantime.timesheetsController.initTimesheetsTable();
         leantime.timesheetsController.initEditTimeModal();
+        jQuery(".dateFrom, .dateTo").datepicker({
+            numberOfMonths: 1,
+            dateFormat:  leantime.i18n.__("language.jsdateformat"),
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+        });
     });
 
 </script>
