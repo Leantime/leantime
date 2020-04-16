@@ -77,7 +77,7 @@ class config
     $this->smtpAutoTLS = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $this->smtpAutoTLS, "boolean");
     $this->smtpSecure = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SECURE", $this->smtpSecure);
     $this->smtpPort = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PORT", $this->smtpPort);
-    echo 'User: ' . getenv("LEAN_DB_USER");
+
   }
 
   private function configEnvironmentHelper($envVar, $default, $dataType = "string") {
