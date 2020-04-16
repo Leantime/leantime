@@ -68,6 +68,8 @@
                                             <?php
                                                 if($fullReportLatest !== false) {
                                                     echo($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']);
+                                                }else{
+                                                    echo 0;
                                                 }
                                                 ?></span>
                                     </div>
