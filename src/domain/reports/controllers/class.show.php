@@ -85,7 +85,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign("fullReport", $fullReport);
             if(count($fullReport) > 0) {
-                $this->tpl->assign("fullReportLatest", $fullReport[count($fullReport)-1]);
+                $this->tpl->assign("fullReportLatest", $fullReport[0]);
             }else{
                 $this->tpl->assign("fullReportLatest", false);
             }

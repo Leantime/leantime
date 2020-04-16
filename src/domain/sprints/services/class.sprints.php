@@ -250,6 +250,8 @@ namespace leantime\domain\services {
             }
 
             $sprintValues = $this->reportRepository->getFullReport($project);
+
+
             $sprintData = array();
             foreach($sprintValues as $row) {
                 $sprintData[$row['date']] = $row;
@@ -262,7 +264,7 @@ namespace leantime\domain\services {
             }
 
             $period = new DatePeriod(
-                new DateTime($allKeys[0]),
+                new DateTime($allKeys[count($allKeys)-1]),
                 new DateInterval('P1D'),
                 new DateTime()
             );
