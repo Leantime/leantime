@@ -83,4 +83,4 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 * Documentation [https://help.leantime.io](https://help.leantime.io)
 * Community Forum [https://community.leantime.io](https://community.leantime.io) !!NEW
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
-* Contact Us [https://leantime.io/contact/] [https://leantime.io/contact/]
+* Contact Us [https://leantime.io/contact/](https://leantime.io/contact)
