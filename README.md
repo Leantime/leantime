@@ -79,5 +79,8 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect your to <yourdomain.com>/update
 
-### Learn More ###
-For more information, check out: [https://help.leantime.io](https://help.leantime.io)
+### Support ###
+* Documentation [https://help.leantime.io](https://help.leantime.io)
+* Community Forum [https://community.leantime.io](https://community.leantime.io) !!NEW
+* File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
+* Contact Us [https://leantime.io/contact/] [https://leantime.io/contact/]
