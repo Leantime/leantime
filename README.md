@@ -15,6 +15,8 @@ Features:
 * Integrations with Mattermost, Slack & Zulip
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Project Reports
+* Available in English, Spanish, Russian, Dutch
 
 ### Screenshots ###
 
