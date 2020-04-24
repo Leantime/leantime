@@ -383,7 +383,7 @@ namespace leantime\domain\repositories {
 							phone, 
 							username, 
 							role,
-					
+					        notifications,
 							clientId, 
 							password
 						) VALUES (
@@ -392,6 +392,7 @@ namespace leantime\domain\repositories {
 							:phone,
 							:user,
 							:role,
+							1,
 							:clientId,
 							:password
 						)";
