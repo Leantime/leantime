@@ -20,16 +20,14 @@ leantime.settingRepository = (function () {
                 url: leantime.appUrl+'/api/setting',
                 data: formData,
                 processData: false,
-                contentType: false
-            }
-        ).success(
-            function (resp) {
+                contentType: false,
+                success: function (resp) {
                     jQuery('#save-logo').removeClass('running');
                     location.reload();
-            }
-        ).error(
-            function (err) {
+                },
+                error: function (err) {
                     console.log(err);
+                }
             }
         );
     };

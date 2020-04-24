@@ -869,7 +869,6 @@ leantime.ticketsController = (function () {
             options: {
                 scales: {
                     yAxes: [{
-                        stacked: true
                     }]
                 }
             }

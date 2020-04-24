@@ -32,6 +32,12 @@ namespace leantime\core {
          * @access public
          * @var    array ini-values
          */
+        public $ini_array_fallback;
+
+        /**
+         * @access public
+         * @var    array ini-values
+         */
         public $langlist;
 
         /**
@@ -48,20 +54,19 @@ namespace leantime\core {
         function __construct()
         {
 
-
             $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
 
-                if($config->language != '' && (!isset($_SESSION['language']) || $_SESSION['language'] == '')) {
+                if($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['language']) === true && $_SESSION['language'] != '') {
+                }elseif(isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
 
-                    $this->setLanguage($_SESSION['language']);
+                    $this->setLanguage($_SESSION['companysettings.language']);
 
                 }else{
 
@@ -103,18 +108,47 @@ namespace leantime\core {
         {
 
             //Todo: Add cache
+
+            //Default to english US
+            $mainLanguageArray = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+
             if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+                $ini_overrides = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+
+                foreach($mainLanguageArray as $languageKey => $languageValue) {
+
+                    if(array_key_exists($languageKey, $ini_overrides)){
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    }
+
+                }
+            }
+
+            $this->ini_array = $mainLanguageArray;
+            return $this->ini_array;
+
+        }
+
+        /**
+         * getLanguageList - gets the list of possible languages
+         *
+         * @access public
+         * @return array|bool
+         */
+        public function getLanguageList()
+        {
+
+            if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
+
+                $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
+                return $this->langlist;
 
             }else{
 
-                //Default to english US
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+                return false;
 
             }
-
-            return $this->ini_array;
 
         }
 

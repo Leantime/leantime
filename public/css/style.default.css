@@ -520,7 +520,7 @@ h1, h2, h3, h4, h5 {
 	position:fixed;
 	padding-top:60px;
 	height:100%;
-    z-index: 7;
+    z-index: 9;
 }
 
 /* Action for tabwidget fix */
@@ -1067,7 +1067,6 @@ a .label-default:after, a .label-primary:after {
 }
 
 .header .logo a.barmenu.open {
-    margin-right:0px;
 }
 
 .header .logo a.barmenu:hover {
@@ -1702,6 +1701,15 @@ a .label-default:after, a .label-primary:after {
     width: 300px !important;
     margin-right: 15px;
     float: left;
+}
+
+.widgettitle.title-secondary {
+    background:none;
+    color:#333;
+    background:#f0f0f0;
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc
+
 }
 
 .wt1 {

@@ -321,7 +321,7 @@ namespace leantime\domain\services {
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
                     $actual_link = BASE_URL."/tickets/showTicket/".$addTicketResponse;
-                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['id'], $values['headline']);
+                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_todo_cta")));
 
@@ -444,6 +444,9 @@ namespace leantime\domain\services {
 
         public function upsertSubtask($values, $parentTicket)
         {
+
+            $subtaskId = $values['subtaskId'];
+
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
@@ -451,7 +454,6 @@ namespace leantime\domain\services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
                 'status' => $values['status'],
@@ -466,7 +468,7 @@ namespace leantime\domain\services {
                 'dependingTicketId' => $parentTicket->id,
             );
 
-            if ($values['subtaskId'] == "new" || $values['subtaskId'] == "") {
+            if ($subtaskId == "new" || $subtaskId == "") {
 
                 //New Ticket
                 if(!$this->ticketRepository->addTicket($values)){
@@ -476,7 +478,7 @@ namespace leantime\domain\services {
             } else {
 
                 //Update Ticket
-                $subtaskId = $values['subtaskId'];
+
                 if(!$this->ticketRepository->updateTicket($values, $subtaskId)){
                     return false;
                 }
