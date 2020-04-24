@@ -1703,6 +1703,15 @@ a .label-default:after, a .label-primary:after {
     float: left;
 }
 
+.widgettitle.title-secondary {
+    background:none;
+    color:#333;
+    background:#f0f0f0;
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc
+
+}
+
 .wt1 {
     background: #333;
     color: #fff;
