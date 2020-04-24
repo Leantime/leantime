@@ -91,6 +91,29 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
+        /**
+         * getUserByEmail - get on user from db
+         *
+         * @access public
+         * @param  $id
+         * @return array
+         */
+        public function getUserByEmail($email)
+        {
+
+            $sql = "SELECT * FROM `zp_user` WHERE username = :email LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
         public function getNumberOfUsers()
         {
 

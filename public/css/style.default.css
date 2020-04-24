@@ -1067,7 +1067,6 @@ a .label-default:after, a .label-primary:after {
 }
 
 .header .logo a.barmenu.open {
-    margin-right:0px;
 }
 
 .header .logo a.barmenu:hover {
