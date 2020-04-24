@@ -56,6 +56,11 @@
             </a>
         </li>
         <li>
+            <a href='http://community.leantime.io' target="_blank">
+                <?=$this->__("menu.community")?>
+            </a>
+        </li>
+        <li>
             <a href='https://leantime.io/contact-us' target="_blank">
                 <?=$this->__("menu.contact_us")?>
             </a>

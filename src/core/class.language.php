@@ -32,6 +32,12 @@ namespace leantime\core {
          * @access public
          * @var    array ini-values
          */
+        public $ini_array_fallback;
+
+        /**
+         * @access public
+         * @var    array ini-values
+         */
         public $langlist;
 
         /**
@@ -103,17 +109,24 @@ namespace leantime\core {
         {
 
             //Todo: Add cache
+
+            //Default to english US
+            $mainLanguageArray = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+
             if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+                $ini_overrides = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
 
-            }else{
+                foreach($mainLanguageArray as $languageKey => $languageValue) {
 
-                //Default to english US
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+                    if(array_key_exists($languageKey, $ini_overrides)){
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    }
 
+                }
             }
 
+            $this->ini_array = $mainLanguageArray;
             return $this->ini_array;
 
         }
