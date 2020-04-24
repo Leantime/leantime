@@ -123,12 +123,6 @@
 
             <?php } ?>
 
-
-            jQuery('#medialist').isotope({
-                itemSelector : 'li',
-                layoutMode : 'fitRows'
-            });
-
             // Media Filter
             jQuery('#mediafilter a').on("click", function(){
 

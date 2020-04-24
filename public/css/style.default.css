@@ -520,7 +520,7 @@ h1, h2, h3, h4, h5 {
 	position:fixed;
 	padding-top:60px;
 	height:100%;
-    z-index: 7;
+    z-index: 9;
 }
 
 /* Action for tabwidget fix */
