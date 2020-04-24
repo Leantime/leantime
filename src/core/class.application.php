@@ -128,6 +128,15 @@ class application
             }
         }
 
+        if(isset($_SESSION["companysettings.language"]) === false || $_SESSION["companysettings.language"] == false) {
+            $language = $this->settingsRepo->getSetting("companysettings.language");
+            if ($language !== false) {
+                $_SESSION["companysettings.language"] = $language;
+            }else{
+                $_SESSION["companysettings.language"] = $this->config->language;
+            }
+        }
+
         //Only run this if the user is not logged in (db should be updated/installed before user login)
         if($this->login->logged_in()===false) {
 

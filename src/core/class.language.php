@@ -54,20 +54,19 @@ namespace leantime\core {
         function __construct()
         {
 
-
             $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
 
-                if($config->language != '' && (!isset($_SESSION['language']) || $_SESSION['language'] == '')) {
+                if($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['language']) === true && $_SESSION['language'] != '') {
+                }elseif(isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
 
-                    $this->setLanguage($_SESSION['language']);
+                    $this->setLanguage($_SESSION['companysettings.language']);
 
                 }else{
 
@@ -128,6 +127,28 @@ namespace leantime\core {
 
             $this->ini_array = $mainLanguageArray;
             return $this->ini_array;
+
+        }
+
+        /**
+         * getLanguageList - gets the list of possible languages
+         *
+         * @access public
+         * @return array|bool
+         */
+        public function getLanguageList()
+        {
+
+            if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
+
+                $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
+                return $this->langlist;
+
+            }else{
+
+                return false;
+
+            }
 
         }
 
