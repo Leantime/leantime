@@ -444,6 +444,9 @@ namespace leantime\domain\services {
 
         public function upsertSubtask($values, $parentTicket)
         {
+
+            $subtaskId = $values['subtaskId'];
+
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
@@ -451,7 +454,6 @@ namespace leantime\domain\services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
                 'status' => $values['status'],
@@ -466,7 +468,7 @@ namespace leantime\domain\services {
                 'dependingTicketId' => $parentTicket->id,
             );
 
-            if ($values['subtaskId'] == "new" || $values['subtaskId'] == "") {
+            if ($subtaskId == "new" || $subtaskId == "") {
 
                 //New Ticket
                 if(!$this->ticketRepository->addTicket($values)){
@@ -476,7 +478,7 @@ namespace leantime\domain\services {
             } else {
 
                 //Update Ticket
-                $subtaskId = $values['subtaskId'];
+
                 if(!$this->ticketRepository->updateTicket($values, $subtaskId)){
                     return false;
                 }
