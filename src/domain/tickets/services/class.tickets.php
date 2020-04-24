@@ -321,7 +321,7 @@ namespace leantime\domain\services {
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
                     $actual_link = BASE_URL."/tickets/showTicket/".$addTicketResponse;
-                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['id'], $values['headline']);
+                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_todo_cta")));
 
