@@ -79,6 +79,9 @@
             <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
                 <a href="<?=BASE_URL ?>/retrospectives/showBoards"><?=$this->__("menu.retrospectives") ?></a>
             </li>
+            <li <?php if($module == 'reports') echo"class=' active '"; ?>>
+                <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
+            </li>
             <?php if ($login::userIsAtLeast("clientManager")) { ?>
                 <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>
                     <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>

@@ -40,76 +40,7 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <?php /*
-                <div class="row" id="sprintBurndownChart">
-                    <div class="col-md-12">
-
-                        <?php if($sprintBurndown != []){ ?>
-
-                            <h5 class="subtitle"><?php echo $this->__("subtitles.sprint_burndown"); ?></h5>
-
-                            <div class="pull-right">
-                                <div class="btn-group mt-1 mx-auto" role="group">
-                                    <a href="javascript:void(0)" id="NumChartButton" class="btn btn-sm btn-secondary active"><?php echo $this->__("links.num_of_todos"); ?></a>
-                                    <a href="javascript:void(0)" id="EffortChartButton" class="btn btn-sm btn-secondary "><?php echo $this->__("links.effort"); ?></a>
-                                    <a href="javascript:void(0)" id="HourlyChartButton" class="btn btn-sm btn-secondary"><?php echo $this->__("links.hourly"); ?></a>
-                                </div>
-
-                                    </div>
-                                    <?php
-                                    $dates = date("m/d/Y", strtotime($this->get('currentSprint')->startDate)) ." - " .date("m/d/Y", strtotime($this->get('currentSprint')->endDate));
-                                    echo "<h4 class='inline'>".$this->get('currentSprint')->name."</h4> - ".$dates; ?>
-                                    <div style="width:100%; height:350px;">
-                                        <canvas id="sprintBurndown"></canvas>
-                                    </div>
-                                    <div style="float:clear;"></div>
-                                    <br /><br /><br />
-
-
-                        <?php }else if($backlogBurndown != []) { ?>
-
-                            <h5 class="subtitle"><?php echo $this->__("subtitles.backlog_burndown"); ?></h5>
-
-                            <div class="pull-right">
-                                <div class="btn-group mt-1 mx-auto" role="group">
-                                    <a href="javascript:void(0)" id="NumChartButton"
-                                       class="btn btn-sm btn-secondary active"><?php echo $this->__("links.num_of_todos"); ?></a>
-                                    <a href="javascript:void(0)" id="EffortChartButton"
-                                       class="btn btn-sm btn-secondary "><?php echo $this->__("links.effort"); ?></a>
-                                    <a href="javascript:void(0)" id="HourlyChartButton"
-                                       class="btn btn-sm btn-secondary"><?php echo $this->__("links.hourly"); ?></a>
-
-
-                                </div>
-
-                            </div>
-                            <div style="width:100%; height:350px;">
-                                <canvas id="backlogBurndown"></canvas>
-                            </div>
-                            <div style="clear:both;"></div>
-                            <br /><br /><br />
-                            <?php
-                        }else {
-                            if ($this->get('upcomingSprint') == false) {
-                                echo "<div class='emptyChartContainer'>
-                                <h4>".$this->__("headlines.no_active_sprint")."</h4>
-                                ".$this->__("headlines.no_active_sprint")."<br /><br />
-                                <a href='/sprints/editSprint' class=\"sprintModal btn btn-primary\" ><span class=\"fa fa-rocket\"></span> ".$this->__("links.create_sprint")."</a>
-                                </div>";
-                            } else {
-                                echo "<div class='emptyChartContainer'>
-                                <h4>".sprintf($this->__("headlines.sprint_starts_on"), date($this->__("language.dateformat"), strtotime($this->get('upcomingSprint')->startDate)))."</h4>
-                                ".$this->__("text.update_sprint_chart_add_todos")."<br /><br />
-                                <a href='/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> ".$this->__("links.goto_backlog")."</a>
-                                </div>";
-                            }
-                        }
-                        ?>
-                    </div>
-                </div>
-                */ ?>
-
-                <div class="row" id="yourToDoContainer">
+               <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle">
                             <?php echo sprintf($this->__("subtitles.todos_this_week"), count($this->get('tickets')["thisWeek"])); ?>

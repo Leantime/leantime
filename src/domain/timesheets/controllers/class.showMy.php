@@ -25,6 +25,7 @@ namespace leantime\domain\controllers {
             $projects = new repositories\projects();
             $helper = new core\helper();
             $tickets = new repositories\tickets();
+            $language = new core\language();
 
 
             $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
@@ -35,8 +36,8 @@ namespace leantime\domain\controllers {
 
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-                        $tempDate = new DateTime($_POST['startDate']);
-                        $dateFrom = $tempDate->format('Y-m-d');
+
+                        $dateFrom = $language->getISODateString($_POST['startDate']);
 
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
@@ -48,8 +49,8 @@ namespace leantime\domain\controllers {
 
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-                        $tempDate = new DateTime($_POST['startDate']);
-                        $dateFrom = $tempDate->format('Y-m-d');
+
+                        $dateFrom = $language->getISODateString($_POST['startDate']);
 
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);

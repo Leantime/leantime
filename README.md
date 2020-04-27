@@ -15,6 +15,8 @@ Features:
 * Integrations with Mattermost, Slack & Zulip
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Project Reports
+* Available in English, Spanish, Russian, Dutch
 
 ### Screenshots ###
 
@@ -36,7 +38,7 @@ Features:
 
 ### Installation (Development) ###
 
-* Install composer and npm 
+* Install composer and npm
 * Clone repository to your local server
 * Create MySQL database
 * Run composer to load php dependencies
@@ -49,7 +51,7 @@ npm install
 ```
 to load Javascript dependencies and finally run the grunt task to create the compiled js files
 ```
-grunt default
+./node_modules/grunt/bin/grunt Build-All
 ```
 * Point your local domain to the `public/` directory
 * Rename `config/configuration.sample.php` to `config/configuration.php`
@@ -79,5 +81,8 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect your to <yourdomain.com>/update
 
-### Learn More ###
-For more information, check out: [https://help.leantime.io](https://help.leantime.io)
+### Support ###
+* Documentation [https://docs.leantime.io](https://docs.leantime.io)
+* Community Forum [https://community.leantime.io](https://community.leantime.io) !!NEW
+* File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
+* Contact Us [https://leantime.io/contact/](https://leantime.io/contact)

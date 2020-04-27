@@ -32,6 +32,12 @@ namespace leantime\core {
          * @access public
          * @var    array ini-values
          */
+        public $ini_array_fallback;
+
+        /**
+         * @access public
+         * @var    array ini-values
+         */
         public $langlist;
 
         /**
@@ -48,20 +54,19 @@ namespace leantime\core {
         function __construct()
         {
 
-
             $config = new config();
 
             if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
 
-                if($config->language != '' && (!isset($_SESSION['language']) || $_SESSION['language'] == '')) {
+                if($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['language']) === true && $_SESSION['language'] != '') {
+                }elseif(isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
 
-                    $this->setLanguage($_SESSION['language']);
+                    $this->setLanguage($_SESSION['companysettings.language']);
 
                 }else{
 
@@ -103,18 +108,47 @@ namespace leantime\core {
         {
 
             //Todo: Add cache
+
+            //Default to english US
+            $mainLanguageArray = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+
             if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
 
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+                $ini_overrides = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+
+                foreach($mainLanguageArray as $languageKey => $languageValue) {
+
+                    if(array_key_exists($languageKey, $ini_overrides)){
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    }
+
+                }
+            }
+
+            $this->ini_array = $mainLanguageArray;
+            return $this->ini_array;
+
+        }
+
+        /**
+         * getLanguageList - gets the list of possible languages
+         *
+         * @access public
+         * @return array|bool
+         */
+        public function getLanguageList()
+        {
+
+            if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
+
+                $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
+                return $this->langlist;
 
             }else{
 
-                //Default to english US
-                $this->ini_array = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+                return false;
 
             }
-
-            return $this->ini_array;
 
         }
 
@@ -180,10 +214,64 @@ namespace leantime\core {
         */
         public function getFormattedDateString($date)
         {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00") {
-                return date($this->__("language.dateformat"), strtotime($date));
+                //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
+                if(strlen($date) == 10){
+                    $timestamp = date_create_from_format("!Y-m-d", $date);
+                }else {
+                    $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+                }
+
+                if(is_object($timestamp)) {
+                    return date($this->__("language.dateformat"), $timestamp->getTimestamp());
+                }
+
             }
+
+        }
+
+        /**
+         * getFormattedTimeString - returns a language specific formatted time string
+         *
+         * @access public
+         * @param $date string
+         * @return string
+         */
+        public function getFormattedTimeString($date)
+        {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
+
+                if(is_object($timestamp)) {
+                    return date($this->__("language.timeformat"), $timestamp->getTimestamp());
+                }
+
+            }
+
+        }
+
+        /**
+         * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
+         *
+         * @access public
+         * @param $date string
+         * @return string|bool
+         */
+        public function getISODateString($date)
+        {
+            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+
+                if(is_object($timestamp)) {
+                    return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
+                }
+
+            }
+
+            return false;
 
         }
 

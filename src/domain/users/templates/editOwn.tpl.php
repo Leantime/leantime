@@ -147,6 +147,20 @@ $user = $this->get('user');
                 </div>
 
             </div>
+
+            <div class="span5">
+                <div class='widgetbox'>
+                    <h4 class='widgettitle'><?php echo $this->__('headlines.twoFA'); ?></h4>
+                    <div class='widgetcontent'>
+                        <?php if ($values['twoFAEnabled']) { ?>
+                            <p><?php echo $this->__('text.twoFA_enabled'); ?></p>
+                        <?php } else { ?>
+                            <p><?php echo $this->__('text.twoFA_disabled'); ?></p>
+                        <?php } ?>
+                        <p><a href="<?=BASE_URL ?>/twoFA/edit"><?php echo $this->__('text.twoFA_manage'); ?></a></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
 

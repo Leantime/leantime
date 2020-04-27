@@ -35,6 +35,23 @@ $helper = $this->get('helper');
         <?php if ($login::userIsAtLeast("clientManager")) { ?>
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
+
+
+        jQuery(".dateFrom, .dateTo").datepicker({
+            numberOfMonths: 1,
+            dateFormat:  leantime.i18n.__("language.jsdateformat"),
+            dayNames: leantime.i18n.__("language.dayNames").split(","),
+            dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+            monthNames: leantime.i18n.__("language.monthNames").split(","),
+            currentText: leantime.i18n.__("language.currentText"),
+            closeText: leantime.i18n.__("language.closeText"),
+            buttonText: leantime.i18n.__("language.buttonText"),
+            nextText: leantime.i18n.__("language.nextText"),
+            prevText: leantime.i18n.__("language.prevText"),
+            weekHeader: leantime.i18n.__("language.weekHeader"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+        });
 	});		
         
     
@@ -70,10 +87,10 @@ $helper = $this->get('helper');
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-				value="<?php echo $this->get('dateFrom'); ?>" size="7" style="margin-bottom:10px"/></td>
+				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
 			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo"
-				value="<?php echo $this->get('dateTo'); ?>" size="7" style="margin-bottom:10px" /></td>
+				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
 			<select name="userId" id="userId" onchange="submit();">
@@ -174,8 +191,8 @@ $helper = $this->get('helper');
                     #<?=$row['id']?>
                 <?php } ?>
             </td>
-            <td data-order="<?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>">
-                <?php echo date($this->__("language.dateformat"), strtotime($row['workDate'])); ?>
+            <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
+                <?php echo$this->getFormattedDateString($row['workDate']); ?>
             </td>
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
 			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
@@ -187,15 +204,15 @@ $helper = $this->get('helper');
 			<td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
 			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
 			<td><?php $this->e($row['description']); ?></td>
-			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedEmplDate'])); ?>
+			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
 			<?php }else{ ?>
                 <?php if ($login::userIsAtLeast("clientManager")) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
 				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
-			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); }?>">
+			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
 
                 <?php if($row['invoicedComp'] == '1'){?>
-                    <?php echo date($this->__("language.dateformat"), strtotime($row['invoicedCompDate'])); ?>
+                    <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
 			    <?php }else{ ?>
                     <?php if ($login::userIsAtLeast("clientManager")) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />

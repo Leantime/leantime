@@ -150,12 +150,11 @@ leantime.leanCanvasController = (function () {
 
         jQuery("#firstRow div.contentInner").each(function(){
             if(jQuery(this).height() > maxHeight){
-                maxHeight = jQuery(this).height();
+                maxHeight = jQuery(this).height()+100;
             }
         });
 
-        jQuery("#firstRow div.contentInner.even").css("height", maxHeight);
-        jQuery("#firstRow div.contentInner.odd").css("height", (maxHeight*2+85));
+        jQuery("#firstRow div.contentInner").css("height", maxHeight);
 
     };
 

@@ -4,6 +4,8 @@ namespace leantime\domain\repositories {
 
     use leantime\core;
     use pdo;
+    use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class reports
     {
@@ -32,9 +34,15 @@ namespace leantime\domain\repositories {
         {
 
             //Ticket Reports
-            $query = "SELECT 
-                        sprint AS sprintId,
-                        projectId,
+            $query = "SELECT ";
+
+                        if($sprintId !== "") {
+                            $query .= "sprint AS sprintId,";
+                        }else{
+                            $query .= "-1 AS sprintId,";
+                        }
+
+            $query .= "  projectId,
                         DATE(NOW() - INTERVAL 1 DAY) AS date,
                         COUNT(DISTINCT zp_tickets.id) AS sum_todos,
                         SUM(case when status =3 then 1 else 0 end) as sum_open_todos,
@@ -71,7 +79,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
 
             }else{
-                $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId, sprint";
+                $query .= " GROUP BY projectId";
             }
 
             $stmn = $this->db->database->prepare($query);
@@ -109,7 +117,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
 
             }else{
-                $query .= " AND (sprint = '' || sprint = -1 || sprint IS NULL) GROUP BY projectId, sprint";
+                $query .= " GROUP BY projectId";
             }
 
             $stmn = $this->db->database->prepare($query);
@@ -127,8 +135,21 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
+
+
+            //Number of users
+            $projectService = new repositories\projects();
+            $users = $projectService->getUsersAssignedToProject($projectId);
+
+            if(is_array($users)) {
+                $numberOfUsers = count($users);
+            }else{
+                $numberOfUsers = 0;
+            }
+
             if(is_array($valuesTickets) && is_array($valueTimesheets)) {
                 $values = array_merge($valuesTickets, $valueTimesheets);
+                $values["sum_teammembers"] = $numberOfUsers;
             }else{
                 $values = false;
             }
@@ -185,7 +206,8 @@ namespace leantime\domain\repositories {
                            daily_avg_hours_planned_todo,
                            daily_avg_hours_planned_point,
                            daily_avg_hours_remaining_point,
-                           daily_avg_hours_remaining_todo)
+                           daily_avg_hours_remaining_todo,
+                           sum_teammembers)
                            
                            VALUES (
                                :sprintId,
@@ -216,7 +238,8 @@ namespace leantime\domain\repositories {
                                :daily_avg_hours_planned_todo,
                                :daily_avg_hours_planned_point,
                                :daily_avg_hours_remaining_point,
-                               :daily_avg_hours_remaining_todo)";
+                               :daily_avg_hours_remaining_todo,
+                               :sum_teammembers)";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':sprintId', $report->sprintId, PDO::PARAM_INT);
@@ -226,9 +249,9 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':sum_open_todos', $report->sum_open_todos, PDO::PARAM_INT);
             $stmn->bindValue(':sum_progres_todos', $report->sum_progres_todos, PDO::PARAM_INT);
             $stmn->bindValue(':sum_closed_todos', $report->sum_closed_todos, PDO::PARAM_INT);
-            $stmn->bindValue(':sum_planned_hours', $report->sum_planned_hours, PDO::PARAM_INT);
-            $stmn->bindValue(':sum_estremaining_hours', $report->sum_estremaining_hours, PDO::PARAM_INT);
-            $stmn->bindValue(':sum_logged_hours', $report->sum_logged_hours, PDO::PARAM_INT);
+            $stmn->bindValue(':sum_planned_hours', $report->sum_planned_hours, PDO::PARAM_STR);
+            $stmn->bindValue(':sum_estremaining_hours', $report->sum_estremaining_hours, PDO::PARAM_STR);
+            $stmn->bindValue(':sum_logged_hours', $report->sum_logged_hours, PDO::PARAM_STR);
             $stmn->bindValue(':sum_points', $report->sum_points, PDO::PARAM_INT);
             $stmn->bindValue(':sum_points_done', $report->sum_points_done, PDO::PARAM_INT);
 
@@ -242,12 +265,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':sum_todos_xxl', $report->sum_todos_xxl, PDO::PARAM_INT);
             $stmn->bindValue(':sum_todos_none', $report->sum_todos_none, PDO::PARAM_INT);
             $stmn->bindValue(':tickets', $report->tickets, PDO::PARAM_STR);
-            $stmn->bindValue(':daily_avg_hours_booked_todo', $report->daily_avg_hours_booked_todo, PDO::PARAM_INT);
-            $stmn->bindValue(':daily_avg_hours_booked_point', $report->daily_avg_hours_booked_point, PDO::PARAM_INT);
-            $stmn->bindValue(':daily_avg_hours_planned_todo', $report->daily_avg_hours_planned_todo, PDO::PARAM_INT);
-            $stmn->bindValue(':daily_avg_hours_planned_point', $report->daily_avg_hours_planned_point, PDO::PARAM_INT);
-            $stmn->bindValue(':daily_avg_hours_remaining_point', $report->daily_avg_hours_remaining_point, PDO::PARAM_INT);
-            $stmn->bindValue(':daily_avg_hours_remaining_todo', $report->daily_avg_hours_remaining_todo, PDO::PARAM_INT);
+            $stmn->bindValue(':daily_avg_hours_booked_todo', $report->daily_avg_hours_booked_todo, PDO::PARAM_STR);
+            $stmn->bindValue(':daily_avg_hours_booked_point', $report->daily_avg_hours_booked_point, PDO::PARAM_STR);
+            $stmn->bindValue(':daily_avg_hours_planned_todo', $report->daily_avg_hours_planned_todo, PDO::PARAM_STR);
+            $stmn->bindValue(':daily_avg_hours_planned_point', $report->daily_avg_hours_planned_point, PDO::PARAM_STR);
+            $stmn->bindValue(':daily_avg_hours_remaining_point', $report->daily_avg_hours_remaining_point, PDO::PARAM_STR);
+            $stmn->bindValue(':daily_avg_hours_remaining_todo', $report->daily_avg_hours_remaining_todo, PDO::PARAM_STR);
+            $stmn->bindValue(':sum_teammembers', $report->sum_teammembers, PDO::PARAM_STR);
+
             $stmn->execute();
 
             $stmn->closeCursor();
@@ -289,6 +314,56 @@ namespace leantime\domain\repositories {
             return $value;
 
         }
+
+        public function getFullReport($project)
+        {
+
+            $query = "SELECT 
+                           date,
+                           SUM(sum_todos) AS sum_todos,
+                           SUM(sum_open_todos) AS sum_open_todos,
+                           SUM(sum_progres_todos) AS sum_progres_todos,
+                           SUM(sum_closed_todos) AS sum_closed_todos,
+                           SUM(sum_planned_hours) AS sum_planned_hours,
+                           SUM(sum_estremaining_hours) AS sum_estremaining_hours,
+                           ROUND(SUM(sum_logged_hours), 2) AS sum_logged_hours,
+                           SUM(sum_points) AS sum_points,
+                           SUM(sum_points_done) AS sum_points_done,
+                           SUM(sum_points_progress) AS sum_points_progress,
+                           SUM(sum_points_open) AS sum_points_open,
+                           SUM(sum_todos_xs) AS sum_todos_xs,
+                           SUM(sum_todos_s) AS sum_todos_s,
+                           SUM(sum_todos_m) AS sum_todos_m,
+                           SUM(sum_todos_l) AS sum_todos_l,
+                           SUM(sum_todos_xl) AS sum_todos_xl,
+                           SUM(sum_todos_xxl) AS sum_todos_xxl,
+                           SUM(sum_todos_none) AS sum_todos_none,
+                           SUM(tickets) AS tickets,
+                           SUM(daily_avg_hours_booked_todo) AS daily_avg_hours_booked_todo,
+                           SUM(daily_avg_hours_booked_point) AS daily_avg_hours_booked_point,
+                           SUM(daily_avg_hours_planned_todo) AS daily_avg_hours_planned_todo,
+                           SUM(daily_avg_hours_planned_point) AS daily_avg_hours_planned_point,
+                           SUM(daily_avg_hours_remaining_point) AS daily_avg_hours_remaining_point,
+                           SUM(daily_avg_hours_remaining_todo) AS daily_avg_hours_remaining_todo
+                        
+                        FROM zp_stats WHERE projectId = :project AND (sprintId < 1 || sprintId IS NULL)
+                        GROUP BY date
+                        ORDER BY date DESC LIMIT 120";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':project', $project, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\reports");
+            $value = $stmn->fetchAll();
+
+            $stmn->closeCursor();
+
+            return $value;
+
+        }
+
+
 
     }
 

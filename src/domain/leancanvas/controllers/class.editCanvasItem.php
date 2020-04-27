@@ -222,7 +222,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
                 $this->tpl->assign('helper', new core\helper());
 
-                $subject = $this->language->__("email_notifications.canvas_board_comment_created ");
+                $subject = $this->language->__("email_notifications.canvas_board_comment_created");
                 $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$_GET['id'];
                 $message = sprintf($this->language->__("email_notifications.canvas_item__comment_created_message"),$_SESSION["userdata"]["name"]);
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));

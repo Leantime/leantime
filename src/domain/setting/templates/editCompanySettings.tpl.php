@@ -32,6 +32,21 @@ $companySettings= $this->get('companySettings');
 
                                     <div class="row">
                                         <div class="col-md-2">
+                                            <label><?=$this->__("label.language")?></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select name="language" id="language">
+                                                <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
+                                                    <option value="<?=$languagKey?>" <?php if($companySettings['language'] == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                                <?php } ?>
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-2">
                                             <label><?=$this->__("label.company_name")?></label>
                                         </div>
                                         <div class="col-md-8">

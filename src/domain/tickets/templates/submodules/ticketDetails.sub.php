@@ -77,13 +77,16 @@
                         <select id="sprint-select" class="span11" name="sprint"
                                 data-placeholder="<?php echo $ticket->sprint ?>">
                             <option value=""><?php echo $this->__('label.not_assigned_to_sprint'); ?></option>
-                            <?php foreach ($this->get('sprints') as $sprintRow) { ?>
+                            <?php
+                            if($this->get('sprints')){
+                                foreach ($this->get('sprints') as $sprintRow) { ?>
                                 <option value="<?php echo $sprintRow->id; ?>"
                                     <?php if ($ticket->sprint == $sprintRow->id) {
                                         echo "selected='selected'";
                                     } ?>
                                 ><?php $this->e($sprintRow->name); ?></option>
-                            <?php } ?>
+                            <?php }
+                            } ?>
                         </select>
                     </div>
                 </div>
@@ -169,7 +172,7 @@
                     <div class="span6">
 
                         <input type="text" class="dates" id="submittedDate" disabled="disabled"
-                               value="<?php echo date($this->__("language.dateformat"), strtotime($ticket->date)); ?>" name="date"/>
+                               value="<?php echo $ticket->date; ?>" name="date"/>
                     </div>
                 </div>
 

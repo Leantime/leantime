@@ -41,8 +41,8 @@
                             <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div class="right"><?php printf(
                                     $this->__('text.written_on'),
-                                    date($this->__('language.dateformat'), strtotime($row['date'])),
-                                    date($this->__('language.timeformat'), strtotime($row['date']))
+                                    $this->getFormattedDateString($row['date']),
+                                    $this->getFormattedTimeString($row['date'])
                                 ); ?></div>
                             <strong><?php $this->e($row['firstname']); ?> <?php $this->e($row['lastname']); ?></strong><br />
                             <p><?php echo nl2br($this->escape($row['text'])); ?></p>
@@ -75,8 +75,8 @@
                             <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div class="right"><?php printf(
                                     $this->__('text.written_on'),
-                                    date($this->__('language.dateformat'), strtotime($row['date'])),
-                                    date($this->__('language.timeformat'), strtotime($row['date']))
+                                    $this->getFormattedDateString($row['date']),
+                                    $this->getFormattedTimeString($row['date'])
                                 ); ?></div>
                             <strong><?php $this->e($comment['firstname']); ?> <?php $this->e($comment['lastname']); ?></strong><br />
                             <p><?php echo nl2br($this->escape($comment['text'])); ?></p>

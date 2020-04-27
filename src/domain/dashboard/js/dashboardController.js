@@ -12,7 +12,7 @@ leantime.dashboardController = (function () {
     };
 
     var _burndownConfig = '';
-    var _burndownChart = '';
+
     var _progressChart = '';
 
     //Constructor
@@ -49,7 +49,7 @@ leantime.dashboardController = (function () {
                             leantime.dashboardController.chartColors.grey
 
                         ],
-                    label: 'Project Done'
+                    label: leantime.i18n.__("label.project_done")
                 }],
                 labels: [
                             complete+'% Done',
@@ -80,6 +80,8 @@ leantime.dashboardController = (function () {
 
     var initBurndown = function (labels, plannedData, actualData) {
 
+        moment.locale(leantime.i18n.__("language.code"));
+
         var MONTHS = labels;
         var config = {
             type: 'line',
@@ -87,7 +89,7 @@ leantime.dashboardController = (function () {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Ideal',
+                        label: leantime.i18n.__("label.ideal"),
                         backgroundColor: leantime.dashboardController.chartColors.blue,
                         borderColor: leantime.dashboardController.chartColors.blue,
                         data: plannedData,
@@ -128,14 +130,18 @@ leantime.dashboardController = (function () {
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Day of the Sprint'
+                            labelString: leantime.i18n.__("label.date"),
+                        },
+                        type: 'time',
+                        time: {
+                            unit: 'day'
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Effort'
+                            labelString: leantime.i18n.__("label.effort")
                         },
                         ticks: {
                             beginAtZero:true
@@ -148,19 +154,21 @@ leantime.dashboardController = (function () {
         var ctx2 = document.getElementById('sprintBurndown').getContext('2d');
         _burndownChart = new Chart(ctx2, config);
 
+        return _burndownChart;
+
     };
 
-    var initChartButtonClick = function (id, plannedData, actualData) {
+    var initChartButtonClick = function (id, plannedData, actualData, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
-                _burndownChart.data.datasets[0].data = plannedData;
-                _burndownChart.data.datasets[1].data = actualData;
-                _burndownChart.options.scales.yAxes[0].scaleLabel.labelString = "Open To-Dos";
-                jQuery("#NumChartButton, #EffortChartButton, #HourlyChartButton").removeClass('active');
+                chart.data.datasets[0].data = plannedData;
+                chart.data.datasets[1].data = actualData;
+                chart.options.scales.yAxes[0].scaleLabel.labelString = leantime.i18n.__("label.open_todos");
+                jQuery(".chartButtons").removeClass('active');
                 jQuery(this).addClass('active');
-                _burndownChart.update();
+                chart.update();
 
             }
         );
@@ -168,6 +176,8 @@ leantime.dashboardController = (function () {
     };
 
     var initBacklogBurndown = function (labels, actualData) {
+
+        moment.locale(leantime.i18n.__("language.code"));
 
         var MONTHS = labels;
         var config = {
@@ -177,15 +187,35 @@ leantime.dashboardController = (function () {
                 datasets: [
 
                     {
-                        label: 'Open To-Dos',
-                        backgroundColor: leantime.dashboardController.chartColors.red,
-                        borderColor: leantime.dashboardController.chartColors.red,
-                        data: actualData,
-                        fill: false,
+                        label: leantime.i18n.__("label.done_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.green,
+                        borderColor: leantime.dashboardController.chartColors.green,
+                        data: actualData['done']['data'],
+                        fill: true,
+                        lineTension: 0,
+                        pointRadius:0,
+                    },
+                    {
+                        label: leantime.i18n.__("label.progress_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.yellow,
+                        borderColor: leantime.dashboardController.chartColors.yellow,
+                        data: actualData['progress']['data'],
+                        fill: true,
                         lineTension: 0,
                         pointRadius:0,
 
-                    }
+                    },
+                    {
+                        label: leantime.i18n.__("label.new_todos"),
+                        backgroundColor: leantime.dashboardController.chartColors.red,
+                        borderColor: leantime.dashboardController.chartColors.red,
+                        data: actualData['open']['data'],
+                        fill: true,
+                        lineTension: 0,
+                        pointRadius:0,
+
+                    },
+
                 ]
             },
             options: {
@@ -218,18 +248,22 @@ leantime.dashboardController = (function () {
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Date'
-                        }
+                            labelString: leantime.i18n.__("label.date"),
+
+                        },
+                        type: 'time',
+
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: '# of open To-Dos'
+                            labelString: leantime.i18n.__("label.num_tickets")
                         },
                         ticks: {
                             beginAtZero:true
-                        }
+                        },
+                        stacked: true
                     }]
                 }
             }
@@ -238,18 +272,25 @@ leantime.dashboardController = (function () {
         var ctx2 = document.getElementById('backlogBurndown').getContext('2d');
         _burndownChart = new Chart(ctx2, config);
 
+        return _burndownChart;
+
     };
 
-    var initBacklogChartButtonClick = function (id, actualData) {
+    var initBacklogChartButtonClick = function (id, actualData, label, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
-                _burndownChart.data.datasets[0].data = actualData;
-                _burndownChart.options.scales.yAxes[0].scaleLabel.labelString = "Open To-Dos";
-                jQuery("#NumChartButton, #EffortChartButton, #HourlyChartButton").removeClass('active');
+                chart.data.datasets[0].data = actualData['done']['data'];
+
+                chart.data.datasets[1].data = actualData['progress']['data'];
+                chart.data.datasets[2].data = actualData['open']['data'];
+
+
+                chart.options.scales.yAxes[0].scaleLabel.labelString = label;
+                jQuery(".backlogChartButtons").removeClass('active');
                 jQuery(this).addClass('active');
-                _burndownChart.update();
+                chart.update();
 
             }
         );
@@ -260,18 +301,26 @@ leantime.dashboardController = (function () {
         jQuery(".duedates").datepicker(
             {
                 dateFormat: leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
                 onClose: function(date) {
 
                     var newDate = "";
 
                     if(date == "") {
-
                         jQuery(this).val(leantime.i18n.__("text.anytime"));
-
                     }
 
-                    var dateTime = new Date(date);
-                    dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+                    var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
 
                     var id = jQuery(this).attr("data-id");
                     newDate = dateTime;

@@ -21,7 +21,8 @@ body.loginpage, .header, .leftmenu .nav-tabs.nav-stacked > li.active > a, .leftm
 
 .header .logo,
 .cr-boundary,
-.maincontentinner .dt-buttons .dt-button-collection button:hover{
+.maincontentinner .dt-buttons .dt-button-collection button:hover,
+.boxedHighlight{
 	background-color: <?php echo $color; ?>;
 }
 

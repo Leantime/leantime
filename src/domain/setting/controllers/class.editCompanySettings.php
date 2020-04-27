@@ -47,7 +47,8 @@ namespace leantime\domain\controllers {
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "color" => $_SESSION["companysettings.mainColor"],
-                    "name" => $_SESSION["companysettings.sitename"]
+                    "name" => $_SESSION["companysettings.sitename"],
+                    "language" => $_SESSION["companysettings.language"]
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -70,6 +71,12 @@ namespace leantime\domain\controllers {
                     $companySettings["name"] = $sitename;
                 }
 
+                $language = $this->settingsRepo->getSetting("companysettings.language");
+                if($language !== false){
+                    $companySettings["language"] = $language;
+                }
+
+                $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
                 $this->tpl->display('setting.editCompanySettings');
 
@@ -89,13 +96,17 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             //If ID is set its an update
-            if(isset($params['name']) && isset($params['color']) && $params['name'] != "" && $params['color'] != "") {
+            if(isset($params['name']) && $params['name'] != ""
+                && isset($params['color'])  && $params['color'] != ""
+                && isset($params['language'])  && $params['language'] != "") {
 
                 $this->settingsRepo->saveSetting("companysettings.mainColor", htmlentities(addslashes($params['color'])));
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
+                $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
                 $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
+                $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
                 $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
@@ -103,7 +114,6 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->get("");
         }
 
         /**

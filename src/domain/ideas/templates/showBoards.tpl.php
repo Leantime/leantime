@@ -149,6 +149,7 @@ $canvasLabels = $this->get('canvasLabels');
                                 </div>
                             </div>
                         </div>
+                        <?=sprintf($this->__("text.num_comments"), $row['commentCount'])?>
 
                         <?php if ($row['milestoneHeadline'] != '') {
                             ?>

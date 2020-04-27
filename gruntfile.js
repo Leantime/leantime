@@ -8,6 +8,9 @@ module.exports = function (grunt) {
         uglify: {
             app_src: {
                 options: {
+                    sourceMap: true
+                    , sourceMapName: "public/js/jsSourceMapAppSrc.map"
+                    , sourceMapUrl: "jsSourceMapAppSrc.map",
                     mangle: false
                 }
                 , src: [
@@ -20,6 +23,9 @@ module.exports = function (grunt) {
             },
             base_lib_src: {
                 options: {
+                    sourceMap: true
+                    , sourceMapName: "public/js/jsSourceMapBaseLib.map"
+                    , sourceMapUrl: "jsSourceMapBaseLib.map",
                     mangle: false
                 }
                 , src: [
@@ -40,6 +46,9 @@ module.exports = function (grunt) {
             },
             extended_lib_src: {
                 options: {
+                    sourceMap: true
+                    , sourceMapName: "public/js/jsSourceMapExtendedSrc.map"
+                    , sourceMapUrl: "jsSourceMapExtendedSrc.map",
                     mangle: false
                 }
                 , src: [

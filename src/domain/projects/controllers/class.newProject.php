@@ -76,11 +76,11 @@ namespace leantime\domain\controllers {
 
                 if ($values['name'] === '') {
 
-                    $tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
+                    $tpl->setNotification($language->__("notification.no_project_name"), 'error');
 
                 } elseif ($values['clientId'] === '') {
 
-                    $tpl->setNotification($this->language->__("notification.no_client"), 'error');
+                    $tpl->setNotification($language->__("notification.no_client"), 'error');
 
                 } else {
 
@@ -92,7 +92,7 @@ namespace leantime\domain\controllers {
 
                     $mailer->setSubject($language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL."/projects/showProject/" . $id . "";
-                    $message = sprintf($language->__('email_notifications.project_created_subject'),$actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $message = sprintf($language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
                     $mailer->setHtml($message);
 
                     $to = array();

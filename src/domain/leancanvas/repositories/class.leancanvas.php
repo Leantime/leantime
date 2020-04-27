@@ -1,6 +1,6 @@
 <?php
 
-namespace leantime\domain\repositories {
+    namespace leantime\domain\repositories {
 
     use leantime\core;
     use pdo;
@@ -35,7 +35,10 @@ namespace leantime\domain\repositories {
             "channels"=>"status.channels",
             "customersegment"=>"status.customersegment",
             "cost"=>"status.cost",
-            "revenue"=>"status.revenue"
+            "revenue"=>"status.revenue",
+            "alternatives"=>"status.alternatives",
+            "earlyadopters"=>"status.earlyadopters",
+            "highlevelconcept"=>"status.highlevelconcept"
             );
 
         public $statusLabels = array(
@@ -75,6 +78,7 @@ namespace leantime\domain\repositories {
         public function getCanvasLabels()
         {
 
+            unset($_SESSION["projectsettings"]["researchlabels"]);
             if(isset($_SESSION["projectsettings"]["researchlabels"])) {
 
 
@@ -96,8 +100,20 @@ namespace leantime\domain\repositories {
 
 
                 if($values !== false) {
+
                     $labels = unserialize($values['value']);
-                    $_SESSION["projectsettings"]["researchlabels"] = $labels;
+
+                    foreach($this->canvasTypes as $key => $typeLabel){
+                        if(isset($labels[$key])){
+                            $this->canvasTypes[$key] = $labels[$key];
+                        }else{
+                            $this->canvasTypes[$key] = $this->language->__($typeLabel);
+                        }
+
+                    }
+
+                    $labels = $this->canvasTypes;
+                    $_SESSION["projectsettings"]["researchlabels"] = $this->canvasTypes;
 
                 }else{
 

@@ -117,25 +117,11 @@ namespace leantime\domain\services {
             if($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
 
                 //Fix date conversion
-                $ticket->date = date($this->language->__("language.dateformat"), strtotime($ticket->date));
-
-                if($ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != NULL) {
-                    $ticket->dateToFinish = date($this->language->__("language.dateformat"), strtotime($ticket->dateToFinish));
-                }else{
-                    $ticket->dateToFinish = "";
-                }
-
-                if($ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != NULL) {
-                    $ticket->editFrom = date($this->language->__("language.dateformat"), strtotime($ticket->editFrom));
-                }else{
-                    $ticket->editFrom = "";
-                }
-
-                if($ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != NULL) {
-                    $ticket->editTo = date($this->language->__("language.dateformat"), strtotime($ticket->editTo));
-                }else{
-                    $ticket->editTo = "";
-                }
+                //Todo: Move to views
+                $ticket->date = $this->language->getFormattedDateString($ticket->date);
+                $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
+                $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
+                $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
 
                 return $ticket;
 
@@ -178,11 +164,11 @@ namespace leantime\domain\services {
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false)
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="headline")
         {
 
             if($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived);
+                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy);
             }
 
             return false;
@@ -263,8 +249,8 @@ namespace leantime\domain\services {
                 'dependingTicketId' =>$params['dependentMilestone'],
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
-                'editFrom' => date('Y-m-d 00:00:01', strtotime($params['editFrom'])),
-                'editTo' => date('Y-m-d 00:00:01', strtotime($params['editTo']))
+                'editFrom' => $this->language->getISODateString($params['editFrom']),
+                'editTo' => $this->language->getISODateString($params['editTo'])
             );
 
 
@@ -317,16 +303,17 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
-                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
-                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                    $values['editFrom'] =  $this->language->getISODateString($values['editFrom']);
                 }
 
                 if($values['editTo'] != "" && $values['editTo'] != NULL) {
-                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                    $values['editTo'] =  $this->language->getISODateString($values['editTo']);
                 }
+
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
                 if($addTicketResponse !== false){
@@ -334,7 +321,7 @@ namespace leantime\domain\services {
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
                     $actual_link = BASE_URL."/tickets/showTicket/".$addTicketResponse;
-                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['id'], $values['headline']);
+                    $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.new_todo_cta")));
 
@@ -384,15 +371,16 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
-                    $values['dateToFinish'] = date('Y-m-d H:i:s', strtotime($values['dateToFinish']));
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
-                    $values['editFrom'] = date('Y-m-d H:i:s', strtotime($values['editFrom']));
+                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
                 }
 
                 if($values['editTo'] != "" && $values['editTo'] != NULL) {
-                    $values['editTo'] = date('Y-m-d H:i:s', strtotime($values['editTo']));
+                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
                 }
                 //Update Ticket
                 if($this->ticketRepository->updateTicket($values, $id) === true){
@@ -440,8 +428,8 @@ namespace leantime\domain\services {
                 'acceptanceCriteria' => '',
                 'dependingTicketId' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
-                'editFrom' => date('Y-m-d 00:00:01', strtotime($params['editFrom'])),
-                'editTo' => date('Y-m-d 23:59:59', strtotime($params['editTo']))
+                'editFrom' => $this->language->getISODateString($params['editFrom']),
+                'editTo' => $this->language->getISODateString($params['editTo'])
             );
 
             if($values['headline'] == "") {
@@ -456,6 +444,9 @@ namespace leantime\domain\services {
 
         public function upsertSubtask($values, $parentTicket)
         {
+
+            $subtaskId = $values['subtaskId'];
+
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
@@ -463,7 +454,6 @@ namespace leantime\domain\services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
                 'status' => $values['status'],
@@ -478,7 +468,7 @@ namespace leantime\domain\services {
                 'dependingTicketId' => $parentTicket->id,
             );
 
-            if ($values['subtaskId'] == "new" || $values['subtaskId'] == "") {
+            if ($subtaskId == "new" || $subtaskId == "") {
 
                 //New Ticket
                 if(!$this->ticketRepository->addTicket($values)){
@@ -488,7 +478,7 @@ namespace leantime\domain\services {
             } else {
 
                 //Update Ticket
-                $subtaskId = $values['subtaskId'];
+
                 if(!$this->ticketRepository->updateTicket($values, $subtaskId)){
                     return false;
                 }

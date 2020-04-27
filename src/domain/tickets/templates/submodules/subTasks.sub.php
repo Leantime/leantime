@@ -38,15 +38,15 @@
                             <option value="<?php echo $key; ?>"
                                 <?php if($subticket['status'] == $key) {echo"selected='selected'";
                                 }?>
-                            ><?php echo $this->escape($statusLabels[$subticket['status']]["name"]); ?></option>
+                            ><?php echo $this->escape($statusLabels[$key]["name"]); ?></option>
                         <?php } ?>
                     </select>
                 </td>
-            <td><input type="text" value="<?php echo $subticket['planHours']; ?>" name="planHours"/></td>
-            <td><input type="text" value="<?php echo $subticket['hourRemaining']; ?>" name="hourRemaining"/></td>
+            <td><input type="text" value="<?php echo $subticket['planHours']; ?>" name="planHours" class="small-input"/></td>
+            <td><input type="text" value="<?php echo $subticket['hourRemaining']; ?>" name="hourRemaining" class="small-input"/></td>
                 <td><input type="hidden" value="<?php echo $subticket['id']; ?>" name="subtaskId" />
                     <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="subtaskSave"/>
-                    <input type="submit" value="<?php echo $this->__('buttons.delete'); ?>" name="subtaskDelete"/></td>
+                    <input type="submit" value="<?php echo $this->__('buttons.delete'); ?>" class="delete" name="subtaskDelete"/></td>
             </form>
             
         </tr>
@@ -56,7 +56,7 @@
             <td colspan="6"><?php echo $this->__('text.no_subtasks'); ?></td>
         </tr>
     <?php endif; ?>
-    <tr><td colspan="6" style="background:#ccc;"><?php echo $this->__('text.create_new_subtask'); ?></td></tr>
+    <tr><td colspan="6" style="background:#ccc;"><strong><?php echo $this->__('text.create_new_subtask'); ?></strong></td></tr>
     <tr>
         <form method="post" action="#subtasks">
         <td><input type="text" value="" name="headline"/></td>
