@@ -42,6 +42,7 @@
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="<?php echo $this->__('buttons.remove'); ?>" class="button"/>
+                                    <a href="<?=BASE_URL?>/users/editOwn" class="btn"><?php echo $this->__('buttons.back'); ?></a>
                                 </p>
                             </form>
                         <?php } ?>

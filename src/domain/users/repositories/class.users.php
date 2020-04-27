@@ -169,8 +169,18 @@ namespace leantime\domain\repositories {
         public function getAll()
         {
 
-            $query = "SELECT zp_user.id, lastname, firstname, role, profileId, username
+            $query = "SELECT 
+                      zp_user.id, 
+                      lastname, 
+                      firstname, 
+                      role, 
+                      profileId, 
+                      username,
+                      twoFAEnabled,
+                      clientId,
+                      zp_clients.name AS clientName
 					FROM `zp_user` 
+					LEFT JOIN zp_clients ON zp_clients.id = zp_user.id
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -197,8 +207,12 @@ namespace leantime\domain\repositories {
                         firstname, 
                         role, 
                         profileId, 
-                        username
-					FROM `zp_user` WHERE clientId = :clientId 
+                        username,
+                        twoFAEnabled,
+                        zp_clients.name AS clientName
+					FROM `zp_user` 
+					LEFT JOIN zp_clients ON zp_clients.id = zp_user.id
+					WHERE clientId = :clientId 
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
