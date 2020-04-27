@@ -13,6 +13,11 @@
                 <?=$this->__("menu.my_profile")?>
             </a>
         </li>
+        <li>
+            <a href='<?=BASE_URL ?>/twoFA/edit/'>
+                <?=$this->__("menu.twoFA")?>
+            </a>
+        </li>
         <?php if ($login::userIsAtLeast("clientManager")) { ?>
 
         <li class="nav-header border"><?=$this->__("label.administration")?></li>
