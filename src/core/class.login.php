@@ -186,7 +186,7 @@ namespace leantime\core {
                         header("Location:".$redirectUrl);
                         exit();
                     } else {
-                        $this->error =  $this->language->__('notifications.twoFA_code_incorrect');
+                        $this->error =  $this->language->__('notification.incorrect_twoFA_code');
                     }
                 }
             }
