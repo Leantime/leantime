@@ -597,7 +597,9 @@ namespace leantime\core {
                   `notifications` int(2) DEFAULT NULL,
                   `pwReset` varchar(100) DEFAULT NULL,
                   `pwResetExpiration` datetime DEFAULT NULL,
-                  `settings` TEXT NULL,
+                  `settings` TEXT NULL,               
+                  `twoFAEnabled` tinyint(1) DEFAULT '0',
+                  `twoFASecret` varchar(200) DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

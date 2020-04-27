@@ -34,6 +34,7 @@ namespace leantime\domain\controllers {
                 'phone' => $row['phone'],
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
+                'twoFAEnabled' => $row['twoFAEnabled'],
             );
 
             //Save form

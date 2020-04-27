@@ -19,11 +19,11 @@
                     <h4 class="widgettitle"><?php echo $this->__('label.twoFA_setup'); ?></h4>
                     <div class="widgetcontent">
                         <?php if(!$this->get('twoFAEnabled')) { ?>
-                            <h4>1. <?php echo $this->__('text.twoFA_qr'); ?></h4>
+                            <h5>1. <?php echo $this->__('text.twoFA_qr'); ?></h5>
                             <img src="<?php echo $this->get("qrData"); ?>"/>
 
                             <form action="" method="post" class='stdform'>
-                                <h4>2. <?php echo $this->__('text.twoFA_verify_code'); ?></h4>
+                                <h5>2. <?php echo $this->__('text.twoFA_verify_code'); ?></h5>
                                 <p>
                                     <span><?php echo $this->__('label.twoFACode_short'); ?>:</span>
                                     <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
@@ -38,7 +38,7 @@
                             </form>
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
-                                <h4><?php echo $this->__('text.twoFA_already_enabled'); ?></h4>
+                                <h5><?php echo $this->__('text.twoFA_already_enabled'); ?></h5>
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="<?php echo $this->__('buttons.remove'); ?>" class="button"/>
