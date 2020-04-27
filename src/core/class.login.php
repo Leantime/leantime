@@ -11,6 +11,7 @@ namespace leantime\core {
 
     use PDO;
     use leantime\domain\repositories;
+    use RobThree\Auth\TwoFactorAuth;
 
     class login
     {
@@ -56,6 +57,18 @@ namespace leantime\core {
          * @var    string username (emailaddress)
          */
         private $mail = null;
+
+        /**
+         * @access private
+         * @var    bool $twoFAEnabled
+         */
+        private $twoFAEnabled;
+
+        /**
+         * @access private
+         * @var    string $twoFASecret
+         */
+        private $twoFASecret;
 
         /**
          * @access private
@@ -133,10 +146,10 @@ namespace leantime\core {
          *
          * @param  $sessionid
          * @return boolean
+         * @throws \Exception
          */
         private function __construct($sessionid)
         {
-
             $this->db = db::getInstance();
 
             $config = new config();
@@ -146,21 +159,36 @@ namespace leantime\core {
             $this->session = $sessionid;
 
             if (isset($_POST['login'])===true && isset($_POST['username'])===true && isset($_POST['password'])===true) {
-
+                $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
                 $this->username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
 
                 $this->password = ($_POST['password']);
 
-                $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
-
                 //If login successful redirect to the correct url to avoid post on reload
                 if($this->login() === true){
-
                     $this->checkSessions();
+
+                    if($this->use2FA()) {
+                        $this->redirect2FA($redirectUrl);
+                    }
+
                     header("Location:".$redirectUrl);
                     exit();
                 }
 
+            }
+
+            if(isset($_SESSION['userdata']) && $this->use2FA()) {
+                if (isset($_POST['twoFA_code']) === true) {
+                    $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
+                    if($this->verify2FA($_POST['twoFA_code'])){
+                        $this->set2FAVerified();
+                        header("Location:".$redirectUrl);
+                        exit();
+                    } else {
+                        $this->error =  $this->language->__('notification.incorrect_twoFA_code');
+                    }
+                }
             }
 
             //Reset password
@@ -230,6 +258,9 @@ namespace leantime\core {
                 $_SESSION['userdata']['mail'] = $this->mail;
                 $_SESSION['userdata']['clientId'] = $this->clientId;
                 $_SESSION['userdata']['settings'] = $this->settings;
+                $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
+                $_SESSION['userdata']['twoFAVerified'] = false;
+                $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
                 $this->updateUserSession($this->session, time());
 
                 $this->setCookie($this->cookieTime);
@@ -412,7 +443,9 @@ namespace leantime\core {
 					lastname AS name,
 					settings,
 					profileId,
-					clientId
+					clientId,
+					twoFAEnabled,
+					twoFASecret
 						FROM zp_user 
 			          WHERE username = :username
 			          LIMIT 1";
@@ -429,7 +462,8 @@ namespace leantime\core {
                 $this->userId = $returnValues['id'];
                 $this->settings = unserialize($returnValues['settings']);
                 $this->clientId = $returnValues['clientId'];
-
+                $this->twoFAEnabled = $returnValues['twoFAEnabled'];
+                $this->twoFASecret = $returnValues['twoFASecret'];
 
                 $roles = self::$userRoles[$returnValues['role']];
                 $this->role = self::$userRoles[$returnValues['role']];
@@ -627,6 +661,35 @@ namespace leantime\core {
             return $_SESSION['userdata']['id'];
         }
 
+        /**
+         * @return bool
+         */
+        private function use2FA()
+        {
+            return $_SESSION['userdata']['twoFAEnabled'];
+        }
+
+        public function redirect2FA($redirectUrl)
+        {
+            header("Location:".BASE_URL."/index.php?twoFA=1&redirectUrl=$redirectUrl");
+            exit();
+        }
+
+        private function verify2FA($code)
+        {
+            $tfa = new TwoFactorAuth('Leantime');
+            return $tfa->verifyCode($_SESSION['userdata']['twoFASecret'], $code);
+        }
+
+        private function get2FAVerified()
+        {
+            return $_SESSION['userdata']['twoFAVerified'];
+        }
+
+        private function set2FAVerified()
+        {
+            $_SESSION['userdata']['twoFAVerified'] = true;
+        }
 
     }
 }

@@ -54,7 +54,7 @@ class application
         $this->overrideThemeSettings();
 
         ob_start();
-        
+
         if($this->login->logged_in()===false) {
 
             //Language is usually initialized by template engine. But template is not loaded on log in / install case
@@ -69,9 +69,18 @@ class application
                 include '../src/update.php';
             }else{
                 include '../src/login.php';
-            }    
-        
+            }
+
         }else{
+            // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
+            if(isset($_GET['twoFA']) === true) {
+                if($_SESSION['userdata']['twoFAVerified'] != true) {
+                    $language = $this->language;
+                    include '../src/twoFA.php';
+                }
+            }else if($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false){
+               $login->redirect2FA($_SERVER['REQUEST_URI']);
+            }
 
             //Set current/default project
             $this->projectService->setCurrentProject();

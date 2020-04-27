@@ -56,7 +56,8 @@ namespace leantime\core {
         private $dbUpdates = array(
             20004,
             20100,
-            20101
+            20101,
+            20102
         );
 
         /**
@@ -596,7 +597,9 @@ namespace leantime\core {
                   `notifications` int(2) DEFAULT NULL,
                   `pwReset` varchar(100) DEFAULT NULL,
                   `pwResetExpiration` datetime DEFAULT NULL,
-                  `settings` TEXT NULL,
+                  `settings` TEXT NULL,               
+                  `twoFAEnabled` tinyint(1) DEFAULT '0',
+                  `twoFASecret` varchar(200) DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -860,6 +863,36 @@ namespace leantime\core {
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
 
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20102()
+        {
+            $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
+                "ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL"
             );
 
             foreach ($sql as $statement) {
