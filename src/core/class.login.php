@@ -389,9 +389,6 @@ namespace leantime\core {
                 unset($_SESSION["currentSprint"]);
                 unset($_SESSION["projectsettings"]);
                 unset($_SESSION['currentSubscription']);
-                unset($_SESSION['twoFAEnabled']);
-                unset($_SESSION['twoFAVerified']);
-                unset($_SESSION['twoFASecret']);
             }
 
             unset($_COOKIE);
