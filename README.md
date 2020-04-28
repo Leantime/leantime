@@ -23,9 +23,9 @@ Features:
 
 | ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/TodoKanban.png "Kanban Board")  | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 | ------------------------------------------------------------------------|:--------------------------------------------------------------------:| :--------------------------------------------------------------------: |
-|![alt text](public/images/Screenshots/MilestoneGantt.png "Calendar View") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "Idea Board") | ![alt text](public/images/Screenshots/Reports.png "Timesheets") |
-| ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")       | ![alt text](public/images/Screenshots/Leancanvas.png "Timesheets")    | ![alt text](public/images/Screenshots/MyCalendar.png "Timesheets") |
-|        |     | |  
+| ![alt text](public/images/Screenshots/MilestoneGantt.png "Milestone Gantt Charts") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "My Timesheets") | ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")   |
+| ![alt text](public/images/Screenshots/Reports.png "Report Screens")   | ![alt text](public/images/Screenshots/LeanCanvas.png "Lean Canvas")    | ![alt text](public/images/Screenshots/MyCalendar.png "My Calendar") |
+
 
 ### Installation (Production) ###
 
