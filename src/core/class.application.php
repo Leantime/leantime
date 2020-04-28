@@ -53,6 +53,8 @@ class application
         //Override theme settings
         $this->overrideThemeSettings();
 
+        $this->loadHeaders();
+
         ob_start();
 
         if($this->login->logged_in()===false) {
@@ -92,6 +94,12 @@ class application
         $toRender = ob_get_clean();
         echo $toRender;
             
+    }
+
+    public function loadHeaders() {
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-XSS-Protection: 1; mode=block');
+        header('X-Content-Type-Options: nosniff');
     }
 
     public function overrideThemeSettings() {
