@@ -17,13 +17,15 @@ Features:
 * File storage with AWS S3 or local file system 
 * Project Reports
 * Available in English, Spanish, Russian, Dutch
+* Two Factor Authentication
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/ToDos_Kanban.png "Kanban Board")  |
-| ------------------------------------------------------------------------|:--------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/Milestones_Gantt.png "Gantt Charts") | ![alt text](public/images/Screenshots/Calendar.png "Calendar View")      | 
-| ![alt text](public/images/Screenshots/Idea_Board.png "Idea Board")       | ![alt text](public/images/Screenshots/Timesheets.png "Timesheets")    |  
+| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/TodoKanban.png "Kanban Board")  | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+| ------------------------------------------------------------------------|:--------------------------------------------------------------------:| :--------------------------------------------------------------------: |
+| ![alt text](public/images/Screenshots/MilestoneGantt.png "Milestone Gantt Charts") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "My Timesheets") | ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")   |
+| ![alt text](public/images/Screenshots/Reports.png "Report Screens")   | ![alt text](public/images/Screenshots/LeanCanvas.png "Lean Canvas")    | ![alt text](public/images/Screenshots/MyCalendar.png "My Calendar") |
+
 
 ### Installation (Production) ###
 
@@ -83,6 +85,6 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 
 ### Support ###
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
-* Community Forum [https://community.leantime.io](https://community.leantime.io) !!NEW
+* Community Forum [https://community.leantime.io](https://community.leantime.io)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Contact Us [https://leantime.io/contact/](https://leantime.io/contact)

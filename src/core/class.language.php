@@ -116,12 +116,15 @@ namespace leantime\core {
 
                 $ini_overrides = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
 
-                foreach($mainLanguageArray as $languageKey => $languageValue) {
+                if(is_array($ini_overrides) == true) {
 
-                    if(array_key_exists($languageKey, $ini_overrides)){
-                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
+
+                        if (array_key_exists($languageKey, $ini_overrides)) {
+                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                        }
+
                     }
-
                 }
             }
 
