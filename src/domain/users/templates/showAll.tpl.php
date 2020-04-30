@@ -49,7 +49,7 @@ $roles = $this->get('roles');
             <tbody>
             <?php foreach($this->get('allUsers') as $row): ?>
                     <tr>
-                        <td style="padding:6px 10px;"><?php echo $this->displayLink('users.editUser', $row['firstname'].' '.$row['lastname'], array('id' => $row['id'])) ?></td>
+                        <td style="padding:6px 10px;"><?php echo $this->displayLink('users.editUser', $this->escape($row['firstname']).' '.$this->escape($row['lastname']), array('id' => $row['id'])) ?></td>
                         <td><?php echo $row['username']; ?></td>
                         <td><?=$row['clientName']; ?></td>
                         <td><?=$this->__("label.roles.".$roles[$row['role']]); ?></td>

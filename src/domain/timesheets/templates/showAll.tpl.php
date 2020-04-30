@@ -99,7 +99,7 @@ $helper = $this->get('helper');
 				<?php foreach($this->get('employees') as $row) {
 					echo'<option value="'.$row['id'].'"';
 					if($row['id'] == $this->get('employeeFilter')) echo' selected="selected" ';
-					echo'>'.$row['lastname'].', '.$row['firstname'].'</option>';
+					echo'>'.$this->escape($row['lastname']).', '.$this->escape($row['firstname']).'</option>';
 				}
 	
 				?>

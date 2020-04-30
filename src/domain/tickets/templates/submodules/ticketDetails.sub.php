@@ -153,7 +153,7 @@
 
                                 if ($ticket->editorId == $userRow["id"]) { echo " selected='selected' ";}
 
-                                echo ">" . $userRow["firstname"] . " " . $userRow["lastname"] . "</option>"; ?>
+                                echo ">" . $this->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
 
                             <?php } ?>
                         </select>
