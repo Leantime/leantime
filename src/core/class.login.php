@@ -564,7 +564,8 @@ namespace leantime\core {
         private function generateLinkAndSendEmail($username)
         {
 
-            $resetLink = md5($username.$this->session.time());
+            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+            $resetLink = substr(str_shuffle($permitted_chars), 0, 32);
 
             $query = "UPDATE
 					zp_user 
