@@ -7,19 +7,19 @@
     "chart.js": "^2.9.3",
     "croppie": "^2.6.4",
     "datatables.net": "^1.10.20",
+    "datatables.net-buttons": "^1.6.1",
     "datatables.net-rowgroup": "^1.1.1",
     "datatables.net-rowreorder": "^1.2.6",
-    "datatables.net-buttons": "^1.6.1",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-migrate": "1.4.1",
     "jquery-ui-dist": "^1.12.1",
     "jquery.uniform": "^4.3.0",
     "masonry-layout": "^4.2.2",
     "packery": "^2.1.2",
     "tether-shepherd": "^1.8.1",
-    "tinymce": "^5.2.0"
+    "tinymce": "^5.2.2"
   },
   "devDependencies": {
     "grunt": "^1.1.0",
