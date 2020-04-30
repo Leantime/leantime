@@ -50,7 +50,8 @@ namespace leantime\domain\controllers {
                         'user' => ($_POST['user']),
                         'phone' => ($_POST['phone']),
                         'password' => (password_hash($_POST['newPassword'], PASSWORD_DEFAULT)),
-                        'notifications' => $row['notifications']
+                        'notifications' => $row['notifications'],
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     if (isset($_POST['notifications']) == true) {
