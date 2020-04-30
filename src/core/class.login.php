@@ -488,7 +488,9 @@ namespace leantime\core {
 				SET 
 					lastlogin = NOW(),
 					session = :sessionid,
-					sessionTime = :time 
+					sessionTime = :time,
+					pwReset = NULL,
+					pwResetExpiration = NULL
 				WHERE 
 					id =  :id 
 				LIMIT 1";
@@ -581,6 +583,8 @@ namespace leantime\core {
             $stmn->execute();
             $count = $stmn->rowCount();
             $stmn->closeCursor();
+
+
 
             if($count > 0) {
                 $mailer = new mailer();
