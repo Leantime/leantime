@@ -11,7 +11,7 @@ $config = new leantime\core\config();
 
 if(isset($config->appUrl) && $config->appUrl != ""){
     define('BASE_URL', $config->appUrl);
-    define('CURRENT_URL', $config->appUrl.$settings->getRequestURI());
+    define('CURRENT_URL', $config->appUrl.$settings->getRequestURI($config->appUrl));
 } else{
     define('BASE_URL', $settings->getBaseURL());
     define('CURRENT_URL', $settings->getFullURL());

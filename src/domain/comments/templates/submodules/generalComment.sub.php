@@ -20,7 +20,7 @@
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)" style="display:none;" id="mainToggler"><span class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?></a>
     <div id="comment0" class="commentBox">
 
-        <img src="/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+        <img src="<?=BASE_URL?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
         <textarea rows="5" cols="50" name="text"></textarea><br />
         
         <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-default" style="margin-left: 60px;"/>

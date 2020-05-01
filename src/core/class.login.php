@@ -261,6 +261,7 @@ namespace leantime\core {
                 $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
                 $_SESSION['userdata']['twoFAVerified'] = false;
                 $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
+
                 $this->updateUserSession($this->session, time());
 
                 $this->setCookie($this->cookieTime);
@@ -389,6 +390,8 @@ namespace leantime\core {
                 unset($_SESSION["currentSprint"]);
                 unset($_SESSION["projectsettings"]);
                 unset($_SESSION['currentSubscription']);
+                unset($_SESSION['lastTicketView']);
+                unset($_SESSION['lastFilterdTicketTableView']);
             }
 
             unset($_COOKIE);

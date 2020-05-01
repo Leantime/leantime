@@ -48,9 +48,9 @@ namespace leantime\domain\controllers {
 
                 $file = $this->filesRepository->getFile($imageId);
 
-                $return = '/images/default-user.png';
+                $return = BASE_URL.'/images/default-user.png';
                 if ($file) {
-                    $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                    $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                 }
 
                 $this->tpl->redirect($return);
