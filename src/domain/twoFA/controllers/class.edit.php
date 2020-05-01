@@ -25,16 +25,22 @@ namespace leantime\domain\controllers {
             $secret = $user['twoFASecret'];
 
             if (isset($_POST['disable'])) {
-                $userRepo->patchUser($userId, [
-                    "twoFAEnabled" => 0,
-                    "twoFASecret" => null
-                ]);
+                if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
-                $user['twoFASecret'] = null;
-                $user['twoFAEnabled'] = 0;
-                $secret = null;
+                    $userRepo->patchUser($userId, [
+                        "twoFAEnabled" => 0,
+                        "twoFASecret" => null
+                    ]);
 
-                $tpl->assign("twoFAEnabled", false);
+                    $user['twoFASecret'] = null;
+                    $user['twoFAEnabled'] = 0;
+                    $secret = null;
+
+                    $tpl->assign("twoFAEnabled", false);
+
+                }else{
+                    $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+                }
             }
 
             if (empty($secret)) {
@@ -77,6 +83,11 @@ namespace leantime\domain\controllers {
                 $tpl->assign("qrData", $qrData);
                 $tpl->assign("twoFAEnabled", false);
             }
+
+            //Sensitive Form, generate form tokens
+            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+            $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
+            $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
             $tpl->display('twoFA.edit');
         }

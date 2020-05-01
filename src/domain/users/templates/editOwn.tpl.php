@@ -28,12 +28,12 @@ $user = $this->get('user');
                     <div class="widgetcontent">
 
                         <form action="" method="post" class='stdform'>
-
+                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <p>
                                 <label for="firstname"><?php echo $this->__('label.firstname'); ?></label>
                                 <span class='field'>
                                     <input type="text" class="input" name="firstname" id="firstname"
-                                           value="<?php echo $values['firstname'] ?>"/><br/>
+                                           value="<?php $this->e($values['firstname']) ?>"/><br/>
                                 </span>
                             </p>
 
@@ -41,7 +41,7 @@ $user = $this->get('user');
                                 <label for="lastname"><?php echo $this->__('label.lastname'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="lastname" class="input" id="lastname"
-                                           value="<?php echo $values['lastname'] ?>"/><br/>
+                                           value="<?php $this->e($values['lastname']) ?>"/><br/>
                                 </span>
                             </p>
 
@@ -49,7 +49,7 @@ $user = $this->get('user');
                                 <label for="user"><?php echo $this->__('label.email'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="user" class="input" id="user"
-                                           value="<?php echo $values['user'] ?>"/><br/>
+                                           value="<?php $this->e($values['user']) ?>"/><br/>
                                 </span>
                             </p>
 
@@ -57,7 +57,7 @@ $user = $this->get('user');
                                 <label for="phone"><?php echo $this->__('label.phone'); ?></label>
                                 <span class='field'>
                                     <input type="text" name="phone" class="input" id="phone"
-                                           value="<?php echo $values['phone'] ?>"/><br/>
+                                           value="<?php $this->e($values['phone']) ?>"/><br/>
                                 </span>
                             </p>
 

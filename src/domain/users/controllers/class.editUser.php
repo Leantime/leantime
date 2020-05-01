@@ -53,48 +53,54 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['save'])) {
 
-                        $values = array(
-                            'firstname'    => ($_POST['firstname']),
-                            'lastname'    => ($_POST['lastname']),
-                            'user'        => ($_POST['user']),
-                            'phone'        => ($_POST['phone']),
-                            'status'    => ($_POST['status']),
-                            'role'        => ($_POST['role']),
-                            'hours'        => ($_POST['hours']),
-                            'wage'        => ($_POST['wage']),
-                            'clientId'    => ($_POST['client'])
-                        );
+                        if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
-                        $changedEmail = 0;
+                            $values = array(
+                                'firstname'    => ($_POST['firstname']),
+                                'lastname'    => ($_POST['lastname']),
+                                'user'        => ($_POST['user']),
+                                'phone'        => ($_POST['phone']),
+                                'status'    => ($_POST['status']),
+                                'role'        => ($_POST['role']),
+                                'hours'        => ($_POST['hours']),
+                                'wage'        => ($_POST['wage']),
+                                'clientId'    => ($_POST['client'])
+                            );
 
-                        if ($row['username'] != $values['user']) {
-                            $changedEmail = 1;
-                        }
+                            $changedEmail = 0;
+
+                            if ($row['username'] != $values['user']) {
+                                $changedEmail = 1;
+                            }
 
 
-                        if ($values['user'] !== '') {
+                            if ($values['user'] !== '') {
 
-                            if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
-                                if ($changedEmail == 1) {
-                                    if ($userRepo->usernameExist($row['username'], $id) === false) {
+                                if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
+                                    if ($changedEmail == 1) {
+                                        if ($userRepo->usernameExist($row['username'], $id) === false) {
 
-                                        $edit = true;
+                                            $edit = true;
 
+                                        } else {
+
+                                            $tpl->setNotification($language->__("notification.user_exists"), 'error');
+                                        }
                                     } else {
 
-                                        $tpl->setNotification($language->__("notification.user_exists"), 'error');
+                                        $edit = true;
                                     }
                                 } else {
 
-                                    $edit = true;
+                                    $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
                                 }
                             } else {
 
-                                $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
+                                $tpl->setNotification($language->__("notification.enter_email"), 'error');
                             }
-                        } else {
 
-                            $tpl->setNotification($language->__("notification.enter_email"), 'error');
+                        }else{
+                            $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
                         }
                     }
 
@@ -139,6 +145,11 @@ namespace leantime\domain\controllers {
                         $tpl->assign('clients', array($clients->getClient($values['clientId'])));
                     }
 
+
+                    //Sensitive Form, generate form tokens
+                    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+                    $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
+                    $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
                     $tpl->assign('values', $values);
                     $tpl->assign('relations', $projectrelation);

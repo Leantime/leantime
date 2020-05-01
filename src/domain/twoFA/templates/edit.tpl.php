@@ -39,6 +39,7 @@
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
                                 <h5><?php echo $this->__('text.twoFA_already_enabled'); ?></h5>
+                                <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="<?php echo $this->__('buttons.remove'); ?>" class="button"/>
