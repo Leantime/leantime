@@ -7,8 +7,7 @@ assignees: ''
 
 ---
 
-[NOTES]
-- If you have problems with the installation please use our [https://community.leantime.io](https://community.leantime.io)
+*If you have problems with the installation please use our [community forum](https://community.leantime.io)*
 
 **Describe the bug**
 A clear and concise description of what the bug is.
