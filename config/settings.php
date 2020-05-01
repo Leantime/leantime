@@ -67,26 +67,33 @@ class settings {
 	
     public function getRequestURI($baseURL  = "") {
 
-	    //Request URI will include the subfolder if one is set. Let's make sure to take it/them out
+	    //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
 	    if($baseURL != "") {
 
             $trimmedBaseURL = rtrim($baseURL,"/");
             $baseURLParts = explode("/", $trimmedBaseURL);
 
-            //If there are only 2 parts we have http + main domain , which is fine
-	        if(count($baseURLParts) == 3) {
+            //If there are 3 parts we have http + main domain, which doesnt need any updates
+	        if(is_array($baseURLParts) && count($baseURLParts) == 3) {
+
                 return $_SERVER['REQUEST_URI'];
 
-	        //Else if > 2 we have http + domain + subfolder
+	        //Else if 4 parts we have http + domain + subfolder
 	        }else if(count($baseURLParts) == 4) {
 
                 $subfolderName = $baseURLParts[3];
 
                 //Remove subfoldername from Request URI
-                $requestURI = str_replace($subfolderName."/", "", $_SERVER['REQUEST_URI']);
+                $requestURI = preg_replace('/^\/'.$subfolderName.'/', '', $_SERVER['REQUEST_URI']);
 
                 return $requestURI;
-            }
+
+            //Else we have a different scenario that is currently not coverd.
+            }else{
+
+                return $_SERVER['REQUEST_URI'];
+
+	        }
 
 	    }else{
 
