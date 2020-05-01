@@ -73,14 +73,10 @@ class settings {
             $trimmedBaseURL = rtrim($baseURL,"/");
             $baseURLParts = explode("/", $trimmedBaseURL);
 
-            //If there are 3 parts we have http + main domain, which doesnt need any updates
-	        if(is_array($baseURLParts) && count($baseURLParts) == 3) {
+            //We only need to update Request URI if we have a subfolder install
+            if(is_array($baseURLParts) && count($baseURLParts) == 4) {
 
-                return $_SERVER['REQUEST_URI'];
-
-	        //Else if 4 parts we have http + domain + subfolder
-	        }else if(count($baseURLParts) == 4) {
-
+                //0: http, 1: "", 2: domain.com 3: subfolder
                 $subfolderName = $baseURLParts[3];
 
                 //Remove subfoldername from Request URI
@@ -88,18 +84,11 @@ class settings {
 
                 return $requestURI;
 
-            //Else we have a different scenario that is currently not coverd.
-            }else{
-
-                return $_SERVER['REQUEST_URI'];
-
-	        }
-
-	    }else{
-
-            return $_SERVER['REQUEST_URI'];
+            }
 
 	    }
+
+        return $_SERVER['REQUEST_URI'];
 
     }
 
