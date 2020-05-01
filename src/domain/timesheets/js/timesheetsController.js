@@ -27,7 +27,7 @@ leantime.timesheetsController = (function () {
                             action:"start"
                         },
                         type: 'POST',
-                        url: '/api/timer'
+                        url: leantime.appUrl+'/api/timer'
                     }
                 ).done(function(msg){
 
@@ -60,7 +60,7 @@ leantime.timesheetsController = (function () {
                                 action:"stop"
                             },
                         type: 'POST',
-                        url: '/api/timer'
+                        url: leantime.appUrl+'/api/timer'
                     }
                 ).done(
                     function (hoursLogged) {

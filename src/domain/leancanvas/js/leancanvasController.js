@@ -213,7 +213,7 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/leancanvas',
+                            url: leantime.appUrl+'/api/leancanvas',
                             data:
                                 {
                                     id : canvasId,
@@ -222,7 +222,7 @@ leantime.leanCanvasController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#user"+canvasId).text(dataLabel);
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
@@ -250,7 +250,7 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/leancanvas',
+                            url: leantime.appUrl+'/api/leancanvas',
                             data:
                                 {
                                     id : canvasItemId,

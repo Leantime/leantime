@@ -541,7 +541,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: '/api/tickets',
+                        url: leantime.appUrl+'/api/tickets',
                         data:
                             {
                                 id: ticketId,
@@ -668,7 +668,7 @@ leantime.ticketsController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
                             jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
@@ -757,7 +757,7 @@ leantime.ticketsController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', '/api/files');
+                    xhr.open('POST', leantime.appUrl+'/api/files');
 
                     xhr.onload = function () {
                         var json;

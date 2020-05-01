@@ -177,7 +177,7 @@ leantime.ideasController = (function () {
             // POST to server using $.post or $.ajax
             jQuery.ajax({
                 type: 'POST',
-                url: '/api/ideas',
+                url: leantime.appUrl+'/api/ideas',
                 data: {
                     action:"ideaSort",
                     payload: ideaSort
@@ -265,7 +265,7 @@ leantime.ideasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/ideas',
+                            url: leantime.appUrl+'/api/ideas',
                             data:
                                 {
                                     id : canvasId,
@@ -274,7 +274,7 @@ leantime.ideasController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
 
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
@@ -303,7 +303,7 @@ leantime.ideasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/ideas',
+                            url: leantime.appUrl+'/api/ideas',
                             data:
                                 {
                                     id : canvasItemId,
@@ -379,7 +379,7 @@ leantime.ideasController = (function () {
                 // POST to server using $.post or $.ajax
                 jQuery.ajax({
                     type: 'POST',
-                    url: '/api/ideas',
+                    url: leantime.appUrl+'/api/ideas',
                     data:statusPostData
                 });
 

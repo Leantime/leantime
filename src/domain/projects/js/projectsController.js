@@ -69,7 +69,7 @@ leantime.projectsController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', '/api/files');
+                    xhr.open('POST', leantime.appUrl+'/api/files');
 
                     xhr.onload = function () {
                         var json;
