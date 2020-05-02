@@ -15,7 +15,7 @@ class settings {
 	 */
 	private $debug = 0;
 
-	public $appVersion = "2.1.0";
+	public $appVersion = "2.1.1";
 
     public $dbVersion = "2.1.2";
 

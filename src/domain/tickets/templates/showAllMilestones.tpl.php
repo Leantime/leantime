@@ -144,7 +144,7 @@
                                 </div>
                             </td>
 
-                            <td data-order="<?=$row->editorFirstname != "" ?  $row->editorFirstname : $this->__("dropdown.not_assigned")?>">
+                            <td data-order="<?=$row->editorFirstname != "" ?  $this->escape($row->editorFirstname) : $this->__("dropdown.not_assigned")?>">
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
