@@ -27,8 +27,8 @@ leantime.leanCanvasController = (function () {
                         // General options
                         width: "100%",
                         height:"200px",
-                        skin_url: '/css/tinymceSkin/oxide',
-                        content_css: '/css/tinymceSkin/oxide/content.css',
+                        skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
+                        content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
                         content_style: "img { max-width: 100%; }",
                         plugins : "autolink,link,textcolor,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
                         // Theme options

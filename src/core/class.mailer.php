@@ -72,7 +72,7 @@ namespace leantime\core {
             //Use SMTP or php mail().
             if($config->useSMTP === true) {
 
-                $this->mailAgent->SMTPDebug = 0;                                  // Enable verbose debug output
+                $this->mailAgent->SMTPDebug = 1;                                  // Enable verbose debug output
                 $this->mailAgent->Timeout = 20;
 
                 $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
