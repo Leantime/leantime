@@ -597,30 +597,26 @@ namespace leantime\domain\repositories {
 						t3.firstname AS editorFirstname,
 						t3.lastname AS editorLastname,
 						t3.profileId AS editorProfileId,
-						
-						
-						
+
 						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS planHours,
 						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS hourRemaining,
 						SUM(timesheets.hours) AS bookedHours,						
 						
-						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
-						COUNT(progressTickets.id) AS allTickets,
+						COUNT(DISTINCT progressTickets.id) AS allTickets,
 						
-						CASE WHEN 
-						  COUNT(progressTickets.id) > 0 
-						THEN 
-						  ROUND(
-						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
-						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100) 
-						ELSE 
-						  0 
-						END AS percentDone
+						(SELECT (
+                            CASE WHEN 
+                              COUNT(DISTINCT progressSub.id) > 0 
+                            THEN 
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status < 1 THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) / 
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100) 
+                            ELSE 
+                              0 
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS percentDone
 					FROM 
 						zp_tickets 
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
