@@ -190,6 +190,7 @@
                             <td data-order="<?=$row->percentDone?>">
                                 <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
                                 <a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
+
                                 <div class="progress" style="width: 100%;">
 
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">

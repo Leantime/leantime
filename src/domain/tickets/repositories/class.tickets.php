@@ -310,7 +310,7 @@ namespace leantime\domain\repositories {
 							zp_tickets.dependingTicketId,
 							zp_tickets.planHours,
 							zp_tickets.hourRemaining,
-							ROUND(SUM(timesheets.hours), 2) AS bookedHours,
+							(SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
 							zp_projects.name AS projectName,
 							zp_clients.name AS clientName,
 							zp_clients.id AS clientId,
@@ -597,28 +597,26 @@ namespace leantime\domain\repositories {
 						t3.firstname AS editorFirstname,
 						t3.lastname AS editorLastname,
 						t3.profileId AS editorProfileId,
-						SUM(progressTickets.planHours) AS planHours,
-						SUM(progressTickets.hourRemaining) AS hourRemaining,
-						SUM(timesheets.hours) AS bookedHours,
+
+						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS planHours,
+						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS hourRemaining,
+						SUM(timesheets.hours) AS bookedHours,						
 						
+						COUNT(DISTINCT progressTickets.id) AS allTickets,
 						
-						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
-						COUNT(progressTickets.id) AS allTickets,
-						
-						CASE WHEN 
-						  COUNT(progressTickets.id) > 0 
-						THEN 
-						  ROUND(
-						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
-						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100) 
-						ELSE 
-						  0 
-						END AS percentDone
+						(SELECT (
+                            CASE WHEN 
+                              COUNT(DISTINCT progressSub.id) > 0 
+                            THEN 
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status < 1 THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) / 
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100) 
+                            ELSE 
+                              0 
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS percentDone
 					FROM 
 						zp_tickets 
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
@@ -636,7 +634,7 @@ namespace leantime\domain\repositories {
             }
 
 				$query .= "	GROUP BY
-						progressTickets.dependingTicketId, zp_tickets.id";
+						zp_tickets.id, progressTickets.dependingTicketId";
 
                 if($sortBy == "date") {
                     $query .= "	ORDER BY zp_tickets.editFrom ASC";

@@ -50,6 +50,7 @@ namespace leantime\domain\services {
                 'date' => '',
                 'kind' => '',
                 'hours' => '',
+                'rate' => '',
                 'description' => '',
                 'invoicedEmpl' => '',
                 'invoicedComp' => '',
