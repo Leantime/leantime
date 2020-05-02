@@ -309,9 +309,9 @@
                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">
                                                                 <?php if($row["editorFirstname"] != ""){
-                                                                    echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
+                                                                    echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['editorProfileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'> ". $this->escape($row["editorFirstname"]). "</span>";
                                                                 }else {
-                                                                    echo "<span id='userImage".$row['id']."'><img src='/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
+                                                                    echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row['id']."'>".$this->__("dropdown.not_assigned")."</span>";
                                                                 }?>
                                                             </span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -321,7 +321,7 @@
 
                                     <?php foreach($this->get('users') as $user){
                                         echo"<li class='dropdown-item'>
-                                                            <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                            <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
                                         echo"</li>";
                                     }?>
                                 </ul>

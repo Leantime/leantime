@@ -53,8 +53,8 @@ leantime.projectsController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: '/css/tinymceSkin/oxide',
-                content_css: '/css/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
+                content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
                 height:"300",
                 content_style: "img { max-width: 100%; }",
                 plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
@@ -69,7 +69,7 @@ leantime.projectsController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', '/api/files');
+                    xhr.open('POST', leantime.appUrl+'/api/files');
 
                     xhr.onload = function () {
                         var json;

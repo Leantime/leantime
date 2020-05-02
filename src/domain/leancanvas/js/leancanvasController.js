@@ -27,8 +27,8 @@ leantime.leanCanvasController = (function () {
                         // General options
                         width: "100%",
                         height:"200px",
-                        skin_url: '/css/tinymceSkin/oxide',
-                        content_css: '/css/tinymceSkin/oxide/content.css',
+                        skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
+                        content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
                         content_style: "img { max-width: 100%; }",
                         plugins : "autolink,link,textcolor,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
                         // Theme options
@@ -213,7 +213,7 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/leancanvas',
+                            url: leantime.appUrl+'/api/leancanvas',
                             data:
                                 {
                                     id : canvasId,
@@ -222,7 +222,7 @@ leantime.leanCanvasController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#user"+canvasId).text(dataLabel);
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
@@ -250,7 +250,7 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/leancanvas',
+                            url: leantime.appUrl+'/api/leancanvas',
                             data:
                                 {
                                     id : canvasItemId,

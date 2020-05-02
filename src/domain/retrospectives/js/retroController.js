@@ -126,7 +126,7 @@ leantime.retroController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: '/api/retrospectives',
+                            url: leantime.appUrl+'/api/retrospectives',
                             data:
                                 {
                                     id : canvasId,
@@ -135,7 +135,7 @@ leantime.retroController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", "/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
 
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }

@@ -514,7 +514,6 @@ namespace leantime\domain\repositories {
                 $return = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
             }
 
-
             return $return;
         }
 

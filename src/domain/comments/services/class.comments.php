@@ -29,7 +29,8 @@ namespace leantime\domain\services {
         }
 
         public function addComment($values, $module, $entityId, $entity) {
-
+            
+           
             if(isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)){
 
                 $mapper = array(
@@ -40,6 +41,8 @@ namespace leantime\domain\services {
                     'commentParent' => ($values['father'])
                 );
 
+
+
                 if($this->commentRepository->addComment($mapper, $module)) {
 
                     $currentUrl = CURRENT_URL;
@@ -47,7 +50,7 @@ namespace leantime\domain\services {
                     switch($module) {
                         case "ticket":
                             $subject = sprintf($this->language->__("email_notifications.new_comment_todo_subject"), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_subject"), $_SESSION["userdata"]["name"], $entity->headline);
+                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_message"), $_SESSION["userdata"]["name"], $entity->headline, $values['text']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
                             break;
                         case "project":
