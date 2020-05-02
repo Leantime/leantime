@@ -1,9 +1,0 @@
-[02-May-2020 15:53:58 America/Los_Angeles] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1305 FUNCTION leantime.EOUND does not exist in D:\xampp\htdocs\leantimeos\src\domain\tickets\repositories\class.tickets.php:650
-Stack trace:
-#0 D:\xampp\htdocs\leantimeos\src\domain\tickets\repositories\class.tickets.php(650): PDOStatement->execute()
-#1 D:\xampp\htdocs\leantimeos\src\domain\tickets\services\class.tickets.php(171): leantime\domain\repositories\tickets->getAllMilestones('24', false, 'date')
-#2 D:\xampp\htdocs\leantimeos\src\domain\tickets\controllers\class.roadmap.php(43): leantime\domain\services\tickets->getAllMilestones('24', false, 'date')
-#3 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(164): leantime\domain\controllers\roadmap->get(Array)
-#4 D:\xampp\htdocs\leantimeos\src\core\class.frontcontroller.php(107): leantime\core\frontcontroller->executeAction('tickets.roadmap')
-#5 D:\xampp\htdocs\leantimeos\src\core\class.application.php(91): leantime\core\frontcontroller->run()
-#6 D:\xampp\htdocs\leantimeo in D:\xampp\htdocs\leantimeos\src\domain\tickets\repositories\class.tickets.php on line 650
