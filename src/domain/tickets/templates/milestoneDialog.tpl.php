@@ -70,7 +70,7 @@ $statusLabels = $this->get('statusLabels');
                 if ($currentMilestone->editorId == $userRow["id"]) { echo " selected='selected' ";
                 }
 
-                echo ">" . $userRow["firstname"] . " " . $userRow["lastname"] . "</option>"; ?>
+                echo ">" . $this->escape($userRow["firstname"]) . " " . $this->escape($userRow["lastname"]) . "</option>"; ?>
 
             <?php } ?>
         </select>
