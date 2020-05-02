@@ -600,7 +600,7 @@ namespace leantime\domain\repositories {
 
 						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS planHours,
 						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS hourRemaining,
-						SUM(timesheets.hours) AS bookedHours,						
+						SUM(ROUND(timesheets.hours, 2)) AS bookedHours,						
 						
 						COUNT(DISTINCT progressTickets.id) AS allTickets,
 						

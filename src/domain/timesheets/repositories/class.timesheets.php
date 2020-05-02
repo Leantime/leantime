@@ -548,7 +548,7 @@ namespace leantime\domain\repositories {
 				DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
 				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
 				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-				SUM(zp_timesheets.hours) AS summe
+				SUM(ROUND(zp_timesheets.hours, 2)) AS summe
 			FROM 
 				zp_timesheets 
 			WHERE 
