@@ -224,7 +224,7 @@ $statusLabels = $this->get("statusLabels");
                             <?php } ?>
                         <?php } ?>
                         <br />
-                        <a href="/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><?=$this->__('links.add_new_canvas_item') ?></a>
+                        <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><?=$this->__('links.add_new_canvas_item') ?></a>
                     </div>
                 </div>
 
