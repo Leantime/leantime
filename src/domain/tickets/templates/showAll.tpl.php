@@ -109,7 +109,7 @@
             </div>
 
             <div class="clearfix"></div>
-            <div class="filterBar <?php if($searchCriteria['users'] == '' && $searchCriteria['milestone'] == '' && $searchCriteria['type'] == '') { echo "hideOnLoad"; } ?>">
+            <div class="filterBar <?php if(!isset($_GET['search'])) { echo "hideOnLoad"; } ?>">
 
                 <div class="row-fluid">
 
@@ -194,7 +194,7 @@
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.search_term") ?></label><br />
-                        <input type="text" class="form-control input-default" id="searchTerm" name="searchTerm" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
+                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="<?=$this->__("input.placeholders.search") ?>" value="<?php echo $searchCriteria['term']; ?>">
                         <input type="submit" value="<?=$this->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
                     </div>
 
