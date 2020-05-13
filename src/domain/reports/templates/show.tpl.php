@@ -35,7 +35,7 @@
                 <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
 
-                            <h5 class="subtitle"><?=$this->__("subtitles.summary")?> (<?=$this->getFormattedDateString($fullReportLatest['date']) ?>) </h5>
+                            <h5 class="subtitle"><?=$this->__("subtitles.summary")?> <?php if($fullReportLatest!= false){?>(<?=$this->getFormattedDateString($fullReportLatest['date']) ?>)<?php } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="boxedHighlight">
@@ -172,18 +172,14 @@
                             }
                             ?>
                             <?php foreach($this->get('milestones') as $row){
-                                $percent = 0;
 
-                                if($row->allTicketsEffort != 0 ) {
-                                    $percent = round(($row->doneTicketsEffort/$row->allTicketsEffort)*100);
-                                }
                                 if($row->editTo == "0000-00-00 00:00:00") {
                                     $date = $this->__("text.no_date_defined");
                                 }else {
                                     $date = new DateTime($row->editTo);
                                     $date= $date->format($this->__("language.dateformat"));
                                 }
-                                if($percent < 100 || $date >= new DateTime()) {
+
                                     ?>
                                     <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
                                         <div class="ticketBox fixed">
@@ -200,21 +196,21 @@
                                                     <?php echo $date; ?>
                                                 </div>
                                                 <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($this->__("text.percent_complete"), $percent)?>
+                                                    <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
-                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percent; ?>%">
-                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percent)?></span>
+                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
+                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </li>
-                                <?php }
+                                <?php
                             } ?>
 
                         </ul>
