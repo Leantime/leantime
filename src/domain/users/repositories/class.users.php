@@ -188,7 +188,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
-            var_dump($values);
 
             return $values;
         }
