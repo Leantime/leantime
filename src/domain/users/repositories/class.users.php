@@ -180,7 +180,7 @@ namespace leantime\domain\repositories {
                       clientId,
                       zp_clients.name AS clientName
 					FROM `zp_user` 
-					LEFT JOIN zp_clients ON zp_clients.id = zp_user.id
+					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -188,6 +188,7 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
+            var_dump($values);
 
             return $values;
         }
