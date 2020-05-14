@@ -57,7 +57,8 @@ namespace leantime\core {
             20004,
             20100,
             20101,
-            20102
+            20102,
+            20103
         );
 
         /**
@@ -534,8 +535,8 @@ namespace leantime\core {
                   `editFrom` datetime DEFAULT NULL,
                   `editTo` datetime DEFAULT NULL,
                   `editorId` varchar(75) DEFAULT NULL,
-                  `planHours` int(10) DEFAULT '0',
-                  `hourRemaining` int(10) DEFAULT NULL,
+                  `planHours` float DEFAULT NULL,
+                  `hourRemaining` float DEFAULT NULL,
                   `type` varchar(255) DEFAULT NULL,
                   `production` int(1) DEFAULT '0',
                   `staging` int(1) DEFAULT '0',
@@ -915,5 +916,36 @@ namespace leantime\core {
             }
 
         }
+
+        private function update_sql_20103()
+        {
+            $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL",
+                "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
     }
 }

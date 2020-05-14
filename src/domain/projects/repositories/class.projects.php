@@ -83,7 +83,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
-					COUNT(ticket.projectId) AS numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
 				FROM zp_projects as project
@@ -643,7 +643,9 @@ namespace leantime\domain\repositories {
         public function hasTickets($id)
         {
 
-            $query = "SELECT id FROM zp_tickets WHERE projectId = :id LIMIT 1";
+            $query = "SELECT id FROM zp_tickets WHERE projectId = :id 
+                      AND zp_tickets.type <> 'subtask' AND
+                       zp_tickets.type <> 'milestone' LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);

@@ -31,22 +31,20 @@ namespace leantime\domain\controllers {
 
                     if ($projectRepo->hasTickets($id)) {
 
-                       $tpl->setNotification($language->__("notification.project_has_tasks"), "error");
+                        $tpl->setNotification($language->__("notification.project_has_tasks"), "info");
 
-                    } else {
+                    }
 
-                        if (isset($_POST['del']) === true) {
+                    if (isset($_POST['del']) === true) {
 
-                            $projectRepo->deleteProject($id);
-                            $projectRepo->deleteAllUserRelations($id);
+                        $projectRepo->deleteProject($id);
+                        $projectRepo->deleteAllUserRelations($id);
 
-                            $projectService->resetCurrentProject();
-                            $projectService->setCurrentProject();
+                        $projectService->resetCurrentProject();
+                        $projectService->setCurrentProject();
 
-                            $tpl->setNotification($language->__("notification.project_deleted"), "success");
-                            $tpl->redirect(BASE_URL."/projects/showAll");
-
-                        }
+                        $tpl->setNotification($language->__("notification.project_deleted"), "success");
+                        $tpl->redirect(BASE_URL . "/projects/showAll");
 
                     }
 
@@ -61,7 +59,7 @@ namespace leantime\domain\controllers {
 
                 }
 
-            } else {
+            }else{
 
                 $tpl->display('general.error');
 
