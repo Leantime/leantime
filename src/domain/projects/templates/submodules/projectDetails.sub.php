@@ -19,7 +19,7 @@ $helper = $this->get('helper');
 
                         <label  class="span4 control-label" for="name"><?=$this->__('label.name'); ?></label>
                         <div class="span6">
-                            <input type="text" name="name" id="name" class="input-large" value="<?php echo $project['name'] ?>" />
+                            <input type="text" name="name" id="name" class="input-large" value="<?php $this->e($project['name']) ?>" />
 
                         </div>
                     </div>
@@ -33,7 +33,7 @@ $helper = $this->get('helper');
                             <?php foreach($this->get('clients') as $row){ ?>
                                 <option value="<?php echo $row['id']; ?>"
                                     <?php if($project['clientId'] == $row['id']) { ?> selected=selected
-                                    <?php } ?>><?php echo $row['name']; ?></option>
+                                    <?php } ?>><?php $this->e($row['name']); ?></option>
                             <?php } ?>
 
                             </select>
@@ -103,7 +103,7 @@ $helper = $this->get('helper');
                     <div class="form-group">
                         <label class="span4 control-label"for="hourBudget"><?php echo $this->__('label.hourly_budget'); ?></label>
                         <div class="span6">
-                            <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="<?php echo $project['hourBudget'] ?>" />
+                            <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="<?php $this->e($project['hourBudget']) ?>" />
 
                         </div>
                     </div>
@@ -111,7 +111,7 @@ $helper = $this->get('helper');
                     <div class="form-group">
                         <label class="span4 control-label" for="dollarBudget"><?php echo $this->__('label.budget_cost'); ?></label>
                         <div class="span6">
-                            <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="<?php echo $project['dollarBudget'] ?>" />
+                            <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="<?php $this->e($project['dollarBudget']) ?>" />
 
                         </div>
                     </div>

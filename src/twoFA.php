@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>"
           type="text/css"/>
     <link rel="stylesheet"
-          href="<?= BASE_URL ?>/css/style.custom.php?color=<?php echo $_SESSION["companysettings.mainColor"]; ?>&v=<?php echo $settings->appVersion; ?>"
+          href="<?= BASE_URL ?>/css/style.custom.php?color=<?php echo htmlentities($_SESSION["companysettings.mainColor"]); ?>&v=<?php echo $settings->appVersion; ?>"
           type="text/css"/>
 
     <script src="<?= BASE_URL ?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
@@ -56,7 +56,7 @@
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="<?= BASE_URL ?>" target="_blank"><img
-                            src="<?php echo $_SESSION["companysettings.logoPath"]; ?>"/></a>
+                            src="<?php echo htmlentities($_SESSION["companysettings.logoPath"]); ?>"/></a>
                 <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
@@ -72,7 +72,7 @@
                 <div class="pageheader">
                     <div class="pageicon"><span class="iconfa-signin"></span></div>
                     <div class="pagetitle">
-                        <h5><?php echo $_SESSION["companysettings.sitename"]; ?></h5>
+                        <h5><?php echo htmlentities($_SESSION["companysettings.sitename"]); ?></h5>
                         <h1><?php echo $language->__("headlines.twoFA_login"); ?></h1>
                     </div>
                 </div>
