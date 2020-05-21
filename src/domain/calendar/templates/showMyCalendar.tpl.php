@@ -58,7 +58,7 @@
                 url: '<?=BASE_URL ?>/calendar/editEvent/<?php echo $calendar['id'] ?>',
                 color: '#00814A'
                 <?php else: ?>
-                url: '<?=BASE_URL ?>/tickets/showTicket/<?php echo $calendar['id'] ?>',
+                url: '<?=BASE_URL ?>/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
                 color:'#BC3600'
                 <?php endif; ?>
             },
