@@ -464,6 +464,35 @@ namespace leantime\domain\services {
 
         }
 
+        public function duplicateProject($projectId) {
+            //Ignoring
+            //Comments, files, user relationship
+
+
+            $oldProjectId = $id;
+            //Copy project Entry
+            $newProjectId = "";
+
+
+            //Duplicate all todos without dependent Ticket set
+
+            //oldId = > newId
+            $ticketIdList = array();
+
+
+            //Duplicate Canvas boards
+            $canvasIdList = array();
+
+
+            //Duplicate Canvas Items
+            $canvasItemIdList = array();
+
+
+
+
+
+        }
+
     }
 
 }

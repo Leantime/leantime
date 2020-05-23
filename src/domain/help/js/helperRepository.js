@@ -18,7 +18,7 @@ leantime.helperRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/users',
+                url: leantime.appUrl+'/api/users',
                 data:
                 {
                     settings : module,
@@ -39,7 +39,7 @@ leantime.helperRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/sessions',
+                url: leantime.appUrl+'/api/sessions',
                 data:
                 {
                     tourActive : 1
@@ -59,7 +59,7 @@ leantime.helperRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: '/api/sessions',
+                url: leantime.appUrl+'/api/sessions',
                 data:
                 {
                     tourActive : 0
