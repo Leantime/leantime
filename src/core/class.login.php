@@ -141,6 +141,11 @@ namespace leantime\core {
 
         private static $instance;
 
+        /*
+         * How often can a user reset a password before it has to be changed
+         */
+        public $pwResetLimit = 5;
+
         /**
          * __construct - getInstance of session and get sessionId and refers to login if post is set
          *
@@ -199,8 +204,13 @@ namespace leantime\core {
                     $userFromDB = $this->getUser($_POST["username"]);
 
                     if($userFromDB !== false && count($userFromDB) > 0) {
-                        $this->generateLinkAndSendEmail($_POST["username"]);
-                        $this->success = $this->language->__('notifications.email_was_sent_to_reset');
+
+                        if($userFromDB['pwResetCount'] < $this->pwResetLimit) {
+                            $this->generateLinkAndSendEmail($_POST["username"]);
+                            $this->success = $this->language->__('notifications.email_was_sent_to_reset');
+                        }else{
+                            $this->error =  $this->language->__('notifications.could_not_reset_limit_reached');
+                        }
                     }else{
                         $this->error =  $this->language->__('notifications.could_not_find_username');
                     }
@@ -547,7 +557,7 @@ namespace leantime\core {
         private function getUser($username)
         {
 
-            $query = "SELECT username, password FROM zp_user 
+            $query = "SELECT username, password, pwResetCount FROM zp_user 
 		          WHERE username = :username LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -574,7 +584,8 @@ namespace leantime\core {
 					zp_user 
 				SET 
 					pwReset = :link,
-					pwResetExpiration = :time
+					pwResetExpiration = :time,
+					pwResetCount = IFNULL(pwResetCount, 0)+1
 				WHERE 
 					username = :user
 				LIMIT 1";
@@ -610,7 +621,8 @@ namespace leantime\core {
 					password = :password,
 					pwReset = '',
 					pwResetExpiration = '',
-					lastpwd_change = :time
+					lastpwd_change = :time,
+					pwResetCount = 0
 				WHERE 
 					pwReset = :hash
 				LIMIT 1";
