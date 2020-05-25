@@ -257,7 +257,8 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.modified,
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
-						zp_canvas_items.status,						
+						zp_canvas_items.status,		
+						zp_canvas_items.milestoneId,				
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
 						t1.profileId AS authorProfileId,
@@ -375,7 +376,8 @@ namespace leantime\domain\repositories {
 						created,
 						modified,
 						canvasId,
-						status
+						status,
+						milestoneId
 				) VALUES (
 						:description,
 						:assumptions,
@@ -386,7 +388,8 @@ namespace leantime\domain\repositories {
 						NOW(),
 						NOW(),
 						:canvasId,
-						:status
+						:status,
+						:milestoneId
 				)";
 
             $stmn = $this->db->database->prepare($query);
@@ -399,6 +402,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();

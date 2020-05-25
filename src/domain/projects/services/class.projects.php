@@ -7,6 +7,7 @@ namespace leantime\domain\services {
     use \DateTime;
     use \DateInterval;
     use PHPMailer\PHPMailer\PHPMailer;
+    use function Sodium\add;
 
     class projects
     {
@@ -464,32 +465,324 @@ namespace leantime\domain\services {
 
         }
 
-        public function duplicateProject($projectId) {
+        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $startDate, bool $assignSameUsers) {
+
             //Ignoring
-            //Comments, files, user relationship
+            //Comments, files, timesheets, personalCalendar Events
+            $oldProjectId = $projectId;
 
-
-            $oldProjectId = $id;
             //Copy project Entry
-            $newProjectId = "";
+            $projectValues = $this->getProject($projectId);
 
+            $copyProject = array(
+                "name" => $projectName,
+                "clientId" => $clientId,
+                "details" => $projectValues['details'],
+                "state" => $projectValues['state'],
+                "hourBudget" => $projectValues['hourBudget'],
+                "dollarBudget" => $projectValues['dollarBudget'],
+                'assignedUsers' => array(),
+            );
+
+            if($assignSameUsers == true){
+                $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+                foreach($projectUsers as $user) {
+                    $copyProject['assignedUsers'][] = $user['id'];
+                }
+            }
+
+            $projectSettingsKeys = array("researchlabels", "retrolabels", "ticketlabels", "idealabels");
+            $newProjectId = $this->projectRepository->addProject($copyProject);
+
+            //ProjectSettings
+            foreach($projectSettingsKeys as $key) {
+                $setting = $this->settingsRepo->getSetting("projectsettings.".$projectId.".".$key);
+
+                if($setting !== false){
+                    $this->settingsRepo->saveSetting("projectsettings.".$newProjectId.".".$key, $setting);
+                }
+
+            }
 
             //Duplicate all todos without dependent Ticket set
+            $allTickets = $this->ticketRepository->getAllByProjectId($projectId);
+
+            //Checks the oldest editFrom date and makes this the start date
+            $oldestTicket = new DateTime();
+
+            foreach($allTickets as $ticket) {
+                if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00"){
+                    $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->editFrom);
+                    if($oldestTicket > $ticketDateTimeObject){
+                        $oldestTicket = $ticketDateTimeObject;
+
+                    }
+
+                }
+
+                if($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00"){
+                    $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->dateToFinish);
+                    if($oldestTicket > $ticketDateTimeObject){
+                        $oldestTicket = $ticketDateTimeObject;
+
+                    }
+
+                }
+            }
+
+
+            $projectStart = new DateTime($startDate);
+            $interval = $oldestTicket->diff($projectStart);
 
             //oldId = > newId
             $ticketIdList = array();
+
+            //Iterate through root tickets first
+            foreach($allTickets as $ticket) {
+                if ($ticket->dependingTicketId == 0 || $ticket->dependingTicketId == "" || $ticket->dependingTicketId == null){
+
+                    $dateToFinishValue = "";
+                    if( $ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+                        $dateToFinish = new DateTime($ticket->dateToFinish);
+                        $dateToFinish->add($interval);
+                        $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
+                    }
+
+                    $editFromValue = "";
+                    if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                        $editFrom = new DateTime($ticket->editFrom);
+                        $editFrom->add($interval);
+                        $editFromValue = $editFrom->format('Y-m-d H:i:s');
+                    }
+
+                    $editToValue = "";
+                    if( $ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                        $editTo = new DateTime($ticket->editTo);
+                        $editTo->add($interval);
+                        $editToValue = $editTo->format('Y-m-d H:i:s');
+                    }
+
+                    $ticketValues = array(
+                        'headline' => $ticket->headline,
+                        'type' => $ticket->type,
+                        'description' => $ticket->description,
+                        'projectId' => $newProjectId,
+                        'editorId' => $ticket->editorId,
+                        'userId' => $_SESSION['userdata']['id'],
+                        'date' => date("Y-m-d H:i:s"),
+                        'dateToFinish' => $dateToFinishValue,
+                        'status' => $ticket->status,
+                        'storypoints' => $ticket->storypoints,
+                        'hourRemaining' => $ticket->hourRemaining,
+                        'planHours' => $ticket->planHours,
+                        'sprint' => "",
+                        'acceptanceCriteria' => $ticket->acceptanceCriteria,
+                        'tags' => $ticket->tags,
+                        'editFrom' => $editFromValue,
+                        'editTo' => $editToValue,
+                        'dependingTicketId' => "",
+                    );
+
+                    $newTicketId = $this->ticketRepository->addTicket($ticketValues);
+
+                    $ticketIdList[$ticket->id] = $newTicketId;
+                }
+
+            }
+
+            //Iterate through childObjects
+            foreach($allTickets as $ticket) {
+                if ($ticket->dependingTicketId != "" && $ticket->dependingTicketId > 0){
+
+                    $dateToFinishValue = "";
+                    if( $ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+                        $dateToFinish = new DateTime($ticket->dateToFinish);
+                        $dateToFinish->add($interval);
+                        $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
+                    }
+
+                    $editFromValue = "";
+                    if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                        $editFrom = new DateTime($ticket->editFrom);
+                        $editFrom->add($interval);
+                        $editFromValue = $editFrom->format('Y-m-d H:i:s');
+                    }
+
+                    $editToValue = "";
+                    if( $ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                        $editTo = new DateTime($ticket->editTo);
+                        $editTo->add($interval);
+                        $editToValue = $editTo->format('Y-m-d H:i:s');
+                    }
+
+                    $ticketValues = array(
+                        'headline' => $ticket->headline,
+                        'type' => $ticket->type,
+                        'description' => $ticket->description,
+                        'projectId' => $newProjectId,
+                        'editorId' => $ticket->editorId,
+                        'userId' => $_SESSION['userdata']['id'],
+                        'date' => date("Y-m-d H:i:s"),
+                        'dateToFinish' => $dateToFinishValue,
+                        'status' => $ticket->status,
+                        'storypoints' => $ticket->storypoints,
+                        'hourRemaining' => $ticket->hourRemaining,
+                        'planHours' => $ticket->planHours,
+                        'sprint' => "",
+                        'acceptanceCriteria' => $ticket->acceptanceCriteria,
+                        'tags' => $ticket->tags,
+                        'editFrom' => $editFromValue,
+                        'editTo' => $editToValue,
+                        'dependingTicketId' => $ticketIdList[$ticket->dependingTicketId],
+                    );
+
+                    $newTicketId = $this->ticketRepository->addTicket($ticketValues);
+
+                    $ticketIdList[$ticket->id] = $newTicketId;
+                }
+
+            }
+
 
 
             //Duplicate Canvas boards
             $canvasIdList = array();
 
+            //LeanCanvas
+            $leancanvasRepo = new repositories\leancanvas();
+            $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
+            foreach($canvasBoards as $canvas) {
 
-            //Duplicate Canvas Items
-            $canvasItemIdList = array();
+                $canvasValues = array(
+                    "title" => $canvas['title'],
+                    "author" => $_SESSION['userdata']['id'],
+                    "projectId" => $newProjectId
+
+                );
+
+                $newCanvasId = $leancanvasRepo->addCanvas($canvasValues);
+                $canvasIdList[$canvas['id']] = $newCanvasId;
+
+                $canvasItems = $leancanvasRepo->getCanvasItemsById($canvas['id']);
+
+                if($canvasItems != false && count($canvasItems) >0) {
+                    foreach ($canvasItems as $item) {
+
+                        $milestoneId = "";
+                        if(isset($ticketIdList[$item['milestoneId']])){
+                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        }
+
+                        $canvasItemValues = array(
+                            "description" => $item['description'],
+                            "assumptions" => $item['assumptions'],
+                            "data" => $item['data'],
+                            "conclusion" => $item['conclusion'],
+                            "box" => $item['box'],
+                            "author" => $item['author'],
+
+                            "canvasId" => $newCanvasId,
+                            "sortindex" => $item['sortindex'],
+                            "status" => $item['status'],
+                            "milestoneId" => $milestoneId
+                        );
+
+                        $leancanvasRepo->addCanvasItem($canvasItemValues);
+                    }
+                }
+            }
 
 
+            //Ideas
+            $ideaRepo = new repositories\ideas();
+            $canvasBoards = $ideaRepo->getAllCanvas($projectId);
+            foreach($canvasBoards as $canvas) {
 
+                $canvasValues = array(
+                    "title" => $canvas['title'],
+                    "author" => $_SESSION['userdata']['id'],
+                    "projectId" => $newProjectId
 
+                );
+
+                $newCanvasId = $ideaRepo->addCanvas($canvasValues);
+                $canvasIdList[$canvas['id']] = $newCanvasId;
+
+                $canvasItems = $ideaRepo->getCanvasItemsById($canvas['id']);
+
+                if($canvasItems != false && count($canvasItems) >0) {
+                    foreach ($canvasItems as $item) {
+
+                        $milestoneId = "";
+                        if(isset($ticketIdList[$item['milestoneId']])){
+                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        }
+
+                        $canvasItemValues = array(
+                            "description" => $item['description'],
+                            "assumptions" => $item['assumptions'],
+                            "data" => $item['data'],
+                            "conclusion" => $item['conclusion'],
+                            "box" => $item['box'],
+                            "author" => $item['author'],
+
+                            "canvasId" => $newCanvasId,
+                            "sortindex" => $item['sortindex'],
+                            "status" => $item['status'],
+                            "milestoneId" => $milestoneId
+                        );
+
+                        $ideaRepo->addCanvasItem($canvasItemValues);
+                    }
+                }
+            }
+
+            //Retros
+            $retroRepo = new repositories\retrospectives();
+            $canvasBoards = $retroRepo->getAllCanvas($projectId);
+            foreach($canvasBoards as $canvas) {
+
+                $canvasValues = array(
+                    "title" => $canvas['title'],
+                    "author" => $_SESSION['userdata']['id'],
+                    "projectId" => $newProjectId
+
+                );
+
+                $newCanvasId = $retroRepo->addCanvas($canvasValues);
+                $canvasIdList[$canvas['id']] = $newCanvasId;
+
+                $canvasItems = $retroRepo->getCanvasItemsById($canvas['id']);
+
+                if($canvasItems != false && count($canvasItems) >0) {
+                    foreach ($canvasItems as $item) {
+
+                        $milestoneId = "";
+                        if(isset($ticketIdList[$item['milestoneId']])){
+                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        }
+
+                        $canvasItemValues = array(
+                            "description" => $item['description'],
+                            "assumptions" => $item['assumptions'],
+                            "data" => $item['data'],
+                            "conclusion" => $item['conclusion'],
+                            "box" => $item['box'],
+                            "author" => $item['author'],
+
+                            "canvasId" => $newCanvasId,
+                            "sortindex" => $item['sortindex'],
+                            "status" => $item['status'],
+                            "milestoneId" => $milestoneId
+                        );
+
+                        $retroRepo->addCanvasItem($canvasItemValues);
+                    }
+                }
+            }
+
+            return $newProjectId;
 
         }
 
