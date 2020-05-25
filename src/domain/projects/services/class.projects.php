@@ -286,9 +286,9 @@ namespace leantime\domain\services {
 
         }
 
-        public function getProjectsAssignedToUser($userId, $projectStatus = "open")
+        public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
-            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus);
+            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;

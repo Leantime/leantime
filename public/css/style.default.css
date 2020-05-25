@@ -4676,7 +4676,8 @@ input[type='submit'].btn-default{
     padding: 4px 12px 3px 12px;
 }
 
-.btn {
+.btn,
+a:link.btn{
     display: inline-block;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
@@ -4687,6 +4688,7 @@ input[type='submit'].btn-default{
     padding: 3px 15px;
     font-family: 'LatoBold', arial;
     word-spacing: 2px;
+    color: #333333;
 }
 
 .btn .caret {
@@ -4709,9 +4711,8 @@ input[type='submit'].btn-default{
     padding: 10px 20px;
 }
 
-.btn-primary, .btn-primary:link {
-    background: #0866c6;
-    border: 1px solid #ddd;
+.btn-primary,
+a.btn-primary:link {
     color: #fff;
 }
 
@@ -6279,4 +6280,10 @@ input.secretInput:active {
     min-height:31px;
     background-size:31px 31px;
     display:none;
+}
+
+.border-bottom {
+    border-bottom:1px solid #ddd;
+    padding-bottom:5px;
+    margin-bottom:10px;
 }
