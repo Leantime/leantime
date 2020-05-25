@@ -53,6 +53,9 @@ leantime.projectsController = (function () {
                     jQuery(".showDialogOnLoad").show();
                     initDates();
                     jQuery(".duplicateProjectModal, .formModal").nyroModal(regularModelConfig);
+                },
+                beforeClose: function () {
+                    location.reload();
                 }
             }
         };
