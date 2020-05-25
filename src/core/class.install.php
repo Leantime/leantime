@@ -58,7 +58,8 @@ namespace leantime\core {
             20100,
             20101,
             20102,
-            20103
+            20103,
+            20104
         );
 
         /**
@@ -585,9 +586,9 @@ namespace leantime\core {
                   `phone` varchar(25) NOT NULL,
                   `profileId` varchar(100) NOT NULL DEFAULT '',
                   `lastlogin` datetime DEFAULT NULL,
-                  `lastpwd_change` int(11) DEFAULT NULL,
+                  
                   `status` varchar(1) NOT NULL DEFAULT 'A',
-                  `expires` int(11) DEFAULT NULL,
+                  `expires` DATETIME DEFAULT NULL,
                   `role` varchar(200) NOT NULL,
                   `session` varchar(100) DEFAULT NULL,
                   `sessiontime` varchar(50) DEFAULT NULL,
@@ -598,15 +599,20 @@ namespace leantime\core {
                   `notifications` int(2) DEFAULT NULL,
                   `pwReset` varchar(100) DEFAULT NULL,
                   `pwResetExpiration` datetime DEFAULT NULL,
+                  `pwResetCount` INT(5) DEFAULT NULL,
+                  `forcePwReset` TINYINT DEFAULT NULL,
+                  `lastpwd_change` DATETIME DEFAULT NULL,
                   `settings` TEXT NULL,               
                   `twoFAEnabled` tinyint(1) DEFAULT '0',
                   `twoFASecret` varchar(200) DEFAULT NULL,
+                  `createdOn` DATETIME DEFAULT NULL
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
-                insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`) 
-                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1);
+                              
+                    
+                insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`) 
+                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
                 
                 CREATE TABLE `zp_wiki` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -924,6 +930,39 @@ namespace leantime\core {
             $sql = array(
                 "ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL",
                 "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20104()
+        {
+            $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_user` ADD COLUMN `pwResetCount` INT(5) NULL AFTER `pwResetExpiration`",
+                "ALTER TABLE `zp_user` ADD COLUMN `forcePwReset` TINYINT NULL AFTER `pwResetCount`",
+                "ALTER TABLE `zp_user` ADD COLUMN `createdOn` DATETIME NULL AFTER `twoFASecret`",
+                "ALTER TABLE `zp_user` CHANGE COLUMN `lastpwd_change` `lastpwd_change` DATETIME NULL DEFAULT NULL AFTER `forcePwReset`",
+                "ALTER TABLE `zp_user` CHANGE COLUMN `expires` `expires` DATETIME NULL DEFAULT NULL",
             );
 
             foreach ($sql as $statement) {

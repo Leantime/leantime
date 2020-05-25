@@ -36,9 +36,9 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <option value="danger" <?php if($canvasItem['status'] == 'danger') {echo"selected='selected' ";
                                     }?>><?=$this->__("status.not_validated") ?></option>
             <option value="info" <?php if($canvasItem['status'] == 'info') {echo"selected='selected' ";
-                                    }?>><?=$this->__("status.validated_true") ?></option>
-            <option value="success" <?php if($canvasItem['status'] == 'success') {echo"selected='selected' ";
                                     }?>><?=$this->__("status.validated_false") ?></option>
+            <option value="success" <?php if($canvasItem['status'] == 'success') {echo"selected='selected' ";
+                                    }?>><?=$this->__("status.validated_true") ?></option>
         </select><br />
         <label><?=$this->__("label.assumptions") ?></label>
         <textarea rows="3" cols="10" name="assumptions" class="modalTextArea researchTextEditor" placeholder="<?=$this->__("input.placeholders.describe_assumption") ?>"><?php echo $canvasItem['assumptions'] ?></textarea><br />

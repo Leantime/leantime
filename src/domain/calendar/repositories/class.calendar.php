@@ -51,6 +51,7 @@ namespace leantime\domain\repositories {
 					tickets.dateToFinish, 
 					tickets.headline, 
 					tickets.id,
+					tickets.projectId,
 					tickets.editFrom,
 					tickets.editTo
 				FROM zp_tickets AS tickets
@@ -95,6 +96,7 @@ namespace leantime\domain\repositories {
                         'i' => date('i', $dateTo)
                     ),
                     'id' => $value['id'],
+                    'projectId' => '',
                     'eventType' => "calendar"
                 );
             }
@@ -133,6 +135,7 @@ namespace leantime\domain\repositories {
                             'i' => date('i', $dateTo)
                         ),
                         'id' => $ticket['id'],
+                        'projectId' => $ticket['projectId'],
                         'eventType' => "ticket"
                     );
                 }

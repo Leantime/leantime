@@ -51,8 +51,8 @@
 					</td>
                     <td class="center"><?php if($row['state'] == -1) echo "Closed"; else { echo "Active"; } ?></td>
 					<td class="center"><?php echo $row['numberOfTickets']; ?></td>
-					<td class="center"><?php echo $row['hourBudget']; ?></td>
-					<td class="center"><?php echo $row['dollarBudget']; ?></td>
+					<td class="center"><?php $this->e($row['hourBudget']); ?></td>
+					<td class="center"><?php $this->e($row['dollarBudget']); ?></td>
 				</tr>
 			 <?php endforeach; ?>
 		
