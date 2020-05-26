@@ -605,7 +605,7 @@ namespace leantime\core {
                   `settings` TEXT NULL,               
                   `twoFAEnabled` tinyint(1) DEFAULT '0',
                   `twoFASecret` varchar(200) DEFAULT NULL,
-                  `createdOn` DATETIME DEFAULT NULL
+                  `createdOn` DATETIME DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
