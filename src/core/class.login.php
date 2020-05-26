@@ -94,7 +94,7 @@ namespace leantime\core {
          * @access public
          * @var    integer time for cookie
          */
-        public $cookieTime = 7200;
+        public $cookieTime;
 
         /**
          * @access public

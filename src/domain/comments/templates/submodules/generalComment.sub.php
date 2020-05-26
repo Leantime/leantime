@@ -38,15 +38,18 @@
 
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
 
-                            <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
-                            <div class="right"><?php printf(
-                                    $this->__('text.written_on'),
-                                    $this->getFormattedDateString($row['date']),
-                                    $this->getFormattedTimeString($row['date'])
-                                ); ?></div>
-                            <strong><?php $this->e($row['firstname']); ?> <?php $this->e($row['lastname']); ?></strong><br />
-                            <p><?php echo nl2br($this->escape($row['text'])); ?></p>
-                            <div class="clear"></div>
+                    <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$row['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
+
+
+                    <div class="right"><?php printf(
+                            $this->__('text.written_on'),
+                            $this->getFormattedDateString($row['date']),
+                            $this->getFormattedTimeString($row['date'])
+                        ); ?></div>
+                    <strong><?php $this->e($row['firstname']); ?> <?php $this->e($row['lastname']); ?></strong><br />
+                    <p style="margin-left:60px;"><?php echo nl2br($this->escape($row['text'])); ?></p>
+
+                    <div class="clear"></div>
 
                     <div style="padding-left:60px">
                         <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
@@ -64,6 +67,8 @@
                         </div>
                     </div>
 
+                    <div class="clear"></div>
+
                 </div>
 
                 <?php if ($comments->getReplies($row['id'])) : ?>
@@ -73,23 +78,26 @@
 
 
                             <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$comment['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
-                            <div class="right"><?php printf(
-                                    $this->__('text.written_on'),
-                                    $this->getFormattedDateString($row['date']),
-                                    $this->getFormattedTimeString($row['date'])
-                                ); ?></div>
-                            <strong><?php $this->e($comment['firstname']); ?> <?php $this->e($comment['lastname']); ?></strong><br />
-                            <p><?php echo nl2br($this->escape($comment['text'])); ?></p>
-                            <div class="clear"></div>
+                            <div >
+                                <div class="right">
+                                    <?php printf(
+                                        $this->__('text.written_on'),
+                                        $this->getFormattedDateString($row['date']),
+                                        $this->getFormattedTimeString($row['date'])
+                                    ); ?></div>
+                                <strong><?php $this->e($comment['firstname']); ?> <?php $this->e($comment['lastname']); ?></strong><br />
+                                <p style="margin-left:60px;"><?php echo nl2br($this->escape($comment['text'])); ?></p>
+                                <div class="clear"></div>
 
-                            <div style="padding-left:60px">
-                            <?php if($comment['userId'] == $_SESSION['userdata']['id']) { ?>
+                                <div style="padding-left:60px">
+                                <?php if($comment['userId'] == $_SESSION['userdata']['id']) { ?>
 
-                                <a href="<?php echo $deleteUrlBase.$comment['id'] ?>" class="deleteComment">
-                                    <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
-                                </a>
+                                    <a href="<?php echo $deleteUrlBase.$comment['id'] ?>" class="deleteComment">
+                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                    </a>
 
-                            <?php } ?>
+                                <?php } ?>
+                                </div>
                             </div>
 
                         </div>

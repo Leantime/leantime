@@ -108,7 +108,7 @@ namespace leantime\domain\repositories {
 
         // Get all open user projects /param: open, closed, all
 
-        public function getUserProjects($status = "all")
+        public function getUserProjects($userId, $status = "all", $clientId = "")
         {
 
             $query = "SELECT
@@ -133,6 +133,10 @@ namespace leantime\domain\repositories {
                 $query .= " AND (project.state = -1)";
             }
 
+            if($clientId != ""){
+                $query .= " AND project.clientId = :clientId";
+            }
+
             $query .= " GROUP BY 
 					project.id
 				ORDER BY clientName, project.name";
@@ -140,6 +144,9 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            if($clientId != ""){
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
+            }
 
 
             $stmn->execute();

@@ -428,7 +428,7 @@
        leantime.ticketsController.initMilestoneDropdown();
        leantime.ticketsController.initStatusDropdown();
 
-       leantime.dashboardController.initProgressChart(<?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
+       leantime.dashboardController.initProgressChart("chart-area", <?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
 
        <?php if($sprintBurndown != []){ ?>
 

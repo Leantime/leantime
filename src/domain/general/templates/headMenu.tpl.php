@@ -2,6 +2,11 @@
 
 <ul class="headmenu">
 
+    <li>
+        <a href='<?=BASE_URL ?>/projects/showMy'>
+            <?=$this->__("menu.my_portfolio")?>
+        </a>
+    </li>
     <?php if ($login::userIsAtLeast("developer")) {
 
         if($this->get('onTheClock') !== false){
@@ -25,12 +30,14 @@
             </ul>
         </li>
         <?php } ?>
+
         <li>
             <a href='<?=BASE_URL ?>/timesheets/showMy/'>
                 <?=$this->__("menu.my_timesheets")?>
             </a>
         </li>
     <?php } ?>
+
     <li>
         <a href='<?=BASE_URL ?>/calendar/showMyCalendar'>
             <?=$this->__("menu.my_calendar")?>

@@ -3,9 +3,9 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
+include_once '../config/configuration.php';
 include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
-include_once '../config/configuration.php';
 
 $config = new leantime\core\config();
 

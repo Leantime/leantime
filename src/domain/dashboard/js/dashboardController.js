@@ -33,7 +33,7 @@ leantime.dashboardController = (function () {
 
     };
 
-    var initProgressChart = function (complete, incomplete ) {
+    var initProgressChart = function (chartId, complete, incomplete ) {
         var config = {
             type: 'doughnut',
 
@@ -74,7 +74,7 @@ leantime.dashboardController = (function () {
             }
         };
 
-        var ctx = document.getElementById('chart-area').getContext('2d');
+        var ctx = document.getElementById(chartId).getContext('2d');
         _progressChart = new Chart(ctx, config);
     };
 
