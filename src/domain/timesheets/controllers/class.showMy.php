@@ -68,7 +68,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('actKind', $kind);
             $tpl->assign('kind', $timesheetsRepo->kind);
             $tpl->assign('helper', $helper);
-            $tpl->assign('allProjects', $projects->getUserProjects());
+            $tpl->assign('allProjects', $projects->getUserProjects($_SESSION["userdata"]["id"]));
             $tpl->assign('allTickets', $tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $tpl->assign('allTimesheets', $myTimesheets);
             $tpl->display('timesheets.showMy');
