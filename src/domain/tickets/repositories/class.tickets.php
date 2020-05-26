@@ -446,6 +446,59 @@ namespace leantime\domain\repositories {
 
         }
 
+        public function getAllByProjectId($projectId)
+        {
+
+            $query = "SELECT
+						zp_tickets.id,
+						zp_tickets.headline, 
+						zp_tickets.type,
+						zp_tickets.description,
+						zp_tickets.date,
+						zp_tickets.dateToFinish,
+						zp_tickets.projectId,
+						zp_tickets.priority,
+						zp_tickets.status,
+						zp_tickets.sprint,
+						zp_tickets.storypoints,
+						zp_tickets.hourRemaining,
+						zp_tickets.acceptanceCriteria,
+						zp_tickets.userId,
+						zp_tickets.editorId,
+						zp_tickets.planHours,
+						zp_tickets.tags,
+						zp_tickets.url,
+						zp_tickets.editFrom,
+						zp_tickets.editTo,
+						zp_tickets.dependingTicketId,					
+						zp_projects.name AS projectName,
+						zp_clients.name AS clientName,
+						zp_user.firstname AS userFirstname,
+						zp_user.lastname AS userLastname,
+						t3.firstname AS editorFirstname,
+						t3.lastname AS editorLastname
+					FROM 
+						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
+						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
+					WHERE 
+						zp_tickets.projectId = :projectId
+					GROUP BY
+						zp_tickets.id";
+
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, '\leantime\domain\models\tickets');
+            $stmn->closeCursor();
+
+            return $values;
+
+        }
+
         /**
          * getTicket - get a specific Ticket depending on the role
          *

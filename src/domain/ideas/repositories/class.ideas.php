@@ -293,6 +293,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.modified,
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
+						zp_canvas_items.milestoneId,
 						IF(zp_canvas_items.status IS NULL, 'idea', zp_canvas_items.status) as status,						
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
@@ -362,6 +363,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.milestoneId,				
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
+						zp_canvas_items.milestoneId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
@@ -413,7 +415,8 @@ namespace leantime\domain\repositories {
 						created,
 						modified,
 						canvasId,
-						status
+						status,
+						milestoneId
 				) VALUES (
 						:description,
 						:assumptions,
@@ -424,7 +427,8 @@ namespace leantime\domain\repositories {
 						NOW(),
 						NOW(),
 						:canvasId,
-						:status
+						:status,
+						:milestoneId
 				)";
 
             $stmn = $this->db->database->prepare($query);
@@ -437,6 +441,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();

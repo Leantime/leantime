@@ -24,6 +24,15 @@
 
                 <?php echo $this->displayNotification() ?>
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal btn btn-default"><?=$this->__("links.duplicate_project") ?></a>
+
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tabbedwidget tab-primary projectTabs">
 
                 <ul>
@@ -201,6 +210,7 @@
 
         leantime.projectsController.initProjectTabs();
         leantime.projectsController.initProjectsEditor();
+        leantime.projectsController.initDuplicateProjectModal();
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {

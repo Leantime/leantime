@@ -19,7 +19,7 @@ leantime.projectsController = (function () {
 
         jQuery(".projectDateFrom, .projectDateTo").datepicker(
             {
-                dateFormat:  leantime.i18n.__("language.dateformat"),
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -37,6 +37,31 @@ leantime.projectsController = (function () {
 
     var initProjectTabs = function () {
         jQuery('.projectTabs').tabs();
+    };
+
+    var initDuplicateProjectModal = function () {
+
+        var regularModelConfig = {
+            sizes: {
+                minW: 450,
+                minH: 350
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    initDates();
+                    jQuery(".duplicateProjectModal, .formModal").nyroModal(regularModelConfig);
+                },
+                beforeClose: function () {
+                    location.reload();
+                }
+            }
+        };
+
+        jQuery(".duplicateProjectModal").nyroModal(regularModelConfig);
+
     };
 
     var initProgressBar = function (percentage) {
@@ -167,6 +192,7 @@ leantime.projectsController = (function () {
         initProjectTabs:initProjectTabs,
         initProgressBar:initProgressBar,
         initProjectTable:initProjectTable,
-        initProjectsEditor:initProjectsEditor
+        initProjectsEditor:initProjectsEditor,
+        initDuplicateProjectModal:initDuplicateProjectModal
     };
 })();
