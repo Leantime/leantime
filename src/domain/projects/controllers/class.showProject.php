@@ -4,7 +4,6 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
-    use JoliCode;
     use leantime\domain\services;
 
     class showProject
@@ -294,7 +293,7 @@ namespace leantime\domain\controllers {
 
                     $comments->deleteComment($commentId);
 
-                    $this->setNotification($this->language->__("notifications.comment_deleted"), "success");
+                    $tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
 
                 }
                 //Timesheets
