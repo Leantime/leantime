@@ -52,13 +52,10 @@ namespace leantime\domain\controllers {
                     $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
 
 
-                    $fullReport = $this->reportService->getFullReport($project['id']);
+                    $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
 
-                    if (count($fullReport) > 0) {
-                        $projectResults[$i]['report'] = $fullReport[0];
-                    } else {
-                        $projectResults[$i]['report'] = false;
-                    }
+                    $projectResults[$i]['report'] = $fullReport;
+
                     $i++;
 
                 }

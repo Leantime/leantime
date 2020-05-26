@@ -84,11 +84,7 @@ namespace leantime\domain\controllers {
             $fullReport =  $this->reportService->getFullReport($_SESSION['currentProject']);
 
             $this->tpl->assign("fullReport", $fullReport);
-            if(count($fullReport) > 0) {
-                $this->tpl->assign("fullReportLatest", $fullReport[0]);
-            }else{
-                $this->tpl->assign("fullReportLatest", false);
-            }
+            $this->tpl->assign("fullReportLatest", $this->reportService->getRealtimeReport($_SESSION['currentProject'], ""));
 
             $this->tpl->assign('states', $this->ticketService->getStatusLabels());
 

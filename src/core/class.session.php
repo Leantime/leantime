@@ -37,7 +37,9 @@ class session
     {
 
         $config = new config();
-        
+
+        ini_set('session.gc_maxlifetime', $config->sessionExpiration);
+
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie

@@ -67,6 +67,9 @@ namespace leantime\domain\services {
             return $this->reportRepository->getFullReport($projectId);
         }
 
+        public function getRealtimeReport($projectId, $sprintId) {
+            return $this->reportRepository->runTicketReport($projectId, $sprintId);
+        }
     }
 
 }
