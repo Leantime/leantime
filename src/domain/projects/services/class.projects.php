@@ -348,9 +348,26 @@ namespace leantime\domain\services {
 
                         if (core\login::userIsAtLeast("clientManager")) {
 
-                            $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
-                                "info");
-                            if ($route != "projects.newProject") {
+
+
+                            $allowedModules = array(
+                                "projects",
+                                "clients",
+                                "users",
+                                "setting",
+                                "help",
+                                "api",
+                                "files",
+                                "calendar",
+                                "timesheets"
+                            );
+
+                            $currentModule = core\FrontController::getModuleName($route);
+
+                            if (in_array($currentModule, $allowedModules) === false) {
+
+                                $this->tpl->setNotification("notifications.you_dont_have_any_projects", "info");
+
                                 $this->tpl->redirect(BASE_URL . "/projects/newProject");
                             }
 

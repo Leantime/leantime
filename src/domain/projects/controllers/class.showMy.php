@@ -38,28 +38,33 @@ namespace leantime\domain\controllers {
 
             $projectResults = array();
             $i = 0;
-            foreach ($allprojects as $project) {
+
+            if(is_array($allprojects)) {
+                foreach ($allprojects as $project) {
 
 
-                if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = $project['clientName'];
+                    if (!array_key_exists($project["clientId"], $clients)) {
+                        $clients[$project["clientId"]] = $project['clientName'];
+                    }
+
+                    if ($clientId == "" || $project["clientId"] == $clientId) {
+
+                        $projectResults[$i] = $project;
+                        $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
+                        $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
+
+
+                        $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+
+                        $projectResults[$i]['report'] = $fullReport;
+
+                        $i++;
+
+                    }
+
                 }
-
-                if ($clientId == "" || $project["clientId"] == $clientId) {
-
-                    $projectResults[$i] = $project;
-                    $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
-                    $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
-
-
-                    $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
-
-                    $projectResults[$i]['report'] = $fullReport;
-
-                    $i++;
-
-                }
-
+            }else{
+                $this->tpl->setNotification("notifications.you_dont_have_any_projects", "info");
             }
 
             $this->tpl->assign("currentClient", $clientId);
