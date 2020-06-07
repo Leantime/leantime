@@ -89,6 +89,7 @@ class db
 
         }catch(\PDOException $e){
 
+            echo $e->getMessage();
             echo "No database connection, check your database credentials in your configuration file.";
 
             exit();

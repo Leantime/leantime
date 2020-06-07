@@ -145,7 +145,7 @@
                     <div class="span6">
 
                         <select data-placeholder="<?php echo $this->__('label.filter_by_user'); ?>"
-                                name="editorId" class="user-select span11">
+                                name="editorId" class="user-select span11" id="assignedTo">
                             <option value=""><?php echo $this->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($this->get('users') as $userRow) { ?>
 
@@ -157,6 +157,7 @@
 
                             <?php } ?>
                         </select>
+                        <a href="javascript:void(0)" onclick="jQuery('#assignedTo').val('<?=$_SESSION['userdata']['id']?>')"><?php echo $this->__("links.assign_to_me") ?></a>
                     </div>
                 </div>
 
