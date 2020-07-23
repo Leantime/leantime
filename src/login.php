@@ -70,10 +70,10 @@
                     </div>
                 </div>
                 <div class="regcontent"  style="margin-left: 90px;">
-                    <form id="login" action="<?php echo $redirectUrl?>" method="post">
-                        <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
+                    <form id="login" action="<?=BASE_URL?><?php echo $redirectUrl; ?>" method="post">
+                        <input type="hidden" name="redirectUrl" value="<?=BASE_URL?><?php echo $redirectUrl; ?>" />
                         <div class="inputwrapper login-alert">
-                            <div class="alert alert-error"><?php echo $login->error;?></div>
+                            <div class="alert alert-error"><?php echo $login->error; ?></div>
                         </div>
                         <div class="">
                             <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_email"); ?>" value=""/>
