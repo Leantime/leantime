@@ -202,7 +202,7 @@ namespace leantime\domain\repositories {
 
             if (isset($values['encName']) && isset($values['extension'])) {
 
-                $file = 'userdata/'.$values['encName'].'.'.$values['extension'];
+	            $file = ROOT . '/../userfiles/'.$values['encName'].'.'.$values['extension'];
                 if (file_exists($file)) {
                     unlink($file);
                 }
