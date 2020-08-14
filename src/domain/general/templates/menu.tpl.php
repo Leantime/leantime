@@ -61,7 +61,7 @@
             <li <?php if($module == 'dashboard') echo" class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
             </li>
-            <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll')) echo"class=' active '"; ?>>
+            <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll'|| $action == 'showTicket')) echo"class=' active '"; ?>>
                 <a href="<?=$this->get('ticketMenuLink');?>"><?=$this->__("menu.todos") ?></a>
             </li>
             <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
