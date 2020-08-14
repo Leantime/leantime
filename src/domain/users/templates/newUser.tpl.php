@@ -151,7 +151,7 @@ $projects = $this->get('relations');
 
                                                             <?php foreach($this->get('allProjects') as $row){ ?>
                                                                 <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>"><?php echo $row['clientName']; ?> / <?php echo $row['name']; ?></option>
+                                                                    <option value="<?php echo $row['id'] ?>"><?php echo $row['name']; ?> / <?php echo $row['clientName']; ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
 
@@ -192,7 +192,7 @@ $projects = $this->get('relations');
 
                                                             <?php foreach($this->get('allProjects') as $row){ ?>
                                                                 <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>" selected="selected"><?php echo $row['clientName']; ?> / <?php echo $row['name']; ?></option>
+                                                                    <option value="<?php echo $row['id'] ?>" selected="selected"><?php echo $row['name']; ?> / <?php echo $row['clientName']; ?></option>
                                                                 <?php } ?>
 
                                                             <?php } ?>

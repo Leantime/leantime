@@ -170,7 +170,7 @@
 
                                                                                 <?php foreach($this->get('allProjects') as $row){ ?>
                                                                                     <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
-                                                                                        <option value="<?php echo $row['id'] ?>"><?php $this->e($row['clientName']); ?> / <?php $this->e($row['name']); ?></option>
+                                                                                        <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> /<?php $this->e($row['clientName']); ?></option>
                                                                                     <?php } ?>
                                                                                 <?php } ?>
 
@@ -191,7 +191,7 @@
 
                                                                                 <?php foreach($this->get('allProjects') as $row){ ?>
                                                                                     <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
-                                                                                        <option value="<?php echo $row['id'] ?>"><?php $this->e($row['clientName']); ?> / <?php $this->e($row['name']); ?></option>
+                                                                                        <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> / <?php $this->e($row['clientName']); ?></option>
 
                                                                                     <?php } ?>
 
