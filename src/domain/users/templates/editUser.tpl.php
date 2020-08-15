@@ -166,7 +166,7 @@
                                                      <div class="row">
                                                          <div class="col-5">
                                                              <span><?php echo $this->__('label.available_projects'); ?></span>
-                                                              <select class="uniformselect" name="select3" multiple="multiple" size="10" id="selectOrigin" style="width:100%">
+                                                              <select class="uniformselect" name="select3" multiple="multiple" size="10" id="selectOrigin" style="width:100%;max-width:100%;">
 
                                                                                 <?php foreach($this->get('allProjects') as $row){ ?>
                                                                                     <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
@@ -186,7 +186,7 @@
                                                          </div>
                                                           <div class="col-5">
                                                               <span><?php echo $this->__('label.assigned_projects'); ?></span>
-                                                                <select name="select4" multiple="multiple" size="10" id="selectDest" style="width:100%">
+                                                                <select name="select4" multiple="multiple" size="10" id="selectDest" style="width:100%;max-width:100%;">
 
 
                                                                                 <?php foreach($this->get('allProjects') as $row){ ?>

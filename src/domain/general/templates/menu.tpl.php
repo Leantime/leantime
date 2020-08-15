@@ -56,7 +56,7 @@ $adminLinks = array("setting", "users", "projects", "clients", "timesheets","cal
 							<?= $this->__("menu.all_clients") ?>
 						</a>
 					</li>
-					<li <?php if ($module == 'users' && $action == 'showAll') echo " class='active' "; ?>>
+					<li <?php if (($module == 'users' && $action == 'showAll') || $action == 'newUser'|| $action == 'editUser') echo " class='active' "; ?>>
 						<a href='<?= BASE_URL ?>/users/showAll/'>
 							<?= $this->__("menu.all_users") ?>
 						</a>
