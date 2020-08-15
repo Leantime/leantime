@@ -10,12 +10,12 @@ if (is_array($currentLink)) {
 	$action = $currentLink[1];
 }
 //Set Admin Links...
-$adminLinks = array("setting", "users", "projects", "clients", "timesheets","calendar");
+$adminLinks = array("setting", "users", "projects", "clients", "calendar");
 
 ?>
 
 <ul class="nav nav-tabs nav-stacked">
-	<?php if (in_array($module, $adminLinks)) { ?>
+	<?php if ((in_array($module, $adminLinks) && $action != 'showProject')|| ($module == 'timesheets' && $action == 'showMy')) { ?>
 		<li class="dropdown"  style="margin-top:67px;">
 			<ul style='display:block'>
 				<li class="nav-header border"><?= $this->__("label.settings") ?></li>
@@ -29,7 +29,7 @@ $adminLinks = array("setting", "users", "projects", "clients", "timesheets","cal
 						<?= $this->__("menu.my_projects") ?>
 					</a>
 				</li>
-				<li  <?php if ($module == 'timesheets') echo " class='active' "; ?>>
+				<li  <?php if ($module == 'timesheets' && $action == 'showMy') echo " class='active' "; ?>>
 					<a href='<?= BASE_URL ?>/timesheets/showMy/'>
 						<?= $this->__("menu.my_timesheets_menu") ?>
 					</a>
