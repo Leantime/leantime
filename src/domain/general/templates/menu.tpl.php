@@ -70,12 +70,12 @@ $adminLinks = array("setting", "users", "projects", "clients", "timesheets","cal
 						</li>
 					<?php } ?>
 					<li class="nav-header border"><?= $this->__("menu.help_support") ?></li>
-					<li>
+					<!--<li>
 						<a href='javascript:void(0);'
 						   onclick="leantime.helperController.showHelperModal('<?php echo $this->get('modal'); ?>');">
 							<?= $this->__("menu.show_me_around") ?>
 						</a>
-					</li>
+					</li>-->
 					<li>
 						<a href='http://docs.leantime.io' target="_blank">
 							<?= $this->__("menu.knowledge_base") ?>
