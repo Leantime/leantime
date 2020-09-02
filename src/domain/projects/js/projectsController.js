@@ -83,7 +83,7 @@ leantime.projectsController = (function () {
                 height:"300",
                 content_style: "img { max-width: 100%; }",
                 plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
-                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | fullscreen",
+                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | numlist | fullscreen",
                 branding: false,
                 statusbar: false,
                 convert_urls: false,
