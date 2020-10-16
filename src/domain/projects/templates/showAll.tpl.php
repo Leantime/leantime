@@ -45,7 +45,7 @@
 				<tr class='gradeA'>
 					
 					<td style="padding:6px;">
-						<?php echo $this->displayLink('projects.showProject',$row['name'], array('id' => $row['id'])) ?>
+						<?php echo $this->displayLink('projects.changeCurrentProject',$row['name'], array('id' => $row['id'])) ?>
 					<td>
 						<?php echo $this->displayLink('clients.showClient',$row['clientName'], array('id' => $row['clientId']), NULL, true) ?>
 					</td>
