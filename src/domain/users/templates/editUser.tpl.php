@@ -138,6 +138,12 @@
                                             <?php endforeach; ?>
                                     </select><br/>
 
+								<label for="password"><?php echo $this->__('label.password'); ?></label> <input
+										   type="password" name="password" id="password" value="" autocomplete="new-password"/><br />
+
+                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input
+										   type="password" name="password2" id="password2" value="" autocomplete="new-password"/><br />
+
                                     <input type='hidden' name='hours' value='<?php $this->e($values['hours']) ?>' /><br />
                                     <div class="input-prepend input-append">
 
