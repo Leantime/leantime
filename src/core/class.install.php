@@ -200,7 +200,18 @@ namespace leantime\core {
 
             $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
-            $newDBVersion = str_replace(".", "", $this->settings->dbVersion);
+			$versionArray = explode(".", $this->settings->dbVersion);
+			if(is_array($versionArray) && count($versionArray) == 3) {
+
+				$major = $versionArray[0];
+				$minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+				$patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+				$newDBVersion = $major . $minor . $patch;
+
+			}else{
+				$errors[0] = "Problem identifying the version number";
+				return $errors;
+			}
 
             $setting = new setting();
             $dbVersion = $setting->getSetting("db-version");
