@@ -26,8 +26,8 @@ if (strpos($formUrl, '?delComment=') !== false) {
 		<textarea rows="5" cols="50" class="tinymce"
 				  name="text"></textarea><br/>
 		<input type="submit" value="<?php echo $this->__('buttons.save') ?>"
-			   name="comment" class="btn btn-default"
-			   style="margin-left: 60px;"/>
+			   name="comment" class="btn btn-default btn-success"
+			   style="margin-left: 0px;"/>
 		<input type="hidden" name="comment" value="1"/>
 		<input type="hidden" name="father" id="father" value="0"/>
 		<br/>
@@ -85,12 +85,11 @@ if (strpos($formUrl, '?delComment=') !== false) {
 										$this->getFormattedTimeString($row['date'])
 									); ?></div>
 								<strong><?php $this->e($comment['firstname']); ?><?php $this->e($comment['lastname']); ?></strong><br/>
-								<p style="margin-left:60px;"><?php echo nl2br($this->escape($comment['text'])); ?></p>
+								<p style="margin-left:60px;"><?php echo nl2br(($comment['text'])); ?></p>
 								<div class="clear"></div>
 
 								<div style="padding-left:60px">
 									<?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
-
 										<a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
 										   class="deleteComment">
 											<span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
@@ -115,7 +114,8 @@ if (strpos($formUrl, '?delComment=') !== false) {
         }
         jQuery('.commentBox').hide('fast', function () {
             jQuery('.commentBox textarea').remove();
-            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text"></textarea>');
+            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymce"></textarea>');
+            leantime.ticketsController.initTicketEditor();
 
         });
         jQuery('#comment' + id + '').show('fast');
