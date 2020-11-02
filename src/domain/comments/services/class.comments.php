@@ -23,9 +23,9 @@ namespace leantime\domain\services {
 
         }
 
-        public function getComments($module, $entityId)
+        public function getComments($module, $entityId,$commentOrder=0)
         {
-            return $this->commentRepository->getComments($module, $entityId);
+            return $this->commentRepository->getComments($module, $entityId,"",$commentOrder);
         }
 
         public function addComment($values, $module, $entityId, $entity) {
