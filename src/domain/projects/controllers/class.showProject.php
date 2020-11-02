@@ -437,7 +437,7 @@ namespace leantime\domain\controllers {
 
                 $tpl->assign("bookedHoursArray", $projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $comments->getComments('project', $_GET['id']);
+                $comment = $comments->getComments('project', $_GET['id'],"",$project['psettings']['commentOrder']);
                 $tpl->assign('comments', $comment);
                 $tpl->assign('numComments', $comments->countComments('project', $_GET['id']));
 
