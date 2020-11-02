@@ -59,7 +59,8 @@ namespace leantime\core {
             20101,
             20102,
             20103,
-            20104
+			20104,
+			20105
         );
 
         /**
@@ -985,6 +986,35 @@ namespace leantime\core {
             }
 
         }
+
+		private function update_sql_20105()
+		{
+			$errors = array();
+
+			$sql = array(
+				"ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
+			);
+
+			foreach ($sql as $statement) {
+
+				try {
+
+					$stmn = $this->database->prepare($statement);
+					$stmn->execute();
+
+				} catch (\PDOException $e) {
+					array_push($errors, $statement . " Failed:" . $e->getMessage());
+				}
+
+			}
+
+			if(count($errors) > 0) {
+				return $errors;
+			}else{
+				return true;
+			}
+
+		}
 
     }
 }

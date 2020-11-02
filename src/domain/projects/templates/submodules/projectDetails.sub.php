@@ -124,6 +124,35 @@ $helper = $this->get('helper');
         </div>
 
     </div>
+	<div class="row-fluid  padding-top">
+
+		<div class="span8">
+			<div class="form-group">
+				<h4 class="widgettitle title-light">
+					<span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
+				</h4>
+				<label class="span4 control-label" for="xtestsetting"><?php echo $this->__('label.ticket_layout'); ?></label>
+				<div class="span6">
+					<div class="span6">
+						<select name="psettings[ticketLayout]" id="projectState">
+							<option value="0" <?php if($project['psettings']['ticketLayout'] == 0) { ?> selected=selected
+							<?php } ?>><?php echo $this->__('label.classic'); ?></option>
+
+							<option value="1" <?php if($project['psettings']['ticketLayout'] == 1) { ?> selected=selected
+							<?php } ?>><?php echo $this->__('label.oneView'); ?></option>
+
+						</select>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="span4">
+
+		</div>
+	</div>
+
+
     <div class="row-fluid padding-top">
         <?php if ($project['id'] != '') : ?>
             <div class="pull-right padding-top">
