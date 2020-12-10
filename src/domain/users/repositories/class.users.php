@@ -264,7 +264,9 @@ namespace leantime\domain\repositories {
 				role = :role,
 				hours = :hours,
 				wage = :wage,
-				clientId = :clientId
+				clientId = :clientId,
+				password = :password
+				
 			 WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -278,6 +280,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+			$stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
