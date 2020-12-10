@@ -121,7 +121,14 @@
                         <input type="hidden" name="comment" value="1" />
                         <?php
                         $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
-                        $this->displaySubmodule('comments-generalComment') ?>
+                        if ($project['psettings']['commentOrder']==1)
+						{
+							$this->displaySubmodule('comments-generalCommentBottom');
+						}
+                        else{
+							$this->displaySubmodule('comments-generalComment') ;
+						}
+                        ?>
                     </form>
 
                 </div>

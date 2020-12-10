@@ -29,9 +29,11 @@ namespace leantime\domain\controllers {
         }
 
 
+		/**
+		 * One Method to rule them all...
+		 */
         public function run()
         {
-
 
             $tpl = new core\template();
             $projectRepo = new repositories\projects();
@@ -123,6 +125,8 @@ namespace leantime\domain\controllers {
                 $project = $projectRepo->getProject($id);
                 $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);
 
+
+
                 $helper = new core\helper();
 
                 if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
@@ -148,7 +152,7 @@ namespace leantime\domain\controllers {
                     $project['numberOfTickets'] = 1;
                 }
 
-
+                //save changed project data
                 if (isset($_POST['save']) === true) {
 
                     if (isset($_POST['editorId']) && count($_POST['editorId'])) {
@@ -157,6 +161,15 @@ namespace leantime\domain\controllers {
                         $assignedUsers = array();
                     }
 
+                    if(empty($_POST['psettings']))
+					{
+						$psettings = serialize(array());
+					}
+                    else{
+                    	$psettings = serialize($_POST['psettings']);
+					}
+
+                    //bind Post Data into one array
                     $values = array(
                         'name' => $_POST['name'],
                         'details' => $_POST['details'],
@@ -164,7 +177,8 @@ namespace leantime\domain\controllers {
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
                         'assignedUsers' => $assignedUsers,
-                        'dollarBudget' => $_POST['dollarBudget']
+						'dollarBudget' => $_POST['dollarBudget'],
+                        'psettings' => $psettings
                     );
 
                     if ($values['name'] !== '') {
@@ -204,7 +218,7 @@ namespace leantime\domain\controllers {
 
                 }
 
-                //Post comment
+                // Manage Post comment
                 $comments = new repositories\comments();
                 if (isset($_POST['comment']) === true) {
 
@@ -216,6 +230,7 @@ namespace leantime\domain\controllers {
                     }
                 }
 
+                //Manage File Uploads
                 $file = new repositories\files();
                 if (isset($_POST['upload'])) {
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
@@ -229,6 +244,7 @@ namespace leantime\domain\controllers {
                     }
                 }
 
+                //Manage timesheet Entries
                 $timesheets = new repositories\timesheets();
 
                 $data = array();
@@ -421,7 +437,7 @@ namespace leantime\domain\controllers {
 
                 $tpl->assign("bookedHoursArray", $projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $comments->getComments('project', $_GET['id']);
+                $comment = $comments->getComments('project', $_GET['id'],"",$project['psettings']['commentOrder']);
                 $tpl->assign('comments', $comment);
                 $tpl->assign('numComments', $comments->countComments('project', $_GET['id']));
 

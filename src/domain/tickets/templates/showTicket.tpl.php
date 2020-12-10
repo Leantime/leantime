@@ -1,7 +1,8 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-    $ticket = $this->get('ticket');
+	$ticket = $this->get('ticket');
+	$projectData = $this->get('projectData');
 
 ?>
 
@@ -59,7 +60,15 @@
                     <input type="hidden" name="comment" value="1" />
                     <?php
                     $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
-                    $this->displaySubmodule('comments-generalComment') ?>
+
+					if ($projectData['psettings']['commentOrder']==1)
+					{
+						$this->displaySubmodule('comments-generalCommentBottom');
+					}
+					else{
+						$this->displaySubmodule('comments-generalComment') ;
+					}
+                    ?>
                 </form>
             </div>
 

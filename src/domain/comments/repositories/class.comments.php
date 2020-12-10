@@ -17,8 +17,13 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
-        public function getComments($module,$moduleId,$parent = 0)
+        public function getComments($module,$moduleId,$parent = 0,$orderByState="0")
         {
+			$orderBy = "DESC";
+        	if ($orderByState == 1)
+			{
+				$orderBy = "ASC";
+			}
 
             $sql = "SELECT 
 					comment.id, 
@@ -34,7 +39,7 @@ namespace leantime\domain\repositories {
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
-				ORDER BY comment.date DESC";
+				ORDER BY comment.date ".$orderBy;
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
