@@ -84,10 +84,6 @@ if($config->useS3 == true){
 }else{
     $run = runBackup($backupFile, $config);
     $S3=NULL;
-    if($run['type']=="success"){
-        @unlink($config->userFilePath.'/'.$backupFile);
-    }
-
 }
 
 header('Content-Type: application/json');
