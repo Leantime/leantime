@@ -16,19 +16,20 @@ include_once '../config/configuration.php';
 
 $config = new leantime\core\config();
 
-
 function runBackup($backupFile, $config){
 
-    $backupPath = $config->userFilePath.'/'.$backupFile;
+    
+    $backupPath = $config->dbBackupPath.$backupFile;
     exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output = array(),$worked);
 
 
     switch ($worked) {
         case 0:
             return array('type'=>'success','msg'=> 'The Database ' .$config->dbDatabase .' is save in the path '.getcwd().'/' .$backupPath );
+            chmod(ROOT.'/'.$config->userFilePath,0755);
             break;
         case 1:
-            return array('type'=>'error','msg'=>'There was an error backup ' .$config->dbDatabase . ' to ' . getcwd() . '/' . $backupPath);
+            return array('type'=>'error','msg'=>'There was an error backup ' .$config->dbDatabase . ' to ' . $backupPath);
             break;
         case 2:
             return array('type'=>'error','msg'=>'There was an error: Database MySQL: ' . $config->dbDatabase );
@@ -56,7 +57,7 @@ function uploadS3($backupFile, $config){
         $result = $s3Client->putObject([
             'Bucket' => $config->s3Bucket,
             'Key'    => $config->s3FolderName . '/backupdb/' . $backupFile,
-            'Body'   => fopen($config->userFilePath.'/'.$backupFile, 'r'),
+            'Body'   => fopen($config->dbBackupPath.$backupFile, 'r'),
             'ACL'    => 'private'
         ]);
         $URL = $result->get('ObjectURL');
@@ -67,7 +68,7 @@ function uploadS3($backupFile, $config){
 
 }
 
-
+$S3=NULL;
 if($config->useS3 == true){
 
     $timezone  = -6; //(GMT -6:00) Central Time
@@ -78,7 +79,7 @@ if($config->useS3 == true){
 
     if($run['type']=="success"){
         $S3 = uploadS3($backupFile, $config);
-        @unlink($config->userFilePath.'/'.$backupFile);
+        @unlink($config->dbBackupPath.$backupFile);
     }
 
 }else{

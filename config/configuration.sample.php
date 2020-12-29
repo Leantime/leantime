@@ -18,6 +18,8 @@ class config
 
   /* Fileupload */
   public $userFilePath= "userfiles/"; //Local relative path to store uploaded files (if not using S3)
+
+  public $dbBackupPath= "backupdb/"; //Local relative path to store backup files, need permission 0777
             
   public $useS3 = false; //Set to true if you want to use S3 instead of local files
   public $s3Key = ""; //S3 Key
