@@ -1,6 +1,8 @@
 <?php
 /**
  * backup.php - For Handling Backup DB.
+ * 
+ * Can use CronJob for run 0 5 * * * wget http://yourleantimeurl.com/backup.php
  *
  */
 define('ROOT', dirname(__FILE__));
