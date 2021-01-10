@@ -382,8 +382,8 @@ namespace leantime\domain\services {
 
                     $_SESSION["currentProject"] = $projectId;
 
-                    if (strlen($project['name']) > 25) {
-                        $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                    if (mb_strlen($project['name']) > 25) {
+                        $_SESSION["currentProjectName"] = mb_substr($project['name'], 0, 25) . " (...)";
                     } else {
                         $_SESSION["currentProjectName"] = $project['name'];
                     }
