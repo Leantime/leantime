@@ -4,10 +4,10 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 $helper = $this->get('helper');
 ?>
 <script type="text/javascript">
-	
-	jQuery(document).ready(function(){ 
-		
-	    jQuery("#checkAllEmpl").change(function(){	
+
+	jQuery(document).ready(function(){
+
+	    jQuery("#checkAllEmpl").change(function(){
 	    	jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
 	    	if(jQuery(this).prop("checked") == true){
 	    		jQuery(".invoicedEmpl").attr("checked", "checked");
@@ -16,9 +16,9 @@ $helper = $this->get('helper');
 	    		jQuery(".invoicedEmpl").removeAttr("checked");
 	    		jQuery(".invoicedEmpl").parent().removeClass("checked");
 	    	}
-	    	
+
 	    });
-	    
+
 	    jQuery("#checkAllComp").change(function(){
 	    	jQuery(".invoicedComp").prop('checked', jQuery(this).prop("checked"));
 	    	if(jQuery(this).prop("checked") == true){
@@ -52,9 +52,9 @@ $helper = $this->get('helper');
             weekHeader: leantime.i18n.__("language.weekHeader"),
             isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         });
-	});		
-        
-    
+	});
+
+
 </script>
 
 <div class="pageheader">
@@ -66,7 +66,7 @@ $helper = $this->get('helper');
                 <h1><?php echo $this->__("headline.project_timesheets") ?></h1>
             </div>
         </div><!--pageheader-->
-        
+
         <div class="maincontent">
             <div class="maincontentinner">
 
@@ -75,7 +75,7 @@ $helper = $this->get('helper');
 <form action="<?=BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
 
     <div class="pull-right">
-        
+
         <div id="tableButtons" style="display:inline-block"></div>
         <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
     </div>
@@ -95,13 +95,12 @@ $helper = $this->get('helper');
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
 			<select name="userId" id="userId" onchange="submit();">
 				<option value="all"><?php echo $this->__("label.all_employees"); ?></option>
-	
+
 				<?php foreach($this->get('employees') as $row) {
 					echo'<option value="'.$row['id'].'"';
 					if($row['id'] == $this->get('employeeFilter')) echo' selected="selected" ';
-					echo'>'.$this->escape($row['lastname']).', '.$this->escape($row['firstname']).'</option>';
+					echo'>'.sprintf( $this->__('text.full_name') , $this->escape($row['firstname']), $this->escape($row['lastname'])).'</option>';
 				}
-	
 				?>
 			</select>
             </td>
@@ -113,22 +112,22 @@ $helper = $this->get('helper');
 					echo'<option value="'.$key.'"';
 					if($key == $this->get('actKind')) echo ' selected="selected"';
 					echo'>'.$this->__($row).'</option>';
-	
+
 				}
 				?>
-	
+
 			</select> </td>
 			<td>
 
-			<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();" 
-				<?php 
+			<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
+				<?php
 				if($this->get('invEmpl') == '1') echo ' checked="checked"';
 				?>
 			/><label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label></td>
             <td>
 
-			<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();" 
-				<?php 
+			<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+				<?php
 				if($this->get('invComp') == '1') echo ' checked="checked"';
 				?>
 			/><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
@@ -177,10 +176,10 @@ $helper = $this->get('helper');
 	<tbody>
 
 	<?php
-	
+
 	$sum = 0;
 	$billableSum = 0;
-	
+
 	foreach($this->get('allTimesheets') as $row) {
 		$sum = $sum + $row['hours'];?>
 		<tr>
@@ -201,7 +200,7 @@ $helper = $this->get('helper');
 			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
 			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
-			<td><?php $this->e($row['firstname']); ?>, <?php $this->e($row['lastname']); ?></td>
+			<td><?php printf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])); ?></td>
 			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
 			<td><?php $this->e($row['description']); ?></td>
 			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
