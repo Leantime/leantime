@@ -13,7 +13,7 @@ $canvasTitle = "";
        <h1><?=$this->__('headline.retrospective') ?></h1>
    </div>
 </div><!--pageheader-->
-           
+
 <div class="maincontent">
     <div class="maincontentinner">
     <?php echo $this->displayNotification(); ?>
@@ -62,11 +62,11 @@ $canvasTitle = "";
 
         </div>
 
-        <div class="clearfix"></div>             
+        <div class="clearfix"></div>
     <?php if(count($this->get('allCanvas')) > 0) {?>
 
         <div id="sortableRetroKanban" class="sortableTicketList disabled" >
-            
+
             <div class="row-fluid" >
 
                 <div class="column" style="width:33.33%">
@@ -125,7 +125,7 @@ $canvasTitle = "";
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -223,7 +223,7 @@ $canvasTitle = "";
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -321,7 +321,7 @@ $canvasTitle = "";
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -364,7 +364,7 @@ $canvasTitle = "";
 
 
 
-            </div>    
+            </div>
 
 
 

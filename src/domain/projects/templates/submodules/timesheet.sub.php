@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $helper = $this->get('helper');
 $project = $this->get('project');
@@ -41,7 +41,7 @@ $bookedHours = $this->get('bookedHours');
 			<?php foreach($this->get('employees') as $row) {
 				echo'<option value="'.$row['id'].'"';
 				if($row['id'] == $this->get('employeeFilter')) echo' selected="selected" ';
-				echo'>'.$row['lastname'].', '.$row['firstname'].'</option>';
+				echo'>'.sprintf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])).'</option>';
 			}
 
 			?>
@@ -61,14 +61,14 @@ $bookedHours = $this->get('bookedHours');
 		</select> </td>
 		<td>
 		<label for="invEmpl"><?php echo $this->__('INVOICED') ?></label>
-		<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();" 
-			<?php 
+		<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
+			<?php
 			if($this->get('invEmpl') == '1') echo ' checked="checked"';
 			?>
 		/><br />
 		<label for="invEmpl"><?php echo $this->__('INVOICED_COMP'); ?></label>
-		<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();" 
-			<?php 
+		<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+			<?php
 			if($this->get('invComp') == '1') echo ' checked="checked"';
 			?>
 		/>
@@ -128,7 +128,7 @@ $bookedHours = $this->get('bookedHours');
 			<td <?php if($diff<0)echo'class="new" ';?>><?php echo $diff; ?></td>
 			<td><a href="index.php?act=tickets.showTicket&amp;id=<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
 			<td><a href="index.php?act=projects.showProject&amp;id=<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
-			<td><?php echo $row['firstname']; ?>, <?php echo $row['lastname']; ?></td>
+			<td><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>
 			<td><?php echo $lang[$row['kind']]; ?></td>
 			<td><?php echo $row['description']; ?></td>
 			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedEmplDate'], 2); ?>
@@ -160,5 +160,5 @@ $bookedHours = $this->get('bookedHours');
 			jQuery('#body').toggle();
 		});
 	});
-	
+
 </script>
