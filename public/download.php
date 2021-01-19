@@ -119,6 +119,7 @@ function getFileFromS3(){
     $s3Client = new Aws\S3\S3Client([
         'version'     => 'latest',
         'region'      => $config->s3Region,
+        'endpoint' => $config->s3EndPoint,
         'credentials' => [
             'key'    => $config->s3Key,
             'secret' => $config->s3Secret

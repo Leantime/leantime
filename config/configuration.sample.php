@@ -18,6 +18,8 @@ class config
 
   /* Fileupload */
   public $userFilePath= "userfiles/"; //Local relative path to store uploaded files (if not using S3)
+
+  public $dbBackupPath= "backupdb/"; //Local relative path to store backup files, need permission 0777
             
   public $useS3 = false; //Set to true if you want to use S3 instead of local files
   public $s3Key = ""; //S3 Key
@@ -25,7 +27,8 @@ class config
   public $s3Bucket = ""; //Your S3 bucket
   public $s3Region = ""; //S3 region
   public $s3FolderName = ""; //Foldername within S3 (can be emtpy)
-            
+  public $s3EndPoint = ""; //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+  
   /* Sessions */
   public $sessionpassword = "3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m"; //Salting sessions. Replace with a strong password
   public $sessionExpiration = 28800; //How many seconds after inactivity should we logout?  28800seconds = 8hours

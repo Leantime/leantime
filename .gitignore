@@ -3,6 +3,7 @@
 .idea
 .settings
 .DS_Store
+.vscode
 *.swp
 
 config/configuration.php
