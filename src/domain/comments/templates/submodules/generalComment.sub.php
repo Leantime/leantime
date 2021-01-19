@@ -40,13 +40,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
 				<div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
 					<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"
 						 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
-					<div class="right"><?php printf(
-							$this->__('text.written_on'),
-							$this->getFormattedDateString($row['date']),
-							$this->getFormattedTimeString($row['date'])
-						); ?></div>
-					<strong><?php $this->e($row['firstname']); ?><?php $this->e($row['lastname']); ?></strong><br/>
-					<div style="margin-left:60px;"><?php echo nl2br(($row['text'])); ?></div>
+					<div class="right"><?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+							$this->getFormattedTimeString($row['date']) ); ?></div>
+					<strong>
+					<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+					</strong><br/>
+					<div style="margin-left:60px;"><?php echo nl2br($this->escape($row['text'])); ?></div>
 					<div class="clear"></div>
 					<div style="padding-left:60px">
 						<a href="javascript:void(0);"
@@ -79,13 +78,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
 								 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
 							<div>
 								<div class="right">
-									<?php printf(
-										$this->__('text.written_on'),
-										$this->getFormattedDateString($row['date']),
-										$this->getFormattedTimeString($row['date'])
-									); ?></div>
-								<strong><?php $this->e($comment['firstname']); ?><?php $this->e($comment['lastname']); ?></strong><br/>
-								<p style="margin-left:60px;"><?php echo nl2br(($comment['text'])); ?></p>
+									<?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+										$this->getFormattedTimeString($row['date']) ); ?></div>
+								<strong>
+								<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+								</strong><br/>
+								<p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
 								<div class="clear"></div>
 
 								<div style="padding-left:60px">

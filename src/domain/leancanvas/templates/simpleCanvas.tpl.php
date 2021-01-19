@@ -40,19 +40,19 @@ $statusLabels = $this->get("statusLabels");
 
       <?php } ?>
 
-       
+
   });
-  
+
   </script>
 
- <div class="pageheader">           
+ <div class="pageheader">
     <div class="pageicon"><span class="fas fa-flask"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.research_board") ?></h1>
     </div>
 </div><!--pageheader-->
-           
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -105,11 +105,11 @@ $statusLabels = $this->get("statusLabels");
 
         </div>
 
-        <div class="clearfix"></div>             
+        <div class="clearfix"></div>
     <?php if(count($this->get('allCanvas')) > 0) {?>
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
-            
+
             <div class="row-fluid" id="firstRow">
 
                 <div class="column" style="width:33.33%">
@@ -188,7 +188,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -305,7 +305,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -421,7 +421,7 @@ $statusLabels = $this->get("statusLabels");
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -464,14 +464,14 @@ $statusLabels = $this->get("statusLabels");
 
 
             </div>
-            
+
 
         </div>
         <div class="clearfix"></div>
 
         <?php  if ($login::userIsAtLeast("clientManager")) { ?>
             <br />
-            <a href="<?=BASE_URL ?>/leancanvas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><i class="fa fa-trash"></i> Delete Board</a>
+            <a href="<?=BASE_URL ?>/leancanvas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?php echo $this->__("links.delete_board") ?></a>
         <?php } ?>
 
         <?php

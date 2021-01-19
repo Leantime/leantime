@@ -17,7 +17,7 @@
 ?>
 
  <div class="pageheader">
- 	
+
  	<div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
@@ -25,7 +25,7 @@
 	</div>
 
 </div><!--pageheader-->
-           
+
 <div class="maincontent">
 
 	<div class="maincontentinner">
@@ -101,7 +101,7 @@
                 </div>
             </div>
 
-			<div class="clearfix"></div>			
+			<div class="clearfix"></div>
 			<div class="filterBar <?php
             if($searchCriteria['users'] == '' && $searchCriteria['milestone'] == '' && $searchCriteria['type'] == '') { echo "hideOnLoad"; } ?>">
 				<div class="row-fluid" style="opacity:0.4">
@@ -117,13 +117,13 @@
 
                                     if($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], explode(",", $searchCriteria['users'])) !== false) echo" selected='selected' ";
 
-                                    echo">".$this->escape($userRow["firstname"]." ".$userRow["lastname"])."</option>"; ?>
+                                    echo">".sprintf( $this->__("text.full_name"), $this->escape($userRow["firstname"]), $this->escape($userRow['lastname']))."</option>"; ?>
 
                                 <?php } 	?>
                             </select>
                         </div>
 
-					
+
 				    </div>
                     <div class="filterBoxLeft">
 
@@ -176,20 +176,20 @@
 		</form>
 
 		<div id="sortableTicketKanban" class="sortableTicketList">
-			
+
 			<div class="row-fluid">
-				
+
 				<?php
 
-				foreach($this->get('allTicketStates') as $key => $statusRow){ 	
+				foreach($this->get('allTicketStates') as $key => $statusRow){
 
 				    //Don't display archive on kanban board
 				    if($key<0){continue;}
 
 					?>
-						
+
 						<div class="column" style="width:<?=$size?>%;">
-							
+
                             <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
                             <?php if ($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
@@ -353,13 +353,13 @@
 
                                                     <?php foreach($this->get('users') as $user){
                                                         echo"<li class='dropdown-item'>
-                                                                <a href='javascript:void(0);' data-label='".$this->escape($user['firstname']." ".$user['lastname'])."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".$this->escape($user['firstname']." ".$user['lastname'])."</a>";
+                                                                <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
                                             </div>
 
-												
+
 										</div>
 										<div class="clearfix"></div>
 									</div>

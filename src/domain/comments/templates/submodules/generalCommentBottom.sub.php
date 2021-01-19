@@ -33,7 +33,10 @@
                             $this->getFormattedDateString($row['date']),
                             $this->getFormattedTimeString($row['date'])
                         ); ?></div>
-                    <strong><?php $this->e($row['firstname']); ?> <?php $this->e($row['lastname']); ?></strong><br />
+                    <strong>
+                    <?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+                    </strong>
+                    <br />
                     <p style="margin-left:60px;"><?php echo nl2br($this->escape($row['text'])); ?></p>
 
                     <div class="clear"></div>
@@ -67,13 +70,12 @@
                             <img src="<?=BASE_URL ?>/api/users?profileImage=<?=$comment['profileId']?>" style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div >
                                 <div class="right">
-                                    <?php printf(
-                                        $this->__('text.written_on'),
-                                        $this->getFormattedDateString($row['date']),
-                                        $this->getFormattedTimeString($row['date'])
-                                    ); ?></div>
-                                <strong><?php $this->e($comment['firstname']); ?> <?php $this->e($comment['lastname']); ?></strong><br />
-                                <p style="margin-left:60px;"><?php echo nl2br($this->escape($comment['text'])); ?></p>
+                                    <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+                                        $this->getFormattedTimeString($row['date']) ); ?></div>
+                                <strong>
+                                <?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?>
+                                </strong><br />
+                                <p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
                                 <div class="clear"></div>
 
                                 <div style="padding-left:60px">

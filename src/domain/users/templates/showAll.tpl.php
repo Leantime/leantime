@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('RESTRICTED') or die('Restricted access');
 $roles = $this->get('roles');
 ?>
@@ -11,7 +11,7 @@ $roles = $this->get('roles');
         <h1><h1><?php echo $this->__('headlines.users'); ?></h1></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -49,13 +49,14 @@ $roles = $this->get('roles');
             <tbody>
             <?php foreach($this->get('allUsers') as $row): ?>
                     <tr>
-                        <td style="padding:6px 10px;"><?php echo $this->displayLink('users.editUser', $this->escape($row['firstname']).' '.$this->escape($row['lastname']), array('id' => $row['id'])) ?></td>
+                        <td style="padding:6px 10px;">
+                        <?php echo $this->displayLink('users.editUser', sprintf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
+                        </td>
                         <td><?php echo $row['username']; ?></td>
                         <td><?=$row['clientName']; ?></td>
                         <td><?=$this->__("label.roles.".$roles[$row['role']]); ?></td>
                         <td><?php if($row['twoFAEnabled']){ echo $this->__('label.yes'); }else{ echo $this->__('label.no'); } ?></td>
                         <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete');?></a></td>
-
                     </tr>
             <?php endforeach; ?>
             </tbody>

@@ -15,7 +15,7 @@ $users = $this->get('users');
         <h1><?php $this->e($values['name']); ?></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
         <?php echo $this->displayNotification(); ?>
@@ -130,7 +130,9 @@ $users = $this->get('users');
                                 <tbody>
                                 <?php foreach($this->get('userClients') as $user): ?>
                                     <tr>
-                                        <td><?php $this->e($user['firstname']. ' ' .$user['lastname']); ?></td>
+                                        <td>
+                                        <?php printf( $this->__('text.full_name'), $this->escape($user['firstname']), $this->escape($user['lastname'])); ?>
+                                        </td>
                                         <td><a href='mailto:<?php $this->e($user['username']); ?>'><?php $this->e($user['username']); ?></a></td>
                                         <td><?php $this->e($user['phone']); ?></td>
                                     </tr>

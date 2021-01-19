@@ -86,10 +86,10 @@ $helper = $this->get('helper');
 
                                     <p class="half">
                                         <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php 
+                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php
                                             endif; ?>/>
 
-                                        <label for="user-<?php echo $row['id'] ?>"><?php echo $this->escape($row['lastname']) .' '. $this->escape($row['firstname']); ?></label>
+                                        <label for="user-<?php echo $row['id'] ?>"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
                                     </p>
                             <?php } ?>
                         </div>
