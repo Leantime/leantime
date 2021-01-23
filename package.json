@@ -5,6 +5,7 @@
   "main": "gruntfile.js",
   "dependencies": {
     "chart.js": "^2.9.3",
+    "composer": "^4.1.0",
     "croppie": "^2.6.4",
     "datatables.net": "^1.10.20",
     "datatables.net-buttons": "^1.6.1",

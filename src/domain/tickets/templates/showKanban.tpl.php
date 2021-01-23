@@ -167,7 +167,7 @@
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.search_term") ?></label><br />
-                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php echo $searchCriteria['term']; ?>">
+                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php $this->e($searchCriteria['term']); ?>">
                         <input type="submit" value="Search" class="form-control btn btn-primary pull-left" />
                     </div>
 
