@@ -386,7 +386,7 @@
 
 <script type="text/javascript">
 
-    leantime.ticketsController.initTicketSearchSubmit("/tickets/showKanban");
+    leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL?>/tickets/showKanban");
 
     leantime.ticketsController.initUserDropdown();
     leantime.ticketsController.initMilestoneDropdown();
