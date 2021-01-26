@@ -37,7 +37,7 @@
 <div class="header hidden-gt-sm">
 
     <div class="logo" style="margin-left:0px;">
-        <a href="<?=BASE_URL ?>/" style="background-image:url(<?=BASE_URL ?><?php echo $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+        <a href="<?=BASE_URL ?>/" style="background-image:url(<?php echo htmlentities($_SESSION["companysettings.logoPath"]);?>)">&nbsp;</a>
     </div>
 
 </div>
