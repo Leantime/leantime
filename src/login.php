@@ -24,7 +24,7 @@
 
 <?php
 
-    $redirectUrl = "/dashboard/show";
+    $redirectUrl = BASE_URL."/dashboard/show";
 
     if($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
         $redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
@@ -37,7 +37,7 @@
 <div class="header hidden-gt-sm">
 
     <div class="logo" style="margin-left:0px;">
-        <a href="<?=BASE_URL ?>/" style="background-image:url(<?=BASE_URL ?><?php echo $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+        <a href="<?=BASE_URL ?>/" style="background-image:url(<?php echo htmlentities($_SESSION["companysettings.logoPath"]);?>)">&nbsp;</a>
     </div>
 
 </div>

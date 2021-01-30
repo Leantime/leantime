@@ -41,7 +41,7 @@
 
     <div class="logo" style="margin-left:0px;">
         <a href="<?= BASE_URL ?>/"
-           style="background-image:url(<?= BASE_URL ?><?php echo $_SESSION["companysettings.logoPath"]; ?>">&nbsp;</a>
+           style="background-image:url(<?php echo $_SESSION["companysettings.logoPath"]; ?>)">&nbsp;</a>
     </div>
 
 </div>

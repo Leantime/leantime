@@ -127,6 +127,7 @@ class application
             }
         }
 
+
         if(isset($_SESSION["companysettings.mainColor"]) === false) {
             $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
             if ($mainColor !== false) {
