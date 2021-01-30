@@ -50,6 +50,11 @@ namespace leantime\domain\controllers {
                     return;
                 }
 
+                //Ensure this ticket belongs to the current project
+                if($_SESSION["currentProject"] != $ticket->projectId) {
+                    $this->projectService->changeCurrentSessionProject($ticket->projectId);
+                    $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
+                }
                 //Delete file
                 if (isset($params['delFile']) === true) {
 
