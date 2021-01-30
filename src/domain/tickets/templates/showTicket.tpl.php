@@ -61,11 +61,10 @@
                     <?php
                     $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
 
-					if ($projectData['psettings']['commentOrder']==1)
+					if (isset($projectData['psettings']['commentOrder']) === true && $projectData['psettings']['commentOrder'] ==1)
 					{
 						$this->displaySubmodule('comments-generalCommentBottom');
-					}
-					else{
+					} else{
 						$this->displaySubmodule('comments-generalComment') ;
 					}
                     ?>
