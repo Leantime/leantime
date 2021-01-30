@@ -24,7 +24,7 @@
 
 <?php
 
-    $redirectUrl ="/dashboard/show";
+    $redirectUrl = BASE_URL."/dashboard/show";
 
     if($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
         $redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
