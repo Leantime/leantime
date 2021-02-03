@@ -66,7 +66,7 @@ class config
     $this->s3Key = $this->configEnvironmentHelper("LEAN_S3_KEY", $this->s3Key);
     $this->s3Secret = $this->configEnvironmentHelper("LEAN_S3_SECRET", $this->s3Secret);
     $this->s3Bucket = $this->configEnvironmentHelper("LEAN_S3_BUCKET", $this->s3Bucket);
-    $this->s3UsePathStyleEndpoint = $this->configEnvironmentHelper("LEAN_S3_PATH_STYLE_ENDPOINT", $this->s3UsePathStyleEndpoint, "boolean");
+    $this->s3UsePathStyleEndpoint = $this->configEnvironmentHelper("LEAN_S3_USE_PATH_STYLE_ENDPOINT", $this->s3UsePathStyleEndpoint, "boolean");
     $this->s3Region = $this->configEnvironmentHelper("LEAN_S3_REGION", $this->s3Region);
     $this->s3FolderName = $this->configEnvironmentHelper("LEAN_S3_FOLDER_NAME", $this->s3FolderName);
               
