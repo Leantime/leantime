@@ -45,7 +45,7 @@ function uploadS3($backupFile, $config){
             'version'     => 'latest',
             'region'      => $config->s3Region,
             'endpoint'    => $config->s3EndPoint,
-            'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
+            'use_path_style_endpoint' => $config->s3UsePathStyleEndpoint,
             'credentials' => [
                 'key'    => $config->s3Key,
                 'secret' => $config->s3Secret
@@ -54,10 +54,12 @@ function uploadS3($backupFile, $config){
     );
 
     try {
-       
+        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // otherwise you will get an error as the key starts with a slash
+        $fileKey = implode('/', array_filter(array($config->s3FolderName, 'backupdb' , $backupFile)));
         $result = $s3Client->putObject([
             'Bucket' => $config->s3Bucket,
-            'Key'    => $config->s3FolderName . '/backupdb/' . $backupFile,
+            'Key'    => $fileKey,
             'Body'   => fopen($config->dbBackupPath.$backupFile, 'r'),
             'ACL'    => 'private'
         ]);
