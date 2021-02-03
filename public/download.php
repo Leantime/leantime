@@ -120,6 +120,7 @@ function getFileFromS3(){
         'version'     => 'latest',
         'region'      => $config->s3Region,
         'endpoint' => $config->s3EndPoint,
+        'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
         'credentials' => [
             'key'    => $config->s3Key,
             'secret' => $config->s3Secret

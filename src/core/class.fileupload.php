@@ -93,6 +93,7 @@ class fileupload
                 'version'     => 'latest',
                 'region'      => $this->config->s3Region,
                 'endpoint'    => $this->config->s3EndPoint,
+                'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
                 'credentials' => [
                  'key'    => $this->config->s3Key,
                  'secret' => $this->config->s3Secret
