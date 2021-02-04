@@ -66,6 +66,7 @@ module.exports = function (grunt) {
                     "node_modules/datatables.net-buttons/js/buttons.print.js",
                     "node_modules/datatables.net-buttons/js/buttons.colVis.js",
                     "node_modules/tinymce/tinymce.js",
+                    "node_modules/tinymce/icons/default/icons.js",
                     "node_modules/tinymce/jquery.tinymce.js",
                     "node_modules/tinymce/themes/silver/theme.js",
                     "node_modules/tinymce/plugins/autolink/plugin.js",
