@@ -25,6 +25,7 @@ class config
   public $s3Key = ""; //S3 Key
   public $s3Secret = ""; //S3 Secret
   public $s3Bucket = ""; //Your S3 bucket
+  public $s3UsePathStyleEndpoint = false; // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
   public $s3Region = ""; //S3 region
   public $s3FolderName = ""; //Foldername within S3 (can be emtpy)
   public $s3EndPoint = ""; //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
@@ -61,9 +62,11 @@ class config
     $this->userFilePath= $this->configEnvironmentHelper("LEAN_USER_FILE_PATH", $this->userFilePath);
               
     $this->useS3 = $this->configEnvironmentHelper("LEAN_USE_S3", $this->useS3, "boolean");
+    $this->s3EndPoint = $this->configEnvironmentHelper("LEAN_S3_END_POINT", $this->s3EndPoint);
     $this->s3Key = $this->configEnvironmentHelper("LEAN_S3_KEY", $this->s3Key);
     $this->s3Secret = $this->configEnvironmentHelper("LEAN_S3_SECRET", $this->s3Secret);
     $this->s3Bucket = $this->configEnvironmentHelper("LEAN_S3_BUCKET", $this->s3Bucket);
+    $this->s3UsePathStyleEndpoint = $this->configEnvironmentHelper("LEAN_S3_USE_PATH_STYLE_ENDPOINT", $this->s3UsePathStyleEndpoint, "boolean");
     $this->s3Region = $this->configEnvironmentHelper("LEAN_S3_REGION", $this->s3Region);
     $this->s3FolderName = $this->configEnvironmentHelper("LEAN_S3_FOLDER_NAME", $this->s3FolderName);
               
