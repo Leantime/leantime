@@ -233,7 +233,7 @@ class fileupload
                 $file = fopen($this->file_tmp_name, "rb");
                 // implode all non-empty elements to allow s3FolderName to be empty. 
                 // otherwise you will get an error as the key starts with a slash
-                $fileName = implode('/', array_filter(array($config->s3FolderName, $this->file_name)));
+                $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
                 $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "public-read");
                 $url =  $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
@@ -275,7 +275,7 @@ class fileupload
             $file = fopen($this->file_tmp_name, "rb");
             // implode all non-empty elements to allow s3FolderName to be empty. 
             // otherwise you will get an error as the key starts with a slash
-            $fileName = implode('/', array_filter(array($config->s3FolderName, $this->file_name)));
+            $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
