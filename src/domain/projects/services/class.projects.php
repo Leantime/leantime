@@ -136,6 +136,9 @@ namespace leantime\domain\services {
 
             //Email
             $users = $this->getUsersToNotify($projectId);
+            $users = array_filter($users, function($user, $k) { 
+                return $user != $_SESSION['userdata']['mail']; 
+            }, ARRAY_FILTER_USE_BOTH);
 
             $mailer = new core\mailer();
             $mailer->setSubject($subject);
