@@ -1,0 +1,116 @@
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[31-Jan-2021 18:54:16 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[31-Jan-2021 18:54:23 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type bool in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:53:47 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:53:51 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:54:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:55:26 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:55:36 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:56:09 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:56:42 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:56:45 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\controllers\class.showProject.php on line 440
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[05-Feb-2021 19:56:54 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in D:\xampp\htdocs\leantimeos-master\src\domain\projects\templates\showProject.tpl.php on line 124
+[05-Feb-2021 20:05:13 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:05:13 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:08:45 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:08:45 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:17 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:17 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:20 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:20 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:42 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:42 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:52 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:09:52 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:10:26 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:10:26 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:04 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:04 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:09 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:09 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:18 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:18 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:27 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:27 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:58 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:11:58 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:12:03 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:12:03 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:13:13 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:13:13 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:13:17 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:13:17 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:14:07 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:14:07 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:14:24 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:14:24 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:07 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\repositories\class.projects.php on line 608
+[05-Feb-2021 20:18:15 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:15 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:36 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:36 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:47 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\projects\repositories\class.projects.php on line 608
+[05-Feb-2021 20:18:51 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:18:51 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:19:48 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:19:48 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:20:19 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:20:19 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:22:14 America/Los_Angeles] PHP Notice:  Undefined index: psettings in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103
+[05-Feb-2021 20:22:14 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in D:\xampp\htdocs\leantimeos-master\src\domain\tickets\controllers\class.showTicket.php on line 103

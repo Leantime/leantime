@@ -337,7 +337,6 @@ namespace leantime\domain\repositories {
 					zp_projects.state,
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
-					zp_projects.psettings,
 					zp_clients.name AS clientName,
 					COUNT(zp_tickets.id) AS numberOfTickets
 				FROM zp_projects 
@@ -357,9 +356,7 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
-			//print_r($values);
-			//additonal Settings...
-			$values['psettings'] = unserialize($values['psettings'] );
+
 
             return $values;
         }

@@ -23,7 +23,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 	</a>
 	<div id="comment0" class="commentBox">
 		<!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
-		<textarea rows="5" cols="50" class="tinymce"
+		<textarea rows="5" cols="50" class="tinymceSimple"
 				  name="text"></textarea><br/>
 		<input type="submit" value="<?php echo $this->__('buttons.save') ?>"
 			   name="comment" class="btn btn-default btn-success"
@@ -112,10 +112,10 @@ if (strpos($formUrl, '?delComment=') !== false) {
         }
         jQuery('.commentBox').hide('fast', function () {
             jQuery('.commentBox textarea').remove();
-            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymce"></textarea>');
-            leantime.ticketsController.initTicketEditor();
-
+            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            leantime.generalController.initSimpleEditor();
         });
+
         jQuery('#comment' + id + '').show('fast');
         jQuery('#father').val(id);
     }

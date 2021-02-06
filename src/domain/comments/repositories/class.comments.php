@@ -20,7 +20,7 @@ namespace leantime\domain\repositories {
         public function getComments($module,$moduleId,$parent = 0,$orderByState="0")
         {
 			$orderBy = "DESC";
-        	if ($orderByState == 1)
+        	if ($orderByState == 1 || $_SESSION["projectsettings"]['commentOrder'] == 1)
 			{
 				$orderBy = "ASC";
 			}

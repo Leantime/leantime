@@ -124,8 +124,6 @@ namespace leantime\domain\repositories {
 
         public function getStateLabels()
         {
-            //Todo: Remove!
-            unset($_SESSION["projectsettings"]["ticketlabels"]);
 
             if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
 

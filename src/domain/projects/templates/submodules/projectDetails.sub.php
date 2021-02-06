@@ -138,11 +138,11 @@ $helper = $this->get('helper');
 				<label class="span4 control-label" for="ticketLayout"><?php echo $this->__('label.ticket_layout'); ?></label>
 				<div class="span6">
 					<div class="span6">
-						<select name="psettings[ticketLayout]" id="ticketLayout">
-							<option value="0" <?php if($project['psettings']['ticketLayout'] == 0) { ?> selected=selected
+						<select name="settingsTicketLayout" id="ticketLayout">
+							<option value="0" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 0) { ?> selected=selected
 							<?php } ?>><?php echo $this->__('label.classic'); ?></option>
 
-							<option value="1" <?php if($project['psettings']['ticketLayout'] == 1) { ?> selected=selected
+							<option value="1" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 1) { ?> selected=selected
 							<?php } ?>><?php echo $this->__('label.oneView'); ?></option>
 
 						</select>
@@ -156,11 +156,11 @@ $helper = $this->get('helper');
 				<label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
 				<div class="span6">
 					<div class="span6">
-						<select name="psettings[commentOrder]" id="commentOrder">
-							<option value="0" <?php if($project['psettings']['commentOrder'] == "0") { ?> selected=selected
+						<select name="settingsCommentOrder" id="commentOrder">
+							<option value="0" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "0") { ?> selected=selected
 							<?php } ?>><?php echo $this->__('label.uptodown'); ?></option>
 
-							<option value="1" <?php if($project['psettings']['commentOrder'] == "1") { ?> selected=selected
+							<option value="1" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "1") { ?> selected=selected
 							<?php } ?>><?php echo $this->__('label.downtoup'); ?></option>
 
 						</select>
