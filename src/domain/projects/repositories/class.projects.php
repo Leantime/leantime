@@ -591,8 +591,7 @@ namespace leantime\domain\repositories {
 				clientId = :clientId,
 				state = :state,
 				hourBudget = :hourBudget,
-				dollarBudget = :dollarBudget,
-				psettings = :psettings
+				dollarBudget = :dollarBudget
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -605,7 +604,6 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('state', $values['state'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-			$stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
 			$stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();

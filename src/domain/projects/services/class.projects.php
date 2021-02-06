@@ -362,6 +362,8 @@ namespace leantime\domain\services {
                             $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
                                 "info");
 
+
+
                             if ($route != "users.editOwn") {
                                 $this->tpl->redirect(BASE_URL . "/users/editOwn");
                             }
