@@ -362,6 +362,8 @@ namespace leantime\domain\services {
                             $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
                                 "info");
 
+
+
                             if ($route != "users.editOwn") {
                                 $this->tpl->redirect(BASE_URL . "/users/editOwn");
                             }
@@ -402,6 +404,9 @@ namespace leantime\domain\services {
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
+                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
 
                     return true;
 

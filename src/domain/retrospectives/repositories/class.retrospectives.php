@@ -51,7 +51,10 @@ namespace leantime\domain\repositories {
         public function getCanvasLabels()
         {
 
-            unset($_SESSION["projectsettings"]["retrolabels"]);
+            if(isset($_SESSION['currentProject']) == false){
+                return;
+            }
+
             if(isset($_SESSION["projectsettings"]["retrolabels"])) {
 
                 return $_SESSION["projectsettings"]["retrolabels"];

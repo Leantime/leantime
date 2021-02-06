@@ -337,7 +337,6 @@ namespace leantime\domain\repositories {
 					zp_projects.state,
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
-					zp_projects.psettings,
 					zp_clients.name AS clientName,
 					COUNT(zp_tickets.id) AS numberOfTickets
 				FROM zp_projects 
@@ -357,9 +356,7 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
-			//print_r($values);
-			//additonal Settings...
-			$values['psettings'] = unserialize($values['psettings'] );
+
 
             return $values;
         }
@@ -594,8 +591,7 @@ namespace leantime\domain\repositories {
 				clientId = :clientId,
 				state = :state,
 				hourBudget = :hourBudget,
-				dollarBudget = :dollarBudget,
-				psettings = :psettings
+				dollarBudget = :dollarBudget
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -608,7 +604,6 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('state', $values['state'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-			$stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
 			$stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();

@@ -78,7 +78,10 @@
         public function getCanvasLabels()
         {
 
-            unset($_SESSION["projectsettings"]["researchlabels"]);
+            if(isset($_SESSION['currentProject']) == false){
+                return;
+            }
+
             if(isset($_SESSION["projectsettings"]["researchlabels"])) {
 
 

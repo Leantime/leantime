@@ -100,7 +100,9 @@ namespace leantime\domain\controllers {
 
                 $projectData = $this->projectService->getProject($ticket->projectId);
 				$this->tpl->assign('projectData', $projectData);
-                $comments = $this->commentService->getComments('ticket', $id,$projectData['psettings']['commentOrder']);
+
+				$comments = $this->commentService->getComments('ticket', $id, $_SESSION["projectsettings"]['commentOrder']);
+
                 $this->tpl->assign('numComments', count($comments));
                 $this->tpl->assign('comments', $comments);
 

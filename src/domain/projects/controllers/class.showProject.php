@@ -120,6 +120,10 @@ namespace leantime\domain\controllers {
                 $slackWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".slackWebhookURL");
                 $tpl->assign('slackWebhookURL', $slackWebhook);
 
+                $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
+                $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
+
+
                 $_SESSION['lastPage'] = BASE_URL."/projects/showProject/".$id;
                 
                 $project = $projectRepo->getProject($id);
@@ -161,13 +165,12 @@ namespace leantime\domain\controllers {
                         $assignedUsers = array();
                     }
 
-                    if(empty($_POST['psettings']))
-					{
-						$psettings = serialize(array());
-					}
-                    else{
-                    	$psettings = serialize($_POST['psettings']);
-					}
+                    $this->settingsRepo->saveSetting("projectsettings." . $id . ".commentOrder", $_POST['settingsCommentOrder']);
+                    $this->settingsRepo->saveSetting("projectsettings." . $id . ".ticketLayout", $_POST['settingsTicketLayout']);
+
+                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
+                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
+
 
                     //bind Post Data into one array
                     $values = array(
@@ -177,8 +180,7 @@ namespace leantime\domain\controllers {
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
                         'assignedUsers' => $assignedUsers,
-						'dollarBudget' => $_POST['dollarBudget'],
-                        'psettings' => $psettings
+						'dollarBudget' => $_POST['dollarBudget']
                     );
 
                     if ($values['name'] !== '') {
@@ -437,7 +439,7 @@ namespace leantime\domain\controllers {
 
                 $tpl->assign("bookedHoursArray", $projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $comments->getComments('project', $_GET['id'],"",$project['psettings']['commentOrder']);
+                $comment = $comments->getComments('project', $_GET['id'],"", $_SESSION["projectsettings"]['commentOrder']);
                 $tpl->assign('comments', $comment);
                 $tpl->assign('numComments', $comments->countComments('project', $_GET['id']));
 
