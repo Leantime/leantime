@@ -52,7 +52,7 @@ namespace leantime\domain\controllers {
 
 
             //Milestones
-            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
+            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
             $this->tpl->assign('milestones', $milestones);
 
             // TICKETS
