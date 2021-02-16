@@ -22,7 +22,7 @@ namespace leantime\domain\controllers {
             $this->sprintService = new services\sprints();
             $this->timesheetService = new services\timesheets();
 
-            $_SESSION['lastPage'] = BASE_URL."/tickets/showAllMilestones";
+            $_SESSION['lastPage'] = CURRENT_URL;
 
 
         }
