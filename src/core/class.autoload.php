@@ -7,7 +7,7 @@
  * @return
  */
  
-spl_autoload_register("leantimeAutoloader", null, true);
+spl_autoload_register("leantimeAutoloader", true, true);
 
 function leantimeAutoloader($class)
 {

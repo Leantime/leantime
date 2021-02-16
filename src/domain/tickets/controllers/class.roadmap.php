@@ -29,8 +29,6 @@ namespace leantime\domain\controllers {
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-
         }
 
 
