@@ -231,7 +231,7 @@ namespace leantime\domain\controllers {
 
                     }else {
 
-                        $this->tpl->redirect("/tickets/showTicket/".$result);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result);
                     }
 
                 }else {
