@@ -42,7 +42,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allTickets', $this->ticketService->getAllMilestones($_SESSION['currentProject'], true));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
             $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
 
