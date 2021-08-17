@@ -2112,6 +2112,7 @@ a .label-default:after, a .label-primary:after {
 .dualselect select option {
     padding: 4px 5px;
     margin: 0;
+    white-space: normal;
 }
 
 .dualselect .ds_arrow {
