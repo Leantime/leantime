@@ -83,6 +83,7 @@ namespace leantime\domain\controllers {
                 'planHours' => "0",
                 'sprint' => "",
                 'storypoints' => "",
+                'priority' => "",
                 'hourRemaining' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",
@@ -106,6 +107,7 @@ namespace leantime\domain\controllers {
                     'dateToFinish' => $_POST['dateToFinish'],
                     'status' => $_POST['status'],
                     'storypoints' => $_POST['storypoints'],
+                    'priority' => $_POST['priority'],
                     'hourRemaining' => $_POST['hourRemaining'],
                     'planHours' => $_POST['planHours'],
                     'sprint' => $_POST['sprint'],
@@ -167,6 +169,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('type', $ticketRepo->getType());
             $tpl->assign('info', $msgKey);
             $tpl->assign('efforts', $ticketRepo->efforts);
+            $tpl->assign('priorities', $ticketRepo->priority);
             $allprojects = $projectObj->getUserProjects();
             $tpl->assign('allProjects', $allprojects);
             $tpl->assign('type', $ticketRepo->getType());
@@ -197,6 +200,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
@@ -245,6 +249,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                     $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                     $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+                    $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
                     $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
                     $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 

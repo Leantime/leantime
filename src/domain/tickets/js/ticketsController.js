@@ -563,6 +563,50 @@ leantime.ticketsController = (function () {
 
     };
 
+    var initPriorityDropdown = function() {
+        // '1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low'
+        var priorityLabels = {
+            '1': 'Critical',
+            '2': 'High',
+            '3': "Medium",
+            '4': "Low",
+            '5': "Lowest"
+        };
+
+        jQuery("body").on("click", ".priorityDropdown .dropdown-menu a", function () {
+
+            var dataValue = jQuery(this).attr("data-value").split("_");
+
+            if (dataValue.length === 2) {
+
+                var ticketId = dataValue[0];
+                var priorityId = dataValue[1];
+
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl+'/api/tickets',
+                        data:
+                            {
+                                id: ticketId,
+                                priority: priorityId
+                            }
+                    }
+                ).done(
+                    function () {
+                        jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.priority_updated"));
+
+                    }
+                );
+
+            }else{
+                console.log("Ticket Controller: Priority data value not set correctly");
+            }
+        });
+
+    };
+
     var initMilestoneDropdown = function () {
 
         jQuery("body").on(
@@ -951,6 +995,7 @@ leantime.ticketsController = (function () {
             var term = jQuery("#termInput").val();
             var sprints = jQuery("#sprintSelect").val();
             var types = jQuery("#typeSelect").val();
+            var priority = jQuery("#prioritySelect").val();
             var status = jQuery("#statusSelect").val();
             var sort = jQuery("#sortBySelect").val();
             var groupBy = jQuery("input[name='groupBy']:checked").val();
@@ -962,6 +1007,7 @@ leantime.ticketsController = (function () {
             if(term != ""  && term != undefined) {query = query + "&term=" + term;}
             if(sprints != ""  && sprints != undefined) {query = query + "&sprint=" + sprints;}
             if(types != "" && types != undefined) {query = query + "&type=" + types;}
+            if(priority != "" && priority != undefined) {query = query + "&priority=" + priority;}
             if(status != "" && status != undefined) {query = query + "&status=" + status;}
             if(sort != "" && sort != undefined) {query = query + "&sort=" + sort;}
             if(groupBy != "" && groupBy != undefined) {query = query + "&groupBy=" + groupBy;}
@@ -1288,6 +1334,7 @@ leantime.ticketsController = (function () {
         initStatusSelectBox:initStatusSelectBox,
         initTicketsTable:initTicketsTable,
         initEffortDropdown:initEffortDropdown,
+        initPriorityDropdown:initPriorityDropdown,
         initMilestoneDropdown:initMilestoneDropdown,
         initStatusDropdown:initStatusDropdown,
         initUserDropdown:initUserDropdown,

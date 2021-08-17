@@ -106,6 +106,21 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="span4 control-label"><?php echo $this->__('label.priority'); ?></label>
+                    <div class="span6">
+                        <select id='priority' name='priority' class="span11">
+                            <option value=""><?php echo $this->__('label.priority_not_defined'); ?></option>
+                            <?php foreach ($this->get('priorities') as $priorityKey=>$priorityValue) {
+                                echo "<option value='" . $priorityKey . "' ";
+                                if ($priorityKey == $ticket->priority) {
+                                    echo "selected='selected'";
+                                }
+                                echo ">" . $priorityValue . "</option>";
+                            } ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.tags'); ?></label>
                     <div class="span6">
                         <input type="text" value="<?php $this->e($ticket->tags); ?>" name="tags" id="tags"/>
