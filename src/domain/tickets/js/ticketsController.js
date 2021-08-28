@@ -794,6 +794,7 @@ leantime.ticketsController = (function () {
                 branding: false,
                 statusbar: false,
                 convert_urls: false,
+                encoding: 'xml',
                 paste_data_images: true,
 
                 images_upload_handler: function (blobInfo, success, failure) {

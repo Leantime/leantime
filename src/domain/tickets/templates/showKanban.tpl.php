@@ -270,7 +270,7 @@
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
 
                                                 <h4><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                <p class="description"><?php echo substr(strip_tags($row["description"]), 0, 200);?><?php if(strlen($row["description"]) >= 200) echo" (...)";?></p>
+                                                <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '...', false, true);?><?php if(strlen($row["description"]) >= 200) echo" (...)";?></p>
 
 
                                             </div>

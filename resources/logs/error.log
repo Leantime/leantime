@@ -1,0 +1,50 @@
+[28-Aug-2021 09:27:02 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:27:02 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:27:29 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:28:00 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:30:21 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:33:49 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:33:56 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:33:57 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:34:10 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:34:10 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:34:34 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:34:34 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:35:16 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:35:21 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:35:21 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:36:02 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:36:02 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:36:02 America/Los_Angeles] PHP Parse error:  syntax error, unexpected ')', expecting ';' or ',' in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showKanban.tpl.php on line 273
+[28-Aug-2021 09:36:04 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:36:04 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:36:04 America/Los_Angeles] PHP Parse error:  syntax error, unexpected ')', expecting ';' or ',' in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showKanban.tpl.php on line 273
+[28-Aug-2021 09:36:09 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:36:09 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:37:56 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:37:56 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:38:08 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:38:08 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:44:44 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1127
+[28-Aug-2021 09:44:47 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:44:47 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:52:06 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:52:06 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:54:44 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:54:44 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:54:47 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:54:47 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:54:47 America/Los_Angeles] PHP Notice:  Undefined variable: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:54:47 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:54:52 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:54:52 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:54:52 America/Los_Angeles] PHP Notice:  Undefined variable: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:54:52 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:54:53 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:54:53 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:55:00 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:55:00 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
+[28-Aug-2021 09:55:00 America/Los_Angeles] PHP Notice:  Undefined variable: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:55:00 America/Los_Angeles] PHP Notice:  Trying to access array offset on value of type null in C:\xampp\htdocs\leantime-oss\src\domain\tickets\templates\showAll.tpl.php on line 330
+[28-Aug-2021 09:55:04 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 375
+[28-Aug-2021 09:55:04 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 417
