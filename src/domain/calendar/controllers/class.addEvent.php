@@ -13,6 +13,8 @@ namespace leantime\domain\controllers {
     class addEvent
     {
 
+        public $language;
+
         /**
          * run - display template and edit data
          *
@@ -23,6 +25,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
+            $this->language = new core\language();
 
 
             $values = array(
@@ -40,15 +43,17 @@ namespace leantime\domain\controllers {
                     $allDay = 'false';
                 }
 
+
+
+                $dateFrom = null;
                 if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                    $dateFrom = date('Y-m-d H:i:01', strtotime($_POST['dateFrom']." ".$_POST['timeFrom']));
+                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']." ".$_POST['timeFrom']);
                 }
 
-
+                $dateTo = null;
                 if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                    $dateTo = date('Y-m-d H:i:01', strtotime($_POST['dateTo']." ".$_POST['timeTo']));
+                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo']." ".$_POST['timeTo']);
                 }
-
 
                 $values = array(
                     'description' => ($_POST['description']),

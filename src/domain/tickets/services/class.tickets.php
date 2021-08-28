@@ -53,6 +53,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getPriorityLabels() {
+            return $this->ticketRepository->priority;
+        }
+
         public function prepareTicketSearchArray(array $searchParams)
         {
 
