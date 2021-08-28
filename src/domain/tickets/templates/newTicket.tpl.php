@@ -34,7 +34,7 @@ $ticket = $this->get('ticket');
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="/tickets/newTicket" method="post">
+                <form class="ticketModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>

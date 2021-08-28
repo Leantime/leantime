@@ -8,6 +8,7 @@
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
     $efforts        = $this->get('efforts');
+    $priorities     = $this->get('priorities');
     $statusLabels   = $this->get('allTicketStates');
 
     //All states >0 (<1 is archive)
@@ -156,7 +157,7 @@
 
                         <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_tye") ?>" title="<?=$this->__("input.placeholders.filter_by_tye") ?>" name="type" id="typeSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_type") ?>" title="<?=$this->__("input.placeholders.filter_by_type") ?>" name="type" id="typeSelect">
                                 <option value=""><?=$this->__("label.all_types") ?></option>
                                 <?php foreach($this->get('types') as $type){ 	?>
 
@@ -171,6 +172,26 @@
                         </div>
 
                     </div>
+
+                    <div class="filterBoxLeft">
+
+                        <label class="inline"><?=$this->__("label.todo_priority") ?></label>
+                        <div class="form-group">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_priority") ?>" title="<?=$this->__("input.placeholders.filter_by_priority") ?>" name="type" id="prioritySelect">
+                                <option value=""><?=$this->__("label.all_priorities") ?></option>
+                                <?php foreach($this->get('priorities') as $priorityKey=>$priorityValue){ 	?>
+
+                                    <?php echo"<option value='".$priorityKey."'";
+
+                                    if(isset($searchCriteria['priority']) && ($searchCriteria['priority'] == $priorityKey)) echo" selected='selected' ";
+
+                                    echo">$priorityValue</option>"; ?>
+
+                                <?php } 	?>
+                            </select>
+                        </div>
+                    </div>
+
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.todo_status") ?></label>
@@ -216,6 +237,7 @@
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
+                <col class="con1">
             </colgroup>
             <thead>
             <tr>
@@ -223,6 +245,7 @@
                 <th><?= $this->__("label.todo_status"); ?></th>
                 <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                 <th><?= $this->__("label.effort"); ?></th>
+                <th><?= $this->__("label.priority"); ?></th>
                 <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
                 <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
                 <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
@@ -299,6 +322,28 @@
                                     <?php foreach($efforts as $effortKey => $effortValue){
                                         echo"<li class='dropdown-item'>
                                                                         <a href='javascript:void(0);' data-value='".$row['id']."_".$effortKey."' id='ticketEffortChange".$row['id'].$effortKey."'>".$effortValue."</a>";
+                                        echo"</li>";
+                                    }?>
+                                </ul>
+                            </div>
+                        </td>
+                        <td data-order="<?=$row['priority'] ? $priority[$row['priority']] : $this->__("label.priority_unkown"); ?>">
+                            <div class="dropdown ticketDropdown priorityDropdown show">
+                                <a class="dropdown-toggle f-left  label-default priority" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text"><?php
+                                                                if($row['priority'] != '' && $row['priority'] > 0) {
+                                                                    echo $priorities[$row['priority']];
+                                                                }else{
+                                                                    echo $this->__("label.priority_unkown");
+                                                                }?>
+                                                            </span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="priorityDropdownMenuLink<?=$row['id']?>">
+                                    <li class="nav-header border"><?=$this->__("dropdown.select_priority")?></li>
+                                    <?php foreach($priorities as $priorityKey => $priorityValue){
+                                        echo"<li class='dropdown-item'>
+                                                                        <a href='javascript:void(0);' data-value='".$row['id']."_".$priorityKey."' id='ticketPriorityChange".$row['id'].$priorityKey."'>".$priorityValue."</a>";
                                         echo"</li>";
                                     }?>
                                 </ul>
@@ -399,6 +444,7 @@
     leantime.ticketsController.initUserDropdown();
     leantime.ticketsController.initMilestoneDropdown();
     leantime.ticketsController.initEffortDropdown();
+    leantime.ticketsController.initPriorityDropdown();
     leantime.ticketsController.initStatusDropdown();
     leantime.ticketsController.initSprintDropdown();
     leantime.ticketsController.initUserSelectBox();

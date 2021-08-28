@@ -59,6 +59,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('tickets', $this->ticketService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $_SESSION['currentProject']));
             $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
             $this->tpl->assign("types", $this->ticketService->getTicketTypes());
             $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
 
