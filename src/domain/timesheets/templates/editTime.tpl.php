@@ -88,9 +88,10 @@ $values = $this->get('values');
 </div>
     <label for="kind"><?php echo $this->__('label.kind')?></label> <select id="kind"
     name="kind">
-    <?php foreach($this->get('kind') as $key => $row){
+    <?php
+    foreach($this->get('kind') as $key => $row){
         echo'<option value="'.$key.'"';
-        if($row == $values['kind']) { echo ' selected="selected"';
+        if($key == $values['kind']) { echo ' selected="selected"';
         }
         echo'>'.$this->__($row).'</option>';
 
