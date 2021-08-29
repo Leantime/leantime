@@ -103,8 +103,7 @@
             </div>
 
 			<div class="clearfix"></div>
-			<div class="filterBar <?php
-            if($searchCriteria['users'] == '' && $searchCriteria['milestone'] == '' && $searchCriteria['type'] == '') { echo "hideOnLoad"; } ?>">
+			<div class="filterBar <?php if(!isset($_GET['search'])) { echo "hideOnLoad"; } ?>">
 				<div class="row-fluid" style="opacity:0.4">
 
 					<div class="filterBoxLeft">

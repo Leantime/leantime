@@ -327,7 +327,7 @@
                                 </ul>
                             </div>
                         </td>
-                        <td data-order="<?=$row['priority'] ? $priority[$row['priority']] : $this->__("label.priority_unkown"); ?>">
+                        <td data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $this->__("label.priority_unkown"); ?>">
                             <div class="dropdown ticketDropdown priorityDropdown show">
                                 <a class="dropdown-toggle f-left  label-default priority" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
