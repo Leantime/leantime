@@ -1146,6 +1146,8 @@ namespace leantime\domain\repositories {
         public function updateTicketStatus($ticketId, $status, $ticketSorting=-1)
         {
 
+            $this->addTicketChange($_SESSION['userdata']['id'], $ticketId, array('status'=>$status));
+
             if($ticketSorting > -1) {
 
                 $query = "UPDATE zp_tickets
