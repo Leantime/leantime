@@ -43,6 +43,8 @@ namespace leantime\domain\controllers {
          * run - display template and edit data
          *
          * @access public
+         *
+         * DEPRECATED
          */
         public function run()
         {
@@ -108,6 +110,7 @@ namespace leantime\domain\controllers {
                     'status' => $_POST['status'],
                     'storypoints' => $_POST['storypoints'],
                     'priority' => $_POST['priority'],
+
                     'hourRemaining' => $_POST['hourRemaining'],
                     'planHours' => $_POST['planHours'],
                     'sprint' => $_POST['sprint'],
