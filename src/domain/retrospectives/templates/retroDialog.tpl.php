@@ -37,11 +37,11 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
         <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <label><?php echo $this->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php echo $canvasItem['description'] ?>" placeholder="<?php echo $this->__("input.placeholders.describe_situation") ?>"/><br />
+        <input type="text" name="description" value="<?php $this->e($canvasItem['description']); ?>" placeholder="<?php echo $this->__("input.placeholders.describe_situation") ?>"/><br />
 
 
         <label><?php echo $this->__("label.examples") ?></label>
-        <textarea rows="3" cols="10" name="data" class="modalTextArea" placeholder="<?php echo $this->__("input.placeholders.list_examples") ?>"><?php echo $canvasItem['data'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="data" class="modalTextArea" placeholder="<?php echo $this->__("input.placeholders.list_examples") ?>"><?php $this->e($canvasItem['data']); ?></textarea><br />
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />

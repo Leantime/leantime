@@ -8,7 +8,7 @@
     echo $this->displayNotification();
 ?>
 
-<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php echo $_GET['module']?>&label=<?php echo $_GET['label']?>">
+<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $this->e($_GET['module']) ?>&label=<?php  $this->e($_GET['label']) ?>">
 
     <label><?=$this->__("label.label")?></label>
     <input type="text" name="newLabel" value="<?php echo $currentLabel; ?>" /><br />

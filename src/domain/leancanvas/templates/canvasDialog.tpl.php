@@ -30,7 +30,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <label><?=$this->__("label.hypothesis") ?></label>
-        <input type="text" name="description" value="<?php echo $canvasItem['description'] ?>" placeholder="<?=$this->__("input.placeholders.describe_hypothesis") ?>" style="width:100%"/><br />
+        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__("input.placeholders.describe_hypothesis") ?>" style="width:100%"/><br />
         <label><?=$this->__("label.status") ?></label>
         <select name="status">
             <option value="danger" <?php if($canvasItem['status'] == 'danger') {echo"selected='selected' ";
