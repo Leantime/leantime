@@ -957,7 +957,6 @@ namespace leantime\domain\repositories {
             return $values['avgSize'];
         }
 
-
         /**
          * addTicket - add a Ticket with postback test
          *
