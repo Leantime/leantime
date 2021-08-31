@@ -42,10 +42,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']); ?>"
                placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
 
-
         <label><?php echo $this->__("label.description") ?></label>
         <textarea rows="3" cols="10" name="data" class="ideaTextEditor"
-                  placeholder=""><?php echo $canvasItem['data'] ?></textarea><br/>
+                  placeholder=""><?php $this->e($canvasItem['data']) ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>

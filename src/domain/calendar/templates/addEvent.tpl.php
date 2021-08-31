@@ -26,7 +26,7 @@ $helper = $this->get('helper');
             <form action="" method="post" class='stdform'>
 
                 <label for="description"><?php echo $this->__('label.title') ?></label>
-                <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
+                <input type="text" id="description" name="description" value="<?php $this->e($values['description']); ?>" /><br />
 
                 <div class="par">
                     <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>

@@ -33,6 +33,8 @@ namespace leantime\domain\controllers {
 
                     $tpl->setNotification($language->__('notifications.sprint_deleted_successfully'), "success");
 
+                    $_SESSION["currentSprint"] = "";
+
                     if(isset($_SESSION['lastPage'])) {
                         $tpl->redirect($_SESSION['lastPage']);
                     }else{

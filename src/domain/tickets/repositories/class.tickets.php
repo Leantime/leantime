@@ -957,7 +957,6 @@ namespace leantime\domain\repositories {
             return $values['avgSize'];
         }
 
-
         /**
          * addTicket - add a Ticket with postback test
          *
@@ -1145,6 +1144,8 @@ namespace leantime\domain\repositories {
 
         public function updateTicketStatus($ticketId, $status, $ticketSorting=-1)
         {
+
+            $this->addTicketChange($_SESSION['userdata']['id'], $ticketId, array('status'=>$status));
 
             if($ticketSorting > -1) {
 

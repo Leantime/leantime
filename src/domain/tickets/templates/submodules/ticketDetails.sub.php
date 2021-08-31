@@ -133,7 +133,6 @@
                 <h4 class="widgettitle title-light"><span
                             class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
                 </h4>
-
                 <textarea name="description" rows="10" cols="80" id="ticketDescription"
                           class="tinymce"><?php echo $ticket->description ?></textarea><br/>
                 <input type="hidden" name="acceptanceCriteria" value=""/>

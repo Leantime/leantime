@@ -52,7 +52,11 @@ namespace leantime\domain\controllers {
 
             if(isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true){
 
-                $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"]);
+                $handler = null;
+                if(isset($params["handler"]) == true){
+                    $handler = $params["handler"];
+                }
+                $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
                 if($results === true) {
 

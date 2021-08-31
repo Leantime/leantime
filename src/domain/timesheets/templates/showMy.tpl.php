@@ -324,8 +324,8 @@ jQuery(document).ready(function(){
                             ?>
 
                                 <tr class="gradeA timesheetRow">
-                                    <td width="14%"><?php echo $timeRow["name"]; ?></td>
-                                    <td width="14%"><?php echo $timeRow["headline"]; ?></td>
+                                    <td width="14%"><?php $this->e($timeRow["name"]); ?></td>
+                                    <td width="14%"><?php $this->e($timeRow["headline"]); ?></td>
                                     <td width="10%"><?php echo $this->__($this->get('kind')[$timeRow['kind']]); ?></td>
                                     <?php $currentDate = $dateFrom->format('Y-m-d'); ?>
                                     <td width="7%" class="rowMo <?php if($today == $currentDate)echo"active"; ?>" <?php if($today == $currentDate)echo"active"; ?>><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursMonday"]; ?>" /></td>

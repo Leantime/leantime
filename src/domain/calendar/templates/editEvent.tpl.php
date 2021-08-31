@@ -28,22 +28,22 @@ $values = $this->get('values');
                     <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
 
                     <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>
-                    <input type="text" id="event_date_from" name="dateFrom" value="<?php echo date($this->__('language.dateformat'), strtotime($values['dateFrom'])); ?>" />
+                    <input type="text" id="event_date_from" name="dateFrom" value="<?php echo $this->getFormattedDateString($values['dateFrom']); ?>" />
 
                     <div class="par">
                         <label> <?php echo $this->__('label.start_time') ?></label>
                         <div class="input-append bootstrap-timepicker">
-                                <input type="text" id="event_time_from" name="timeFrom" value="<?php echo date($this->__('language.timeformat') , strtotime($values['dateFrom'])); ?>" />
+                                <input type="text" id="event_time_from" name="timeFrom" value="<?php echo $this->getFormattedTimeString($values['dateFrom']); ?>" />
                            </div>
                     </div>
 
                     <label for="dateTo"><?php echo $this->__('label.end_date') ?></label>
-                    <input type="text" id="event_date_to" name="dateTo" value="<?php echo date($this->__('language.dateformat') , strtotime($values['dateTo'])); ?>" />
+                    <input type="text" id="event_date_to" name="dateTo" value="<?php echo $this->getFormattedDateString($values['dateTo']); ?>" />
 
                     <div class="par">
                         <label for=""><?php echo $this->__('label.end_time') ?> </label>
                         <div class="input-append bootstrap-timepicker">
-                                <input type="text" id="event_time_to" name="timeTo" value="<?php echo date($this->__('language.timeformat') , strtotime($values['dateTo'])); ?>" />
+                                <input type="text" id="event_time_to" name="timeTo" value="<?php echo $this->getFormattedDateString($values['dateTo']); ?>" />
                            </div>
                     </div>
 

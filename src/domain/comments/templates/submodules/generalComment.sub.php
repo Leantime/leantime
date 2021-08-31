@@ -45,7 +45,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 					<strong>
 					<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
 					</strong><br/>
-					<div style="margin-left:60px;"><?php echo nl2br($row['text']); ?></div>
+					<div style="margin-left:60px;"><?php echo ($row['text']); ?></div>
 					<div class="clear"></div>
 					<div style="padding-left:60px">
 						<a href="javascript:void(0);"

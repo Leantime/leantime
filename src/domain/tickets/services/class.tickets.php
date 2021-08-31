@@ -53,6 +53,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getPriorityLabels() {
+            return $this->ticketRepository->priority;
+        }
+
         public function prepareTicketSearchArray(array $searchParams)
         {
 
@@ -65,7 +69,8 @@ namespace leantime\domain\services {
                 "sprint"=> $_SESSION['currentSprint'],
                 "milestone"=>"",
                 "orderBy" => "sortIndex",
-                "groupBy" => ""
+                "groupBy" => "",
+                "priority" => ""
             );
 
             if(isset($searchParams["users"]) === true) {
@@ -90,6 +95,10 @@ namespace leantime\domain\services {
 
             if(isset($searchParams["groupBy"]) === true) {
                 $searchCriteria["groupBy"] =$searchParams["groupBy"];
+            }
+
+            if(isset($searchParams["priority"]) === true) {
+                $searchCriteria["priority"] =$searchParams["priority"];
             }
 
             if(isset($searchParams["sprint"]) === true) {
@@ -199,6 +208,7 @@ namespace leantime\domain\services {
                 'planHours' => '',
                 'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : "",
                 'acceptanceCriteria' => '',
+                'priority' => 3,
                 'tags' => '',
                 'editFrom' => '',
                 'editTo' => '',
@@ -283,6 +293,7 @@ namespace leantime\domain\services {
                 'sprint' => $values['sprint'],
                 'storypoints' => $values['storypoints'],
                 'hourRemaining' => $values['hourRemaining'],
+                'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
                 'editTo' => $values['editTo'],
@@ -489,7 +500,7 @@ namespace leantime\domain\services {
 
         }
 
-        public function updateTicketStatusAndSorting($params)
+        public function updateTicketStatusAndSorting($params, $handler=null)
         {
 
             //Jquery sortable serializes the array for kanban in format
@@ -514,6 +525,25 @@ namespace leantime\domain\services {
                     }
                 }
             }
+
+            if($handler) {
+
+                //Assumes format ticket_ID
+                $id = substr($handler, 7);
+
+                $ticket = $this->getTicket($id);
+
+                if($ticket) {
+
+                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $ticket->headline);
+                    $actual_link = CURRENT_URL;
+                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
+
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.todo_update_cta")));
+                }
+            }
+
+
 
             return true;
 

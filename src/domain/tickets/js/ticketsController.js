@@ -794,6 +794,7 @@ leantime.ticketsController = (function () {
                 branding: false,
                 statusbar: false,
                 convert_urls: false,
+                encoding: 'xml',
                 paste_data_images: true,
 
                 images_upload_handler: function (blobInfo, success, failure) {
@@ -1036,6 +1037,7 @@ leantime.ticketsController = (function () {
             jQuery(this).css("background", "#ffffff");
         });
 
+        var position_updated = false;
 
         jQuery("#sortableTicketKanban .contentInner").sortable({
             connectWith: ".contentInner",
@@ -1054,18 +1056,20 @@ leantime.ticketsController = (function () {
                 ui.item.removeClass("tilt");
                 jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
                 ui.item.removeData("move_handler");
-            },
-            update: function (event, ui) {
 
                 countTickets();
 
+                console.log(ui.item[0].id);
+
                 var statusPostData = {
                     action: "kanbanSort",
-                    payload: {}
+                    payload: {},
+                    handler: ui.item[0].id
                 };
-                for(var i=0; i<ticketStatusList.length; i++) {
 
-                    if(jQuery(".contentInner.status_"+ticketStatusList[i]).length) {
+                for (var i = 0; i < ticketStatusList.length; i++) {
+
+                    if (jQuery(".contentInner.status_" + ticketStatusList[i]).length) {
                         statusPostData.payload[ticketStatusList[i]] = jQuery(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
                     }
                 }
@@ -1073,7 +1077,7 @@ leantime.ticketsController = (function () {
                 // POST to server using $.post or $.ajax
                 jQuery.ajax({
                     type: 'POST',
-                    url: leantime.appUrl+'/api/tickets',
+                    url: leantime.appUrl + '/api/tickets',
                     data: statusPostData
 
                 });
