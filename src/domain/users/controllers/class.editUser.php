@@ -65,7 +65,7 @@ namespace leantime\domain\controllers {
 								'hours' => ($_POST['hours']),
 								'wage' => ($_POST['wage']),
 								'clientId' => ($_POST['client']),
-								'password' = ($row['password']),
+								'password' => ($row['password']),
 							);
 
 							$changedEmail = 0;
