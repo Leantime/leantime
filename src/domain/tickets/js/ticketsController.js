@@ -1165,7 +1165,7 @@ leantime.ticketsController = (function () {
                             .data()
                             .pluck(plannedHoursIndex)
                             .reduce(function (a, b) {
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var sumRemaining = rows
@@ -1173,7 +1173,7 @@ leantime.ticketsController = (function () {
                             .pluck(remainingHoursIndex)
                             .reduce(function (a, b) {
 
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var sumLogged = rows
@@ -1181,7 +1181,7 @@ leantime.ticketsController = (function () {
                             .pluck(loggedHoursIndex)
                             .reduce(function (a, b) {
 
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var visiblePlannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
