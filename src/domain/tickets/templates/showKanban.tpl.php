@@ -218,7 +218,7 @@
 
 							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
-                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>"  onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.add_todo_no_icon"); ?></a>
+                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.add_todo_no_icon"); ?></a>
                                     <div class="ticketBox hideOnLoad " id="ticket_new_<?=$key?>">
 
                                         <form method="post">
