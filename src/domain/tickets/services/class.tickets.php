@@ -362,6 +362,7 @@ namespace leantime\domain\services {
                 'sprint' => $values['sprint'],
                 'storypoints' => $values['storypoints'],
                 'hourRemaining' => $values['hourRemaining'],
+                'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
                 'editTo' => $values['editTo'],
