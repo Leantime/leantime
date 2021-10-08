@@ -15,6 +15,7 @@
         "endroid/qr-code": "^3.7"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "3.*"
     }
 
