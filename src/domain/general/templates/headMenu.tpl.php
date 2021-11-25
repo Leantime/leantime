@@ -3,6 +3,12 @@
 <ul class="headmenu">
 
     <li>
+        <a href='<?=BASE_URL ?>/projects/showAllTickets'>
+            <?=$this->__("menu.all_projects_tickets")?>
+        </a>
+    </li>
+
+    <li>
         <a href='<?=BASE_URL ?>/projects/showMy'>
             <?=$this->__("menu.my_portfolio")?>
         </a>
