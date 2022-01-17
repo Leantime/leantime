@@ -26,7 +26,7 @@ $statusLabels = $this->get('statusLabels');
     <form class="formModal" method="post" action="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
 
         <label><?=$this->__("label.milestone_title"); ?></label>
-        <input type="text" name="headline" value="<?php echo $currentMilestone->headline?>" placeholder="<?=$this->__("label.milestone_title"); ?>"/><br />
+        <input type="text" name="headline" value="<?php $this->e($currentMilestone->headline) ?>" placeholder="<?=$this->__("label.milestone_title"); ?>"/><br />
 
         <label><?php echo $this->__('label.todo_status'); ?></label>
         <select id="status-select" name="status" class="span11"

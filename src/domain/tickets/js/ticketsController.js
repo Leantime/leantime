@@ -78,6 +78,10 @@ leantime.ticketsController = (function () {
 
     var initGanttChart = function (tasks, viewMode) {
 
+        function htmlEntities(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        };
+
         jQuery(document).ready(
             function () {
 
@@ -88,7 +92,7 @@ leantime.ticketsController = (function () {
                             // dates and progress value
                             var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
                             return '<div class="details-container"> ' +
-                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+task.name+'</a></h4><br /> ' +
+                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+htmlEntities(task.name)+'</a></h4><br /> ' +
                             '<p>'+leantime.i18n.__("text.expected_to_finish_by")+' <strong>'+end_date+'</strong><br /> ' +
                             ''+Math.round(task.progress)+'%</p> ' +
                             '<a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
@@ -1165,7 +1169,7 @@ leantime.ticketsController = (function () {
                             .data()
                             .pluck(plannedHoursIndex)
                             .reduce(function (a, b) {
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var sumRemaining = rows
@@ -1173,7 +1177,7 @@ leantime.ticketsController = (function () {
                             .pluck(remainingHoursIndex)
                             .reduce(function (a, b) {
 
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var sumLogged = rows
@@ -1181,7 +1185,7 @@ leantime.ticketsController = (function () {
                             .pluck(loggedHoursIndex)
                             .reduce(function (a, b) {
 
-                                return parseInt(a) + parseInt(b["@data-order"]);
+                                return parseFloat(a) + parseFloat(b["@data-order"]);
                             }, "0");
 
                         var visiblePlannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();

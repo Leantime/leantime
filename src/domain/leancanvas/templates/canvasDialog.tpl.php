@@ -19,7 +19,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><i class="iconfa iconfa-columns"></i> <?php echo $canvasTypes[$canvasItem['box']]; ?> <?php echo $canvasItem['description']; ?></h4>
+    <h4 class="widgettitle title-light"><i class="iconfa iconfa-columns"></i> <?php echo $canvasTypes[$canvasItem['box']]; ?> <?php $this->e($canvasItem['description']); ?></h4>
 
     <?php echo $this->displayNotification(); ?>
 

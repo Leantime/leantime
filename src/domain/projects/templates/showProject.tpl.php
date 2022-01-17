@@ -101,7 +101,7 @@
                                                             <?php else: ?>
                                                             <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
                                                             <?php endif; ?>
-                                                        <span class="filename"><?php echo $file['realName'] ?></span>
+                                                        <span class="filename"><?php $this->e($file['realName']) ?></span>
 
                                                       </a>
 

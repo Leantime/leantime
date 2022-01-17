@@ -62,7 +62,7 @@
 
                         <ul class="sortableTicketList" >
                             <li class="">
-                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link"  onclick="jQuery('#ticket_new').toggle('fast'); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
+                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link" onclick="jQuery('#ticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
                                 <div class="ticketBox hideOnLoad" id="ticket_new" style="text-align:center;">
 
                                     <form method="post" class="form-group">
