@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
 					}
 
 					//Validation
-					print_r($_POST);
+					//print_r($_POST);
 					# exit();
 
 					if ($values['user'] !== '') {

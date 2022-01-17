@@ -156,32 +156,6 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-
-        public function getProjectAccounts($projectId)
-        {
-
-            $sql = "SELECT * FROM zp_account WHERE projectId = :projectId";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $returnValues = array();
-            foreach($values as $value) {
-                $value['name'] = openssl_decrypt($value['name'], $this->encryptionMethod, $this->secrethash);
-                $value['username'] = openssl_decrypt($value['username'], $this->encryptionMethod, $this->secrethash);
-                $value['password'] = openssl_decrypt($value['password'], $this->encryptionMethod, $this->secrethash);
-                $value['host'] = openssl_decrypt($value['host'], $this->encryptionMethod, $this->secrethash);
-                $value['kind'] = openssl_decrypt($value['kind'], $this->encryptionMethod, $this->secrethash);
-                $returnValues[] = $value;
-            }
-
-            return $returnValues;
-        }
-
         public function getClientProjects($clientId)
         {
 
@@ -216,84 +190,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-        }
-
-        public function getProjectAccount($id)
-        {
-
-            $sql = "SELECT * FROM zp_account WHERE id = :id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            $returnValues = array();
-            foreach($values as $value) {
-                $value['name'] = openssl_decrypt($value['name'], $this->encryptionMethod, $this->secrethash, 0, $this->iv);
-                $value['username'] = openssl_decrypt($value['username'], $this->encryptionMethod, $this->secrethash, 0, $this->iv);
-                $value['password'] = openssl_decrypt($value['password'], $this->encryptionMethod, $this->secrethash, 0, $this->iv);
-                $value['host'] = openssl_decrypt($value['host'], $this->encryptionMethod, $this->secrethash, 0, $this->iv);
-                $value['kind'] = openssl_decrypt($value['kind'], $this->encryptionMethod, $this->secrethash, 0, $this->iv);
-                $returnValues[] = $value;
-            }
-
-            return $returnValues;
-        }
-
-        public function addAccount($values, $projectId)
-        {
-
-            $sql = "INSERT INTO zp_account (projectId, name, username, password, host, kind) VALUES (:projectId, :name, :username, :password, :host, :kind)";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
-            $stmn->bindValue(':name', openssl_encrypt($values['name'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
-            $stmn->bindValue(':username', openssl_encrypt($values['username'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
-            $stmn->bindValue(':password', openssl_encrypt($values['password'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
-            $stmn->bindValue(':host', openssl_encrypt($values['host'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
-            $stmn->bindValue(':kind', openssl_encrypt($values['kind'], $this->encryptionMethod, $this->secrethash, 0, $this->iv), PDO::PARAM_STR);
-
-            $stmn->execute();
-            $stmn->closeCursor();
-        }
-
-        public function editAccount($values, $id)
-        {
-
-            $sql = "UPDATE zp_account 
-					SET 
-						'name' = :name AND
-						'username' = :username AND
-						'password' = :password AND
-						'host' = :host AND
-						'kind' = :kind
-					WHERE id = :id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-            $stmn->bindValue(':username', $values['username'], PDO::PARAM_STR);
-            $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
-            $stmn->bindValue(':host', $values['host'], PDO::PARAM_STR);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $stmn->closeCursor();
-        }
-
-        public function deleteAccount($id)
-        {
-
-            $sql = "DELETE FROM zp_account WHERE id = :id";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $stmn->closeCursor();
         }
 
         public function getProjectTickets($projectId)

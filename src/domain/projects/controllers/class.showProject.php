@@ -447,9 +447,6 @@ namespace leantime\domain\controllers {
                 $tpl->assign('state', $projectRepo->state);
                 $tpl->assign('helper', $helper);
                 $tpl->assign('role', $_SESSION['userdata']['role']);
-                $accounts = $projectRepo->getProjectAccounts($id);
-                $tpl->assign('accounts', $accounts);
-
 
                 $tpl->display('projects.showProject');
 

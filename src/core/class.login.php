@@ -9,6 +9,7 @@
  */
 namespace leantime\core {
 
+    use leantime\domain\services\ldap;
     use PDO;
     use leantime\domain\repositories;
     use RobThree\Auth\TwoFactorAuth;
@@ -146,6 +147,8 @@ namespace leantime\core {
          */
         public $pwResetLimit = 5;
 
+        private $ldapDetails = array();
+
         /**
          * __construct - getInstance of session and get sessionId and refers to login if post is set
          *
@@ -160,6 +163,7 @@ namespace leantime\core {
             $config = new config();
             $this->cookieTime = $config->sessionExpiration;
             $this->language = new language();
+            $this->settingsRepo = new repositories\setting();
 
             $this->session = $sessionid;
 
@@ -259,18 +263,72 @@ namespace leantime\core {
         private function login()
         {
 
+
+            //different identity providers can live here
+            //they all need to
+            //A ensure the user is in leantime (with a valid role) and if not create the user
+            //set the session variables
+            //update users from the identity provider
+
+
+            $ldap = new ldap();
+            $ldap->connect();
+
+            //Try Ldap
+            if($ldap->useLdap === true){
+
+                if ($bind = $ldap->bind($this->username, $this->password)) {
+
+                    //Get user
+                    $userCheck = $this->getUser($this->username);
+
+                    //If user does not exist create user
+                    if($userCheck == false && $ldap->autoCreateUser === true) {
+
+                        $ldapUser = $ldap->getSingleUser($this->username);
+
+                        $userArray = array(
+                            'firstname' => $ldapUser['firstname'],
+                            'lastname' => $ldapUser['lastname'],
+                            'phone' => '',
+                            'user' => $ldapUser['user'],
+                            'role' => $ldapUser['role'],
+                            'password' => '',
+                            'clientId' => '',
+                            'sso'=> 'ldap'
+                        );
+
+                        $users = new repositories\users();
+                        //$users->addUser($userArray);
+
+                        //Adduser to project if default is set
+
+                    }else{
+
+                        return false;
+
+                    }
+
+                    // set user session
+                    $this->getUserByLogin($this->username, '', true);
+
+                    $this->setSession();
+
+                    $this->updateUserSession($this->session, time());
+
+                    $this->setCookie($this->cookieTime);
+
+                    return true;
+
+
+                }
+
+            }
+
+            //Check if the user is in our db (even if ldap fails, clients will fall under this case)
             if($this->getUserByLogin($this->username, $this->password) === true) {
 
-                //Set Sessions
-                $_SESSION['userdata']['role'] = $this->role;
-                $_SESSION['userdata']['id'] = $this->userId;
-                $_SESSION['userdata']['name'] = $this->name;
-                $_SESSION['userdata']['mail'] = $this->mail;
-                $_SESSION['userdata']['clientId'] = $this->clientId;
-                $_SESSION['userdata']['settings'] = $this->settings;
-                $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
-                $_SESSION['userdata']['twoFAVerified'] = false;
-                $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
+                $this->setSession();
 
                 $this->updateUserSession($this->session, time());
 
@@ -287,6 +345,19 @@ namespace leantime\core {
             }
         }
 
+        private function setSession() {
+            //Set Sessions
+            $_SESSION['userdata']['role'] = $this->role;
+            $_SESSION['userdata']['id'] = $this->userId;
+            $_SESSION['userdata']['name'] = $this->name;
+            $_SESSION['userdata']['mail'] = $this->mail;
+            $_SESSION['userdata']['clientId'] = $this->clientId;
+            $_SESSION['userdata']['settings'] = $this->settings;
+            $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
+            $_SESSION['userdata']['twoFAVerified'] = false;
+            $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
+        }
+
         /**
          * setCookie - set and/or updates the cookie
          *
@@ -298,6 +369,8 @@ namespace leantime\core {
             $expiry = time()+$time;
             setcookie("sid", $this->session, (int)$expiry, "/");
         }
+
+
 
         /**
          * logged_in - Check if logged in and Update sessions
@@ -436,12 +509,12 @@ namespace leantime\core {
          * @param  $password
          * @return boolean
          */
-        public function getUserByLogin($username, $password)
+        public function getUserByLogin($username, $password, $ldapLogin = false)
         {
 
             $user=$this->getUser($username);
 
-            if($user === false || !password_verify($password, $user['password'])) {
+            if($user === false || (!password_verify($password, $user['password']) && $ldapLogin == false)) {
 
                 return false;
 

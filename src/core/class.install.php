@@ -60,7 +60,8 @@ namespace leantime\core {
             20102,
             20103,
 			20104,
-			20105
+			20105,
+            20106
         );
 
         /**
@@ -1027,6 +1028,35 @@ namespace leantime\core {
 			}
 
 		}
+
+        private function update_sql_20106()
+        {
+            $errors = array();
+
+            $sql = array(
+                "ALTER TABLE `zp_user` ADD COLUMN `sso` varchar(200) DEFAULT NULL"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (\PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
 
     }
 }
