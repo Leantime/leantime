@@ -407,7 +407,9 @@ namespace leantime\domain\services {
 
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
+                    
+                    unset($_SESSION["projectsettings"]["ticketlabels"]);
+                    
                     return true;
 
                 } else {
