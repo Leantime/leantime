@@ -53,7 +53,7 @@ class settings {
 
 	public function getBaseURL () {
 
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? "https://" : "http://";
+        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 

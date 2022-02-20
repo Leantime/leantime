@@ -298,3 +298,100 @@ Stack trace:
 [22-Oct-2021 10:34:55 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
 [22-Oct-2021 13:35:38 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Can't contact LDAP server in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
 [05-Jan-2022 07:15:15 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:03:26 America/Los_Angeles] PHP Notice:  Undefined index: HTTP_X_FORWARDED_PROTO in C:\xampp\htdocs\leantime-oss\config\settings.php on line 56
+[18-Feb-2022 14:03:26 America/Los_Angeles] PHP Notice:  Undefined index: HTTP_X_FORWARDED_PROTO in C:\xampp\htdocs\leantime-oss\config\settings.php on line 56
+[18-Feb-2022 14:18:41 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:33:58 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:34:40 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:34:49 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:34:55 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid credentials in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 110
+[18-Feb-2022 14:35:01 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:35:01 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:35:01 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:36:42 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:36:42 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:36:42 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 139
+[18-Feb-2022 14:43:03 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:43:03 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:43:03 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:43:19 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:43:19 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:43:19 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 142
+[18-Feb-2022 14:46:04 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 143
+[18-Feb-2022 14:46:04 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 143
+[18-Feb-2022 14:46:04 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 143
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 69
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 70
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 72
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 77
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Notice:  Trying to get property 'username' of non-object in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 120
+[18-Feb-2022 15:32:35 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 122
+[19-Feb-2022 16:06:41 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 72
+[19-Feb-2022 16:06:41 America/Los_Angeles] PHP Warning:  preg_replace(): Unknown modifier 'g' in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 77
+[19-Feb-2022 16:06:41 America/Los_Angeles] PHP Notice:  Trying to get property 'username' of non-object in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 120
+[19-Feb-2022 16:06:41 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 122
+[19-Feb-2022 16:07:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:02 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:44 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:47 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:47 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:07:47 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:29 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:29 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:29 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:48 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:48 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:08:48 America/Los_Angeles] PHP Warning:  Invalid argument supplied for foreach() in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 151
+[19-Feb-2022 16:09:51 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php:153
+Stack trace:
+#0 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(288): leantime\domain\services\ldap->getSingleUser('admin')
+#1 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(177): leantime\core\login->login()
+#2 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(250): leantime\core\login->__construct('e131d44aaf10011...')
+#3 C:\xampp\htdocs\leantime-oss\public\index.php(20): leantime\core\login::getInstance('e131d44aaf10011...')
+#4 {main}
+  thrown in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 153
+[19-Feb-2022 16:11:06 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php:146
+Stack trace:
+#0 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(288): leantime\domain\services\ldap->getSingleUser('admin')
+#1 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(177): leantime\core\login->login()
+#2 C:\xampp\htdocs\leantime-oss\src\core\class.login.php(250): leantime\core\login->__construct('e131d44aaf10011...')
+#3 C:\xampp\htdocs\leantime-oss\public\index.php(20): leantime\core\login::getInstance('e131d44aaf10011...')
+#4 {main}
+  thrown in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:03 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:12:37 America/Los_Angeles] PHP Warning:  strpos(): Empty needle in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 146
+[19-Feb-2022 16:34:49 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[19-Feb-2022 16:34:49 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[19-Feb-2022 16:34:49 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[19-Feb-2022 16:34:49 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[19-Feb-2022 16:34:50 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 142
+[19-Feb-2022 16:34:50 America/Los_Angeles] PHP Notice:  Undefined index: ticketLayout in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 145
+[19-Feb-2022 16:34:50 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 160
+[19-Feb-2022 16:34:50 America/Los_Angeles] PHP Notice:  Undefined index: commentOrder in C:\xampp\htdocs\leantime-oss\src\domain\projects\templates\submodules\projectDetails.sub.php on line 163
+[19-Feb-2022 16:46:31 America/Los_Angeles] PHP Notice:  Undefined index: useLdap in C:\xampp\htdocs\leantime-oss\src\domain\users\templates\editOwn.tpl.php on line 35
+[19-Feb-2022 18:08:46 America/Los_Angeles] PHP Notice:  Undefined index: useLdap in C:\xampp\htdocs\leantime-oss\src\domain\users\templates\editOwn.tpl.php on line 35

@@ -13,7 +13,7 @@ class ldap
     private $port;
     private $baseDn; //Base DN for domain
     private $ldapDn; //DN where users are located (including baseDn)
-    private $userDomain;
+    public $userDomain;
     private $ldapKeys = array (
         "username" => "uid",
         "groups" => "memberof",
@@ -60,9 +60,14 @@ class ldap
             $this->ldapDn = $this->settingsRepo->getSetting('companysettings.ldap.ldapDn') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapDn') : $this->config->ldapDn;
             $this->defaultRoleKey = $this->settingsRepo->getSetting('companysettings.ldap.ldapDefaultRoleKey') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapDefaultRoleKey') : $this->config->ldapDefaultRoleKey;
             $this->port = $this->settingsRepo->getSetting('companysettings.ldap.ldapPort') ? $this->settingsRepo->getSetting('companysettings.ldap.port') : $this->config->ldapPort;
-            $this->ldapLtGroupAssignments = $this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments')) : json_decode($this->config->ldapLtGroupAssignments);
-            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode($this->config->ldapKeys);
             $this->userDomain = $this->settingsRepo->getSetting('companysettings.ldap.ldapUserDomain') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapUserDomain') : $this->config->ldapUserDomain;
+
+            $this->ldapLtGroupAssignments = $this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
+
+            //var_dump(   (trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments))) );
+            //echo json_last_error();
+
+            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
 
 
         }else{
@@ -124,29 +129,22 @@ class ldap
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
-        echo "<pre>";
-        var_dump($entries[0][$this->ldapKeys->groups]);
-        echo "</pre>";
         //Find Role
-
         $role = $this->defaultRoleKey;
 
-        var_dump($entries[0][$this->ldapKeys->groups]);
         foreach($entries[0][$this->ldapKeys->groups] as $grps) {
 
-            var_dump($this->ldapLtGroupAssignments);
-
             foreach($this->ldapLtGroupAssignments as $key=>$row) {
-                var_dump($row);
-                if (strpos($grps, $row['ldapRole'])) {
-                    if($key > $role) {
-                        $role = $key;
+
+                if( $row->ldapRole != "") {
+                    if (strpos($grps, $row->ldapRole)) {
+                        if ($key > $role) {
+                            $role = $key;
+                        }
                     }
                 }
             }
         }
-
-        exit;
 
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
@@ -160,7 +158,7 @@ class ldap
             );
     }
 
-    private function extractLdapFromUsername($username){
+    public function extractLdapFromUsername($username){
 
         $getLdap = explode("@", $username);
 
