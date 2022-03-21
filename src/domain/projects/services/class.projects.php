@@ -8,6 +8,7 @@ namespace leantime\domain\services {
     use \DateInterval;
     use PHPMailer\PHPMailer\PHPMailer;
     use function Sodium\add;
+    use League\HTMLToMarkdown\HtmlConverter;
 
     class projects
     {
@@ -194,7 +195,74 @@ namespace leantime\domain\services {
 
             }
 
-            //Mattermost Webhook Post
+            //Discord Webhook post
+            $converter = FALSE;
+            for ($i = 1; 3 >= $i ; $i++) {
+              $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $projectId . '.discordWebhookURL' . $i);
+              if ($discordWebhookURL !== "" && $discordWebhookURL !== FALSE) {
+                if (!$converter) {
+                  $converter = new HtmlConverter();
+                }
+                $timestamp = date('c', strtotime('now'));
+                $fields = [
+                  // Additional data to be sent; e.g.:
+                  //[
+                  //  'name' => $subject,
+                  //  'value' => $message,
+                  //  'inline' => FALSE
+                  //],
+                ];
+                $url_link = (
+                  empty($url['link'])
+                    ? ''
+                    : $url['link']
+                );
+
+                // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
+                $data_string = json_encode([
+                  'content' => 'Leantime' . ' - ' . $_SESSION['companysettings.sitename'],
+                  'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
+                  'tts' => FALSE,
+                  'embeds' => [
+                    [
+                      'title' => $subject,
+                      'type' => 'rich',
+                      'description' => $converter->convert($message),
+                      'url' => $url_link,
+                      'timestamp' => $timestamp,
+                      'color' => hexdec('3366ff'),
+                      'footer' => [
+                        'text' => 'Leantime',
+                        'icon_url' => $url_link,
+                      ],
+                      'author' => [
+                        'name' =>  $projectName,
+                        'url' => $url_link
+                      ],
+                      'fields' => $fields,
+                    ]
+                  ]
+
+                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+                $ch = curl_init($discordWebhookURL);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+                curl_setopt($ch, CURLOPT_POST, TRUE);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+                curl_setopt($ch, CURLOPT_HEADER, FALSE);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'Content-Length: ' . strlen($data_string)
+                  ]
+                );
+
+                $result = curl_exec($ch);
+              }
+            }
+
+          //Mattermost Webhook Post
             $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".mattermostWebhookURL");
             if($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
 
