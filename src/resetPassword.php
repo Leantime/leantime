@@ -26,7 +26,6 @@
 
     });
 </script>
-</head>
 
 <body class="loginpage" style="height:100%;">
 

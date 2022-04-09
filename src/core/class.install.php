@@ -154,8 +154,6 @@ namespace leantime\core {
 
             $sql = $this->sqlPrep();
 
-            $this->database->beginTransaction();
-
             try {
 
                 $this->database->query("Use `" . $config->dbDatabase . "`;");
@@ -173,14 +171,11 @@ namespace leantime\core {
                 while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */
                 };
 
-                $this->database->commit();
-
                 return true;
 
             } catch (\PDOException $e) {
 
-                $this->database->rollBack();
-
+                var_dump($e->getMessage());
                 return $e->getMessage();
 
             }
@@ -1034,7 +1029,7 @@ namespace leantime\core {
             $errors = array();
 
             $sql = array(
-                "ALTER TABLE `zp_user` ADD COLUMN `sso` varchar(200) DEFAULT NULL"
+                "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL"
             );
 
             foreach ($sql as $statement) {

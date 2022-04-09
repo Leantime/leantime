@@ -135,7 +135,7 @@ $user = $this->get('user');
                                 <p class='stdformbutton'>
                                     <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
                                         <span onclick="leantime.usersController.saveCroppie()"><?php echo $this->__('buttons.save') ?></span>
-                                        <span class="ld ld-ring ld-spin"</span>
+                                        <span class="ld ld-ring ld-spin"></span>
                                     </span>
                                     <input id="picSubmit" type="submit" name="savePic" class="hidden"
                                            value="<?php echo $this->__('buttons.upload'); ?>"/>

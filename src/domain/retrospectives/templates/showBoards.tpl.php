@@ -451,7 +451,6 @@ $canvasTitle = "";
         </div><!-- /.modal -->
 
     </div>
-</div>
 
 <script type="text/javascript">
 

@@ -17,7 +17,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "squizlabs/php_codesniffer": "3.*"
+        "phpstan/phpstan":"^1.4.9"
     }
 
 }

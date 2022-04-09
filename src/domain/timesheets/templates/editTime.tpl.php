@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 defined('RESTRICTED') or die('Restricted access');
 $helper = $this->get('helper');
@@ -148,7 +148,7 @@ $values = $this->get('values');
     <p class="stdformbutton">
         <?php echo $this->displayLink('timesheets.delTime', $this->__('links.delete'), array('id' => $_GET['id']), array('class'=>'delete editTimeModal pull-right')); ?>
         <input type="submit" value="<?php echo $this->__('buttons.save'); ?>"
-        name="save" class="button" /></fieldset>
+        name="save" class="button" />
     </p>
 </form>
 

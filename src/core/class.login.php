@@ -278,9 +278,8 @@ namespace leantime\core {
             if($this->config->useLdap === true){
 
                 $ldap = new ldap();
-                $ldap->connect();
 
-                if ($bind = $ldap->bind($this->username, $this->password)) {
+                if ($ldap->connect() && $ldap->bind($this->config->bindUser, $this->config->bindPassword)) {
 
                     //Update username to include domain
                     $usernameWDomain = $ldap->extractLdapFromUsername($this->username)."".$ldap->userDomain;
@@ -289,7 +288,7 @@ namespace leantime\core {
                     $userCheck = $this->getUser($usernameWDomain);
 
                     //If user does not exist create user
-                    if($userCheck == false && $ldap->autoCreateUser === true) {
+                    if($userCheck == false) {
 
                         $ldapUser = $ldap->getSingleUser($this->username);
 
@@ -301,18 +300,14 @@ namespace leantime\core {
                             'role' => $ldapUser['role'],
                             'password' => '',
                             'clientId' => '',
-                            'sso'=> 'ldap'
+                            'source' => 'ldap'
                         );
 
                         $users = new repositories\users();
                         $users->addUser($userArray);
 
-                    //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
-                    //TODO: create a better login response. This will return that the username or password was not correct
-                    }elseif($userCheck == false && $ldap->autoCreateUser === false) {
-
-                        return false;
-
+                        //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
+                        //TODO: create a better login response. This will return that the username or password was not correct
                     }
 
                     //TODO: if user exists in ldap, do an auto update of name
@@ -625,6 +620,7 @@ namespace leantime\core {
 					role,
 					firstname AS firstname,
 					lastname AS name,
+					password,
 					settings,
 					profileId,
 					clientId,

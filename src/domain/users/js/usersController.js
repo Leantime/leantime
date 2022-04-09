@@ -116,11 +116,32 @@ leantime.usersController = (function () {
 
     };
 
+    var _initModals = function () {
+
+        var userImportModalConfig = {
+            sizes: {
+                minW: 400,
+                minH: 350
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    jQuery(".userImportModal").nyroModal(userImportModalConfig);
+                }
+            }
+        };
+
+        jQuery(".userImportModal").nyroModal(userImportModalConfig);
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         readURL: readURL,
         clearCroppie: clearCroppie,
         saveCroppie: saveCroppie,
-        initUserTable:initUserTable
+        initUserTable:initUserTable,
+        _initModals:_initModals
     };
 })();

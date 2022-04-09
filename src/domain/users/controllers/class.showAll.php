@@ -3,37 +3,36 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\domain\models\billing;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
     class showAll
     {
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
+
+        public function get()
         {
 
             $tpl = new core\template();
             $userRepo =  new repositories\users();
+            $ldapService = new services\ldap();
 
             //Only Admins
             if(core\login::userIsAtLeast("clientManager")) {
 
-                //Assign vars
-
                 if(core\login::userIsAtLeast("manager")) {
                     $tpl->assign('allUsers', $userRepo->getAll());
+
                 }else{
                     $tpl->assign('allUsers', $userRepo->getAllClientUsers(core\login::getUserClientId()));
                 }
 
                 $tpl->assign('admin', true);
                 $tpl->assign('roles', core\login::$userRoles);
+
+                if($ldapService->connect()) {
+                    $ldapService->getAllMembers($_SESSION['userdata']['mail'], '');
+                }
 
                 $tpl->display('users.showAll');
 
@@ -42,6 +41,10 @@ namespace leantime\domain\controllers {
                 $tpl->display('general.error');
 
             }
+
+        }
+
+        public function post($params) {
 
         }
 

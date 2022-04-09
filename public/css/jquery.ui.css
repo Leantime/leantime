@@ -203,7 +203,7 @@
 }
 .ui-slider-vertical a:hover, .ui-slider-vertical a.ui-state-active {
 	-moz-box-shadow: 0 0 3px rgba(0,0,0,0.3); -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.3); box-shadow: 0 0 3px rgba(0,0,0,0.3); }
-}
+
 .ui-slider-vertical a.ui-slider-handle { margin-bottom: -8px; }
 
 .ui-slider-vertical .ui-slider-range { background: #078ff8; width: 4px; position: absolute; left: -1px; }

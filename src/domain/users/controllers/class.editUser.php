@@ -37,7 +37,6 @@ namespace leantime\domain\controllers {
 						exit();
 					}
 
-
 					//Build values array
 					$values = array(
 						'firstname' => $row['firstname'],
@@ -48,7 +47,8 @@ namespace leantime\domain\controllers {
 						'role' => $row['role'],
 						'hours' => $row['hours'],
 						'wage' => $row['wage'],
-						'clientId' => $row['clientId']
+						'clientId' => $row['clientId'],
+                        'source' =>  $row['source']
 					);
 
 					if (isset($_POST['save'])) {

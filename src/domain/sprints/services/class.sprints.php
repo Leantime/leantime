@@ -254,7 +254,7 @@ namespace leantime\domain\services {
 
             $sprintData = array();
             foreach($sprintValues as $row) {
-                $sprintData[$row['date']] = $row;
+                $sprintData[$row->date] = $row;
             }
 
             $allKeys = array_keys($sprintData);
@@ -279,17 +279,17 @@ namespace leantime\domain\services {
 
                 if (isset($sprintData[$value->format('Y-m-d')." 00:00:00"])) {
 
-                    $burnDown[$i]["open"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_estremaining_hours'];
-                    $burnDown[$i]["open"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_open_todos'] ;
-                    $burnDown[$i]["open"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_open'];
+                    $burnDown[$i]["open"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_estremaining_hours;
+                    $burnDown[$i]["open"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_open_todos;
+                    $burnDown[$i]["open"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_points_open;
 
                     $burnDown[$i]["progress"]["actualHours"] = 0;
-                    $burnDown[$i]["progress"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_progres_todos'];
-                    $burnDown[$i]["progress"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_progress'];
+                    $burnDown[$i]["progress"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_progres_todos;
+                    $burnDown[$i]["progress"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_points_progress;
 
-                    $burnDown[$i]["done"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_logged_hours'];
-                    $burnDown[$i]["done"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_closed_todos'];
-                    $burnDown[$i]["done"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_done'];
+                    $burnDown[$i]["done"]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_logged_hours;
+                    $burnDown[$i]["done"]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_closed_todos;
+                    $burnDown[$i]["done"]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_points_done;
 
                 }else{
                     if ($i == 0) {

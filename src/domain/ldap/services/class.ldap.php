@@ -24,6 +24,8 @@ class ldap
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
     private $defaultRoleKey;
+    private $bindUser;
+    private $bindPassword;
 
     /**
      * @var config
@@ -47,26 +49,23 @@ class ldap
 
             $this->config = new config();
             //Map config vars
-            $this->useLdap = $this->settingsRepo->getSetting('companysettings.ldap.useLdap') ? $this->settingsRepo->getSetting('companysettings.ldap.useLdap') : $this->config->useLdap;
+            $this->useLdap = $this->config->useLdap;
 
             //Don't do anything else if ldap is turned off
             if ($this->useLdap === false) {
                 return false;
             }
 
-            $this->host = $this->settingsRepo->getSetting('companysettings.ldap.ldapHost') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapHost') : $this->config->ldapHost;
-            $this->autoCreateUser = $this->settingsRepo->getSetting('companysettings.ldap.autoCreateUser') ? $this->settingsRepo->getSetting('companysettings.ldap.autoCreateUser') : $this->config->autoCreateUser;
-            $this->baseDn = $this->settingsRepo->getSetting('companysettings.ldap.baseDn') ? $this->settingsRepo->getSetting('companysettings.ldap.baseDn') : $this->config->baseDn;
-            $this->ldapDn = $this->settingsRepo->getSetting('companysettings.ldap.ldapDn') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapDn') : $this->config->ldapDn;
-            $this->defaultRoleKey = $this->settingsRepo->getSetting('companysettings.ldap.ldapDefaultRoleKey') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapDefaultRoleKey') : $this->config->ldapDefaultRoleKey;
-            $this->port = $this->settingsRepo->getSetting('companysettings.ldap.ldapPort') ? $this->settingsRepo->getSetting('companysettings.ldap.port') : $this->config->ldapPort;
-            $this->userDomain = $this->settingsRepo->getSetting('companysettings.ldap.ldapUserDomain') ? $this->settingsRepo->getSetting('companysettings.ldap.ldapUserDomain') : $this->config->ldapUserDomain;
-
-            $this->ldapLtGroupAssignments = $this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ltGroupAssignments')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
-
-            //var_dump(   (trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments))) );
-            //echo json_last_error();
-
+            //Prepare and map in case we want to get the config from somewhere else in the future
+            $this->host = $this->config->ldapHost;
+            $this->baseDn = $this->config->baseDn;
+            $this->ldapDn = $this->config->ldapDn;
+            $this->defaultRoleKey = $this->config->ldapDefaultRoleKey;
+            $this->port = $this->config->ldapPort;
+            $this->userDomain = $this->config->ldapUserDomain;
+            $this->bindUser = $this->config->bindUser;
+            $this->bindPassword = $this->config->bindPassword;
+            $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
 
 
@@ -74,14 +73,13 @@ class ldap
             //TODO
         }
 
-        //$this->getRoleAssignments();
 
 
     }
 
     private function getRoleAssignments (){
 
-        //$assignedRoles = $this->settingsRepo->getSetting('companysettings.ldap.roleAssignments') ? unserialize($this->settingsRepo->getSetting('companysettings.ldap.roleAssignments')) : $this->config->assignedRoles;
+        $assignedRoles = $this->config->assignedRoles;
 
         //TODO: Should come from db roles table eventually
         $availableRoles = core\login::$userRoles;
@@ -95,24 +93,25 @@ class ldap
 
     public function connect() {
 
-        $this->ldapConnection = ldap_connect($this->host, $this->port);
+        if(function_exists("ldap_connect")) {
+            $this->ldapConnection = ldap_connect($this->host, $this->port);
 
-        ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
-        ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
+            ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
+            ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
 
-        return true;
-
-    }
-
-    public function bind($username, $password){
-
-        if($username == '') {
+            return true;
+        }else{
+            error_log("ldap extension not installed", 0);
             return false;
         }
 
-        $usernameDN = $this->ldapKeys->username."=".$this->extractLdapFromUsername($username).",".$this->ldapDn;
+    }
 
-        return ldap_bind($this->ldapConnection, $usernameDN, $password);
+    public function bind(){
+
+        $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
+
+        return @ldap_bind($this->ldapConnection, $usernameDN, $this->bindPassword);
 
     }
 
@@ -170,34 +169,75 @@ class ldap
 
     }
 
-    public function getAllMembers($group,$user,$password) {
+    public function getAllMembers() {
 
-            $ldap_host = "LDAPSERVER";
-            $ldap_dn = "OU=some_group,OU=some_group,DC=company,DC=com";
-            $base_dn = "DC=company,DC=com";
-            $ldap_usr_dom = "@company.com";
-            $ldap = ldap_connect($ldap_host);
+        if(function_exists("ldap_search")) {
 
-            $results = ldap_search($ldap,$ldap_dn, "cn=" . $group);
-            $member_list = ldap_get_entries($ldap, $results);
+            $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname);
 
-            $dirty = 0;
-            $group_member_details = array();
+            $filter = "(cn=*)";
 
-            foreach($member_list[0]['member'] as $member) {
-                if($dirty == 0) {
-                    $dirty = 1;
-                } else {
-                    $member_dn = explode_dn($member);
-                    $member_cn = str_replace("CN=","",$member_dn[0]);
-                    $member_search = ldap_search($ldap, $base_dn, "(CN=" . $member_cn . ")");
-                    $member_details = ldap_get_entries($ldap, $member_search);
-                    $group_member_details[] = array($member_details[0]['givenname'][0],$member_details[0]['sn'][0],$member_details[0]['telephonenumber'][0],$member_details[0]['othertelephone'][0]);
+            $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
+            $entries = ldap_get_entries($this->ldapConnection, $result);
+
+            $allUsers = array();
+
+            foreach ($entries as $key => $row) {
+
+                if (isset($row["dn"])) {
+
+                    preg_match('/(?:^|.*,)uid=(.*?)(?:,.*$|$)/', $row["dn"], $usernameArray);
+
+                    if (count($usernameArray) > 0) {
+                        $allUsers[] = $this->getSingleUser($usernameArray[1]);
+                    }
                 }
             }
-            ldap_close($ldap);
-            return $group_member_details;
+
+            return $allUsers;
+
+        }else{
+
+            error_log("ldap extension not installed", 0);
+            return false;
+
         }
 
+    }
+
+
+    public function upsertUsers($ldapUsers) {
+
+        $userRepo = new repositories\users();
+
+        foreach($ldapUsers as $user) {
+            //Update
+            $checkUser = $userRepo->getUserByEmail($user['user']);
+
+            if(is_array($checkUser)){
+
+                $userRepo->patchUser($checkUser['id'], array("firstname"=>$user["firstname"], "lastname"=>$user["lastname"], "role"=>$user["role"] ));
+
+            }else{
+                //Insert
+                $userArray = array(
+                    'firstname' => $user['firstname'],
+                    'lastname' => $user['lastname'],
+                    'phone' => '',
+                    'user' => $user['user'],
+                    'role' => $user['role'],
+                    'password' => '',
+                    'clientId' => '',
+                    'source'=> 'ldap'
+                );
+
+                $userRepo->addUser($userArray);
+
+            }
+        }
+
+        return true;
+
+    }
 
 }

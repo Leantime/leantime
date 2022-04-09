@@ -23,7 +23,6 @@
 
     });
 </script>
-</head>
 
 <?php
 

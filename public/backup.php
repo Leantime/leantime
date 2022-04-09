@@ -20,7 +20,8 @@ function runBackup($backupFile, $config){
 
     
     $backupPath = $config->dbBackupPath.$backupFile;
-    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output = array(),$worked);
+    $output = array();
+    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output,$worked);
 
 
     switch ($worked) {
@@ -72,11 +73,12 @@ function uploadS3($backupFile, $config){
 }
 
 $S3=NULL;
-if($config->useS3 == true){
 
-    $timezone  = -6; //(GMT -6:00) Central Time
-    $date = gmdate("Ymd-Hi", time() + 3600 * ($timezone + date("I")));
-    $backupFile = $config->dbDatabase . '_' . $date . '.sql';
+$timezone  = -6; //(GMT -6:00) Central Time
+$date = gmdate("Ymd-Hi", time() + 3600 * ($timezone + date("I")));
+$backupFile = $config->dbDatabase . '_' . $date . '.sql';
+
+if($config->useS3 == true){
 
     $run = runBackup($backupFile, $config);
 
@@ -86,8 +88,10 @@ if($config->useS3 == true){
     }
 
 }else{
+
     $run = runBackup($backupFile, $config);
     $S3=NULL;
+
 }
 
 header('Content-Type: application/json');

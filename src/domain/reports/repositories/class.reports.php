@@ -166,7 +166,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\reports");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, \leantime\domain\models\reports::class);
             $value = $stmn->fetchAll();
 
             $stmn->closeCursor();
@@ -354,7 +354,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':project', $project, PDO::PARAM_INT);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\reports");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, \leantime\domain\models\reports::class);
             $value = $stmn->fetchAll();
 
             $stmn->closeCursor();

@@ -74,6 +74,4 @@ defined('RESTRICTED') or die('Restricted access');
     </tbody>
 </table>
 
-</fieldset>
-
 </form>

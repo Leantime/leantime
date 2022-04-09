@@ -9,10 +9,7 @@ namespace leantime\domain\controllers {
 
         public function run()
         {
-
-            $login = new core\login(core\session::getSID());
-
-            if ($login->logged_in() === true) {
+            if (core\login::logged_in() === true) {
 
                 header("Location:".BASE_URL."/index.php?logout=1");
             }
