@@ -197,6 +197,28 @@
                                 </form>
                             </div>
                         </div>
+
+                        <?php // Slack webhook ?>
+                        <h4 class='widgettitle title-light'><span class='iconfa iconfa-leaf'></span>Discord</h4>
+                        <div class='row'>
+                            <div class='col-md-3'>
+                                <img src='<?= BASE_URL ?>/images/discord-logo.png' width='200'/>
+                            </div>
+
+                            <div class='col-md-5'>
+                              <?= $this->__('text.discord_instructions'); ?>
+                            </div>
+                            <div class="col-md-4">
+                                <strong><?= $this->__('label.webhook_url'); ?></strong><br/>
+                                <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                                    <?php for ($i = 1; 3 >= $i ; $i++): ?>
+                                    <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $this->__('input.placeholders.discord_url'); ?>" value="<?php echo $this->get('discordWebhookURL' . $i); ?>"/><br/>
+                                    <?php endfor; ?>
+                                    <input type="submit" value="<?= $this->__('buttons.save'); ?>" name="discordSave"/>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

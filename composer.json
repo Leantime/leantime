@@ -13,7 +13,8 @@
         "phpmailer/phpmailer": "^6.0",
         "robthree/twofactorauth": "^1.7",
         "endroid/qr-code": "^3.7",
-        "ext-ldap": "*"
+        "ext-ldap": "*",
+        "league/html-to-markdown": "^5.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

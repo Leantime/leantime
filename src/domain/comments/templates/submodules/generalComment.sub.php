@@ -78,10 +78,10 @@ if (strpos($formUrl, '?delComment=') !== false) {
 								 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
 							<div>
 								<div class="right">
-									<?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
-										$this->getFormattedTimeString($row['date']) ); ?></div>
+									<?php printf( $this->__('text.written_on'), $this->getFormattedDateString($comment['date']),
+										$this->getFormattedTimeString($comment['date']) ); ?></div>
 								<strong>
-								<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+								<?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?>
 								</strong><br/>
 								<p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
 								<div class="clear"></div>

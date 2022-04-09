@@ -62,7 +62,7 @@ namespace leantime\domain\controllers {
 
                     $webhook = strip_tags($_POST['slackWebhookURL']);
                     $this->settingsRepo->saveSetting("projectsettings." . $id . ".slackWebhookURL", $webhook);
-                    $tpl->setNotification($this->language->__("notification.saved_mattermost_webhook"), 'success');
+                    $tpl->setNotification($this->language->__("notification.saved_slack_webhook"), 'success');
                 }
 
 
@@ -114,11 +114,25 @@ namespace leantime\domain\controllers {
 
                 }
 
+                //Discord integration; provide three possible webhooks per project
+                if (isset($_POST['discordSave'])) {
+                  for ($i = 1; 3 >= $i ; $i++) {
+                    $webhook = trim(strip_tags($_POST['discordWebhookURL' . $i]));
+                    $this->settingsRepo->saveSetting('projectsettings.' . $id . '.discordWebhookURL' . $i, $webhook);
+                  }
+                  $tpl->setNotification($this->language->__('notification.saved_discord_webhook'), 'success');
+                }
+
                 $mattermostWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".mattermostWebhookURL");
                 $tpl->assign('mattermostWebhookURL', $mattermostWebhook);
 
                 $slackWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".slackWebhookURL");
                 $tpl->assign('slackWebhookURL', $slackWebhook);
+
+                for ($i = 1; 3 >= $i ; $i++) {
+                  $discordWebhook = $this->settingsRepo->getSetting('projectsettings.' . $id . '.discordWebhookURL' . $i);
+                  $tpl->assign('discordWebhookURL' . $i, $discordWebhook);
+                }
 
                 $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
                 $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
