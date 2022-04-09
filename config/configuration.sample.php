@@ -45,28 +45,50 @@ class config
     public $smtpPort = ""; //Port (usually one of 25, 465, 587, 2526)
 
     /*ldap default settings (can be changed in company settings */
-    public $useLdap = false;
-    public $autoCreateUser = true; //Create user on first login? If not users need to be imported via user management
-    public $ldapHost = ""; //FQDN
+    /*ldap default settings*/
+    public $useLdap = true;
+    public $ldapHost = "192.168.1.2"; //FQDN
     public $ldapPort = 389; //Default Port
-    public $baseDn = ""; //Base DN, example: DC=example,DC=com
-    public $ldapDn = ""; //Location of users, example: CN=users,DC=example,DC=com
-    public $ldapUserDomain = ""; //Domain after ldap, example @example.com
-    public $ldapKeys = array (  //Default ldap keys in your directory. Currently set to most often used values
-        "username" => "uid",
-        "groups" => "memberOf",
-        "email" => "mail",
-        "firstname" => "displayname",
-        "lastname" => '',
-    );
-    public $ldapLtGroupAssignments = array ( //Default role assignments to Leantime. (Optional) Can be updated in user settings for each user
-        10   => array('ltRole'=>'client', 'ldapRole'=>''),
-        20   => array('ltRole'=>'developer', 'ldapRole'=>''),
-        30   => array('ltRole'=>'clientManager', 'ldapRole'=>''),
-        40   => array('ltRole'=>'manager', 'ldapRole'=>''),
-        50   => array('ltRole'=>'admin', 'ldapRole'=>'administrator'),
-    );
-    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to client)
+    public $baseDn = "dc=192,dc=168,dc=1,dc=2"; //Base DN, example: DC=example,DC=com
+    public $ldapDn = "cn=Users,dc=192,dc=168,dc=1,dc=2"; //Location of users, example: CN=users,DC=example,DC=com
+    public $ldapUserDomain = "@leantime.io"; //Domain after ldap, example @example.com
+    public $bindUser = "ldapReader"; //ldap user that can search directory. (Should be read only)
+    public $bindPassword = "test";
+
+    //Default ldap keys in your directory.
+    public $ldapKeys = '{ 
+        "username":"uid",
+        "groups":"memberof",
+        "email":"mail",
+        "firstname":"displayname",
+        "lastname":""
+        }';
+
+    //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
+    public $ldapLtGroupAssignments = '{
+          "10": {
+            "ltRole":"client",
+            "ldapRole":""
+          },
+          "20": {
+            "ltRole":"developer",
+            "ldapRole":""
+          },
+          "30": {
+            "ltRole":"clientManager",
+            "ldapRole":""
+          },
+          "40": {
+            "ltRole":"manager",
+            "ldapRole":""
+          },
+          "50": {
+            "ltRole":"admin",
+            "ldapRole":"administrators"
+          }
+        }';
+
+    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to developer)
 
     function __construct(){
       /* General */
@@ -107,6 +129,17 @@ class config
       $this->smtpAutoTLS = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $this->smtpAutoTLS, "boolean");
       $this->smtpSecure = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SECURE", $this->smtpSecure);
       $this->smtpPort = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PORT", $this->smtpPort);
+
+      /*ldap*/
+      $this->useLdap = $this->configEnvironmentHelper("LEAN_LDAP_USE_LDAP", $this->useLdap);;
+      $this->ldapHost = $this->configEnvironmentHelper("LEAN_LDAP_HOST", $this->ldapHost);
+      $this->ldapPort = $this->configEnvironmentHelper("LEAN_LDAP_PORT", $this->ldapPort);
+      $this->baseDn = $this->configEnvironmentHelper("LEAN_LDAP_BASE_DN", $this->baseDn);
+      $this->ldapDn = $this->configEnvironmentHelper("LEAN_LDAP_DN", $this->ldapDn);
+      $this->ldapUserDomain = $this->configEnvironmentHelper("LEAN_LDAP_USER_DOMAIN", $this->ldapUserDomain);
+      $this->ldapKeys = $this->configEnvironmentHelper("LEAN_LDAP_KEYS", $this->ldapKeys);
+      $this->ldapLtGroupAssignments = $this->configEnvironmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $this->ldapLtGroupAssignments);
+      $this->ldapDefaultRoleKey = $this->configEnvironmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $this->ldapDefaultRoleKey);
 
     }
 

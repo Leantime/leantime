@@ -595,7 +595,6 @@ namespace leantime\core {
                   `phone` varchar(25) NOT NULL,
                   `profileId` varchar(100) NOT NULL DEFAULT '',
                   `lastlogin` datetime DEFAULT NULL,
-                  
                   `status` varchar(1) NOT NULL DEFAULT 'A',
                   `expires` DATETIME DEFAULT NULL,
                   `role` varchar(200) NOT NULL,
@@ -615,10 +614,10 @@ namespace leantime\core {
                   `twoFAEnabled` tinyint(1) DEFAULT '0',
                   `twoFASecret` varchar(200) DEFAULT NULL,
                   `createdOn` DATETIME DEFAULT NULL,
+                  `source` varchar(200) DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                              
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;               
                     
                 insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`) 
                 values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
