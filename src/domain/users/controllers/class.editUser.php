@@ -56,16 +56,17 @@ namespace leantime\domain\controllers {
 						if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
 							$values = array(
-								'firstname' => ($_POST['firstname']),
-								'lastname' => ($_POST['lastname']),
-								'user' => ($_POST['user']),
-								'phone' => ($_POST['phone']),
-								'status' => ($_POST['status']),
-								'role' => ($_POST['role']),
-								'hours' => ($_POST['hours']),
-								'wage' => ($_POST['wage']),
-								'clientId' => ($_POST['client']),
+								'firstname' => ($_POST['firstname'] ?? $row['firstname']),
+								'lastname' => ($_POST['lastname'] ??  $row['lastname']),
+								'user' => ($_POST['user'] ?? $row['username']),
+								'phone' => ($_POST['phone'] ??  $row['phone']),
+								'status' => ($_POST['status'] ?? $row['status']),
+								'role' => ($_POST['role'] ?? $row['role']),
+								'hours' => ($_POST['hours'] ?? $row['hours']),
+								'wage' => ($_POST['wage'] ?? $row['wage']),
+								'clientId' => ($_POST['client'] ?? $row['clientId']),
 								'password' => ($row['password']),
+                                'source' =>  $row['source']
 							);
 
 							$changedEmail = 0;
@@ -74,12 +75,12 @@ namespace leantime\domain\controllers {
 								$changedEmail = 1;
 							}
 
-							if ($_POST['password'] != '' && $_POST['password'] == $_POST['password2']) {
+							if (isset($_POST['password']) && $_POST['password'] != '' && $_POST['password'] == $_POST['password2']) {
 								$values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 							}
 
 							if ($values['user'] !== '') {
-								if ($_POST['password'] == $_POST['password2']) {
+								if ( !isset($_POST['password']) || ($_POST['password'] == $_POST['password2'])) {
 									if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 										if ($changedEmail == 1) {
 											if ($userRepo->usernameExist($row['username'], $id) === false) {

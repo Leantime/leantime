@@ -59,17 +59,22 @@ leantime.dashboardController = (function () {
             options: {
                 maintainAspectRatio : false,
                 responsive: true,
-
-                legend: {
-                    position: 'bottom',
-                },
-                title: {
-                    display: false,
-                    text: ''
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: false,
+                        text: ''
+                    }
                 },
                 animation: {
                     animateScale: true,
                     animateRotate: true
+                },
+                scales: {
+                    y: {},
+                    x: {}
                 }
             }
         };
@@ -110,43 +115,47 @@ leantime.dashboardController = (function () {
                 responsive: true,
                 maintainAspectRatio : false,
 
-                title: {
-                    display: false,
-                    text: 'Line Chart'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
+
                 hover: {
                     mode: 'nearest',
                     intersect: true
                 },
-                legend: {
-                    position: 'bottom',
+
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Line Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    }
                 },
                 scales: {
-                    xAxes: [{
+                    x: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: leantime.i18n.__("label.date"),
+                            text: leantime.i18n.__("label.date"),
                         },
                         type: 'time',
                         time: {
                             unit: 'day'
                         }
-                    }],
-                    yAxes: [{
+                    },
+                    y: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: leantime.i18n.__("label.effort")
+                            text: leantime.i18n.__("label.effort")
                         },
                         ticks: {
                             beginAtZero:true
                         }
-                    }]
+                    }
                 }
             }
         };
@@ -221,21 +230,9 @@ leantime.dashboardController = (function () {
             options: {
                 responsive: true,
                 maintainAspectRatio : false,
-
-                title: {
-                    display: false,
-                    text: 'Line Chart'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
                 hover: {
                     mode: 'nearest',
                     intersect: true
-                },
-                legend: {
-                    position: 'bottom',
                 },
                 elements: {
                     point: {
@@ -243,28 +240,41 @@ leantime.dashboardController = (function () {
                         radius:"0"
                     }
                 },
+                plugins: {
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Line Chart'
+                    },
+                },
                 scales: {
-                    xAxes: [{
+                    x: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: leantime.i18n.__("label.date"),
+                            text: leantime.i18n.__("label.date"),
 
                         },
                         type: 'time',
 
-                    }],
-                    yAxes: [{
+                    },
+                    y: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: leantime.i18n.__("label.num_tickets")
+                            text: leantime.i18n.__("label.num_tickets")
                         },
                         ticks: {
                             beginAtZero:true
                         },
                         stacked: true
-                    }]
+                    }
                 }
             }
         };
@@ -287,7 +297,7 @@ leantime.dashboardController = (function () {
                 chart.data.datasets[2].data = actualData['open']['data'];
 
 
-                chart.options.scales.yAxes[0].scaleLabel.labelString = label;
+                chart.options.scales.y.title.text = label;
                 jQuery(".backlogChartButtons").removeClass('active');
                 jQuery(this).addClass('active');
                 chart.update();

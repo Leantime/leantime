@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                     "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
+                    "node_modules/moment/moment.js",
                     "public/js/libs/bootstrap.min.js",
                     "public/js/libs/bootstrap-timepicker.min.js",
                     "public/js/libs/bootstrap-fileupload.min.js",
@@ -53,7 +54,8 @@ module.exports = function (grunt) {
                 }
                 , src: [
                     "node_modules/croppie/croppie.js",
-                    "node_modules/chart.js/dist/Chart.bundle.js",
+                    "node_modules/chart.js/dist/chart.js",
+                    "node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
                     "node_modules/packery/dist/packery.pkgd.js",
                     "node_modules/imagesloaded/imagesloaded.pkgd.js",
                     "node_modules/tether-shepherd/dist/js/tether.js",
