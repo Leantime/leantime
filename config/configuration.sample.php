@@ -46,14 +46,14 @@ class config
 
     /*ldap default settings (can be changed in company settings */
     /*ldap default settings*/
-    public $useLdap = true;
-    public $ldapHost = "192.168.1.2"; //FQDN
+    public $useLdap = false;
+    public $ldapHost = ""; //FQDN
     public $ldapPort = 389; //Default Port
-    public $baseDn = "dc=192,dc=168,dc=1,dc=2"; //Base DN, example: DC=example,DC=com
-    public $ldapDn = "cn=Users,dc=192,dc=168,dc=1,dc=2"; //Location of users, example: CN=users,DC=example,DC=com
-    public $ldapUserDomain = "@leantime.io"; //Domain after ldap, example @example.com
-    public $bindUser = "ldapReader"; //ldap user that can search directory. (Should be read only)
-    public $bindPassword = "test";
+    public $baseDn = ""; //Base DN, example: DC=example,DC=com
+    public $ldapDn = ""; //Location of users, example: CN=users,DC=example,DC=com
+    public $ldapUserDomain = ""; //Domain after ldap, example @example.com
+    public $bindUser = ""; //ldap user that can search directory. (Should be read only)
+    public $bindPassword = "";
 
     //Default ldap keys in your directory.
     public $ldapKeys = '{ 
