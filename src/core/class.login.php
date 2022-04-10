@@ -279,7 +279,7 @@ namespace leantime\core {
 
                 $ldap = new ldap();
 
-                if ($ldap->connect() && $ldap->bind($this->config->bindUser, $this->config->bindPassword)) {
+                if ($ldap->connect() && $ldap->bind($this->username, $this->password)) {
 
                     //Update username to include domain
                     $usernameWDomain = $ldap->extractLdapFromUsername($this->username)."".$ldap->userDomain;

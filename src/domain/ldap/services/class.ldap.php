@@ -107,11 +107,18 @@ class ldap
 
     }
 
-    public function bind(){
+    public function bind($username='', $password=''){
 
-        $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
+        if($username != '' && $password != ''){
+            $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
+            $passwordBind='';
+        }else{
+            $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
+            $passwordBind = $this->bindPassword;
+        }
 
-        return @ldap_bind($this->ldapConnection, $usernameDN, $this->bindPassword);
+
+        return @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
     }
 
