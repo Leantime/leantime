@@ -15,14 +15,14 @@ include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
 $config = new leantime\core\config();
+$settings = new leantime\core\settings();
+$settings->loadSettings($config->defaultTimezone);
 
 function runBackup($backupFile, $config){
 
-    
     $backupPath = $config->dbBackupPath.$backupFile;
     $output = array();
     exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output,$worked);
-
 
     switch ($worked) {
         case 0:
@@ -30,6 +30,7 @@ function runBackup($backupFile, $config){
             chmod(ROOT.'/'.$config->userFilePath,0755);
             break;
         case 1:
+
             return array('type'=>'error','msg'=>'There was an error backup ' .$config->dbDatabase . ' to ' . $backupPath);
             break;
         case 2:

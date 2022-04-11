@@ -175,7 +175,6 @@ namespace leantime\core {
 
             } catch (\PDOException $e) {
 
-                var_dump($e->getMessage());
                 return $e->getMessage();
 
             }

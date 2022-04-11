@@ -1,0 +1,1 @@
+[10-Apr-2022 08:09:28 America/Los_Angeles] PHP Notice:  Undefined property: leantime\core\config::$dbBackupPath in C:\xampp\htdocs\leantime-oss\public\backup.php on line 22

@@ -30,9 +30,14 @@ class settings {
 	 * loadSettings - load all settings and set ini
 	 *
 	 */
-	public function loadSettings(){
+	public function loadSettings($timezone){
 
-		date_default_timezone_set('America/Los_Angeles');
+        if($timezone != '') {
+            date_default_timezone_set($timezone);
+        }else{
+            date_default_timezone_set('America/Los_Angeles');
+        }
+
         error_reporting(E_ALL);
 
 		if($this->debug === 1){
@@ -93,7 +98,3 @@ class settings {
     }
 
 }
-
-$settings = new settings();
-$settings->loadSettings();
-

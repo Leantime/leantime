@@ -9,6 +9,7 @@ class config
     public $mainColor = "1b75bb"; //Default color, can be changed later
     public $logoPath = "/images/logo.png"; //Default logo path, can be changed later
     public $appUrl = ""; //Base URL, trailing slash not needed
+    public $defaultTimezone = "America/Los_Angeles"; //Set default timezone
 
     /* Database */
     public $dbHost="localhost"; //Database host
@@ -19,7 +20,7 @@ class config
     /* Fileupload */
     public $userFilePath= "userfiles/"; //Local relative path to store uploaded files (if not using S3)
 
-    public $dbBackupPath= "backupdb/"; //Local relative path to store backup files, need permission 0777
+    public $dbBackupPath= "backupdb/"; //Local relative path to store backup files, need permission to write
 
     public $useS3 = false; //Set to true if you want to use S3 instead of local files
     public $s3Key = ""; //S3 Key
@@ -97,6 +98,7 @@ class config
       $this->mainColor = $this->configEnvironmentHelper("LEAN_MAIN_COLOR", $this->mainColor);
       $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
       $this->appUrl = $this->configEnvironmentHelper("LEAN_APP_URL", $this->appUrl);
+      $this->defaultTimezone  = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
 
       /* Database */
       $this->dbHost = $this->configEnvironmentHelper("LEAN_DB_HOST", $this->dbHost);
