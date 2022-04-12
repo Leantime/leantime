@@ -1224,7 +1224,7 @@ namespace leantime\domain\repositories {
             $sql = "INSERT INTO zp_tickethistory (
 					userId, ticketId, changeType, changeValue, dateModified
 				) VALUES (
-					:userId, :ticketId, :changeType, :changeValue, NOW()
+					:userId, :ticketId, :changeType, :changeValue, :date
 				)";
 
             $stmn = $this->db->database->prepare($sql);
@@ -1235,6 +1235,8 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
                 $stmn->bindValue(':changeType', $field, PDO::PARAM_STR);
                 $stmn->bindValue(':changeValue', $value, PDO::PARAM_STR);
+                $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+
                 $stmn->execute();
             }
 
