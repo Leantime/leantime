@@ -7,7 +7,6 @@
 
 namespace leantime\core {
 
-    use JetBrains\PhpStorm\NoReturn;
     use leantime\domain\repositories;
 
     class template
