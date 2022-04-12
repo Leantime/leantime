@@ -89,17 +89,17 @@
 
                                     <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                                     <label for="firstname"><?php echo $this->__('label.firstname'); ?></label> <input
-                                        type="text" name="firstname" id="firstname"
+                                        type="text" name="firstname" id="firstname"  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
                                         value="<?php $this->e($values['firstname']); ?>" /><br />
 
                                     <label for="lastname"><?php echo $this->__('label.lastname'); ?></label> <input
-                                        type="text" name="lastname" id="lastname"
+                                        type="text" name="lastname" id="lastname" <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
                                         value="<?php $this->e($values['lastname']); ?>" /><br />
 
-                                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input
+                                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
                                         type="text" name="user" id="user" value="<?php $this->e($values['user']); ?>" /><br />
 
-                                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
+                                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
                                         type="text" name="phone" id="phone"
                                         value="<?php $this->e($values['phone']); ?>" /><br />
 
@@ -138,10 +138,10 @@
                                             <?php endforeach; ?>
                                     </select><br/>
 
-								<label for="password"><?php echo $this->__('label.password'); ?></label> <input
+								<label for="password"><?php echo $this->__('label.password'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
 										   type="password" name="password" id="password" value="" autocomplete="new-password"/><br />
 
-                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input
+                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
 										   type="password" name="password2" id="password2" value="" autocomplete="new-password"/><br />
 
                                     <input type='hidden' name='hours' value='<?php $this->e($values['hours']) ?>' /><br />

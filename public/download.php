@@ -12,6 +12,8 @@ include_once '../config/configuration.php';
 
 $login = leantime\core\login::getInstance(leantime\core\session::getSID());
 $config = new leantime\core\config();
+$settings = new leantime\core\settings();
+$settings->loadSettings($config->defaultTimezone);
 
 if ($login->logged_in()!==true) {
 

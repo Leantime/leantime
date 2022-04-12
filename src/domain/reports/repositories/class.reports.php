@@ -105,9 +105,9 @@ namespace leantime\domain\repositories {
             //Timesheet Reports
             $query = "SELECT 
                         
-                        SUM(zp_timesheets.hours) as sum_logged_hours,
-                        SUM(zp_timesheets.hours) / COUNT(DISTINCT zp_tickets.id) AS daily_avg_hours_booked_todo,
-                        SUM(zp_timesheets.hours) / :storyPoints as daily_avg_hours_booked_point
+                        ROUND(SUM(zp_timesheets.hours), 2) as sum_logged_hours,
+                        ROUND(SUM(zp_timesheets.hours) / COUNT(DISTINCT zp_tickets.id), 2) AS daily_avg_hours_booked_todo,
+                        ROUND(SUM(zp_timesheets.hours) / :storyPoints, 2) as daily_avg_hours_booked_point
                         
                     FROM zp_tickets 
                     LEFT JOIN zp_timesheets ON zp_tickets.id = zp_timesheets.ticketId
@@ -166,7 +166,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\reports");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, \leantime\domain\models\reports::class);
             $value = $stmn->fetchAll();
 
             $stmn->closeCursor();
@@ -354,7 +354,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':project', $project, PDO::PARAM_INT);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\reports");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, \leantime\domain\models\reports::class);
             $value = $stmn->fetchAll();
 
             $stmn->closeCursor();

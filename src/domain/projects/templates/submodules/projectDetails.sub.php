@@ -55,7 +55,6 @@ $helper = $this->get('helper');
                                <?php } ?>><?php echo $this->__('label.closed'); ?></option>
 
                             </select>
-
                         </div>
                     </div>
 

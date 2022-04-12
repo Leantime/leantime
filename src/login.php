@@ -20,7 +20,6 @@
 
     });
 </script>
-</head>
 
 <?php
 

@@ -14,3 +14,8 @@ input[type='submit']{
 .chzn-container-single .chzn-single {
     border:1px solid #bbb;
 }
+
+
+.mainwrapper input:disabled {
+    background-color:#ddd;
+}

@@ -226,7 +226,7 @@ namespace leantime\domain\repositories {
 
 
 
-        public function getWeeklyTimesheets($projectId=-1, $dateStart='0000-01-01 00:00:00', $userId)
+        public function getWeeklyTimesheets($projectId=-1, $dateStart='0000-01-01 00:00:00', $userId=0)
         {
 
             $query = "SELECT

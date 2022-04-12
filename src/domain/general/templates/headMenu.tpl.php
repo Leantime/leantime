@@ -10,8 +10,8 @@
     <?php if ($login::userIsAtLeast("developer")) {
 
         if($this->get('onTheClock') !== false){
-        echo "<li class='timerHeadMenu' id='timerHeadMenu'";
-        echo"><a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
+        echo "<li class='timerHeadMenu' id='timerHeadMenu'>";
+        echo"<a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
                 ".sprintf($this->__('text.timer_on_todo'), $this->get('onTheClock')['totalTime'], substr($this->escape($this->get('onTheClock')['headline']), 0, 10))."
             </a>";
 

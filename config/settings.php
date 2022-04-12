@@ -15,9 +15,9 @@ class settings {
 	 */
 	private $debug = 0;
 
-	public $appVersion = "2.1.8";
+	public $appVersion = "2.1.9";
 
-    public $dbVersion = "2.1.5";
+    public $dbVersion = "2.1.6";
 
 	/**
 	 * __construct
@@ -30,9 +30,14 @@ class settings {
 	 * loadSettings - load all settings and set ini
 	 *
 	 */
-	public function loadSettings(){
+	public function loadSettings($timezone){
 
-		date_default_timezone_set('America/Los_Angeles');
+        if($timezone != '') {
+            date_default_timezone_set($timezone);
+        }else{
+            date_default_timezone_set('America/Los_Angeles');
+        }
+
         error_reporting(E_ALL);
 
 		if($this->debug === 1){
@@ -53,7 +58,7 @@ class settings {
 
 	public function getBaseURL () {
 
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? "https://" : "http://";
+        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 
@@ -93,7 +98,3 @@ class settings {
     }
 
 }
-
-$settings = new settings();
-$settings->loadSettings();
-

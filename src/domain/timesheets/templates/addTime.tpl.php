@@ -170,5 +170,3 @@ $values = $this->get('values');
         </form>
     </div>
 </div>
-</div>
-</div>

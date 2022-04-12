@@ -402,7 +402,8 @@ namespace leantime\domain\repositories {
 							role,
 					        notifications,
 							clientId, 
-							password
+							password,
+							source
 						) VALUES (
 							:firstname,
 							:lastname,
@@ -411,7 +412,8 @@ namespace leantime\domain\repositories {
 							:role,
 							1,
 							:clientId,
-							:password
+							:password,
+							:source
 						)";
 
             $stmn = $this->db->database->prepare($query);
@@ -423,7 +425,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
 
             $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
-            $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
+            $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
+
+            if(isset($values['source'])){
+                $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);
+            }else{
+                $stmn->bindValue(':source', '', PDO::PARAM_STR);
+            }
+
 
 
             $stmn->execute();

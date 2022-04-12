@@ -9,6 +9,7 @@
  */
 namespace leantime\core {
 
+    use leantime\domain\services\ldap;
     use PDO;
     use leantime\domain\repositories;
     use RobThree\Auth\TwoFactorAuth;
@@ -146,6 +147,8 @@ namespace leantime\core {
          */
         public $pwResetLimit = 5;
 
+        private $config;
+
         /**
          * __construct - getInstance of session and get sessionId and refers to login if post is set
          *
@@ -157,16 +160,16 @@ namespace leantime\core {
         {
             $this->db = db::getInstance();
 
-            $config = new config();
-            $this->cookieTime = $config->sessionExpiration;
+            $this->config = new config();
+            $this->cookieTime = $this->config->sessionExpiration;
             $this->language = new language();
-
+            $this->settingsRepo = new repositories\setting();
             $this->session = $sessionid;
 
             if (isset($_POST['login'])===true && isset($_POST['username'])===true && isset($_POST['password'])===true) {
+
                 $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
                 $this->username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
-
                 $this->password = ($_POST['password']);
 
                 //If login successful redirect to the correct url to avoid post on reload
@@ -206,8 +209,10 @@ namespace leantime\core {
                     if($userFromDB !== false && count($userFromDB) > 0) {
 
                         if($userFromDB['pwResetCount'] < $this->pwResetLimit) {
+
                             $this->generateLinkAndSendEmail($_POST["username"]);
                             $this->success = $this->language->__('notifications.email_was_sent_to_reset');
+
                         }else{
                             $this->error =  $this->language->__('notifications.could_not_reset_limit_reached');
                         }
@@ -219,10 +224,14 @@ namespace leantime\core {
                 if(isset($_POST['password']) === true && isset($_POST['password2']) === true) {
 
                     if(strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
+
                         $this->error = $this->language->__('notification.passwords_dont_match');
+
                     }else{
+
                         $this->changePW($_POST['password'], $_GET['hash']);
                         $this->success = $this->language->__('notifications.passwords_changed_successfully');
+
                     }
                 }
 
@@ -259,18 +268,75 @@ namespace leantime\core {
         private function login()
         {
 
+            //different identity providers can live here
+            //they all need to
+            ////A: ensure the user is in leantime (with a valid role) and if not create the user
+            ////B: set the session variables
+            ////C: update users from the identity provider
+
+            //Try Ldap
+            if($this->config->useLdap === true){
+
+                $ldap = new ldap();
+
+                if ($ldap->connect() && $ldap->bind($this->username, $this->password)) {
+
+                    //Update username to include domain
+                    $usernameWDomain = $ldap->extractLdapFromUsername($this->username)."".$ldap->userDomain;
+
+                    //Get user
+                    $userCheck = $this->getUser($usernameWDomain);
+
+                    //If user does not exist create user
+                    if($userCheck == false) {
+
+                        $ldapUser = $ldap->getSingleUser($this->username);
+
+                        $userArray = array(
+                            'firstname' => $ldapUser['firstname'],
+                            'lastname' => $ldapUser['lastname'],
+                            'phone' => '',
+                            'user' => $ldapUser['user'],
+                            'role' => $ldapUser['role'],
+                            'password' => '',
+                            'clientId' => '',
+                            'source' => 'ldap'
+                        );
+
+                        $users = new repositories\users();
+                        $users->addUser($userArray);
+
+                        //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
+                        //TODO: create a better login response. This will return that the username or password was not correct
+                    }
+
+                    //TODO: if user exists in ldap, do an auto update of name
+
+                    //Set username to be ladp+domain to validate and get user info
+                    $this->username = $usernameWDomain;
+
+                    // set user session
+                    $this->getUserByLogin($this->username, '', true);
+
+                    $this->setSession(true);
+
+                    $this->updateUserSession($this->session, time());
+
+                    $this->setCookie($this->cookieTime);
+
+                    return true;
+
+                }
+
+            }
+
+            //TODO: Single Sign On?
+
+            //Check if the user is in our db
+            //Check even if ldap is turned on to allow contractors and clients to have an account
             if($this->getUserByLogin($this->username, $this->password) === true) {
 
-                //Set Sessions
-                $_SESSION['userdata']['role'] = $this->role;
-                $_SESSION['userdata']['id'] = $this->userId;
-                $_SESSION['userdata']['name'] = $this->name;
-                $_SESSION['userdata']['mail'] = $this->mail;
-                $_SESSION['userdata']['clientId'] = $this->clientId;
-                $_SESSION['userdata']['settings'] = $this->settings;
-                $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
-                $_SESSION['userdata']['twoFAVerified'] = false;
-                $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
+                $this->setSession();
 
                 $this->updateUserSession($this->session, time());
 
@@ -287,6 +353,21 @@ namespace leantime\core {
             }
         }
 
+        private function setSession($isLdap=false) {
+            //Set Sessions
+            $_SESSION['userdata']['role'] = $this->role;
+            $_SESSION['userdata']['id'] = $this->userId;
+            $_SESSION['userdata']['name'] = $this->name;
+            $_SESSION['userdata']['mail'] = $this->mail;
+            $_SESSION['userdata']['clientId'] = $this->clientId;
+            $_SESSION['userdata']['settings'] = $this->settings;
+            $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
+            $_SESSION['userdata']['twoFAVerified'] = false;
+            $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
+            $_SESSION['userdata']['isLdap'] = $isLdap;
+
+        }
+
         /**
          * setCookie - set and/or updates the cookie
          *
@@ -298,6 +379,8 @@ namespace leantime\core {
             $expiry = time()+$time;
             setcookie("sid", $this->session, (int)$expiry, "/");
         }
+
+
 
         /**
          * logged_in - Check if logged in and Update sessions
@@ -323,7 +406,6 @@ namespace leantime\core {
                 $returnValues = $stmn->fetch();
 
             }catch(\PDOException $e){
-
 
                return false;
 
@@ -410,10 +492,10 @@ namespace leantime\core {
         }
 
         /**
-         * checkSessions - check the sesisions in the database and unset them if necessary
+         * checkSessions - check all sessions in the database and unset them if necessary
          *
          * @access private
-         * @return
+         * @return void
          */
         private function checkSessions()
         {
@@ -427,59 +509,34 @@ namespace leantime\core {
         }
 
 
-
         /**
-         * getUserByLogin - Check login data andset email vars
+         * getUserByLogin - Check login data and set email vars
          *
          * @access public
-         * @param  $emailname
+         * @param  $username
          * @param  $password
+         * @param  $ldapLogin //check if the login is coming from an ldap directory
          * @return boolean
          */
-        public function getUserByLogin($username, $password)
+        public function getUserByLogin($username, $password, $ldapLogin = false)
         {
 
-            $user=$this->getUser($username);
+            $user = $this->getUser($username);
 
-            if($user === false || !password_verify($password, $user['password'])) {
+            if($user === false || (!password_verify($password, $user['password']) && $ldapLogin == false)) {
 
                 return false;
 
             }else{
 
-                //
-                $query = "SELECT 
-					id,
-					username,
-					role,
-					firstname AS firstname,
-					lastname AS name,
-					settings,
-					profileId,
-					clientId,
-					twoFAEnabled,
-					twoFASecret
-						FROM zp_user 
-			          WHERE username = :username
-			          LIMIT 1";
-
-                $stmn = $this->db->database->prepare($query);
-                $stmn->bindValue(':username', $username, PDO::PARAM_STR);
-
-                $stmn->execute();
-                $returnValues = $stmn->fetch();
-                $stmn->closeCursor();
-
-                $this->name = strip_tags($returnValues['firstname']);
-                $this->mail = filter_var($returnValues['username'], FILTER_SANITIZE_EMAIL);
-                $this->userId = $returnValues['id'];
-                $this->settings = unserialize($returnValues['settings']);
-                $this->clientId = $returnValues['clientId'];
-                $this->twoFAEnabled = $returnValues['twoFAEnabled'];
-                $this->twoFASecret = $returnValues['twoFASecret'];
-
-                $roles = self::$userRoles[$returnValues['role']];
-                $this->role = self::$userRoles[$returnValues['role']];
+                $this->name = strip_tags($user['firstname']);
+                $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
+                $this->userId = $user['id'];
+                $this->settings = unserialize($user['settings']);
+                $this->clientId = $user['clientId'];
+                $this->twoFAEnabled = $user['twoFAEnabled'];
+                $this->twoFASecret = $user['twoFASecret'];
+                $this->role = self::$userRoles[$user['role']];
 
                 return true;
             }
@@ -557,7 +614,18 @@ namespace leantime\core {
         private function getUser($username)
         {
 
-            $query = "SELECT username, password, pwResetCount FROM zp_user 
+            $query = "SELECT 
+                    id,
+					username,
+					role,
+					firstname AS firstname,
+					lastname AS name,
+					password,
+					settings,
+					profileId,
+					clientId,
+					twoFAEnabled,
+					twoFASecret FROM zp_user 
 		          WHERE username = :username LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -599,8 +667,6 @@ namespace leantime\core {
             $count = $stmn->rowCount();
             $stmn->closeCursor();
 
-
-
             if($count > 0) {
                 $mailer = new mailer();
                 $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
@@ -627,7 +693,6 @@ namespace leantime\core {
 					pwReset = :hash
 				LIMIT 1";
 
-
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
             $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
@@ -635,8 +700,6 @@ namespace leantime\core {
             $stmn->execute();
             $count = $stmn->rowCount();
             $stmn->closeCursor();
-
-
 
         }
 
@@ -657,7 +720,6 @@ namespace leantime\core {
             }
         }
 
-
         public static function userHasRole ($role) {
 
             if($role == $_SESSION['userdata']['role']){
@@ -665,7 +727,6 @@ namespace leantime\core {
             }
 
             return false;
-
         }
 
         public static function getRole () {

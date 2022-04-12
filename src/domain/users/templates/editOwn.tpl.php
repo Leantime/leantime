@@ -32,7 +32,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="firstname"><?php echo $this->__('label.firstname'); ?></label>
                                 <span class='field'>
-                                    <input type="text" class="input" name="firstname" id="firstname"
+                                    <input type="text" class="input" name="firstname" id="firstname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            value="<?php $this->e($values['firstname']) ?>"/><br/>
                                 </span>
                             </p>
@@ -40,7 +40,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="lastname"><?php echo $this->__('label.lastname'); ?></label>
                                 <span class='field'>
-                                    <input type="text" name="lastname" class="input" id="lastname"
+                                    <input type="text" name="lastname" class="input" id="lastname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            value="<?php $this->e($values['lastname']) ?>"/><br/>
                                 </span>
                             </p>
@@ -48,7 +48,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="user"><?php echo $this->__('label.email'); ?></label>
                                 <span class='field'>
-                                    <input type="text" name="user" class="input" id="user"
+                                    <input type="text" name="user" class="input" id="user" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            value="<?php $this->e($values['user']) ?>"/><br/>
                                 </span>
                             </p>
@@ -56,7 +56,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="phone"><?php echo $this->__('label.phone'); ?></label>
                                 <span class='field'>
-                                    <input type="text" name="phone" class="input" id="phone"
+                                    <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>
                                            value="<?php $this->e($values['phone']) ?>"/><br/>
                                 </span>
                             </p>
@@ -64,7 +64,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="currentPassword"><?php echo $this->__('label.old_password') ?></label>
                                 <span class='field'>
-                                    <input type='password' value="" name="currentPassword" class="input"
+                                    <input type='password' value="" name="currentPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            id="currentPassword"/><br/>
                                 </span>
                             </p>
@@ -72,7 +72,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="oldPassword"><?php echo $this->__('label.new_password') ?></label>
                                 <span class='field'>
-                                    <input type='password' value="" name="newPassword" class="input"
+                                    <input type='password' value="" name="newPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            id="newPassword"/><br/>
                                 </span>
                             </p>
@@ -80,7 +80,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="newPassword"><?php echo $this->__('label.password_repeat') ?></label>
                                 <span class='field'>
-                                    <input type="password" value="" name="confirmPassword" class="input"
+                                    <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                            id="confirmPassword"/><br/>
                                 </span>
                             </p>
@@ -135,7 +135,7 @@ $user = $this->get('user');
                                 <p class='stdformbutton'>
                                     <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
                                         <span onclick="leantime.usersController.saveCroppie()"><?php echo $this->__('buttons.save') ?></span>
-                                        <span class="ld ld-ring ld-spin"</span>
+                                        <span class="ld ld-ring ld-spin"></span>
                                     </span>
                                     <input id="picSubmit" type="submit" name="savePic" class="hidden"
                                            value="<?php echo $this->__('buttons.upload'); ?>"/>

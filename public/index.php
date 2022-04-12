@@ -8,6 +8,8 @@ include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
 
 $config = new leantime\core\config();
+$settings = new leantime\core\settings();
+$settings->loadSettings($config->defaultTimezone);
 
 if(isset($config->appUrl) && $config->appUrl != ""){
     define('BASE_URL', $config->appUrl);

@@ -121,7 +121,7 @@ $install = new leantime\core\install($config, $settings);
 
                         }else{
 
-                            $error = $language->__("notification.database_exists");
+                            $error = $language->__("notifications.database_exists");
 
                         }
                 }

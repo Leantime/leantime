@@ -191,10 +191,10 @@ namespace leantime\core {
 
                 $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
 
-
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
 
-                throw ($this->__("notifications.no_template"));
+                error_log($this->__("notifications.no_template"), 0);
+                echo $this->__("notifications.no_template");
 
             } else {
 
@@ -202,7 +202,6 @@ namespace leantime\core {
 
             }
 
-            return;
         }
 
 
@@ -396,14 +395,14 @@ namespace leantime\core {
             return $notification;
         }
 
-        public function redirect($url)
+        public function redirect($url): void
         {
 
             header("Location:".trim($url));
             exit();
         }
 
-        public function getSubdomain()
+        public function getSubdomain(): string
         {
 
             preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
@@ -416,14 +415,16 @@ namespace leantime\core {
 
         }
 
-        public function __($index){
+        public function __($index): string
+        {
 
             return $this->language->__($index);
 
         }
 
         //Echos and escapes content
-        public function e($content) {
+        public function e($content): void
+        {
 
             $escaped = $this->escape($content);
 
@@ -431,7 +432,8 @@ namespace leantime\core {
 
         }
 
-        public function escape($content) {
+        public function escape($content): string
+        {
 
             return htmlentities($content);
 
@@ -444,7 +446,8 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedDateString($date) {
+        public function getFormattedDateString($date): string
+        {
 
            return  $this->language->getFormattedDateString($date);
 
@@ -457,7 +460,8 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedTimeString($date) {
+        public function getFormattedTimeString($date): string
+        {
 
             return  $this->language->getFormattedTimeString($date);
 

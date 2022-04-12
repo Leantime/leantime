@@ -42,7 +42,8 @@ $ticket = $this->get('ticket');
                     <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
                     <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
 
-                    <?php  if ($login::userIsAtLeast("developer")) { ?>
+                    <?php
+                    if ($login::userIsAtLeast("developer")) { ?>
                         <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                     <?php  } ?>
 

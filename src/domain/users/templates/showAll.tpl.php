@@ -67,6 +67,7 @@ $roles = $this->get('roles');
 <script type="text/javascript">
     jQuery(document).ready(function() {
             leantime.usersController.initUserTable();
+            leantime.usersController._initModals();
         }
     );
 
