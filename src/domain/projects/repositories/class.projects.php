@@ -118,7 +118,7 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
-					COUNT(ticket.projectId) AS numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
 				FROM zp_relationuserproject AS relation
@@ -166,7 +166,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
-					COUNT(ticket.projectId) AS numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
 				FROM zp_projects as project
@@ -234,7 +234,7 @@ namespace leantime\domain\repositories {
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
 					zp_clients.name AS clientName,
-					COUNT(zp_tickets.id) AS numberOfTickets
+					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
 				FROM zp_projects 
 				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId 
 				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
