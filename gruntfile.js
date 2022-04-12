@@ -139,26 +139,6 @@ module.exports = function (grunt) {
                     "public/css/main.css": "public/less/main.less"
                 }
             }
-        }
-        , watch: {
-            scripts: {
-                files: ["src/domain/**/*.js"]
-                , tasks: ["uglify:app_src", "jshint"]
-                , options: {
-                    nospawn: true
-                }
-            }
-            , styles: {
-                files: ["src/domain/**/*.less"]
-                , tasks: ["less"]
-                , options: {
-                    nospan: true
-                }
-            },
-            composer_json: {
-                files: [ 'composer.json', 'composer.lock' ],
-                tasks: [ 'exec:composer_install' ],
-            }
         },
         exec: {
             composer_install: {
@@ -168,5 +148,4 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
-    grunt.registerTask("Dev-Watch", ["watch"]);
 };
