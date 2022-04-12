@@ -174,20 +174,35 @@ namespace leantime\domain\services {
                 $plannedEffortStart = 0;
             }
 
-            $dateStart = new DateTime($sprint->startDate);
-            $dateEnd = new DateTime($sprint->endDate);
+            //The sprint object can come from the repository or the service.
+            //Dates get formatted in the service and could not be parsed
+            //Checking if we have an iso date or not
+            if(strlen($sprint->startDate) > 11){
+                //DB dateformat
+                $dateStart = new DateTime($sprint->startDate);
+                $dateEnd = new DateTime($sprint->endDate);
+                $period = new DatePeriod(
+                    new DateTime($sprint->startDate),
+                    new DateInterval('P1D'),
+                    new DateTime($sprint->endDate)
+                );
+            }else{
+                //language formatted
+                $dateStart = new DateTime($this->language->getISODateString($sprint->startDate));
+                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate));
+                $period = new DatePeriod(
+                    new DateTime($this->language->getISODateString($sprint->startDate)),
+                    new DateInterval('P1D'),
+                    new DateTime($this->language->getISODateString($sprint->endDate))
+                );
+            }
+
             $sprintLength = $dateEnd->diff($dateStart)->format("%a");
             $sprintLength++; //Diff is 1 day less than actual sprint days (eg even if a sprint starts and ends today it should still be a 1 day sprint, but the diff would be 0)
 
             $dailyHoursPlanned = $plannedHoursStart / $sprintLength;
             $dailyNumPlanned = $plannedNumStart / $sprintLength;
             $dailyEffortPlanned = $plannedEffortStart / $sprintLength;
-
-            $period = new DatePeriod(
-                new DateTime($sprint->startDate),
-                new DateInterval('P1D'),
-                new DateTime($sprint->endDate)
-            );
 
             $burnDown = [];
             $i = 0;

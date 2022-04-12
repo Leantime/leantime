@@ -110,8 +110,8 @@ class ldap
     public function bind($username='', $password=''){
 
         if($username != '' && $password != ''){
-            $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
-            $passwordBind='';
+            $usernameDN = $this->ldapKeys->username."=".$username.",".$this->ldapDn;
+            $passwordBind=$password;
         }else{
             $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
             $passwordBind = $this->bindPassword;
