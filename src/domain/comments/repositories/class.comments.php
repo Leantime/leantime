@@ -113,7 +113,7 @@ namespace leantime\domain\repositories {
 
             $sql = "INSERT INTO zp_comment (
 			text, userId, date, moduleId, module, commentParent
-		) VALUES (:text, :userId, NOW(), :moduleId, :module, :commentParent)";
+		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent)";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -122,6 +122,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':commentParent', $values['commentParent'], PDO::PARAM_INT);
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();
