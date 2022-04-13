@@ -49,7 +49,7 @@
                     $calendar['dateTo']['h'].','.
                     $calendar['dateTo']['i'] ?>),
                 <?php endif; ?>
-                <?php if ((isset($calendar['allDay']) && $calendar['allDay'] == 1)) : ?>
+                <?php if ((isset($calendar['allDay']) && $calendar['allDay'] == TRUE)) : ?>
                 allDay: true,
                 <?php else: ?>
                 allDay: false,

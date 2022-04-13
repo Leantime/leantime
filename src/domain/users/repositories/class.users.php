@@ -211,7 +211,7 @@ namespace leantime\domain\repositories {
                         twoFAEnabled,
                         zp_clients.name AS clientName
 					FROM `zp_user` 
-					LEFT JOIN zp_clients ON zp_clients.id = zp_user.id
+					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					WHERE clientId = :clientId 
 					ORDER BY lastname";
 
