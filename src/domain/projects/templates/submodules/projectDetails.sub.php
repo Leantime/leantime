@@ -130,7 +130,7 @@ $helper = $this->get('helper');
 		</h4>
 	</div>
 
-	<div class="row-fluid  padding-top">
+	<div class="row-fluid  padding-top" style="display:none;">
 		<div class="span8">
 			<div class="form-group">
 
