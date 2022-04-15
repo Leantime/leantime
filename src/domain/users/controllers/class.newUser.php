@@ -67,6 +67,7 @@ namespace leantime\domain\controllers {
 
 										$userId = $userRepo->addUser($values);
 
+
 										//Update Project Relationships
 										if (isset($_POST['projects'])) {
 											if ($_POST['projects'][0] !== '0') {

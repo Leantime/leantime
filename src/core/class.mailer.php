@@ -66,9 +66,9 @@ namespace leantime\core {
             $this->from = $config->email;
 
             //PHPMailer
-            $this->mailAgent = new PHPMailer();
+            $this->mailAgent = new PHPMailer(true);
 		
-	    $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
+	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             //Use SMTP or php mail().
             if($config->useSMTP === true) {
@@ -214,8 +214,15 @@ namespace leantime\core {
             $to = array_unique($to);
 
             foreach ($to as $recip) {
-                $this->mailAgent->addAddress($recip);
-                $this->mailAgent->send();
+
+                try {
+                    $this->mailAgent->addAddress($recip);
+                    $this->mailAgent->send();
+                }catch(Exception $e){
+                    error_log($this->mailAgent->ErrorInfo);
+                    error_log($e->getMessage());
+                }
+
                 $this->mailAgent->clearAllRecipients();
             }
 
