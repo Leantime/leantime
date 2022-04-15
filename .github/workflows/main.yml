@@ -1,26 +1,33 @@
-name: Psalm Static analysis
+name: Psalm
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'psalm.xml.dist'
 
 jobs:
   psalm:
-    name: Psalm
+    name: psalm
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Psalm
-        uses: docker://vimeo/psalm-github-actions
-        continue-on-error: true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-           security_analysis: true
-           report_file: results.sarif
-           composer_require_dev: true
-           composer_ignore_platform_reqs: false
-           
-      - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v1
+          php-version: '7.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, ext-ldap
+          coverage: none
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
         with:
-           sarif_file: results.sarif
-        
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Run psalm
+        run: ./vendor/bin/psalm --output-format=github
