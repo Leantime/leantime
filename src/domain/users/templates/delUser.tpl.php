@@ -20,6 +20,7 @@ $user = $this->get('user');
         <div class="widgetcontent">
 
             <form method="post">
+                <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                 <p><?php echo $this->__('text.confirm_user_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
                 <a class="btn btn-primary" href="<?=BASE_URL ?>/users/showAll"><?php echo $this->__('buttons.back'); ?></a>

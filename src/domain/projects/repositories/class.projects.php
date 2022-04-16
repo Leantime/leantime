@@ -52,12 +52,6 @@ namespace leantime\domain\repositories {
          * @access public
          */
 
-        private $encryptionMethod = 'AES-256-CBC';
-
-        private $secrethash = 'z5xXjI?maCHMGXW2neV8?0T<uD&<N4$j!K/W$V8(q~';
-
-        private $iv = '123';
-
         function __construct()
         {
             $config = new core\config();
