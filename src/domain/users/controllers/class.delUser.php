@@ -32,13 +32,24 @@ namespace leantime\domain\controllers {
                     //Delete User
                     if (isset($_POST['del']) === true) {
 
-                        $userRepo->deleteUser($id);
+                        if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
-                        $tpl->setNotification($language->__("notifications.user_deleted"), "success");
+                            $userRepo->deleteUser($id);
 
-                        $tpl->redirect(BASE_URL."/users/showAll");
+                            $tpl->setNotification($language->__("notifications.user_deleted"), "success");
+
+                            $tpl->redirect(BASE_URL."/users/showAll");
+
+                        }else{
+                            $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+                        }
 
                     }
+
+                    //Sensitive Form, generate form tokens
+                    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+                    $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
+                    $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
                     //Assign variables
                     $tpl->assign('user', $user);

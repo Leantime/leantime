@@ -45,9 +45,9 @@
 				<tr class='gradeA'>
 					
 					<td style="padding:6px;">
-						<?php echo $this->displayLink('projects.changeCurrentProject',$row['name'], array('id' => $row['id'])) ?>
+						<?php echo $this->displayLink('projects.changeCurrentProject',$this->escape($row['name']), array('id' => $row['id'])) ?>
 					<td>
-						<?php echo $this->displayLink('clients.showClient',$row['clientName'], array('id' => $row['clientId']), NULL, true) ?>
+						<?php echo $this->displayLink('clients.showClient',$this->escape($row['clientName']), array('id' => $row['clientId']), NULL, true) ?>
 					</td>
                     <td class="center"><?php if($row['state'] == -1) echo "Closed"; else { echo "Active"; } ?></td>
 					<td class="center"><?php echo $row['numberOfTickets']; ?></td>

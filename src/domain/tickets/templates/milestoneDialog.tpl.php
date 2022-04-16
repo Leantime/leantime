@@ -51,7 +51,7 @@ $statusLabels = $this->get('statusLabels');
                     if ($currentMilestone->dependingTicketId == $milestoneRow->id) { echo " selected='selected' ";
                     }
 
-                    echo ">" . $milestoneRow->headline . " </option>";
+                    echo ">" . $this->escape($milestoneRow->headline) . " </option>";
 
                 }
             }

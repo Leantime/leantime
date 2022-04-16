@@ -121,7 +121,7 @@ $projects = $this->get('relations');
                             <?php } ?>
                             <?php foreach($this->get('clients') as $client): ?>
                                 <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
-                               endif; ?>><?php echo $client['name'] ?></option>
+                               endif; ?>><?php $this->e($client['name']) ?></option>
                             <?php endforeach; ?>
                         </select><br/>
 
@@ -151,7 +151,7 @@ $projects = $this->get('relations');
 
                                                             <?php foreach($this->get('allProjects') as $row){ ?>
                                                                 <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>"><?php echo $row['name']; ?> / <?php echo $row['clientName']; ?></option>
+                                                                    <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> / <?php $this->e($row['clientName']); ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
 

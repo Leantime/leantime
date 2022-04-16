@@ -39,7 +39,7 @@ $statusLabels = $this->get("statusLabels");
                                     $canvasTitle = $canvasRow["title"];
                                     echo" selected='selected' ";
                                 }
-                                echo">".$canvasRow["title"]."</option>"; ?>
+                                echo">".$this->escape($canvasRow["title"])."</option>"; ?>
 
                             <?php }     ?>
                         </select><br />

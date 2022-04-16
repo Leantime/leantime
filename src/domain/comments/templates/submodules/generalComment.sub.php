@@ -104,6 +104,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 </form>
 
 <script type='text/javascript'>
+    leantime.generalController.initSimpleEditor();
     function toggleCommentBoxes(id) {
         if (id == 0) {
             jQuery('#mainToggler').hide();
