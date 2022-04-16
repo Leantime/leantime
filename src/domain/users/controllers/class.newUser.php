@@ -55,10 +55,6 @@ namespace leantime\domain\controllers {
 						$values['clientId'] = core\login::getUserClientId();
 					}
 
-					//Validation
-					//print_r($_POST);
-					# exit();
-
 					if ($values['user'] !== '') {
 						if ($_POST['password'] == $_POST['password2']) {
 							if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {

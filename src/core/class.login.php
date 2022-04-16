@@ -275,7 +275,7 @@ namespace leantime\core {
             ////C: update users from the identity provider
 
             //Try Ldap
-            if($this->config->useLdap === true){
+            if($this->config->useLdap === true && extension_loaded('ldap')){
 
                 $ldap = new ldap();
 
@@ -642,7 +642,7 @@ namespace leantime\core {
 
         }
 
-        private function generateLinkAndSendEmail($username)
+        public function generateLinkAndSendEmail($username)
         {
 
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
