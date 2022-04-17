@@ -1,3 +1,0 @@
-[17-Apr-2022 16:24:47 America/Los_Angeles] PHP Warning:  ldap_connect(): invalid port number: 0 in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 97
-[17-Apr-2022 16:24:47 America/Los_Angeles] PHP Warning:  ldap_set_option(): supplied argument is not a valid ldap link resource in C:\xampp\htdocs\leantime-oss\src\domain\ldap\services\class.ldap.php on line 99
-[17-Apr-2022 16:27:56 America/Los_Angeles] PHP Notice:  Undefined index: priority in C:\xampp\htdocs\leantime-oss\src\domain\tickets\repositories\class.tickets.php on line 1031
