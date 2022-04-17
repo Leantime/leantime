@@ -93,7 +93,12 @@ class ldap
 
     public function connect() {
 
+        if(!$this->config->useLdap){
+            return false;
+        }
+
         if(function_exists("ldap_connect")) {
+
             $this->ldapConnection = ldap_connect($this->host, $this->port);
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');

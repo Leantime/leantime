@@ -30,10 +30,6 @@ namespace leantime\domain\controllers {
                 $tpl->assign('admin', true);
                 $tpl->assign('roles', core\login::$userRoles);
 
-                if($ldapService->connect()) {
-                    $ldapService->getAllMembers($_SESSION['userdata']['mail'], '');
-                }
-
                 $tpl->display('users.showAll');
 
             }else{
