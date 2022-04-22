@@ -13,10 +13,11 @@ Features:
 * Project reports
 * Multiple user roles (client, team member, client manager, manager, administrator)
 * Two-Factor Authentication
+* LDAP integration
 * Integrations with Mattermost, Slack & Zulip
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
-* Available in English, Spanish, Russian, Dutch
+* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T)	
 
 
 ### Screenshots ###
