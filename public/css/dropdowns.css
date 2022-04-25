@@ -2,34 +2,36 @@
 
 .dropdown-menu {
     margin-top: 0;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
+    border-radius: var(--box-radius);
     border:0px;
-    -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--regular-shadow);
 }
 
 .dropdown-menu > li > a {
-    font-size: 12px;
+    font-size: var(--base-font-size);
     color: #444;
     margin: 0 5px;
     padding: 5px 10px;
 }
 
+
+
 .maincontentinner .viewDropDown .dropdown-menu > li > a:hover .muted,
 body .maincontentinner .viewDropDown .dropdown-menu li a.active,
-.dropdown-menu > li > a.active{
-    color: #fff;
+.dropdown-menu > li > a.active,
+.dropdown ul li.active a{
+    color: var(--main-action-color);
+    background:var(--main-action-bg);
 }
 
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
-    background: #444;
+    color: var(--secondary-action-color);
+    background:var(--secondary-action-bg);
 }
+
 
 .dropdown .dropdown-menu .nav-header {
     padding-left: 10px;
@@ -40,8 +42,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:inline-block;
 }
 
-.ticketDropdown ul {
+.ticketDropdown {
+    font-size:var(--font-size-s);
+}
+
+.ticketDropdown ul,
+.ticketDropdown ul li a{
     top: 22px;
+    font-size:var(--font-size-s);
 }
 
 

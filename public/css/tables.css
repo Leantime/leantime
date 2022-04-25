@@ -1,3 +1,41 @@
+.table th {
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 12px;
+    border-top: 0;
+    background: #555;
+    color: #fff;
+}
+
+.table th.centeralign, .table td.centeralign {
+    text-align: center;
+}
+
+
+.table.table-bordered th {
+    border-color: #555;
+}
+
+.table .con0 {
+    background: #fff;
+}
+
+.table .con1 {
+    background: #f7f7f7;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-right: 1px solid #ccc;
+    border-left:0px;
+}
+
+.table-bordered th:last-child,
+.table-bordered td:last-child {
+    border-right: 0px solid #dddddd;
+}
+
+
 .dataTable {
     margin-bottom: 0;
 }
@@ -11,10 +49,10 @@
 }
 
 .dataTables_length, .dataTables_info {
-    background: #eee;
+    background: #f3f4f5;
     padding: 10px;
     font-size: 11px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 .dataTables_length {
@@ -48,12 +86,12 @@
     padding: 5px 10px;
     border: 1px solid #ccc;
     font-size: 12px;
-    background: #eee;
+    background: #f3f4f5;
     cursor: pointer;
 }
 
 .dataTables_paginate span:hover {
-    background-color: #ddd;
+    background-color: #ccc;
 }
 
 .dataTables_paginate .first {
@@ -65,17 +103,17 @@
 }
 
 .dataTables_paginate .paginate_button:hover {
-    background: #eee;
+    background: #f3f4f5;
 }
 
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
     color: #ccc;
-    background: #eee;
+    background: #f3f4f5;
 }
 
 .dataTables_paginate a {
-    color: #666;
+    color: #555;
     font-size:12px;
 }
 
@@ -89,7 +127,7 @@
 }
 
 .dataTables_scrollHead {
-    background: #333;
+    background: #555;
 }
 
 .dataTables_scrollHead table {
@@ -126,6 +164,10 @@
 
 }
 
+.maincontentinner .table {
+    border:1px solid #ccc;
+}
+
 .maincontentinner .table th,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
@@ -133,14 +175,20 @@
     text-transform:none;
     font-size: 14px;
     border-top: 0;
-    color: #fff;
+    color: #555;
     font-weight: normal;
     text-rendering: optimizelegibility;
     padding: 12px 14px;
+    background:#f3f4f5 !important;
     border:0px;
     border-right:1px solid #ccc;
     border-color:#ccc;
     line-height: 17px;
+}
+
+.maincontentinner .table th:last-child,
+.maincontentinner .table.table-bordered th:last-child {
+    border-right:0px;
 }
 
 
@@ -180,8 +228,8 @@
 
 .maincontentinner .dataTables_wrapper  .bottom {
     position:relative;
-    background: #eee;
-    border: 1px solid #ddd;
+    background: #f3f4f5;
+    border: 1px solid #ccc;
     height:60px;
 }
 
@@ -213,7 +261,7 @@
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
-    outline:2px solid #333;
+    outline:2px solid #555;
 }
 
 .paginate_button.current {
@@ -244,7 +292,7 @@
     margin:0px;
     background:#fff;
     font-size: 12px;
-    color: #aaa;
+    color: #ccc;
     margin: 0 5px;
     padding: 5px 10px;
     border:0px;
@@ -255,7 +303,7 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button.active{
     text-decoration: none;
-    color: #444;
+    color: #555;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
@@ -268,18 +316,16 @@
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
-    border-color: #bbb;
-    border: 1px solid #ddd;
+    border-color: #ccc;
+    border: 1px solid #ccc;
     margin: 0 0 9px;
     padding: 3px 15px;
-    font-family: 'LatoBold', arial;
-    word-spacing: 2px;
     line-height: 20px;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    color: #333333;
-    background: #eee;
+    color: #555;
+    background: #f3f4f5;
     text-shadow: none;
     line-height:20px;
 }
@@ -289,7 +335,7 @@
 }
 
 .maincontentinner .dt-buttons>.dt-button:hover {
-    background:#e1e1e1;
+    background:#e6e6e6;
 }
 
 

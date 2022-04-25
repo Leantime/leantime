@@ -3,9 +3,9 @@
 <head>
     <?php echo $frontController->includeAction('general.header'); ?>
 
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/vars.css.php?color=<?php echo htmlentities($_SESSION["companysettings.mainColor"]) ?>&v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css"/>
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/style.custom.php?color=<?php echo htmlentities($_SESSION["companysettings.mainColor"]) ?>&v=<?php echo $settings->appVersion; ?>" type="text/css"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/overwrites.css" type="text/css"/>
 
     <script src="<?=BASE_URL?>/api/i18n"></script>
 
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
+    <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-240px;'; ?>">
 
         <div class="leftmenu">
 

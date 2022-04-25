@@ -25,7 +25,7 @@ leantime.menuController = (function () {
     var _initLeftMenuHamburgerButton = function (){
 
         if (jQuery('.barmenu').hasClass('open')) {
-            jQuery('.rightpanel, .headerinner').css({marginLeft: '260px'});
+            jQuery('.rightpanel, .headerinner').css({marginLeft: '240px'});
             jQuery('.logo, .leftpanel').css({marginLeft: 0});
             leantime.menuRepository.updateUserMenuSettings("open");
         } else {
@@ -36,13 +36,11 @@ leantime.menuController = (function () {
 
         jQuery('.barmenu').click(function () {
 
-            var lwidth = '260px';
-            if (jQuery(window).width() < 340) {
-                lwidth = '240px';
-            }
+            var lwidth = '240px';
+
 
             if (!jQuery(this).hasClass('open')) {
-                jQuery('.rightpanel, .headerinner').animate({marginLeft: '260px'}, 'fast', function(){
+                jQuery('.rightpanel, .headerinner').animate({marginLeft: '240px'}, 'fast', function(){
                     jQuery('.barmenu').addClass('open');
                 });
                 jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
@@ -53,7 +51,7 @@ leantime.menuController = (function () {
                 jQuery('.rightpanel, .headerinner').animate({marginLeft: 0}, 'fast', function() {
                     jQuery('.barmenu').removeClass('open');
                 });
-                jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '260px'}, 'fast');
+                jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '240px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");
 
@@ -64,7 +62,7 @@ leantime.menuController = (function () {
         jQuery(window).resize(function () {
 
             if (jQuery('.barmenu').hasClass('open')) {
-                jQuery('.rightpanel, .headerinner').css({marginLeft: '260px'});
+                jQuery('.rightpanel, .headerinner').css({marginLeft: '240px'});
                 jQuery('.logo, .leftpanel').css({marginLeft: 0});
                 leantime.menuRepository.updateUserMenuSettings("open");
             } else {

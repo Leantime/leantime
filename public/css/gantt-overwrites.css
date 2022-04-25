@@ -1,0 +1,18 @@
+body .gantt-container {
+    font-size: var(--base-font-size);
+}
+
+body .gantt .bar-label,
+body .gantt .lower-text,
+body .gantt .upper-text {
+    font-size: var(--base-font-size);
+}
+
+body .gantt #details .details-container p {
+    font-size: var(--base-font-size);
+}
+
+
+body .gantt #details .details-container {
+    border-radius:var(--box-radius);
+}

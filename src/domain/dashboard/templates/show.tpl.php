@@ -11,26 +11,21 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
-                <h1><?php echo $this->__("headlines.project_with_name"); ?> <?php $this->e($this->get('currentProjectName')); ?></h1>
-            </div>
-            <div class="col-lg-4" style="text-align:right;padding-top:15px">
-                <?php if(count($this->get('allUsers')) == 1) {?>
 
-                        <a href="<?=BASE_URL ?>/users/newUser/" >
-                            <i class="fa fa-users" style="font-size:25px; margin-right:10px; vertical-align: middle"></i>
-                            <span style="font-size:14px; line-height:25px;">
-                                <?php echo $this->__("links.dont_do_it_alone"); ?>
-                            </span>
-                        </a>
+        <?php if(count($this->get('allUsers')) == 1) {?>
+            <a href="<?=BASE_URL ?>/users/newUser/" class="headerCTA">
+                <i class="fa fa-users"></i>
+                <span style="font-size:14px; line-height:25px;">
+                        <?php echo $this->__("links.dont_do_it_alone"); ?>
+                    </span>
+            </a>
+        <?php } ?>
 
-                <?php } ?>
+        <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
+        <h1><?php echo $this->__("headlines.project_with_name"); ?> <?php $this->e($this->get('currentProjectName')); ?></h1>
 
-            </div>
-        </div>
     </div>
+
 </div>
 
 <div class="maincontent">
