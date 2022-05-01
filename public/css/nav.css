@@ -1,0 +1,132 @@
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
+    color: #fff;
+}
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
+    text-decoration: none;
+    background-color: #555;
+    color: #fff;
+}
+
+.leftmenu .nav-tabs.nav-stacked .project-selector .chzn-container a {
+    padding: 0px 20px;
+}
+
+.leftmenu .nav-tabs.nav-stacked a {
+    color: #555;
+    padding: 10px 20px 10px 20px;
+    font-size: var(--font-size-l);
+}
+
+.leftpanel .leftmenu .nav-tabs ul.projectselector {
+    overflow: auto;
+    height: 90vh;
+}
+
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a {
+    background-image:none;
+    color:#fff;
+}
+
+.project-selector .dropdown-menu .openToggle,
+.project-selector .dropdown-menu .closeToggle{
+    cursor:pointer;
+}
+
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.nav-header.openToggle:hover,
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.nav-header.closeToggle:hover {
+    color:#555;
+}
+
+.leftpanel .leftmenu .nav-tabs ul.project-selector .dropdown-menu .openToggle i,
+.leftpanel .leftmenu .nav-tabs ul.project-selector .dropdown-menu .closeToggle i {
+
+}
+
+.leftmenu .nav-tabs.nav-stacked a span {
+    margin-right: 5px;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li > a {
+    border: 0;
+    border-bottom: 1px solid #232323;
+    border-top: 1px solid #232323;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li > a:hover,
+.leftmenu .nav-tabs.nav-stacked > li > a:focus {
+    background-color: #2c2c2c;
+    color: #fff;
+    border-bottom-color: #232323;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.active > a {
+    color: #fff;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.active > a:hover {
+}
+
+.leftmenu .nav-tabs > li {
+    margin-bottom: 0;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown ul {
+    background: var(--main-menu-link-bg);
+    display: none;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown ul li {
+    border-bottom: 1px solid var(--main-menu-border-color);
+
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
+    background-image: url(../images/droparrow.png);
+    background-repeat: no-repeat;
+    background-position: right 19px;
+}
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
+    display: block;
+    font-size: var(--base-font-size);
+    padding: 7px 10px 7px 15px;
+    color: var(--main-menu-link-color);
+
+}
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
+    background-color: var(--main-menu-link-active-bg);
+    color: var(--main-menu-link-active-color);
+}
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
+    text-decoration: none;
+    background-color: var(--main-menu-link-hover-bg);
+    color: var(--main-menu-link-hover-color);
+}
+
+
+.nav-tabs {
+    border-color: var(--primary-color);
+}
+
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus {
+    border-color: var(--primary-color);
+}
+
+.nav-tabs > li > a {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+}

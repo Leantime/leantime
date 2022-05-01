@@ -213,8 +213,8 @@
                             <?php if ($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
-                                <strong class="count">0</strong>
-                            <?php $this->e($statusRow['name']); ?></h4>
+
+                            <?php $this->e($statusRow['name']); ?> (<strong class="count">0</strong>)</h4>
 
 							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
@@ -235,9 +235,10 @@
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
+
 								<?php foreach($this->get('allTickets') as $row) { ?>
 									<?php if($row["status"] == $key){?>
-									<div class="ticketBox moveable container" id="ticket_<?php echo$row["id"];?>">
+									<div class="ticketBox moveable container priority-border-<?=$row['priority']?>" id="ticket_<?php echo$row["id"];?>">
 
                                         <div class="row">
 
@@ -357,7 +358,7 @@
                                             </div>
 
                                             <div class="dropdown ticketDropdown priorityDropdown show">
-                                                <a class="dropdown-toggle f-left  label-default priority" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                     if($row['priority'] != '' && $row['priority'] > 0) {
                                                                         echo $priorities[$row['priority']];
@@ -371,7 +372,7 @@
                                                     <li class="nav-header border"><?=$this->__("dropdown.select_priority")?></li>
                                                     <?php foreach($priorities as $priorityKey => $priorityValue){
                                                         echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-value='".$row['id']."_".$priorityKey."' id='ticketPriorityChange".$row['id'].$priorityKey."'>".$priorityValue."</a>";
+                                                                            <a href='javascript:void(0);' class='priority-bg-".$priorityKey."' data-value='".$row['id']."_".$priorityKey."' id='ticketPriorityChange".$row['id'].$priorityKey."'>".$priorityValue."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>

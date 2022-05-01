@@ -20,16 +20,16 @@
 body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu > li > a.active,
 .dropdown ul li.active a{
-    color: var(--main-action-color);
-    background:var(--main-action-bg);
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
 }
 
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
-    color: var(--secondary-action-color);
-    background:var(--secondary-action-bg);
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
 }
 
 
@@ -52,8 +52,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     font-size:var(--font-size-s);
 }
 
-
-
 .ticketDropdown.userDropdown {
     margin-top:-2px;
 }
@@ -72,8 +70,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown > a,
 .maincontentinner .ticketDropdown > a:link{
     color:#fff;
-    padding:0px 6px;
+    padding:0px 10px;
     white-space: nowrap;
+    border-radius:10px;
 }
 
 .maincontentinner .ticketDropdown.firstDropdown > a {

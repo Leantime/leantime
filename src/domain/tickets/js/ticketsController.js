@@ -1030,8 +1030,8 @@ leantime.ticketsController = (function () {
 
             countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
-            var height = jQuery("html").height()-320;
-            jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
+            //var height = jQuery("html").height()-320;
+            //jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
 
         });
 

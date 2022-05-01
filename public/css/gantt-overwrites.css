@@ -1,5 +1,7 @@
 body .gantt-container {
     font-size: var(--base-font-size);
+    margin-top:10px;
+    border-radius: 5px;
 }
 
 body .gantt .bar-label,

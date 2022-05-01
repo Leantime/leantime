@@ -40,12 +40,6 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 .label-primary, .leftmenu .nav-tabs.nav-stacked
 { background-color: var(--primary-color) }
 
-.btn-primary,
-.btn-primary:link,
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled],
-.btn-group.open .btn-primary.dropdown-toggle {
-	background:var(--main-action-bg);
-}
 
 
 .loginpanelinner,
@@ -101,9 +95,8 @@ button,
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
 .table th,
 .dropdown-menu span.radio:hover,
-.paginate_button.current,
-.dropdown-menu > li > a.active
-{ background-color:  var(--primary-color);  }
+.paginate_button.current
+{ background-color:  var(--main-action-bg);  }
 
 input[type='submit']:hover, 
 button:hover {
@@ -150,7 +143,6 @@ span.btn-white:hover{
 .tabs-right,
 .tabs-left,
 .tab-primary.ui-tabs,
-.btn-primary, .btn-primary:link,
 .nav-tabs.nav-stacked > li > a,
 .nav-tabs.nav-stacked > li > a:hover,
 .nav-tabs.nav-stacked > li > a:hover,
@@ -232,9 +224,9 @@ div.tagsinput span.tag
 	border:1px solid var(--main-border-color);
 	padding:10px;
 	margin-bottom:5px;
-	background:var(--secondary-bg);
+	background:var(--kanban-col-bg);
 	padding-top:5px;
-    border-radius:5px;
+    border-radius:var(--box-radius);
 }
 
 .filterBar .filterBoxLeft {
@@ -262,12 +254,12 @@ label.inline {
 
 body .widgettitle.title-light {
 	color:var(--primary-color);
-	padding-left:5px;
+	padding-left:0px;
 	background-color:#fff !important;
     border-left:0px !important;
     border-top:0px !important;
     border-right:0px !important;
-	border-bottom:1px solid #ccc;
+	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 
 }
@@ -281,16 +273,7 @@ div.tagsinput {
 	border:1px solid var(--main-border-color);
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus,
-.btn-group.open .btn-primary.dropdown-toggle
-{
-	background: var(--main-action-hover-bg);
-	color:var(--main-action-hover-color);  }
 
-.btn-primary, .btn-primary:link { 
-	
-	border: 1px solid var(--main-border-color);
-	 }
 	 
 	 .tabbedwidget .btn-primary {
 	 	border:0px;
@@ -299,3 +282,12 @@ div.tagsinput {
 .gantt-container a:hover {
     text-decoration:underline !important;
 }
+
+
+
+
+
+
+
+
+/* Playing with header */

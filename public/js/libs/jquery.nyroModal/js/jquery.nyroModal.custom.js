@@ -257,6 +257,7 @@ jQuery(function($, undefined) {
 				this._callFilters('beforeClose');
 				var self = this;
 				this._unreposition();
+				$('body').css("overlfow", "auto");
 				self._callAnim('hideCont', function() {
 					self._callAnim('hideLoad', function() {
 						self._callAnim('hideBg', function() {
@@ -283,7 +284,7 @@ jQuery(function($, undefined) {
 				if (!this.elts.bg)
 					this.elts.bg = $('<div />').hide().appendTo(this.elts.all);
 				if (!this.elts.cont)
-					this.elts.cont = $('<div />').hide().appendTo(this.elts.all);
+					this.elts.cont = $('<div />').hide().appendTo(this.elts.bg);
 				if (!this.elts.hidden)
 					this.elts.hidden = $('<div />').hide().appendTo(this.elts.all);
 				this.elts.hidden.empty();
@@ -513,16 +514,20 @@ jQuery(function($, undefined) {
 			// Content comes from the hidden div, scripts and eventually close button.
 			_writeContent: function() {
 
+				var topValue = (this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2;
+				if(topValue <=10) {
+					topValue = 50;
+				}
 				this.elts.cont
 					.empty()
 					.append(this.elts.hidden.contents())
 					.append(this._scripts)
 					.append(this.showCloseButton ? this.closeButton : '')
 					.css({
-						position: 'fixed',
+						position: 'absolute',
 						width: this.sizes.w,
-						height: (this.sizes.h + 32),
-						top: (this.getInternal().fullSize.viewH - this.sizes.h - 32 - this.sizes.hMargin)/2,
+						height: 'auto',
+						top: topValue,
 						left: (this.getInternal().fullSize.viewW - this.sizes.w - this.sizes.wMargin)/2
 					});
 			},
@@ -535,16 +540,22 @@ jQuery(function($, undefined) {
 					elts.each(function() {
 						var me = $(this),
 							offset = me.offset();
+
+						var topValue = offset.top - space.top;
+						if(topValue <=50){
+							topValue=50;
+						}
+
 						me.css({
-							position: 'fixed',
-							top: offset.top - space.top ,
+							position: 'absolute',
+							top: topValue,
 							left: offset.left - space.left ,
                             visibility: 'visible'
 						});
 					});
 					this.elts.cont.after(elts);
 				}
-				this.elts.cont.css('overflow', 'auto');
+				//this.elts.cont.css('overflow', 'auto');
 				this._callFilters('afterReposition');
 			},
 
@@ -748,6 +759,11 @@ jQuery(function($, undefined) {
 			_getSpaceReposition: function() {
 				var	outer = this._getOuter($b),
 					ie7 = $.browser.msie && $.browser.version < 8 && !(screen.height <= $w.height()+23);
+
+				var topValue = $w.scrollTop() - (!ie7 ? outer.h.border / 2 : 0);
+				if(topValue <=50){
+					topValue = 50;
+				}
 				return {
 					top: $w.scrollTop() - (!ie7 ? outer.h.border / 2 : 0),
 					left: $w.scrollLeft() - (!ie7 ? outer.w.border / 2 : 0)
@@ -783,7 +799,7 @@ jQuery(function($, undefined) {
 		_animations = {
 			basic: {
 				showBg: function(nm, clb) {
-					nm.elts.bg.css({opacity: 0.7}).show();
+					nm.elts.bg.css().show();
 					clb();
 				},
 				hideBg: function(nm, clb) {
@@ -817,10 +833,16 @@ jQuery(function($, undefined) {
 					clb();
 				},
 				resize: function(nm, clb) {
+
+					var topValue = (nm.getInternal().fullSize.viewH - nm.sizes.h - nm.sizes.hMargin)/2;
+					if(topValue <=50) {
+						topValue = 50;
+					}
+
 					nm.elts.cont.css({
 						width: nm.sizes.w,
-						height: nm.sizes.h,
-						top: (nm.getInternal().fullSize.viewH - nm.sizes.h - nm.sizes.hMargin)/2,
+						height: "auto",
+						top: topValue,
 						left: (nm.getInternal().fullSize.viewW - nm.sizes.w - nm.sizes.wMargin)/2
 					});
 					clb();
@@ -845,7 +867,10 @@ jQuery(function($, undefined) {
 					if (nm.closeOnClick)
 						nm.elts.bg.unbind('click.nyroModal').bind('click.nyroModal', function(e) {
 							e.preventDefault();
-							nm.close();
+							//Only close if user clicked on background and not on content (child element)
+							if(e.target == this) {
+								nm.close();
+							}
 						});
 					nm.elts.cont.addClass('nyroModalCont');
 					nm.elts.hidden.addClass('nyroModalCont nyroModalHidden');
@@ -857,6 +882,7 @@ jQuery(function($, undefined) {
 					nm._setCont(nm.errorMsg);
 				},
 				beforeShowCont: function(nm) {
+					$('body').css('overflow', "hidden");
 					nm.elts.cont
 						.find('.nyroModal').each(function() {
 							var cur = $(this);
@@ -958,7 +984,7 @@ jQuery(function($, undefined) {
 	$.nmAnims({
 		fade: {
 			showBg: function(nm, clb) {
-				nm.elts.bg.fadeTo(250, 0.7, clb);
+				nm.elts.bg.fadeTo(250, 1, clb);
 			},
 			hideBg: function(nm, clb) {
 				nm.elts.bg.fadeOut(clb);
@@ -1008,10 +1034,16 @@ jQuery(function($, undefined) {
 					});
 			},
 			resize: function(nm, clb) {
+
+				var topValue = (nm.getInternal().fullSize.viewH - nm.sizes.h - nm.sizes.hMargin)/2;
+				if(topValue <=50){
+					topValue = 50;
+				}
+
 				nm.elts.cont.animate({
 					width: nm.sizes.w,
-					height: nm.sizes.h,
-					top: (nm.getInternal().fullSize.viewH - nm.sizes.h - nm.sizes.hMargin)/2,
+					height: "auto",
+					top: topValue,
 					left: (nm.getInternal().fullSize.viewW - nm.sizes.w - nm.sizes.wMargin)/2
 				}, clb);
 			}

@@ -52,9 +52,6 @@
 
         <!--###MAINCONTENT###-->
 
-        <div class='footer'>
-            <?php echo $frontController->includeAction('general.footer'); ?>
-        </div>
 
     </div><!--rightpanel-->
 
