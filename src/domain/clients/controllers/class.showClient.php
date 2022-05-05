@@ -52,6 +52,7 @@ namespace leantime\domain\controllers {
             $row = $clientRepo->getClient($id);
 
             $clientValues = array(
+                'id' => $row['id'],
                 'name' => $row['name'],
                 'street' => $row['street'],
                 'zip' => $row['zip'],
