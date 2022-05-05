@@ -13,6 +13,12 @@
             <div class="span12">
                 <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span><?php echo $this->__('subtitle.general'); ?></h4>
                 <div class="form-group">
+                    <label class="span4 control-label"><?php echo $this->__('label.ticket_id'); ?></label>
+                    <div class="span6">
+                        <input type="text" value="<?php $this->e($ticket->id); ?>" name="id" autocomplete="off" style="width:99%;" readonly/>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.ticket_title'); ?>*</label>
                     <div class="span6">
                         <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" autocomplete="off"  style="width:99%;"/>
