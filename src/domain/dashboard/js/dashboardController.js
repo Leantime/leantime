@@ -150,7 +150,7 @@ leantime.dashboardController = (function () {
                         display: true,
                         title: {
                             display: true,
-                            text: leantime.i18n.__("label.effort")
+                            text: leantime.i18n.__("label.num_tickets")
                         },
                         ticks: {
                             beginAtZero:true
@@ -167,14 +167,15 @@ leantime.dashboardController = (function () {
 
     };
 
-    var initChartButtonClick = function (id, plannedData, actualData, chart) {
+    var initChartButtonClick = function (id, label, plannedData, actualData, chart) {
 
         jQuery("#"+id).click(
             function (event) {
 
                 chart.data.datasets[0].data = plannedData;
                 chart.data.datasets[1].data = actualData;
-                chart.options.scales.yAxes[0].scaleLabel.labelString = leantime.i18n.__("label.open_todos");
+                chart.options.scales.y.title.text = label;
+                //chart.options.scales.yAxes[0].scaleLabel.labelString = label;
                 jQuery(".chartButtons").removeClass('active');
                 jQuery(this).addClass('active');
                 chart.update();
@@ -262,7 +263,9 @@ leantime.dashboardController = (function () {
 
                         },
                         type: 'time',
-
+                        time: {
+                            unit: 'day'
+                        },
                     },
                     y: {
                         display: true,
