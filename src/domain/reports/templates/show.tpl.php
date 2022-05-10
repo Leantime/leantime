@@ -236,9 +236,9 @@
        <?php if($sprintBurndown !== false){ ?>
 
            var sprintBurndownChart = leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
-           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ], sprintBurndownChart);
+           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', '<?=$this->__('label.hours') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ], sprintBurndownChart);
+           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', '<?=$this->__('label.effort') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ], sprintBurndownChart);
+           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', '<?=$this->__('label.num_tickets') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ], sprintBurndownChart);
 
        <?php } ?>
 
