@@ -4,6 +4,11 @@ $config = new leantime\core\config();
 $settings = new leantime\core\settings();
 $install = new leantime\core\install($config, $settings);
 
+if ($install->checkIfInstalled()) {
+    header('Location: '. BASE_URL);
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
@@ -86,8 +91,6 @@ $install = new leantime\core\install($config, $settings);
                             'company'		=>($_POST['company'])
                         );
 
-                        if($install->checkIfInstalled() === false) {
-
                             if (isset($_POST['email']) == false || $_POST['email'] == '') {
                                 $error = $language->__("notification.enter_email");
                             } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
@@ -118,12 +121,6 @@ $install = new leantime\core\install($config, $settings);
                                    </div>";
                                 }
                             }
-
-                        }else{
-
-                            $error = $language->__("notifications.database_exists");
-
-                        }
                 }
 
                 ?>
