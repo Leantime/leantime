@@ -4,6 +4,11 @@ $config = new leantime\core\config();
 $settings = new leantime\core\settings();
 $install = new leantime\core\install($config, $settings);
 
+if ($install->checkIfInstalled()) {
+    header('Location: '. BASE_URL);
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
@@ -86,43 +91,35 @@ $install = new leantime\core\install($config, $settings);
                             'company'		=>($_POST['company'])
                         );
 
-                        if($install->checkIfInstalled() === false) {
+                        if (isset($_POST['email']) == false || $_POST['email'] == '') {
+                            $error = $language->__("notification.enter_email");
+                        } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
+                            $error = $language->__("notification.enter_password");
+                        } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
+                            $error = $language->__("notification.enter_firstname");
+                        } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
+                            $error = $language->__("notification.enter_lastname");
+                        } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
+                            $error = $language->__("notification.enter_company");
+                        } else {
 
-                            if (isset($_POST['email']) == false || $_POST['email'] == '') {
-                                $error = $language->__("notification.enter_email");
-                            } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
-                                $error = $language->__("notification.enter_password");
-                            } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
-                                $error = $language->__("notification.enter_firstname");
-                            } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
-                                $error = $language->__("notification.enter_lastname");
-                            } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
-                                $error = $language->__("notification.enter_company");
-                            } else {
+                            $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-                                $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                            $dbSetupResults = $install->setupDB($values);
+                            if($dbSetupResults === true) {
 
-                                $dbSetupResults = $install->setupDB($values);
-                                if($dbSetupResults === true) {
-
-                                    echo "<div class='inputwrapper login-alert'>
-                                        <div class='alert alert-success' style='padding:10px;'>
-                                            ".sprintf($language->__("notifications.installation_success"),BASE_URL)."
-                                        </div>
-                                   </div>";
-                                }else{
-                                    echo "<div class='inputwrapper login-alert'>
-                                        <div class='alert alert-error' style='padding:10px;'>
-                                            ".sprintf($language->__("notifications.installation_success"),$dbSetupResults)."   
-                                        </div>
-                                   </div>";
-                                }
+                                echo "<div class='inputwrapper login-alert'>
+                                    <div class='alert alert-success' style='padding:10px;'>
+                                        ".sprintf($language->__("notifications.installation_success"),BASE_URL)."
+                                    </div>
+                               </div>";
+                            }else{
+                                echo "<div class='inputwrapper login-alert'>
+                                    <div class='alert alert-error' style='padding:10px;'>
+                                        ".sprintf($language->__("notifications.installation_success"),$dbSetupResults)."   
+                                    </div>
+                               </div>";
                             }
-
-                        }else{
-
-                            $error = $language->__("notifications.database_exists");
-
                         }
                 }
 
