@@ -31,12 +31,6 @@ namespace leantime\core {
          * @access public
          * @var    string
          */
-        public $from = '';
-
-        /**
-         * @access public
-         * @var    string
-         */
         public $text = '';
 
         /**
@@ -63,11 +57,15 @@ namespace leantime\core {
 
             $config = new config();
 
-            $this->from = $config->email;
-
+            if($config->email != '') {
+                $this->emailDomain = $config->email;
+            }else{
+                $host = $_SERVER['HTTP_HOST'] ?? "leantime";
+                $this->emailDomain = "no-reply@".$host;
+            }
             //PHPMailer
             $this->mailAgent = new PHPMailer(true);
-		
+
 	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             //Use SMTP or php mail().
@@ -90,8 +88,6 @@ namespace leantime\core {
                 $this->mailAgent->isMail();
 
             }
-
-            $this->emailDomain = $config->email;
 
             $this->logo = $_SESSION["companysettings.logoPath"];
             $this->companyColor = $_SESSION["companysettings.mainColor"];
