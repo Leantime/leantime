@@ -48,6 +48,7 @@ class config
     /*ldap default settings (can be changed in company settings */
     /*ldap default settings*/
     public $useLdap = false;
+    public $ldapType = "OL"; //Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
     public $ldapHost = ""; //FQDN
     public $ldapPort = 389; //Default Port
     public $baseDn = ""; //Base DN, example: DC=example,DC=com
@@ -133,7 +134,8 @@ class config
       $this->smtpPort = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PORT", $this->smtpPort);
 
       /*ldap*/
-      $this->useLdap = $this->configEnvironmentHelper("LEAN_LDAP_USE_LDAP", $this->useLdap);;
+      $this->useLdap = $this->configEnvironmentHelper("LEAN_LDAP_USE_LDAP", $this->useLdap);
+      $this->ldapType = $this->configEnvironmentHelper("LEAN_LDAP_LDAP_TYPE", $this->ldapType);
       $this->ldapHost = $this->configEnvironmentHelper("LEAN_LDAP_HOST", $this->ldapHost);
       $this->ldapPort = $this->configEnvironmentHelper("LEAN_LDAP_PORT", $this->ldapPort);
       $this->baseDn = $this->configEnvironmentHelper("LEAN_LDAP_BASE_DN", $this->baseDn);
