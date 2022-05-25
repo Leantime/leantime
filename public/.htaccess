@@ -3,9 +3,6 @@ RewriteEngine On
 #Uncomment and update if Leantime runs in a subfolder
 #RewriteBase /leantime/
 
-RewriteCond %{HTTP:X-Forwarded-Proto} =http
-RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
-
 RewriteRule ^resetPassword$ index.php?resetPassword=true
 RewriteRule ^resetPassword/([^/\.]+)/?$ index.php?resetPassword=true&hash=$1
 
