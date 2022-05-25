@@ -38,7 +38,7 @@ class session
 
         $config = new config();
 
-        ini_set('session.gc_maxlifetime', $config->sessionExpiration);
+        ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
 
         $this->sessionpassword = $config->sessionpassword;
 
