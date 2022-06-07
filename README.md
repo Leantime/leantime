@@ -73,6 +73,7 @@ docker run -d -p 80:80 --network leantime-net \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \
 -e LEAN_DB_DATABASE=leantime \
+-e LEAN_EMAIL_RETURN=changeme@local.local \
 --name leantime leantime/leantime:latest
 ```
 
