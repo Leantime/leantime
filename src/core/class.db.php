@@ -7,7 +7,8 @@
 
 namespace leantime\core;
 
-use \PDO;
+use PDO;
+use PDOException;
 
 class db
 {
@@ -61,7 +62,7 @@ class db
 
     /**
      * @access public
-     * @var    integer number of rows (CAUTION: Limited numrows with SQL LIMIT)
+     * @var    int number of rows (CAUTION: Limited numrows with SQL LIMIT)
      */
     public $counter = null;
 
@@ -87,7 +88,7 @@ class db
             $this->database = new PDO('mysql:host=' . $this->host . ';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        }catch(\PDOException $e){
+        }catch(PDOException $e){
 
             echo "No database connection, check your database credentials in your configuration file.";
 
@@ -112,7 +113,7 @@ class db
      * Count - True counter of results
      *
      * @access public
-     * @return integer (
+     * @return int (
      */
     
     public function count()
@@ -120,7 +121,7 @@ class db
 
         if($this->counter===null ) {
             
-            $this->counter=$this->result->fetchColumn();;
+            $this->counter=$this->result->fetchColumn();
 
         }
 

@@ -2,6 +2,7 @@
 
 namespace leantime\domain\services {
 
+    use DateTime;
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -205,10 +206,10 @@ namespace leantime\domain\services {
                 if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                     $tickets["later"][] = $row;
                 }else {
-                    $date = new \DateTime($row['dateToFinish']);
+                    $date = new DateTime($row['dateToFinish']);
 
                     $nextFriday = strtotime('friday this week');
-                    $nextFridayDateTime = new \DateTime();
+                    $nextFridayDateTime = new DateTime();
                     $nextFridayDateTime->setTimestamp($nextFriday);
                     if($date <= $nextFridayDateTime){
                         $tickets["thisWeek"][] = $row;
@@ -573,7 +574,7 @@ namespace leantime\domain\services {
 
                             if($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false){
                                 return false;
-                            };
+                            }
 
                         }
                     }

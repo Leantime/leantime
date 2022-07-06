@@ -2,7 +2,6 @@
 
 defined('RESTRICTED') or die('Restricted access');
 $values = $this->get('values');
-$helper = $this->get('helper');
 ?>
 
 <div class="pageheader">

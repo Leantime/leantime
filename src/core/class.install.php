@@ -3,7 +3,8 @@
 namespace leantime\core {
 
     use leantime\domain\repositories\setting;
-    use \PDO;
+    use PDO;
+    use PDOException;
 
     class install
     {
@@ -16,7 +17,7 @@ namespace leantime\core {
 
         /**
          * @access public
-         * @var integer
+         * @var int
          */
         public $id;
 
@@ -103,7 +104,7 @@ namespace leantime\core {
                     $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
 
                 echo $e->getMessage();
 
@@ -132,7 +133,7 @@ namespace leantime\core {
 
                 return true;
 
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
 
                 return false;
 
@@ -168,12 +169,13 @@ namespace leantime\core {
 
                 $stmn->execute();
 
+                /** @noinspection PhpStatementHasEmptyBodyInspection */
                 while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */
-                };
+                }
 
                 return true;
 
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
 
                 return $e->getMessage();
 
@@ -256,7 +258,7 @@ namespace leantime\core {
 
                             $currentDBVersion = $updateVersion;
 
-                        }catch(\PDOException $e) {
+                        }catch(PDOException $e) {
 
                             error_log($e->getMessage());
                             error_log($e->getTraceAsString());
@@ -795,7 +797,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -829,7 +831,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -886,7 +888,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -916,7 +918,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -946,7 +948,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -979,7 +981,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 
@@ -1008,7 +1010,7 @@ namespace leantime\core {
 					$stmn = $this->database->prepare($statement);
 					$stmn->execute();
 
-				} catch (\PDOException $e) {
+				} catch (PDOException $e) {
 					array_push($errors, $statement . " Failed:" . $e->getMessage());
 				}
 
@@ -1037,7 +1039,7 @@ namespace leantime\core {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
 
-                } catch (\PDOException $e) {
+                } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
 

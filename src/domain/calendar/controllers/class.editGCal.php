@@ -25,7 +25,6 @@ namespace leantime\domain\controllers {
             $calendarRepo = new repositories\calendar();
 
             $msgKey = '';
-            $helper = new core\helper();
 
 
             if (isset($_GET['id']) === true) {
@@ -56,7 +55,6 @@ namespace leantime\domain\controllers {
                 }
 
                 $tpl->assign('values', $values);
-                $tpl->assign('helper', $helper);
                 $tpl->assign('info', $msgKey);
 
                 $tpl->display('calendar.editGCal');

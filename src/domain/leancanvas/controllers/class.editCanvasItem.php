@@ -7,8 +7,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
 
     class editCanvasItem
@@ -91,7 +91,6 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->assign('comments', $comments);
-            $this->tpl->assign('helper', new core\helper());
 
             $this->tpl->assign("milestones",  $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
             $this->tpl->assign('canvasTypes',  $this->leanCanvasRepo->canvasTypes);
@@ -220,7 +219,6 @@ namespace leantime\domain\controllers {
 
                 $message = $this->commentsRepo->addComment($values, 'leancanvasitem');
                 $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                $this->tpl->assign('helper', new core\helper());
 
                 $subject = $this->language->__("email_notifications.canvas_board_comment_created");
                 $actual_link = BASE_URL."/leancanvas/editCanvasItem/".(int)$_GET['id'];
@@ -232,7 +230,6 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->assign('helper', new core\helper());
             $this->tpl->assign('canvasTypes',  $this->leanCanvasRepo->canvasTypes);
             $this->tpl->assign('canvasItem',  $this->leanCanvasRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial('leancanvas.canvasDialog');

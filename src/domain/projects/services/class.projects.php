@@ -4,8 +4,8 @@ namespace leantime\domain\services {
 
     use leantime\core;
     use leantime\domain\repositories;
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
     use PHPMailer\PHPMailer\PHPMailer;
     use function Sodium\add;
     use League\HTMLToMarkdown\HtmlConverter;
@@ -95,10 +95,12 @@ namespace leantime\domain\services {
 
             //Fix this
             $currentDate = new DateTime();
-            if($today->format("Y") > ($currentDate->format("Y") +5)) {
-                $completionDate = "Past ".($currentDate->format("Y")+5);
+            $inFiveYears = intval($currentDate->format("Y")) + 5;
+            
+            if(intval($today->format("Y")) >= $inFiveYears) {
+                $completionDate = "Past ".$inFiveYears;
             }else{
-                $completionDate = $today->format('m/d/Y');
+                $completionDate = $today->format($this->language->__('language.dateformat'));
             }
 
 

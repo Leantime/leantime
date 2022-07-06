@@ -4,9 +4,9 @@ namespace leantime\domain\services {
 
     use leantime\core;
     use leantime\domain\repositories;
-    use \DatePeriod;
-    use \DateTime;
-    use \DateInterval;
+    use DatePeriod;
+    use DateTime;
+    use DateInterval;
 
     class sprints
     {
@@ -274,7 +274,7 @@ namespace leantime\domain\services {
 
             $allKeys = array_keys($sprintData);
 
-            if(count($allKeys) === false || count($allKeys) == 0){
+            if(count($allKeys) == 0){
                 return [];
             }
 

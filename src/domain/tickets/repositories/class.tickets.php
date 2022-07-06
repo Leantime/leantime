@@ -107,13 +107,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access private
-         * @var    integer
+         * @var    int
          */
         private $page = 0;
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $rowsPerPage = 10;
 
@@ -1006,7 +1006,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  array $values
-         * @return boolean|int
+         * @return bool|int
          */
         public function addTicket(array $values)
         {

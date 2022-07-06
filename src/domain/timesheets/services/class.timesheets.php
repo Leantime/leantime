@@ -4,9 +4,9 @@ namespace leantime\domain\services {
 
     use leantime\core;
     use leantime\domain\repositories;
-    use \DatePeriod;
-    use \DateTime;
-    use \DateInterval;
+    use DatePeriod;
+    use DateTime;
+    use DateInterval;
 
     class timesheets
     {

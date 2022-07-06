@@ -511,7 +511,7 @@ namespace leantime\domain\repositories {
                             if ($this->updateIdeaStatus($id, $status) === false) {
 
                                 return false;
-                            };
+                            }
                         }
 
                     }

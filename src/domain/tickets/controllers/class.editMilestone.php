@@ -6,8 +6,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
     class editMilestone
     {
@@ -89,7 +89,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('comments', $comments);
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('helper', new core\helper());
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
             $this->tpl->assign('milestone', $milestone);
             $this->tpl->displayPartial('tickets.milestoneDialog');
@@ -125,8 +124,6 @@ namespace leantime\domain\controllers {
 
                     if($message === true) {
                         $this->tpl->setNotification($this->language->__("notifications.comment_added_successfully"), "success");
-
-                        $this->tpl->assign('helper', new core\helper());
 
                         $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
                         $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];

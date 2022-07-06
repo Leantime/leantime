@@ -25,7 +25,6 @@ namespace leantime\domain\controllers {
             $calendarRepo = new repositories\calendar();
 
             $msgKey = '';
-            $helper = new core\helper();
 
 
             $values = array(
@@ -50,7 +49,6 @@ namespace leantime\domain\controllers {
             }
 
             $tpl->assign('values', $values);
-            $tpl->assign('helper', $helper);
             $tpl->assign('info', $msgKey);
 
             $tpl->display('calendar.importGCal');

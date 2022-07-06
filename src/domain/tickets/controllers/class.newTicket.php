@@ -52,7 +52,6 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $ticketRepo = new repositories\tickets();
 
-            $helper = new core\helper();
             $projectObj = new repositories\projects();
             $user = new repositories\users();
             $language = new core\language();
@@ -105,7 +104,7 @@ namespace leantime\domain\controllers {
                     'userId' => $_SESSION['userdata']['id'],
                     'userFirstname' => $userinfo["firstname"],
                     'userLastname' => $userinfo["lastname"],
-                    'date' => $helper->timestamp2date(date("Y-m-d H:i:s"), 2),
+                    'date' => $this->language->getFormattedDateString(date("Y-m-d H:i:s")),
                     'dateToFinish' => $_POST['dateToFinish'],
                     'status' => $_POST['status'],
                     'storypoints' => $_POST['storypoints'],
@@ -131,10 +130,10 @@ namespace leantime\domain\controllers {
 
                 } else {
 
-                    $values['date'] = $helper->timestamp2date($values['date'], 4);
-                    $values['dateToFinish'] = $helper->timestamp2date($values['dateToFinish'], 4);
-                    $values['editFrom'] = $helper->timestamp2date($values['editFrom'], 4);
-                    $values['editTo'] = $helper->timestamp2date($values['editTo'], 4);
+                    $values['date'] = $this->language->getISODateString($values['date']);
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
 
                     // returns last inserted id
                     $id = $ticketRepo->addTicket($values);
@@ -179,8 +178,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('objTicket', $ticketRepo);
             $tpl->assign('employees', $user->getEmployees());
             $tpl->assign('timesheetsAllHours', 0);
-
-            $tpl->assign('helper', $helper);
 
             $tpl->display('tickets.newTicket');
 

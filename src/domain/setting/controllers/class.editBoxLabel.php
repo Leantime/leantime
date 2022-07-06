@@ -7,8 +7,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
 
     class editBoxLabel

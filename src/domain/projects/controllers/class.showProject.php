@@ -146,7 +146,6 @@ namespace leantime\domain\controllers {
 
 
 
-                $helper = new core\helper();
 
                 if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
                     $tpl->display('general.error');
@@ -372,13 +371,13 @@ namespace leantime\domain\controllers {
 
                 if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                    $dateFrom = ($helper->timestamp2date($_POST['dateFrom'], 4));
+                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']);
 
                 }
 
                 if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                    $dateTo = ($helper->timestamp2date($_POST['dateTo'], 4));
+                    $dateTo = $this->language->getISODateTimeString($_POST['dateTo']);
 
                 }
 
@@ -429,13 +428,13 @@ namespace leantime\domain\controllers {
                 $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
                 $tpl->assign('employeeFilter', $userId);
                 $tpl->assign('employees', $employees);
-                $tpl->assign('dateFrom', $helper->timestamp2date($dateFrom, 2));
-                $tpl->assign('dateTo', $helper->timestamp2date($dateTo, 2));
+                $tpl->assign('dateFrom', $this->language->getFormattedDateString($dateFrom));
+                $tpl->assign('dateTo', $this->language->getFormattedDateString($dateFrom));
                 $tpl->assign('actKind', $kind);
                 $tpl->assign('kind', $timesheets->kind);
                 $tpl->assign('invComp', $invCompCheck);
                 $tpl->assign('invEmpl', $invEmplCheck);
-                $tpl->assign('helper', $helper);
+
                 $tpl->assign('projectFilter', $projectFilter);
 
 
@@ -479,7 +478,6 @@ namespace leantime\domain\controllers {
 
 
                 $tpl->assign('state', $projectRepo->state);
-                $tpl->assign('helper', $helper);
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
                 $tpl->display('projects.showProject');

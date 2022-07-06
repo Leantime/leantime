@@ -50,7 +50,7 @@ namespace leantime\domain\controllers {
 
             }else{
 
-                //$this->tpl->redirect(BASE_URL."/404/");
+                $this->tpl->redirect(BASE_URL."/404/");
 
             }
 

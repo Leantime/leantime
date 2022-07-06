@@ -4,6 +4,7 @@ namespace leantime\domain\repositories {
 
     use leantime\core;
     use pdo;
+    use PDOException;
 
     class setting
     {
@@ -43,7 +44,7 @@ namespace leantime\domain\repositories {
                     $values = $stmn->fetch();
                     $stmn->closeCursor();
 
-                }catch(\PDOException $e){
+                }catch(PDOException $e){
                     return false;
                 }
 
@@ -1091,7 +1092,7 @@ namespace leantime\domain\repositories {
 
                 return true;
 
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
 
                 return false;
 

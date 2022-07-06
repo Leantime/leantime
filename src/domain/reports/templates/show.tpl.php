@@ -235,10 +235,10 @@
 
        <?php if($sprintBurndown !== false){ ?>
 
-           var sprintBurndownChart = leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
-           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', '<?=$this->__('label.hours') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', '<?=$this->__('label.effort') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', '<?=$this->__('label.num_tickets') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ], sprintBurndownChart);
+           var sprintBurndownChart = leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
+           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', '<?=$this->__('label.hours') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; }  ?> ], sprintBurndownChart);
+           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', '<?=$this->__('label.effort') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; }  ?> ], sprintBurndownChart);
+           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', '<?=$this->__('label.num_tickets') ?>', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ], sprintBurndownChart);
 
        <?php } ?>
 
@@ -253,24 +253,24 @@
                     'label': 'Open',
                     'data':
                     [";
-                        foreach($backlogBurndown as $value)  { if($value['open']['actualNum'] !== '') echo "'".$value['open']['actualNum']."',"; };
-                echo"]};";
+                        foreach($backlogBurndown as $value)  { if($value['open']['actualNum'] !== '') echo "'".$value['open']['actualNum']."',"; }
+       echo"]};";
 
                echo "
                statusBurnupNum['progress'] = {
                             'label': 'Progress',
                             'data':
                             [";
-               foreach($backlogBurndown as $value)  { if($value['progress']['actualNum'] !== '') echo "'".$value['progress']['actualNum']."',"; };
-               echo"]};";
+               foreach($backlogBurndown as $value)  { if($value['progress']['actualNum'] !== '') echo "'".$value['progress']['actualNum']."',"; }
+       echo"]};";
 
                echo "
                statusBurnupNum['done'] = {
                                     'label': 'Done',
                                     'data':
                                     [";
-               foreach($backlogBurndown as $value)  { if($value['done']['actualNum'] !== '') echo "'".$value['done']['actualNum']."',"; };
-               echo"]};";
+               foreach($backlogBurndown as $value)  { if($value['done']['actualNum'] !== '') echo "'".$value['done']['actualNum']."',"; }
+       echo"]};";
 
            ?>
 
@@ -286,24 +286,24 @@
                         'label': 'Open',
                         'data':
                         [";
-           foreach($backlogBurndown as $value)  { if($value['open']['actualEffort'] !== '') echo "'".$value['open']['actualEffort']."',"; };
-           echo"]};";
+           foreach($backlogBurndown as $value)  { if($value['open']['actualEffort'] !== '') echo "'".$value['open']['actualEffort']."',"; }
+       echo"]};";
 
            echo " 
            statusBurnupEffort['progress'] = {
                                 'label': 'Progress',
                                 'data':
                                 [";
-           foreach($backlogBurndown as $value)  { if($value['progress']['actualEffort'] !== '') echo "'".$value['progress']['actualEffort']."',"; };
-           echo"]};";
+           foreach($backlogBurndown as $value)  { if($value['progress']['actualEffort'] !== '') echo "'".$value['progress']['actualEffort']."',"; }
+       echo"]};";
 
            echo " 
            statusBurnupEffort['done'] = {
                                         'label': 'Done',
                                         'data':
                                         [";
-           foreach($backlogBurndown as $value)  { if($value['done']['actualEffort'] !== '') echo "'".$value['done']['actualEffort']."',"; };
-           echo"]};";
+           foreach($backlogBurndown as $value)  { if($value['done']['actualEffort'] !== '') echo "'".$value['done']['actualEffort']."',"; }
+       echo"]};";
 
            ?>
 
@@ -316,7 +316,7 @@
                         'label': 'Open',
                         'data':
                         [";
-       foreach($backlogBurndown as $value)  { if($value['open']['actualHours'] !== '') echo "'".$value['open']['actualHours']."',"; };
+       foreach($backlogBurndown as $value)  { if($value['open']['actualHours'] !== '') echo "'".$value['open']['actualHours']."',"; }
        echo"]};";
 
        echo " 
@@ -324,7 +324,7 @@
                                 'label': 'Progress',
                                 'data':
                                 [";
-       foreach($backlogBurndown as $value)  { if($value['progress']['actualHours'] !== '') echo "'".$value['progress']['actualHours']."',"; };
+       foreach($backlogBurndown as $value)  { if($value['progress']['actualHours'] !== '') echo "'".$value['progress']['actualHours']."',"; }
        echo"]};";
 
        echo " 
@@ -332,7 +332,7 @@
                                         'label': 'Done',
                                         'data':
                                         [";
-       foreach($backlogBurndown as $value)  { if($value['done']['actualHours'] !== '') echo "'".$value['done']['actualHours']."',"; };
+       foreach($backlogBurndown as $value)  { if($value['done']['actualHours'] !== '') echo "'".$value['done']['actualHours']."',"; }
        echo"]};";
 
        ?>

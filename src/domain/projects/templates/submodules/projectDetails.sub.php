@@ -2,7 +2,6 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
-$helper = $this->get('helper');
 ?>
 
 
