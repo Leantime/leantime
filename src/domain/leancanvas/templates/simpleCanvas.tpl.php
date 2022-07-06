@@ -485,7 +485,7 @@ $statusLabels = $this->get("statusLabels");
 
         echo "<br /><br /><div class='center'>";
 
-        echo"<div style='width:50%' class='svgContainer'>";
+        echo"<div style='width:30%' class='svgContainer'>";
         echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
         echo"</div>";
 

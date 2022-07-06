@@ -147,8 +147,8 @@ $values = $this->get('values');
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
         <?php echo $this->displayLink('timesheets.delTime', $this->__('links.delete'), array('id' => $_GET['id']), array('class'=>'delete editTimeModal pull-right')); ?>
-        <input type="submit" value="<?php echo $this->__('buttons.save'); ?>"
-        name="save" class="button" />
+
+        <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>
 
