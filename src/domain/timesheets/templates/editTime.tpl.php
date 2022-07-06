@@ -123,7 +123,7 @@ $values = $this->get('values');
 
             <?php echo $this->__('label.date') ?>&nbsp;<input type="text"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo ($values['invoicedEmplDate'] != "") ? $this->getFormattedDateString($values['invoicedEmplDate']) : ""; ?>"
+                                                  value="<?php echo $this->getFormattedDateString($values['invoicedEmplDate']); ?>"
                                                   size="7"/><br/>
 
 
@@ -138,7 +138,7 @@ $values = $this->get('values');
         <?php echo $this->__('label.date') ?>&nbsp;<input type="text"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo ($values['invoicedCompDate'] != "") ? $this->getFormattedDateString($values['invoicedCompDate']) : ""; ?>"
+                                                      value="<?php echo $this->getFormattedDateString($values['invoicedCompDate']); ?>"
                                                       size="7"/><br/>
     <?php } ?>
 

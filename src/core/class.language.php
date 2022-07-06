@@ -235,6 +235,8 @@ namespace leantime\core {
 
             }
 
+            return "";
+
         }
 
         /**
