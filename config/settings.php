@@ -13,7 +13,7 @@ class settings {
 	 * @access private
 	 * @var string - 1 debugmodus
 	 */
-	private $debug = 0;
+	private $debug = 1;
 
 	public $appVersion = "2.1.9";
 
@@ -58,7 +58,15 @@ class settings {
 
 	public function getBaseURL () {
 
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ? "https://" : "http://";
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+
+            $protocol = "https://";
+        } else {
+            $protocol = "http://";
+        }
+
         $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 
