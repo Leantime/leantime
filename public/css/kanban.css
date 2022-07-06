@@ -29,7 +29,7 @@
     border:1px solid #ccc;
     padding:10px 5px;
     min-height:200px;
-    /*overflow-x: hidden;*/
+    overflow-x: hidden;
     overflow-y: auto;
 }
 

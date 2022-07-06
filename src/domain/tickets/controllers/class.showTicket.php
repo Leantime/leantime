@@ -55,6 +55,7 @@ namespace leantime\domain\controllers {
                     $this->projectService->changeCurrentSessionProject($ticket->projectId);
                     $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
                 }
+
                 //Delete file
                 if (isset($params['delFile']) === true) {
 
