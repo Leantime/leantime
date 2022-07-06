@@ -97,19 +97,24 @@ namespace leantime\domain\controllers {
             if (isset($_GET['module']) && isset($_GET['label'])) {
 
                 $sanitizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
+
                 //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {
 
                     $currentStateLabels = $this->ticketsRepo->getStateLabels();
-                    $newStateLabels = array();
-                    foreach ($currentStateLabels as $key => $label) {
-                        $newStateLabels[$key] = $label["name"];
-                    }
-                    $newStateLabels[$_GET['label']] = $sanitizedString;
 
-                    unset($_SESSION["projectsettings"]["ticketlabels"]);
-                    $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
-                        serialize($newStateLabels));
+                    $statusKey = filter_var($_GET['label'], FILTER_SANITIZE_NUMBER_INT);
+
+                    if(isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])){
+
+                        $currentStateLabels[$statusKey]['name'] = $sanitizedString;
+
+                        unset($_SESSION["projectsettings"]["ticketlabels"]);
+                        $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
+                            serialize($currentStateLabels));
+                    }
+
+
                 }
 
                 if ($_GET['module'] == "retrolabels") {

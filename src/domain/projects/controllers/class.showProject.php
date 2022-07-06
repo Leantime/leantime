@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
             $this->language = new core\language();
             $this->commentService = new services\comments();
             $this->fileService = new services\files();
+            $this->ticketService = new services\tickets();
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -150,6 +151,23 @@ namespace leantime\domain\controllers {
                 if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
+                }
+
+
+                if(isset($_POST['submitSettings'])) {
+
+                    if(isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0){
+
+                        if($this->ticketService->saveStatusLabels($_POST)){
+
+                            $tpl->setNotification($this->language->__('notification.new_status_saved'), 'success');
+                        }else{
+                            $tpl->setNotification($this->language->__('notification.error_saving_status'), 'error');
+                        }
+
+                    }else{
+                        $tpl->setNotification($this->language->__('notification.at_least_one_status'), 'error');
+                    }
                 }
 
                 //Calculate projectdetails
@@ -407,6 +425,8 @@ namespace leantime\domain\controllers {
                     $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
                     $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
                 }
+
+                $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
                 $tpl->assign('employeeFilter', $userId);
                 $tpl->assign('employees', $employees);
                 $tpl->assign('dateFrom', $helper->timestamp2date($dateFrom, 2));

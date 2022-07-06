@@ -25,6 +25,7 @@ namespace leantime\domain\services {
             $this->language = new core\language();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
+            $this->settingsRepo = new repositories\setting();
 
         }
 
@@ -32,6 +33,51 @@ namespace leantime\domain\services {
         public function getStatusLabels() {
 
             return $this->ticketRepository->getStateLabels();
+
+        }
+
+        public function saveStatusLabels($params) {
+
+            if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
+
+                $statusArray = array();
+
+                foreach($params['labelKeys'] as $labelKey) {
+
+                    $labelKey = filter_var($labelKey, FILTER_SANITIZE_NUMBER_INT);
+
+                    $statusArray[$labelKey] = array(
+                        "name" => $params['label-'.$labelKey] ?? '',
+                        "class" => $params['labelClass-'.$labelKey] ?? 'label-default',
+                        "statusType" => $params['labelType-'.$labelKey] ?? 'NEW',
+                        "kanbanCol" => $params['labelKanbanCol-'.$labelKey] ?? false,
+                        "sortKey" => $params['labelSort-'.$labelKey] ?? 99
+                    );
+                }
+
+                unset($_SESSION["projectsettings"]["ticketlabels"]);
+
+                return $this->settingsRepo->saveSetting("projectsettings.".$_SESSION['currentProject'].".ticketlabels", serialize($statusArray));
+
+            }else{
+
+                return false;
+
+            }
+        }
+
+        public function getKanbanColumns() {
+
+            $statusList = $this->ticketRepository->getStateLabels();
+
+            $visibleCols = array();
+            foreach($statusList as $key=>$status) {
+                if($status['kanbanCol']){
+                    $visibleCols[$key] = $status;
+                }
+            }
+
+            return $visibleCols;
 
         }
 

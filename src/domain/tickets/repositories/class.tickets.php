@@ -36,20 +36,49 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $statusNumByKey = array('NEW' => 3, 'ERROR' => 1, 'INPROGRESS' => 4, 'APPROVAL' => 2, 'FINISHED' => 0, "ARCHIVED" =>-1);
-
-
-        /**
-         * @access public
-         * @var    array
-         */
-        public $statusList = array(
-            '3' => 'status.new', //New
-            '1' => 'status.blocked', //In Progress
-            '4' => 'status.in_progress', //In Progress
-            '2' => 'status.waiting_for_approval', //In Progress
-            '0' => 'status.done', //Done
-            '-1' => 'status.archived' //Done
+        public $statusListSeed = array(
+            3 => array(
+                    "name" => 'status.new',
+                    "class" => 'label-info',
+                    "statusType" => "NEW",
+                    "kanbanCol" => true,
+                    "sortKey" => 1
+            ),
+            1 => array(
+                "name" => 'status.blocked',
+                "class" => 'label-important',
+                "statusType" => "INPROGRESS",
+                "kanbanCol" => true,
+                "sortKey" => 2
+            ),
+            4 => array(
+                "name" => 'status.in_progress',
+                "class" => 'label-warning',
+                "statusType" => "INPROGRESS",
+                "kanbanCol" => true,
+                "sortKey" => 3
+            ),
+            2 => array(
+                "name" => 'status.waiting_for_approval',
+                "class" => 'label-warning',
+                "statusType" => "INPROGRESS",
+                "kanbanCol" => true,
+                "sortKey" => 4
+            ),
+            0 => array(
+                "name" => 'status.done',
+                "class" => 'label-success',
+                "statusType" => "DONE",
+                "kanbanCol" => true,
+                "sortKey" => 5
+            ),
+            -1 => array(
+                "name" => 'status.archived',
+                "class" => 'label-default',
+                "statusType" => "DONE",
+                "kanbanCol" => false,
+                "sortKey" => 6
+            )
         );
 
         /**
@@ -125,6 +154,8 @@ namespace leantime\domain\repositories {
         public function getStateLabels()
         {
 
+            unset($_SESSION["projectsettings"]["ticketlabels"]);
+
             if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
 
                 return $_SESSION["projectsettings"]["ticketlabels"];
@@ -145,37 +176,50 @@ namespace leantime\domain\repositories {
 
                 $labels = array();
 
-                //preseed state labels with default values
-                foreach($this->statusList as $key=>$label) {
-                    $labels[$key] = array(
-                        "name" => $this->language->__($label),
-                        "class" => $this->statusClasses[$key]
-                    );
-                }
+                $statusList = $this->statusListSeed;
 
                 //Override the state values that are in the db
                 if($values !== false) {
 
-                    foreach(unserialize($values['value']) as $key=>$label) {
+                    $statusList = array();
 
-                        //Custom key in the database represents the string value. Needs to be translated to numeric status value
-                        if(!is_int($key)) {
-                            $numericKey = $this->statusNumByKey[$key];
-                        }else{
-                            $numericKey = $key;
+                    foreach(unserialize($values['value']) as $key=>$status) {
+
+                        if(is_int($key)) {
+
+                            //Backwards Compatibility with existing labels in db
+                            //Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>
+                            //Afterwards labelString was replaced with an array to include all different status attributes needed for custom status types
+                            if(!is_array($status)) {
+
+                                $statusList[$key] = $this->statusListSeed[$key];
+
+                                if(is_array($statusList[$key]) && isset($statusList[$key]["name"])) {
+                                    $statusList[$key]["name"] = $status;
+                                }
+
+                            }else{
+                                $statusList[$key] = $status;
+                            }
                         }
 
-                        $labels[$numericKey] = array(
-                            "name" => $label,
-                            "class" => $this->statusClasses[$numericKey]
-                        );
                     }
 
+                } else {
+                    //If the values are not coming from the db, we need to translate the label strings
+                    foreach($statusList as &$status) {
+                        $status['name'] = $this->language->__($status['name']);
+                    }
                 }
 
-                $_SESSION["projectsettings"]["ticketlabels"] = $labels;
+                //Sort by order number
+                uasort($statusList, function($a, $b) {
+                    return $a['sortKey'] <=> $b['sortKey'];
+                });
 
-                return $labels;
+                $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
+
+                return $statusList;
 
             }
         }

@@ -5790,7 +5790,7 @@ a.filter-term {
 .quickAddLink {
     display: block;
     border: 2px dotted #ccc;
-    padding: 5px;
+    padding: 5px 10px;
     text-align: center;
     margin-bottom: 5px;
     border-radius:5px;
@@ -6293,4 +6293,26 @@ input.secretInput:active {
     border-bottom:1px solid #ddd;
     padding-bottom:5px;
     margin-bottom:10px;
+}
+
+.maincontent .chzn-container .chzn-results li {
+    margin-bottom:2px;
+    list-style-type:none;
+    padding:5px;
+}
+
+.maincontent .chzn-container .chzn-results li span,
+.maincontent .chzn-container .chzn-single span{
+    margin-left:0px !important;
+}
+
+.maincontent .chzn-container .chzn-results li span:after,
+.maincontent .chzn-container .chzn-single span:after{
+    border-color:transparent;
+}
+
+.sortHandle {
+    font-size:16px;
+    color:#ccc;
+    padding-left:15px;
 }
