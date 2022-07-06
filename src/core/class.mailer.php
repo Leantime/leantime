@@ -11,6 +11,7 @@ namespace leantime\core {
 
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
+    use phpmailerException;
 
     class mailer
     {
@@ -147,7 +148,7 @@ namespace leantime\core {
          * @param  array $to
          * @param  $from
          * @return void
-         * @throws \phpmailerException
+         * @throws phpmailerException
          */
         public function sendMail(array $to, $from)
         {

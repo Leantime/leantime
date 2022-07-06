@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
             $this->language = new core\language();
             $this->commentService = new services\comments();
             $this->fileService = new services\files();
+            $this->ticketService = new services\tickets();
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -145,11 +146,27 @@ namespace leantime\domain\controllers {
 
 
 
-                $helper = new core\helper();
 
                 if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
+                }
+
+
+                if(isset($_POST['submitSettings'])) {
+
+                    if(isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0){
+
+                        if($this->ticketService->saveStatusLabels($_POST)){
+
+                            $tpl->setNotification($this->language->__('notification.new_status_saved'), 'success');
+                        }else{
+                            $tpl->setNotification($this->language->__('notification.error_saving_status'), 'error');
+                        }
+
+                    }else{
+                        $tpl->setNotification($this->language->__('notification.at_least_one_status'), 'error');
+                    }
                 }
 
                 //Calculate projectdetails
@@ -354,13 +371,13 @@ namespace leantime\domain\controllers {
 
                 if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                    $dateFrom = ($helper->timestamp2date($_POST['dateFrom'], 4));
+                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']);
 
                 }
 
                 if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                    $dateTo = ($helper->timestamp2date($_POST['dateTo'], 4));
+                    $dateTo = $this->language->getISODateTimeString($_POST['dateTo']);
 
                 }
 
@@ -407,15 +424,17 @@ namespace leantime\domain\controllers {
                     $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
                     $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
                 }
+
+                $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
                 $tpl->assign('employeeFilter', $userId);
                 $tpl->assign('employees', $employees);
-                $tpl->assign('dateFrom', $helper->timestamp2date($dateFrom, 2));
-                $tpl->assign('dateTo', $helper->timestamp2date($dateTo, 2));
+                $tpl->assign('dateFrom', $this->language->getFormattedDateString($dateFrom));
+                $tpl->assign('dateTo', $this->language->getFormattedDateString($dateFrom));
                 $tpl->assign('actKind', $kind);
                 $tpl->assign('kind', $timesheets->kind);
                 $tpl->assign('invComp', $invCompCheck);
                 $tpl->assign('invEmpl', $invEmplCheck);
-                $tpl->assign('helper', $helper);
+
                 $tpl->assign('projectFilter', $projectFilter);
 
 
@@ -459,7 +478,6 @@ namespace leantime\domain\controllers {
 
 
                 $tpl->assign('state', $projectRepo->state);
-                $tpl->assign('helper', $helper);
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
                 $tpl->display('projects.showProject');

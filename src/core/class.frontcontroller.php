@@ -7,6 +7,7 @@
 
 namespace leantime\core {
 
+    use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
 
@@ -66,7 +67,7 @@ namespace leantime\core {
 
                 }
 
-                self::$instance = new FrontController($rootPath);
+                self::$instance = new frontcontroller($rootPath);
             }
 
             return self::$instance;
@@ -145,7 +146,7 @@ namespace leantime\core {
 
             //Initialize Action
             $classname = "leantime\\domain\\controllers\\".$actionName ;
-            $action = new $classname;
+            $action = new $classname();
 
             if(is_object($action) === false) {
 
@@ -209,7 +210,7 @@ namespace leantime\core {
                 return $_GET;
                     break;
             default:
-                throw(new \Exception("Unexpected HTTP Method: ".$method));
+                throw(new Exception("Unexpected HTTP Method: ".$method));
                     break;
             }
 

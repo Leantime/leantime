@@ -4,8 +4,8 @@ namespace leantime\domain\services {
 
     use leantime\core;
     use leantime\domain\repositories;
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
     use PHPMailer\PHPMailer\PHPMailer;
     use function Sodium\add;
     use League\HTMLToMarkdown\HtmlConverter;
@@ -95,17 +95,19 @@ namespace leantime\domain\services {
 
             //Fix this
             $currentDate = new DateTime();
-            if($today->format("Y") > ($currentDate->format("Y") +5)) {
-                $completionDate = "Past ".($currentDate->format("Y")+5);
+            $inFiveYears = intval($currentDate->format("Y")) + 5;
+            
+            if(intval($today->format("Y")) >= $inFiveYears) {
+                $completionDate = "Past ".$inFiveYears;
             }else{
-                $completionDate = $today->format('m/d/Y');
+                $completionDate = $today->format($this->language->__('language.dateformat'));
             }
 
 
             $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
             if($numberOfClosedTickets < 10) {
                 $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
-            }else if($finalPercent == 100) {
+            }elseif($finalPercent == 100) {
                 $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
 
             }
@@ -473,11 +475,8 @@ namespace leantime\domain\services {
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
-                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
-                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-                    
-                    unset($_SESSION["projectsettings"]["ticketlabels"]);
-                    
+                    unset($_SESSION["projectsettings"]);
+
                     return true;
 
                 } else {
@@ -504,6 +503,7 @@ namespace leantime\domain\services {
             $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
             $_SESSION['currentRetroCanvas'] = "";
+            unset($_SESSION["projectsettings"]);
 
             $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 

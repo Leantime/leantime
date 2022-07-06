@@ -65,6 +65,7 @@
         }
 
         public function getStatusLabels () {
+
             foreach($this->statusLabels as $key => $statusLabel){
                 $this->statusLabels[$key] = $this->language->__($statusLabel);
             }
@@ -83,7 +84,6 @@
             }
 
             if(isset($_SESSION["projectsettings"]["researchlabels"])) {
-
 
                 return $_SESSION["projectsettings"]["researchlabels"];
 

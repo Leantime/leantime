@@ -13,7 +13,8 @@
     box-sizing: border-box;
     height:auto;
     padding:5px;
-    float:left;
+    flex:0 0 auto;
+    min-width:250px;
 }
 
 .column:first-child {
@@ -69,27 +70,32 @@
     height: 50px;
 }
 
-.titleBorderColor1 {
+.titleBorderColor1,
+.title-border-label-important {
     border-bottom:5px solid #b94a48;
 }
 
-.titleBorderColor3 {
+.titleBorderColor3,
+.title-border-label-info{
     border-bottom:5px solid #2d6987;
 }
 
-.titleBorderColor4 {
+.titleBorderColor4,
+.title-border-label-warning{
     border-bottom:5px solid #f89406;
 }
 
-.titleBorderColor2 {
+.titleBorderColor2{
     border-bottom:5px solid #f89406;
 }
 
-.titleBorderColor0 {
+.titleBorderColor0,
+.title-border-label-success{
     border-bottom:5px solid #468847;
 }
 
-.titleBorderColor-1 {
+.titleBorderColor-1,
+.title-border-label-default{
     border-bottom:5px solid #999999;
 }
 
@@ -165,6 +171,12 @@
     text-align:center;
     color:#999;
     padding:20px 0px;
+}
+
+.sortableTicketList .row-fluid {
+    width:100%;
+    display:flex;
+    overflow-x:auto;
 }
 
 

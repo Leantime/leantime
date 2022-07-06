@@ -29,7 +29,6 @@ namespace leantime\domain\controllers {
                 if (isset($_GET['id']) === true) {
 
                     $projects = new repositories\projects();
-                    $helper = new core\helper();
                     $tickets = new repositories\tickets();
 
                     $id = ($_GET['id']);

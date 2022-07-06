@@ -70,25 +70,9 @@ class ldap
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
 
-        }else{
-            //TODO
         }
 
 
-
-    }
-
-    private function getRoleAssignments (){
-
-        $assignedRoles = $this->config->assignedRoles;
-
-        //TODO: Should come from db roles table eventually
-        $availableRoles = core\login::$userRoles;
-        foreach($availableRoles as $key => $row) {
-            if(isset($this->ldapLtGroupAssignments[$row])) {
-                $this->ldapLtGroupAssignments[$key] = array("ltRole" => $row, "ldapRole" => $assignedRoles[$row]);
-            }
-        }
 
     }
 
@@ -142,7 +126,7 @@ class ldap
     public function getSingleUser($username) {
 
         if(!is_resource($this->ldapConnection)){
-            throw Exception("No connection");
+            throw new Exception("No connection");
         }
 
         $filter = "(".$this->ldapKeys->username."=" . $this->extractLdapFromUsername($username) . ")";

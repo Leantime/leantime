@@ -54,9 +54,9 @@ defined('RESTRICTED') or die('Restricted access');
     <thead>
         <tr>
             <th>Id</th>
-            <th><?php echo $lang['NAME']; ?></th>
-            <th><?php echo $lang['URL']; ?></th>
-            <th><?php echo $lang['COLOR']; ?></th>
+            <th><?php echo $this->__('NAME'); ?></th>
+            <th><?php echo $this->__('URL'); ?></th>
+            <th><?php echo $this->__('COLOR'); ?></th>
         </tr>
     </thead>
 

@@ -9,9 +9,11 @@
  */
 namespace leantime\core {
 
+    use Exception;
     use leantime\domain\services\ldap;
     use PDO;
     use leantime\domain\repositories;
+    use PDOException;
     use RobThree\Auth\TwoFactorAuth;
 
     class login
@@ -19,13 +21,13 @@ namespace leantime\core {
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    int user id from DB
          */
         private $userId = null;
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    int user id from DB
          */
         private $clientId = null;
 
@@ -93,7 +95,7 @@ namespace leantime\core {
 
         /**
          * @access public
-         * @var    integer time for cookie
+         * @var    int time for cookie
          */
         public $cookieTime;
 
@@ -153,8 +155,8 @@ namespace leantime\core {
          * __construct - getInstance of session and get sessionId and refers to login if post is set
          *
          * @param  $sessionid
-         * @return boolean
-         * @throws \Exception
+         * @return bool
+         * @throws Exception
          */
         private function __construct($sessionid)
         {
@@ -263,7 +265,7 @@ namespace leantime\core {
          * login - Validate POST-data with DB
          *
          * @access private
-         * @return boolean
+         * @return bool
          */
         private function login()
         {
@@ -405,7 +407,7 @@ namespace leantime\core {
 
                 $returnValues = $stmn->fetch();
 
-            }catch(\PDOException $e){
+            }catch(PDOException $e){
 
                return false;
 
@@ -458,7 +460,7 @@ namespace leantime\core {
          * logout - destroy sessions and cookies
          *
          * @access private
-         * @return boolean
+         * @return bool
          */
         private function logout()
         {
@@ -516,7 +518,7 @@ namespace leantime\core {
          * @param  $username
          * @param  $password
          * @param  $ldapLogin //check if the login is coming from an ldap directory
-         * @return boolean
+         * @return bool
          */
         public function getUserByLogin($username, $password, $ldapLogin = false)
         {

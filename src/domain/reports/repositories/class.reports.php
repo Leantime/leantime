@@ -11,13 +11,12 @@ namespace leantime\domain\repositories {
     {
 
 
-
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        function __construct()
+        public function __construct()
         {
 
             $this->db = core\db::getInstance();
@@ -36,11 +35,11 @@ namespace leantime\domain\repositories {
             //Ticket Reports
             $query = "SELECT ";
 
-                        if($sprintId !== "") {
-                            $query .= "sprint AS sprintId,";
-                        }else{
-                            $query .= "-1 AS sprintId,";
-                        }
+            if ($sprintId !== "") {
+                $query .= "sprint AS sprintId,";
+            } else {
+                $query .= "-1 AS sprintId,";
+            }
 
             $query .= "  projectId,
                         DATE(NOW() - INTERVAL 1 DAY) AS date,
@@ -75,10 +74,10 @@ namespace leantime\domain\repositories {
                     
                     WHERE projectId = :projectId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-            if($sprintId !== "") {
+            if ($sprintId !== "") {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
 
-            }else{
+            } else {
                 $query .= " GROUP BY projectId";
             }
 
@@ -86,7 +85,7 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
-            if($sprintId !== "") {
+            if ($sprintId !== "") {
                 $stmn->bindValue(':sprint', $sprintId, PDO::PARAM_STR);
             }
 
@@ -96,9 +95,9 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            if(isset($valuesTickets['sum_points']) && $valuesTickets['sum_points']>0){
+            if (isset($valuesTickets['sum_points']) && $valuesTickets['sum_points'] > 0) {
                 $storyPoints = $valuesTickets['sum_points'];
-            }else{
+            } else {
                 $storyPoints = 1;
             }
 
@@ -113,10 +112,10 @@ namespace leantime\domain\repositories {
                     LEFT JOIN zp_timesheets ON zp_tickets.id = zp_timesheets.ticketId
                     WHERE projectId = :projectId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-            if($sprintId !== "") {
+            if ($sprintId !== "") {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
 
-            }else{
+            } else {
                 $query .= " GROUP BY projectId";
             }
 
@@ -125,7 +124,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':storyPoints', $storyPoints, PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
-            if($sprintId !== "") {
+            if ($sprintId !== "") {
                 $stmn->bindValue(':sprint', $sprintId, PDO::PARAM_STR);
             }
 
@@ -136,21 +135,20 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
 
-
             //Number of users
             $projectService = new repositories\projects();
             $users = $projectService->getUsersAssignedToProject($projectId);
 
-            if(is_array($users)) {
+            if (is_array($users)) {
                 $numberOfUsers = count($users);
-            }else{
+            } else {
                 $numberOfUsers = 0;
             }
 
-            if(is_array($valuesTickets) && is_array($valueTimesheets)) {
+            if (is_array($valuesTickets) && is_array($valueTimesheets)) {
                 $values = array_merge($valuesTickets, $valueTimesheets);
                 $values["sum_teammembers"] = $numberOfUsers;
-            }else{
+            } else {
                 $values = false;
             }
 
@@ -176,7 +174,7 @@ namespace leantime\domain\repositories {
 
         public function addReport($report)
         {
-            $report = (object) $report;
+            $report = (object)$report;
 
             $query = "INSERT INTO zp_stats 
                           (sprintId,
@@ -362,7 +360,6 @@ namespace leantime\domain\repositories {
             return $value;
 
         }
-
 
 
     }

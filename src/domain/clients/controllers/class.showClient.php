@@ -149,7 +149,7 @@ namespace leantime\domain\controllers {
                 $tpl->assign('users', new repositories\users());
                 $tpl->assign('clientProjects', $project->getClientProjects($id));
                 $tpl->assign('files', $file->getFilesByModule('client', $id));
-                $tpl->assign('helper', new core\helper());
+
 
                 $tpl->display('clients.showClient');
 

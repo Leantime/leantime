@@ -11,9 +11,16 @@
     $efforts        = $this->get('efforts');
     $priorities     = $this->get('priorities');
 
-    //All states >0 (<1 is archive)
-    $numberofColumns = count($this->get('allTicketStates'))-1;
-    $size = floor(100 / $numberofColumns);
+
+
+    //Count Columns to show
+    $numberofColumns = count($this->get('allKanbanColumns'));
+
+    if($numberofColumns > 0) {
+        $size = floor(100 / $numberofColumns);
+    }else {
+        $size = 100;
+    }
 
 ?>
 
@@ -200,16 +207,13 @@
 
 				<?php
 
-				foreach($this->get('allTicketStates') as $key => $statusRow){
-
-				    //Don't display archive on kanban board
-				    if($key<0){continue;}
+				foreach($this->get('allKanbanColumns') as $key => $statusRow){
 
 					?>
 
 						<div class="column" style="width:<?=$size?>%;">
 
-                            <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
+                            <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
                             <?php if ($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>

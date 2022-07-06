@@ -75,7 +75,7 @@ namespace leantime\core {
          */
         public function __construct()
         {
-            $this->controller = FrontController::getInstance();
+            $this->controller = frontcontroller::getInstance();
 
             $this->language = new language();
 
@@ -141,7 +141,7 @@ namespace leantime\core {
 
             $this->template = $template;
 
-            include '../src/content.php';
+            require ROOT.'/../src/content.php';
 
             $mainContent = ob_get_clean();
             ob_start();
@@ -283,32 +283,6 @@ namespace leantime\core {
 
             }
 
-        }
-
-        public function displaySubmoduleTitle($alias)
-        {
-
-            $setting = new repositories\setting();
-            $language = $this->language;
-
-            $title = '';
-
-            if ($setting->submoduleHasRights($alias) !== false) {
-
-                $submodule = $setting->getSubmodule($alias);
-
-                if ($submodule['title'] !== '') {
-
-                    $title = $this->__($submodule['title']);
-
-                } else {
-
-                    $title = ucfirst(str_replace('.sub.php', $submodule['submodule']));
-
-                }
-            }
-
-            return $title;
         }
 
         /**
@@ -491,7 +465,6 @@ namespace leantime\core {
          * @param int $length Length of returned string, including ellipsis.
          * @param array $options An array of HTML attributes and options.
          * @return string Trimmed string.
-         * @see \Cake\Utility\Text::truncate()
          * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-text
          * @link https://github.com/cakephp/cakephp/blob/master/src/View/Helper/TextHelper.php
          */

@@ -34,7 +34,7 @@
                 <li><a href="#comments"><?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                     <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
-                <?php }; ?>
+                <?php } ?>
             </ul>
 
             <div id="ticketdetails">

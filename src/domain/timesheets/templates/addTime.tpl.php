@@ -1,8 +1,6 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
-
-$helper = $this->get('helper');
 $values = $this->get('values');
 ?>
 <script type="text/javascript">

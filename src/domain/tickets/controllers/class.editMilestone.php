@@ -6,8 +6,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
     class editMilestone
     {
@@ -20,7 +20,7 @@ namespace leantime\domain\controllers {
          * constructor - initialize private variables
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function __construct()
         {
@@ -39,7 +39,7 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function get($params)
         {
@@ -89,7 +89,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('comments', $comments);
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('helper', new core\helper());
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
             $this->tpl->assign('milestone', $milestone);
             $this->tpl->displayPartial('tickets.milestoneDialog');
@@ -100,7 +99,7 @@ namespace leantime\domain\controllers {
          * post - handle post requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function post($params)
         {
@@ -125,8 +124,6 @@ namespace leantime\domain\controllers {
 
                     if($message === true) {
                         $this->tpl->setNotification($this->language->__("notifications.comment_added_successfully"), "success");
-
-                        $this->tpl->assign('helper', new core\helper());
 
                         $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
                         $actual_link = BASE_URL."/tickets/editMilestone/".(int)$_GET['id'];
@@ -196,7 +193,7 @@ namespace leantime\domain\controllers {
          * put - handle put requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function put($params)
         {
@@ -206,7 +203,7 @@ namespace leantime\domain\controllers {
          * delete - handle delete requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function delete($params)
         {

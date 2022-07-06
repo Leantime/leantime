@@ -28,13 +28,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $role;
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $id;
 
@@ -293,7 +293,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  $username
          * @param  $userId
-         * @return boolean
+         * @return bool
          */
         public function usernameExist($username, $userId ='')
         {
