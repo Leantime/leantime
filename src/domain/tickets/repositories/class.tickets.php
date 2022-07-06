@@ -437,9 +437,9 @@ namespace leantime\domain\repositories {
 
             if($sort == "standard") {
                 $query .= " ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC";
-            }else if($sort == "kanbansort") {
+            }elseif($sort == "kanbansort") {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
-            }else if($sort == "duedate") {
+            }elseif($sort == "duedate") {
                 $query .= " ORDER BY zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }
 
@@ -740,7 +740,7 @@ namespace leantime\domain\repositories {
 
                 if($sortBy == "date") {
                     $query .= "	ORDER BY zp_tickets.editFrom ASC";
-                }else if($sortBy == "headline") {
+                }elseif($sortBy == "headline") {
                     $query .= "	ORDER BY zp_tickets.headline ASC";
                 }
 

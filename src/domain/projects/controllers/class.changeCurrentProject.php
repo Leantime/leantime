@@ -23,7 +23,6 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
          */
         public function get($params)
         {
@@ -62,7 +61,6 @@ namespace leantime\domain\controllers {
          * post - handle post requests (via login for example) and redirects to get
          *
          * @access public
-         * @param  paramters or body of the request
          */
         public function post($params)
         {

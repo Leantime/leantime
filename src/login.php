@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
+<html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $frontController->includeAction('general.header'); ?>
+    <?php echo $this->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL ?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL ?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
@@ -50,7 +50,7 @@
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="<?=BASE_URL ?>" target="_blank"><img src="<?php echo htmlentities($_SESSION["companysettings.logoPath"]); ?>" /></a>
-                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
+                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $this->language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
                 </span>
@@ -65,7 +65,7 @@
                     <div class="pageicon"><span class="iconfa-signin"></span></div>
                     <div class="pagetitle">
                         <h5><?php echo htmlentities($_SESSION["companysettings.sitename"]); ?></h5>
-                        <h1><?php echo $language->__("headlines.login"); ?></h1>
+                        <h1><?php echo $this->language->__("headlines.login"); ?></h1>
                     </div>
                 </div>
                 <div class="regcontent"  style="margin-left: 90px;">
@@ -75,14 +75,14 @@
                             <div class="alert alert-error"><?php echo $login->error;?></div>
                         </div>
                         <div class="">
-                            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_email"); ?>" value=""/>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $this->language->__("input.placeholders.enter_email"); ?>" value=""/>
                         </div>
                         <div class="">
-                            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $language->__("input.placeholders.enter_password"); ?>" value=""/>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $this->language->__("input.placeholders.enter_password"); ?>" value=""/>
                         </div>
                         <div class="">
-                            <a href="<?=BASE_URL ?>/resetPassword" style="float:right; margin-top:10px;"><?php echo $language->__("links.forgot_password"); ?></a>
-                            <input type="submit" name="login" value="<?php echo $language->__("buttons.login"); ?>" class="btn btn-primary"/>
+                            <a href="<?=BASE_URL ?>/resetPassword" style="float:right; margin-top:10px;"><?php echo $this->language->__("links.forgot_password"); ?></a>
+                            <input type="submit" name="login" value="<?php echo $this->language->__("buttons.login"); ?>" class="btn btn-primary"/>
                         </div>
 
                     </form>

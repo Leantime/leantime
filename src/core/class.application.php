@@ -62,22 +62,22 @@ class application
 
             //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
-                include '../src/resetPassword.php';
-            }else if(isset($_GET['install']) === true) {
-                 include '../src/install.php';
-            }else if(isset($_GET['update']) === true) {
-                include '../src/update.php';
+                include ROOT.'/../src/resetPassword.php';
+            }elseif(isset($_GET['install']) === true) {
+                 include ROOT.'/../src/install.php';
+            }elseif(isset($_GET['update']) === true) {
+                include ROOT.'/../src/update.php';
             }else{
-                include '../src/login.php';
+                include ROOT.'/../src/login.php';
             }
 
         }else{
             // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
             if(isset($_GET['twoFA']) === true) {
                 if($_SESSION['userdata']['twoFAVerified'] != true) {
-                    include '../src/twoFA.php';
+                    include ROOT.'/../src/twoFA.php';
                 }
-            }else if($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false){
+            }elseif($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false){
                $login->redirect2FA($_SERVER['REQUEST_URI']);
             }
 
@@ -89,6 +89,7 @@ class application
         }
 
         $toRender = ob_get_clean();
+
         echo $toRender;
             
     }

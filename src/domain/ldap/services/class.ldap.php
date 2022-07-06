@@ -76,20 +76,6 @@ class ldap
 
     }
 
-    private function getRoleAssignments (){
-
-        $assignedRoles = $this->config->assignedRoles;
-
-        //TODO: Should come from db roles table eventually
-        $availableRoles = core\login::$userRoles;
-        foreach($availableRoles as $key => $row) {
-            if(isset($this->ldapLtGroupAssignments[$row])) {
-                $this->ldapLtGroupAssignments[$key] = array("ltRole" => $row, "ldapRole" => $assignedRoles[$row]);
-            }
-        }
-
-    }
-
     public function connect() {
 
         if(!$this->config->useLdap){
@@ -140,7 +126,7 @@ class ldap
     public function getSingleUser($username) {
 
         if(!is_resource($this->ldapConnection)){
-            throw Exception("No connection");
+            throw new Exception("No connection");
         }
 
         $filter = "(".$this->ldapKeys->username."=" . $this->extractLdapFromUsername($username) . ")";

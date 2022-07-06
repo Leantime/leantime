@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
+<html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $frontController->includeAction('general.header'); ?>
+    <?php echo $this->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css"/>
@@ -29,10 +29,10 @@
         </div>
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
             <div class="userloggedinfo">
-                <?php echo $frontController->includeAction('general.loginInfo'); ?>    
+                <?php echo $this->includeAction('general.loginInfo'); ?>
             </div>
 
-            <?php echo $frontController->includeAction('general.headMenu'); ?>
+            <?php echo $this->includeAction('general.headMenu'); ?>
 
         </div>
     </div>
@@ -41,7 +41,7 @@
 
         <div class="leftmenu">
 
-            <?php echo $frontController->includeAction('general.menu'); ?>
+            <?php echo $this->includeAction('general.menu'); ?>
 
         </div><!--leftmenu-->
 
@@ -53,7 +53,7 @@
         <!--###MAINCONTENT###-->
 
         <div class='footer'>
-            <?php echo $frontController->includeAction('general.footer'); ?>
+            <?php echo $this->includeAction('general.footer'); ?>
         </div>
 
     </div><!--rightpanel-->

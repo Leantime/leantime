@@ -17,7 +17,7 @@ namespace leantime\domain\controllers {
          * constructor - initialize private variables
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function __construct()
         {
@@ -31,7 +31,7 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function get($params)
         {
@@ -47,7 +47,7 @@ namespace leantime\domain\controllers {
          * post - handle post requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function post($params)
         {
@@ -58,7 +58,7 @@ namespace leantime\domain\controllers {
          * put - handle put requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function put($params)
         {
@@ -69,7 +69,7 @@ namespace leantime\domain\controllers {
          * delete - handle delete requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function delete($params)
         {

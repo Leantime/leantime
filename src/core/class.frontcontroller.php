@@ -67,7 +67,7 @@ namespace leantime\core {
 
                 }
 
-                self::$instance = new FrontController($rootPath);
+                self::$instance = new frontcontroller($rootPath);
             }
 
             return self::$instance;
