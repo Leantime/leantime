@@ -71,10 +71,15 @@ namespace leantime\domain\services {
             $statusList = $this->ticketRepository->getStateLabels();
 
             $visibleCols = array();
+
             foreach($statusList as $key=>$status) {
+
                 if($status['kanbanCol']){
+
                     $visibleCols[$key] = $status;
+
                 }
+
             }
 
             return $visibleCols;

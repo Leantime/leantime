@@ -222,6 +222,7 @@ leantime.projectsController = (function () {
             });
 
             jQuery("#todosettings select.colorChosen").on('change', function(evt, params){
+
                 var id = jQuery(this).attr('id').replace("-", "_");
 
                 jQuery("#"+id+"_chzn a span").removeClass();
@@ -232,7 +233,9 @@ leantime.projectsController = (function () {
     };
 
     var removeStatus = function(id) {
+
         jQuery("#todostatus-"+id).parent().remove();
+
     };
 
     var addToDoStatus = function(id) {
@@ -240,8 +243,9 @@ leantime.projectsController = (function () {
         var highestKey = -1;
 
         jQuery("#todosettings ul .statusList").each(function(){
+
             var keyInt = jQuery(this).find('.labelKey').val();
-            console.log("Current Key"+keyInt+" highest key" + highestKey);
+
             if(keyInt >= highestKey) {
                 highestKey = keyInt;
             }
