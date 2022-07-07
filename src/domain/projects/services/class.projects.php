@@ -303,7 +303,7 @@ namespace leantime\domain\services {
 
                 $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
                 if($url !== false){
-                    $prepareChatMessage .= "".$url['link']."";
+                    $prepareChatMessage .= " ".$url['link']."";
                 }
 
                 $data = array(

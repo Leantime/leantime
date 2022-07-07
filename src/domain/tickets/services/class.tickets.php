@@ -522,6 +522,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
+                'priority' => '',
                 'status' => $values['status'],
                 'storypoints' => "",
                 'hourRemaining' => $values['hourRemaining'],
