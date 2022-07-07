@@ -6,8 +6,9 @@
     $action = '';
 
     if(is_array($currentLink)) {
-        $module = $currentLink[0];
-        $action = $currentLink[1];
+
+        $module = $currentLink[0]??'';
+        $action = $currentLink[1]??'';
     }
 
 ?>
