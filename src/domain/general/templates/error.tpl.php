@@ -7,8 +7,8 @@
     <span class="animate2 bounceIn">0</span>
     <span class="animate3 bounceIn">4</span>
     <div class="errorbtns animate4 fadeInUp">
-        <a onclick="history.back()" class="btn btn-primary btn-large"><?php echo $this->__('buttons.back') ?></a>
-        <a href="<?=BASE_URL ?>" class="btn btn-large"><?php echo $this->__('links.dashboard') ?></a>
+        <a onclick="history.back()" class="btn btn-default"><?php echo $this->__('buttons.back') ?></a>
+        <a href="<?=BASE_URL ?>" class="btn btn-primary"><?php echo $this->__('links.dashboard') ?></a>
     </div><br/><br/><br/><br/>
 
 </div>

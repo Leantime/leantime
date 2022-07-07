@@ -20,7 +20,7 @@ leantime.calendarController = (function () {
         var m = date.getMonth();
         var y = date.getFullYear();
 
-        var heightWindow = jQuery(".mainwrapper").height();
+        var heightWindow = jQuery("body").height() - 260;
 
         var calendar = jQuery('#calendar').fullCalendar({
             height: heightWindow,
