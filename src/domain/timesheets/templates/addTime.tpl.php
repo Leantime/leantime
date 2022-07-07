@@ -24,10 +24,19 @@ $values = $this->get('values');
 
             $("#date, #invoicedCompDate, #invoicedEmplDate").datepicker({
 
-                dateFormat: <?php echo $this->__('language.dateFormat') ?>,
-                dayNames: [<?php echo''.$this->__('language.dayNames').'' ?>],
-                dayNamesMin:  [<?php echo''.$this->__('language.dayNamesMin').'' ?>],
-                monthNames: [<?php echo''.$this->__('language.monthNames').'' ?>]
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             });
 
 

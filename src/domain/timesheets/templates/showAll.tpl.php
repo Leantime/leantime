@@ -37,7 +37,6 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 
 
         jQuery(".dateFrom, .dateTo").datepicker({
-            numberOfMonths: 1,
             dateFormat:  leantime.i18n.__("language.jsdateformat"),
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -46,10 +45,11 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
             currentText: leantime.i18n.__("language.currentText"),
             closeText: leantime.i18n.__("language.closeText"),
             buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
             nextText: leantime.i18n.__("language.nextText"),
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
-            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
         });
 	});
 

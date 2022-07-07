@@ -157,6 +157,7 @@ leantime.ticketsController = (function () {
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             }
         );
     };
@@ -194,6 +195,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -221,6 +223,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -261,6 +264,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -284,6 +288,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
                 .on(
@@ -325,6 +330,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -369,6 +375,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
                 .on(
@@ -861,7 +868,7 @@ leantime.ticketsController = (function () {
 
         jQuery(".quickDueDates").datepicker(
             {
-                dateFormat: leantime.i18n.__("language.jsdateformat"),
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -873,6 +880,7 @@ leantime.ticketsController = (function () {
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 onClose: function(date) {
 
                     var newDate = "";
@@ -917,8 +925,8 @@ leantime.ticketsController = (function () {
             },
             options: {
                 scales: {
-                    yAxes: [{
-                    }]
+                    y: {},
+                    x: {}
                 }
             }
         });

@@ -37,7 +37,7 @@ jQuery(document).ready(function(){
 
 
     jQuery('.week-picker').datepicker({
-    	firstDay: 1,
+
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
             selectCurrentWeek();
@@ -62,7 +62,6 @@ jQuery(document).ready(function(){
         onChangeMonthYear: function (year, month, inst) {
             selectCurrentWeek();
         },
-        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         dateFormat:  leantime.i18n.__("language.jsdateformat"),
         dayNames: leantime.i18n.__("language.dayNames").split(","),
         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -71,9 +70,11 @@ jQuery(document).ready(function(){
         currentText: leantime.i18n.__("language.currentText"),
         closeText: leantime.i18n.__("language.closeText"),
         buttonText: leantime.i18n.__("language.buttonText"),
+        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         nextText: leantime.i18n.__("language.nextText"),
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
+        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
     });
     
     setDates('.week-picker');
