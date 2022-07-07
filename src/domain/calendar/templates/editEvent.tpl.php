@@ -28,7 +28,7 @@ $values = $this->get('values');
                     <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
 
                     <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>
-                    <input type="text" id="event_date_from" name="dateFrom" value="<?php echo $this->getFormattedDateString($values['dateFrom']); ?>" />
+                    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo $this->getFormattedDateString($values['dateFrom']); ?>" />
 
                     <div class="par">
                         <label> <?php echo $this->__('label.start_time') ?></label>
@@ -38,7 +38,7 @@ $values = $this->get('values');
                     </div>
 
                     <label for="dateTo"><?php echo $this->__('label.end_date') ?></label>
-                    <input type="text" id="event_date_to" name="dateTo" value="<?php echo $this->getFormattedDateString($values['dateTo']); ?>" />
+                    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="<?php echo $this->getFormattedDateString($values['dateTo']); ?>" />
 
                     <div class="par">
                         <label for=""><?php echo $this->__('label.end_time') ?> </label>

@@ -29,7 +29,7 @@ $values = $this->get('values');
 
                 <div class="par">
                     <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>
-                    <input type="text" id="event_date_from" name="dateFrom" value="" /><br/>
+                    <input type="text" id="event_date_from" name="dateFrom" value="" autocomplete="off" /><br/>
                 </div>
                 <div class="par">
                     <label for=""><?php echo $this->__('label.start_time') ?></label>
@@ -39,7 +39,7 @@ $values = $this->get('values');
                 </div>
                 <div class="par">
                     <label for="dateTo"><?php echo $this->__('label.end_date') ?></label>
-                    <input type="text" id="event_date_to" name="dateTo" value="" /><br/>
+                    <input type="text" id="event_date_to" name="dateTo" value="" autocomplete="off" /><br/>
                 </div>
                 <div class="par">
                     <label for=""><?php echo $this->__('label.end_time') ?> </label>

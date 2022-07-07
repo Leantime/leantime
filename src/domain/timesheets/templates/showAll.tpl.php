@@ -85,10 +85,10 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
-                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
+                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
 			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
-                <input type="text" id="dateTo" class="dateTo" name="dateTo"
+                <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>

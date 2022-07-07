@@ -133,7 +133,7 @@ $values = $this->get('values');
                                 } ?>
 
                             </select><br/>
-                            <label for="date"><?php echo $this->__('DATE') ?></label> <input type="text"
+                            <label for="date"><?php echo $this->__('DATE') ?></label> <input type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="<?php echo $values['date'] ?>"
                                                                                              size="7"/>
@@ -163,7 +163,7 @@ $values = $this->get('values');
                                     <?php if ($values['invoicedComp'] == '1') {
                                         echo ' checked="checked"';
                                     } ?> />
-                                <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text"
+                                <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
                                                                               id="invoicedCompDate"
                                                                               name="invoicedCompDate"
                                                                               value="<?php echo $values['invoicedCompDate'] ?>"
