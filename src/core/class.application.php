@@ -16,6 +16,14 @@ class application
     private $projectService;
     private $settingsRepo;
 
+    private $publicActions = array(
+        "auth.login",
+        "auth.passwordReset",
+        "install.go",
+        "install.update",
+        "general.error404"
+    );
+
 
     public function __construct(config $config,
                                 settings $settings,
@@ -60,18 +68,13 @@ class application
 
         if($this->login->logged_in()===false) {
 
-            //Run password reset through application to avoid security holes in the front controller
-            if(isset($_GET['resetPassword']) === true) {
-                include ROOT.'/../src/resetPassword.php';
-            }elseif(isset($_GET['install']) === true) {
-                 include ROOT.'/../src/install.php';
-            }elseif(isset($_GET['update']) === true) {
-                include ROOT.'/../src/update.php';
-            }else{
-                include ROOT.'/../src/login.php';
-            }
+           //Allow a limited set of actions to be public
+           if(in_array($frontController->fullAction, $this->publicActions)){
+               $frontController->run();
+           }
 
         }else{
+
             // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
             if(isset($_GET['twoFA']) === true) {
                 if($_SESSION['userdata']['twoFAVerified'] != true) {

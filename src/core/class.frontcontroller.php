@@ -40,6 +40,12 @@ namespace leantime\core {
         private $lastAction;
 
         /**
+         * @access public
+         * @var    string - fully parsed action
+         */
+        public $fullAction;
+
+        /**
          * __construct - Set the rootpath of the server
          *
          * @param $rootPath
@@ -85,33 +91,39 @@ namespace leantime\core {
             //Set action-name
             if(isset($_REQUEST['act'])) {
 
-                $completeName = htmlspecialchars($_REQUEST['act']);
+                $this->fullAction = htmlspecialchars($_REQUEST['act']);
 
             }else{
 
                 if($differentFirstAction == '') {
 
-                    $completeName = $this->firstAction;
+                    $this->fullAction = $this->firstAction;
 
                 }else{
 
-                    $completeName = $differentFirstAction;
+                    $this->fullAction = $differentFirstAction;
 
                 }
 
             }
 
-            if($completeName != '') {
+            if($this->fullAction != '') {
                 //execute action
                 try {
 
-                    $this->executeAction($completeName);
+                    $this->executeAction($this->fullAction);
 
                 } catch (Exception $e) {
 
                     echo $e->getMessage();
 
                 }
+            } else {
+
+                header("HTTP/1.0 404 Not Found");
+
+                $this->run("general.error404");
+
             }
         }
 
@@ -161,6 +173,7 @@ namespace leantime\core {
                     $method= $this->getRequestMethod();
 
                     if(method_exists($action, $method)) {
+
                         $params = $this->getRequestParams($method);
                         $action->$method($params);
 
@@ -283,7 +296,11 @@ namespace leantime\core {
          */
         public static function getCurrentRoute() {
 
-            return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+            if(isset($_REQUEST['act'])) {
+                return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+            }
+
+            return '';
 
         }
 

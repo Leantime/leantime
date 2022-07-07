@@ -68,6 +68,9 @@ namespace leantime\core {
             'default'    => 'iconfa-off'
         );
 
+        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+
+
         /**
          * __construct - get instance of frontcontroller
          *
@@ -129,7 +132,7 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template)
+        public function display($template, $status = 200, $layout = "content")
         {
 
             //These variables are available in the template
@@ -141,7 +144,10 @@ namespace leantime\core {
 
             $this->template = $template;
 
-            require ROOT.'/../src/content.php';
+            $layout = filter_var($layout, FILTER_SANITIZE_STRING);
+            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
+                require ROOT . '/../src/app.php';
+            }
 
             $mainContent = ob_get_clean();
             ob_start();
@@ -151,16 +157,23 @@ namespace leantime\core {
 
             $module = frontcontroller::getModuleName($template);
 
-            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
+            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
                 throw new Exception($this->__("notifications.no_template"));
             }
 
-            include $strTemplate;
+            require $strTemplate;
 
             $subContent = ob_get_clean();
 
             $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+
+            if(in_array($status, $this->validStatusCodes)) {
+                http_response_code($status);
+            }else{
+                http_response_code(200);
+            }
 
             echo $content;
 
@@ -173,34 +186,10 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template)
+        public function displayPartial($template, $statusCode = 200)
         {
 
-            //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
-            $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
-
-            $this->template = $template;
-
-            //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
-
-            $module = frontcontroller::getModuleName($template);
-
-                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
-                error_log($this->__("notifications.no_template"), 0);
-                echo $this->__("notifications.no_template");
-
-            } else {
-
-                include $strTemplate;
-
-            }
+            $this->display($template, $statusCode, 'blank');
 
         }
 
