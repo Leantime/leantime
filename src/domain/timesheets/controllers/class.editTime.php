@@ -158,7 +158,23 @@ namespace leantime\domain\controllers {
 
                                             $timesheetsRepo->updateTime($values);
                                             $tpl->setNotification('notifications.time_logged_success', 'success');
-                                            $values['description'] = $_POST['description'];
+
+                                            $timesheetUpdated = $timesheetsRepo->getTimesheet($id);
+
+                                            $values = array(
+                                                'id' => $id,
+                                                'userId' => $timesheetUpdated['userId'],
+                                                'ticket' => $timesheetUpdated['ticketId'],
+                                                'project' => $timesheetUpdated['projectId'],
+                                                'date' => $timesheetUpdated['workDate'],
+                                                'kind' => $timesheetUpdated['kind'],
+                                                'hours' => $timesheetUpdated['hours'],
+                                                'description' => $timesheetUpdated['description'],
+                                                'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
+                                                'invoicedComp' => $timesheetUpdated['invoicedComp'],
+                                                'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
+                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate']
+                                            );
 
                                         } else {
 
@@ -186,6 +202,7 @@ namespace leantime\domain\controllers {
                             }
 
                         }
+
 
                         $tpl->assign('values', $values);
 

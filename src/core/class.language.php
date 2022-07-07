@@ -218,7 +218,7 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedDateString($date)
+        public function getFormattedDateString($date) :string
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
@@ -234,6 +234,8 @@ namespace leantime\core {
                 }
 
             }
+
+            return "";
 
         }
 

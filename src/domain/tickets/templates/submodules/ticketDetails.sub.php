@@ -200,7 +200,7 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.due_date'); ?></label>
                     <div class="span6">
-                        <input type="text" class="dates" id="deadline"
+                        <input type="text" class="dates" id="deadline" autocomplete="off"
                                value="<?php echo $ticket->dateToFinish; ?>"
                                name="dateToFinish"/>
                     </div>
@@ -209,9 +209,9 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.working_date_from_to'); ?></label>
                     <div class="span6">
-                        <input type="text" class="dates" style="width:90px; float:left;" name="editFrom"
+                        <input type="text" class="dates" style="width:90px; float:left;" name="editFrom" autocomplete="off"
                                value="<?php echo $ticket->editFrom; ?>"/> -
-                        <input type="text" class="dates" style="width:90px;" name="editTo"
+                        <input type="text" class="dates" style="width:90px;" name="editTo" autocomplete="off"
                                value="<?php echo $ticket->editTo; ?>"/>
                     </div>
                 </div>

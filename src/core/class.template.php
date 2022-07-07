@@ -441,116 +441,82 @@ namespace leantime\core {
 
         }
 
+        //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
+        //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
+        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {
+            $printedLength = 0;
+            $position = 0;
+            $tags = array();
+            $isUtf8 = true;
+            $truncate = "";
 
-        /**
-         * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
-         * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
-         *
-         * Licensed under The MIT License
-         * For full copyright and license information, please see the LICENSE.txt
-         * Redistributions of files must retain the above copyright notice.
-         *
-         * Copy of Truncates text method from cakePHP
-         *
-         * Cuts a string to the length of $length and replaces the last characters
-         * with the ellipsis if the text is longer than length.
-         *
-         * ### Options:
-         *
-         * - `ellipsis` Will be used as Ending and appended to the trimmed string
-         * - `exact` If false, $text will not be cut mid-word
-         * - `html` If true, HTML tags would be handled correctly
-         *
-         * @param string $text String to truncate.
-         * @param int $length Length of returned string, including ellipsis.
-         * @param array $options An array of HTML attributes and options.
-         * @return string Trimmed string.
-         * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-text
-         * @link https://github.com/cakephp/cakephp/blob/master/src/View/Helper/TextHelper.php
-         */
-        public function truncate($text, $length = 100, $ending = '...', $exact = true, $considerHtml = false) {
-            if (is_array($ending)) {
-                extract($ending);
+            // For UTF-8, we need to count multibyte sequences as one character.
+            $re = $isUtf8
+                ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}'
+                : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
+
+            while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position))
+            {
+                list($tag, $tagPosition) = $match[0];
+
+                // Print text leading up to the tag.
+                $str = substr($html, $position, $tagPosition - $position);
+                if ($printedLength + strlen($str) > $maxLength)
+                {
+                    $truncate .= substr($str, 0, $maxLength - $printedLength);
+                    $printedLength = $maxLength;
+                    break;
+                }
+
+                $truncate .= $str;
+                $printedLength += strlen($str);
+                if ($printedLength >= $maxLength) break;
+
+                if ($tag[0] == '&' || ord($tag) >= 0x80)
+                {
+                    // Pass the entity or UTF-8 multibyte sequence through unchanged.
+                    $truncate .= $tag;
+                    $printedLength++;
+                }
+                else
+                {
+                    // Handle the tag.
+                    $tagName = $match[1][0];
+                    if ($tag[1] == '/')
+                    {
+                        // This is a closing tag.
+
+                        $openingTag = array_pop($tags);
+                        assert($openingTag == $tagName); // check that tags are properly nested.
+
+                        $truncate .= $tag;
+                    }
+                    elseif ($tag[strlen($tag) - 2] == '/')
+                    {
+                        // Self-closing tag.
+                        $truncate .= $tag;
+                    }
+                    else
+                    {
+                        // Opening tag.
+                        $truncate .= $tag;
+                        $tags[] = $tagName;
+                    }
+                }
+
+                // Continue after the tag.
+                $position = $tagPosition + strlen($tag);
             }
-            if ($considerHtml) {
-                if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
-                    return $text;
-                }
-                $totalLength = mb_strlen($ending);
-                $openTags = array();
-                $truncate = '';
-                preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
-                foreach ($tags as $tag) {
-                    if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
-                        if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
-                            array_unshift($openTags, $tag[2]);
-                        } else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
-                            $pos = array_search($closeTag[1], $openTags);
-                            if ($pos !== false) {
-                                array_splice($openTags, $pos, 1);
-                            }
-                        }
-                    }
-                    $truncate .= $tag[1];
 
-                    $contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
-                    if ($contentLength + $totalLength > $length) {
-                        $left = $length - $totalLength;
-                        $entitiesLength = 0;
-                        if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
-                            foreach ($entities[0] as $entity) {
-                                if ($entity[1] + 1 - $entitiesLength <= $left) {
-                                    $left--;
-                                    $entitiesLength += mb_strlen($entity[0]);
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
+            // Print any remaining text.
+            if ($printedLength < $maxLength && $position < strlen($html))
+                $truncate .= sprintf(substr($html, $position, $maxLength - $printedLength));
 
-                        $truncate .= mb_substr($tag[3], 0 , $left + $entitiesLength);
-                        break;
-                    } else {
-                        $truncate .= $tag[3];
-                        $totalLength += $contentLength;
-                    }
-                    if ($totalLength >= $length) {
-                        break;
-                    }
-                }
-
-            } else {
-                if (mb_strlen($text) <= $length) {
-                    return $text;
-                } else {
-                    $truncate = mb_substr($text, 0, $length - strlen($ending));
-                }
-            }
-            if (!$exact) {
-                $spacepos = mb_strrpos($truncate, ' ');
-                if (isset($spacepos)) {
-                    if ($considerHtml) {
-                        $bits = mb_substr($truncate, $spacepos);
-                        preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-                        if (!empty($droppedTags)) {
-                            foreach ($droppedTags as $closingTag) {
-                                if (!in_array($closingTag[1], $openTags)) {
-                                    array_unshift($openTags, $closingTag[1]);
-                                }
-                            }
-                        }
-                    }
-                    $truncate = mb_substr($truncate, 0, $spacepos);
-                }
-            }
+            // Close any open tags.
+            while (!empty($tags))
+                $truncate .= sprintf('</%s>', array_pop($tags));
 
             $truncate .= $ending;
-
-            if ($considerHtml) {
-                foreach ($openTags as $tag) {
-                    $truncate .= '</'.$tag.'>';
-                }
-            }
 
             return $truncate;
         }

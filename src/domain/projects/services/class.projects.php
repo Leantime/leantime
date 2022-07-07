@@ -2,13 +2,14 @@
 
 namespace leantime\domain\services {
 
+    use GuzzleHttp\Exception\RequestException;
     use leantime\core;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
-    use PHPMailer\PHPMailer\PHPMailer;
-    use function Sodium\add;
     use League\HTMLToMarkdown\HtmlConverter;
+    use GuzzleHttp\Client;
+    use Psr\Http\Message\ResponseInterface;
 
     class projects
     {
@@ -137,6 +138,8 @@ namespace leantime\domain\services {
 
             $projectName = $this->getProjectName($projectId);
 
+            $httpClient = new Client();
+
             //Email
             $users = $this->getUsersToNotify($projectId);
             $users = array_filter($users, function($user, $k) { 
@@ -183,17 +186,14 @@ namespace leantime\domain\services {
                 );
 
                 $data_string = json_encode($data);
-                $ch = curl_init($slackWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                try {
+                    $httpClient->post($slackWebhookURL, [
+                        'body' => $data_string
+                    ]);
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
 
             }
 
@@ -247,20 +247,13 @@ namespace leantime\domain\services {
 
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-                $ch = curl_init($discordWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($data_string)
-                  ]
-                );
-
-                $result = curl_exec($ch);
+                try {
+                      $httpClient->post($discordWebhookURL, [
+                          'body' => $data_string
+                      ]);
+                }catch (\Exception $e) {
+                      error_log($e->getMessage());
+                }
               }
             }
 
@@ -276,17 +269,15 @@ namespace leantime\domain\services {
                 );
 
                 $data_string = json_encode($data);
-                $ch = curl_init($mattermostWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                try {
+                    $httpClient->post($mattermostWebhookURL, [
+                        'body' => $data_string
+                    ]);
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
+
             }
 
 
@@ -303,7 +294,7 @@ namespace leantime\domain\services {
 
                 $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
                 if($url !== false){
-                    $prepareChatMessage .= "".$url['link']."";
+                    $prepareChatMessage .= " ".$url['link']."";
                 }
 
                 $data = array(
@@ -315,22 +306,21 @@ namespace leantime\domain\services {
 
                 $curlUrl = $botURL . '?' . http_build_query($data);
 
-                $ch = curl_init($curlUrl);
-
                 $data_string = json_encode($data);
 
-                curl_setopt($ch, CURLOPT_USERPWD, "$botEmail:$botKey");
-                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
+                try {
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                    $httpClient->post($curlUrl, [
+                        'body' => $data_string,
+                        'auth' => [
+                            $botEmail,
+                            $botKey
+                        ]
+                    ]);
+
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
 
             }
 
@@ -476,6 +466,10 @@ namespace leantime\domain\services {
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
                     unset($_SESSION["projectsettings"]);
+
+                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
+                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
+
 
                     return true;
 

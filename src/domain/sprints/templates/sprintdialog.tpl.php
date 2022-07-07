@@ -17,10 +17,10 @@ if(isset($currentSprint->id)) {$id = $currentSprint->id;
     <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="<?=$this->__('input.placeholders.sprint_x') ?>"/><br />
 
     <label><?=$this->__('label.first_day') ?></label>
-    <input type="text" name="startDate" value="<?php echo $currentSprint->startDate?>" placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintStart" /><br />
+    <input type="text" name="startDate" autocomplete="off" value="<?php echo $currentSprint->startDate?>" placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintStart" /><br />
 
     <label><?=$this->__('label.last_day') ?></label>
-    <input type="text" name="endDate" value="<?php echo $currentSprint->endDate?>"  placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintEnd"  />
+    <input type="text" name="endDate" autocomplete="off" value="<?php echo $currentSprint->endDate?>"  placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintEnd"  />
 
     <br />
 

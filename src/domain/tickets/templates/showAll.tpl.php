@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="col-md-5">
                     <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
@@ -87,7 +87,7 @@
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
 
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != ""){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" ><?=$this->__("links.kanban") ?></a></li>
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>

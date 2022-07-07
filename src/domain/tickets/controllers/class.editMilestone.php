@@ -64,6 +64,7 @@ namespace leantime\domain\controllers {
                 //Ensure this ticket belongs to the current project
                 if($_SESSION["currentProject"] != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
+                    $this->tpl->redirect(BASE_URL."/tickets/editMilestone/".$milestone->id);
                 }
 
                 $comments = $this->commentsService->getComments('ticket', $params['id']);

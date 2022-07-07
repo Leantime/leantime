@@ -2,6 +2,12 @@
     "name": "leantime/leantime",
     "description": "Open source project management system",
     "type": "project",
+    "config": {
+        "platform-check": false,
+        "platform": {
+            "php": "8.0"
+        }
+    },
     "authors": [
         {
             "name": "Marcel",
@@ -9,6 +15,8 @@
         }
     ],
     "require": {
+        "php": "^8.0",
+        "guzzlehttp/guzzle": "7.4.5",
         "aws/aws-sdk-php": "3.219.0",
         "phpmailer/phpmailer": "6.6.0",
         "robthree/twofactorauth": "1.8.2",
@@ -17,7 +25,6 @@
         "league/html-to-markdown": "5.1"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
         "phpstan/phpstan":"1.5.4"
     }
 

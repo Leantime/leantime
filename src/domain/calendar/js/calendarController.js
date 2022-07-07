@@ -104,10 +104,11 @@ leantime.calendarController = (function () {
                         currentText: leantime.i18n.__("language.currentText"),
                         closeText: leantime.i18n.__("language.closeText"),
                         buttonText: leantime.i18n.__("language.buttonText"),
-                        isRTL: leantime.i18n.__("language.isRTL"),
+                        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -127,10 +128,11 @@ leantime.calendarController = (function () {
                     currentText: leantime.i18n.__("language.currentText"),
                     closeText: leantime.i18n.__("language.closeText"),
                     buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: leantime.i18n.__("language.isRTL"),
+                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
                 )
                 .on(

@@ -1229,6 +1229,9 @@ namespace leantime\domain\repositories {
 
         public function addTicketChange($userId,$ticketId,$values)
         {
+            if(empty($ticketId)) {
+                return;
+            }
 
             $fields = array(
                 'headline' => 'headline',
@@ -1256,11 +1259,18 @@ namespace leantime\domain\repositories {
             $oldValues = $stmn->fetch();
             $stmn->closeCursor();
 
+
             // compare table
             foreach($fields as $enum => $dbTable) {
 
-                if (isset($values[$dbTable]) === true && ($oldValues[$dbTable] != $values[$dbTable]) && ($values[$dbTable] != "")) {
+                if (isset($values[$dbTable]) === true &&
+                    isset($oldValues[$dbTable]) === true &&
+
+                    ($oldValues[$dbTable] != $values[$dbTable]) &&
+                    ($values[$dbTable] != "")) {
+
                     $changedFields[$enum] = $values[$dbTable];
+
                 }
 
             }

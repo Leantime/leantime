@@ -37,7 +37,7 @@ jQuery(document).ready(function(){
 
 
     jQuery('.week-picker').datepicker({
-    	firstDay: 1,
+
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
             selectCurrentWeek();
@@ -62,7 +62,6 @@ jQuery(document).ready(function(){
         onChangeMonthYear: function (year, month, inst) {
             selectCurrentWeek();
         },
-        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         dateFormat:  leantime.i18n.__("language.jsdateformat"),
         dayNames: leantime.i18n.__("language.dayNames").split(","),
         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -71,9 +70,11 @@ jQuery(document).ready(function(){
         currentText: leantime.i18n.__("language.currentText"),
         closeText: leantime.i18n.__("language.closeText"),
         buttonText: leantime.i18n.__("language.buttonText"),
+        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         nextText: leantime.i18n.__("language.nextText"),
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
+        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
     });
     
     setDates('.week-picker');
@@ -242,8 +243,8 @@ jQuery(document).ready(function(){
                         <div class="padding-top-sm">
                             <span><?php echo $this->__('label.week_from')?></span>
                             <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                            <input type="text" class="week-picker" name="startDate" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
-                            <input type="text" class="week-picker" name="endDate" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
+                            <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
+                            <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
                             <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                             <input type="hidden" name="search" value="1" />
 

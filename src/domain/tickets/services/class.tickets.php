@@ -522,6 +522,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
+                'priority' => '',
                 'status' => $values['status'],
                 'storypoints' => "",
                 'hourRemaining' => $values['hourRemaining'],
@@ -564,7 +565,7 @@ namespace leantime\domain\services {
             //This represents status & kanban sorting
             foreach($params as $status=>$ticketList){
 
-                if(is_numeric($status)) {
+                if(is_numeric($status) && !empty($ticketList)) {
 
                     $tickets = explode("&", $ticketList);
 
