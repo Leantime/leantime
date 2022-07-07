@@ -458,7 +458,7 @@ namespace leantime\core {
             while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position))
             {
                 list($tag, $tagPosition) = $match[0];
-                
+
                 // Print text leading up to the tag.
                 $str = substr($html, $position, $tagPosition - $position);
                 if ($printedLength + strlen($str) > $maxLength)

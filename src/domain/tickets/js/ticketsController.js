@@ -74,6 +74,7 @@ leantime.ticketsController = (function () {
 
     var toggleFilterBar = function () {
         jQuery(".filterBar").toggle();
+
     };
 
     var initGanttChart = function (tasks, viewMode) {
