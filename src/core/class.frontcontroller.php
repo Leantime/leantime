@@ -102,6 +102,7 @@ namespace leantime\core {
             }
 
             if($completeName != '') {
+
                 //execute action
                 try {
 
