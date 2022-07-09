@@ -19,7 +19,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><i class="iconfa iconfa-columns"></i> <?php echo $canvasTypes[$canvasItem['box']]; ?> <?php $this->e($canvasItem['description']); ?></h4>
+    <h4 class="widgettitle title-light"><i class="iconfa iconfa-columns"></i> <?php $this->e($canvasTypes[$canvasItem['box']]); ?> <?php $this->e($canvasItem['description']); ?></h4>
 
     <?php echo $this->displayNotification(); ?>
 
@@ -27,7 +27,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
-        <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <label><?=$this->__("label.hypothesis") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__("input.placeholders.describe_hypothesis") ?>" style="width:100%"/><br />

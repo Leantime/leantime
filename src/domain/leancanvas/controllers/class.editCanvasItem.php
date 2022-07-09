@@ -69,14 +69,14 @@ namespace leantime\domain\controllers {
 
             }else{
                 if(isset($params['type'])) {
-                    $type=$params['type'];
+                    $type=strip_tags($params['type']);
                 } else {
                     $type = "problem";
                 }
 
                 $canvasItem = array(
                     "id"=>"",
-                    "box" => $params['type'],
+                    "box" => $type,
                     "description" => "",
                     "status" => "danger",
                     "assumptions" => "",
