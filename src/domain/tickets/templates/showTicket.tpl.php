@@ -61,7 +61,7 @@
                     <?php
                     $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
 
-                    $this->displaySubmodule('comments-generalComment') ;
+                    $this->displaySubmodule('comments-generalComment');
                     ?>
                 </form>
             </div>

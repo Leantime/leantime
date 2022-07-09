@@ -107,7 +107,7 @@ class application
 
             }catch(\LogicException $e){
 
-                error_reporting($e->getMessage());
+                error_log($e->getMessage(), 0);
 
             }
 

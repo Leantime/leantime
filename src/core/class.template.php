@@ -230,10 +230,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return void
          */
-        public function includeAction($completeName)
+        public function includeAction($completeName, $params=array())
         {
 
-            $this->controller->includeAction($completeName);
+            $this->controller->includeAction($completeName, $params);
 
         }
 
