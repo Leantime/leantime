@@ -52,6 +52,7 @@ class application
         $login = $this->login;
         $frontController = $this->frontController;
         $language = $this->language;
+        $telemetryResponse = false;
 
         //Override theme appSettings
         $this->overrideThemeSettings();
@@ -84,7 +85,7 @@ class application
             }
 
             //Send telemetry if user is opt in and if it hasn't been sent that day
-            $response = $this->reportService->sendAnonymousTelemetry();
+            $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
 
             //Set current/default project
             $this->projectService->setCurrentProject();
@@ -98,11 +99,11 @@ class application
         echo $toRender;
 
         //Wait for telemetry if it was sent
-        if($response !== false){
+        if($telemetryResponse !== false){
 
             try {
 
-                $response->wait();
+                $telemetryResponse->wait();
 
             }catch(\LogicException $e){
 
