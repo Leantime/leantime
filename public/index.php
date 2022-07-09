@@ -4,11 +4,11 @@ define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
 include_once '../config/configuration.php';
-include_once '../config/settings.php';
+include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
 if(isset($config->appUrl) && $config->appUrl != ""){

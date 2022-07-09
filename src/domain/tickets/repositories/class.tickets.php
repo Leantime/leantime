@@ -872,7 +872,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getNumberOfAllTickets($projectId)
+        public function getNumberOfAllTickets($projectId=null)
         {
 
             $query = "SELECT
@@ -880,13 +880,46 @@ namespace leantime\domain\repositories {
 					FROM 
 						zp_tickets
 					WHERE 
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1";
+						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask'";
+
+            if(!is_null($projectId)){
+                $query .= "AND zp_tickets.projectId = :projectId ";
+            }
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            if(!is_null($projectId)) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values['allTickets'];
+
+        }
+
+        public function getNumberOfMilestones($projectId=null)
+        {
+
+            $query = "SELECT
+						COUNT(zp_tickets.id) AS allTickets
+					FROM 
+						zp_tickets
+					WHERE 
+						zp_tickets.type = 'milestone' ";
+
+            if(!is_null($projectId)){
+                $query .= "AND zp_tickets.projectId = :projectId ";
+            }
+
+            $stmn = $this->db->database->prepare($query);
+
+            if(!is_null($projectId)) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
 

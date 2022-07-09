@@ -18,11 +18,11 @@ $statusLabels = $this->get("statusLabels");
          leantime.leanCanvasController.initUserDropdown();
          leantime.leanCanvasController.initStatusDropdown();
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
+        <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['appSettings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
           leantime.helperController.showHelperModal("simpleLeanCanvas");
             <?php
             //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] = 1;
+            $_SESSION['userdata']['appSettings']["modals"]["simpleLeanCanvas"] = 1;
         } ?>
 
 

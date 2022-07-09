@@ -92,11 +92,11 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-            //Special handling for settings
+            //Special handling for appSettings
 
             if(isset($params['patchModalSettings'])) {
 
-                if($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
+                if($this->usersService->updateUserSettings("modals", $params['appSettings'], 1)) {
                     echo "{status:ok}";
                 }
             }

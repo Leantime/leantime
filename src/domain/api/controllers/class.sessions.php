@@ -62,7 +62,7 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-            //Special handling for settings
+            //Special handling for appSettings
 
             if(isset($params['tourActive'])) {
 
