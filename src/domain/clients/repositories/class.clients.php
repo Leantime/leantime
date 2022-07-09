@@ -128,6 +128,24 @@ namespace leantime\domain\repositories {
 
         }
 
+        public function getNumberOfClients()
+        {
+
+            $sql = "SELECT COUNT(id) AS clientCount FROM `zp_clients`";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['clientCount']) === true) {
+                return $values['clientCount'];
+            }else{
+                return 0;
+            }
+        }
+
         public function isClient($values)
         {
 

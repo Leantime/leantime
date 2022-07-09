@@ -135,7 +135,7 @@ namespace leantime\core {
             //These variables are available in the template
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
             $login = login::getInstance();
             $language = $this->language;
 
@@ -167,6 +167,24 @@ namespace leantime\core {
         }
 
         /**
+         * displayJson - returns json data
+         *
+         * @access public
+         * @param  $jsonContent
+         * @return void
+         */
+        public function displayJson($jsonContent) {
+
+            header('Content-Type: application/json; charset=utf-8');
+            if($jsonContent !== false) {
+                echo $jsonContent;
+            }else{
+                echo "{Invalid Json}";
+            }
+
+        }
+
+        /**
          * display - display only the template from the template folder without a wrapper
          *
          * @access public
@@ -179,7 +197,7 @@ namespace leantime\core {
             //These variables are available in the template
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
             $login = login::getInstance();
 
             $this->template = $template;
@@ -212,10 +230,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return void
          */
-        public function includeAction($completeName)
+        public function includeAction($completeName, $params=array())
         {
 
-            $this->controller->includeAction($completeName);
+            $this->controller->includeAction($completeName, $params);
 
         }
 
@@ -263,7 +281,7 @@ namespace leantime\core {
 
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
             $login = login::getInstance();
 
 

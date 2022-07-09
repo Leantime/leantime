@@ -48,7 +48,8 @@ namespace leantime\domain\controllers {
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "color" => $_SESSION["companysettings.mainColor"],
                     "name" => $_SESSION["companysettings.sitename"],
-                    "language" => $_SESSION["companysettings.language"]
+                    "language" => $_SESSION["companysettings.language"],
+                    "telemetryActive" => false
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -74,6 +75,11 @@ namespace leantime\domain\controllers {
                 $language = $this->settingsRepo->getSetting("companysettings.language");
                 if($language !== false){
                     $companySettings["language"] = $language;
+                }
+
+                $telemetryActive = $this->settingsRepo->getSetting("companysettings.telemetry.active");
+                if($telemetryActive !== false){
+                    $companySettings["telemetryActive"] = $telemetryActive;
                 }
 
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
@@ -107,6 +113,19 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
+
+                if(isset($_POST['telemetryActive'])) {
+
+                    $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
+
+                }else{
+
+                    //When opting out, delete all telemetry related settings including UUID
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.anonymousId");
+
+                }
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
                 $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");

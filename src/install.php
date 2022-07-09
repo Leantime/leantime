@@ -1,7 +1,7 @@
 <?php
 
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $install = new leantime\core\install($config, $settings);
 
 if ($install->checkIfInstalled()) {

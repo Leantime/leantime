@@ -106,6 +106,16 @@ $companySettings= $this->get('companySettings');
                                         </div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label><?=$this->__("label.send_telemetry")?></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?=$companySettings['telemetryActive']==true?'checked="checked"':'';?> />
+                                            <small style="vertical-align: text-top;"><?=$this->__("label.telemetry_background")?></small>
+                                        </div>
+                                    </div>
+
                                     <input type="submit" value="<?=$this->__("buttons.save")?>" id="saveBtn"/>
 
                                 </form>

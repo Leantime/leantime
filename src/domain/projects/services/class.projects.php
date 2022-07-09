@@ -189,7 +189,8 @@ namespace leantime\domain\services {
 
                 try {
                     $httpClient->post($slackWebhookURL, [
-                        'body' => $data_string
+                        'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ]
                     ]);
                 }catch (\Exception $e) {
                     error_log($e->getMessage());
@@ -232,7 +233,7 @@ namespace leantime\domain\services {
                       'description' => $converter->convert($message),
                       'url' => $url_link,
                       'timestamp' => $timestamp,
-                      'color' => hexdec('3366ff'),
+                      'color' => hexdec('1b75bb'),
                       'footer' => [
                         'text' => 'Leantime',
                         'icon_url' => $url_link,
@@ -249,7 +250,8 @@ namespace leantime\domain\services {
 
                 try {
                       $httpClient->post($discordWebhookURL, [
-                          'body' => $data_string
+                          'body' => $data_string,
+                          'headers' => [ 'Content-Type' => 'application/json' ]
                       ]);
                 }catch (\Exception $e) {
                       error_log($e->getMessage());
@@ -312,6 +314,7 @@ namespace leantime\domain\services {
 
                     $httpClient->post($curlUrl, [
                         'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ],
                         'auth' => [
                             $botEmail,
                             $botKey

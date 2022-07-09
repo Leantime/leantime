@@ -15,10 +15,11 @@ class application
     private $language;
     private $projectService;
     private $settingsRepo;
+    private $reportService;
 
 
     public function __construct(config $config,
-                                settings $settings,
+                                appSettings $settings,
                                 login $login,
                                 frontcontroller $frontController,
                                 language $language,
@@ -33,6 +34,7 @@ class application
         $this->language = $language;
         $this->projectService = $projectService;
         $this->settingsRepo = $settingRepo;
+        $this->reportService = new services\reports();
 
     }
 
@@ -50,6 +52,7 @@ class application
         $login = $this->login;
         $frontController = $this->frontController;
         $language = $this->language;
+        $telemetryResponse = false;
 
         //Override theme settings
         $this->overrideThemeSettings();
@@ -62,24 +65,27 @@ class application
 
             //Run password reset through application to avoid security holes in the front controller
             if(isset($_GET['resetPassword']) === true) {
-                include ROOT.'/../src/resetPassword.php';
+                require ROOT.'/../src/resetPassword.php';
             }elseif(isset($_GET['install']) === true) {
-                 include ROOT.'/../src/install.php';
+                require ROOT.'/../src/install.php';
             }elseif(isset($_GET['update']) === true) {
-                include ROOT.'/../src/update.php';
+                require ROOT.'/../src/update.php';
             }else{
-                include ROOT.'/../src/login.php';
+                require ROOT.'/../src/login.php';
             }
 
         }else{
             // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
             if(isset($_GET['twoFA']) === true) {
                 if($_SESSION['userdata']['twoFAVerified'] != true) {
-                    include ROOT.'/../src/twoFA.php';
+                    require ROOT.'/../src/twoFA.php';
                 }
             }elseif($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false){
                $login->redirect2FA($_SERVER['REQUEST_URI']);
             }
+
+            //Send telemetry if user is opt in and if it hasn't been sent that day
+            $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
 
             //Set current/default project
             $this->projectService->setCurrentProject();
@@ -91,6 +97,21 @@ class application
         $toRender = ob_get_clean();
 
         echo $toRender;
+
+        //Wait for telemetry if it was sent
+        if($telemetryResponse !== false){
+
+            try {
+
+                $telemetryResponse->wait();
+
+            }catch(\LogicException $e){
+
+                error_log($e->getMessage(), 0);
+
+            }
+
+        }
             
     }
 
@@ -124,7 +145,6 @@ class application
 
             }
         }
-
 
         if(isset($_SESSION["companysettings.mainColor"]) === false) {
             $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");

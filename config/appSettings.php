@@ -1,13 +1,13 @@
 <?php
 
 /**
- * settings class - System settings
+ * appSettings class - System appSettings
  *
  */
 
 namespace leantime\core;
 
-class settings {
+class appSettings {
 
 	/**
 	 * @access private
@@ -15,9 +15,9 @@ class settings {
 	 */
 	private $debug = 1;
 
-	public $appVersion = "2.1.9";
+	public $appVersion = "2.2.0";
 
-    public $dbVersion = "2.1.6";
+    public $dbVersion = "2.1.7";
 
 	/**
 	 * __construct
@@ -27,7 +27,7 @@ class settings {
 	}
 
 	/**
-	 * loadSettings - load all settings and set ini
+	 * loadSettings - load all appSettings and set ini
 	 *
 	 */
 	public function loadSettings($timezone){

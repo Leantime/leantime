@@ -100,6 +100,33 @@ namespace leantime\domain\repositories {
         }
 
 
+        public function getNumberOfProjects($clientId = null)
+        {
+
+            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects`";
+
+            if($clientId != null && is_numeric($clientId)){
+                $sql .= " WHERE clientId = :clientId";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if ($clientId != null && is_numeric($clientId)) {
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['projectCount']) === true) {
+                return $values['projectCount'];
+            }else{
+                return 0;
+            }
+        }
+
+
         // Get all open user projects /param: open, closed, all
 
         public function getUserProjects($userId, $status = "all", $clientId = "")

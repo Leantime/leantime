@@ -1,14 +1,15 @@
 <?php
 
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $install = new leantime\core\install($config, $settings);
+
 
 ?>
 <!DOCTYPE html>
 <html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $this->includeAction('general.header'); ?>
+    <?php echo $this->frontController->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
