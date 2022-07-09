@@ -67,11 +67,11 @@
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
-            <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["showProjects"]) === false || $_SESSION['userdata']['appSettings']["modals"]["showProjects"] == 0){     ?>
+            <?php if(isset($_SESSION['userdata']['settings']["modals"]["showProjects"]) === false || $_SESSION['userdata']['settings']["modals"]["showProjects"] == 0){     ?>
             leantime.helperController.showHelperModal("showProjects");
             <?php
             //Only show once per session
-            $_SESSION['userdata']['appSettings']["modals"]["showProjects"] = 1;
+            $_SESSION['userdata']['settings']["modals"]["showProjects"] = 1;
             } ?>
 
             leantime.projectsController.initProjectTable();

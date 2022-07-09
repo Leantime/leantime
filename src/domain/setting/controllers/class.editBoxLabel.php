@@ -52,7 +52,7 @@ namespace leantime\domain\controllers {
 
                 if (isset($params['module']) && isset($params['label'])) {
 
-                    //Move to appSettings service
+                    //Move to settings service
                     if ($params['module'] == "ticketlabels") {
                         $stateLabels = $this->ticketsRepo->getStateLabels();
                         $currentLabel = $stateLabels[$params['label']]["name"];
@@ -98,7 +98,7 @@ namespace leantime\domain\controllers {
 
                 $sanitizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
 
-                //Move to appSettings service
+                //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {
 
                     $currentStateLabels = $this->ticketsRepo->getStateLabels();

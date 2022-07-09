@@ -58,11 +58,11 @@
 
             leantime.clientsController.initClientTable();
 
-            <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["showClients"]) === false || $_SESSION['userdata']['appSettings']["modals"]["showClients"] == 0) {     ?>
+            <?php if(isset($_SESSION['userdata']['settings']["modals"]["showClients"]) === false || $_SESSION['userdata']['settings']["modals"]["showClients"] == 0) {     ?>
             leantime.helperController.showHelperModal("showClients");
             <?php
             //Only show once per session
-            $_SESSION['userdata']['appSettings']["modals"]["showClients"] = 1;
+            $_SESSION['userdata']['settings']["modals"]["showClients"] = 1;
             } ?>
 
         }

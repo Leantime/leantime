@@ -282,11 +282,11 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
         leantime.ideasController.initUserDropdown();
 
 
-        <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['appSettings']["modals"]["advancedBoards"] == 0) {     ?>
+        <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
         leantime.helperController.showHelperModal("advancedBoards");
         <?php
         //Only show once per session
-        $_SESSION['userdata']['appSettings']["modals"]["advancedBoards"] = 1;
+        $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
         } ?>
 
     });

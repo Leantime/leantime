@@ -54,7 +54,7 @@ class application
         $language = $this->language;
         $telemetryResponse = false;
 
-        //Override theme appSettings
+        //Override theme settings
         $this->overrideThemeSettings();
 
         $this->loadHeaders();

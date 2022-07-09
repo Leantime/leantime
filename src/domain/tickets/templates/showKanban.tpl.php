@@ -443,12 +443,12 @@
     var ticketStatusList = [<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo "'".$key."',"; }?>];
     leantime.ticketsController.initTicketKanban(ticketStatusList);
 
-    <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["kanban"]) === false || $_SESSION['userdata']['appSettings']["modals"]["kanban"] == 0){ ?>
+    <?php if(isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0){ ?>
 
         leantime.helperController.showHelperModal("kanban");
         <?php
         //Only show once per session
-        $_SESSION['userdata']['appSettings']["modals"]["kanban"] = 1;
+        $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
         }
     ?>
 

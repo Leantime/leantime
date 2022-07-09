@@ -453,11 +453,11 @@
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
 
-    <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["backlog"]) === false || $_SESSION['userdata']['appSettings']["modals"]["backlog"] == 0){     ?>
+    <?php if(isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0){     ?>
     leantime.helperController.showHelperModal("backlog");
     <?php
     //Only show once per session
-    $_SESSION['userdata']['appSettings']["modals"]["backlog"] = 1;
+    $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
     } ?>
 
 

@@ -196,11 +196,11 @@ jQuery(document).ready(function(){
     	
     });
 
-    <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["mytimesheets"]) === false || $_SESSION['userdata']['appSettings']["modals"]["mytimesheets"] == 0){     ?>
+    <?php if(isset($_SESSION['userdata']['settings']["modals"]["mytimesheets"]) === false || $_SESSION['userdata']['settings']["modals"]["mytimesheets"] == 0){     ?>
     leantime.helperController.showHelperModal("mytimesheets");
     <?php
     //Only show once per session
-    $_SESSION['userdata']['appSettings']["modals"]["mytimesheets"] = 1;
+    $_SESSION['userdata']['settings']["modals"]["mytimesheets"] = 1;
     } ?>
  });
     

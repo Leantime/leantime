@@ -18,27 +18,27 @@ namespace leantime\domain\services {
 
         private static $modules = array(
             "api" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
-            "calendar" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "calendar" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "clients" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "comments" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "dashboard" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "files" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "general" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "help" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
-            "ideas" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "ldap" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "leancanvas" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "projects" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "read" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "reports" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "retrospectives" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "setting" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "sprints" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "tickets" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "timesheets" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "twoFA" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "users" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
-            "modulemanager" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "company"),
+            "ideas" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "ldap" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "leancanvas" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "projects" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "read" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "reports" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "retrospectives" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "setting" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "sprints" => array("required" => false, "enabled" => true, "dependsOn" => "tickets", "scope" => "project"),
+            "tickets" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "timesheets" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "twoFA" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "users" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
+            "modulemanager" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
         );
 
 
@@ -66,6 +66,18 @@ namespace leantime\domain\services {
             }
 
             return self::$instance;
+        }
+
+        public static function isModuleEnabled($module) {
+
+            if(isset(self::$modules[$module])) {
+                if(self::$modules[$module]['enabled'] === true) {
+                    return true;
+                }
+            }
+
+            return false;
+
         }
 
 

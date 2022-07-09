@@ -6,8 +6,8 @@ $milestones = $this->get('milestones');
 ?>
 
 <?php
-if(isset($_SESSION['userdata']['appSettings']['views']['roadmap'])){
-    $roadmapView = $_SESSION['userdata']['appSettings']['views']['roadmap'];
+if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
+    $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
 }else{
     $roadmapView = "Month";
 }
@@ -87,11 +87,11 @@ if(isset($_SESSION['userdata']['appSettings']['views']['roadmap'])){
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    <?php if(isset($_SESSION['userdata']['appSettings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['appSettings']["modals"]["roadmap"] == 0){     ?>
+    <?php if(isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0){     ?>
     leantime.helperController.showHelperModal("roadmap");
     <?php
     //Only show once per session
-    $_SESSION['userdata']['appSettings']["modals"]["roadmap"] = 1;
+    $_SESSION['userdata']['settings']["modals"]["roadmap"] = 1;
     } ?>
 
     <?php if(isset($_GET['showMilestoneModal'])) {

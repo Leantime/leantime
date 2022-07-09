@@ -51,11 +51,11 @@ namespace leantime\domain\services {
             $filteredInput = filter_var($setting, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
             $filteredValue = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
 
-            $_SESSION['userdata']['appSettings'][$category][$filteredInput] =  $filteredValue;
+            $_SESSION['userdata']['settings'][$category][$filteredInput] =  $filteredValue;
 
-            $serializeSettings = serialize($_SESSION['userdata']['appSettings']);
+            $serializeSettings = serialize($_SESSION['userdata']['settings']);
 
-            return $this->userRepo->patchUser($_SESSION['userdata']['id'], array("appSettings" => $serializeSettings));
+            return $this->userRepo->patchUser($_SESSION['userdata']['id'], array("settings" => $serializeSettings));
         }
 
     }
