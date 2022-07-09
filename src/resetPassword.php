@@ -3,7 +3,7 @@
 <head>
     <title><?php echo $_SESSION["companysettings.sitename"]; ?></title>
 
-    <?php echo $this->includeAction('general.header'); ?>
+    <?php echo $this->frontController->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
