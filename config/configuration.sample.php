@@ -14,6 +14,7 @@ class config
 
     /* Database */
     public $dbHost = 'localhost'; //Database host
+    public $dbUser = ''; //Database username
     public $dbPassword = ''; //Database password
     public $dbDatabase = ''; //Database name
 
