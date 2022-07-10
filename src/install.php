@@ -73,6 +73,7 @@ if ($install->checkIfInstalled()) {
             <div class="regcontent"  id="login" style="margin-left: 90px;">
 
                 <?php
+
                 $error = false;
                 $values = array(
                     'email'			=>"",
@@ -146,6 +147,9 @@ if ($install->checkIfInstalled()) {
                         <p><input type="submit" name="installAction" class="btn btn-primary" value="<?=$this->language->__("buttons.install");?>" onClick="this.form.submit(); this.disabled=true; this.value='<?=$this->language->__("buttons.install");?>'; "/></p>
 
                     </form>
+
+
+
             </div>
         </div>
     </div>

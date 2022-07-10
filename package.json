@@ -26,7 +26,6 @@
   "devDependencies": {
     "grunt": "^1.5.2",
     "grunt-contrib-jshint": "^3.2.0",
-    "grunt-contrib-less": "^2.1.0",
     "grunt-contrib-uglify": "^5.1.0",
     "grunt-exec": "^3.0.0"
   },

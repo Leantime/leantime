@@ -2151,32 +2151,6 @@ a .label-default:after, a .label-primary:after {
 
 /*** BUTTONS & ICONS ***/
 
-[class^="iconsweets-"], [class*=" iconsweets-"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    background-image: url(../images/iconsweets-icons.png);
-    background-position: -16px -16px;
-    background-repeat: no-repeat;
-}
-
-/* White icons with optional class or on hover/active states of certain elements */
-.iconsweets-white,
-.nav-pills > .active > a > [class^="iconsweets-"],
-.nav-pills > .active > a > [class*=" iconsweets-"],
-.nav-list > .active > a > [class^="iconsweets-"],
-.nav-list > .active > a > [class*=" iconsweets-"],
-.navbar-inverse .nav > .active > a > [class^="iconsweets-"],
-.navbar-inverse .nav > .active > a > [class*=" iconsweets-"],
-.dropdown-menu > li > a:hover > [class^="iconsweets-"],
-.dropdown-menu > li > a:hover > [class*=" iconsweets-"],
-.dropdown-menu > .active > a > [class^="iconsweets-"],
-.dropdown-menu > .active > a > [class*=" iconsweets-"],
-.dropdown-submenu:hover > a > [class^="iconsweets-"],
-.dropdown-submenu:hover > a > [class*=" iconsweets-"] {
-    background-image: url(../images/iconsweets-icons-white.png);
-}
 
 .iconsweets-magnifying-glass {
     background-position: -16px -16px;
@@ -3890,13 +3864,6 @@ ul.list-inline li {
     font-size: 12px;
 }
 
-.wizard .hormenu li a span.dot span {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    background: url(../img/steps.png) no-repeat 0 -40px;
-}
-
 .wizard .hormenu li:first-child a span.dot {
     margin-left: 47%;
     text-align: left;
@@ -4841,10 +4808,6 @@ body .btn-group.open .btn-primary.dropdown-toggle {
     border-color: #333;
     color: #333;
     background: none;
-}
-
-.btn-circle .iconsweets-white {
-    background-image: url("../images/iconsweets-icons.png");
 }
 
 .btn-group+.btn-group {
@@ -5911,13 +5874,6 @@ body a.delete,
 .filterBar select {
     height: 32px;
     line-height: 24px;
-}
-
-.emptyChartContainer {
-    background: url('/images/emptyChartBg.png') no-repeat center center;
-    min-height: 290px;
-    text-align: center;
-    padding-top: 75px;
 }
 
 input.small {
