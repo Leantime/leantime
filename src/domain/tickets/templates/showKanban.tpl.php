@@ -221,9 +221,9 @@
                                     </a>
 
                                     <ul class="dropdown-menu">
-                                        <li><a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><i class="fas fa-edit"></i> Edit Label</a>
+                                        <li><a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
                                         </li>
-                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><i class="fas fa-plus"></i> Add/Remove Columns</a></li>
+                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$this->__('links.add_remove_col')?></a></li>
                                     </ul>
                                 </div>
                                   <?php } ?>
