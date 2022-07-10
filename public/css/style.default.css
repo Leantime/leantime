@@ -6042,10 +6042,10 @@ body::after {
 
 .widgettitle .editHeadline {
     float: right;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, .3);
 }
 
-.widgettitle .editHeadline:hover {
+body .widgettitle .editHeadline:hover {
     color: rgba(0, 0, 0, 0.5);
 }
 
