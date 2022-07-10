@@ -253,7 +253,7 @@
                                                 <option value="label-default" class="label-default" <?=$ticketStatus['class']=='label-default'?'selected="selected"':""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <label><?=$this->__("label.reportType") ?></label>
                                             <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
                                                 <option value="NEW" <?=($ticketStatus['statusType']=='NEW')?'selected="selected"':""; ?>><?=$this->__('status.new'); ?></option>

@@ -215,8 +215,18 @@
 
                             <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
                             <?php if ($login::userIsAtLeast("clientManager")) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                            <?php } ?>
+                                <div class="inlineDropDownContainer" style="float:right;">
+                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+
+                                    <ul class="dropdown-menu">
+                                        <li><a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
+                                        </li>
+                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$this->__('links.add_remove_col')?></a></li>
+                                    </ul>
+                                </div>
+                                  <?php } ?>
                                 <strong class="count">0</strong>
                             <?php $this->e($statusRow['name']); ?></h4>
 

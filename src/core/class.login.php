@@ -627,6 +627,7 @@ namespace leantime\core {
 					profileId,
 					clientId,
 					twoFAEnabled,
+					pwResetCount,
 					twoFASecret FROM zp_user 
 		          WHERE username = :username LIMIT 1";
 
