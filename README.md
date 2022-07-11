@@ -1,7 +1,11 @@
 # Leantime #
 
+<a href="https://discord.gg/4zMzJtAq9z">![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)</a>
+<br />
+
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
+
 Features:
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
