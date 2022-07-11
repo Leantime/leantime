@@ -1,6 +1,9 @@
 # Leantime #
 
-<a href="https://discord.gg/4zMzJtAq9z">![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)</a> ![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)
+![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square) 
+![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)
+![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)
+<a href="https://discord.gg/4zMzJtAq9z">![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)</a>
 <br />
 
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
