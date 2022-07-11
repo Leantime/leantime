@@ -40,7 +40,7 @@ Features:
 ### System Requirements ###
 
 * PHP 8+
-* MySQL 5.7
+* MySQL 5.7+
 * Apache or Nginx (IIS works with some modifications)
 
 ### Installation (Production) ###
