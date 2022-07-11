@@ -1,4 +1,7 @@
-# Leantime #
+
+<img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/>
+
+# Leantime&trade; #
 
 ![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square) 
 ![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)
