@@ -1,7 +1,17 @@
-# Leantime #
+
+<img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/>
+
+# Leantime&trade; #
+
+![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square) 
+![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)
+![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)
+<a href="https://discord.gg/4zMzJtAq9z">![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)</a>
+<br />
 
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
+
 Features:
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
@@ -14,10 +24,10 @@ Features:
 * Multiple user roles (client, team member, client manager, manager, administrator)
 * Two-Factor Authentication
 * LDAP integration
-* Integrations with Mattermost, Slack & Zulip
+* Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
-* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T)	
+* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T), Japanese
 
 
 ### Screenshots ###
@@ -27,6 +37,11 @@ Features:
 | ![alt text](public/images/Screenshots/MilestoneGantt.png "Milestone Gantt Charts") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "My Timesheets") | ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")   |
 | ![alt text](public/images/Screenshots/Reports.png "Report Screens")   | ![alt text](public/images/Screenshots/LeanCanvas.png "Lean Canvas")    | ![alt text](public/images/Screenshots/MyCalendar.png "My Calendar") |
 
+### System Requirements ###
+
+* PHP 8+
+* MySQL 5.7+
+* Apache or Nginx (IIS works with some modifications)
 
 ### Installation (Production) ###
 
@@ -73,6 +88,7 @@ docker run -d -p 80:80 --network leantime-net \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \
 -e LEAN_DB_DATABASE=leantime \
+-e LEAN_EMAIL_RETURN=changeme@local.local \
 --name leantime leantime/leantime:latest
 ```
 
@@ -89,5 +105,6 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 ### Support ###
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Forum [https://community.leantime.io](https://community.leantime.io)
+* Discussions on [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Contact Us [https://leantime.io/contact/](https://leantime.io/contact)
