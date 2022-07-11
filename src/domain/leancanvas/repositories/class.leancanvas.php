@@ -523,7 +523,11 @@
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values;
+            if(isset($values['boardCount'])) {
+                return $values['boardCount'];
+            }
+
+            return 0;
 
         }
 
