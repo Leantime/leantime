@@ -37,6 +37,11 @@ Features:
 | ![alt text](public/images/Screenshots/MilestoneGantt.png "Milestone Gantt Charts") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "My Timesheets") | ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")   |
 | ![alt text](public/images/Screenshots/Reports.png "Report Screens")   | ![alt text](public/images/Screenshots/LeanCanvas.png "Lean Canvas")    | ![alt text](public/images/Screenshots/MyCalendar.png "My Calendar") |
 
+### System Requirements ###
+
+* PHP 8+
+* MySQL 5.7
+* Apache or Nginx (IIS works with some modifications)
 
 ### Installation (Production) ###
 
