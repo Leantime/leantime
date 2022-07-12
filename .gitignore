@@ -1,6 +1,11 @@
 .metadata
 .project
-.idea
+
+
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf/*
+
 .settings
 .DS_Store
 .vscode
