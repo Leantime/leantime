@@ -311,7 +311,7 @@ namespace leantime\core {
          */
         public static function getCurrentRoute() {
 
-            return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+            return htmlspecialchars($_REQUEST['act']);
 
         }
 
