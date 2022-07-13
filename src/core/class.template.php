@@ -427,7 +427,11 @@ namespace leantime\core {
         public function escape($content): string
         {
 
-            return htmlentities($content);
+            if(!is_null($content)) {
+                return htmlentities($content);
+            }
+
+            return '';
 
         }
 
