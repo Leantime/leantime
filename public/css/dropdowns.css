@@ -5,11 +5,12 @@
     border-radius: var(--box-radius);
     border:0px;
     box-shadow: var(--regular-shadow);
+    background:var(--secondary-background);
 }
 
 .dropdown-menu > li > a {
     font-size: var(--base-font-size);
-    color: #444;
+    color:var(--primary-font-color);
     margin: 0 5px;
     padding: 5px 10px;
 }
@@ -73,6 +74,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding:0px 10px;
     white-space: nowrap;
     border-radius:10px;
+    margin-left:0px;
 }
 
 .maincontentinner .ticketDropdown.firstDropdown > a {
@@ -190,13 +192,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu span.radio {
     display:block;
     font-size: 12px;
-    color: #444;
+    color: var(--main-menu-link-color);
     margin: 0 5px;
     padding: 5px 10px;
 }
 
 .dropdown-menu span.radio:hover {
-    color:#fff;
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
 }
 
 .dropdown-menu span.radio label {

@@ -25,12 +25,14 @@ leantime.menuController = (function () {
     var _initLeftMenuHamburgerButton = function (){
 
         if (jQuery('.barmenu').hasClass('open')) {
-            jQuery('.rightpanel, .headerinner').css({marginLeft: '240px'});
+            jQuery('.rightpanel').css({marginLeft: '240px'});
+            jQuery('.header').css({marginLeft: '240px', width:'calc(100%-240px)'});
             jQuery('.logo, .leftpanel').css({marginLeft: 0});
             leantime.menuRepository.updateUserMenuSettings("open");
         } else {
-            jQuery('.rightpanel, .headerinner').css({marginLeft: 0});
-            jQuery('.logo, .leftpanel').css({marginLeft: '-260px'});
+            jQuery('.rightpanel, .header').css({marginLeft: 0});
+            jQuery('.header').css({marginLeft: 0, width:'100%'});
+            jQuery('.logo, .leftpanel').css({marginLeft: '-240px'});
             leantime.menuRepository.updateUserMenuSettings("closed");
         }
 
@@ -40,17 +42,24 @@ leantime.menuController = (function () {
 
 
             if (!jQuery(this).hasClass('open')) {
-                jQuery('.rightpanel, .headerinner').animate({marginLeft: '240px'}, 'fast', function(){
+
+                jQuery('.header').animate({marginLeft: '240px', width:'-=240px'}, 'fast');
+
+                jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
+
+                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function(){
                     jQuery('.barmenu').addClass('open');
                 });
-                jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
+
 
                 leantime.menuRepository.updateUserMenuSettings("open");
             } else {
 
-                jQuery('.rightpanel, .headerinner').animate({marginLeft: 0}, 'fast', function() {
+                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function() {
                     jQuery('.barmenu').removeClass('open');
                 });
+
+                jQuery('.header').animate({marginLeft: '0', width:'100%'}, 'fast');
                 jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '240px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");

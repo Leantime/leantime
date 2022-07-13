@@ -16,7 +16,6 @@ $statusLabels = $this->get('statusLabels');
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
 
 
     <h4 class="widgettitle title-light"><?=$this->__("headline.milestone"); ?> </h4>
@@ -117,4 +116,3 @@ $statusLabels = $this->get('statusLabels');
         })
     </script>
 
-</div>

@@ -43,6 +43,12 @@ namespace leantime\core {
 
         /**
          * @access private
+         * @var    string profileid (image) from db
+         */
+        private $profileId = '';
+
+        /**
+         * @access private
          * @var    string
          */
         private $password = null;
@@ -358,6 +364,7 @@ namespace leantime\core {
             $_SESSION['userdata']['role'] = $this->role;
             $_SESSION['userdata']['id'] = $this->userId;
             $_SESSION['userdata']['name'] = $this->name;
+            $_SESSION['userdata']['profileId'] = $this->profileId;
             $_SESSION['userdata']['mail'] = $this->mail;
             $_SESSION['userdata']['clientId'] = $this->clientId;
             $_SESSION['userdata']['settings'] = $this->settings;
@@ -537,6 +544,7 @@ namespace leantime\core {
                 $this->twoFAEnabled = $user['twoFAEnabled'];
                 $this->twoFASecret = $user['twoFASecret'];
                 $this->role = self::$userRoles[$user['role']];
+                $this->profileId = $user['profileId'];
 
                 return true;
             }

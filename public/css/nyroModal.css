@@ -58,7 +58,6 @@
 	position: relative;
 	min-height: 100px;
 	min-width: 250px;
-	font-size:12px;
 }
 .nyroModalImage, .nyroModalSwf, .nyroModalIframe, .nyroModalIframeForm {
 	position: relative;
@@ -118,10 +117,16 @@
 }
 
 .nyroModalCont select {
-	max-width:50%;
+	max-width:90%;
 	height: 28px;
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
 
+}
+
+.nyroModalCont h1 {
+	font-size:var(--font-size-xxl);
+	color:var(--primary-font-color);
+	margin-bottom:20px;
 }

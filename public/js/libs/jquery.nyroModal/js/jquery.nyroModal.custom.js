@@ -1,8 +1,9 @@
 /*
- * nyroModal v2.0.0
- * Core
+ * Leantime Modals
  *
- * Commit a771d6237dc7c3a278f6 (05/07/2011) * 
+ * This is a heavily modified fork of nyroModal v2.0.0
+ * Including a variety of filters needed for Leantime specific use cases
+ *
  * 
  * Included parts:
  * - anims.fade
@@ -12,17 +13,11 @@
  * - filters.dom
  * - filters.data
  * - filters.image
- * - filters.swf
  * - filters.form
  * - filters.formFile
  * - filters.iframe
  * - filters.iframeForm
  * - filters.embedly
- */
-/*
- * nyroModal v2.0.0
- * Core
- *
  */
 
 jQuery(function($, undefined) {
@@ -257,7 +252,7 @@ jQuery(function($, undefined) {
 				this._callFilters('beforeClose');
 				var self = this;
 				this._unreposition();
-				$('body').css("overlfow", "auto");
+				$('body').css("overflow", "auto");
 				self._callAnim('hideCont', function() {
 					self._callAnim('hideLoad', function() {
 						self._callAnim('hideBg', function() {
@@ -305,7 +300,7 @@ jQuery(function($, undefined) {
 			// Will init the size and call the 'size' function.
 			// Will call 'filledContent' callback filter
 			_setCont: function(html, selector) {
-				if (selector) {
+				if (selector && 1==2) {
 					var tmp = [],
 						i = 0;
 					// Looking for script to store them
@@ -466,9 +461,10 @@ jQuery(function($, undefined) {
 									this._callFilters('beforeShowCont');
 									this._callAnim('hideTrans', $.proxy(function() {
 										this._transition = false;
-										this._callFilters('afterShowCont');
+
 										this.elts.cont.append(this._scriptsShown);
 										this._reposition();
+										this._callFilters('afterShowCont');
 									}, this));
 								}, this);
 								if (this._nbContentLoading == 1) {
@@ -779,6 +775,7 @@ jQuery(function($, undefined) {
 				return '';
 			},
 			_extractUrl: function(url) {
+
 				var ret = {
 					url: undefined,
 					sel: undefined
@@ -790,8 +787,10 @@ jQuery(function($, undefined) {
 						curLoc = window.location.href.substring(0, window.location.href.length - hashLoc.length),
 						req = url.substring(0, url.length - hash.length);
 					ret.sel = hash;
-					if (req != curLoc && req != baseHref)
-						ret.url = req;
+					if (req != curLoc && req != baseHref) {
+						ret.url = url;
+					}
+
 				}
 				return ret;
 			}
@@ -866,7 +865,7 @@ jQuery(function($, undefined) {
 					nm.elts.bg.addClass('nyroModalBg');
 					if (nm.closeOnClick)
 						nm.elts.bg.unbind('click.nyroModal').bind('click.nyroModal', function(e) {
-							e.preventDefault();
+
 							//Only close if user clicked on background and not on content (child element)
 							if(e.target == this) {
 								nm.close();
@@ -1248,7 +1247,7 @@ jQuery(function($, undefined) {
  * - filters.link
  * 
  * Before: filters.link
- */
+
 jQuery(function($, undefined) {
 	$.nmFilters({
 		dom: {
@@ -1271,7 +1270,7 @@ jQuery(function($, undefined) {
 			}
 		}
 	});
-});
+});  */
 /*
  * nyroModal v2.0.0
  * 
@@ -1286,6 +1285,7 @@ jQuery(function($, undefined) {
 	$.nmFilters({
 		data: {
 			is: function(nm) {
+
 				var ret = nm.data ? true : false;
 				if (ret) {
 					nm._delFilter('dom');
@@ -1362,42 +1362,7 @@ jQuery(function($, undefined) {
 		}
 	});
 });
-/*
- * nyroModal v2.0.0
- * 
- * SWF filter
- * 
- * Depends:
- * - filters.link
- * 
- * Before: filters.image
- */
-jQuery(function($, undefined) {
-	$.nmFilters({
-		swf: {
-			idCounter: 1,
-			is: function(nm) {
-				return nm._hasFilter('link') && nm.opener.is('[href$=".swf"]');
-			},
-			init: function(nm) {
-				nm.loadFilter = 'swf';
-			},
-			load: function(nm) {
-				if (!nm.swfObjectId)
-					nm.swfObjectId = 'nyroModalSwf-'+(this.idCounter++);
-				var url = nm.store.link.url,
-					cont = '<div><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="'+nm.swfObjectId+'" width="'+nm.sizes.w+'" height="'+nm.sizes.h+'"><param name="movie" value="'+url+'"></param>',
-					tmp = '';
-				$.each(nm.swf, function(name, val) {
-					cont+= '<param name="'+name+'" value="'+val+'"></param>';
-					tmp+= ' '+name+'="'+val+'"';
-				});
-				cont+= '<embed src="'+url+'" type="application/x-shockwave-flash" width="'+nm.sizes.w+'" height="'+nm.sizes.h+'"'+tmp+'></embed></object></div>';
-				nm._setCont(cont);
-			}
-		}
-	});
-});
+
 /*
  * nyroModal v2.0.0
  * 
@@ -1414,19 +1379,28 @@ jQuery(function($, undefined) {
 				var ret = nm.opener.is('form');
 				if (ret)
 					nm.store.form = nm.getInternal()._extractUrl(nm.opener.attr('action'));
+
+				console.log(ret);
+				console.log(nm.store.form);
+
 				return ret;
 			},
 			init: function(nm) {
 				nm.loadFilter = 'form';
 				nm.opener.unbind('submit.nyroModal').bind('submit.nyroModal', function(e) {
 					e.preventDefault();
+
 					nm.opener.trigger('nyroModal');
 				});
 			},
 			load: function(nm) {
 				var data = nm.opener.serializeArray();
+
 				if (nm.store.form.sel)
 					data.push({name: nm.selIndicator, value: nm.store.form.sel.substring(1)});
+
+				nm.callbacks.beforePostSubmit();
+
 				$.ajax({
 					url: nm.store.form.url,
 					data: data,

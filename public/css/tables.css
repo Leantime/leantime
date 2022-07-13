@@ -1,10 +1,11 @@
 .table th {
     font-weight: normal;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: var(--base-font-size);
     border-top: 0;
-    background: #555;
-    color: #fff;
+
+    color: var(--kanban-col-title-color);
+    background:var(--kanban-col-title-bg);
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -17,11 +18,11 @@
 }
 
 .table .con0 {
-    background: #fff;
+    background: var(--content-bg);
 }
 
 .table .con1 {
-    background: var(--secondary-bg);
+    background: var(--kanban-col-bg);
 }
 
 .table-bordered th,
@@ -32,7 +33,7 @@
 
 .table-bordered th:last-child,
 .table-bordered td:last-child {
-    border-right: 0px solid #dddddd;
+    border-right: 0px solid #ccc;
 }
 
 
@@ -41,7 +42,7 @@
 }
 
 .dataTable th, .dataTable td {
-    font-size: 12px;
+    font-size: var(--base-font-size);
 }
 
 .dataTables_wrapper {
@@ -49,9 +50,9 @@
 }
 
 .dataTables_length, .dataTables_info {
-    background: #f3f4f5;
+    background: var(--kanban-col-title-bg);
     padding: 10px;
-    font-size: 11px;
+    font-size: var(--font-size-s);
     border: 1px solid #ccc;
 }
 
@@ -86,12 +87,12 @@
     padding: 5px 10px;
     border: 1px solid #ccc;
     font-size: 12px;
-    background: #f3f4f5;
+    background: var(--kanban-col-title-bg);
     cursor: pointer;
 }
 
 .dataTables_paginate span:hover {
-    background-color: #ccc;
+    background-color: var(--secondary-action-hover-bg);
 }
 
 .dataTables_paginate .first {
@@ -103,18 +104,18 @@
 }
 
 .dataTables_paginate .paginate_button:hover {
-    background: #f3f4f5;
+    background: var(--kanban-col-title-bg);
 }
 
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
     color: #ccc;
-    background: #f3f4f5;
+    background: var(--kanban-col-title-bg);
 }
 
 .dataTables_paginate a {
-    color: #555;
-    font-size:12px;
+    color: var(--primary-font-color);
+    font-size:var(--font-size-s);
 }
 
 .dataTables_paginate a:hover {
@@ -144,7 +145,7 @@
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: #555;
+    background: var(--col-hover-bg);
 }
 
 .dataTable thead th.sorting:after {
@@ -178,17 +179,20 @@
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
     text-transform:none;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-top: 0;
-    color: #fff;
+
     font-weight: normal;
     text-rendering: optimizelegibility;
-    padding: 12px 14px;
+    padding: 10px;
 
     border:0px;
     border-right:1px solid #ccc;
     border-color:#ccc;
     line-height: 17px;
+
+    color: var(--kanban-col-title-color);
+    background:var(--col-title-bg);
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -207,14 +211,15 @@
 
 .maincontentinner .table th.sorting_desc,
 .maincontentinner .table th.sorting_asc {
-    background:#555;
+    color: var(--primary-font-color);
+    background:var(--col-hover-bg);
 }
 
 
 .maincontentinner .table tr.dtrg-group td {
-    background:#555;
-    color: #fff;
-    padding: 6px 14px;
+    background:var(--col-hover-bg);
+    color: var(--kanban-col-title-color);
+    padding: 5px 10px;
 }
 
 .maincontentinner .table {
@@ -241,7 +246,7 @@
 
 .maincontentinner .dataTables_wrapper  .bottom {
     position:relative;
-    background:var(--secondary-bg);
+    background:var(--kanban-col-title-bg);
     border: 1px solid var(--main-border-color);
     border-top:0px;
     height:60px;
@@ -302,12 +307,10 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button {
     display:block;
-    width:95%;
+    width:100%;
     margin:0px;
-    background:#fff;
-    font-size: 12px;
-    color: #ccc;
-    margin: 0 5px;
+    background:var(--secondary-background);
+    color: var(--main-menu-link-color);
     padding: 5px 10px;
     border:0px;
     text-align:left;
@@ -322,7 +325,8 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
 .maincontentinner .dt-buttons .dt-button-collection button.active:hover{
-    color:#fff;
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
 }
 
 .maincontentinner .dt-buttons>.dt-button {
@@ -331,15 +335,15 @@
     -webkit-box-shadow: none;
     box-shadow: none;
     border-color: #ccc;
-    border: 1px solid #ccc;
+    border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
     padding: 3px 12px;
     line-height: 20px;
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;
-    color: #555;
-    background: #f3f4f5;
+    color: var(--secondary-action-color);
+    background: var(--secondary-action-bg);
     text-shadow: none;
     line-height:20px;
 }
@@ -349,7 +353,16 @@
 }
 
 .maincontentinner .dt-buttons>.dt-button:hover {
-    background:#e6e6e6;
+    background:var(--secondary-action-hover-bg);
+    color:var(--secondary-action-hover-color);
+}
+.maincontentinner .dt-buttons .dt-button-collection button {
+    border-radius:0px;
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button:hover {
+    background:var(--main-menu-link-hover-bg);
+    color:var(--main-menu-link-hover-color);
 }
 
 

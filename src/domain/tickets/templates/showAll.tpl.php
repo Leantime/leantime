@@ -227,7 +227,7 @@
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1" width="20%">
+                <col class="con1">
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">

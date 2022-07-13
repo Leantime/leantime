@@ -3,26 +3,12 @@
     defined('RESTRICTED') or die('Restricted access');
 	$ticket = $this->get('ticket');
 	$projectData = $this->get('projectData');
+$todoTypeIcons  = $this->get("ticketTypeIcons");
 
 ?>
 
-<div class="pageheader">
 
-    <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$this->__("links.go_back") ?></a>
-    </div>
-
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headlines.edit_todo") ?></h1>
-    </div>
-
-</div><!--pageheader-->
-
-<div class="maincontent">
-
-    <div class="maincontentinner">
+        <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
 
         <?php echo $this->displayNotification(); ?>
 
@@ -31,6 +17,7 @@
             <ul>
                 <li><a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a></li>
                 <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
+                <li><a href="#comments"><?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
                 <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                     <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
@@ -40,6 +27,17 @@
             <div id="ticketdetails">
                 <form class="ticketModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
+                </form>
+            </div>
+
+            <div id="comments">
+                <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
+                    <input type="hidden" name="comment" value="1" />
+                    <?php
+                    $this->assign('formUrl', "".BASE_URL."/tickets/showTicket/".$ticket->id."#comments");
+
+                    $this->displaySubmodule('comments-generalComment') ;
+                    ?>
                 </form>
             </div>
 
@@ -64,35 +62,17 @@
             <?php } ?>
         </div>
 
-    </div>
+        <br />
 
-    <div class="maincontentinner">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
-            <input type="hidden" name="comment" value="1" />
-            <?php
-            $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
-
-            $this->displaySubmodule('comments-generalComment') ;
-            ?>
-        </form>
-    </div>
-
-
-
-
-
-
-
-</div>
 
 <script type="text/javascript">
 
-    leantime.ticketsController.initTicketTabs();
-    leantime.ticketsController.initTicketEditor();
-    leantime.ticketsController.initTagsInput();
+    jQuery(function(){
 
-    jQuery(window).load(function () {
-        jQuery(window).resize();
+        leantime.ticketsController.initTicketTabs();
+        leantime.ticketsController.initTagsInput();
+        leantime.generalController.initComplexEditor();
+
     });
 
 </script>

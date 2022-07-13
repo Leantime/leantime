@@ -25,7 +25,7 @@
 
 .column .contentInner {
     background:var(--kanban-col-bg);
-    border:1px solid #ccc;
+    border:1px solid var(--neutral);
     padding:7px;
     min-height:45px;
 
@@ -37,7 +37,7 @@
 
 .column .contentInner .ui-state-highlight {
     background:#ddd;
-    border: 2px dotted #ccc;
+    border: 2px dotted var(--neutral);
     visibility:visible;
     display:block;
     -webkit-transition: -webkit-transform 0.2s;
@@ -97,12 +97,12 @@
 }
 
 .sortableTicketList li:hover {
-    background:#f9f9f9;
+    background:var(--main-menu-link-hover-bg);
 }
 
 .sortableTicketList .ticketBox {
-    background:#fff;
-    border:1px solid #ddd;
+    background: var(--kanban-card-bg);
+    border:1px solid var(--main-border-color);
     padding:10px;
     padding-bottom:10px;
     margin-bottom:5px;
@@ -122,11 +122,11 @@
 }
 
 .sortableTicketList li:hover .ticketBox {
-    background:#f9f9f9;
+    background:var(--main-menu-link-hover-bg);
 }
 
 .sortableTicketList li:hover .ticketBox.fixed {
-    background:#fff;
+    background:var(--main-menu-link-hover-bg);
 }
 
 .sortableTicketList .ticketBox p.description {
@@ -223,12 +223,12 @@ body .maincontent .priority-bg-5 {
     border-top: 1px solid var(--main-border-color) !important;
     border-right: 1px solid var(--main-border-color) !important;
     border-bottom:0px solid var(--kanban-col-title-bg) !important;
-    border-top-left-radius: var(--box-radius);
-    border-top-right-radius: var(--box-radius);
+    border-top-left-radius: var(--box-radius-small);
+    border-top-right-radius: var(--box-radius-small);
 }
 
 .widgettitle span {
-    vertical-align: middle;
+    vertical-align: top;
     display: inline-block;
     margin-right: 8px;
 }

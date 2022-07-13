@@ -47,9 +47,11 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 	background-color: var(--primary-color) !important;
 }
 
-.header .logo,
+.header .logo {
+
+}
+
 .cr-boundary,
-.maincontentinner .dt-buttons .dt-button-collection button:hover,
 .boxedHighlight{
 	background-color: var(--primary-color);
 }
@@ -57,8 +59,6 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 /* color */
 
 a,a:hover,a:link,a:active,a:focus,
-.pageicon,
-.pagetitle h1,
 .userlist li .uinfo h5,
 .messagemenu ul li.active a,
 .msglist li h4,
@@ -93,8 +93,6 @@ input[type='submit'],
 button,
 .shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
-.table th,
-.dropdown-menu span.radio:hover,
 .paginate_button.current
 { background-color:  var(--main-action-bg);  }
 
@@ -255,7 +253,7 @@ label.inline {
 body .widgettitle.title-light {
 	color:var(--primary-color);
 	padding-left:0px;
-	background-color:#fff !important;
+	background-color: transparent !important;
     border-left:0px !important;
     border-top:0px !important;
     border-right:0px !important;
@@ -284,8 +282,10 @@ div.tagsinput {
 }
 
 
-
-
+body .tox .tox-edit-area__iframe,
+body .tox .tox-toolbar-overlord{
+	background-color:var(--secondary-background);
+}
 
 
 

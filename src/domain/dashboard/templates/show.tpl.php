@@ -29,13 +29,14 @@
 </div>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+
 
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
             <div class="col-lg-8">
-               <div class="row" id="yourToDoContainer">
+                <div class="maincontentinner">
+                    <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle">
                             <?php echo sprintf($this->__("subtitles.todos_this_week"), count($this->get('tickets')["thisWeek"])); ?>
@@ -91,7 +92,7 @@
 
                                     ?>
                                     <li class="ui-state-default" id="ticket_<?php echo $row['id']; ?>" >
-                                        <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
+                                        <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                             <div class="row">
                                                 <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                                     <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
@@ -222,7 +223,7 @@
                                 }
                                 ?>
                                 <li class="ui-state-default" id="ticket_<?php echo $row['id']; ?>" >
-                                    <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
+                                    <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                         <div class="row">
                                             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                                 <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
@@ -334,83 +335,84 @@
                         <?php } ?>
                     </div>
                 </div>
-
+                </div>
             </div>
 
             <div class="col-lg-4">
+                <div class="maincontentinner">
+                    <div class="row" id="projectProgressContainer">
+                        <div class="col-md-12">
 
-                <div class="row" id="projectProgressContainer">
-                    <div class="col-md-12">
 
+                            <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
 
-                        <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
-
-                        <div id="canvas-holder" style="width:100%; height:250px;">
-                            <canvas id="chart-area" ></canvas>
+                            <div id="canvas-holder" style="width:100%; height:250px;">
+                                <canvas id="chart-area" ></canvas>
+                            </div>
+                            <br /><br />
                         </div>
-                        <br /><br />
                     </div>
-                </div>
-                <div class="row" id="milestoneProgressContainer">
-                    <div class="col-md-12">
-                        <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
-                        <ul class="sortableTicketList" >
-                            <?php
-                            if(count($this->get('milestones')) == 0){
-                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
-                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap'>".$this->__("links.goto_milestones")."</a>";
-                            }
-                            ?>
-                            <?php foreach($this->get('milestones') as $row){
-                                $percent = 0;
-
-
-                                if($row->editTo == "0000-00-00 00:00:00") {
-                                    $date = $this->__("text.no_date_defined");
-                                }else {
-                                    $date = new DateTime($row->editTo);
-                                    $date= $date->format($this->__("language.dateformat"));
+                    <div class="row" id="milestoneProgressContainer">
+                        <div class="col-md-12">
+                            <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
+                            <ul class="sortableTicketList" >
+                                <?php
+                                if(count($this->get('milestones')) == 0){
+                                    echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
+                                    ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap'>".$this->__("links.goto_milestones")."</a>";
                                 }
-                                if($row->percentDone < 100 || $date >= new DateTime()) {
-                                    ?>
-                                    <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
-                                        <div class="ticketBox fixed">
+                                ?>
+                                <?php foreach($this->get('milestones') as $row){
+                                    $percent = 0;
 
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
-                                                </div>
-                                            </div>
-                                            <div class="row">
 
-                                                <div class="col-md-7">
-                                                    <?=$this->__("label.due") ?>
-                                                    <?php echo $date; ?>
+                                    if($row->editTo == "0000-00-00 00:00:00") {
+                                        $date = $this->__("text.no_date_defined");
+                                    }else {
+                                        $date = new DateTime($row->editTo);
+                                        $date= $date->format($this->__("language.dateformat"));
+                                    }
+                                    if($row->percentDone < 100 || $date >= new DateTime()) {
+                                        ?>
+                                        <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
+                                            <div class="ticketBox fixed">
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                <div class="row">
+
+                                                    <div class="col-md-7">
+                                                        <?=$this->__("label.due") ?>
+                                                        <?php echo $date; ?>
+                                                    </div>
+                                                    <div class="col-md-5" style="text-align:right">
+                                                        <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                <?php }
-                            } ?>
+                                        </li>
+                                    <?php }
+                                } ?>
 
-                        </ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
 </div>
 
 
