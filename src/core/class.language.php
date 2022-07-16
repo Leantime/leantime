@@ -22,7 +22,7 @@ namespace leantime\core {
          * @access private
          * @var    string default de-DE
          */
-        private $language = 'de';
+        private $language = 'en-US';
 
         /**
          * @access public
