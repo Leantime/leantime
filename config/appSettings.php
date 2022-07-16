@@ -15,7 +15,7 @@ class appSettings {
 	 */
 	private $debug = 0;
 
-	public $appVersion = "2.2.0";
+	public $appVersion = "2.2.1";
 
     public $dbVersion = "2.1.7";
 
@@ -38,11 +38,11 @@ class appSettings {
             date_default_timezone_set('America/Los_Angeles');
         }
 
-        error_reporting(E_ALL);
-
 		if($this->debug === 1){
+            error_reporting(E_ALL);
 			ini_set('display_errors', 1);
 		}else{
+            error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 			ini_set('display_errors', 0);
 		}
 
