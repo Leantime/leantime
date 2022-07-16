@@ -7,6 +7,7 @@
 
 namespace leantime\core {
 
+    use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
 
@@ -66,7 +67,7 @@ namespace leantime\core {
 
                 }
 
-                self::$instance = new FrontController($rootPath);
+                self::$instance = new frontcontroller($rootPath);
             }
 
             return self::$instance;
@@ -101,6 +102,7 @@ namespace leantime\core {
             }
 
             if($completeName != '') {
+
                 //execute action
                 try {
 
@@ -111,6 +113,12 @@ namespace leantime\core {
                     echo $e->getMessage();
 
                 }
+
+            } else {
+
+                header("HTTP/1.0 404 Not Found");
+                exit;
+
             }
         }
 
@@ -121,7 +129,7 @@ namespace leantime\core {
          * @param  $completeName
          * @return string|object
          */
-        private function executeAction($completeName)
+        private function executeAction($completeName, $params=array())
         {
 
             //actionname.filename
@@ -144,8 +152,26 @@ namespace leantime\core {
             include_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
 
             //Initialize Action
-            $classname = "leantime\\domain\\controllers\\".$actionName ;
-            $action = new $classname;
+            try {
+
+                $classname = "leantime\\domain\\controllers\\" . $actionName;
+
+                //Check if constructor of controller needs/accepts arguments
+                $reflector = new \ReflectionClass($classname);
+                $constructor = $reflector->getConstructor();
+
+                if ($constructor && $constructor->getParameters()) {
+                    $action = new $classname($params);
+                } else {
+                    $action = new $classname();
+                }
+
+            }catch(Exception $e){
+
+                header("HTTP/1.0 501 Not Implemented");
+                error_log($e->getMessage(), 0);
+                exit();
+            }
 
             if(is_object($action) === false) {
 
@@ -157,20 +183,23 @@ namespace leantime\core {
                 try {
 
                     //Everything ok? run action
-                    $method= $this->getRequestMethod();
+                    $method = $this->getRequestMethod();
 
                     if(method_exists($action, $method)) {
+
                         $params = $this->getRequestParams($method);
                         $action->$method($params);
 
                     }else {
+
                         //Use run for all request types.
                         $action->run();
+
                     }
 
                 }catch (Exception $e) {
 
-                    echo $e->getMessage();
+                    error_log($e->getMessage(), 0);
 
                 }
 
@@ -209,7 +238,7 @@ namespace leantime\core {
                 return $_GET;
                     break;
             default:
-                throw(new \Exception("Unexpected HTTP Method: ".$method));
+                throw(new Exception("Unexpected HTTP Method: ".$method));
                     break;
             }
 
@@ -222,9 +251,9 @@ namespace leantime\core {
          * @param  $completeName
          * @return object
          */
-        public function includeAction($completeName)
+        public function includeAction($completeName, $params=array())
         {
-            $this->executeAction($completeName);
+            $this->executeAction($completeName, $params);
         }
 
         /**
@@ -282,7 +311,7 @@ namespace leantime\core {
          */
         public static function getCurrentRoute() {
 
-            return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+            return htmlspecialchars($_REQUEST['act']);
 
         }
 

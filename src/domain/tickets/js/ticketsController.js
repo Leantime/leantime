@@ -74,13 +74,14 @@ leantime.ticketsController = (function () {
 
     var toggleFilterBar = function () {
         jQuery(".filterBar").toggle();
+
     };
 
     var initGanttChart = function (tasks, viewMode) {
 
         function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        };
+        }
 
         jQuery(document).ready(
             function () {
@@ -157,6 +158,7 @@ leantime.ticketsController = (function () {
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             }
         );
     };
@@ -194,6 +196,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -221,6 +224,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -261,6 +265,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -284,6 +289,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
                 .on(
@@ -325,6 +331,7 @@ leantime.ticketsController = (function () {
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
+                        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                     }
                 )
                 .on(
@@ -369,6 +376,7 @@ leantime.ticketsController = (function () {
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
                 .on(
@@ -831,7 +839,7 @@ leantime.ticketsController = (function () {
 
         jQuery(".quickDueDates").datepicker(
             {
-                dateFormat: leantime.i18n.__("language.jsdateformat"),
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -843,6 +851,7 @@ leantime.ticketsController = (function () {
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 onClose: function(date) {
 
                     var newDate = "";
@@ -905,8 +914,52 @@ leantime.ticketsController = (function () {
                             text: leantime.i18n.__("label.planned_hours")
                         },
                         ticks: {
-                            beginAtZero:true
+                            beginAtZero: true
                         }
+                    }
+                }
+            }
+        });
+    };
+
+    var colorTicketBoxes = function (currentBox){
+
+        var color = "#fff";
+        jQuery(".ticketBox").each(function(index){
+
+            var value = jQuery(this).find(".statusDropdown > a").attr("class");
+
+            if(value != undefined) {
+                if (value.indexOf("important") > -1) {
+
+                    color = "#b94a48";
+
+                }else if (value.indexOf("info") > -1) {
+
+                        color = "#2d6987";
+
+                } else if (value.indexOf("warning") > -1) {
+
+                    color = "#f89406";
+
+                } else if (value.indexOf("success") > -1) {
+
+                    color = "#468847";
+
+                } else if (value.indexOf("default") > -1) {
+
+                    color = "#999999";
+                }else{
+
+                    color = "#999999";
+
+                }
+
+                jQuery(this).css("borderLeft", "5px solid " + color);
+
+                if(currentBox != null) {
+                    if (jQuery(this).attr("data-val") == currentBox) {
+                        jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
                     }
                 }
             }

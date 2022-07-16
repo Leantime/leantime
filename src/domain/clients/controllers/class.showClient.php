@@ -52,6 +52,7 @@ namespace leantime\domain\controllers {
             $row = $clientRepo->getClient($id);
 
             $clientValues = array(
+                'id' => $row['id'],
                 'name' => $row['name'],
                 'street' => $row['street'],
                 'zip' => $row['zip'],
@@ -148,7 +149,7 @@ namespace leantime\domain\controllers {
                 $tpl->assign('users', new repositories\users());
                 $tpl->assign('clientProjects', $project->getClientProjects($id));
                 $tpl->assign('files', $file->getFilesByModule('client', $id));
-                $tpl->assign('helper', new core\helper());
+
 
                 $tpl->display('clients.showClient');
 

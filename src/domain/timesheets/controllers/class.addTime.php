@@ -18,13 +18,13 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
+            $language = new core\language();
 
             $info = '';
             //Only admins and employees
             if(core\login::userIsAtLeast("developer")) {
 
                 $projects = new repositories\projects();
-                $helper = new core\helper();
                 $tickets = new repositories\tickets();
                 $values = array(
                     'userId' => $_SESSION['userdata']['id'],
@@ -61,7 +61,7 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['date']) && $_POST['date'] != '') {
 
-                        $values['date'] = ($helper->timestamp2date($_POST['date'], 4));
+                        $values['date'] = $language->getISODateString($_POST['date']);
 
                     }
 
@@ -81,7 +81,7 @@ namespace leantime\domain\controllers {
 
                         if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
 
-                            $values['invoicedEmplDate'] = ($helper->timestamp2date($_POST['invoicedEmplDate'], 4));
+                            $values['invoicedEmplDate'] = $language->getISODateString($_POST['invoicedEmplDate']);
 
                         }
 
@@ -99,7 +99,7 @@ namespace leantime\domain\controllers {
 
                             if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
 
-                                $values['invoicedCompDate'] = ($helper->timestamp2date($_POST['invoicedCompDate'], 4));
+                                $values['invoicedCompDate'] = $language->getISODateString($_POST['invoicedCompDate']);
 
                             }
 
@@ -153,9 +153,9 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['save']) === true) {
 
-                        $values['date'] = $helper->timestamp2date($values['date'], 2);
-                        $values['invoicedCompDate'] = $helper->timestamp2date($values['invoicedCompDate'], 2);
-                        $values['invoicedEmplDate'] = $helper->timestamp2date($values['invoicedEmplDate'], 2);
+                        $values['date'] = $language->getFormattedDateString($values['date']);
+                        $values['invoicedCompDate'] = $language->getFormattedDateString($values['invoicedCompDate']);
+                        $values['invoicedEmplDate'] = $language->getFormattedDateString($values['invoicedEmplDate']);
 
 
                         $tpl->assign('values', $values);

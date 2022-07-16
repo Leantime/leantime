@@ -9,13 +9,12 @@ namespace leantime\domain\repositories {
     {
 
 
-
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        function __construct()
+        public function __construct()
         {
 
             $this->db = core\db::getInstance();
@@ -118,7 +117,7 @@ namespace leantime\domain\repositories {
          * getCurrentSprintId - get current sprint for a project
          *
          * @access public
-         * @return array
+         * @return mixed
          */
         public function getCurrentSprint($projectId)
         {

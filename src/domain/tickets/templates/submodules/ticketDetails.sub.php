@@ -13,8 +13,15 @@
             <div class="span12">
                 <div class="form-group">
 
+                    <label class="span4 control-label"><?php echo $this->__('label.ticket_id'); ?></label>
+                    <div class="span6">
+                        <input type="text" value="<?php $this->e($ticket->id); ?>" name="id" autocomplete="off" style="width:99%;" readonly/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="span4 control-label"><?php echo $this->__('label.ticket_title'); ?>*</label>
+                    <div class="span6">
 
-                        <label class="control-label"><?php echo $this->__('label.ticket_title'); ?>*</label>
                         <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" autocomplete="off"  style="width:99%;"/>
 
                 </div>
@@ -224,7 +231,7 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.due_date'); ?></label>
                     <div class="span6">
-                        <input type="text" class="dates" style="width:90px;" id="deadline"
+                        <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
                                value="<?php echo $ticket->dateToFinish; ?>"
                                name="dateToFinish"/>
                     </div>
@@ -233,9 +240,9 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.working_date_from_to'); ?></label>
                     <div class="span6">
-                        <input type="text" class="dates" style="width:90px; float:left;" name="editFrom"
+                        <input type="text" class="dates" style="width:90px; float:left;" name="editFrom" autocomplete="off"
                                value="<?php echo $ticket->editFrom; ?>"/> -
-                        <input type="text" class="dates" style="width:90px;" name="editTo"
+                        <input type="text" class="dates" style="width:90px;" name="editTo" autocomplete="off"
                                value="<?php echo $ticket->editTo; ?>"/>
                     </div>
                 </div>

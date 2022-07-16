@@ -1,6 +1,5 @@
 <?php
 
-$helper = $this->get('helper');
 $project = $this->get('project');
 if(!$project['hourBudget']) {
 	$project['hourBudget'] = 'no';
@@ -36,7 +35,7 @@ $bookedHours = $this->get('bookedHours');
 		<td>
 		<label for="userId"><?php echo $this->__('EMPLOYEE'); ?></label>
 		<select name="userId" id="userId" onchange="submit();">
-			<option value="all"><?php echo $lang['ALL_EMPLOYEES']; ?></option>
+			<option value="all"><?php echo $this->__('ALL_EMPLOYEES'); ?></option>
 
 			<?php foreach($this->get('employees') as $row) {
 				echo'<option value="'.$row['id'].'"';
@@ -53,7 +52,7 @@ $bookedHours = $this->get('bookedHours');
 			<?php foreach($this->get('kind') as $row){
 				echo'<option value="'.$row.'"';
 				if($row == $this->get('actKind')) echo ' selected="selected"';
-				echo'>'.$lang[$row].'</option>';
+				echo'>'.$this->__($row).'</option>';
 
 			}
 			?>
@@ -121,7 +120,7 @@ $bookedHours = $this->get('bookedHours');
 		$sum = $sum + $row['hours'];?>
 		<tr>
 			<td><a href="index.php?act=timesheets.editTime&amp;id=<?php echo $row['id']; ?>"><?php echo $row['id']; ?></a></td>
-			<td><?php echo $helper->timestamp2date($row['workDate'], 2); ?></td>
+			<td><?php echo $this->getFormattedDateString($row['workDate']); ?></td>
 			<td><?php echo $row['hours']; ?></td>
 			<td><?php echo $row['planHours']; ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
@@ -129,11 +128,11 @@ $bookedHours = $this->get('bookedHours');
 			<td><a href="index.php?act=tickets.showTicket&amp;id=<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
 			<td><a href="index.php?act=projects.showProject&amp;id=<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
 			<td><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>
-			<td><?php echo $lang[$row['kind']]; ?></td>
+			<td><?php echo $this->__($row['kind']); ?></td>
 			<td><?php echo $row['description']; ?></td>
-			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedEmplDate'], 2); ?>
+			<td><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
 			<?php }else{ ?>  <?php } ?></td>
-			<td><?php if($row['invoicedComp'] == '1'){?> <?php echo $helper->timestamp2date($row['invoicedCompDate'], 2); ?>
+			<td><?php if($row['invoicedComp'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
 			<?php }else{ ?> <?php } ?></td>
 		</tr>
 		<?php } ?>

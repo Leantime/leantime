@@ -28,13 +28,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $role;
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $id;
 
@@ -89,6 +89,30 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
+        }
+
+        /**
+         * getLastLogin - get the date of the last login of any user
+         *
+         * @access public
+         * @param  $id
+         * @return string|null returns datetime string with last login or null if nothing could be found
+         */
+        public function getLastLogin() :string|null
+        {
+
+            $sql = "SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['lastlogin'])) {
+                return $values['lastlogin'];
+            }
+            return null;
         }
 
         /**
@@ -293,7 +317,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  $username
          * @param  $userId
-         * @return boolean
+         * @return bool
          */
         public function usernameExist($username, $userId ='')
         {

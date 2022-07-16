@@ -2,7 +2,6 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
-$helper = $this->get('helper');
 ?>
 
 
@@ -124,7 +123,7 @@ $helper = $this->get('helper');
 
     </div>
 
-	<div class="row-fluid  padding-top">
+	<div class="row-fluid  padding-top" style="display:none;">
 		<h4 class="widgettitle title-light">
 			<span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
 		</h4>
@@ -150,7 +149,7 @@ $helper = $this->get('helper');
 				</div>
 			</div>
 		</div>
-		<div class="span4">
+		<div class="spsan4">
 			<div class="form-group">
 				<label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
 				<div class="span6">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
+<html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $frontController->includeAction('general.header'); ?>
+    <?php echo $this->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL?>/css/vars.css.php?color=<?php echo htmlentities($_SESSION["companysettings.mainColor"]) ?>&v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
@@ -21,9 +21,8 @@
 <body>
 <div class="mainwrapper">
 
-
-
     <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-240px;'; ?>">
+
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
 
@@ -32,7 +31,7 @@
 
         <div class="leftmenu">
 
-            <?php echo $frontController->includeAction('general.menu'); ?>
+            <?php echo $this->includeAction('general.menu'); ?>
 
         </div><!--leftmenu-->
 
@@ -59,7 +58,6 @@
     <div class="rightpanel" style="position: relative; <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
 
         <!--###MAINCONTENT###-->
-
 
     </div><!--rightpanel-->
 

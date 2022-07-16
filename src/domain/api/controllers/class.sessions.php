@@ -23,7 +23,7 @@ namespace leantime\domain\controllers {
         {
 
             $this->tpl = new core\template();
-            $this->usersService = new services\users;
+            $this->usersService = new services\users();
 
         }
 

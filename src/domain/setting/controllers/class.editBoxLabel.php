@@ -7,8 +7,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
 
     class editBoxLabel
@@ -22,7 +22,7 @@ namespace leantime\domain\controllers {
          * constructor - initialize private variables
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function __construct()
         {
@@ -41,7 +41,7 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function get($params)
         {
@@ -88,7 +88,7 @@ namespace leantime\domain\controllers {
          * post - handle post requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function post($params)
         {
@@ -97,19 +97,24 @@ namespace leantime\domain\controllers {
             if (isset($_GET['module']) && isset($_GET['label'])) {
 
                 $sanitizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
+
                 //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {
 
                     $currentStateLabels = $this->ticketsRepo->getStateLabels();
-                    $newStateLabels = array();
-                    foreach ($currentStateLabels as $key => $label) {
-                        $newStateLabels[$key] = $label["name"];
-                    }
-                    $newStateLabels[$_GET['label']] = $sanitizedString;
 
-                    unset($_SESSION["projectsettings"]["ticketlabels"]);
-                    $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
-                        serialize($newStateLabels));
+                    $statusKey = filter_var($_GET['label'], FILTER_SANITIZE_NUMBER_INT);
+
+                    if(isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])){
+
+                        $currentStateLabels[$statusKey]['name'] = $sanitizedString;
+
+                        unset($_SESSION["projectsettings"]["ticketlabels"]);
+                        $this->settingsRepo->saveSetting("projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
+                            serialize($currentStateLabels));
+                    }
+
+
                 }
 
                 if ($_GET['module'] == "retrolabels") {
@@ -155,7 +160,7 @@ namespace leantime\domain\controllers {
          * put - handle put requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function put($params)
         {
@@ -166,7 +171,7 @@ namespace leantime\domain\controllers {
          * delete - handle delete requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function delete($params)
         {

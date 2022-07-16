@@ -1,7 +1,6 @@
 <?php
 
 defined( 'RESTRICTED' ) or die( 'Restricted access' );
-$helper = $this->get('helper');
 ?>
 <script type="text/javascript">
 
@@ -38,7 +37,6 @@ $helper = $this->get('helper');
 
 
         jQuery(".dateFrom, .dateTo").datepicker({
-            numberOfMonths: 1,
             dateFormat:  leantime.i18n.__("language.jsdateformat"),
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -47,10 +45,11 @@ $helper = $this->get('helper');
             currentText: leantime.i18n.__("language.currentText"),
             closeText: leantime.i18n.__("language.closeText"),
             buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
             nextText: leantime.i18n.__("language.nextText"),
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
-            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
         });
 	});
 
@@ -86,10 +85,10 @@ $helper = $this->get('helper');
 
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
-                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
+                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
 			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
-                <input type="text" id="dateTo" class="dateTo" name="dateTo"
+                <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
@@ -196,7 +195,7 @@ $helper = $this->get('helper');
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
 			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
-			<td data-order="<?php $diff; ?>"><?php echo $diff; ?></td>
+			<td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
 			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
 			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>

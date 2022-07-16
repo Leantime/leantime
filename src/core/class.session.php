@@ -38,18 +38,18 @@ class session
 
         $config = new config();
 
-        ini_set('session.gc_maxlifetime', $config->sessionExpiration);
+        ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
 
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
+        $testSession = false;
         if(isset($_COOKIE['sid']) === true) {
-            
             self::$sid=htmlspecialchars($_COOKIE['sid']);
-
+            $testSession = explode('-', self::$sid);
         }
 
-        $testSession = explode('-', self::$sid);
+
 
         //Don't allow session ids from user.
         if(is_array($testSession) === true && count($testSession) > 1) {
@@ -86,7 +86,7 @@ class session
 
         if (self::$instance === null) {
                 
-            self::$instance = new self;
+            self::$instance = new self();
 
         }
 

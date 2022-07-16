@@ -11,9 +11,16 @@
     $efforts        = $this->get('efforts');
     $priorities     = $this->get('priorities');
 
-    //All states >0 (<1 is archive)
-    $numberofColumns = count($this->get('allTicketStates'))-1;
-    $size = floor(100 / $numberofColumns);
+
+
+    //Count Columns to show
+    $numberofColumns = count($this->get('allKanbanColumns'));
+
+    if($numberofColumns > 0) {
+        $size = floor(100 / $numberofColumns);
+    }else {
+        $size = 100;
+    }
 
 ?>
 
@@ -41,7 +48,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
@@ -91,7 +98,7 @@
                     <div class="pull-right">
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != ""){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" class="active"><?=$this->__("links.kanban") ?></a></li>
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" ><?=$this->__("links.table") ?></a></li>
@@ -187,7 +194,7 @@
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.search_term") ?></label><br />
                         <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php $this->e($searchCriteria['term']); ?>">
-                        <input type="submit" value="Search" class="form-control btn btn-primary pull-left" />
+                        <input type="submit" value="Search" name="submitSearch" class="form-control btn btn-primary pull-left" id="filterFormSubmit"/>
                     </div>
 
                 </div>
@@ -200,21 +207,29 @@
 
 				<?php
 
-				foreach($this->get('allTicketStates') as $key => $statusRow){
-
-				    //Don't display archive on kanban board
-				    if($key<0){continue;}
+				foreach($this->get('allKanbanColumns') as $key => $statusRow){
 
 					?>
 
 						<div class="column" style="width:<?=$size?>%;">
 
-                            <h4 class="widgettitle title-primary titleBorderColor<?php echo $key; ?>">
+                            <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
                             <?php if ($login::userIsAtLeast("clientManager")) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
-                            <?php } ?>
+                                <div class="inlineDropDownContainer" style="float:right;">
+                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
 
-                            <?php $this->e($statusRow['name']); ?> (<strong class="count">0</strong>)</h4>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
+                                        </li>
+                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$this->__('links.add_remove_col')?></a></li>
+                                    </ul>
+                                </div>
+                                  <?php } ?>
+                                <strong class="count">0</strong>
+                            <?php $this->e($statusRow['name']); ?></h4>
+
 
 							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
@@ -268,10 +283,10 @@
                                                     </div>
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
+                                                <small>#<?php echo $row['id']; ?></small>
 
-                                                <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '...', false, true);?><?php if(strlen($row["description"]) >= 200) echo" (...)";?></p>
-
+                                                <h4><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+                                                <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
 
                                             </div>
 

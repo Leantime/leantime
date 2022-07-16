@@ -1852,32 +1852,6 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 /*** BUTTONS & ICONS ***/
 
-[class^="iconsweets-"], [class*=" iconsweets-"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    background-image: url(../images/iconsweets-icons.png);
-    background-position: -16px -16px;
-    background-repeat: no-repeat;
-}
-
-/* White icons with optional class or on hover/active states of certain elements */
-.iconsweets-white,
-.nav-pills > .active > a > [class^="iconsweets-"],
-.nav-pills > .active > a > [class*=" iconsweets-"],
-.nav-list > .active > a > [class^="iconsweets-"],
-.nav-list > .active > a > [class*=" iconsweets-"],
-.navbar-inverse .nav > .active > a > [class^="iconsweets-"],
-.navbar-inverse .nav > .active > a > [class*=" iconsweets-"],
-.dropdown-menu > li > a:hover > [class^="iconsweets-"],
-.dropdown-menu > li > a:hover > [class*=" iconsweets-"],
-.dropdown-menu > .active > a > [class^="iconsweets-"],
-.dropdown-menu > .active > a > [class*=" iconsweets-"],
-.dropdown-submenu:hover > a > [class^="iconsweets-"],
-.dropdown-submenu:hover > a > [class*=" iconsweets-"] {
-    background-image: url(../images/iconsweets-icons-white.png);
-}
 
 .iconsweets-magnifying-glass {
     background-position: -16px -16px;
@@ -3547,20 +3521,6 @@ ul.list-inline li {
 }
 
 
-
-
-.tabbedwizard .stepContainer {
-    padding: 30px;
-    background: #fff;
-}
-
-.tabbedwizard .stepContainer h4 {
-    font-size: var(--font-size-l);
-    border-bottom: 1px solid #ddd;
-    color: #666;
-}
-
-
 /*** EDIT PROFILE ***/
 
 .profile-left .taglist {
@@ -3809,12 +3769,18 @@ ul.list-inline li {
     width: 65%;
 }
 
+
 .width63 {
     width: 63%;
 }
 
 .width70 {
     width: 70%;
+}
+
+.btn-group+.btn-group {
+    margin-left: 0px;
+
 }
 
 /*** FONT ROBOTO LIGHT ***/
@@ -4733,7 +4699,6 @@ a.filter-term {
 
 .quickAddLink {
     display: block;
-
     padding: 5px;
     margin-bottom: 5px;
     border-radius:var(--box-radius);
@@ -4851,8 +4816,6 @@ body a.delete,
 body .ui-tabs-panel {
     color:var(--primary-font-color);
 }
-
-
 
 .emptyChartContainer {
     background: url('/images/emptyChartBg.png') no-repeat center center;
@@ -5027,10 +4990,10 @@ body::after {
 
 .widgettitle .editHeadline {
     float: right;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, .3);
 }
 
-.widgettitle .editHeadline:hover {
+body .widgettitle .editHeadline:hover {
     color: rgba(0, 0, 0, 0.5);
 }
 
@@ -5241,7 +5204,6 @@ input.secretInput:active {
     margin-bottom:10px;
 }
 
-
 .commentMain {
     width:calc(100% - 40px);
     margin-bottom:10px;
@@ -5318,4 +5280,26 @@ input.secretInput:active {
 
 .form-group {
     clear:both;
+}
+
+.maincontent .chzn-container .chzn-results li {
+    margin-bottom:2px;
+    list-style-type:none;
+    padding:5px;
+}
+
+.maincontent .chzn-container .chzn-results li span,
+.maincontent .chzn-container .chzn-single span{
+    margin-left:0px !important;
+}
+
+.maincontent .chzn-container .chzn-results li span:after,
+.maincontent .chzn-container .chzn-single span:after{
+    border-color:transparent;
+}
+
+.sortHandle {
+    font-size:16px;
+    color:#ccc;
+    padding-left:15px;
 }

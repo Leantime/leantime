@@ -7,8 +7,8 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    use \DateTime;
-    use \DateInterval;
+    use DateTime;
+    use DateInterval;
 
 
     class editCompanySettings
@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
          * constructor - initialize private variables
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function __construct()
         {
@@ -38,7 +38,7 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function get($params)
         {
@@ -48,7 +48,8 @@ namespace leantime\domain\controllers {
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "color" => $_SESSION["companysettings.mainColor"],
                     "name" => $_SESSION["companysettings.sitename"],
-                    "language" => $_SESSION["companysettings.language"]
+                    "language" => $_SESSION["companysettings.language"],
+                    "telemetryActive" => false
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -76,6 +77,11 @@ namespace leantime\domain\controllers {
                     $companySettings["language"] = $language;
                 }
 
+                $telemetryActive = $this->settingsRepo->getSetting("companysettings.telemetry.active");
+                if($telemetryActive !== false){
+                    $companySettings["telemetryActive"] = $telemetryActive;
+                }
+
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
                 $this->tpl->display('setting.editCompanySettings');
@@ -91,7 +97,7 @@ namespace leantime\domain\controllers {
          * post - handle post requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function post($params)
         {
@@ -108,6 +114,19 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
+                if(isset($_POST['telemetryActive'])) {
+
+                    $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
+
+                }else{
+
+                    //When opting out, delete all telemetry related settings including UUID
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.anonymousId");
+
+                }
+
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
                 $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
                     
@@ -120,7 +139,7 @@ namespace leantime\domain\controllers {
          * put - handle put requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function put($params)
         {
@@ -131,7 +150,7 @@ namespace leantime\domain\controllers {
          * delete - handle delete requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function delete($params)
         {

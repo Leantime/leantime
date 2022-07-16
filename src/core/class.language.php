@@ -7,6 +7,8 @@
 
 namespace leantime\core {
 
+    use Exception;
+
     class language
     {
 
@@ -20,7 +22,7 @@ namespace leantime\core {
          * @access private
          * @var    string default de-DE
          */
-        private $language = 'de';
+        private $language = 'en-US';
 
         /**
          * @access public
@@ -46,38 +48,39 @@ namespace leantime\core {
          * @var    array ini-values
          */
         private $alert = false;
+
         /**
          * __construct - Check standard language otherwise get language from browser
          *
          * @return array
          */
-        function __construct()
+        public function __construct()
         {
 
             $config = new config();
 
-            if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
+            if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
 
-                $this->langlist = parse_ini_file(''.$this->iniFolder.'languagelist.ini');
+                $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
 
-                if($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
+                if ($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
 
                     $this->setLanguage($config->language);
 
-                }elseif(isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
+                } elseif (isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
 
                     $this->setLanguage($_SESSION['companysettings.language']);
 
-                }else{
+                } else {
 
                     $browserLang = $this->getBrowserLanguage();
                     $this->setLanguage($browserLang);
 
                 }
 
-            }else{
+            } else {
 
-                throw new \Exception("Language list missing");
+                throw new Exception("Language list missing");
             }
 
         }
@@ -110,13 +113,13 @@ namespace leantime\core {
             //Todo: Add cache
 
             //Default to english US
-            $mainLanguageArray = parse_ini_file(''.$this->iniFolder.'/en-US.ini', false, INI_SCANNER_RAW );
+            $mainLanguageArray = parse_ini_file('' . $this->iniFolder . '/en-US.ini', false, INI_SCANNER_RAW);
 
-            if(file_exists(''.$this->iniFolder.'/'.$this->language.'.ini') === true) {
+            if (file_exists('' . $this->iniFolder . '/' . $this->language . '.ini') === true) {
 
-                $ini_overrides = parse_ini_file(''.$this->iniFolder.'/'.$this->language.'.ini', false, INI_SCANNER_RAW );
+                $ini_overrides = parse_ini_file('' . $this->iniFolder . '/' . $this->language . '.ini', false, INI_SCANNER_RAW);
 
-                if(is_array($ini_overrides) == true) {
+                if (is_array($ini_overrides) == true) {
 
                     foreach ($mainLanguageArray as $languageKey => $languageValue) {
 
@@ -142,12 +145,12 @@ namespace leantime\core {
         public function getLanguageList()
         {
 
-            if(file_exists(''.$this->iniFolder.'languagelist.ini') === true) {
+            if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
                 return $this->langlist;
 
-            }else{
+            } else {
 
                 return false;
 
@@ -175,7 +178,7 @@ namespace leantime\core {
 
             $langCode = explode("-", $language);
 
-            if(isset($this->langlist[$langCode[0]]) === true) {
+            if (isset($this->langlist[$langCode[0]]) === true) {
 
                 return $langCode[0];
 
@@ -184,22 +187,22 @@ namespace leantime\core {
         }
 
 
-        public function __($index)
+        public function __(string $index) :string
         {
 
             if (isset($this->ini_array[$index]) === true) {
 
                 $index = trim($index);
 
-                return $this->ini_array[$index];
+                return (string) $this->ini_array[$index];
 
             } else {
 
-                if($this->alert === true) {
+                if ($this->alert === true) {
 
-                    return '<span style="color: red; font-weight:bold;">'.$index.'</span>';
+                    return '<span style="color: red; font-weight:bold;">' . $index . '</span>';
 
-                }else{
+                } else {
 
                     return $index;
 
@@ -209,28 +212,30 @@ namespace leantime\core {
         }
 
         /**
-        * getFormattedDateString - returns a language specific formatted date string
-        *
-        * @access public
-        * @param $date string
-        * @return string
-        */
-        public function getFormattedDateString($date)
+         * getFormattedDateString - returns a language specific formatted date string
+         *
+         * @access public
+         * @param $date string
+         * @return string
+         */
+        public function getFormattedDateString($date) :string
         {
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
                 //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
-                if(strlen($date) == 10){
+                if (strlen($date) == 10) {
                     $timestamp = date_create_from_format("!Y-m-d", $date);
-                }else {
+                } else {
                     $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
                 }
 
-                if(is_object($timestamp)) {
+                if (is_object($timestamp)) {
                     return date($this->__("language.dateformat"), $timestamp->getTimestamp());
                 }
 
             }
+
+            return "";
 
         }
 
@@ -243,11 +248,11 @@ namespace leantime\core {
          */
         public function getFormattedTimeString($date)
         {
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
                 $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
-                if(is_object($timestamp)) {
+                if (is_object($timestamp)) {
                     return date($this->__("language.timeformat"), $timestamp->getTimestamp());
                 }
 
@@ -264,11 +269,11 @@ namespace leantime\core {
          */
         public function getISODateString($date)
         {
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
                 $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
-                if(is_object($timestamp)) {
+                if (is_object($timestamp)) {
                     return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
                 }
 
@@ -288,11 +293,11 @@ namespace leantime\core {
          */
         public function getISODateTimeString($date)
         {
-            if(is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-                $timestamp = date_create_from_format($this->__("language.dateformat")." ".$this->__("language.timeformat"), $date);
+                $timestamp = date_create_from_format($this->__("language.dateformat") . " " . $this->__("language.timeformat"), $date);
 
-                if(is_object($timestamp)) {
+                if (is_object($timestamp)) {
                     return date("Y-m-d H:i:00", $timestamp->getTimestamp());
                 }
 

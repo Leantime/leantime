@@ -194,7 +194,7 @@ $canvasLabels = $this->get('canvasLabels');
 
             <br/><br/>
             <div class='center'>
-                <div style='width:50%' class='svgContainer'>
+                <div style='width:30%' class='svgContainer'>
                     <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
                 </div>
 

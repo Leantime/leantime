@@ -1,7 +1,6 @@
 <?php
 
 defined( 'RESTRICTED' ) or die( 'Restricted access' );
-$helper = $this->get('helper');
 ?>
 
 
@@ -121,7 +120,7 @@ $helper = $this->get('helper');
                         <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
                         <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
                         <?php $diff = $row['planHours']-$row['hours']; ?>
-                        <td data-order="<?php $diff; ?>"><?php echo $diff; ?></td>
+                        <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
                         <td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
@@ -169,10 +168,11 @@ $helper = $this->get('helper');
             currentText: leantime.i18n.__("language.currentText"),
             closeText: leantime.i18n.__("language.closeText"),
             buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
             nextText: leantime.i18n.__("language.nextText"),
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
-            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
         });
     });
 

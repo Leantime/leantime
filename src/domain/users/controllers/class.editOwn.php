@@ -71,8 +71,6 @@ namespace leantime\domain\controllers {
                     //Validation
                     if ($values['user'] !== '') {
 
-                        $helper = new core\helper();
-
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 
                             if ($_POST['newPassword'] == $_POST['confirmPassword']) {

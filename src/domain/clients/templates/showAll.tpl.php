@@ -28,6 +28,7 @@
             </colgroup>
             <thead>
                 <tr>
+                    <th class='head0'><?php echo $this->__('label.client_id'); ?></th>
                     <th class='head1'><?php echo $this->__('label.client_name'); ?></th>
                     <th class='head0'><?php echo $this->__('label.url') ?></th>
                     <th class='head1'><?php echo $this->__('label.number_of_projects'); ?></th>
@@ -37,6 +38,7 @@
 
             <?php foreach($this->get('allClients') as $row) { ?>
                 <tr>
+                    <td><?php echo $row['id']; ?></td>
                     <td>
                 <?php echo $this->displayLink('clients.showClient', $this->escape($row['name']), array('id' => $this->escape($row['id']))) ?>
                     </td>

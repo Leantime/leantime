@@ -35,6 +35,13 @@ $users = $this->get('users');
                             <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span> <?php echo $this->__('subtitle.details'); ?></h4>
 
                             <div class="form-group">
+                                <label class="span4 control-label"><?php echo $this->__('label.client_id') ?></label>
+                                <div class="span6">
+                                    <input type="text" name="id" id="id" value="<?php $this->e($values['id']); ?>" readonly />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="span4 control-label"><?php echo $this->__('label.name') ?></label>
                                 <div class="span6">
                                     <input type="text" name="name" id="name" value="<?php $this->e($values['name']); ?>" />

@@ -8,10 +8,10 @@ defined('RESTRICTED') or die('Restricted access');
 <?php if($this->get('msg') === '') { ?>
 
 <form method="post" accept-charset="utf-8">
-<fieldset><legend><?php echo $lang['CONFIRM_DELETE']; ?></legend>
+<fieldset><legend><?php echo $this->__('CONFIRM_DELETE'); ?></legend>
 <p>Soll der Kalender wirklich gelöscht werden?<br />
 </p>
-<input type="submit" value="<?php echo $lang['DELETE']; ?>" name="del"
+<input type="submit" value="<?php echo $this->__('DELETE'); ?>" name="del"
     class="button"></fieldset>
 </form>
 

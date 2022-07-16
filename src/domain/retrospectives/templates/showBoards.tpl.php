@@ -381,7 +381,7 @@ $canvasTitle = "";
     <?php } else {
 
          echo "<br /><br /><div class='center'>";
-        echo"<div style='width:50%' class='svgContainer'>";
+        echo"<div style='width:30%' class='svgContainer'>";
             echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
         echo"</div>";
 

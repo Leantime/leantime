@@ -1,13 +1,13 @@
 <?php
 
 /**
- * settings class - System settings
+ * appSettings class - System appSettings
  *
  */
 
 namespace leantime\core;
 
-class settings {
+class appSettings {
 
 	/**
 	 * @access private
@@ -15,9 +15,9 @@ class settings {
 	 */
 	private $debug = 0;
 
-	public $appVersion = "2.1.9";
+	public $appVersion = "2.2.1";
 
-    public $dbVersion = "2.1.6";
+    public $dbVersion = "2.1.7";
 
 	/**
 	 * __construct
@@ -27,7 +27,7 @@ class settings {
 	}
 
 	/**
-	 * loadSettings - load all settings and set ini
+	 * loadSettings - load all appSettings and set ini
 	 *
 	 */
 	public function loadSettings($timezone){
@@ -38,11 +38,11 @@ class settings {
             date_default_timezone_set('America/Los_Angeles');
         }
 
-        error_reporting(E_ALL);
-
 		if($this->debug === 1){
+            error_reporting(E_ALL);
 			ini_set('display_errors', 1);
 		}else{
+            error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 			ini_set('display_errors', 0);
 		}
 
@@ -58,7 +58,15 @@ class settings {
 
 	public function getBaseURL () {
 
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ? "https://" : "http://";
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+
+            $protocol = "https://";
+        } else {
+            $protocol = "http://";
+        }
+
         $domainName = $_SERVER['HTTP_HOST'].'';
         return $protocol.$domainName;
 

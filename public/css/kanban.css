@@ -13,7 +13,8 @@
     box-sizing: border-box;
     height:auto;
     padding:5px;
-    float:left;
+    flex:0 0 auto;
+    min-width:250px;
 }
 
 .column:first-child {
@@ -28,6 +29,8 @@
     border:1px solid var(--neutral);
     padding:7px;
     min-height:45px;
+    overflow-x: hidden;
+    overflow-y: auto;
 
 }
 
@@ -68,27 +71,32 @@
     height: 50px;
 }
 
-.titleBorderColor1 {
+.titleBorderColor1,
+.title-border-label-important {
     border-bottom:5px solid #b94a48;
 }
 
-.titleBorderColor3 {
+.titleBorderColor3,
+.title-border-label-info{
     border-bottom:5px solid #2d6987;
 }
 
-.titleBorderColor4 {
+.titleBorderColor4,
+.title-border-label-warning{
     border-bottom:5px solid #f89406;
 }
 
-.titleBorderColor2 {
+.titleBorderColor2{
     border-bottom:5px solid #f89406;
 }
 
-.titleBorderColor0 {
+.titleBorderColor0,
+.title-border-label-success{
     border-bottom:5px solid #468847;
 }
 
-.titleBorderColor-1 {
+.titleBorderColor-1,
+.title-border-label-default{
     border-bottom:5px solid #999999;
 }
 
@@ -166,6 +174,7 @@
     padding:20px 0px;
 }
 
+
 body .maincontent .priority-border-1 {
     border-left: 3px solid #B92F2FFF;
 }
@@ -231,6 +240,12 @@ body .maincontent .priority-bg-5 {
     vertical-align: top;
     display: inline-block;
     margin-right: 8px;
+}
+
+.sortableTicketList .row-fluid {
+    width:100%;
+    display:flex;
+    overflow-x:auto;
 }
 
 .widgettitle strong {

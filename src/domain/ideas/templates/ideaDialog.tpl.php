@@ -35,7 +35,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
-        <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
         <label><?php echo $this->__("label.name") ?></label>

@@ -34,7 +34,7 @@
                 <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                     <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
-                <?php }; ?>
+                <?php } ?>
             </ul>
 
             <div id="ticketdetails">
@@ -54,7 +54,6 @@
                     <?php $this->displaySubmodule('tickets-attachments') ?>
                 </form>
             </div>
-
 
 
             <?php if ($_SESSION["userdata"]["role"] != "client") { ?>

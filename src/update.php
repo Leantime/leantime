@@ -1,14 +1,15 @@
 <?php
 
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $install = new leantime\core\install($config, $settings);
+
 
 ?>
 <!DOCTYPE html>
-<html dir="<?php echo $language->__("language.direction"); ?>" lang="<?php echo $language->__("language.code"); ?>">
+<html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $frontController->includeAction('general.header'); ?>
+    <?php echo $this->frontController->includeAction('general.header'); ?>
 
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/style.default.css?v=<?php echo $settings->appVersion; ?>" type="text/css" />
@@ -46,7 +47,7 @@ $install = new leantime\core\install($config, $settings);
             </div>
             <div class="col-md-6" style="position:relative;">
                 <a href="<?=BASE_URL ?>/" target="_blank"><img src="<?php echo htmlentities($_SESSION["companysettings.logoPath"]); ?>" /></a>
-                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $language->__("headlines.drive_impact"); ?></h1>
+                <h1 style="font-family:Exo;  font-size: 64px; padding-left:15px; font-weight:400;"><?php echo $this->language->__("headlines.drive_impact"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
 				    <span class="iq-round"></span>
                 </span>
@@ -61,8 +62,8 @@ $install = new leantime\core\install($config, $settings);
                     <div class="pageicon"><span class="iconfa-signin"></span></div>
                     <div class="pagetitle">
                         <h5><?php echo htmlentities($_SESSION["companysettings.sitename"]); ?></h5>
-                        <h1><?php echo $language->__("headlines.update_database"); ?></h1>
-                        <p><?php echo $language->__("text.new_db_version"); ?></p><br />
+                        <h1><?php echo $this->language->__("headlines.update_database"); ?></h1>
+                        <p><?php echo $this->language->__("text.new_db_version"); ?></p><br />
                     </div>
                 </div>
                 <div class="regcontent"  id="login" style="margin-left: 90px;">
@@ -93,14 +94,14 @@ $install = new leantime\core\install($config, $settings);
                         if($success === true) {
                             echo "
                                 <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-success'>".sprintf($language->__("text.update_was_successful"),BASE_URL)."</div>
+                                    <div class='alert alert-success'>".sprintf($this->language->__("text.update_was_successful"),BASE_URL)."</div>
                                 </div>";
                         }
                     ?>
                     <?php if($success !== true) { ?>
                     <form action="<?=BASE_URL ?>/update" method="post" class="registrationForm">
                         <input type="hidden" name="updateDB" value="1" />
-                       <p><input type="submit" name="updateAction" class="btn btn-primary" value="<?=$language->__("buttons.update_now")?>" onClick="this.form.submit(); this.disabled=true; this.value='Updating…'; "/></p>
+                       <p><input type="submit" name="updateAction" class="btn btn-primary" value="<?=$this->language->__("buttons.update_now")?>" onClick="this.form.submit(); this.disabled=true; this.value='Updating…'; "/></p>
                     </form>
                     <?php } ?>
                 </div>
