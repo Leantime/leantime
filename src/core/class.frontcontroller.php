@@ -309,7 +309,8 @@ namespace leantime\core {
          * @param  $completeName
          * @return string
          */
-        public static function getCurrentRoute() {
+        public static function getCurrentRoute() 
+        {
 
             return htmlspecialchars($_REQUEST['act']);
 
