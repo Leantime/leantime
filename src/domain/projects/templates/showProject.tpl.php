@@ -314,7 +314,7 @@
                 <option value="label-default" class="label-default"><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
             </select>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2">
             <label><?=$this->__("label.reportType") ?></label>
             <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW"><?=$this->__('status.new'); ?></option>
