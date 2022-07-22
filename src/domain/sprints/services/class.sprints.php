@@ -157,7 +157,9 @@ namespace leantime\domain\services {
             $sprintValues = $this->reportRepository->getSprintReport($sprint->id);
             $sprintData = array();
             foreach($sprintValues as $row) {
-                $sprintData[$row['date']] = $row;
+                if(is_object($row)) {
+                    $sprintData[$row->date] = $row;
+                }
             }
 
             $allKeys = array_keys($sprintData);
