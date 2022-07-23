@@ -159,30 +159,3 @@ $companySettings= $this->get('companySettings');
     </div>
 </div>
 </div>
-<script>
-    // color picker
-    if(jQuery('#colorpicker').length > 0) {
-        jQuery('#colorSelector span').css('backgroundColor', '#' + jQuery('#colorpicker').val());
-        jQuery('#colorSelector').ColorPicker({
-            color: jQuery('#colorpicker').val(),
-            onShow: function (colpkr) {
-                jQuery(colpkr).fadeIn(500);
-                return false;
-            },
-            onHide: function (colpkr) {
-                jQuery(colpkr).fadeOut(500);
-                return false;
-            },
-            onChange: function (hsb, hex, rgb) {
-                jQuery('#colorSelector span').css('backgroundColor', '#' + hex);
-                jQuery('#colorpicker').val(''+hex);
-
-                jQuery(".header .logo, .cr-boundary, .header, .widgettitle.title-primary, .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a, input[type='submit'], button").css('backgroundColor', '#' + hex);
-                jQuery(".widgetcontent, .pageicon").css('borderColor', '#' + hex);
-                jQuery(".pagetitle h1, .pageicon").css("color", '#' + hex);
-
-            }
-        });
-    }
-
-</script>

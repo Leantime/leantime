@@ -188,7 +188,7 @@ leantime.generalController = (function () {
                 }
             }
         );
-        console.log("complex loading");
+
 
     };
 

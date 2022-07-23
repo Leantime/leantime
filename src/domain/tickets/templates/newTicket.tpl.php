@@ -46,7 +46,6 @@ $ticket = $this->get('ticket');
 <script type="text/javascript">
 
     leantime.ticketsController.initTicketTabs();
-    leantime.ticketsController.initTicketEditor();
     leantime.ticketsController.initTagsInput();
 
     jQuery(window).load(function () {

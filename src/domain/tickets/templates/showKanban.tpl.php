@@ -50,7 +50,7 @@
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/newTicket" class='ticketModal'> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
@@ -463,4 +463,21 @@
         }
     ?>
 
+    jQuery(document).ready(function(){
+
+        <?php if(isset($_GET['showTicketModal'])) {
+
+        if($_GET['showTicketModal'] == "") {
+            $modalUrl = "";
+        }else{
+            $modalUrl = "/".(int)$_GET['showTicketModal'];
+        }
+        ?>
+
+        leantime.ticketsController.openTicketModalManually("<?=BASE_URL ?>/tickets/showTicket<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/showKanban');
+
+        <?php } ?>
+
+    });
 </script>
