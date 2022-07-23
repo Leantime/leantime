@@ -20,6 +20,11 @@
             <div class="form-group">
                 <form action="" method="post">
                     <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown">
+                        <span class="projectAvatar">
+                            <?php //If image available, show, otherwise show briefcase ?>
+                            <span class="fa fa-briefcase"></span>
+                        </span>
+
                         <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-down"></i>
                     </a>
 

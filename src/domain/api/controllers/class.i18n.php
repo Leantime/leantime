@@ -39,8 +39,8 @@ namespace leantime\domain\controllers {
         {
 
             header('Content-Type: application/javascript');
-            echo "
-                var leantime = leantime || {};
+
+            echo "var leantime = leantime || {};
                 var leantime = {
                     i18n: {
                         dictionary: ".json_encode($this->i18n->readIni()).",

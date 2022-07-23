@@ -6,3 +6,20 @@ body .tox-tinymce {
     border-radius:3px;
     z-index: 8;
 }
+
+body .tox .tox-toolbar,
+body .tox .tox-toolbar__overflow,
+body .tox .tox-toolbar__primary {
+    border-top:0px;
+}
+
+
+body .tox .tox-mbtn,
+body .tox .tox-collection__item-label {
+    font-size:var(--base-font-size);
+    font-family: var(--primary-font-family);
+}
+
+body .tox .tox-mbtn--active {
+    background:var(--secondary-action-bg);
+}

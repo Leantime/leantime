@@ -46,7 +46,8 @@ namespace leantime\domain\controllers {
 
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
-                    "color" => $_SESSION["companysettings.mainColor"],
+                    "primarycolor" => $_SESSION["companysettings.primarycolor"],
+                    "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
                     "name" => $_SESSION["companysettings.sitename"],
                     "language" => $_SESSION["companysettings.language"],
                     "telemetryActive" => false
@@ -64,7 +65,18 @@ namespace leantime\domain\controllers {
 
                 $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
                 if($mainColor !== false){
-                    $companySettings["color"] = $mainColor;
+                    $companySettings["primarycolor"] = "#".$mainColor;
+                    $companySettings["secondarycolor"] = "#".$mainColor;
+                }
+
+                $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
+                if($primaryColor !== false){
+                    $companySettings["primarycolor"] = $primaryColor;
+                }
+
+                $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
+                if($secondaryColor !== false){
+                    $companySettings["secondarycolor"] = $secondaryColor;
                 }
 
                 $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
@@ -103,14 +115,26 @@ namespace leantime\domain\controllers {
         {
             //If ID is set its an update
             if(isset($params['name']) && $params['name'] != ""
-                && isset($params['color'])  && $params['color'] != ""
+                && isset($params['primarycolor'])  && $params['primarycolor'] != ""
                 && isset($params['language'])  && $params['language'] != "") {
 
-                $this->settingsRepo->saveSetting("companysettings.mainColor", htmlentities(addslashes($params['color'])));
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
-                $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
+                $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
+                $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
+
+
+                //Check if main color is still in the system
+                //if so remove. This call should be removed in a few versions.
+                $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
+                if($mainColor !== false){
+                    $this->settingsRepo->deleteSetting("companysettings.mainColor");
+                }
+
+
+                $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
+                $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
@@ -128,10 +152,10 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
-                $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
-                    
 
             }
+
+            $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
 
         }
 

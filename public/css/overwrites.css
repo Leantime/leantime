@@ -1,36 +1,64 @@
-<?php 
-$color = $_GET['color']; 
-$color = "#".$color; 
-header("Content-type: text/css", true);
-?>
 
 /* login */
-.inputwrapper button { background: #d3401e; border-color: #b02808; }
-.inputwrapper button:hover { background: #b02808; border-color: #a42406; }
+.inputwrapper button { background: var(--main-action-bg); border-color: var(--main-border-color) }
+.inputwrapper button:hover { background: var(--main-action-hover-bg); border-color: var(--main-border-color) }
 
 /* background */
 
-body.loginpage, .header, .leftmenu .nav-tabs.nav-stacked > li.active > a, .leftmenu .nav-tabs.nav-stacked > li.active > a:hover, .shortcuts li a, .widgettitle, .mediamgr .mediamgr_rightinner h4, .messagemenu, .msglist li.selected, .wizard .hormenu li a.done, .wizard .hormenu li a.selected, .actionBar a:hover, .actionBar a:hover, .wizard .tabbedmenu, .nav-tabs > .active > a:focus, .tabbable > .nav-tabs, .btn-primary, .btn-primary:link, .nav-tabs > li > a:hover, .nav-tabs > li > a:focus, .nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus, .tabs-right .nav-tabs, .tabs-right > .nav-tabs > li > a, .tabs-left .nav-tabs, .tabs-left > .nav-tabs > li > a, .progress-primary .bar, .tab-primary.ui-tabs .ui-tabs-nav, .ui-datepicker-calendar td.ui-datepicker-today a, .nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus, .nav-list > .active > a, .nav-list > .active > a:hover, .nav-list > .active > a:focus, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled], .btn-group.open .btn-primary.dropdown-toggle, .fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice, div.tagsinput span.tag, .chzn-container .chzn-results .highlighted, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a, .label-primary, .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a
-{ background-color: <?php echo $color; ?>; }
+body.loginpage,
+.header,
+.leftmenu .nav-tabs.nav-stacked > li.active > a,
+.leftmenu .nav-tabs.nav-stacked > li.active > a:hover,
+.shortcuts li a,
+.widgettitle,
+.mediamgr .mediamgr_rightinner h4,
+.messagemenu, .msglist li.selected,
+.wizard .hormenu li a.done,
+.wizard .hormenu li a.selected,
+.actionBar a:hover, .actionBar a:hover,
+.wizard .tabbedmenu, .nav-tabs > .active > a:focus,
+.tabbable > .nav-tabs,
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus,
+.nav-pills > .active > a,
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:focus,
+.tabs-right .nav-tabs,
+.tabs-right > .nav-tabs > li > a,
+.tabs-left .nav-tabs,
+.tabs-left > .nav-tabs > li > a,
+.progress-primary .bar,
+.ui-datepicker-calendar td.ui-datepicker-today a,
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus,
+.nav-list > .active > a,
+.nav-list > .active > a:hover,
+.nav-list > .active > a:focus,
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice,
+div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
+.label-primary, .leftmenu .nav-tabs.nav-stacked
+{ background-color: var(--primary-color) }
+
 
 
 .loginpanelinner,
 .leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
-	background-color: <?php echo $color; ?> !important;
+	background-color: var(--primary-color) !important;
+	color:var(--main-action-color);
 }
 
-.header .logo,
+.header .logo {
+
+}
+
 .cr-boundary,
-.maincontentinner .dt-buttons .dt-button-collection button:hover,
 .boxedHighlight{
-	background-color: <?php echo $color; ?>;
 }
 
 /* color */
 
 a,a:hover,a:link,a:active,a:focus,
-.pageicon,
-.pagetitle h1,
 .userlist li .uinfo h5,
 .messagemenu ul li.active a,
 .msglist li h4,
@@ -58,22 +86,19 @@ input.secretInput,
 .maincontentinner .ticketDropdown.noBg >a:link,
 .viewDropDown .dropdown-menu li a.active,
 .paginate_button.current:hover
-{ color: <?php echo $color; ?>; }
+{ color: var(--primary-color); }
 
 
 input[type='submit'],
 button,
 .shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
-.table th,
-.dropdown-menu span.radio:hover,
-.paginate_button.current,
-.dropdown-menu > li > a.active
-{ background-color:  <?php echo $color; ?>;  }
+.paginate_button.current
+{ background-color:  var(--main-action-bg);  }
 
 input[type='submit']:hover, 
 button:hover {
-	background-color:  #555;
+	background-color:  var(--main-action-hover-bg);
 	color:#fff;
 } 	
 
@@ -91,8 +116,6 @@ span.btn-white:hover{
 
 	
 /* border color */
-
-.pageicon,
 .widgetcontent,
 .messagemenu ul li.active,
 .messageleft,
@@ -118,7 +141,6 @@ span.btn-white:hover{
 .tabs-right,
 .tabs-left,
 .tab-primary.ui-tabs,
-.btn-primary, .btn-primary:link,
 .nav-tabs.nav-stacked > li > a,
 .nav-tabs.nav-stacked > li > a:hover,
 .nav-tabs.nav-stacked > li > a:hover,
@@ -127,21 +149,21 @@ span.btn-white:hover{
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus,
 div.tagsinput span.tag
-{ border-color: <?php echo $color; ?>; }
+{ border-color: var(--main-border-color) }
 
 
-.ui-datepicker-header { background-color: <?php echo $color; ?> !important; }
-.ui-datepicker { border-color: <?php echo $color; ?> !important; }
+.ui-datepicker-header { background-color: var(--primary-color) !important; }
+.ui-datepicker { border-color: var(--main-border-color) !important; }
 
 
 /* extras */
 
-.tabs-below > .nav-tabs > li.active > a { border-bottom: 1px solid <?php echo $color; ?> !important; }
+.tabs-below > .nav-tabs > li.active > a { border-bottom: 1px solid var(--main-border-color) !important; }
 .nav-list > li > a { color: #666; }
 .tabs-left > .nav-tabs > li,
-.tabs-right > .nav-tabs > li { border-color: rgba(255,255,255,0.2); }
-.leftmenu .nav-tabs.nav-stacked > li > a { border-color: #232323 !important; }
-.leftmenu .nav-tabs.nav-stacked > li.active > a { border-color: rgba(0,0,0,0.1) !important; }
+.tabs-right > .nav-tabs > li { border-color: var(--main-border-color); }
+.leftmenu .nav-tabs.nav-stacked > li > a { border-color: var(--main-border-color) !important; }
+.leftmenu .nav-tabs.nav-stacked > li.active > a { border-color: var(--main-border-color) !important; }
 
 /* ie fix */
 
@@ -151,11 +173,11 @@ div.tagsinput span.tag
 
 @media screen and (max-width: 480px) {
  
- .userloggedinfo ul li a:hover { background-color: <?php echo $color; ?>; }
+ .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
  
   .userloggedinfo .userinfo,
   .wizard .hormenu li,
-  .messageright { border-color: <?php echo $color; ?>; }
+  .messageright { border-color: var(--main-border-color); }
 
 }
 
@@ -181,7 +203,7 @@ div.tagsinput span.tag
 }
 
 .ui-weekpicker td a.ui-state-highlight {
-	background-color: <?php echo $color; ?>;
+	background-color: var(--primary-color);
 }
 
 
@@ -197,18 +219,25 @@ div.tagsinput span.tag
 
 .filterBar {
 	
-	border:1px solid #ccc;
+	border:1px solid var(--main-border-color);
 	padding:10px;
 	margin-bottom:5px;
-	background:#eee;
+	background:var(--kanban-col-bg);
 	padding-top:5px;
+	margin-top: 10px;
+    border-radius:var(--box-radius);
+}
 
+.headtitle {
+	background:var(--kanban-col-bg);
+	border:1px solid var(--main-border-color);
+	border-radius:var(--box-radius);
 }
 
 .filterBar .filterBoxLeft {
 	float:left;
 	margin-right:15px;
-min-width:50px;
+    min-width:50px;
 }
 
 .filterBar .filterBoxLeft input,
@@ -228,11 +257,14 @@ label.inline {
 	height:40px;
 }
 
-.widgettitle.title-light {
-	color:<?php echo $color; ?>;
-	padding-left:5px;
-	background-color:#fff;
-	border-bottom:1px solid #ddd;
+body .widgettitle.title-light {
+	color:var(--primary-color);
+	padding-left:0px;
+	background-color: transparent !important;
+    border-left:0px !important;
+    border-top:0px !important;
+    border-right:0px !important;
+	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 
 }
@@ -243,17 +275,10 @@ font-size: 16px;
 }
 
 div.tagsinput {
-	border:1px solid #ccc;	
+	border:1px solid var(--main-border-color);
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus,
-.btn-group.open .btn-primary.dropdown-toggle,
-{ background: #ccc; color:#000 }
 
-.btn-primary, .btn-primary:link { 
-	
-	border: 1px solid #ddd;
-	 }
 	 
 	 .tabbedwidget .btn-primary {
 	 	border:0px;
@@ -262,3 +287,14 @@ div.tagsinput {
 .gantt-container a:hover {
     text-decoration:underline !important;
 }
+
+
+body .tox .tox-edit-area__iframe,
+body .tox .tox-toolbar-overlord{
+	background-color:var(--secondary-background);
+}
+
+
+
+
+/* Playing with header */

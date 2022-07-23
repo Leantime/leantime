@@ -238,7 +238,7 @@ jQuery(document).ready(function(){
 
                 <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
 
-                    <div class="headtitle filterBar " style="margin:0px; background: #eee;">
+                    <div class="headtitle filterBar">
 
                         <div class="padding-top-sm">
                             <span><?php echo $this->__('label.week_from')?></span>

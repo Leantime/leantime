@@ -105,7 +105,7 @@ class application
 
                 $telemetryResponse->wait();
 
-            }catch(\LogicException $e){
+            }catch(\Exception $e){
 
                 error_log($e->getMessage(), 0);
 
@@ -146,12 +146,35 @@ class application
             }
         }
 
-        if(isset($_SESSION["companysettings.mainColor"]) === false) {
+
+        if(isset($_SESSION["companysettings.primarycolor"]) === false) {
+
+            $_SESSION["companysettings.primarycolor"] = "#".$this->config->mainColor;
+            $_SESSION["companysettings.secondarycolor"] = "#".$this->config->mainColor;
+
+            //Old setting
             $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
             if ($mainColor !== false) {
-                $_SESSION["companysettings.mainColor"] = $mainColor;
-            }else{
-                $_SESSION["companysettings.mainColor"] = $this->config->mainColor;
+                $_SESSION["companysettings.primarycolor"] = "#".$mainColor;
+                $_SESSION["companysettings.secondarycolor"] = "#".$mainColor;
+            }
+
+            //new setting
+            $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
+            if ($primaryColor !== false) {
+                $_SESSION["companysettings.primarycolor"] = $primaryColor;
+                $_SESSION["companysettings.secondarycolor"] = $primaryColor;
+            }
+
+            $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
+            if ($secondaryColor !== false) {
+                $_SESSION["companysettings.secondarycolor"] = $secondaryColor;
+            }
+
+        }else{
+            if(!str_starts_with($_SESSION["companysettings.primarycolor"], "#")){
+                $_SESSION["companysettings.primarycolor"] = "#".$_SESSION["companysettings.primarycolor"];
+                $_SESSION["companysettings.secondarycolor"] = "#".$_SESSION["companysettings.primarycolor"];
             }
         }
 

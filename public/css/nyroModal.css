@@ -2,24 +2,23 @@
 .nyroModalCont, .nyroModalBg {
 	z-index: 100;
 	overflow-x: hidden !important;
-	padding: 30px 40px 20px 35px
+	padding: 34px 40px 20px 35px
 }
 
 .nyroModalBg {
 	position: fixed;
-	overflow: hidden;
+	overflow: auto;
 	top: 0;
 	left: 0;
 	height: 100%;
 	width: 100%;
-	background: #000;
-	opacity: 0.7;
+	background: rgba(0, 0, 0, 0.6);
 }
 .nmReposition {
 	position: absolute;
 }
 .nyroModalCloseButton {
-	top: -13px;
+	top: -8px;
 	right: -13px;
 	width: 12px;
 	height: 12px;
@@ -34,10 +33,11 @@
 	color: #ddd;
 }
 .nyroModalCont {
-	position: absolute;
+	position: relative;
 	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
 	background: #fff;
 	border-radius:5px;
+	margin-bottom:50px;
 }
 .nyroModalCont iframe {
 	width: 600px;
@@ -58,8 +58,6 @@
 	position: relative;
 	min-height: 100px;
 	min-width: 250px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
 }
 .nyroModalImage, .nyroModalSwf, .nyroModalIframe, .nyroModalIframeForm {
 	position: relative;
@@ -119,10 +117,16 @@
 }
 
 .nyroModalCont select {
-	max-width:50%;
+	max-width:90%;
 	height: 28px;
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
 
+}
+
+.nyroModalCont h1 {
+	font-size:var(--font-size-xxl);
+	color:var(--primary-font-color);
+	margin-bottom:20px;
 }

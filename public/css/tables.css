@@ -1,9 +1,48 @@
+.table th {
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: var(--base-font-size);
+    border-top: 0;
+
+    color: var(--kanban-col-title-color);
+    background:var(--kanban-col-title-bg);
+}
+
+.table th.centeralign, .table td.centeralign {
+    text-align: center;
+}
+
+
+.table.table-bordered th {
+    border-color: #555;
+}
+
+.table .con0 {
+    background: var(--content-bg);
+}
+
+.table .con1 {
+    background: var(--kanban-col-bg);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-right: 1px solid #ccc;
+    border-left:0px;
+}
+
+.table-bordered th:last-child,
+.table-bordered td:last-child {
+    border-right: 0px solid #ccc;
+}
+
+
 .dataTable {
     margin-bottom: 0;
 }
 
 .dataTable th, .dataTable td {
-    font-size: 12px;
+    font-size: var(--base-font-size);
 }
 
 .dataTables_wrapper {
@@ -11,10 +50,10 @@
 }
 
 .dataTables_length, .dataTables_info {
-    background: #eee;
+    background: var(--kanban-col-title-bg);
     padding: 10px;
-    font-size: 11px;
-    border: 1px solid #ddd;
+    font-size: var(--font-size-s);
+    border: 1px solid #ccc;
 }
 
 .dataTables_length {
@@ -48,12 +87,12 @@
     padding: 5px 10px;
     border: 1px solid #ccc;
     font-size: 12px;
-    background: #eee;
+    background: var(--kanban-col-title-bg);
     cursor: pointer;
 }
 
 .dataTables_paginate span:hover {
-    background-color: #ddd;
+    background-color: var(--secondary-action-hover-bg);
 }
 
 .dataTables_paginate .first {
@@ -65,18 +104,18 @@
 }
 
 .dataTables_paginate .paginate_button:hover {
-    background: #eee;
+    background: var(--kanban-col-title-bg);
 }
 
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
     color: #ccc;
-    background: #eee;
+    background: var(--kanban-col-title-bg);
 }
 
 .dataTables_paginate a {
-    color: #666;
-    font-size:12px;
+    color: var(--primary-font-color);
+    font-size:var(--font-size-s);
 }
 
 .dataTables_paginate a:hover {
@@ -89,7 +128,7 @@
 }
 
 .dataTables_scrollHead {
-    background: #333;
+    background: #555;
 }
 
 .dataTables_scrollHead table {
@@ -106,7 +145,7 @@
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: #555;
+    background: var(--col-hover-bg);
 }
 
 .dataTable thead th.sorting:after {
@@ -126,38 +165,65 @@
 
 }
 
+.maincontentinner .table {
+    border:1px solid #ccc;
+}
+
+.table-bordered {
+    border-top-left-radius:var(--box-radius);
+    border-top-right-radius:var(--box-radius);
+}
+
 .maincontentinner .table th,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
     text-transform:none;
-    font-size: 14px;
+    font-size: var(--base-font-size);
     border-top: 0;
-    color: #fff;
+
     font-weight: normal;
     text-rendering: optimizelegibility;
-    padding: 12px 14px;
+    padding: 10px;
+
     border:0px;
     border-right:1px solid #ccc;
     border-color:#ccc;
     line-height: 17px;
+
+    color: var(--kanban-col-title-color);
+    background:var(--col-title-bg);
+}
+
+.table-bordered colgroup+thead tr:first-child th:first-child {
+    border-top-left-radius:var(--box-radius);
+}
+
+.table-bordered colgroup+thead tr:last-child th:last-child {
+    border-top-right-radius:var(--box-radius);
+}
+
+.maincontentinner .table th:last-child,
+.maincontentinner .table.table-bordered th:last-child {
+    border-right:0px;
 }
 
 
 .maincontentinner .table th.sorting_desc,
 .maincontentinner .table th.sorting_asc {
-    background:#555;
+    color: var(--primary-font-color);
+    background:var(--col-hover-bg);
 }
 
 
 .maincontentinner .table tr.dtrg-group td {
-    background:#555;
-    color: #fff;
-    padding: 6px 14px;
+    background:var(--col-hover-bg);
+    color: var(--kanban-col-title-color);
+    padding: 5px 10px;
 }
 
 .maincontentinner .table {
-    margin-top:5px;
+    margin-top:10px;
 }
 
 .maincontentinner .table td {
@@ -180,8 +246,9 @@
 
 .maincontentinner .dataTables_wrapper  .bottom {
     position:relative;
-    background: #eee;
-    border: 1px solid #ddd;
+    background:var(--kanban-col-title-bg);
+    border: 1px solid var(--main-border-color);
+    border-top:0px;
     height:60px;
 }
 
@@ -213,7 +280,7 @@
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
-    outline:2px solid #333;
+    outline:2px solid #555;
 }
 
 .paginate_button.current {
@@ -240,12 +307,10 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button {
     display:block;
-    width:95%;
+    width:100%;
     margin:0px;
-    background:#fff;
-    font-size: 12px;
-    color: #aaa;
-    margin: 0 5px;
+    background:var(--secondary-background);
+    color: var(--main-menu-link-color);
     padding: 5px 10px;
     border:0px;
     text-align:left;
@@ -255,12 +320,13 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button.active{
     text-decoration: none;
-    color: #444;
+    color: #555;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
 .maincontentinner .dt-buttons .dt-button-collection button.active:hover{
-    color:#fff;
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
 }
 
 .maincontentinner .dt-buttons>.dt-button {
@@ -268,18 +334,16 @@
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
-    border-color: #bbb;
-    border: 1px solid #ddd;
+    border-color: #ccc;
+    border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
-    padding: 3px 15px;
-    font-family: 'LatoBold', arial;
-    word-spacing: 2px;
+    padding: 3px 12px;
     line-height: 20px;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: baseline;
     cursor: pointer;
-    color: #333333;
-    background: #eee;
+    color: var(--secondary-action-color);
+    background: var(--secondary-action-bg);
     text-shadow: none;
     line-height:20px;
 }
@@ -289,7 +353,16 @@
 }
 
 .maincontentinner .dt-buttons>.dt-button:hover {
-    background:#e1e1e1;
+    background:var(--secondary-action-hover-bg);
+    color:var(--secondary-action-hover-color);
+}
+.maincontentinner .dt-buttons .dt-button-collection button {
+    border-radius:0px;
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button:hover {
+    background:var(--main-menu-link-hover-bg);
+    color:var(--main-menu-link-hover-color);
 }
 
 
@@ -304,6 +377,13 @@
 
 .maincontentinner .timesheetTable tfoot td {
     padding:10px;
+}
+
+.maincontentinner .headtitle table,
+.maincontentinner .headtitle .table th,
+.maincontentinner .headtitle .table td{
+    border:none;
+    margin-top:0px;
 }
 
 
