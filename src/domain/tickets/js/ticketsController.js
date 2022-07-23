@@ -29,6 +29,39 @@ leantime.ticketsController = (function () {
         titleFromIframe: true
     };
 
+    var ticketModalConfig = {
+        sizes: {
+            minW:  700,
+            minH: 1000
+        },
+        resizable: true,
+        autoSizable: true,
+        callbacks: {
+            beforePostSubmit: function() {
+                jQuery('textarea.complexEditor').tinymce().save();
+                jQuery('textarea.complexEditor').tinymce().remove();
+            },
+            beforeShowCont: function() {
+
+
+
+
+            },
+            afterShowCont: function () {
+
+                jQuery("#commentForm, .deleteComment, .ticketModal").nyroModal(ticketModalConfig);
+            },
+            beforeClose: function () {
+
+                location.reload();
+            },
+
+
+
+        },
+        titleFromIframe: true
+    };
+
     //Constructor
     (function () {
         jQuery(document).ready(
@@ -70,6 +103,10 @@ leantime.ticketsController = (function () {
 
     var openMilestoneModalManually = function (url) {
         jQuery.nmManual(url, milestoneModalConfig);
+    };
+
+    var openTicketModalManually = function (url) {
+        jQuery.nmManual(url, ticketModalConfig);
     };
 
     var toggleFilterBar = function () {
@@ -1334,6 +1371,7 @@ leantime.ticketsController = (function () {
         updatePlannedHours:updatePlannedHours,
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
+        openTicketModalManually: openTicketModalManually,
         initTimeSheetChart:initTimeSheetChart,
         initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,

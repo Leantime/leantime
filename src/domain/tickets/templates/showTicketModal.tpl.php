@@ -3,9 +3,18 @@
     defined('RESTRICTED') or die('Restricted access');
 	$ticket = $this->get('ticket');
 	$projectData = $this->get('projectData');
-$todoTypeIcons  = $this->get("ticketTypeIcons");
+    $todoTypeIcons  = $this->get("ticketTypeIcons");
 
 ?>
+<script type="text/javascript">
+    window.onload = function() {
+        if (!window.jQuery) {
+            //It's not a modal
+            location.href="<?=BASE_URL ?>/tickets/showKanban&showTicketModal=<?php echo $ticket->id; ?>";
+
+        }
+    }
+</script>
 
 
         <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
