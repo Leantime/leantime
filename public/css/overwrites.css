@@ -52,8 +52,8 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 
 }
 
-.cr-boundary,
 .boxedHighlight{
+	background:var(--accent1);
 }
 
 /* color */
