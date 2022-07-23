@@ -5090,6 +5090,8 @@ body .widgettitle .editHeadline:hover {
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .fa {
     font-size: var(--base-font-size);
     padding-left:5px;
+    float:right;
+    margin-top:24px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector:hover,

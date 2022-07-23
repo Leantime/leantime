@@ -21,7 +21,7 @@ rm .gitattributes .gitignore composer.json composer.lock gruntfile.js package-lo
 
 cd ..
 
-zip -r -X Leantime-v$1.zip leantime/*
+zip -r -X Leantime-v$1.zip leantime/.
 
 tar -zcvf Leantime-v$1.tar.gz leantime
 
