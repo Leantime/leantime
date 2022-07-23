@@ -8,7 +8,7 @@ class config
     public $sitename = 'Leantime'; //Name of your site, can be changed later
     public $language = 'en-US'; //Default language
     public $mainColor = '1b75bb'; //Default color, can be changed later
-    public $logoPath = '/images/logo.png'; //Default logo path, can be changed later
+    public $logoPath = '/images/logo.svg'; //Default logo path, can be changed later
     public $appUrl = ''; //Base URL, trailing slash not needed
     public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone
 

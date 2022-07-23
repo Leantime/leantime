@@ -158,6 +158,7 @@ namespace leantime\core {
 
             include $strTemplate;
 
+
             $subContent = ob_get_clean();
 
             $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);

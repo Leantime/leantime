@@ -29,13 +29,19 @@
     border:1px solid var(--neutral);
     padding:7px;
     min-height:45px;
-    overflow-x: hidden;
-    overflow-y: auto;
 
+}
+
+.kanbanCardContent {
+    overflow:hidden;
 }
 
 .ticketBox:hover {
     background:#f3f4f5;
+}
+
+.ticketBox h4 a {
+    font-weight:bold;
 }
 
 .column .contentInner .ui-state-highlight {
@@ -111,7 +117,7 @@
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
     border:1px solid var(--main-border-color);
-    padding:10px;
+    padding:10px 15px;
     padding-bottom:10px;
     margin-bottom:5px;
     cursor:move;
@@ -227,7 +233,7 @@ body .maincontent .priority-bg-5 {
     padding: 10px 10px;
     font-size: var(--base-font-size);
     line-height:17px;
-
+    font-weight: bold;
     border-left: 1px solid var(--main-border-color) !important;
     border-top: 1px solid var(--main-border-color) !important;
     border-right: 1px solid var(--main-border-color) !important;

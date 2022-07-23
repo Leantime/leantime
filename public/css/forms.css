@@ -1,4 +1,8 @@
 
+form label {
+    padding-top:5px;
+}
+
 tox-edit-area,
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     height: auto;
@@ -15,6 +19,12 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     border-radius: 3px;
     padding: 3px 6px;
     color:var(--primary-font-color);
+}
+
+input:read-only,
+input:disabled {
+    border:none;
+    box-shadow:none;
 }
 
 body div.tagsinput {
@@ -86,7 +96,6 @@ textarea, button {
 
 .stdform .assign-container label {
     width: auto;
-    padding-top: 0px;
 }
 
 .assign-container .checker {
@@ -103,11 +112,18 @@ textarea, button {
 
 /*Secondary Button*/
 body .btn-default,
+body .btn,
+a.btn,
+input.btn,
+button.btn,
 body input[type='submit'].btn-default,
 .btn-group .btn,
 .btn-group>.btn:last-child,
-.btn-group>.dropdown-toggle
+.btn-group>.dropdown-toggle,
+a.btn-default,
+.btn-default:link
 {
+    font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     padding: 3px 12px;
     line-height:21px;
@@ -120,7 +136,7 @@ body input[type='submit'].btn-default,
     border:1px solid var(--secondary-action-bg);
     border-radius:var(--element-radius) !important;
     outline:0;
-    vertical-align: baseline;
+    vertical-align: top;
 }
 
 body .btn-default:hover,
@@ -164,7 +180,8 @@ body input[type='submit'].btn-default:active,
 
 /*Primary button */
 
-.btn-primary,
+body .btn-primary,
+body btn.btn-primary,
 input[type='submit'],
 .btn-primary:link,
 .dt-button,
@@ -205,10 +222,6 @@ body .btn-group.open .btn-primary.dropdown-toggle,
     font-size:var(--base-font-size);
 }
 
-input:disabled {
-    opacity:0.75;
-}
-
 
 
 .btn-group>.btn {
@@ -223,8 +236,12 @@ a:link.btn{
 
 }
 
+.viewText {
+    padding-right:5px;
+}
+
 .btn .caret {
-    margin-left: 5px;
+    margin-left: 0px;
 }
 
 .btn-small {
@@ -405,5 +422,16 @@ select,
 .chzn-container-multi .chzn-choices .search-field input {
     height: auto;
     padding: 3px 6px;
+}
+
+input[type=checkbox] {
+    margin-top:9px;
+}
+
+input[type=color] {
+    height:29px;
+    padding:0px;
+    width:29px;
+    border:2px solid #ccc;
 }
 

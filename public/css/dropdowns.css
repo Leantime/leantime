@@ -104,6 +104,13 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 }
 
+.maincontentinner .dropdown img {
+    width:21px;
+    border-radius: 10px;
+    border: 1px solid var(--neutral);
+    margin-top:1px;
+}
+
 
 .maincontentinner .ticketDropdown.noBg >a:hover {
     color:#000;
@@ -185,7 +192,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu span.radio input[type="radio"] {
     float:left;
     vertical-align: middle;
-    margin-top: 5px;
+    margin-top: 9px;
     margin-right:5px;
 }
 

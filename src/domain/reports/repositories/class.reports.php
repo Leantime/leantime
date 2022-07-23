@@ -277,7 +277,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getSprintReport($sprint)
+        public function getSprintReport($sprint) :array
         {
 
             $query = "SELECT * FROM zp_stats WHERE sprintId = :sprint ORDER BY date ASC";

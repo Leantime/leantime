@@ -1399,7 +1399,9 @@ jQuery(function($, undefined) {
 				if (nm.store.form.sel)
 					data.push({name: nm.selIndicator, value: nm.store.form.sel.substring(1)});
 
-				nm.callbacks.beforePostSubmit();
+				if (typeof nm.callbacks.beforePostSubmit === "function") {
+					nm.callbacks.beforePostSubmit();
+				}
 
 				$.ajax({
 					url: nm.store.form.url,

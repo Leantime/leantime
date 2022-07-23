@@ -1,22 +1,22 @@
-<?php 
-$color = $_GET['color']; 
-$color = "#".$color; 
+<?php
+
+$color1 = strlen($_GET['color1'])==7 ? $_GET['color1'] : "#1b75bb";
+$color2 = strlen($_GET['color2'])==7 ? $_GET['color2'] : "#81B1A8";
+
 header("Content-type: text/css", true);
 
 //TODO: Replace wtih custom colors
 
 ?>
 
-
 :root {
 
-
-    --accent1: #1b75bb;
-    --accent1-hover: #145A8F;
+    --accent1: <?=$color1 ?>;
+    --accent1-hover: #555;
     --accent1-color:#fff;
 
-    --accent2:#81B1A8;
-    --accent2-hover: #81B1A8;
+    --accent2:<?=$color2 ?>;
+    --accent2-hover: #555;
     --accent2-color:#fff;
 
     --primary-background: #F4F4F6;
@@ -106,7 +106,7 @@ header("Content-type: text/css", true);
 
     --main-border-color:var(--neutral);
     --regular-shadow: 0px 2px 4px rgb(0 0 0 / 20%);
-    --large-shadow: 0px 0px 10px 0 rgba(0 0 0 / 30%);
+    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
     --box-radius: 5px;
     --box-radius-small:3px;
     --element-radius: 5px;
@@ -114,8 +114,8 @@ header("Content-type: text/css", true);
     --kanban-col-bg: var(--col-content-bg);
     --kanban-col-title-bg: var(--col-title-bg);
     --kanban-col-title-color:var(--primary-font-color);
-    --kanban-card-bg: #fff;
-    --kanban-card-hover: #F4F4F6;
+    --kanban-card-bg: var(--secondary-background);
+    --kanban-card-hover: var(--primary-background);
 
 }
 

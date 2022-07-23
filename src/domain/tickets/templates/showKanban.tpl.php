@@ -257,7 +257,7 @@
 
                                         <div class="row">
 
-                                            <div class="col-md-12" style="overflow:hidden">
+                                            <div class="col-md-12">
                                                 <?php
 
                                                 if ($login::userIsAtLeast("developer")) {
@@ -284,10 +284,10 @@
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
-
-                                                <h4><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
-
+                                                <div class="kanbanCardContent">
+                                                    <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+                                                    <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
+                                                </div>
                                             </div>
 
 

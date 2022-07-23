@@ -131,7 +131,6 @@ leantime.generalController = (function () {
                 branding: true,
                 statusbar: true,
                 convert_urls: false,
-                encoding: 'xml',
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,

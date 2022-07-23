@@ -3,7 +3,7 @@
 <head>
     <?php echo $this->includeAction('general.header'); ?>
 
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/vars.css.php?color=<?php echo htmlentities($_SESSION["companysettings.mainColor"]) ?>&v=<?php echo $settings->appVersion; ?>"/>
+    <link rel="stylesheet" href="<?=BASE_URL?>/css/vars.css.php?color1=<?php echo htmlentities($_SESSION["companysettings.primarycolor"]) ?>&color2=<?php echo htmlentities($_SESSION["companysettings.secondarycolor"]) ?>&v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
     <link rel="stylesheet" href="<?=BASE_URL?>/css/overwrites.css" type="text/css"/>
 

@@ -45,6 +45,7 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 .loginpanelinner,
 .leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
 	background-color: var(--primary-color) !important;
+	color:var(--main-action-color);
 }
 
 .header .logo {
@@ -53,7 +54,6 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
 
 .cr-boundary,
 .boxedHighlight{
-	background-color: var(--primary-color);
 }
 
 /* color */
@@ -224,7 +224,14 @@ div.tagsinput span.tag
 	margin-bottom:5px;
 	background:var(--kanban-col-bg);
 	padding-top:5px;
+	margin-top: 10px;
     border-radius:var(--box-radius);
+}
+
+.headtitle {
+	background:var(--kanban-col-bg);
+	border:1px solid var(--main-border-color);
+	border-radius:var(--box-radius);
 }
 
 .filterBar .filterBoxLeft {

@@ -47,6 +47,7 @@
         </div>
 
     </div>
+    </div>
     <div class="span4">
         <div class="row-fluid marginBottom">
             <div class="span12">

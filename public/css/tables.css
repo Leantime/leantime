@@ -223,7 +223,7 @@
 }
 
 .maincontentinner .table {
-    margin-top:5px;
+    margin-top:10px;
 }
 
 .maincontentinner .table td {
@@ -377,6 +377,13 @@
 
 .maincontentinner .timesheetTable tfoot td {
     padding:10px;
+}
+
+.maincontentinner .headtitle table,
+.maincontentinner .headtitle .table th,
+.maincontentinner .headtitle .table td{
+    border:none;
+    margin-top:0px;
 }
 
 

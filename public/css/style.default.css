@@ -393,10 +393,6 @@ a:hover {
     text-decoration: underline;
 }
 
-strong {
-    font-weight: normal;
-}
-
 label, input, textarea, select, button {
     font-size: var(--base-font-size);
 }
@@ -609,6 +605,10 @@ a .label-default:after, a .label-primary:after {
     transform: translate(-50%, -50%);
 }
 
+.loginpage .pagetitle h1 {
+    font-size:var(--font-size-xxl);
+}
+
 .loginpanelinner {
     padding: 20px;
     border: 8px solid #555;
@@ -699,11 +699,20 @@ a .label-default:after, a .label-primary:after {
     z-index:3;
     height:100%;
     overflow:hidden;
-    padding-top:15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color:var(--accent1-color);
     background:linear-gradient(45deg, var(--accent1) 20%,var(--accent2) 100%);
     box-shadow: var(--large-shadow);
 }
+.row .regLeft .mainWelcome {
+    font-family:Exo;
+    font-size: 54px;
+    padding-left:15px;
+    font-weight:400;
+}
+
 
 
 .row .regLeft::after {
@@ -721,9 +730,18 @@ a .label-default:after, a .label-primary:after {
 .row .regRight {
     position:relative;
     z-index:10;
-
-    padding-top:14%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.row .regRight img {
+    max-width:120px;
+    margin-bottom:40px;
+    margin-top:-40px;
+}
+
+
 
 .iq-objects-04 {
     position: absolute;
@@ -857,10 +875,9 @@ a .label-default:after, a .label-primary:after {
 }
 
 .regpanelinner .pageheader {
-    padding: 11px 30px;
+    padding:0;
     border-bottom: 0px solid #ddd;
     position: relative;
-    min-height: 68px;
     color:var(--main-action-bg);
     background:none;
 }
@@ -873,12 +890,29 @@ a .label-default:after, a .label-primary:after {
 
 .regpanelinner #login,
 .regpanelinner #resetPassword{
-    max-width:250px;
 }
 
 .regpanelinner #login .btn,
-.regpanelinner #resetPassword .btm{
-    width:auto;
+.regpanelinner #resetPassword .btn{
+    width:100%;
+    margin-bottom:25px;
+}
+
+.regpanelinner input {
+    width:100%;
+}
+
+.regcontent {
+    width:260px;
+}
+
+.regcontent a.forgotPw  {
+    color:var(--primary-font-color);
+}
+
+.forgotPwContainer {
+    text-align:right;
+    padding-bottom:20px;
 }
 
 .login-alert .alert-danger, .login-alert .alert-error {
@@ -919,15 +953,17 @@ a .label-default:after, a .label-primary:after {
     width: 240px;
     text-align: center;
     height: 50px;
+    padding:10px 5px 5px 10px;
 }
 
 .logo a {
-    width: 240px;
+    width: 220px;
     text-align: center;
-    height: 50px;
+    height: 40px;
     background-position: left center;
     display: block;
-    background-size:240px auto;
+    background-repeat: no-repeat;
+    background-size:contain;
 }
 
 .logo a:hover {
@@ -937,7 +973,7 @@ a .label-default:after, a .label-primary:after {
 .header a.barmenu {
     float:left;
     margin-top:0px;
-    margin-left:25px;
+    margin-left:20px;
     font-size:20px;
     color:#fff;
     cursor:pointer;
@@ -969,7 +1005,7 @@ a .label-default:after, a .label-primary:after {
     border-radius: 50%;
     border: 1px solid white;
     margin-top:10px;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .viewmore a {
@@ -1268,23 +1304,23 @@ a .label-default:after, a .label-primary:after {
 }
 
 .pageicon {
-    width: 40px;
-    height:40px;
-    font-size:20px;
+    width: 30px;
+    height:30px;
+    font-size:16px;
     padding: 0px;
     color: var(--main-action-color);
     border-width: 2px;
     border-style: solid;
     border-color:var(--main-action-color);
     display: inline-block;
-    -moz-border-radius: 40px;
-    -webkit-border-radius: 40px;
-    border-radius: 40px;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
     float: left;
     text-align: center;
-    margin-right:10px;
-    line-height:36px; /* 36px + 4px borders */
-    margin-top:10px;
+    margin-right:5px;
+    line-height:26px;
+    margin-top:15px;
 }
 
 .pagetitle {
@@ -1323,7 +1359,7 @@ a .label-default:after, a .label-primary:after {
     border-radius:var(--box-radius);
     background:var(--content-bg);
     position:relative;
-    padding:15px;
+    padding:15px 17px;
     margin-bottom:20px;
 }
 
@@ -1616,9 +1652,6 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     background-color: #555 !important;
 }
 
-.headtitle {
-    margin-bottom: 21px;
-}
 
 .headtitle-box {
     margin-bottom: 0;
@@ -1846,8 +1879,6 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 }
 
 .fileupload .btn, .fileupload .fileupload-exists {
-    height: 30px;
-    padding: 5px;
 }
 
 /*** BUTTONS & ICONS ***/
@@ -3861,7 +3892,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 
 .fileupload .btn {
     vertical-align: top;
-    color: #666;
+
 }
 
 .fileupload .btn-primary {
@@ -4738,6 +4769,7 @@ div.color-picker ul li {
 .sortableTicketList .ticketBox small {
     font-size: var(--font-size-s);
     color: var(--secondary-font-color);
+    font-weight:lighter;
 }
 
 .sortableTicketList .ticketBox li {
@@ -4990,7 +5022,7 @@ body::after {
 
 .widgettitle .editHeadline {
     float: right;
-    color: rgba(255, 255, 255, .3);
+    color: #aaa;
 }
 
 body .widgettitle .editHeadline:hover {
@@ -5127,7 +5159,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li a:hover {
-    color:var(--secondary-action-hover-color);
+    color:var(--dropdown-link-hover-color);
 }
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.nav-header {
@@ -5234,7 +5266,7 @@ input.secretInput:active {
 }
 
 .commentImage {
-    margin-top:10px;
+    margin-top:0px;
     float:left;
     margin-right:10px;
 }
@@ -5302,4 +5334,8 @@ input.secretInput:active {
     font-size:16px;
     color:#ccc;
     padding-left:15px;
+}
+
+.ui-tabs-panel {
+    padding:15px 0px;
 }

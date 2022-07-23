@@ -30,8 +30,8 @@ leantime.settingController = (function () {
                             enableExif: true,
                             enforceBoundary: false,
                             viewport:{
-                                width: 260,
-                                height: 60,
+                                width: 220,
+                                height: 40,
                                 type: 'square'
                             },
                             boundary: {
