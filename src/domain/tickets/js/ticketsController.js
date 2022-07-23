@@ -1064,7 +1064,7 @@ leantime.ticketsController = (function () {
 
                 countTickets();
 
-                console.log(ui.item[0].id);
+
 
                 var statusPostData = {
                     action: "kanbanSort",

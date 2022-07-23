@@ -1380,8 +1380,7 @@ jQuery(function($, undefined) {
 				if (ret)
 					nm.store.form = nm.getInternal()._extractUrl(nm.opener.attr('action'));
 
-				console.log(ret);
-				console.log(nm.store.form);
+
 
 				return ret;
 			},

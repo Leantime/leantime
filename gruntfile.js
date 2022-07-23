@@ -92,7 +92,6 @@ module.exports = function (grunt) {
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
-                    "public/js/libs/colorpicker.js",
                     "public/js/libs/simpleGantt/moment.min.js",
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
