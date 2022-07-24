@@ -61,7 +61,7 @@ $install = new leantime\core\install($config, $settings);
                         <h1><?php echo $this->language->__("headlines.update_database"); ?></h1>
                     </div>
                 </div>
-                <div class="regcontent"  id="login" style="margin-left: 90px;">
+                <div class="regcontent"  id="login">
                     <p><?php echo $this->language->__("text.new_db_version"); ?></p><br />
 
                     <?php
