@@ -70,11 +70,15 @@ class application
                 require ROOT.'/../src/install.php';
             }elseif(isset($_GET['update']) === true) {
                 require ROOT.'/../src/update.php';
+            }elseif(isset($_GET['act']) && $_GET['act'] == 'api.i18n'){
+                $frontController->run();
             }else{
                 require ROOT.'/../src/login.php';
             }
 
+
         }else{
+
             // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
             if(isset($_GET['twoFA']) === true) {
                 if($_SESSION['userdata']['twoFAVerified'] != true) {
