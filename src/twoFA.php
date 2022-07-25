@@ -2,19 +2,6 @@
 <html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
     <?php echo $this->frontController->includeAction('general.header'); ?>
-
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/vars.css.php?color1=<?php echo htmlentities($_SESSION["companysettings.primarycolor"]) ?>&color2=<?php echo htmlentities($_SESSION["companysettings.secondarycolor"]) ?>&v=<?php echo $settings->appVersion; ?>"/>
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
-    <link rel="stylesheet" href="<?=BASE_URL?>/css/overwrites.css" type="text/css"/>
-
-    <script src="<?=BASE_URL?>/api/i18n"></script>
-
-    <!-- libs -->
-    <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
-    <script src="<?=BASE_URL?>/js/compiled-extended-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
-
-    <!-- app -->
-    <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 </head>
 
 <script type="text/javascript">

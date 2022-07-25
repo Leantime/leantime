@@ -1,21 +1,10 @@
-<?php
-
-$color1 = strlen($_GET['color1'])==6 ? $_GET['color1'] : "#1b75bb";
-$color2 = strlen($_GET['color2'])==6 ? $_GET['color2'] : "#81B1A8";
-
-header("Content-type: text/css", true);
-
-//TODO: Replace wtih custom colors
-
-?>
-
 :root {
 
-    --accent1: #<?=$color1 ?>;
+    --accent1: #1b75bb;
     --accent1-hover: #555;
     --accent1-color:#fff;
 
-    --accent2: #<?=$color2 ?>;
+    --accent2: #81B1A8;
     --accent2-hover: #555;
     --accent2-color:#fff;
 
@@ -31,34 +20,12 @@ header("Content-type: text/css", true);
     --col-content-bg: #F4F4F6;
     --col-hover-bg: #c7c7d1;
 
-
-    /*Leantime Dark
-       --accent1: #187CC9;
-       --accent1-hover: #187CC9;
-       --accent1-color:#f4f4f6;
-
-       --accent2:#230C10;
-       --accent2-hover: #230C10;
-       --accent2-color:#f4f4f6;
-
-       --primary-background: #2e2e38;
-       --secondary-background: #1d1d23;
-
-       --primary-font-color: #f4f4f6;
-       --secondary-font-color: #f4f4f6;
-       --neutral: #131316;
-
-   */
-
-
-
     --primary-color: var(--accent1);
     --secondary-color: var(--accent2);
 
     --main-bg: var(--primary-background);
     --left-panel-bg: var(--secondary-background);
     --content-bg: var(--secondary-background);
-
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -103,7 +70,6 @@ header("Content-type: text/css", true);
     --font-size-xl: 18px;
     --font-size-xxl: 22px;
 
-
     --main-border-color:var(--neutral);
     --regular-shadow: 0px 2px 4px rgb(0 0 0 / 20%);
     --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
@@ -118,62 +84,3 @@ header("Content-type: text/css", true);
     --kanban-card-hover: var(--primary-background);
 
 }
-
-
-<?php /*
-
-
-:root {
-
-    --primary-color: #0492c2;
-    --secondary-color: #0492c2;
-
-    --main-bg: #faf9f6;
-    --secondary-bg: #f6f7fa;
-    --left-panel-bg:#f6f7fa;
-
-
-    --main-action-bg: #f98900;
-    --main-action-color: #fff;
-    --main-action-hover-bg: #e9ebed;
-    --main-action-hover-color: #555;
-
-    --secondary-action-bg: #f6f7fa;
-    --secondary-action-color: #555;
-    --secondary-action-hover-bg: #e9ebed;
-    --secondary-action-hover-color: #555;
-
-    --main-menu-link-bg: #f6f7fa;
-    --main-menu-link-color: #555;
-
-    --main-menu-link-hover-bg: #e9ebed;
-    --main-menu-link-hover-color: #555;
-
-    --main-menu-link-active-bg: #D3D6DA;
-    --main-menu-link-active-color: #555;
-
-    --dropdown-link-bg: #fff;
-    --dropdown-link-color: #555;
-    --dropdown-link-hover-bg: #e9ebed;
-    --dropdown-link-hover-color: #555;
-
-
-    --primary-font-family: 'RobotoRegular', 'Helvetica Neue', Helvetica, sans-serif;
-    --base-font-size: 14px;
-    --font-size-xs: 10px;
-    --font-size-s:12px;
-    --font-size-l: 16px;
-    --font-size-xl: 18px;
-    --font-size-xxl: 22px;
-
-
-    --main-border-color:#ccc;
-    --regular-shadow: 0px 2px 4px rgb(0 0 0 / 20%);
-    --box-radius: 10px;
-    --element-radius: 5px;
-
-    --kanban-col-bg: #fff;
-
-}
-
-*/ ?>
