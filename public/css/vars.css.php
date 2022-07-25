@@ -1,7 +1,7 @@
 <?php
 
-$color1 = strlen($_GET['color1'])==7 ? $_GET['color1'] : "#1b75bb";
-$color2 = strlen($_GET['color2'])==7 ? $_GET['color2'] : "#81B1A8";
+$color1 = strlen($_GET['color1'])==6 ? $_GET['color1'] : "#1b75bb";
+$color2 = strlen($_GET['color2'])==6 ? $_GET['color2'] : "#81B1A8";
 
 header("Content-type: text/css", true);
 
@@ -11,11 +11,11 @@ header("Content-type: text/css", true);
 
 :root {
 
-    --accent1: <?=$color1 ?>;
+    --accent1: #<?=$color1 ?>;
     --accent1-hover: #555;
     --accent1-color:#fff;
 
-    --accent2:<?=$color2 ?>;
+    --accent2: #<?=$color2 ?>;
     --accent2-hover: #555;
     --accent2-color:#fff;
 
