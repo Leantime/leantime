@@ -16,7 +16,6 @@
 
 <link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-default.css?v=<?php echo $settings->appVersion; ?>"/>
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
-<link rel="stylesheet" href="<?=BASE_URL?>/css/overwrites.css" type="text/css"/>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
 

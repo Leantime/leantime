@@ -188,7 +188,7 @@ fieldset,
 
 #content .allTickets thead th {
 	background:
-		url(jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
+		url(../jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
 		scroll 50% 50% #cccccc;
 	height: 28px;
 	text-align: left;
@@ -324,7 +324,7 @@ input.width140 {
 
 input.button {
 	background:
-		url(jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
+		url(../jqueryUi/images/ui-bg_highlight-soft_75_cccccc_1x100.png) repeat-x
 		scroll 50% 50% #cccccc;
 	cursor: pointer;
 	padding: 1px 5px;

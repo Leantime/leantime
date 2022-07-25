@@ -27,8 +27,8 @@ leantime.ideasController = (function () {
                         // General options
                         width: "100%",
                         height:"400px",
-                        skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
-                        content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
+                        skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
+                        content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                         content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                         plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                         toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
