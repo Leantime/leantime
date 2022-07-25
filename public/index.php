@@ -32,7 +32,7 @@ if($login->logged_in()!==true){
 
 //Bootstrap application
 $application = new leantime\core\application(
-                        new leantime\core\config(),
+                        $config,
                         $settings,
                         $login,
                         leantime\core\frontcontroller::getInstance(ROOT),

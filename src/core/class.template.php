@@ -158,6 +158,7 @@ namespace leantime\core {
 
             include $strTemplate;
 
+
             $subContent = ob_get_clean();
 
             $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
@@ -427,7 +428,11 @@ namespace leantime\core {
         public function escape($content): string
         {
 
-            return htmlentities($content);
+            if(!is_null($content)) {
+                return htmlentities($content);
+            }
+
+            return '';
 
         }
 

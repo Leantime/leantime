@@ -50,7 +50,7 @@
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/newTicket" class='ticketModal'> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
@@ -230,6 +230,7 @@
                                 <strong class="count">0</strong>
                             <?php $this->e($statusRow['name']); ?></h4>
 
+
 							<div class="contentInner <?php echo"status_".$key;?>" >
                                 <div>
                                     <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.add_todo_no_icon"); ?></a>
@@ -249,9 +250,10 @@
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
+
 								<?php foreach($this->get('allTickets') as $row) { ?>
 									<?php if($row["status"] == $key){?>
-									<div class="ticketBox moveable container" id="ticket_<?php echo$row["id"];?>">
+									<div class="ticketBox moveable container priority-border-<?=$row['priority']?>" id="ticket_<?php echo$row["id"];?>">
 
                                         <div class="row">
 
@@ -282,11 +284,10 @@
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
-
-                                                <h4><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
-
-
+                                                <div class="kanbanCardContent">
+                                                    <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+                                                    <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
+                                                </div>
                                             </div>
 
 
@@ -372,7 +373,7 @@
                                             </div>
 
                                             <div class="dropdown ticketDropdown priorityDropdown show">
-                                                <a class="dropdown-toggle f-left  label-default priority" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                     if($row['priority'] != '' && $row['priority'] > 0) {
                                                                         echo $priorities[$row['priority']];
@@ -386,7 +387,7 @@
                                                     <li class="nav-header border"><?=$this->__("dropdown.select_priority")?></li>
                                                     <?php foreach($priorities as $priorityKey => $priorityValue){
                                                         echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-value='".$row['id']."_".$priorityKey."' id='ticketPriorityChange".$row['id'].$priorityKey."'>".$priorityValue."</a>";
+                                                                            <a href='javascript:void(0);' class='priority-bg-".$priorityKey."' data-value='".$row['id']."_".$priorityKey."' id='ticketPriorityChange".$row['id'].$priorityKey."'>".$priorityValue."</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -462,4 +463,21 @@
         }
     ?>
 
+    jQuery(document).ready(function(){
+
+        <?php if(isset($_GET['showTicketModal'])) {
+
+        if($_GET['showTicketModal'] == "") {
+            $modalUrl = "";
+        }else{
+            $modalUrl = "/".(int)$_GET['showTicketModal'];
+        }
+        ?>
+
+        leantime.ticketsController.openTicketModalManually("<?=BASE_URL ?>/tickets/showTicket<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/showKanban');
+
+        <?php } ?>
+
+    });
 </script>

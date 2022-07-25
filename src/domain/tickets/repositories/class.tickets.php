@@ -363,7 +363,7 @@ namespace leantime\domain\repositories {
 							t2.lastname AS editorLastname,
 							t2.profileId AS editorProfileId,
 							milestone.headline AS milestoneHeadline,
-							IF((milestone.tags IS NULL OR milestone.tags = ''), '#1b75bb', milestone.tags) AS milestoneColor,
+							IF((milestone.tags IS NULL OR milestone.tags = ''), '#999999', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
 							COUNT(DISTINCT zp_file.id) AS fileCount
 						FROM 
@@ -683,11 +683,11 @@ namespace leantime\domain\repositories {
 						zp_tickets.hourRemaining,
 						zp_tickets.acceptanceCriteria,
 						depMilestone.headline AS milestoneHeadline,
-						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), '#1b75bb', depMilestone.tags) AS milestoneColor,
+						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), '#999999', depMilestone.tags) AS milestoneColor,
 						zp_tickets.userId,
 						zp_tickets.editorId,
 						zp_tickets.planHours,
-						IF((zp_tickets.tags IS NULL OR zp_tickets.tags = ''), '#1b75bb', zp_tickets.tags) AS tags,
+						IF((zp_tickets.tags IS NULL OR zp_tickets.tags = ''), '#999999', zp_tickets.tags) AS tags,
 						zp_tickets.url,
 						zp_tickets.editFrom,
 						zp_tickets.editTo,

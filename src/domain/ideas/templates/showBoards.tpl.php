@@ -102,9 +102,9 @@ $canvasLabels = $this->get('canvasLabels');
                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                 <div class="mainIdeaContent">
-                                    <?php echo($row["data"]); ?>
-                                </div>
 
+                                </div>
+                                <?=$row["data"] ?>
                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                                 <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">

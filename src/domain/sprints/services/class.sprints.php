@@ -157,16 +157,18 @@ namespace leantime\domain\services {
             $sprintValues = $this->reportRepository->getSprintReport($sprint->id);
             $sprintData = array();
             foreach($sprintValues as $row) {
-                $sprintData[$row['date']] = $row;
+                if(is_object($row)) {
+                    $sprintData[$row->date] = $row;
+                }
             }
 
             $allKeys = array_keys($sprintData);
 
             //If the first day is set in our reports table
             if(isset($allKeys[0])) {
-                $plannedHoursStart = $sprintData[$allKeys[0]]['sum_planned_hours'];
-                $plannedNumStart = $sprintData[$allKeys[0]]['sum_todos'];
-                $plannedEffortStart = $sprintData[$allKeys[0]]['sum_points'];
+                $plannedHoursStart = $sprintData[$allKeys[0]]->sum_planned_hours;
+                $plannedNumStart = $sprintData[$allKeys[0]]->sum_todos;
+                $plannedEffortStart = $sprintData[$allKeys[0]]->sum_points;
             }else{
                 //If the sprint started today and we don't have any data to report, planned is 0
                 $plannedHoursStart = 0;
@@ -221,9 +223,9 @@ namespace leantime\domain\services {
                 }
 
                 if (isset($sprintData[$value->format('Y-m-d')." 00:00:00"])) {
-                    $burnDown[$i]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_estremaining_hours'];
-                    $burnDown[$i]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_open_todos'] + $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_progres_todos'];
-                    $burnDown[$i]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_open'] + $sprintData[$value->format('Y-m-d')." 00:00:00"]['sum_points_progress'];
+                    $burnDown[$i]["actualHours"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_estremaining_hours;
+                    $burnDown[$i]["actualNum"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_open_todos + $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_progres_todos;
+                    $burnDown[$i]["actualEffort"] = $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_points_open + $sprintData[$value->format('Y-m-d')." 00:00:00"]->sum_points_progress;
                 }else{
                     if ($i == 0) {
 

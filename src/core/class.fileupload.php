@@ -161,7 +161,7 @@ class fileupload
     /**
      * checkFileSize - Checks if filesize is ok
      *
-     * @access private
+     * @access public
      * @return bool
      */
     public function checkFileSize()
