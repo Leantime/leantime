@@ -12,6 +12,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
 
+            $tpl->assign('appSettings', new core\appSettings());
             $tpl->displayPartial('general.header');
         }
     }

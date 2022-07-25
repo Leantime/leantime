@@ -716,7 +716,7 @@ a .label-default:after, a .label-primary:after {
 
 
 .row .regLeft::after {
-    background:url(../images/03-1.png) no-repeat 50px 0px;
+    background:url(../../images/03-1.png) no-repeat 50px 0px;
     top:0px;
     left:0px;
     content:"";
@@ -4676,7 +4676,7 @@ a.filter-term {
     visibility: hidden;
     z-index: 1000010;
     border: 0 solid #ddd;
-    background: url(../images/close.png) center center no-repeat;
+    background: url(../../images/close.png) center center no-repeat;
     padding-left: 1px;
     margin-left: -27px;
     margin-top: 15px;
@@ -5226,7 +5226,7 @@ input.secretInput:active {
 .loading {
     width:100%;
     text-align:center;
-    background:url(../images/ajaxLoader.gif) center center no-repeat;
+    background:url(../../images/ajaxLoader.gif) center center no-repeat;
     min-height:31px;
     background-size:31px 31px;
     display:none;

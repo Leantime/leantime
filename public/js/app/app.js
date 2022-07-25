@@ -1,5 +1,4 @@
 //Lets get this party started.
-
 var leantime = leantime || {};
 
 var themeColor = jQuery('meta[name=theme-color]').attr("content");
