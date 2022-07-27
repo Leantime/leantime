@@ -1,0 +1,123 @@
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined array key "description" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 519
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined array key "hourRemaining" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 528
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined array key "planHours" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 529
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 57
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 57
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 63
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 63
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 84
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 86
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 86
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 86
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 86
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:39:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $subtask in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 68
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 68
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:47 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $subtask in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 68
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 68
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 89
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 91
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 96
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Undefined variable $row in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 10:43:53 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/submodules/subTasks.sub.php on line 101
+[26-Jul-2022 17:40:35 America/Los_Angeles] PHP Warning:  Undefined array key "description" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 519
+[26-Jul-2022 17:40:35 America/Los_Angeles] PHP Warning:  Undefined array key "priority" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 525
+[26-Jul-2022 17:40:35 America/Los_Angeles] PHP Warning:  Undefined array key "hourRemaining" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 528
+[26-Jul-2022 17:40:35 America/Los_Angeles] PHP Warning:  Undefined array key "planHours" in /Users/marcel/Sites/leantime-oss/src/domain/tickets/services/class.tickets.php on line 529

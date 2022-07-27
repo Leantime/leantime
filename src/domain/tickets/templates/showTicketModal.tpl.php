@@ -51,9 +51,9 @@
             </div>
 
             <div id="subtasks">
-                <form method="post" action="#subtasks" class="ticketModal">
-                    <?php $this->displaySubmodule('tickets-subTasks') ?>
-                </form>
+
+                <?php $this->displaySubmodule('tickets-subTasks') ?>
+
             </div>
 
             <div id="files">

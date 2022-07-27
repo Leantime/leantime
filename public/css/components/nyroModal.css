@@ -113,7 +113,7 @@
 .nyroModalCont textarea,
 .nyroModalCont input[type="text"],
 .nyroModalCont select {
-	width:100%;
+	/*width:100%;*/
 }
 
 .nyroModalCont select {

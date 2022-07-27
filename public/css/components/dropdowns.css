@@ -69,7 +69,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontentinner .ticketDropdown > a,
-.maincontentinner .ticketDropdown > a:link{
+.maincontentinner .ticketDropdown > a:link,
+.nyroModalCont .ticketDropdown > a,
+.nyroModalCont .ticketDropdown > a:link{
     color:#fff;
     padding:0px 10px;
     white-space: nowrap;
