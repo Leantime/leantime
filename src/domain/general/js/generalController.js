@@ -6,10 +6,15 @@ leantime.generalController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
+
                 _initPopOvers();
                 _initLabelModals();
                 _initSimpleEditor();
                 initComplexEditor();
+
+                if(jQuery('.login-alert .alert').text() != ''){
+                    jQuery('.login-alert').fadeIn();
+                }
             }
         );
 
