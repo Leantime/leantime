@@ -101,26 +101,26 @@ $mailer = new \leantime\core\mailer();
 
 $messages=$queue->listMessageInQueue();
 
-$currentRecipient="";
 $allMessagesToSend=array();
 $n=0;
 foreach ($messages as $message) 
 {
     $n++;
-    $currentRecipient=$message['recipient'];
+    $currentUserId=$message['userId'];
 
-    $allMessagesToSend[$currentRecipient][$message['msghash']]=Array(
+    $allMessagesToSend[$currentUserId][$message['msghash']]=Array(
         'thedate'=>$message['thedate'],
         'message'=> $message['message'],
 	'projectId'=>$message['projectId']
     );
     // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
     // and here we need to group the messages in an array to know which messages are grouped to group-delete them
-    $allMessagesToDelete[$currentRecipient][]=$message['msghash'];
+    $allMessagesToDelete[$currentUserId][]=$message['msghash'];
 }
-foreach ($allMessagesToSend as $recipient => $messageToSendToUser)
+foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
 {
-    $theuser=$users->getUserByEmail($recipient);
+    $theuser=$users->getUser($currentUserId);
+    $recipient=$theuser['username'];
 
     // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails
     // TODO : Update profile form to allow each user to edit his own messageFrequency option
@@ -169,8 +169,8 @@ foreach ($allMessagesToSend as $recipient => $messageToSendToUser)
     // TODO here : only delete these if the send was successful
     // echo for DEBUG PURPOSE
     echo "Messages send (about to delete) :";
-    print_r($allMessagesToDelete[$recipient]);
-    $queue->deleteMessageInQueue($allMessagesToDelete[$recipient]);
+    print_r($allMessagesToDelete[$currentUserId]);
+    $queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 
     // Store the last time a mail was sent to $recipient email
     $thedate=date('Y-m-d H:i:s');
