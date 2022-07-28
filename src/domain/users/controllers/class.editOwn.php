@@ -21,6 +21,7 @@ namespace leantime\domain\controllers {
 
             $userId = $_SESSION['userdata']['id'];
             $userRepo = new repositories\users();
+            $settingsRepo = new \leantime\domain\repositories\setting();
 
             $row = $userRepo->getUser($userId);
 
@@ -37,6 +38,7 @@ namespace leantime\domain\controllers {
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
+                'messagesfrequency' => $settingsRepo->getSetting("usersettings.".$row['id'].".messageFrequency"),
             );
 
             //Save form
@@ -52,6 +54,7 @@ namespace leantime\domain\controllers {
                         'password' => (password_hash($_POST['newPassword'], PASSWORD_DEFAULT)),
                         'notifications' => $row['notifications'],
                         'twoFAEnabled' => $row['twoFAEnabled'],
+                        'messagesfrequency' => $_POST['messagesfrequency'],
                     );
 
                     if (isset($_POST['notifications']) == true) {
@@ -107,6 +110,9 @@ namespace leantime\domain\controllers {
 
                                 }
 
+                                // Storing option messagefrequency
+                               	$settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
+
                             } else {
 
                                 $tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
@@ -126,9 +132,10 @@ namespace leantime\domain\controllers {
                     }
 
                 }else{
-                    $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
-                }
 
+                    $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+
+                }
             }
 
             //Assign vars

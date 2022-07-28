@@ -5,6 +5,9 @@
 // providers don't allow it.
 // TODO : Maybe create a semaphore class with a fallback on file locks
 // TODO : Ensure no locks remain there for long (would block cron)
+// TODO : make a javascript more clever doing periodic calls
+//        + push here a json structure with information so that javascript call does not come back too often
+//        if there are a lot of people connected
 
 // Get the semaphore
 $fp = fopen("cronlock.txt", "w+");
@@ -40,6 +43,23 @@ if(isset($config->appUrl) && $config->appUrl != ""){
 
 ob_start();
 
+if ( $_GET['mode'] == "debug" )
+{
+    $DEBUG_CRON=true;
+} else
+{
+    $DEBUG_CRON=false;
+}
+
+function debug_print ($message)
+{
+    global $DEBUG_CRON;
+    if ( $DEBUG_CRON == true )
+    {
+        print($message."\n");
+    }
+}
+
 // Fake template to be replaced by something better
 // TODO : Rework email templating system
 function doFormatMail ($messageToSendToUser)
@@ -73,21 +93,21 @@ function overrideThemeSettingsMinimal()
         $_SESSION["companysettings.logoPath"] =  BASE_URL.$logoPath;
     }
     // echo for DEBUG PURPOSE
-    //echo $_SESSION["companysettings.logoPath"]."<br/>\n";
+    //debug_print($_SESSION["companysettings.logoPath"]);
 
     $_SESSION["companysettings.mainColor"] = $color;
     // echo for DEBUG PURPOSE
-    //echo $_SESSION["companysettings.mainColor"]."<br/>\n";
+    //debug_print($_SESSION["companysettings.mainColor"]);
 
     $_SESSION["companysettings.sitename"] = $sitename;
     // echo for DEBUG PURPOSE
-    //echo $_SESSION["companysettings.sitename"]."<br/>\n";
+    //debug_print($_SESSION["companysettings.sitename"]);
 
 }
 
 //Bootstrap application
 // echo for DEBUG PURPOSE
-echo "cron start"."<br/>\n";
+debug_print( "cron start");
 
 overrideThemeSettingsMinimal();
 
@@ -127,10 +147,10 @@ foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
     $lastMessageDate = strtotime($settingsRepo->getSetting("usersettings.".$theuser['id'].".lastMessageDate"));
     $nowDate = time();
     // echo for DEBUG PURPOSE
-    echo "Last message to ".$recipient." was on ".date('Y-m-d H:i:s', $lastMessageDate)."<br/>\n";
+    debug_print( "Last message to ".$recipient." was on ".date('Y-m-d H:i:s', $lastMessageDate));
     $timeSince = abs($nowDate - $lastMessageDate);
     // echo for DEBUG PURPOSE
-    echo "Time elapsed since : ".$timeSince."<br/>\n";
+    debug_print("Time elapsed since : ".$timeSince);
 
     $messageFrequency=$settingsRepo->getSetting("usersettings.".$theuser['id'].".messageFrequency");
     // Check if there is a default value in DB
@@ -145,12 +165,12 @@ foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
 	$settingsRepo->saveSetting("usersettings.default.messageFrequency", 3600);
     }
     // echo for DEBUG PURPOSE
-    echo "The message frequency for ".$recipient." : ".$messageFrequency."<br/>\n";
+    debug_print( "The message frequency for ".$recipient." : ".$messageFrequency);
 
     if ($timeSince < $messageFrequency ) 
     {
         // echo for DEBUG PURPOSE
-        echo "Elapsed time not enough for ".$recipient." : skipping till ".date("Y-m-d H:i:s", $lastMessageDate+$messageFrequency)."<br/>\n";
+        debug_print( "Elapsed time not enough for ".$recipient." : skipping till ".date("Y-m-d H:i:s", $lastMessageDate+$messageFrequency));
 	continue;
     }
 
@@ -168,7 +188,7 @@ foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
     // Delete the corresponding messages from the queue when the mail is sent
     // TODO here : only delete these if the send was successful
     // echo for DEBUG PURPOSE
-    echo "Messages send (about to delete) :";
+    debug_print( "Messages send (about to delete) :");
     print_r($allMessagesToDelete[$currentUserId]);
     $queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 
@@ -178,7 +198,7 @@ foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
   
 }
 // echo for DEBUG PURPOSE
-echo "<br/>\ncron end";
+debug_print( "cron end");
 
 // Release the semaphore for next thread
 flock($fp, LOCK_UN);
