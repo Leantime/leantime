@@ -78,17 +78,18 @@ leantime.projectsController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"300",
-                content_style: "img { max-width: 100%; }",
-                plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
-                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | numlist | fullscreen",
-                branding: false,
-                statusbar: false,
+                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
+                branding: true,
+                statusbar: true,
                 convert_urls: false,
                 paste_data_images: true,
-
+                menubar:false,
+                resizable: true,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
 

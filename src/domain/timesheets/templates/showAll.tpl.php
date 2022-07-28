@@ -79,9 +79,9 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
         <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
     </div>
     <div class="clearfix"></div>
-    <div class="headtitle" style="margin:0px; background: #eee; <?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
+    <div class="headtitle" style="<?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
 
-	<table cellpadding="10" cellspacing="0" width="90%" style=" border: 1px solid #ccc; margin-top:0px;" class="table dataTable filterTable">
+	<table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
 
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
@@ -196,7 +196,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
 			<td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
-			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
+			<td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
 			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
 			<td><?php printf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])); ?></td>

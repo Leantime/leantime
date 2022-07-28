@@ -1,4 +1,5 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
+<?php $appSettings = $this->get('appSettings'); ?>
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
 
@@ -7,8 +8,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
-<meta name="theme-color" content="#<?php $this->e($_SESSION["companysettings.mainColor"]) ?>">
+<meta name="theme-color" content="<?php $this->e($_SESSION["companysettings.primarycolor"]) ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/favicon.ico"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/apple-touch-icon.png">
+
+<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-default.css?v=<?php echo $settings->appVersion; ?>"/>
+<link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+
+<script src="<?=BASE_URL?>/api/i18n"></script>
+
+<!-- libs -->
+<script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+<script src="<?=BASE_URL?>/js/compiled-extended-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+
+<!-- app -->
+<script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+
+
+<!-- Replace main theme colors -->
+<style>
+
+    :root{
+        --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
+        --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
+    }
+
+</style>

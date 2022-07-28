@@ -166,7 +166,7 @@ jQuery(document).ready(function(){
     			rowSum = rowSum + currentValue;
     			
     			var currentClass = jQuery(this).parent().attr('class');
-                console.log(currentClass);
+
     			if(currentClass.indexOf("rowMo") > -1){ colSumMo = colSumMo + currentValue; }
                 if(currentClass.indexOf("rowTu") > -1){ colSumTu = colSumTu + currentValue; }
                 if(currentClass.indexOf("rowWe") > -1){ colSumWe = colSumWe + currentValue;  }
@@ -181,7 +181,6 @@ jQuery(document).ready(function(){
     		jQuery(this).find(".rowSum strong").text(rowSum);
     	});
 
-    	console.log(colSumMo);
     	jQuery("#sumMo").text(colSumMo.toFixed(2));
     	jQuery("#sumTu").text(colSumTu.toFixed(2));
     	jQuery("#sumWe").text(colSumWe.toFixed(2));
@@ -238,7 +237,7 @@ jQuery(document).ready(function(){
 
                 <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
 
-                    <div class="headtitle filterBar " style="margin:0px; background: #eee;">
+                    <div class="headtitle filterBar">
 
                         <div class="padding-top-sm">
                             <span><?php echo $this->__('label.week_from')?></span>

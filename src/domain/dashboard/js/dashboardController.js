@@ -71,10 +71,6 @@ leantime.dashboardController = (function () {
                 animation: {
                     animateScale: true,
                     animateRotate: true
-                },
-                scales: {
-                    y: {},
-                    x: {}
                 }
             }
         };

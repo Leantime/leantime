@@ -88,7 +88,11 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values['count'];
+            if(isset($values['count'])) {
+                return $values['count'];
+            }else{
+                return 0;
+            }
         }
 
         public function getReplies($id)

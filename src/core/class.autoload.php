@@ -40,4 +40,4 @@ function leantimeAutoloader($class)
     }
 
 }
-require_once '../vendor/autoload.php';
+require_once ROOT.'/../vendor/autoload.php';
