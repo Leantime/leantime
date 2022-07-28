@@ -60,10 +60,11 @@ namespace leantime\core {
             20101,
             20102,
             20103,
-			20104,
-			20105,
+            20104,
+            20105,
             20106,
-            20107
+            20107,
+            20108
         );
 
         /**
@@ -727,6 +728,17 @@ namespace leantime\core {
                       KEY `projectAction` (`projectId` ASC, `action` ASC),
                       KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                CREATE TABLE `zp_queue` (
+                      `msghash` varchar(50) NOT NULL,
+                      `userId` int(11) NOT NULL,
+                      `message` text NOT NULL,
+                      `thedate` datetime NOT NULL,
+                      `projectId` int(11) NOT NULL,
+                      PRIMARY KEY (`msghash`),
+                      KEY `projectId` (`projectId`),
+                      KEY `userId` (`userId`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                             
             ";
 
@@ -1084,5 +1096,41 @@ namespace leantime\core {
 
         }
 
+        private function update_sql_20108()
+        {
+            $errors = array();
+
+            $sql = array( "CREATE TABLE IF NOT EXISTS `zp_queue` (
+                               `msghash` varchar(50) NOT NULL,
+                               `userId` int(11) NOT NULL,
+                               `message` text NOT NULL,
+                               `thedate` datetime NOT NULL,
+                               `projectId` int(11) NOT NULL,
+                               PRIMARY KEY (`msghash`),
+                               KEY `projectId` (`projectId`),
+                               KEY `userId` (`userId`)
+			   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+                   );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
     }
 }
