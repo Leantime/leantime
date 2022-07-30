@@ -13,7 +13,7 @@ class appSettings {
 	 * @access private
 	 * @var string - 1 debugmodus
 	 */
-	private $debug = 0;
+	private $debug = 1;
 
 	public $appVersion = "2.2.2";
 
