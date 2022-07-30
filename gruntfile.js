@@ -16,6 +16,7 @@ module.exports = function (grunt) {
                     "public/js/app/app.js",
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
+                    "public/js/app/core/wysiwyg.js",
                     "src/domain/**/*.js"
                 ]
                 , dest: "public/js/compiled-app.min.js"

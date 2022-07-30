@@ -6,7 +6,6 @@ leantime.generalController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
-
                 _initPopOvers();
                 _initLabelModals();
                 _initSimpleEditor();
@@ -129,7 +128,7 @@ leantime.generalController = (function () {
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
-                height:"700",
+                height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
