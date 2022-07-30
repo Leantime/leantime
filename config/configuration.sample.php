@@ -7,9 +7,10 @@ class config
     /* General */
     public $sitename = 'Leantime'; //Name of your site, can be changed later
     public $language = 'en-US'; //Default language
-    public $mainColor = '1b75bb'; //Default color, can be changed later
     public $logoPath = '/images/logo.svg'; //Default logo path, can be changed later
     public $appUrl = ''; //Base URL, trailing slash not needed
+    public $primarycolor = '#1b75bb'; //Base URL, trailing slash not needed
+    public $secondarycolor = '#81B1A8'; //Base URL, trailing slash not needed
     public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone
 
     /* Database */
@@ -98,9 +99,11 @@ class config
         /* General */
         $this->sitename = $this->configEnvironmentHelper("LEAN_SITENAME", $this->sitename);
         $this->language = $this->configEnvironmentHelper("LEAN_LANGUAGE", $this->language);
-        $this->mainColor = $this->configEnvironmentHelper("LEAN_MAIN_COLOR", $this->mainColor);
         $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
         $this->appUrl = $this->configEnvironmentHelper("LEAN_APP_URL", $this->appUrl);
+        $this->primarycolor = $this->configEnvironmentHelper("LEAN_PRIMARY_COLOR", $this->primarycolor);
+        $this->secondarycolor = $this->configEnvironmentHelper("LEAN_SECONDARY_COLOR", $this->secondarycolor);
+
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
 
         /* Database */

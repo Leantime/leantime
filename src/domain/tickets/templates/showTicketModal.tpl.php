@@ -51,13 +51,13 @@
             </div>
 
             <div id="subtasks">
-                <form method="post" action="#subtasks" class="ticketModal">
+                <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>#subtasks" class="ticketModal">
                     <?php $this->displaySubmodule('tickets-subTasks') ?>
                 </form>
             </div>
 
             <div id="files">
-                <form action='#files' method='POST' enctype="multipart/form-data" class="ticketModal">
+                <form action='<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>#files' method='POST' enctype="multipart/form-data" class="ticketModal">
                     <?php $this->displaySubmodule('tickets-attachments') ?>
                 </form>
             </div>
