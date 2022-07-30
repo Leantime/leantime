@@ -84,7 +84,7 @@ function overrideThemeSettingsMinimal()
 
     $settingsRepo = new leantime\domain\repositories\setting();
     $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
-    $color = $settingsRepo->getSetting("companysettings.mainColor");
+    $color = $settingsRepo->getSetting("companysettings.primaryColor");
     $sitename = $settingsRepo->getSetting("companysettings.sitename");
 
     if (strpos($logoPath, 'http') === 0) {
