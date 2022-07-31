@@ -10,7 +10,7 @@
 //        if there are a lot of people connected
 
 // Get the semaphore
-$fp = fopen("cronlock.txt", "w+");
+$fp = fopen("../resources/logs/cronlock.txt", "w+");
 
 // If semaphore can not be created, exit
 if (!flock($fp, LOCK_EX)) {
