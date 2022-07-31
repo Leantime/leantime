@@ -64,14 +64,14 @@ class application
         if($this->login->logged_in()===false) {
 
             //Run password reset through application to avoid security holes in the front controller
-            if(isset($_GET['resetPassword']) === true) {
+            if(isset($_GET['act']) && $_GET['act'] == 'api.i18n') {
+                $frontController->run();
+            }elseif(isset($_GET['resetPassword']) === true) {
                 require ROOT.'/../src/resetPassword.php';
             }elseif(isset($_GET['install']) === true) {
                 require ROOT.'/../src/install.php';
             }elseif(isset($_GET['update']) === true) {
                 require ROOT.'/../src/update.php';
-            }elseif(isset($_GET['act']) && $_GET['act'] == 'api.i18n'){
-                $frontController->run();
             }else{
                 require ROOT.'/../src/login.php';
             }
@@ -153,8 +153,8 @@ class application
 
         if(isset($_SESSION["companysettings.primarycolor"]) === false) {
 
-            $_SESSION["companysettings.primarycolor"] = "#".$this->config->mainColor;
-            $_SESSION["companysettings.secondarycolor"] = "#".$this->config->mainColor;
+            $_SESSION["companysettings.primarycolor"] = "#1b75bb";
+            $_SESSION["companysettings.secondarycolor"] = "#81B1A8";
 
             //Old setting
             $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
@@ -204,14 +204,18 @@ class application
         if($this->login->logged_in()===false) {
 
             if($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false){
-                header("Location:".BASE_URL."/install");
-                exit();
+                if(!isset($_GET['act']) || $_GET['act'] != 'api.i18n') {
+                    header("Location:" . BASE_URL . "/install");
+                    exit();
+                }
             }
 
             $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
-                header("Location:".BASE_URL."/update");
-                exit();
+                if(!isset($_GET['act']) || $_GET['act'] != 'api.i18n') {
+                    header("Location:".BASE_URL."/update");
+                    exit();
+                }
             }
         }
     }

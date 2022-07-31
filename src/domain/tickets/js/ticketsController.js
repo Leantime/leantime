@@ -503,7 +503,6 @@ leantime.ticketsController = (function () {
 
         var modalConfig = {
             sizes: {
-                modes:"rightHalf",
                 minW:  700,
                 minH: 1000
             },
@@ -1069,7 +1068,7 @@ leantime.ticketsController = (function () {
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
             var height = jQuery("html").height()-250;
-            jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
+            jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
 

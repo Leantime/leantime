@@ -32,20 +32,6 @@ jQuery(document).ready(function () {
             }
         }
     });
-    // dynamic table
-    jQuery('#dyntable2').dataTable({
-        "sPaginationType": "full_numbers",
-        "aaSortingFixed": [[0, 'asc']],
-        "fnDrawCallback": function (oSettings) {
-
-        }
-    });
-
-    jQuery('#dyntable').dataTable({
-        "bScrollInfinite": true,
-        "bScrollCollapse": true,
-        "sScrollY": "300px"
-    });
 
 
 });
