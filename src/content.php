@@ -48,6 +48,11 @@
     </div><!--rightpanel-->
 
 </div><!--mainwrapper-->
+<script>
+    var req = new XMLHttpRequest();
+    req.open("GET", "<?=BASE_URL?>/cron.php",true);
+    req.send(null);
+</script>
 
 </body>
 </html>
