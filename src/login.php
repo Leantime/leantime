@@ -4,16 +4,6 @@
     <?php echo $this->frontController->includeAction('general.header'); ?>
 </head>
 
-<script type="text/javascript">
-    jQuery(document).ready(function(){
-        
-        if(jQuery('.login-alert .alert').text() != ''){
-            jQuery('.login-alert').fadeIn();
-        }
-
-    });
-</script>
-
 <?php
 
     $redirectUrl = BASE_URL."/dashboard/show";

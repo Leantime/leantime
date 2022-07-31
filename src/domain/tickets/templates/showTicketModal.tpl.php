@@ -52,14 +52,11 @@
 
             <div id="subtasks">
                 <?php $this->displaySubmodule('tickets-subTasks') ?>
-
             </div>
 
             <div id="files">
                 <?php $this->displaySubmodule('tickets-attachments') ?>
             </div>
-
-
 
             <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                 <div id="timesheet">

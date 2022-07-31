@@ -86,6 +86,8 @@ class ldap
 
             $this->ldapConnection = ldap_connect($this->host, $this->port);
 
+            ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 7);
+
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
             ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
 
@@ -119,14 +121,14 @@ class ldap
         }
 
 
-        return @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+        return ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
     }
 
     public function getSingleUser($username) {
 
         if(!is_resource($this->ldapConnection)){
-            throw new Exception("No connection");
+            error_log("No connection, last error: ".ldap_error($this->ldapConnection));
         }
 
         $filter = "(".$this->ldapKeys->username."=" . $this->extractLdapFromUsername($username) . ")";

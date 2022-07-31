@@ -22,11 +22,12 @@
 
 jQuery(function($, undefined) {
 
-    $.curCSS = function (element, attrib, val) {
+    var $w, $d, $b, baseHref, _nmObj, _internal, _animations, _filters;
+	$.curCSS = function (element, attrib, val) {
         $(element).css(attrib, val);
     };
 
-	var $w = $(window),
+	$w = $(window),
 		$d = $(document),
 		$b = $('body'),
 		baseHref = $('base').attr('href'),
@@ -174,7 +175,7 @@ jQuery(function($, undefined) {
 				if(this.sizes.mode == "rightHalf") {
 
 					this.sizes.h = maxHeight;
-					this.sizes.w = maxWidth/2;
+					this.sizes.w = (maxWidth/3)*2;
 
 				}else{
 
@@ -509,11 +510,19 @@ jQuery(function($, undefined) {
 			// Write the content in the modal.
 			// Content comes from the hidden div, scripts and eventually close button.
 			_writeContent: function() {
-
-				var topValue = (this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2;
-				if(topValue <=10) {
-					topValue = 50;
+				if(this.sizes.mode == "rightHalf") {
+					var topValue = 0;
+					var leftValue = "auto";
+					var rightValue = 0;
+				}else{
+					var topValue = (this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2;
+					if(topValue <=10) {
+						topValue = 50;
+					}
+					var leftValue = (this.getInternal().fullSize.viewW - this.sizes.w - this.sizes.wMargin)/2;
+					var rightValue = "auto";
 				}
+
 				this.elts.cont
 					.empty()
 					.append(this.elts.hidden.contents())
@@ -524,7 +533,8 @@ jQuery(function($, undefined) {
 						width: this.sizes.w,
 						height: 'auto',
 						top: topValue,
-						left: (this.getInternal().fullSize.viewW - this.sizes.w - this.sizes.wMargin)/2
+						left: leftValue,
+						right: rightValue
 					});
 			},
 
@@ -533,19 +543,36 @@ jQuery(function($, undefined) {
 				var elts = this.elts.cont.find('.nmReposition');
 				if (elts.length) {
 					var space = this.getInternal()._getSpaceReposition();
-					elts.each(function() {
-						var me = $(this),
-							offset = me.offset();
+					var nmThis = this;
 
-						var topValue = offset.top - space.top;
-						if(topValue <=50){
-							topValue=50;
+					elts.each(function() {
+
+						let topValue = 0;
+						let leftValue = 0;
+						let rightValue = 0;
+						let me = $(this);
+						let	offset = me.offset();
+
+						if(nmThis.sizes.mode == "rightHalf") {
+							leftValue = "auto";
+							rightValue = 0;
+
+						}else{
+
+							topValue = offset.top - space.top;
+							if(topValue <=50){
+								topValue=50;
+							}
+
+							leftValue = offset.left - space.left;
+							rightValue = "auto";
 						}
 
 						me.css({
 							position: 'absolute',
 							top: topValue,
-							left: offset.left - space.left ,
+							left: leftValue,
+							right: rightValue,
                             visibility: 'visible'
 						});
 					});
@@ -697,6 +724,7 @@ jQuery(function($, undefined) {
 				});
 			},
 			_resize: function() {
+				// noinspection CssInvalidPseudoSelector
 				var opens = $(':nmOpen').each(function() {
 					$(this).data('nmObj')._unreposition();
 				});
@@ -744,16 +772,15 @@ jQuery(function($, undefined) {
 				return ret;
 			},
 			_getSpaceReposition: function() {
-				var	outer = this._getOuter($b),
-					ie7 = $.browser.msie && $.browser.version < 8 && !(screen.height <= $w.height()+23);
+				var	outer = this._getOuter($b);
 
-				var topValue = $w.scrollTop() - (!ie7 ? outer.h.border / 2 : 0);
+				var topValue = $w.scrollTop() - (outer.h.border / 2);
 				if(topValue <=50){
 					topValue = 50;
 				}
 				return {
-					top: $w.scrollTop() - (!ie7 ? outer.h.border / 2 : 0),
-					left: $w.scrollLeft() - (!ie7 ? outer.w.border / 2 : 0)
+					top: $w.scrollTop() - (outer.h.border / 2),
+					left: $w.scrollLeft() - (outer.h.border / 2)
 				};
 			},
 
