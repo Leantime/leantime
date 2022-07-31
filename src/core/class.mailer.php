@@ -178,7 +178,7 @@ namespace leantime\core {
 			<td align="center" valign="top">
 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
 					<tr>
-						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
+						<td style="padding:3px 10px; background-color:' . $this->companyColor . '">
 							<table>
 								<tr>
 								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>

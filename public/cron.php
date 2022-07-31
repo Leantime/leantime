@@ -88,8 +88,8 @@ function overrideThemeSettingsMinimal()
 
     $settingsRepo = new leantime\domain\repositories\setting();
     $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
-    $color = $settingsRepo->getSetting("companysettings.primaryColor");
-    $color2 = $settingsRepo->getSetting("companysettings.secondaryColor");
+    $color = $settingsRepo->getSetting("companysettings.primarycolor");
+    $color2 = $settingsRepo->getSetting("companysettings.secondarycolor");
     $sitename = $settingsRepo->getSetting("companysettings.sitename");
 
     if (strpos($logoPath, 'http') === 0) {
@@ -100,7 +100,7 @@ function overrideThemeSettingsMinimal()
     // echo for DEBUG PURPOSE
     //debug_print($_SESSION["companysettings.logoPath"]);
 
-    $_SESSION["companysettings.maincolor"] = $color;
+    $_SESSION["companysettings.mainColor"] = $color;
     $_SESSION["companysettings.primarycolor"] = $color;
     $_SESSION["companysettings.secondarycolor"] = $color2;
     // echo for DEBUG PURPOSE
