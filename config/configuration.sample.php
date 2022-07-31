@@ -11,6 +11,7 @@ class config
     public $logoPath = '/images/logo.svg'; //Default logo path, can be changed later
     public $appUrl = ''; //Base URL, trailing slash not needed
     public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone
+    public $debug = 0; //Base URL, trailing slash not needed
 
     /* Database */
     public $dbHost = 'localhost'; //Database host
@@ -101,6 +102,7 @@ class config
         $this->mainColor = $this->configEnvironmentHelper("LEAN_MAIN_COLOR", $this->mainColor);
         $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
         $this->appUrl = $this->configEnvironmentHelper("LEAN_APP_URL", $this->appUrl);
+        $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);
 
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
 
