@@ -43,12 +43,15 @@ if(isset($config->appUrl) && $config->appUrl != ""){
 
 ob_start();
 
-if ( $_GET['mode'] == "debug" )
+if ( isset($_GET['mode']))
 {
-    $DEBUG_CRON=true;
-} else
-{
-    $DEBUG_CRON=false;
+    if ( $_GET['mode'] && $_GET['mode'] == "debug" )
+    {
+        $DEBUG_CRON=true;
+    } else
+    {
+        $DEBUG_CRON=false;
+    }
 }
 
 function debug_print ($message)
