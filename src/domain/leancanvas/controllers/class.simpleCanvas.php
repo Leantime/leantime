@@ -68,7 +68,7 @@ namespace leantime\domain\controllers {
 
                     // NEW Queuing messaging system
                     $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($users, $message, "", $_SESSION["currentProject"]);
+                    $queue->queueMessageToUsers($users, $message, $language->__("notifications.new_canvas_created"), $_SESSION["currentProject"]);
 
 
                     $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');

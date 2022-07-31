@@ -76,7 +76,7 @@ namespace leantime\domain\controllers {
 
                     // NEW Queuing messaging system
                     $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($users, $message, "", $projectId);
+                    $queue->queueMessageToUsers($users, $message, $language->__('email_notifications.canvas_board_created'), $projectId);
 
 
                     $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');

@@ -69,7 +69,7 @@ namespace leantime\domain\controllers {
 
                     // NEW Queuing messaging system
                     $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($users, $message, "", $_SESSION["currentProject"]);
+                    $queue->queueMessageToUsers($users, $message, $language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
 
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;

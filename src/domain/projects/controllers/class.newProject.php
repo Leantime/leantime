@@ -107,7 +107,7 @@ namespace leantime\domain\controllers {
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
 	            // NEW Queuing messaging system
 	            $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($to, $message, "", $id);
+                    $queue->queueMessageToUsers($to, $message, $language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
