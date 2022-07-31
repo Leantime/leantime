@@ -23,7 +23,6 @@ namespace leantime\domain\repositories {
 
 	    foreach ($recipients as $recipient) {
 
-                date_default_timezone_set('Europe/Paris');
                 $thedate = date('Y-m-d H:i:s');
 		// NEW : Allowing recipients to be emails or userIds
 		// TODO : Accept a list of \user objects too ?
