@@ -64,21 +64,6 @@ function debug_print ($message)
     }
 }
 
-// Fake template to be replaced by something better
-// TODO : Rework email templating system
-function doFormatMail ($messageToSendToUser)
-{
-    $outputHTML="Leantime has news for you...<br/>\n";
-    foreach ($messageToSendToUser as $chunk)
-    {
-         $outputHTML.="<div style=\"border: 1px solid grey; margin: 3px; padding: 3px;\">\n";
-         $outputHTML.="<div style=\"float : right\">".$chunk['thedate']."</div>\n";
-         $outputHTML.="<div>".$chunk['message']."</div>\n";
-         $outputHTML.="</div>\n";
-    }
-    return $outputHTML;
-}
-
 // setting manually session values to theme the emails.
 // Could not get the repoSettings class to work
 // DONE : Find a better solution
