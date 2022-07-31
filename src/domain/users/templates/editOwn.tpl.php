@@ -98,16 +98,16 @@ $user = $this->get('user');
                                 <span class='field'>
                                     <select name="messagesfrequency" class="input" id="messagesfrequency" >
                                         <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
-                                        <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>>5min</option>
-                                        <option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>>15min</option>
-                                        <option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>>30min</option>
-                                        <option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>>1h</option>
-                                        <option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>>3h</option>
-                                        <option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>>6h</option>
-                                        <option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>>12h</option>
-                                        <option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>>24h</option>
-                                        <option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>>48h</option>
-                                        <option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>>1w</option>
+                                        <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
+					<option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
+					<option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>><?php echo $this->__('label.30min') ?></option>
+					<option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>><?php echo $this->__('label.1h') ?></option>
+					<option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>><?php echo $this->__('label.3h') ?></option>
+					<option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>><?php echo $this->__('label.6h') ?></option>
+					<option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>><?php echo $this->__('label.12h') ?></option>
+					<option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>><?php echo $this->__('label.24h') ?></option>
+					<option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>><?php echo $this->__('label.48h') ?></option>
+					<option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
                                     </select> <br/>
                                 </span>
                             </p>
