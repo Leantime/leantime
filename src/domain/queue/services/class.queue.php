@@ -24,6 +24,22 @@ namespace leantime\domain\services {
             $this->mailer = new \leantime\core\mailer();
         }
 
+        // Fake template to be replaced by something better
+        // TODO : Rework email templating system
+        private function doFormatMail ($messageToSendToUser)
+        {
+            $outputHTML="Leantime has news for you...<br/>\n";
+            foreach ($messageToSendToUser as $chunk)
+            {
+                 $outputHTML.="<div style=\"border: 1px solid grey; margin: 3px; padding: 3px;\">";
+                 $outputHTML.="<div style=\"margin: 0px; padding: 0px; float : right\">".$chunk['thedate']."</div>";
+                 $outputHTML.="<div><p><em>".$chunk['subject']."</em></p>";
+                 $outputHTML.=$chunk['message']."</div>";
+                 $outputHTML.="</div>";
+            }
+            return $outputHTML;
+        }
+
         public function processQueue()
         {
 
@@ -39,8 +55,9 @@ namespace leantime\domain\services {
 
                 $allMessagesToSend[$currentUserId][$message['msghash']]=Array(
                     'thedate'=>$message['thedate'],
+                    'subject'=> $message['subject'],
                     'message'=> $message['message'],
-            	'projectId'=>$message['projectId']
+                    'projectId'=>$message['projectId']
                 );
                 // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
                 // and here we need to group the messages in an array to know which messages are grouped to group-delete them
@@ -85,7 +102,7 @@ namespace leantime\domain\services {
                 }
 
                 // TODO here : set up a true templating system to format the messages
-                $formattedHTML=doFormatMail($messageToSendToUser);
+                $formattedHTML=$this->doFormatMail($messageToSendToUser);
 
                 // TODO Tranlastion needed somewhere ? 
 
