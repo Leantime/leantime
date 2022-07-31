@@ -1,0 +1,932 @@
+[30-Jul-2022 02:43:48 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "PDO" not found in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.db.php:63
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.db.php(81): leantime\core\db->__construct()
+#1 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.login.php(169): leantime\core\db::getInstance()
+#2 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.login.php(263): leantime\core\login->__construct()
+#3 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(22): leantime\core\login::getInstance()
+#4 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.db.php on line 63
+[30-Jul-2022 12:10:52 Europe/Paris] PHP Fatal error:  Uncaught Error: Undefined constant "leantime\core\ENV" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:207
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(58): leantime\core\application->overrideThemeSettings()
+#1 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#2 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:10:53 Europe/Paris] PHP Fatal error:  Uncaught Error: Undefined constant "leantime\core\ENV" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:207
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(58): leantime\core\application->overrideThemeSettings()
+#1 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#2 /home/pascal/.symfony/php/2f2ebe1fd74a16c9cf80d079cc86235cec0f6035-router.php(33): require('/home/pascal/.e...')
+#3 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:10:56 Europe/Paris] PHP Fatal error:  Uncaught Error: Undefined constant "leantime\core\ENV" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:207
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(58): leantime\core\application->overrideThemeSettings()
+#1 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#2 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:07 Europe/Paris] PHP Fatal error:  Uncaught Error: Undefined constant "leantime\core\ENV" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:207
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(58): leantime\core\application->overrideThemeSettings()
+#1 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#2 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:28 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:28 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:29 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:29 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:29 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:29 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:29 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:30 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:30 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:34 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:34 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:39 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:39 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:39 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:39 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:39 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Undefined variable $ENV in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Warning:  Trying to access array offset on value of type null in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php on line 207
+[30-Jul-2022 12:11:40 Europe/Paris] PHP Stack trace:
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:0
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   2. leantime\core\application->start() /home/pascal/.eh.src/toastmasters/leantime/public/index.php:43
+[30-Jul-2022 12:11:40 Europe/Paris] PHP   3. leantime\core\application->overrideThemeSettings() /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php:58
+[30-Jul-2022 12:17:58 Europe/Paris] PHP Fatal error:  Uncaught Error: Call to undefined function filter_var() in /home/pascal/.eh.src/toastmasters/leantime/src/login.php:22
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(76): require()
+#1 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#2 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/src/login.php on line 22
+[30-Jul-2022 12:22:24 Europe/Paris] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strlen() in /home/pascal/.eh.src/toastmasters/leantime/vendor/symfony/polyfill-mbstring/Mbstring.php:491
+Stack trace:
+#0 /home/pascal/.eh.src/toastmasters/leantime/vendor/symfony/polyfill-mbstring/bootstrap80.php(57): Symfony\Polyfill\Mbstring\Mbstring::mb_strlen()
+#1 /home/pascal/.eh.src/toastmasters/leantime/src/domain/projects/services/class.projects.php(458): mb_strlen()
+#2 /home/pascal/.eh.src/toastmasters/leantime/src/domain/projects/services/class.projects.php(410): leantime\domain\services\projects->changeCurrentSessionProject()
+#3 /home/pascal/.eh.src/toastmasters/leantime/src/core/class.application.php(95): leantime\domain\services\projects->setCurrentProject()
+#4 /home/pascal/.eh.src/toastmasters/leantime/public/index.php(43): leantime\core\application->start()
+#5 {main}
+  thrown in /home/pascal/.eh.src/toastmasters/leantime/vendor/symfony/polyfill-mbstring/Mbstring.php on line 491
+[31-Jul-2022 12:27:22 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:27:22 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:27:22 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:27:22 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:27:22 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:27:22 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:27:22 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:31:40 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:31:40 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:40 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:31:40 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:40 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:40 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:31:46 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:31:46 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:46 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:46 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:31:46 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:46 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:46 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:31:54 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:31:54 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:54 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:54 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:31:54 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:31:54 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:31:54 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:32:16 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:32:16 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:32:16 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:32:16 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:32:16 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:32:16 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:32:16 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:32:56 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:32:56 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:32:56 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:32:56 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:32:56 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:32:56 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:32:56 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:04 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:04 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:04 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:04 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:04 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:04 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:04 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:10 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:10 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:10 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:10 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:10 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:10 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:10 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:16 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:16 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:16 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:16 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:16 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:16 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:16 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:18 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:18 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:18 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:18 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:18 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:18 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:18 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:21 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:21 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:21 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:21 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:21 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:21 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:21 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
+[31-Jul-2022 12:33:41 Europe/Paris] PHP Warning:  Undefined array key "mode" in /home/pascal/.eh.src/toastmasters/leantime/public/cron.php on line 46
+[31-Jul-2022 12:33:41 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:41 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:41 Europe/Paris] PHP Warning:  Undefined array key "companysettings.primarycolor" in /home/pascal/.eh.src/toastmasters/leantime/src/core/class.mailer.php on line 95
+[31-Jul-2022 12:33:41 Europe/Paris] PHP Stack trace:
+[31-Jul-2022 12:33:41 Europe/Paris] PHP   1. {main}() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:0
+[31-Jul-2022 12:33:41 Europe/Paris] PHP   2. leantime\core\mailer->__construct() /home/pascal/.eh.src/toastmasters/leantime/public/cron.php:120
