@@ -25,6 +25,7 @@ include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 
 use leantime\domain\repositories;
+use leantime\domain\services;
 
 $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
@@ -88,6 +89,7 @@ function overrideThemeSettingsMinimal()
     $settingsRepo = new leantime\domain\repositories\setting();
     $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
     $color = $settingsRepo->getSetting("companysettings.primaryColor");
+    $color2 = $settingsRepo->getSetting("companysettings.secondaryColor");
     $sitename = $settingsRepo->getSetting("companysettings.sitename");
 
     if (strpos($logoPath, 'http') === 0) {
@@ -98,7 +100,9 @@ function overrideThemeSettingsMinimal()
     // echo for DEBUG PURPOSE
     //debug_print($_SESSION["companysettings.logoPath"]);
 
-    $_SESSION["companysettings.mainColor"] = $color;
+    $_SESSION["companysettings.maincolor"] = $color;
+    $_SESSION["companysettings.primarycolor"] = $color;
+    $_SESSION["companysettings.secondarycolor"] = $color2;
     // echo for DEBUG PURPOSE
     //debug_print($_SESSION["companysettings.mainColor"]);
 
@@ -114,92 +118,10 @@ debug_print( "cron start");
 
 overrideThemeSettingsMinimal();
 
-// NEW Queuing messaging system
-$queue = new repositories\queue();
+$queueService = new services\queue();
 
-// We need users and settings and a mailer
-$users = new repositories\users();
-$settingsRepo = new leantime\domain\repositories\setting();
-$mailer = new \leantime\core\mailer();
+$queueService->processQueue();
 
-$messages=$queue->listMessageInQueue();
-
-$allMessagesToSend=array();
-$n=0;
-foreach ($messages as $message) 
-{
-    $n++;
-    $currentUserId=$message['userId'];
-
-    $allMessagesToSend[$currentUserId][$message['msghash']]=Array(
-        'thedate'=>$message['thedate'],
-        'message'=> $message['message'],
-	'projectId'=>$message['projectId']
-    );
-    // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
-    // and here we need to group the messages in an array to know which messages are grouped to group-delete them
-    $allMessagesToDelete[$currentUserId][]=$message['msghash'];
-}
-foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser)
-{
-    $theuser=$users->getUser($currentUserId);
-    $recipient=$theuser['username'];
-
-    // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails
-    // TODO : Update profile form to allow each user to edit his own messageFrequency option
-    $lastMessageDate = strtotime($settingsRepo->getSetting("usersettings.".$theuser['id'].".lastMessageDate"));
-    $nowDate = time();
-    // echo for DEBUG PURPOSE
-    debug_print( "Last message to ".$recipient." was on ".date('Y-m-d H:i:s', $lastMessageDate));
-    $timeSince = abs($nowDate - $lastMessageDate);
-    // echo for DEBUG PURPOSE
-    debug_print("Time elapsed since : ".$timeSince);
-
-    $messageFrequency=$settingsRepo->getSetting("usersettings.".$theuser['id'].".messageFrequency");
-    // Check if there is a default value in DB
-    if ( $messageFrequency == "" )
-    {
-        $messageFrequency=$settingsRepo->getSetting("usersettings.default.messageFrequency");
-    }
-    // Last security to avoid flooding people.
-    if ( $messageFrequency == "" )
-    {
-        $messageFrequency=3600;
-	$settingsRepo->saveSetting("usersettings.default.messageFrequency", 3600);
-    }
-    // echo for DEBUG PURPOSE
-    debug_print( "The message frequency for ".$recipient." : ".$messageFrequency);
-
-    if ($timeSince < $messageFrequency ) 
-    {
-        // echo for DEBUG PURPOSE
-        debug_print( "Elapsed time not enough for ".$recipient." : skipping till ".date("Y-m-d H:i:s", $lastMessageDate+$messageFrequency));
-	continue;
-    }
-
-    // TODO here : set up a true templating system to format the messages
-    $formattedHTML=doFormatMail($messageToSendToUser);
-
-    // TODO Tranlastion needed somewhere ? 
-    
-    // DONE : Send the message with PHPMailer here
-    $mailer->setSubject("Leantime notification");
-    $mailer->setHtml($formattedHTML);
-    $to = array($recipient);
-    $mailer->sendMail($to, "Leantime System");
-
-    // Delete the corresponding messages from the queue when the mail is sent
-    // TODO here : only delete these if the send was successful
-    // echo for DEBUG PURPOSE
-    debug_print( "Messages send (about to delete) :");
-    print_r($allMessagesToDelete[$currentUserId]);
-    $queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
-
-    // Store the last time a mail was sent to $recipient email
-    $thedate=date('Y-m-d H:i:s');
-    $settingsRepo->saveSetting("usersettings.".$theuser['id'].".lastMessageDate", $thedate);
-  
-}
 // echo for DEBUG PURPOSE
 debug_print( "cron end");
 
