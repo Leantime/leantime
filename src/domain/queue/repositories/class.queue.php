@@ -17,7 +17,7 @@ namespace leantime\domain\repositories {
         public function queueMessageToUsers($recipients,$message, $subject = "",$projectId = 0)
         {
 
-            $sql = 'INSERT INTO zp_queue (msghash,userId,message,thedate,projectId) VALUES (:msghash,:userId,:message,:thedate,:projectId)';
+            $sql = 'INSERT INTO zp_queue (msghash,channel,userId,subject,message,thedate,projectId) VALUES (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
 
             $recipients = array_unique($recipients);
 
@@ -43,7 +43,9 @@ namespace leantime\domain\repositories {
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
+                $stmn->bindValue(':channel', 'email', PDO::PARAM_STR);
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+                $stmn->bindValue(':subject', $subject, PDO::PARAM_STR);
                 $stmn->bindValue(':message', $message, PDO::PARAM_STR);
                 $stmn->bindValue(':thedate', $thedate, PDO::PARAM_STR);
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
@@ -56,12 +58,13 @@ namespace leantime\domain\repositories {
         }
 
         // TODO later : lists messages per user or per project ?
-	public function listMessageInQueue($recipients = null, $projectId = 0)
+	public function listMessageInQueue($channel = 'email', $recipients = null, $projectId = 0)
         {
-            $sql = 'SELECT * from zp_queue ORDER BY userId, projectId ASC, thedate ASC';
+            $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
 
             $stmn = $this->db->database->prepare($sql);
 
+            $stmn->bindValue(':channel', $channel, PDO::PARAM_STR);
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();

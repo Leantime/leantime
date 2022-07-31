@@ -28,7 +28,7 @@ namespace leantime\domain\services {
         {
 
 
-            $messages=$this->queue->listMessageInQueue();
+            $messages=$this->queue->listMessageInQueue('email');
 
             $allMessagesToSend=array();
             $n=0;
