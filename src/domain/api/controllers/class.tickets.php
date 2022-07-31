@@ -50,22 +50,28 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true){
+            if(isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
 
                 $handler = null;
-                if(isset($params["handler"]) == true){
+                if (isset($params["handler"]) == true) {
                     $handler = $params["handler"];
                 }
                 $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
-                if($results === true) {
-
+                if ($results === true) {
                     echo "{status:ok}";
-
-                }else{
-
+                } else {
                     echo "{status:failure}";
+                }
 
+            }elseif(isset($params['action']) && $params['action'] == "new"){
+
+                $results = $this->ticketsApiService->addTicket($params);
+
+                if($results === true) {
+                    $this->tpl->displayJson("{status:ok}");
+                }else{
+                    $this->tpl->displayJson("{status:failure}");
                 }
 
             }else{

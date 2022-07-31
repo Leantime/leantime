@@ -182,14 +182,25 @@ namespace leantime\core {
 
                 //If login successful redirect to the correct url to avoid post on reload
                 if($this->login() === true){
+
                     $this->checkSessions();
 
                     if($this->use2FA()) {
                         $this->redirect2FA($redirectUrl);
                     }
 
-                    header("Location:".$redirectUrl);
-                    exit();
+                    //Todo replace with a check if user is API user
+                    if(isset($_POST['api']) === true){
+
+                        header('Content-Type: application/json; charset=utf-8');
+
+                        echo '{token:'.$this->session.'}';
+
+                    }else {
+
+                        header("Location:" . $redirectUrl);
+                        exit();
+                    }
                 }
 
             }
