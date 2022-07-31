@@ -295,6 +295,36 @@ body .tox .tox-toolbar-overlord{
 }
 
 
+.ui-datepicker-next {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	right: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px 1px;
+}
+
+.ui-datepicker-prev {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	left: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px -39px;
+}
+
+.ui-datepicker-header {
+	position: relative;
+	text-align: center;
+	padding: 5px;
+	color: #fff;
+	background: #0866c6;
+	text-transform: uppercase;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.ui-datepicker {
+	border-radius:5px;
+}
 
 
 /* Playing with header */

@@ -626,11 +626,11 @@ namespace leantime\domain\repositories {
 						zp_tickets.status,
 						zp_tickets.sprint,
 						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
+						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
 						zp_tickets.acceptanceCriteria,
 						zp_tickets.userId,
 						zp_tickets.editorId,
-						zp_tickets.planHours,
+						IFNULL(zp_tickets.planHours, 0) AS planHours,
 						zp_tickets.tags,
 						zp_tickets.url,
 						zp_tickets.editFrom,
@@ -650,7 +650,7 @@ namespace leantime\domain\repositories {
 					WHERE 
 						zp_tickets.dependingTicketId = :ticketId AND zp_tickets.type = 'subtask'
 					GROUP BY
-						zp_tickets.id";
+						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);

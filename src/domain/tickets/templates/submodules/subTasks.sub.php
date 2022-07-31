@@ -10,7 +10,7 @@
 <p><?=$this->__('text.what_are_subtasks') ?><br /><br /></p>
 
 
-<ul class="sortableTicketList" >
+<ul class="sortableTicketList" style="margin-bottom:120px;">
     <li class="">
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
@@ -50,20 +50,43 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
     }
 ?>
     <li class="ui-state-default" id="ticket_<?php echo $subticket['id']; ?>" >
-        <div class="ticketBox fixed priority-border-<?=$subticket['priority']?>" data-val="<?php echo $subticket['id']; ?>">
+        <div class="ticketBox fixed priority-border-<?=$subticket['priority']?>" data-val="<?php echo $subticket['id']; ?>" >
 
             <div class="row">
-                <div clss="col-md-12" style="padding:0 15px;">
-                    <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" />
+                <div class="col-md-12" style="padding:0 15px;">
+                    <div class="inlineDropDownContainer">
+                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+
+                        </ul>
+                    </div>
+                    <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
                 </div>
+
             </div>
             <div class="row">
-                <div class="col-md-4" style="padding:0 15px;">
-                    <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $subticket['id'];?>" name="date" />
-                </div>
-                <div class="col-md-8" style="padding-top:3px;" >
-                    <div class="right">
+                <div class="col-md-9" style="padding:0 15px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $subticket['id'];?>" name="date" />
 
+                        </div>
+                        <div class="col-md-4">
+                            <?php echo $this->__("label.planned_hours"); ?><input type="text" value="<?php echo $this->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                        </div>
+                        <div class="col-md-4">
+                            <?php echo $this->__("label.estimated_hours_remaining"); ?><input type="text" value="<?php echo $this->e($subticket['hourRemaining']); ?>" name="hourRemaining" data-label="hourRemaining-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="col-md-3" style="padding-top:3px;" >
+                    <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
@@ -113,103 +136,3 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
 <?php } ?>
 </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table cellpadding="0" cellspacing="0" border="0" class="allTickets table table-bordered"
-    id="allTickets">
-    
-    <thead>
-        <tr>
-            <th width="15%"><?php echo $this->__('label.headline'); ?></th>
-            <th  width="30%"><?php echo $this->__('label.description'); ?></th>
-            <th width="15%"><?php echo $this->__('label.todo_status'); ?></th>
-            <th width="10%"><?php echo $this->__('label.planned_hours'); ?></th>
-            <th width="10%"><?php echo $this->__('label.actual_hours_remaining'); ?></th>
-            <th width="10%"><?php echo $this->__('label.actions'); ?></th>
-        </tr>
-    </thead>
-    <tbody>
-
-    <?php
-    $sumPlanHours = 0;
-    $sumEstHours = 0;
-    foreach($this->get('allSubTasks') as $subticket) {
-        $sumPlanHours = $sumPlanHours + $subticket['planHours'];
-        $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
-        ?>
-        <tr>
-            <form method="post" action="#subtasks">
-                <td><input type="text" value="<?php $this->e($subticket['headline']); ?>" name="headline"/></td>
-                <td><textarea  name="description" style="width:80%"><?php $this->e($subticket['description']) ?></textarea></td>
-                <td style="width:150px;" ><select class="span11 status-select" name="status" style="width:150px;"  data-placeholder="">
-                        <?php foreach($statusLabels as $key=>$label){?>
-                            <option value="<?php echo $key; ?>"
-                                <?php if($subticket['status'] == $key) {echo"selected='selected'";
-                                }?>
-                            ><?php echo $this->escape($statusLabels[$key]["name"]); ?></option>
-                        <?php } ?>
-                    </select>
-                </td>
-            <td><input type="text" value="<?php echo $this->e($subticket['planHours']); ?>" name="planHours" class="small-input"/></td>
-            <td><input type="text" value="<?php echo $this->e($subticket['hourRemaining']); ?>" name="hourRemaining" class="small-input"/></td>
-                <td><input type="hidden" value="<?php echo $subticket['id']; ?>" name="subtaskId" />
-                    <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="subtaskSave"/>
-                    <input type="submit" value="<?php echo $this->__('buttons.delete'); ?>" class="delete" name="subtaskDelete"/></td>
-            </form>
-            
-        </tr>
-    <?php } ?>
-    <?php if(count($this->get('allSubTasks')) === 0) : ?>
-        <tr>
-            <td colspan="6"><?php echo $this->__('text.no_subtasks'); ?></td>
-        </tr>
-    <?php endif; ?>
-    <tr><td colspan="6" style="background:#ccc;"><strong><?php echo $this->__('text.create_new_subtask'); ?></strong></td></tr>
-    <tr>
-        <form method="post" action="#subtasks">
-        <td><input type="text" value="" name="headline"/></td>
-        <td><textarea  name="description" style="width:80%"></textarea></td>
-        <td style="width:150px;">
-            <select class="span11 status-select" name="status"  style="width:150px;" data-placeholder="">
-                <?php foreach($statusLabels as $key=>$label){?>
-                    <option value="<?php echo $key; ?>"
-                    ><?php echo $this->escape($label["name"]); ?></option>
-                <?php } ?>
-            </select>
-        </td>
-        <td><input type="text" value="" name="planHours" style="width:100px;"/></td>
-        <td><input type="text" value="" name="hourRemaining" style="width:100px;"/></td>
-        <td><input type="hidden" value="new" name="subtaskId" /><input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="subtaskSave"/></td>
-        </form>
-    </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3"><strong><?php echo $this->__('label.total_hours') ?></strong></td>
-            <td><strong><?php echo $sumPlanHours; ?></strong></td>
-            <td><strong><?php echo $sumEstHours; ?></strong></td>
-            <td></td>
-        </tr>
-    </tfoot>
-</table>

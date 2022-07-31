@@ -51,15 +51,12 @@
             </div>
 
             <div id="subtasks">
-
                 <?php $this->displaySubmodule('tickets-subTasks') ?>
 
             </div>
 
             <div id="files">
-                <form action='#files' method='POST' enctype="multipart/form-data" class="ticketModal">
-                    <?php $this->displaySubmodule('tickets-attachments') ?>
-                </form>
+                <?php $this->displaySubmodule('tickets-attachments') ?>
             </div>
 
 
@@ -77,10 +74,13 @@
 <script type="text/javascript">
 
     jQuery(function(){
-
+        leantime.ticketsController.initAsyncInputChange();
+        leantime.dashboardController._initDueDateTimePickers();
         leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
         leantime.generalController.initComplexEditor();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initStatusDropdown();
 
     });
 
