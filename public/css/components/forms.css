@@ -113,7 +113,7 @@ textarea, button {
 /*Secondary Button*/
 body .btn-default,
 body .btn,
-a.btn,
+body a.btn,
 input.btn,
 button.btn,
 body input[type='submit'].btn-default,
@@ -122,6 +122,7 @@ body input[type='submit'].btn-default,
 .btn-group>.dropdown-toggle,
 a.btn-default,
 .btn-default:link
+
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
