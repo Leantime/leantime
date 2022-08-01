@@ -64,7 +64,7 @@ ob_start();
 
 if ( isset($_GET['mode']))
 {
-    if ( $_GET['mode'] && $_GET['mode'] == "debug" )
+    if ( $_GET['mode'] == "debug" )
     {
         $DEBUG_CRON=true;
     } else
