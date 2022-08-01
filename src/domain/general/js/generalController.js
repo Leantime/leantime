@@ -11,7 +11,7 @@ leantime.generalController = (function () {
                 _initSimpleEditor();
                 initComplexEditor();
 
-                if(jQuery('.login-alert .alert').text() != ''){
+                if(jQuery('.login-alert .alert').text() !== ''){
                     jQuery('.login-alert').fadeIn();
                 }
             }
