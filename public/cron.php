@@ -31,6 +31,24 @@ $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
+// NEW Audit system
+$audit = new leantime\domain\repositories\audit();
+
+$LastEvent = $audit->getLastEvent('cron');
+
+// Using audit system to prevent too frequent executions
+$lastEventDate = strtotime($LastEvent['date']);
+$nowDate = time();
+$timeSince = abs($nowDate - $lastEventDate);
+if ($timeSince < 300)
+{
+    echo "Last cron execution was on ".$LastEvent['date']. " plz come back later";
+    exit;
+}
+
+// Storing audit cron event
+$audit->storeEvent("cron", "Cron started");
+
 // TODO  check if using the session class in cron is a better idea
 session_start();
 
@@ -109,6 +127,9 @@ $queueService->processQueue();
 
 // echo for DEBUG PURPOSE
 debug_print( "cron end");
+
+// Cleaning old audit events
+$audit->pruneEvents();
 
 // Release the semaphore for next thread
 flock($fp, LOCK_UN);
