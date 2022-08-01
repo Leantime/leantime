@@ -48,11 +48,12 @@
     </div><!--rightpanel-->
 
 </div><!--mainwrapper-->
+<?php if ( isset($_SESSION['DOCRON'] )) { ?>
 <script>
     var req = new XMLHttpRequest();
     req.open("GET", "<?=BASE_URL?>/cron.php",true);
     req.send(null);
 </script>
-
+<?php } ?>
 </body>
 </html>

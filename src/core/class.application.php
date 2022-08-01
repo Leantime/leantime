@@ -126,6 +126,22 @@ class application
     }
 
     public function overrideThemeSettings() {
+        $audit = new \leantime\domain\repositories\audit();
+
+        $LastCronEvent = $audit->getLastEvent('cron');
+
+        // Using audit system to prevent too frequent cron executions
+        $lastCronEventDate = strtotime($LastCronEvent['date']);
+        $nowDate = time();
+        $timeSince = abs($nowDate - $lastCronEventDate);
+        if ($timeSince >= 300)
+        {
+            $_SESSION["DOCRON"] = true;
+        } else
+        {
+            unset ($_SESSION["DOCRON"]);
+        }
+
 
         if(isset($_SESSION["companysettings.logoPath"]) === false) {
 
