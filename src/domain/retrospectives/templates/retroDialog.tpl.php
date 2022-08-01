@@ -34,7 +34,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
-        <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <label><?php echo $this->__("label.description") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']); ?>" placeholder="<?php echo $this->__("input.placeholders.describe_situation") ?>"/><br />

@@ -54,22 +54,45 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function countComments($module,$moduleId)
+        public function countComments($module = null, $moduleId = null)
         {
 
             $sql = "SELECT count(id) as count
-				FROM zp_comment as comment
-				WHERE moduleId = :moduleId AND module = :module";
+				FROM zp_comment as comment";
+
+            if($module != null || $moduleId != null){
+                $sql.=" WHERE ";
+                if($module != null) {
+                    $sql.="module = :module AND ";
+                }
+
+                if($moduleId != null) {
+                    $sql.="moduleId = :moduleId AND ";
+                }
+
+                $sql.= "1=1";
+
+            }
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-            $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+
+            if($module != null) {
+                $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            }
+
+            if($module != null) {
+                $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values['count'];
+            if(isset($values['count'])) {
+                return $values['count'];
+            }else{
+                return 0;
+            }
         }
 
         public function getReplies($id)

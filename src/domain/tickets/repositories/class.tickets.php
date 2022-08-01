@@ -363,7 +363,7 @@ namespace leantime\domain\repositories {
 							t2.lastname AS editorLastname,
 							t2.profileId AS editorProfileId,
 							milestone.headline AS milestoneHeadline,
-							IF((milestone.tags IS NULL OR milestone.tags = ''), '#1b75bb', milestone.tags) AS milestoneColor,
+							IF((milestone.tags IS NULL OR milestone.tags = ''), '#999999', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
 							COUNT(DISTINCT zp_file.id) AS fileCount
 						FROM 
@@ -626,11 +626,11 @@ namespace leantime\domain\repositories {
 						zp_tickets.status,
 						zp_tickets.sprint,
 						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
+						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
 						zp_tickets.acceptanceCriteria,
 						zp_tickets.userId,
 						zp_tickets.editorId,
-						zp_tickets.planHours,
+						IFNULL(zp_tickets.planHours, 0) AS planHours,
 						zp_tickets.tags,
 						zp_tickets.url,
 						zp_tickets.editFrom,
@@ -650,7 +650,7 @@ namespace leantime\domain\repositories {
 					WHERE 
 						zp_tickets.dependingTicketId = :ticketId AND zp_tickets.type = 'subtask'
 					GROUP BY
-						zp_tickets.id";
+						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
@@ -683,11 +683,11 @@ namespace leantime\domain\repositories {
 						zp_tickets.hourRemaining,
 						zp_tickets.acceptanceCriteria,
 						depMilestone.headline AS milestoneHeadline,
-						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), '#1b75bb', depMilestone.tags) AS milestoneColor,
+						IF((depMilestone.tags IS NULL OR depMilestone.tags = ''), '#999999', depMilestone.tags) AS milestoneColor,
 						zp_tickets.userId,
 						zp_tickets.editorId,
 						zp_tickets.planHours,
-						IF((zp_tickets.tags IS NULL OR zp_tickets.tags = ''), '#1b75bb', zp_tickets.tags) AS tags,
+						IF((zp_tickets.tags IS NULL OR zp_tickets.tags = ''), '#999999', zp_tickets.tags) AS tags,
 						zp_tickets.url,
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
@@ -872,7 +872,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getNumberOfAllTickets($projectId)
+        public function getNumberOfAllTickets($projectId=null)
         {
 
             $query = "SELECT
@@ -880,13 +880,46 @@ namespace leantime\domain\repositories {
 					FROM 
 						zp_tickets
 					WHERE 
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
-                    ORDER BY
-					    zp_tickets.date ASC
-					LIMIT 1";
+						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask'";
+
+            if(!is_null($projectId)){
+                $query .= "AND zp_tickets.projectId = :projectId ";
+            }
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            if(!is_null($projectId)) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values['allTickets'];
+
+        }
+
+        public function getNumberOfMilestones($projectId=null)
+        {
+
+            $query = "SELECT
+						COUNT(zp_tickets.id) AS allTickets
+					FROM 
+						zp_tickets
+					WHERE 
+						zp_tickets.type = 'milestone' ";
+
+            if(!is_null($projectId)){
+                $query .= "AND zp_tickets.projectId = :projectId ";
+            }
+
+            $stmn = $this->db->database->prepare($query);
+
+            if(!is_null($projectId)) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
 

@@ -62,7 +62,8 @@ namespace leantime\core {
             20103,
 			20104,
 			20105,
-            20106
+            20106,
+            20107
         );
 
         /**
@@ -73,7 +74,7 @@ namespace leantime\core {
         private $config;
 
         /**
-         * settings object, passed into constructor
+         * appSettings object, passed into constructor
          * @access private
          * @var string
          */
@@ -151,7 +152,7 @@ namespace leantime\core {
         {
 
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
 
             $sql = $this->sqlPrep();
 
@@ -710,6 +711,7 @@ namespace leantime\core {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                 
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', :dbVersion);
+                INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true');
                 
                 CREATE TABLE `zp_audit` (
                       `id` INT NOT NULL AUTO_INCREMENT,
@@ -1030,6 +1032,35 @@ namespace leantime\core {
 
             $sql = array(
                 "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20107()
+        {
+            $errors = array();
+
+            $sql = array(
+                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')"
             );
 
             foreach ($sql as $statement) {

@@ -485,6 +485,37 @@ namespace leantime\domain\repositories {
 
         }
 
+        public function getNumberOfIdeas($projectId = null)
+        {
+
+            $sql = "SELECT
+					count(zp_canvas_items.id) AS ideaCount	
+				FROM 
+				zp_canvas_items
+				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
+				WHERE canvasBoard.type = 'idea'  ";
+
+            if(!is_null($projectId)){
+                $sql.=" AND canvasBoard.projectId = :projectId";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if(!is_null($projectId)){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['ideaCount']) === true) {
+                return $values['ideaCount'];
+            }else{
+                return 0;
+            }
+        }
+
         public function bulkUpdateIdeaStatus($params)
         {
 

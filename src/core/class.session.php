@@ -43,13 +43,13 @@ class session
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
+        $testSession = false;
         if(isset($_COOKIE['sid']) === true) {
-            
             self::$sid=htmlspecialchars($_COOKIE['sid']);
-
+            $testSession = explode('-', self::$sid);
         }
 
-        $testSession = explode('-', self::$sid);
+
 
         //Don't allow session ids from user.
         if(is_array($testSession) === true && count($testSession) > 1) {

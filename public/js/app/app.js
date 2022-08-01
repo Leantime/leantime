@@ -1,5 +1,4 @@
 //Lets get this party started.
-
 var leantime = leantime || {};
 
 var themeColor = jQuery('meta[name=theme-color]').attr("content");
@@ -35,6 +34,12 @@ leantime.replaceSVGColors = function () {
 };
 
 leantime.replaceSVGColors();
+
+jQuery(document).on('focusin', function(e) {
+    if (jQuery(e.target).closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
+        e.stopImmediatePropagation();
+    }
+});
 
 //Set moment locale early in app creation
 moment.locale(leantime.i18n.__("language.code"));

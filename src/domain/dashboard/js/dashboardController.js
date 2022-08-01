@@ -71,10 +71,6 @@ leantime.dashboardController = (function () {
                 animation: {
                     animateScale: true,
                     animateRotate: true
-                },
-                scales: {
-                    y: {},
-                    x: {}
                 }
             }
         };
@@ -357,7 +353,8 @@ leantime.dashboardController = (function () {
         initBacklogBurndown:initBacklogBurndown,
         initBacklogChartButtonClick:initBacklogChartButtonClick,
         initProgressChart:initProgressChart,
-        prepareHiddenDueDate:prepareHiddenDueDate
+        prepareHiddenDueDate:prepareHiddenDueDate,
+        _initDueDateTimePickers:_initDueDateTimePickers
 
     };
 })();

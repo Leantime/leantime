@@ -107,7 +107,9 @@ namespace leantime\core {
 
             }
 
+
             if($this->fullAction != '') {
+
                 //execute action
                 try {
 
@@ -118,6 +120,7 @@ namespace leantime\core {
                     echo $e->getMessage();
 
                 }
+
             } else {
 
                 header("HTTP/1.0 404 Not Found");
@@ -134,7 +137,7 @@ namespace leantime\core {
          * @param  $completeName
          * @return string|object
          */
-        private function executeAction($completeName)
+        private function executeAction($completeName, $params=array())
         {
 
             //actionname.filename
@@ -157,8 +160,26 @@ namespace leantime\core {
             include_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
 
             //Initialize Action
-            $classname = "leantime\\domain\\controllers\\".$actionName ;
-            $action = new $classname();
+            try {
+
+                $classname = "leantime\\domain\\controllers\\" . $actionName;
+
+                //Check if constructor of controller needs/accepts arguments
+                $reflector = new \ReflectionClass($classname);
+                $constructor = $reflector->getConstructor();
+
+                if ($constructor && $constructor->getParameters()) {
+                    $action = new $classname($params);
+                } else {
+                    $action = new $classname();
+                }
+
+            }catch(Exception $e){
+
+                header("HTTP/1.0 501 Not Implemented");
+                error_log($e->getMessage(), 0);
+                exit();
+            }
 
             if(is_object($action) === false) {
 
@@ -170,7 +191,7 @@ namespace leantime\core {
                 try {
 
                     //Everything ok? run action
-                    $method= $this->getRequestMethod();
+                    $method = $this->getRequestMethod();
 
                     if(method_exists($action, $method)) {
 
@@ -178,13 +199,15 @@ namespace leantime\core {
                         $action->$method($params);
 
                     }else {
+
                         //Use run for all request types.
                         $action->run();
+
                     }
 
                 }catch (Exception $e) {
 
-                    echo $e->getMessage();
+                    error_log($e->getMessage(), 0);
 
                 }
 
@@ -236,9 +259,9 @@ namespace leantime\core {
          * @param  $completeName
          * @return object
          */
-        public function includeAction($completeName)
+        public function includeAction($completeName, $params=array())
         {
-            $this->executeAction($completeName);
+            $this->executeAction($completeName, $params);
         }
 
         /**
@@ -291,13 +314,13 @@ namespace leantime\core {
          * getCurrentRoute - gets the current main action
          *
          * @access public
-         * @param  $completeName
          * @return string
          */
-        public static function getCurrentRoute() {
+        public static function getCurrentRoute() 
+        {
 
             if(isset($_REQUEST['act'])) {
-                return filter_var($_REQUEST['act'], FILTER_SANITIZE_STRING);
+                return htmlspecialchars($_REQUEST['act']);
             }
 
             return '';

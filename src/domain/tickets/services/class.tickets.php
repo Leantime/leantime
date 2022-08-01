@@ -238,7 +238,10 @@ namespace leantime\domain\services {
 
         public function getAllSubtasks($ticketId)
         {
-           return $this->ticketRepository->getAllSubtasks($ticketId);
+            $values = $this->ticketRepository->getAllSubtasks($ticketId);
+
+
+            return $values;
         }
 
         //Add
@@ -516,17 +519,17 @@ namespace leantime\domain\services {
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
-                'description' => $values['description'],
+                'description' => $values['description'] ?? '',
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
-                'priority' => '',
+                'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
                 'storypoints' => "",
-                'hourRemaining' => $values['hourRemaining'],
-                'planHours' => $values['planHours'],
+                'hourRemaining' => $values['hourRemaining'] ?? 0,
+                'planHours' => $values['planHours'] ?? 0,
                 'sprint' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",

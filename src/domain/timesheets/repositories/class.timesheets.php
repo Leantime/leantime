@@ -221,6 +221,27 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
+        public function getHoursBooked()
+        {
+            $sql = "SELECT SUM(hours) AS hoursBooked
+                    FROM zp_timesheets;";
+
+            $stmn = $this->db->database->prepare($sql);
+
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['hoursBooked']) === true) {
+                return $values['hoursBooked'];
+            }else{
+                return 0;
+            }
+
+            return $values;
+        }
+
 
 
 

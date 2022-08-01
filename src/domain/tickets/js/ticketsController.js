@@ -29,6 +29,39 @@ leantime.ticketsController = (function () {
         titleFromIframe: true
     };
 
+    var ticketModalConfig = {
+        sizes: {
+            minW:  700,
+            minH: 1000
+        },
+        resizable: true,
+        autoSizable: true,
+        callbacks: {
+            beforePostSubmit: function() {
+                jQuery('textarea.complexEditor').tinymce().save();
+                jQuery('textarea.complexEditor').tinymce().remove();
+            },
+            beforeShowCont: function() {
+
+
+
+
+            },
+            afterShowCont: function () {
+
+                jQuery("#commentForm, .deleteComment, .ticketModal").nyroModal(ticketModalConfig);
+            },
+            beforeClose: function () {
+
+                location.reload();
+            },
+
+
+
+        },
+        titleFromIframe: true
+    };
+
     //Constructor
     (function () {
         jQuery(document).ready(
@@ -70,6 +103,10 @@ leantime.ticketsController = (function () {
 
     var openMilestoneModalManually = function (url) {
         jQuery.nmManual(url, milestoneModalConfig);
+    };
+
+    var openTicketModalManually = function (url) {
+        jQuery.nmManual(url, ticketModalConfig);
     };
 
     var toggleFilterBar = function () {
@@ -480,6 +517,8 @@ leantime.ticketsController = (function () {
                     _initMilestoneDates();
                     _initSimpleColorPicker();
                     jQuery(".formModal, #commentForm, .deleteComment").nyroModal(modalConfig);
+
+
                 },
                 beforeClose: function () {
 
@@ -492,6 +531,43 @@ leantime.ticketsController = (function () {
         };
 
         jQuery(".milestoneModal").nyroModal(modalConfig);
+
+
+
+        var ticketModalConfig = {
+            sizes: {
+                minW:  700,
+                minH: 1000
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                beforePostSubmit: function() {
+                    jQuery('textarea.complexEditor').tinymce().save();
+                    jQuery('textarea.complexEditor').tinymce().remove();
+                },
+                beforeShowCont: function() {
+
+
+
+
+                },
+                afterShowCont: function () {
+
+                    jQuery("#commentForm, .deleteComment, .ticketModal").nyroModal(ticketModalConfig);
+                },
+                beforeClose: function () {
+
+                    location.reload();
+                },
+
+
+
+            },
+            titleFromIframe: true
+        };
+
+        jQuery(".ticketModal").nyroModal(ticketModalConfig);
 
 
     };
@@ -607,6 +683,13 @@ leantime.ticketsController = (function () {
                 ).done(
                     function () {
                         jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").removeClass("priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5");
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").addClass("priority-bg-"+priorityId);
+
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").removeClass("priority-border-1 priority-border-2 priority-border-3 priority-border-4 priority-border-5");
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-"+priorityId);
+
+
                         jQuery.jGrowl(leantime.i18n.__("short_notifications.priority_updated"));
 
                     }
@@ -687,7 +770,7 @@ leantime.ticketsController = (function () {
                             jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
-                            leantime.ticketsController.colorTicketBoxes(ticketId);
+
                         }
                     );
 
@@ -695,7 +778,6 @@ leantime.ticketsController = (function () {
             }
         );
 
-        leantime.ticketsController.colorTicketBoxes();
     };
 
     var initUserDropdown = function () {
@@ -735,6 +817,38 @@ leantime.ticketsController = (function () {
         );
     };
 
+    var initAsyncInputChange = function() {
+
+        jQuery(".asyncInputUpdate").on("change", function(){
+            var dataLabel = jQuery(this).attr('data-label').split("-");
+
+            if(dataLabel.length == 2){
+                var fieldName = dataLabel[0];
+                var entityId = dataLabel[1];
+                var value = jQuery(this).val();
+
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl+'/api/tickets',
+                        data:
+                            {
+                                id : entityId,
+                                [fieldName]:value,
+
+                            }
+                    }
+                ).done(
+                    function () {
+                        jQuery.jGrowl(leantime.i18n.__("notifications.subtask_saved"));
+                    }
+                );
+
+            }
+
+        });
+    };
+
     var initSprintDropdown = function () {
 
         jQuery("body").on(
@@ -768,8 +882,6 @@ leantime.ticketsController = (function () {
                 }
             }
         );
-
-        leantime.ticketsController.colorTicketBoxes();
     };
 
     var _initSimpleColorPicker = function () {
@@ -788,80 +900,6 @@ leantime.ticketsController = (function () {
                 jQuery('input.simpleColorPicker').css('background', currentColor);
             }
 
-
-    };
-
-    var initTicketEditor = function () {
-
-        jQuery('textarea.tinymce').tinymce(
-            {
-                // General options
-                width: "98%",
-                skin_url: leantime.appUrl+'/css/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/tinymceSkin/oxide/content.css',
-                height:"300",
-                content_style: "img { max-width: 100%; }",
-                plugins : "autolink,link,image,lists,pagebreak,table,save,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,template,advlist",
-                toolbar : "bold italic strikethrough | fontsizeselect forecolor | link unlink image | bullist | numlist |  fullscreen",
-                branding: false,
-                statusbar: false,
-                convert_urls: false,
-                encoding: 'xml',
-                paste_data_images: true,
-
-                images_upload_handler: function (blobInfo, success, failure) {
-                    var xhr, formData;
-
-                    xhr = new XMLHttpRequest();
-                    xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
-
-                    xhr.onload = function () {
-                        var json;
-
-                        if (xhr.status < 200 || xhr.status >= 300) {
-                            failure('HTTP Error: ' + xhr.status);
-                            return;
-                        }
-
-                        success(xhr.responseText);
-                    };
-
-                    formData = new FormData();
-                    formData.append('file', blobInfo.blob());
-
-                    xhr.send(formData);
-                },
-                file_picker_callback: function (callback, value, meta) {
-
-                    window.filePickerCallback = callback;
-
-                    var shortOptions = {
-                        afterShowCont: function () {
-                            jQuery(".fileModal").nyroModal({callbacks:shortOptions});
-
-                        }
-                    };
-
-                    jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
-                        {
-                            stack: true,
-                            callbacks: shortOptions,
-                            sizes: {
-                                minW: 500,
-                                minH: 500,
-                            }
-                        }
-                    );
-                    jQuery.nmTop().elts.cont.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.bg.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.load.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
-
-                }
-            }
-        );
 
     };
 
@@ -926,12 +964,30 @@ leantime.ticketsController = (function () {
             },
             options: {
                 scales: {
-                    y: {},
-                    x: {}
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: leantime.i18n.__("label.booked_hours"),
+                        },
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: leantime.i18n.__("label.planned_hours")
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }
                 }
             }
         });
-
     };
 
     var colorTicketBoxes = function (currentBox){
@@ -974,25 +1030,28 @@ leantime.ticketsController = (function () {
                         jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
                     }
                 }
-
             }
+
         });
-
-
 
     };
 
     var initTicketTabs = function(){
 
         jQuery(document).ready(function () {
+
             jQuery('.ticketTabs').tabs({
                 create: function( event, ui ) {
                     jQuery('.ticketTabs').css("visibility", "visible");
+
                 },
                 activate: function(event, ui) {
-
                     window.location.hash = ui.newPanel.selector;
+                },
+                load: function() {
+
                 }
+
             });
         });
 
@@ -1039,15 +1098,16 @@ leantime.ticketsController = (function () {
 
             countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
-            var height = jQuery("html").height()-320;
-            jQuery("#sortableTicketKanban .column .contentInner").css("height", height);
+
+            var height = jQuery("html").height()-250;
+            jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
 
         jQuery("#sortableTicketKanban .ticketBox").hover(function(){
-            jQuery(this).css("background", "#f9f9f9");
+            jQuery(this).css("background", "var(--kanban-card-hover)");
         },function(){
-            jQuery(this).css("background", "#ffffff");
+            jQuery(this).css("background", "var(--kanban-card-bg)");
         });
 
         var position_updated = false;
@@ -1072,7 +1132,7 @@ leantime.ticketsController = (function () {
 
                 countTickets();
 
-                console.log(ui.item[0].id);
+
 
                 var statusPostData = {
                     action: "kanbanSort",
@@ -1342,8 +1402,8 @@ leantime.ticketsController = (function () {
         updatePlannedHours:updatePlannedHours,
         initModals:initModals,
         openMilestoneModalManually:openMilestoneModalManually,
+        openTicketModalManually: openTicketModalManually,
         initTimeSheetChart:initTimeSheetChart,
-        colorTicketBoxes:colorTicketBoxes,
         initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
@@ -1356,9 +1416,9 @@ leantime.ticketsController = (function () {
         initStatusDropdown:initStatusDropdown,
         initUserDropdown:initUserDropdown,
         initSprintDropdown:initSprintDropdown,
-        initTicketEditor:initTicketEditor,
         initToolTips:initToolTips,
         initTagsInput:initTagsInput,
-        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate
+        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
+        initAsyncInputChange:initAsyncInputChange
     };
 })();

@@ -179,7 +179,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('employees', $user->getEmployees());
             $tpl->assign('timesheetsAllHours', 0);
 
-            $tpl->display('tickets.newTicket');
+            $tpl->displayPartial('tickets.newTicketModal');
 
         }
 
@@ -214,7 +214,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-            $this->tpl->display('tickets.newTicket');
+            $this->tpl->displayPartial('tickets.newTicketModal');
 
 
         }
@@ -263,7 +263,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-                    $this->tpl->display('tickets.newTicket');
+                    $this->tpl->displayPartial('tickets.newTicketModal');
 
                 }
 

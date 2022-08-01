@@ -58,6 +58,7 @@ namespace leantime\core {
 
             $config = new config();
 
+
             if($config->email != '') {
                 $this->emailDomain = $config->email;
             }else{
@@ -65,7 +66,7 @@ namespace leantime\core {
                 $this->emailDomain = "no-reply@".$host;
             }
             //PHPMailer
-            $this->mailAgent = new PHPMailer(true);
+            $this->mailAgent = new PHPMailer(false);
 
 	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
@@ -91,7 +92,7 @@ namespace leantime\core {
             }
 
             $this->logo = $_SESSION["companysettings.logoPath"];
-            $this->companyColor = $_SESSION["companysettings.mainColor"];
+            $this->companyColor = $_SESSION["companysettings.primarycolor"];
 
             $this->language = new language();
 

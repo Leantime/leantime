@@ -17,7 +17,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
+<div class="showDialogOnLoad" >
 
     <h4 class="widgettitle title-light"><i
                 class="iconfa iconfa-columns"></i>
@@ -35,7 +35,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
-        <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
         <label><?php echo $this->__("label.name") ?></label>
@@ -44,7 +44,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <label><?php echo $this->__("label.description") ?></label>
         <textarea rows="3" cols="10" name="data" class="ideaTextEditor"
-                  placeholder=""><?php $this->e($canvasItem['data']) ?></textarea><br/>
+                  placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>

@@ -161,7 +161,7 @@ class fileupload
     /**
      * checkFileSize - Checks if filesize is ok
      *
-     * @access private
+     * @access public
      * @return bool
      */
     public function checkFileSize()
@@ -242,7 +242,7 @@ class fileupload
 
             } catch (S3Exception $e) {
 
-                error_reporting($e->getMessage());
+                error_log($e->getMessage(), 0);
                 return false;
 
             }
@@ -257,7 +257,7 @@ class fileupload
 
             } catch (Exception $e) {
 
-                error_reporting($e->getMessage());
+                error_log($e->getMessage(), 0);
                 return false;
             }
 
@@ -283,7 +283,7 @@ class fileupload
 
         } catch (S3Exception $e) {
 
-            error_reporting($e->getMessage());
+            error_log($e->getMessage(), 0);
             return false;
 
         }
@@ -301,7 +301,7 @@ class fileupload
 
         } catch (Exception $e) {
 
-            error_reporting($e->getMessage());
+            error_log($e->getMessage(), 0);
             return false;
         }
 

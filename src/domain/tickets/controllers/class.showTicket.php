@@ -82,9 +82,21 @@ namespace leantime\domain\controllers {
                     }
                 }
 
+                //Delete Subtask
+                if (isset($params['delSubtask']) === true) {
+
+                    $subtaskId = (int)$params['delSubtask'];
+                    if($this->ticketService->deleteTicket($subtaskId)) {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
+                    }else {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
+                    }
+                }
+
                 $this->tpl->assign('ticket', $ticket);
                 $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
+                $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                 $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
                 $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
@@ -121,11 +133,11 @@ namespace leantime\domain\controllers {
                 //TODO: Refactor thumbnail generation in file manager
                 $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
 
-                $this->tpl->display('tickets.showTicket');
+                $this->tpl->displayPartial('tickets.showTicketModal');
 
             } else {
 
-                $this->tpl->display('general.error');
+                $this->tpl->displayPartial('general.error');
 
             }
 
@@ -133,6 +145,8 @@ namespace leantime\domain\controllers {
 
         public function post($params)
         {
+
+            $tab = "";
 
             if (isset($_GET['id']) === true) {
 
@@ -152,6 +166,8 @@ namespace leantime\domain\controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), "error");
                     }
+
+                    $tab = "#files";
                 }
 
                 //Add a comment
@@ -162,6 +178,9 @@ namespace leantime\domain\controllers {
                     }else {
                         $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                     }
+
+                    $tab = "#comment";
+
                 }
 
                 //Log time
@@ -187,16 +206,7 @@ namespace leantime\domain\controllers {
 
                 }
 
-                //Delete Subtask
-                if (isset($params['subtaskDelete']) === true) {
 
-                    $subtaskId = $params['subtaskId'];
-                    if($this->ticketService->deleteTicket($subtaskId)) {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
-                    }else {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
-                    }
-                }
 
                 //Save Ticket
                 if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {
@@ -214,7 +224,7 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id);
+                $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."".$tab);
 
             } else {
 

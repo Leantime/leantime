@@ -92,6 +92,30 @@ namespace leantime\domain\repositories {
         }
 
         /**
+         * getLastLogin - get the date of the last login of any user
+         *
+         * @access public
+         * @param  $id
+         * @return string|null returns datetime string with last login or null if nothing could be found
+         */
+        public function getLastLogin() :string|null
+        {
+
+            $sql = "SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['lastlogin'])) {
+                return $values['lastlogin'];
+            }
+            return null;
+        }
+
+        /**
          * getUserByEmail - get on user from db
          *
          * @access public

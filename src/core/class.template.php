@@ -138,7 +138,7 @@ namespace leantime\core {
             //These variables are available in the template
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
             $login = login::getInstance();
             $language = $this->language;
 
@@ -165,6 +165,7 @@ namespace leantime\core {
 
             require $strTemplate;
 
+
             $subContent = ob_get_clean();
 
             $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
@@ -176,6 +177,24 @@ namespace leantime\core {
             }
 
             echo $content;
+
+        }
+
+        /**
+         * displayJson - returns json data
+         *
+         * @access public
+         * @param  $jsonContent
+         * @return void
+         */
+        public function displayJson($jsonContent) {
+
+            header('Content-Type: application/json; charset=utf-8');
+            if($jsonContent !== false) {
+                echo $jsonContent;
+            }else{
+                echo "{Invalid Json}";
+            }
 
         }
 
@@ -201,10 +220,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return void
          */
-        public function includeAction($completeName)
+        public function includeAction($completeName, $params=array())
         {
 
-            $this->controller->includeAction($completeName);
+            $this->controller->includeAction($completeName, $params);
 
         }
 
@@ -252,7 +271,7 @@ namespace leantime\core {
 
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
+            $settings = new appSettings();
             $login = login::getInstance();
 
 
@@ -398,7 +417,11 @@ namespace leantime\core {
         public function escape($content): string
         {
 
-            return htmlentities($content);
+            if(!is_null($content)) {
+                return htmlentities($content);
+            }
+
+            return '';
 
         }
 
