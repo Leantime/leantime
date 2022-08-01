@@ -3,13 +3,13 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
-include_once '../config/configuration.php';
-include_once '../config/appSettings.php';
-include_once '../src/core/class.autoload.php';
+require_once '../config/configuration.php';
+require_once '../config/appSettings.php';
+require_once '../src/core/class.autoload.php';
 
 $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone);
+$settings->loadSettings($config->defaultTimezone, $config->debug ?? 0);
 
 if(isset($config->appUrl) && $config->appUrl != ""){
     define('BASE_URL', $config->appUrl);

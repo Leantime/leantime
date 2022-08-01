@@ -51,18 +51,12 @@
             </div>
 
             <div id="subtasks">
-                <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>#subtasks" class="ticketModal">
-                    <?php $this->displaySubmodule('tickets-subTasks') ?>
-                </form>
+                <?php $this->displaySubmodule('tickets-subTasks') ?>
             </div>
 
             <div id="files">
-                <form action='<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>#files' method='POST' enctype="multipart/form-data" class="ticketModal">
-                    <?php $this->displaySubmodule('tickets-attachments') ?>
-                </form>
+                <?php $this->displaySubmodule('tickets-attachments') ?>
             </div>
-
-
 
             <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                 <div id="timesheet">
@@ -77,10 +71,13 @@
 <script type="text/javascript">
 
     jQuery(function(){
-
+        leantime.ticketsController.initAsyncInputChange();
+        leantime.dashboardController._initDueDateTimePickers();
         leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
         leantime.generalController.initComplexEditor();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initStatusDropdown();
 
     });
 

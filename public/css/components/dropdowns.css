@@ -69,7 +69,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontentinner .ticketDropdown > a,
-.maincontentinner .ticketDropdown > a:link{
+.maincontentinner .ticketDropdown > a:link,
+.nyroModalCont .ticketDropdown > a,
+.nyroModalCont .ticketDropdown > a:link{
     color:#fff;
     padding:0px 10px;
     white-space: nowrap;
@@ -91,7 +93,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.maincontentinner .ticketDropdown.colorized li a {
+.maincontentinner .ticketDropdown.colorized li a,
+.nyroModalCont .ticketDropdown.colorized li a{
     color:#fff;
 }
 
@@ -122,30 +125,41 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown ul li a.label-important,
 .maincontentinner .ticketDropdown ul li a.label-success,
 .maincontentinner .ticketDropdown ul li a.label-default,
-.maincontentinner .ticketDropdown ul li a.label-info{
+.maincontentinner .ticketDropdown ul li a.label-info,
+.nyroModalCont .ticketDropdown ul li a.label-warning,
+.nyroModalCont .ticketDropdown ul li a.label-important,
+.nyroModalCont .ticketDropdown ul li a.label-success,
+.nyroModalCont .ticketDropdown ul li a.label-default,
+.nyroModalCont .ticketDropdown ul li a.label-info{
     padding: 5px 10px;
     display:block;
     border-radius: 0px;
 }
 
-.maincontentinner .ticketDropdown a.label-warning {
+.maincontentinner .ticketDropdown a.label-warning,
+.nyroModalCont .ticketDropdown a.label-warning{
     background:#f89406;
 }
 
-.maincontentinner .ticketDropdown a.label-info {
+.maincontentinner .ticketDropdown a.label-info,
+.nyroModalCont .ticketDropdown a.label-info{
     background:#2d6987;
 }
 
 .maincontentinner .ticketDropdown a.label-important,
-.maincontentinner .ticketDropdown a.label-danger {
+.maincontentinner .ticketDropdown a.label-danger,
+.nyroModalCont .ticketDropdown a.label-important,
+.nyroModalCont .ticketDropdown a.label-danger{
     background:#b94a48;
 }
 
-.maincontentinner .ticketDropdown a.label-success {
+.maincontentinner .ticketDropdown a.label-success,
+.nyroModalCont .ticketDropdown a.label-success{
     background:#468847;
 }
 
-.maincontentinner .ticketDropdown a.label-default {
+.maincontentinner .ticketDropdown a.label-default,
+.nyroModalCont .ticketDropdown a.label-default{
 
 }
 

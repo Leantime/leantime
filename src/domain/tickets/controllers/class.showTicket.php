@@ -82,6 +82,17 @@ namespace leantime\domain\controllers {
                     }
                 }
 
+                //Delete Subtask
+                if (isset($params['delSubtask']) === true) {
+
+                    $subtaskId = (int)$params['delSubtask'];
+                    if($this->ticketService->deleteTicket($subtaskId)) {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
+                    }else {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
+                    }
+                }
+
                 $this->tpl->assign('ticket', $ticket);
                 $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
@@ -155,6 +166,8 @@ namespace leantime\domain\controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), "error");
                     }
+
+                    $tab = "#files";
                 }
 
                 //Add a comment
@@ -193,16 +206,7 @@ namespace leantime\domain\controllers {
 
                 }
 
-                //Delete Subtask
-                if (isset($params['subtaskDelete']) === true) {
 
-                    $subtaskId = $params['subtaskId'];
-                    if($this->ticketService->deleteTicket($subtaskId)) {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
-                    }else {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
-                    }
-                }
 
                 //Save Ticket
                 if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {

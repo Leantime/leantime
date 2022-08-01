@@ -817,6 +817,38 @@ leantime.ticketsController = (function () {
         );
     };
 
+    var initAsyncInputChange = function() {
+
+        jQuery(".asyncInputUpdate").on("change", function(){
+            var dataLabel = jQuery(this).attr('data-label').split("-");
+
+            if(dataLabel.length == 2){
+                var fieldName = dataLabel[0];
+                var entityId = dataLabel[1];
+                var value = jQuery(this).val();
+
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl+'/api/tickets',
+                        data:
+                            {
+                                id : entityId,
+                                [fieldName]:value,
+
+                            }
+                    }
+                ).done(
+                    function () {
+                        jQuery.jGrowl(leantime.i18n.__("notifications.subtask_saved"));
+                    }
+                );
+
+            }
+
+        });
+    };
+
     var initSprintDropdown = function () {
 
         jQuery("body").on(
@@ -1386,6 +1418,7 @@ leantime.ticketsController = (function () {
         initSprintDropdown:initSprintDropdown,
         initToolTips:initToolTips,
         initTagsInput:initTagsInput,
-        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate
+        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
+        initAsyncInputChange:initAsyncInputChange
     };
 })();
