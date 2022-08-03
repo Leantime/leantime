@@ -26,8 +26,9 @@ rm createReleasePackage.sh
 
 #Exiting release folder and creating archives for Github
 cd ..
-zip -r -X Leantime-v$1.zip leantime
-tar -zcvf Leantime-v$1.tar.gz leantime
+version=`grep "appVersion" leantime/config/appSettings.php |awk -F' = ' '{print substr($2,2,length($2)-3)}'`
+zip -r -X "Leantime-v$version$1.zip" leantime
+tar -zcvf "Leantime-v$version$1.tar.gz" leantime
 
 #Removing 
 rm -R leantime
