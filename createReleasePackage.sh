@@ -24,6 +24,12 @@ rm -R public/images/Screenshots
 rm .gitattributes .gitignore composer.json composer.lock gruntfile.js package-lock.json package.json
 rm createReleasePackage.sh
 
+#removing js directories
+find ./src/domain/ -maxdepth 2 -name "js" -exec rm -r {} \;
+
+#removing uncompiled js files
+find ./public/js/ -mindepth 1 ! -name "*compiled*" -exec rm -f -r {} \;
+
 #Exiting release folder and creating archives for Github
 cd ..
 version=`grep "appVersion" leantime/config/appSettings.php |awk -F' = ' '{print substr($2,2,length($2)-3)}'`
