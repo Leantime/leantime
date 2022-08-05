@@ -3,6 +3,7 @@
 namespace leantime\core {
 
     use leantime\domain\repositories\setting;
+    use leantime\core\migrations;
     use PDO;
     use PDOException;
 
@@ -48,6 +49,14 @@ namespace leantime\core {
          * @var string
          */
         private $host = '';
+
+
+        /**
+         * migration class
+         * @access private
+         * @var object
+         */
+        private $migration;
 
         /**
          * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
@@ -186,6 +195,22 @@ namespace leantime\core {
 
         }
 
+        private function prep_version_number($version)
+        {
+            $versionArray = explode(".", $version);
+            if(is_array($versionArray) && count($versionArray) == 3) {
+
+                $major = $versionArray[0];
+                $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+                $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+                
+                return $major . $minor . $patch;
+
+            }else{
+                return false;
+            }
+        }
+
         /**
          * updateDB main entry point to update the db based on version number. Executes all missing db update scripts
          *
@@ -199,36 +224,19 @@ namespace leantime\core {
 
             $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
-			$versionArray = explode(".", $this->settings->dbVersion);
-			if(is_array($versionArray) && count($versionArray) == 3) {
-
-				$major = $versionArray[0];
-				$minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
-				$patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
-				$newDBVersion = $major . $minor . $patch;
-
-			}else{
+			$newDBVersion = $this->prep_version_number($this->settings->dbVersion);
+            
+            if ($newDBVersion === false){
 				$errors[0] = "Problem identifying the version number";
 				return $errors;
 			}
 
             $setting = new setting();
-            $dbVersion = $setting->getSetting("db-version");
+            $currentDBVersion = $this->prep_version_number($setting->getSetting("db-version"));
 
-            $currentDBVersion = 0;
-            if ($dbVersion != false) {
-                $versionArray = explode(".", $dbVersion);
-                if(is_array($versionArray) && count($versionArray) == 3) {
-
-                    $major = $versionArray[0];
-                    $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
-                    $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
-                    $currentDBVersion = $major . $minor . $patch;
-
-                }else{
-                    $errors[0] = "Problem identifying the version number";
-                    return $errors;
-                }
+            if($currentDBVersion === false){
+                $errors[0] = "Problem identifying the version number";
+                return $errors;
             }
 
             if ($currentDBVersion == $newDBVersion) {
@@ -236,44 +244,51 @@ namespace leantime\core {
                 return $errors;
             }
 
-            //Find all update functions that need to be executed
-            foreach ($this->dbUpdates as $updateVersion) {
+            $dir = dirname(__FILE__) .'/migrations/';
+            $db_updates = array_diff(scandir($dir), ['.','..']);
 
-                if ($currentDBVersion < $updateVersion) {
+            if(count($db_updates)){
+                foreach ($db_updates as $update_file) {
+                    list($class, $version, $ext) = explode('.', $update_file);
+                    $update = "leantime\\core\\migrations\\$version";
+                    require_once $update;
+                    $db_migration = new $version();
 
-                    $functionName = "update_sql_" . $updateVersion;
+                    return [$db_migration->get_version()];
+                    // exit();
 
-                    $result = $this->$functionName();
-                    $result = true;
+                    if ($currentDBVersion < $db_migration->get_version()) {
 
-                    if ($result !== true) {
+                        $result = $this->migration->migrate($updateVersion);
 
-                        $errors = array_merge($errors, $result);
+                        if ($result !== true) {
 
-                    }else{
+                            $errors = array_merge($errors, $result);
 
-                        //Update version number in db
-                        try {
-                            $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '" . $this->settings->dbVersion . "') ON DUPLICATE KEY UPDATE `value` = '" . $this->settings->dbVersion . "'");
-                            $stmn->execute();
+                        }else{
 
-                            $currentDBVersion = $updateVersion;
+                            //Update version number in db
+                            try {
+                                $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '" . $this->settings->dbVersion . "') ON DUPLICATE KEY UPDATE `value` = '" . $this->settings->dbVersion . "'");
+                                $stmn->execute();
 
-                        }catch(PDOException $e) {
+                                $currentDBVersion = $updateVersion;
 
-                            error_log($e->getMessage());
-                            error_log($e->getTraceAsString());
-                            return array("There was a problem updating the database");
+                            }catch(PDOException $e) {
+
+                                error_log($e->getMessage());
+                                error_log($e->getTraceAsString());
+                                return array("There was a problem updating the database");
+                            }
+                        }
+
+                        if (count($errors) > 0) {
+                            return $errors;
                         }
                     }
-
-                    if (count($errors) > 0) {
-                        return $errors;
-                    }
-
                 }
-
             }
+            
 
             return true;
         }
@@ -743,346 +758,346 @@ namespace leantime\core {
          * @access public
          * @return bool | array
          */
-        private function update_sql_20004()
-        {
+        // private function update_sql_20004()
+        // {
 
-            $errors = array();
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_wiki_articles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_submodulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //     $sql = array(
+        //         "ALTER TABLE `zp_wiki_articles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_submodulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
 
-                "ALTER TABLE `zp_canvas` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_wiki_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_tickethistory` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_gcallinks` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_message` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_note` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_canvas` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_wiki_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_tickethistory` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_gcallinks` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_message` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_note` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
 
-                "ALTER TABLE `zp_timesheets` MODIFY kind VARCHAR(175);",
-                "ALTER TABLE `zp_timesheets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_timesheets` MODIFY kind VARCHAR(175);",
+        //         "ALTER TABLE `zp_timesheets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
 
-                "ALTER TABLE `zp_roles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_projects` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_modulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_wiki_comments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_punch_clock` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_clients` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_account` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_sprints` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_lead` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
-                "ALTER TABLE `zp_user` MODIFY username VARCHAR(175);",
-                "ALTER TABLE `zp_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
-                "ALTER TABLE `zp_settings` MODIFY `key` VARCHAR(175);",
-                "ALTER TABLE `zp_settings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
-                "ALTER TABLE `zp_comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_stats` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
-                "ALTER TABLE `zp_tickets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_canvas_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_dashboard_widgets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_file` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_action_tabs` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_relationuserproject` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-            );
+        //         "ALTER TABLE `zp_roles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_projects` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_modulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_wiki_comments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_punch_clock` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_clients` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_account` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_sprints` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_lead` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+
+        //         "ALTER TABLE `zp_user` MODIFY username VARCHAR(175);",
+        //         "ALTER TABLE `zp_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+
+        //         "ALTER TABLE `zp_settings` MODIFY `key` VARCHAR(175);",
+        //         "ALTER TABLE `zp_settings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+
+        //         "ALTER TABLE `zp_comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_stats` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+
+        //         "ALTER TABLE `zp_tickets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_canvas_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_dashboard_widgets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_file` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_action_tabs` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_relationuserproject` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+        //         "ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+        //     );
 
-            foreach ($sql as $statement) {
-
-                try {
+        //     foreach ($sql as $statement) {
+
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20100()
-        {
+        // private function update_sql_20100()
+        // {
 
-            $errors = array();
+        //     $errors = array();
 
-            $sql = array(
-                "UPDATE `zp_user` SET role = 50 WHERE role = 2;",
-                "UPDATE `zp_user` SET role = 10 WHERE role = 3;",
-                "UPDATE `zp_user` SET role = 20 WHERE role = 4;",
-                "UPDATE `zp_user` SET role = 40 WHERE role = 5;",
-            );
+        //     $sql = array(
+        //         "UPDATE `zp_user` SET role = 50 WHERE role = 2;",
+        //         "UPDATE `zp_user` SET role = 10 WHERE role = 3;",
+        //         "UPDATE `zp_user` SET role = 20 WHERE role = 4;",
+        //         "UPDATE `zp_user` SET role = 40 WHERE role = 5;",
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20101() {
+        // private function update_sql_20101() {
 
 
-            $errors = array();
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
-                "ALTER TABLE `zp_stats`
-                    ADD COLUMN `sum_teammembers` INT(11) NULL DEFAULT NULL AFTER `daily_avg_hours_remaining_todo`,
-                    CHANGE COLUMN `sum_planned_hours` `sum_planned_hours` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `sum_logged_hours` `sum_logged_hours` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `sum_estremaining_hours` `sum_estremaining_hours` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_booked_todo` `daily_avg_hours_booked_todo` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_booked_point` `daily_avg_hours_booked_point` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_planned_todo` `daily_avg_hours_planned_todo` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
-                    CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;",
-                "CREATE TABLE `zp_audit` (
-                      `id` INT NOT NULL AUTO_INCREMENT,
-                      `userId` INT NULL,
-                      `projectId` INT NULL,
-                      `action` VARCHAR(45) NULL,
-                      `entity` VARCHAR(45) NULL,
-                      `entityId` INT NULL,
-                      `values` TEXT NULL,
-                      `date` DATETIME NULL,
-                      PRIMARY KEY (`id`),
-                      KEY `projectId` (`projectId` ASC),
-                      KEY `projectAction` (`projectId` ASC, `action` ASC),
-                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+        //     $sql = array(
+        //         "ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;",
+        //         "ALTER TABLE `zp_stats`
+        //             ADD COLUMN `sum_teammembers` INT(11) NULL DEFAULT NULL AFTER `daily_avg_hours_remaining_todo`,
+        //             CHANGE COLUMN `sum_planned_hours` `sum_planned_hours` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `sum_logged_hours` `sum_logged_hours` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `sum_estremaining_hours` `sum_estremaining_hours` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_booked_todo` `daily_avg_hours_booked_todo` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_booked_point` `daily_avg_hours_booked_point` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_planned_todo` `daily_avg_hours_planned_todo` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
+        //             CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;",
+        //         "CREATE TABLE `zp_audit` (
+        //               `id` INT NOT NULL AUTO_INCREMENT,
+        //               `userId` INT NULL,
+        //               `projectId` INT NULL,
+        //               `action` VARCHAR(45) NULL,
+        //               `entity` VARCHAR(45) NULL,
+        //               `entityId` INT NULL,
+        //               `values` TEXT NULL,
+        //               `date` DATETIME NULL,
+        //               PRIMARY KEY (`id`),
+        //               KEY `projectId` (`projectId` ASC),
+        //               KEY `projectAction` (`projectId` ASC, `action` ASC),
+        //               KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+        //             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
 
-            );
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20102()
-        {
-            $errors = array();
+        // private function update_sql_20102()
+        // {
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
-                "ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL"
-            );
+        //     $sql = array(
+        //         "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
+        //         "ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL"
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20103()
-        {
-            $errors = array();
+        // private function update_sql_20103()
+        // {
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL",
-                "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL"
-            );
+        //     $sql = array(
+        //         "ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL",
+        //         "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL"
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20104()
-        {
-            $errors = array();
+        // private function update_sql_20104()
+        // {
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_user` ADD COLUMN `pwResetCount` INT(5) NULL AFTER `pwResetExpiration`",
-                "ALTER TABLE `zp_user` ADD COLUMN `forcePwReset` TINYINT NULL AFTER `pwResetCount`",
-                "ALTER TABLE `zp_user` ADD COLUMN `createdOn` DATETIME NULL AFTER `twoFASecret`",
-                "ALTER TABLE `zp_user` CHANGE COLUMN `lastpwd_change` `lastpwd_change` DATETIME NULL DEFAULT NULL AFTER `forcePwReset`",
-                "ALTER TABLE `zp_user` CHANGE COLUMN `expires` `expires` DATETIME NULL DEFAULT NULL",
-            );
+        //     $sql = array(
+        //         "ALTER TABLE `zp_user` ADD COLUMN `pwResetCount` INT(5) NULL AFTER `pwResetExpiration`",
+        //         "ALTER TABLE `zp_user` ADD COLUMN `forcePwReset` TINYINT NULL AFTER `pwResetCount`",
+        //         "ALTER TABLE `zp_user` ADD COLUMN `createdOn` DATETIME NULL AFTER `twoFASecret`",
+        //         "ALTER TABLE `zp_user` CHANGE COLUMN `lastpwd_change` `lastpwd_change` DATETIME NULL DEFAULT NULL AFTER `forcePwReset`",
+        //         "ALTER TABLE `zp_user` CHANGE COLUMN `expires` `expires` DATETIME NULL DEFAULT NULL",
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-		private function update_sql_20105()
-		{
-			$errors = array();
+		// private function update_sql_20105()
+		// {
+		// 	$errors = array();
 
-			$sql = array(
-				"ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
-			);
+		// 	$sql = array(
+		// 		"ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
+		// 	);
 
-			foreach ($sql as $statement) {
+		// 	foreach ($sql as $statement) {
 
-				try {
+		// 		try {
 
-					$stmn = $this->database->prepare($statement);
-					$stmn->execute();
+		// 			$stmn = $this->database->prepare($statement);
+		// 			$stmn->execute();
 
-				} catch (PDOException $e) {
-					array_push($errors, $statement . " Failed:" . $e->getMessage());
-				}
+		// 		} catch (PDOException $e) {
+		// 			array_push($errors, $statement . " Failed:" . $e->getMessage());
+		// 		}
 
-			}
+		// 	}
 
-			if(count($errors) > 0) {
-				return $errors;
-			}else{
-				return true;
-			}
+		// 	if(count($errors) > 0) {
+		// 		return $errors;
+		// 	}else{
+		// 		return true;
+		// 	}
 
-		}
+		// }
 
-        private function update_sql_20106()
-        {
-            $errors = array();
+        // private function update_sql_20106()
+        // {
+        //     $errors = array();
 
-            $sql = array(
-                "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL"
-            );
+        //     $sql = array(
+        //         "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL"
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
-        private function update_sql_20107()
-        {
-            $errors = array();
+        // private function update_sql_20107()
+        // {
+        //     $errors = array();
 
-            $sql = array(
-                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')"
-            );
+        //     $sql = array(
+        //         "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')"
+        //     );
 
-            foreach ($sql as $statement) {
+        //     foreach ($sql as $statement) {
 
-                try {
+        //         try {
 
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
+        //             $stmn = $this->database->prepare($statement);
+        //             $stmn->execute();
 
-                } catch (PDOException $e) {
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-                }
+        //         } catch (PDOException $e) {
+        //             array_push($errors, $statement . " Failed:" . $e->getMessage());
+        //         }
 
-            }
+        //     }
 
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
+        //     if(count($errors) > 0) {
+        //         return $errors;
+        //     }else{
+        //         return true;
+        //     }
 
-        }
+        // }
 
     }
 }
