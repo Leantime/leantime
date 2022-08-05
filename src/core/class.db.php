@@ -38,7 +38,7 @@ class db
      * @access private
      * @var    string database port default: 3306
      */
-    private $port='';
+    private $port='3306';
 
 
     public $database='';

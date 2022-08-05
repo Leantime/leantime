@@ -54,7 +54,7 @@ namespace leantime\core {
          * @access private
          * @var string
          */
-        private $port = '';
+        private $port = '3306';
 
         /**
          * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
