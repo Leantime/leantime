@@ -22,7 +22,7 @@ function runBackup($backupFile, $config){
 
     $backupPath = $config->dbBackupPath.$backupFile;
     $output = array();
-    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output,$worked);
+    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --port={$config->dbPort} --result-file={$backupPath} 2>&1", $output,$worked);
 
     switch ($worked) {
         case 0:
