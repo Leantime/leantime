@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delSprint
     {
-
         /**
          * run - display template and edit data
          *
@@ -21,39 +20,31 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
                 if (isset($_POST['del'])) {
-
                     $sprintRepo->delSprint($id);
 
                     $tpl->setNotification($language->__('notifications.sprint_deleted_successfully'), "success");
 
                     $_SESSION["currentSprint"] = "";
 
-                    if(isset($_SESSION['lastPage'])) {
+                    if (isset($_SESSION['lastPage'])) {
                         $tpl->redirect($_SESSION['lastPage']);
-                    }else{
-                        $tpl->redirect(BASE_URL."/tickets/showKanban");
+                    } else {
+                        $tpl->redirect(BASE_URL . "/tickets/showKanban");
                     }
-
                 }
 
                 $tpl->assign('id', $id);
                 $tpl->displayPartial('sprints.delSprint');
-
             } else {
-
                 $tpl->displayPartial('general.error');
-
             }
-
         }
-
     }
 
 }

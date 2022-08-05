@@ -3,45 +3,47 @@
 /** @var leantime\core\language $language */
 ?>
     <div id="fileManager">
-    	<div >
-    		
-    		<?php echo $this->displayNotification() ?>
+        <div >
+            
+            <?php echo $this->displayNotification() ?>
 
-			<div class='mediamgr'>
-			 <div class='mediamgr_left'>
+            <div class='mediamgr'>
+             <div class='mediamgr_left'>
                     <div class="mediamgr_category">
-                    	
-		        	<form action='<?=BASE_URL ?>/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
-						<div class="par f-left" style="margin-right: 15px;">
-						
-					   	 <div class='fileupload fileupload-new' data-provides='fileupload'>
-					   	 	<input type="hidden" />
-							<div class="input-append">
-								<div class="uneditable-input span3">
-									<i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
-								</div>
-								<span class="btn btn-file">
-									<span class="fileupload-new">Select file</span>
-									<span class='fileupload-exists'>Change</span>
-									<input type='file' name='file' />
-								</span>
-									
-								<a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
-							</div>
-					  	 </div>		
-					   	</div>
-					   
-					   <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
-		
-					</form>
+                        
+                    <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
+                        echo"&modalPopUp=true";
+                                  }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+                        <div class="par f-left" style="margin-right: 15px;">
+                        
+                         <div class='fileupload fileupload-new' data-provides='fileupload'>
+                            <input type="hidden" />
+                            <div class="input-append">
+                                <div class="uneditable-input span3">
+                                    <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                </div>
+                                <span class="btn btn-file">
+                                    <span class="fileupload-new">Select file</span>
+                                    <span class='fileupload-exists'>Change</span>
+                                    <input type='file' name='file' />
+                                </span>
+                                    
+                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+                            </div>
+                         </div>     
+                        </div>
+                       
+                       <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
+        
+                    </form>
 
-					</div> 
+                    </div> 
 
                     <div class="mediamgr_content">          
-                    	
-                    	<ul id='medialist' class='listfile'>
-                    		<?php foreach($this->get('files') as $file): ?>
-                    		<li class="<?php echo $file['moduleId'] ?>">
+                        
+                        <ul id='medialist' class='listfile'>
+                            <?php foreach ($this->get('files') as $file) : ?>
+                            <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -59,18 +61,18 @@
 
                                     </ul>
                                 </div>
-                              	<a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                              		<?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
-                              			<img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                              		<?php else: ?>
-                              			<img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
-                              		<?php endif; ?>
-                            		<span class="filename"><?php echo substr($file['realName'], 0, 10)."(...).".$file['extension'] ?></span>
-                              	</a>
-                           	</li>
-                           	<?php endforeach; ?>
+                                <a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                    <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
+                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                    <?php else : ?>
+                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
+                                    <?php endif; ?>
+                                    <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
                         <br class="clearall" />
-                    	</ul>
+                        </ul>
                         <br class="clearall" />
                         
                     </div><!--mediamgr_content-->
@@ -79,23 +81,23 @@
                 
 
                 <br class="clearall" />
-            </div><!--mediamgr-->      		 	
+            </div><!--mediamgr-->               
 
 
-		</div>
-	</div>
-	
+        </div>
+    </div>
+    
 
 <script type='text/javascript'>
     jQuery(document).ready(function(){
 
-		jQuery('#widgetAction').click(function(){
-			jQuery('.widgetList').toggle();
-		});
-		jQuery('#widgetAction2').click(function(){
-			jQuery('.widgetList2').toggle();
-		});		
-	});
+        jQuery('#widgetAction').click(function(){
+            jQuery('.widgetList').toggle();
+        });
+        jQuery('#widgetAction2').click(function(){
+            jQuery('.widgetList2').toggle();
+        });     
+    });
 </script>
 
 
@@ -110,8 +112,7 @@
 
             //jQuery("#medialist a").colorbox();
 
-            <?php if(isset($_GET['modalPopUp'])) { ?>
-
+            <?php if (isset($_GET['modalPopUp'])) { ?>
                 jQuery('#medialist a.imageLink').on("click", function(event){
 
                     event.preventDefault();

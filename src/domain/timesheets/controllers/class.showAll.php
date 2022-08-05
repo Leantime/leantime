@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
         /**
          * run - display template and edit data
          *
@@ -18,7 +17,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
-            $_SESSION['lastPage'] = BASE_URL."/timesheets/showAll";
+            $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
             $language = new core\language();
 
             //Only admins and employees
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
             $projects = new repositories\projects();
 
             if (isset($_POST['saveInvoice']) === true) {
-
                 $invEmpl = '';
                 $invComp = '';
 
@@ -39,8 +37,6 @@ namespace leantime\domain\controllers {
                 }
 
                 $timesheetsRepo->updateInvoices($invEmpl, $invComp);
-
-
             }
 
 
@@ -57,31 +53,22 @@ namespace leantime\domain\controllers {
             $userId = 'all';
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
-
                 $kind = ($_POST['kind']);
-
             }
 
             if (isset($_POST['userId']) && $_POST['userId'] != '') {
-
                 $userId = ($_POST['userId']);
-
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
                 $dateFrom = $language->getISODateString($_POST['dateFrom']);
-
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
                 $dateTo = $language->getISODateString($_POST['dateTo']);
-
             }
 
             if (isset($_POST['invEmpl']) === true) {
-
                 $invEmplCheck = $_POST['invEmpl'];
 
                 if ($invEmplCheck == 'on') {
@@ -89,13 +76,11 @@ namespace leantime\domain\controllers {
                 } else {
                     $invEmplCheck = '0';
                 }
-
             } else {
                 $invEmplCheck = '0';
             }
 
             if (isset($_POST['invComp']) === true) {
-
                 $invCompCheck = ($_POST['invComp']);
 
                 if ($invCompCheck == 'on') {
@@ -103,7 +88,6 @@ namespace leantime\domain\controllers {
                 } else {
                     $invCompCheck = '0';
                 }
-
             } else {
                 $invCompCheck = '0';
             }
@@ -137,10 +121,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('allTimesheets', $timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
 
             $tpl->display('timesheets.showAll');
-
-
         }
-
     }
 
 }

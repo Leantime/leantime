@@ -89,25 +89,26 @@
 
                                     <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                                     <label for="firstname"><?php echo $this->__('label.firstname'); ?></label> <input
-                                        type="text" name="firstname" id="firstname"  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
+                                        type="text" name="firstname" id="firstname"  <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
                                         value="<?php $this->e($values['firstname']); ?>" /><br />
 
                                     <label for="lastname"><?php echo $this->__('label.lastname'); ?></label> <input
-                                        type="text" name="lastname" id="lastname" <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
+                                        type="text" name="lastname" id="lastname" <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
                                         value="<?php $this->e($values['lastname']); ?>" /><br />
 
-                                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
+                                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input  <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
                                         type="text" name="user" id="user" value="<?php $this->e($values['user']); ?>" /><br />
 
-                                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
+                                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input  <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
                                         type="text" name="phone" id="phone"
                                         value="<?php $this->e($values['phone']); ?>" /><br />
 
                                     <label for="status"><?php echo $this->__('label.status'); ?></label>
                                    <select name='status' id='status'>
-                                    <?php foreach($status as $key => $value) { ?>
+                                    <?php foreach ($status as $key => $value) { ?>
                                                 <option value='<?php echo $key ?>'
-                                        <?php if($key == $values['status']) { ?> selected='selected' <?php
+                                        <?php if ($key == $values['status']) {
+                                            ?> selected='selected' <?php
                                         } ?>>
                                         <?php echo $this->__($value); ?>
                                                 </option>
@@ -116,33 +117,35 @@
 
                                     <label for="role"><?php echo $this->__('label.role'); ?></label> <select
                                         name="role" id="role">
-                                        <?php foreach($this->get('roles') as $key => $role){ ?>
+                                        <?php foreach ($this->get('roles') as $key => $role) { ?>
                                                     <option value="<?php  echo $key; ?>"
-                                            <?php if($key == $values['role']) { ?> selected="selected" <?php
+                                            <?php if ($key == $values['role']) {
+                                                ?> selected="selected" <?php
                                             } ?>>
-                                            <?=$this->__("label.roles.".$role) ?>
+                                            <?=$this->__("label.roles." . $role) ?>
                                                     </option>
                                         <?php } ?>
                                     </select> <br />
 
                                     <label for="client"><?php echo $this->__('label.client') ?></label>
                                     <select name='client' id="client">
-                                             <?php if($login::userIsAtLeast("manager")){?>
+                                             <?php if ($login::userIsAtLeast("manager")) {?>
                                                  <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
                                              <?php } ?>
-                                            <?php foreach($this->get('clients') as $client): ?>
-                                                        <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
-                                                       endif; ?>>
+                                            <?php foreach ($this->get('clients') as $client) : ?>
+                                                        <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                                                            ?>selected="selected"<?php
+                                                                       endif; ?>>
                                                 <?php $this->e($client['name']) ?>
                                             </option>
                                             <?php endforeach; ?>
                                     </select><br/>
 
-								<label for="password"><?php echo $this->__('label.password'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
-										   type="password" name="password" id="password" value="" autocomplete="new-password"/><br />
+                                <label for="password"><?php echo $this->__('label.password'); ?></label> <input  <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
+                                           type="password" name="password" id="password" value="" autocomplete="new-password"/><br />
 
-                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input  <?=$values['source']=='ldap' ? "disabled='disabled'" : ''; ?>
-										   type="password" name="password2" id="password2" value="" autocomplete="new-password"/><br />
+                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input  <?=$values['source'] == 'ldap' ? "disabled='disabled'" : ''; ?>
+                                           type="password" name="password2" id="password2" value="" autocomplete="new-password"/><br />
 
                                     <input type='hidden' name='hours' value='<?php $this->e($values['hours']) ?>' /><br />
                                     <div class="input-prepend input-append">
@@ -174,8 +177,8 @@
                                                              <span><?php echo $this->__('label.available_projects'); ?></span>
                                                               <select class="uniformselect" name="select3" multiple="multiple" size="10" id="selectOrigin" style="width:100%">
 
-                                                                                <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                                    <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
+                                                                                <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                                    <?php if (is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
                                                                                         <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> /<?php $this->e($row['clientName']); ?></option>
                                                                                     <?php } ?>
                                                                                 <?php } ?>
@@ -195,8 +198,8 @@
                                                                 <select name="select4" multiple="multiple" size="10" id="selectDest" style="width:100%">
 
 
-                                                                                <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                                    <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
+                                                                                <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                                    <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
                                                                                         <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> / <?php $this->e($row['clientName']); ?></option>
 
                                                                                     <?php } ?>
@@ -215,8 +218,8 @@
                                                                     <select name="projects[]" multiple="multiple" size="10" id="projects" style="display:none;">
 
 
-                                                                                <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                                    <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
+                                                                                <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                                    <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
                                                                                         <option value="<?php echo $row['id'] ?>" selected="selected"><?php $this->e($row['clientName']); ?> / <?php $this->e($row['name']); ?></option>
                                                                                     <?php } ?>
 

@@ -7,6 +7,7 @@
  * @version 1.0
  * @license GNU/GPL, see license.txt
  */
+
 namespace leantime\core {
 
     use PHPMailer\PHPMailer\PHPMailer;
@@ -15,7 +16,6 @@ namespace leantime\core {
 
     class mailer
     {
-
         /**
          * @access public
          * @var    string
@@ -59,20 +59,19 @@ namespace leantime\core {
             $config = new config();
 
 
-            if($config->email != '') {
+            if ($config->email != '') {
                 $this->emailDomain = $config->email;
-            }else{
+            } else {
                 $host = $_SERVER['HTTP_HOST'] ?? "leantime";
-                $this->emailDomain = "no-reply@".$host;
+                $this->emailDomain = "no-reply@" . $host;
             }
             //PHPMailer
             $this->mailAgent = new PHPMailer(false);
 
-	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
+            $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             //Use SMTP or php mail().
-            if($config->useSMTP === true) {
-
+            if ($config->useSMTP === true) {
                 $this->mailAgent->SMTPDebug = 0;                                  // Enable verbose debug output
                 $this->mailAgent->Timeout = 20;
 
@@ -84,18 +83,14 @@ namespace leantime\core {
                 $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-                
-            }else{
-
+            } else {
                 $this->mailAgent->isMail();
-
             }
 
             $this->logo = $_SESSION["companysettings.logoPath"];
             $this->companyColor = $_SESSION["companysettings.primarycolor"];
 
             $this->language = new language();
-
         }
 
         /**
@@ -110,7 +105,6 @@ namespace leantime\core {
         {
 
             $this->text = $text;
-
         }
 
         /**
@@ -125,7 +119,6 @@ namespace leantime\core {
         {
 
             $this->html = $html;
-
         }
 
         /**
@@ -139,7 +132,6 @@ namespace leantime\core {
         {
 
             $this->subject = $subject;
-
         }
 
         /**
@@ -163,12 +155,12 @@ namespace leantime\core {
 
             $logoParts = parse_url($this->logo);
 
-            if(isset($logoParts['scheme'])) {
+            if (isset($logoParts['scheme'])) {
                 //Logo is URL
                 $inlineLogoContent = $this->logo;
-            }else{
+            } else {
                 //Logo comes from local file system
-                $this->mailAgent->addEmbeddedImage(ROOT."".$this->logo, 'companylogo');
+                $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
                 $inlineLogoContent = "cid:companylogo";
             }
 
@@ -181,7 +173,7 @@ namespace leantime\core {
 						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
 							<table>
 								<tr>
-								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>
+								<td width="150"><img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;"></td>
 								<td></td>
 							</tr>
 							</table>
@@ -189,7 +181,7 @@ namespace leantime\core {
 					</tr>
 					<tr>
 						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
-							'.$this->language->__('email_notifications.hi').'
+							' . $this->language->__('email_notifications.hi') . '
 							<br /><br />
 							' . nl2br($this->html) . '
 							<br /><br />
@@ -201,7 +193,7 @@ namespace leantime\core {
 		</tr>
 		<tr>
 			<td align="center">
-			'.sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/').'
+			' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
 			</td>
 		</tr>
 		</table>';
@@ -212,21 +204,17 @@ namespace leantime\core {
             $to = array_unique($to);
 
             foreach ($to as $recip) {
-
                 try {
                     $this->mailAgent->addAddress($recip);
                     $this->mailAgent->send();
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     error_log($this->mailAgent->ErrorInfo);
                     error_log($e->getMessage());
                 }
 
                 $this->mailAgent->clearAllRecipients();
             }
-
-
         }
-
     }
 
 }

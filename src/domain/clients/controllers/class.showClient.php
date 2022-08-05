@@ -5,7 +5,6 @@
  *
  */
 
-
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -14,21 +13,21 @@ namespace leantime\domain\controllers {
 
     class showClient
     {
-
         /**
          * run - display template and edit data
          *
          * @access public
          */
-        public function __construct () {
+        public function __construct()
+        {
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();
             $this->language = new core\language();
             $this->commentService = new services\comments();
             $this->fileService = new services\files();
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL."/clients/showAll";
+            if (!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = BASE_URL . "/clients/showAll";
             }
         }
 
@@ -65,8 +64,7 @@ namespace leantime\domain\controllers {
             );
 
             if (empty($row) === false && core\login::userIsAtLeast("clientManager")) {
-
-                if(core\login::userHasRole("clientManager") && $id != core\login::getUserClientId()) {
+                if (core\login::userHasRole("clientManager") && $id != core\login::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
                 }
@@ -80,44 +78,37 @@ namespace leantime\domain\controllers {
                 }
 
                 if (isset($_POST['upload'])) {
-
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
                         $return = $file->upload($_FILES, 'client', $id);
                         $tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
-
-                    }else{
+                    } else {
                         $tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
                 }
 
                 //Delete File
                 if (isset($_GET['delFile']) === true) {
-
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
-                    if($result === true) {
+                    if ($result === true) {
                         $tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $tpl->redirect(BASE_URL."/clients/showClient/".$id."#files");
-                    }else {
+                        $tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
+                    } else {
                         $tpl->setNotification($result["msg"], "success");
                     }
-
                 }
 
 
                 //Add comment
                 if (isset($_POST['comment']) === true) {
-
-                    if($this->commentService->addComment($_POST, "client", $id, $row)) {
-
+                    if ($this->commentService->addComment($_POST, "client", $id, $row)) {
                         $tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                    }else {
+                    } else {
                         $tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                     }
                 }
 
                 if (isset($_POST['save']) === true) {
-
                     $clientValues = array(
                         'name' => $_POST['name'],
                         'street' => $_POST['street'],
@@ -131,13 +122,10 @@ namespace leantime\domain\controllers {
                     );
 
                     if ($clientValues['name'] !== '') {
-
                         $clientRepo->editClient($clientValues, $id);
 
                         $tpl->setNotification($this->language->__("notification.client_saved_successfully"), 'success');
-
                     } else {
-
                         $tpl->setNotification($this->language->__("notification.client_name_not_specified"), 'error');
                     }
                 }
@@ -152,14 +140,9 @@ namespace leantime\domain\controllers {
 
 
                 $tpl->display('clients.showClient');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 }

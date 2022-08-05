@@ -13,7 +13,7 @@
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><?php echo sprintf($this->__('headline.project'),$this->escape($project['name'])); ?>
+        <h1><?php echo sprintf($this->__('headline.project'), $this->escape($project['name'])); ?>
         </h1>
     </div>
 </div><!--pageheader-->
@@ -78,7 +78,7 @@
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                            <?php foreach($this->get('files') as $file): ?>
+                            <?php foreach ($this->get('files') as $file) : ?>
                                             <li class="<?php echo $file['moduleId'] ?>">
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
@@ -98,9 +98,9 @@
                                                   <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                                                     <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                                         <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                                                        <?php else: ?>
+                                                    <?php else : ?>
                                                         <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
-                                                        <?php endif; ?>
+                                                    <?php endif; ?>
                                                     <span class="filename"><?php $this->e($file['realName']) ?></span>
 
                                                   </a>
@@ -120,7 +120,7 @@
                 <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
+                    $this->assign('formUrl', BASE_URL . "/projects/showProject/" . $project['id'] . "");
                     $this->displaySubmodule('comments-generalComment') ;
                     ?>
                 </form>
@@ -211,7 +211,7 @@
                     <div class="col-md-4">
                         <strong><?= $this->__('label.webhook_url'); ?></strong><br/>
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <?php for ($i = 1; 3 >= $i ; $i++): ?>
+                            <?php for ($i = 1; 3 >= $i; $i++) : ?>
                             <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $this->__('input.placeholders.discord_url'); ?>" value="<?php echo $this->get('discordWebhookURL' . $i); ?>"/><br/>
                             <?php endfor; ?>
                             <input type="submit" value="<?= $this->__('buttons.save'); ?>" name="discordSave"/>
@@ -224,8 +224,7 @@
             <div id="todosettings">
                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
                     <ul class="sortableTicketList" id="todoStatusList">
-                        <?php foreach($this->get('todoStatus') as $key => $ticketStatus) { ?>
-
+                        <?php foreach ($this->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
                                 <div class="ticketBox">
                                     <div class="row statusList" id="todostatus-<?=$key?>">
@@ -246,24 +245,24 @@
                                         <div class="col-md-2">
                                             <label><?=$this->__("label.color") ?></label>
                                             <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
-                                                <option value="label-info" class="label-info" <?=$ticketStatus['class']=='label-info'?'selected="selected"':""; ?>><span class="label-info"><?=$this->__('label.blue'); ?></span></option>
-                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class']=='label-warning'?'selected="selected"':""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
-                                                <option value="label-success" class="label-success" <?=$ticketStatus['class']=='label-success'?'selected="selected"':""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
-                                                <option value="label-important" class="label-important" <?=$ticketStatus['class']=='label-important'?'selected="selected"':""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
-                                                <option value="label-default" class="label-default" <?=$ticketStatus['class']=='label-default'?'selected="selected"':""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
+                                                <option value="label-info" class="label-info" <?=$ticketStatus['class'] == 'label-info' ? 'selected="selected"' : ""; ?>><span class="label-info"><?=$this->__('label.blue'); ?></span></option>
+                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class'] == 'label-warning' ? 'selected="selected"' : ""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
+                                                <option value="label-success" class="label-success" <?=$ticketStatus['class'] == 'label-success' ? 'selected="selected"' : ""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
+                                                <option value="label-important" class="label-important" <?=$ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
+                                                <option value="label-default" class="label-default" <?=$ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label><?=$this->__("label.reportType") ?></label>
                                             <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
-                                                <option value="NEW" <?=($ticketStatus['statusType']=='NEW')?'selected="selected"':""; ?>><?=$this->__('status.new'); ?></option>
-                                                <option value="INPROGRESS" <?=($ticketStatus['statusType']=='INPROGRESS')?'selected="selected"':""; ?>><?=$this->__('status.in_progress'); ?></option>
-                                                <option value="DONE" <?=($ticketStatus['statusType']=='DONE')?'selected="selected"':""; ?>><?=$this->__('status.done'); ?></option>
+                                                <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$this->__('status.new'); ?></option>
+                                                <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$this->__('status.in_progress'); ?></option>
+                                                <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$this->__('status.done'); ?></option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label for=""><?=$this->__('label.showInKanban'); ?></label>
-                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol']==true)?'checked="checked"':""; ?>/>
+                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol'] == true) ? 'checked="checked"' : ""; ?>/>
                                         </div>
                                         <div class="remove">
                                             <br />
@@ -337,7 +336,7 @@
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
-        <?php if(isset($_GET['integrationSuccess'])) {?>
+        <?php if (isset($_GET['integrationSuccess'])) {?>
             window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
         <?php } ?>
 
@@ -348,11 +347,11 @@
         leantime.projectsController.initSelectFields();
 
         <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {
-        ?>
+        if (isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {
+            ?>
             leantime.helperController.showHelperModal("projectSuccess");
 
-        <?php
+            <?php
             $_SESSION['tourActive'] = false;
         }
         ?>

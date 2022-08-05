@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class editGCal
     {
-
         /**
          * run - display template and edit data
          *
@@ -28,7 +27,6 @@ namespace leantime\domain\controllers {
 
 
             if (isset($_GET['id']) === true) {
-
                 $id = ($_GET['id']);
 
                 $row = $calendarRepo->getGCal($id);
@@ -40,7 +38,6 @@ namespace leantime\domain\controllers {
                 );
 
                 if (isset($_POST['save']) === true) {
-
                     $values = array(
                         'url' => ($_POST['url']),
                         'name' => ($_POST['name']),
@@ -50,24 +47,15 @@ namespace leantime\domain\controllers {
                     $calendarRepo->editGUrl($values, $id);
 
                     $msgKey = 'Kalender bearbeitet';
-
-
                 }
 
                 $tpl->assign('values', $values);
                 $tpl->assign('info', $msgKey);
 
                 $tpl->display('calendar.editGCal');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
-
         }
-
     }
 }
-

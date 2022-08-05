@@ -56,7 +56,9 @@ $user = $this->get('user');
                             <p>
                                 <label for="phone"><?php echo $this->__('label.phone'); ?></label>
                                 <span class='field'>
-                                    <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>
+                                    <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") {
+                                        echo " checked='checked' ";
+                                                                                             } ?>
                                            value="<?php $this->e($values['phone']) ?>"/><br/>
                                 </span>
                             </p>
@@ -89,7 +91,9 @@ $user = $this->get('user');
                                 <label for="notifications"><?php echo $this->__('label.receive_notifications') ?></label>
                                 <span class='field'>
                                     <input type="checkbox" value="" name="notifications" class="input"
-                                           id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
+                                           id="notifications" <?php if ($values['notifications'] == "1") {
+                                                echo " checked='checked' ";
+                                                              } ?>/> <br/>
                                 </span>
                             </p>
 

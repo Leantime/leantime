@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class tickets
     {
-
         private $tpl;
         private $projects;
         private $sprintService;
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->ticketsApiService = new services\tickets();
-
         }
 
 
@@ -38,7 +36,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -50,30 +47,21 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true){
-
+            if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                 $handler = null;
-                if(isset($params["handler"]) == true){
+                if (isset($params["handler"]) == true) {
                     $handler = $params["handler"];
                 }
                 $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
-                if($results === true) {
-
+                if ($results === true) {
                     echo "{status:ok}";
-
-                }else{
-
+                } else {
                     echo "{status:failure}";
-
                 }
-
-            }else{
-
+            } else {
                 echo "{status:failure}";
-
             }
-
         }
 
         /**
@@ -86,9 +74,9 @@ namespace leantime\domain\controllers {
         {
             $results = $this->ticketsApiService->patchTicket($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -101,9 +89,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

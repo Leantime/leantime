@@ -1,8 +1,8 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-	$ticket = $this->get('ticket');
-	$projectData = $this->get('projectData');
+    $ticket = $this->get('ticket');
+    $projectData = $this->get('projectData');
 
 ?>
 
@@ -14,7 +14,7 @@
 
     <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headlines.edit_todo") ?></h1>
     </div>
 
@@ -69,7 +69,7 @@
         <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
+            $this->assign('formUrl', "/tickets/showTicket/" . $ticket->id . "");
 
             $this->displaySubmodule('comments-generalComment') ;
             ?>

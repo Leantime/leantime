@@ -135,18 +135,18 @@ $users = $this->get('users');
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php foreach($this->get('userClients') as $user): ?>
+                                <?php foreach ($this->get('userClients') as $user) : ?>
                                     <tr>
                                         <td>
-                                        <?php printf( $this->__('text.full_name'), $this->escape($user['firstname']), $this->escape($user['lastname'])); ?>
+                                        <?php printf($this->__('text.full_name'), $this->escape($user['firstname']), $this->escape($user['lastname'])); ?>
                                         </td>
                                         <td><a href='mailto:<?php $this->e($user['username']); ?>'><?php $this->e($user['username']); ?></a></td>
                                         <td><?php $this->e($user['phone']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
 
-                                <?php if(count($this->get('userClients')) == 0) {
-                                    echo "<tr><td colspan='3'>".$this->__('text.no_users_assigned_to_this_client')."</td></tr>";
+                                <?php if (count($this->get('userClients')) == 0) {
+                                    echo "<tr><td colspan='3'>" . $this->__('text.no_users_assigned_to_this_client') . "</td></tr>";
                                 }?>
                                 </tbody>
                             </table>
@@ -173,7 +173,7 @@ $users = $this->get('users');
                 <form method="post" action="<?=BASE_URL ?>/clients/showClient/<?php echo $this->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', BASE_URL."/clients/showClient/".$this->escape($_GET['id'])."");
+                    $this->assign('formUrl', BASE_URL . "/clients/showClient/" . $this->escape($_GET['id']) . "");
                     $this->displaySubmodule('comments-generalComment') ?>
                 </form>
 
@@ -211,7 +211,7 @@ $users = $this->get('users');
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                                    <?php foreach($this->get('files') as $file): ?>
+                                    <?php foreach ($this->get('files') as $file) : ?>
                                         <li class="<?php echo $file['moduleId'] ?>">
                                             <div class="inlineDropDownContainer" style="float:right;">
 
@@ -232,9 +232,9 @@ $users = $this->get('users');
                                               <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>">
                                                   <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                                       <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $this->e($file['extension']); ?>&realName=<?php $this->e($file['realName']); ?>" alt="" />
-                                                    <?php else: ?>
+                                                  <?php else : ?>
                                                       <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
-                                                    <?php endif; ?>
+                                                  <?php endif; ?>
                                                 <span class="filename"><?php $this->e($file['realName']); ?></span>
                                               </a>
                                            </li>

@@ -6,11 +6,11 @@
 
 <?php
 
-    $redirectUrl = BASE_URL."/dashboard/show";
+    $redirectUrl = BASE_URL . "/dashboard/show";
 
-    if($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
-        $redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
-    }
+if ($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
+    $redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
+}
 
 ?>
 
@@ -22,7 +22,7 @@
             <div class="col-md-12" style="position:relative;">
                 <h1 class="mainWelcome"><?php echo $language->__("headlines.welcome_back"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
-				    <span class="iq-round"></span>
+                    <span class="iq-round"></span>
                 </span>
             </div>
         </div>

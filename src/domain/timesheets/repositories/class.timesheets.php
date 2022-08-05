@@ -8,12 +8,11 @@ namespace leantime\domain\repositories {
 
     class timesheets
     {
-
         /**
          * @access public
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         /**
          * @access public
@@ -40,7 +39,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -48,7 +46,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1')
+        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1')
         {
 
             $query = "SELECT
@@ -78,37 +76,31 @@ namespace leantime\domain\repositories {
                     WHERE 
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
-            if($projectId > 0) {
-                $query.=" AND (zp_tickets.projectId = :projectId)";
+            if ($projectId > 0) {
+                $query .= " AND (zp_tickets.projectId = :projectId)";
             }
 
-            if($ticketFilter > 0) {
-                $query.=" AND (zp_tickets.id = :ticketFilter)";
+            if ($ticketFilter > 0) {
+                $query .= " AND (zp_tickets.id = :ticketFilter)";
             }
 
-            if($kind != 'all') {
-                $query.= " AND (zp_timesheets.kind = :kind)";
+            if ($kind != 'all') {
+                $query .= " AND (zp_timesheets.kind = :kind)";
             }
 
-            if($userId != 'all') {
-                $query.= " AND (zp_timesheets.userId= :userId)";
+            if ($userId != 'all') {
+                $query .= " AND (zp_timesheets.userId= :userId)";
             }
 
-            if($invComp == '1' && $invEmpl == '1') {
-
-                $query.= " AND (zp_timesheets.invoicedComp = 1 AND zp_timesheets.invoicedEmpl = 1)";
-
-            }elseif($invComp == '1' && $invEmpl != '1') {
-
-                $query.= " AND (zp_timesheets.invoicedComp = 1 AND (zp_timesheets.invoicedEmpl <> 1 OR zp_timesheets.invoicedEmpl IS NULL) )";
-
-            }elseif($invComp != '1' && $invEmpl == '1') {
-
-                $query.= " AND ((zp_timesheets.invoicedComp <> 1 OR zp_timesheets.invoicedComp IS NULL)  AND zp_timesheets.invoicedEmpl = 1)";
-
+            if ($invComp == '1' && $invEmpl == '1') {
+                $query .= " AND (zp_timesheets.invoicedComp = 1 AND zp_timesheets.invoicedEmpl = 1)";
+            } elseif ($invComp == '1' && $invEmpl != '1') {
+                $query .= " AND (zp_timesheets.invoicedComp = 1 AND (zp_timesheets.invoicedEmpl <> 1 OR zp_timesheets.invoicedEmpl IS NULL) )";
+            } elseif ($invComp != '1' && $invEmpl == '1') {
+                $query .= " AND ((zp_timesheets.invoicedComp <> 1 OR zp_timesheets.invoicedComp IS NULL)  AND zp_timesheets.invoicedEmpl = 1)";
             }
 
-            $query.= " GROUP BY
+            $query .= " GROUP BY
 		                zp_timesheets.id, 
                         zp_timesheets.userId, 
                         zp_timesheets.ticketId,
@@ -124,19 +116,19 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
             $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
 
-            if($projectId > 0) {
+            if ($projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
             }
 
-            if($ticketFilter > 0) {
+            if ($ticketFilter > 0) {
                 $stmn->bindValue(':ticketFilter', $ticketFilter, PDO::PARAM_STR);
             }
 
-            if($kind != 'all') {
+            if ($kind != 'all') {
                 $stmn->bindValue(':kind', $kind, PDO::PARAM_STR);
             }
 
-            if($userId != 'all') {
+            if ($userId != 'all') {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
             }
 
@@ -146,8 +138,6 @@ namespace leantime\domain\repositories {
 
 
             return $values;
-
-
         }
 
         public function export($values)
@@ -175,13 +165,13 @@ namespace leantime\domain\repositories {
             //  $this->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck)
             $values = $this->getAll($values['project'], $values['kind'], $values['dateFrom'], $values['dateTo'], $values['userId'], $values['invEmplCheck'], $values['invCompCheck']);
 
-            $filename = "export_".date('m-d_h:m');
-            $hash = md5(time().$_SESSION['userdata']['id']);
-            $path = $_SERVER['DOCUMENT_ROOT'].'/userdata/export/';
+            $filename = "export_" . date('m-d_h:m');
+            $hash = md5(time() . $_SESSION['userdata']['id']);
+            $path = $_SERVER['DOCUMENT_ROOT'] . '/userdata/export/';
             $ext = 'xls';
-            $file = $path.$hash.'.'.$ext;
+            $file = $path . $hash . '.' . $ext;
             header('Content-type: application/ms-excel');
-            header('Content-Disposition: attachment; filename='.$filename);
+            header('Content-Disposition: attachment; filename=' . $filename);
 
             $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date) 
 					VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
@@ -200,8 +190,8 @@ namespace leantime\domain\repositories {
             $content = 'ID: \t NAME: \t HEADLINE: \t HOURS: \t DESCRIPTION: \t KIND: \t NAME: \t \n';
 
             foreach ($values as $value) {
-                $content .= $value['id']. '\t' . $value['firstname'].' '.$value['lastname']. '\t' . $value['headline']. '\t' . $value['hours']. '\t'
-                    . $value['description']. '\t' . $value['kind']. '\t' . $value['name'] . '\t \n';
+                $content .= $value['id'] . '\t' . $value['firstname'] . ' ' . $value['lastname'] . '\t' . $value['headline'] . '\t' . $value['hours'] . '\t'
+                    . $value['description'] . '\t' . $value['kind'] . '\t' . $value['name'] . '\t \n';
             }
 
             file_put_contents($file, $content);
@@ -233,9 +223,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['hoursBooked']) === true) {
+            if (isset($values['hoursBooked']) === true) {
                 return $values['hoursBooked'];
-            }else{
+            } else {
                 return 0;
             }
 
@@ -248,7 +238,7 @@ namespace leantime\domain\repositories {
 
 
 
-        public function getWeeklyTimesheets($projectId=-1, $dateStart='0000-01-01 00:00:00', $userId=0)
+        public function getWeeklyTimesheets($projectId = -1, $dateStart = '0000-01-01 00:00:00', $userId = 0)
         {
 
             $query = "SELECT
@@ -285,18 +275,18 @@ namespace leantime\domain\repositories {
 			AND (zp_timesheets.userId = :userId)
 		";
 
-            if($projectId > 0) {
-                $query.=" AND zp_tickets.projectId = :projectId";
+            if ($projectId > 0) {
+                $query .= " AND zp_tickets.projectId = :projectId";
             }
 
-            $query.="GROUP BY ticketId, kind";
+            $query .= "GROUP BY ticketId, kind";
 
             $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':dateStart', $dateStart, PDO::PARAM_STR);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
-            if($projectId > 0) {
+            if ($projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -326,9 +316,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            if(count($values) > 0) {
+            if (count($values) > 0) {
                 return $values[0]['sumHours'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -447,7 +437,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         /**
@@ -522,7 +511,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -588,24 +576,18 @@ namespace leantime\domain\repositories {
 
             $returnValues = array();
 
-            if(count($values) >0) {
-
-                $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
-                $endDate = "".$values[(count($values)-1)]['utc']."";
+            if (count($values) > 0) {
+                $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
+                $endDate = "" . $values[(count($values) - 1)]['utc'] . "";
 
                 $returnValues = $this->dateRange($startDate, $endDate);
 
-                foreach($values as $row) {
-
+                foreach ($values as $row) {
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
-
                 }
-
-            }else{
-
+            } else {
                 $returnValues[date("Y-m-d")]["utc"] = date("Y-m-d");
                 $returnValues[date("Y-m-d")]["summe"] = 0;
-
             }
 
             return $returnValues;
@@ -621,15 +603,14 @@ namespace leantime\domain\repositories {
          * @param string $format date format
          * @return array
          */
-        private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d' )
+        private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
         {
 
             $dates = array();
             $current = strtotime($first);
             $last = strtotime($last);
 
-            while( $current <= $last ) {
-
+            while ($current <= $last) {
                 $dates[date($format, $current)]['utc'] = date($format, $current);
                 $dates[date($format, $current)]['summe'] = 0;
                 $current = strtotime($step, $current);
@@ -649,7 +630,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
 
@@ -661,36 +641,27 @@ namespace leantime\domain\repositories {
         public function updateInvoices($invEmpl, $invComp = '')
         {
 
-            if($invEmpl != '' && is_array($invEmpl) === true) {
-
-                foreach($invEmpl as $row1){
-
+            if ($invEmpl != '' && is_array($invEmpl) === true) {
+                foreach ($invEmpl as $row1) {
                     $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
 					WHERE id = :id ";
 
                     $stmn = $this->db->database->prepare($query);
-                    $stmn->bindValue(':id',  $row1, PDO::PARAM_STR);
+                    $stmn->bindValue(':id', $row1, PDO::PARAM_STR);
                     $stmn->execute();
-
                 }
             }
 
-            if($invComp != '' && is_array($invComp) === true) {
-
-                foreach($invComp as $row2){
-
+            if ($invComp != '' && is_array($invComp) === true) {
+                foreach ($invComp as $row2) {
                     $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
 				    WHERE id = :id ";
 
                     $stmn = $this->db->database->prepare($query2);
-                    $stmn->bindValue(':id',  $row2, PDO::PARAM_STR);
+                    $stmn->bindValue(':id', $row2, PDO::PARAM_STR);
                     $stmn->execute();
-
-
                 }
-
             }
-
         }
 
 
@@ -714,7 +685,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         /**
@@ -737,8 +707,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            if($result) {
-
+            if ($result) {
                 $inTimestamp = $result['punchIn'];
                 $outTimestamp = time();
 
@@ -758,9 +727,8 @@ namespace leantime\domain\repositories {
                 $stmn->closeCursor();
 
                 //At least 1 minutes
-                if($hoursWorked >= 0.016) {
-
-                    $date = date("Y-m-d", $inTimestamp)." 00:00:00";
+                if ($hoursWorked >= 0.016) {
+                    $date = date("Y-m-d", $inTimestamp) . " 00:00:00";
 
                     $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) 
                     VALUES
@@ -772,24 +740,18 @@ namespace leantime\domain\repositories {
                     $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
                     $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
                     $stmn->bindValue(':hoursWorked', $hoursWorked, PDO::PARAM_STR);
-                    $stmn->bindValue(':workDate', date("Y-m-d", $inTimestamp)." 00:00:00", PDO::PARAM_STR);
+                    $stmn->bindValue(':workDate', date("Y-m-d", $inTimestamp) . " 00:00:00", PDO::PARAM_STR);
 
                     $stmn->execute();
                     $stmn->closeCursor();
-
-                }else{
+                } else {
                     $hoursWorked = 0;
                 }
 
                 return $hoursWorked;
-
-            }else{
+            } else {
                 return false;
             }
-
-
-
-
         }
 
         /**
@@ -870,26 +832,23 @@ namespace leantime\domain\repositories {
 
             $returnValues = array();
 
-            if(count($values) >0) {
-                $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
-                $endDate = "".$values[(count($values)-1)]['utc']."";
+            if (count($values) > 0) {
+                $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
+                $endDate = "" . $values[(count($values) - 1)]['utc'] . "";
 
 
                 $returnValues = $this->dateRange($startDate, $endDate);
 
-                foreach($values as $row) {
-
+                foreach ($values as $row) {
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
-
                 }
-            }else{
+            } else {
                 $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
                 $returnValues[date("%Y-%m-%d")]["summe"] = 0;
             }
 
             return $returnValues;
         }
-
     }
 
 }

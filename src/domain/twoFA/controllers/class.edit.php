@@ -21,12 +21,11 @@ namespace leantime\domain\controllers {
             $user = $userRepo->getUser($userId);
 
             $mp = new TwoFAQRCode();
-            $tfa = new TwoFactorAuth('Leantime',6, 30, 'sha1', $mp);
+            $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', $mp);
             $secret = $user['twoFASecret'];
 
             if (isset($_POST['disable'])) {
-                if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
+                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                     $userRepo->patchUser($userId, [
                         "twoFAEnabled" => 0,
                         "twoFASecret" => null
@@ -37,8 +36,7 @@ namespace leantime\domain\controllers {
                     $secret = null;
 
                     $tpl->assign("twoFAEnabled", false);
-
-                }else{
+                } else {
                     $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
                 }
             }
@@ -93,16 +91,18 @@ namespace leantime\domain\controllers {
         }
     }
 
-    class TwoFAQRCode implements IQRCodeProvider {
-        public function getMimeType() {
+    class TwoFAQRCode implements IQRCodeProvider
+    {
+        public function getMimeType()
+        {
             return 'image/png';
         }
 
-        public function getQRCodeImage($qrtext, $size) {
+        public function getQRCodeImage($qrtext, $size)
+        {
             $qrCode = new QrCode($qrtext);
             $qrCode->setSize($size);
             return $qrCode->writeString();
         }
     }
 }
-

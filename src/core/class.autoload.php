@@ -6,7 +6,7 @@
  * @param  $class
  * @return
  */
- 
+
 spl_autoload_register("leantimeAutoloader", true, true);
 
 function leantimeAutoloader($class)
@@ -15,11 +15,11 @@ function leantimeAutoloader($class)
     $namespace = "";
     $classArray = explode('\\', $class);
 
-    if(count($classArray) >0) {
+    if (count($classArray) > 0) {
         $class = $classArray[count($classArray) - 1];
     }
 
-    if(count($classArray) >1) {
+    if (count($classArray) > 1) {
         $namespace = $classArray[count($classArray) - 2];
     }
 
@@ -30,14 +30,12 @@ function leantimeAutoloader($class)
 
 
 
-    foreach($paths as &$path){
-
-        if(file_exists($path) === true) {
-            if((include_once $path) !== false) { return; 
+    foreach ($paths as &$path) {
+        if (file_exists($path) === true) {
+            if ((include_once $path) !== false) {
+                return;
             }
         }
-            
     }
-
 }
-require_once ROOT.'/../vendor/autoload.php';
+require_once ROOT . '/../vendor/autoload.php';

@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class newTicket
     {
-
         private $projectService;
         private $ticketService;
         private $tpl;
@@ -34,8 +33,8 @@ namespace leantime\domain\controllers {
             $this->timesheetService = new services\timesheets();
             $this->userService = new services\users();
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban/";
+            if (!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban/";
             }
         }
 
@@ -62,7 +61,6 @@ namespace leantime\domain\controllers {
             //Set current project ID
             if (isset($_COOKIE['searchCriteria']) === true) {
                 $searchCriteria = unserialize($_COOKIE['searchCriteria']);
-
             }
 
 
@@ -94,7 +92,6 @@ namespace leantime\domain\controllers {
             );
 
             if (isset($_POST['saveTicket']) || isset($_POST['saveAndCloseTicket'])) {
-
                 $values = array(
                     'headline' => $_POST['headline'],
                     'type' => $_POST['type'],
@@ -121,15 +118,10 @@ namespace leantime\domain\controllers {
                 );
 
                 if ($values['headline'] === '') {
-
                     $tpl->setNotification('ERROR_NO_HEADLINE', 'error');
-
                 } elseif ($values['projectId'] === '') {
-
                     $tpl->setNotification('ERROR_NO_PROJECT', 'error');
-
                 } else {
-
                     $values['date'] = $this->language->getISODateString($values['date']);
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
                     $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
@@ -143,23 +135,22 @@ namespace leantime\domain\controllers {
 
 
                     $subject = "New To-Do has been added to one of your projects.";
-                    $actual_link = BASE_URL."/tickets/showTicket/". $id;
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".$values['headline']."'";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
+                    $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
+                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '" . $values['headline'] . "'";
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => "Click here to see it."));
 
 
                     $tpl->setNotification('To-Do created successfully', 'success');
 
                     if (isset($_POST['saveTicket'])) {
-                        $tpl->redirect(BASE_URL."/tickets/showTicket/" . $id);
+                        $tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id);
                     }
 
 
-                    if(isset($_POST["saveAndCloseTicket"]) === true) {
+                    if (isset($_POST["saveAndCloseTicket"]) === true) {
                         $tpl->redirect($_SESSION['lastPage']);
                     }
                 }
-
             }
 
             $tpl->assign('ticket', $values);
@@ -180,17 +171,17 @@ namespace leantime\domain\controllers {
             $tpl->assign('timesheetsAllHours', 0);
 
             $tpl->displayPartial('tickets.newTicketModal');
-
         }
 
 
-        public function get () {
+        public function get()
+        {
 
             $ticket = new models\tickets(
                 array(
-                    "userLastname"=>$_SESSION['userdata']["name"],
-                    "status"=>3,
-                    "projectId"=>$_SESSION['currentProject']
+                    "userLastname" => $_SESSION['userdata']["name"],
+                    "status" => 3,
+                    "projectId" => $_SESSION['currentProject']
                 )
             );
 
@@ -215,37 +206,29 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
             $this->tpl->displayPartial('tickets.newTicketModal');
-
-
         }
 
-        public function post ($params) {
+        public function post($params)
+        {
 
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-
                 $result = $this->ticketService->addTicket($params);
 
-                if(is_array($result) === false) {
-
+                if (is_array($result) === false) {
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
-
+                    if (isset($params["saveAndCloseTicket"]) === true) {
                         $this->tpl->redirect($_SESSION['lastPage']);
-
-                    }else {
-
-                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result);
+                    } else {
+                        $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result);
                     }
-
-                }else {
-
+                } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
 
                     $ticket = new models\tickets($params);
                     $ticket->userLastname = $_SESSION['userdata']["name"];
 
-                    $this->tpl->assign('ticket',$ticket);
+                    $this->tpl->assign('ticket', $ticket);
                     $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                     $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                     $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
@@ -264,13 +247,9 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
                     $this->tpl->displayPartial('tickets.newTicketModal');
-
                 }
-
             }
-
         }
-
     }
 
 }

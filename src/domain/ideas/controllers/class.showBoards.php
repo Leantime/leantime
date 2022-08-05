@@ -8,8 +8,6 @@ namespace leantime\domain\controllers {
 
     class showBoards
     {
-
-
         public function __construct()
         {
 
@@ -30,9 +28,9 @@ namespace leantime\domain\controllers {
 
             $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-            if(isset($_SESSION['currentIdeaCanvas'])) {
+            if (isset($_SESSION['currentIdeaCanvas'])) {
                 $currentCanvasId = $_SESSION['currentIdeaCanvas'];
-            }else{
+            } else {
                 $currentCanvasId = -1;
                 $_SESSION['currentIdeaCanvas'] = "";
             }
@@ -54,9 +52,7 @@ namespace leantime\domain\controllers {
 
             //Add Canvas
             if (isset($_POST["newCanvas"]) === true) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
                     $currentCanvasId = $ideaRepo->addCanvas($values);
                     $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
@@ -74,32 +70,23 @@ namespace leantime\domain\controllers {
                     $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL."/ideas/showBoards/");
-
+                    $tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
                 }
-
             }
 
             //Edit Canvas
             if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $ideaRepo->updateCanvas($values);
 
                     $tpl->setNotification($language->__("notification.board_edited"), "success");
-                    $tpl->redirect(BASE_URL."/ideas/showBoards/");
-
-
+                    $tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
-
                     $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
-
                 }
-
             }
 
             $tpl->assign('currentCanvas', $currentCanvasId);
@@ -113,9 +100,6 @@ namespace leantime\domain\controllers {
                 $tpl->display('ideas.showBoards');
             }
         }
-
     }
 
 }
-
-

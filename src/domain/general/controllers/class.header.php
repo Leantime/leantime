@@ -6,7 +6,6 @@ namespace leantime\domain\controllers {
 
     class header
     {
-
         public function run()
         {
 

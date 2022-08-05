@@ -18,9 +18,9 @@
 
     $redirectUrl = "/dashboard/show";
 
-    if(isset($_GET['redirectUrl'])) {
-        $redirectUrl = filter_var($_GET['redirectUrl'], FILTER_SANITIZE_URL);
-    }
+if (isset($_GET['redirectUrl'])) {
+    $redirectUrl = filter_var($_GET['redirectUrl'], FILTER_SANITIZE_URL);
+}
 
 ?>
 
@@ -32,7 +32,7 @@
             <div class="col-md-12" style="position:relative;">
                 <h1 class="mainWelcome"><?php echo $language->__("headlines.welcome_back"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
-				    <span class="iq-round"></span>
+                    <span class="iq-round"></span>
                 </span>
             </div>
         </div>
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="regcontent">
-                    <form id="login" action="<?php echo BASE_URL."/index.php?twoFA=1&redirectUrl=$redirectUrl" ?>" method="post">
+                    <form id="login" action="<?php echo BASE_URL . "/index.php?twoFA=1&redirectUrl=$redirectUrl" ?>" method="post">
                         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl ?>"/>
                         <div class="inputwrapper login-alert">
                             <div class="alert alert-error"><?php echo $login->error; ?></div>

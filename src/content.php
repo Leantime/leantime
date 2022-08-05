@@ -7,10 +7,14 @@
 <body>
 <div class="mainwrapper">
 
-    <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-240px;'; ?>">
+    <div class="leftpanel" style="<?php if (isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') {
+        echo 'margin-left:-240px;';
+                                  } ?>">
 
 
-        <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
+        <div class="logo" style="<?php if (isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') {
+            echo 'margin-left:-260px;';
+                                 } ?>">
 
             <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo htmlentities($_SESSION["companysettings.logoPath"]); ?>')">&nbsp;</a>
         </div>
@@ -23,13 +27,19 @@
 
     </div><!-- leftpanel -->
 
-    <div class="header" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px; width:100%;'; ?>">
+    <div class="header" style="<?php if (isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') {
+        echo 'margin-left:0px; width:100%;';
+                               } ?>">
 
-        <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);">
+        <a class="barmenu <?php if (!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') {
+            echo 'open';
+                          } ?>" href="javascript:void(0);">
             <span class="fa fa-bars"></span>
         </a>
 
-        <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
+        <div class="headerinner" style="<?php if (isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') {
+            echo 'margin-left:0px;';
+                                        } ?>">
 
 
             <div class="userloggedinfo">
@@ -41,7 +51,9 @@
         </div>
     </div>
 
-    <div class="rightpanel" style="position: relative; <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
+    <div class="rightpanel" style="position: relative; <?php if (isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') {
+        echo 'margin-left:0px;';
+                                                       } ?>">
 
         <!--###MAINCONTENT###-->
 

@@ -1,12 +1,12 @@
 <?php
 
 $project = $this->get('project');
-if(!$project['hourBudget']) {
+if (!$project['hourBudget']) {
     $project['hourBudget'] = 'no';
 }
 
 $project = $this->get('project');
-if(!$project['dollarBudget']) {
+if (!$project['dollarBudget']) {
     $project['dollarBudget'] = 'no';
 }
 
@@ -21,21 +21,20 @@ $dueDate = '';
     jQuery(document).ready(function(){        
         
     
-    <?php 
+    <?php
     $arr = array();
     $arr2 = array();
-    foreach($bookedHoursArr as $key => $value){
-                
-        $arr[] = "['".($key*1000)."', ".$value."]";
-        $arr2[] = "['".($key*1000)."', ".$project['hourBudget']."]";
+    foreach ($bookedHoursArr as $key => $value) {
+        $arr[] = "['" . ($key * 1000) . "', " . $value . "]";
+        $arr2[] = "['" . ($key * 1000) . "', " . $project['hourBudget'] . "]";
     }
-            
-    if(is_array($arr) === true) {
+
+    if (is_array($arr) === true) {
         $string = implode(",", $arr);
         $string2 = implode(",", $arr2);
-        echo "var hours = [".$string."];";
-        echo "var hoursBudget = [".$string2."];";
-    }else{
+        echo "var hours = [" . $string . "];";
+        echo "var hoursBudget = [" . $string2 . "];";
+    } else {
         echo "var hours = [];";
         echo "var hoursBudget = [];";
     }
@@ -51,11 +50,11 @@ $dueDate = '';
         }
     
         
-    <?php 
-    if($bookedHours > $project['hourBudget']) {
-        $color="red";
-    }else{
-        $color="green";
+    <?php
+    if ($bookedHours > $project['hourBudget']) {
+        $color = "red";
+    } else {
+        $color = "green";
     }
     ?>
             

@@ -6,7 +6,8 @@ leantime.timesheetsController = (function () {
         jQuery(document).ready(
             function () {
                 _initTicketTimers();
-            });
+            }
+        );
 
     })();
 
@@ -15,7 +16,8 @@ leantime.timesheetsController = (function () {
     var _initTicketTimers = function () {
 
         jQuery(".punchIn").on(
-            "click", function () {
+            "click",
+            function () {
 
                 var ticketId = jQuery(this).attr("data-value");
 
@@ -27,9 +29,9 @@ leantime.timesheetsController = (function () {
                             action:"start"
                         },
                         type: 'POST',
-                        url: leantime.appUrl+'/api/timer'
+                        url: leantime.appUrl + '/api/timer'
                     }
-                ).done(function(msg){
+                ).done(function (msg) {
 
                     jQuery.jGrowl(leantime.i18n.__("short_notifications.timer_started"));
 
@@ -38,16 +40,17 @@ leantime.timesheetsController = (function () {
                 var currentdate = moment().format(leantime.i18n.__("language.jstimeformat"));
 
                 jQuery(".timerContainer .punchIn").hide();
-                jQuery("#timerContainer-"+ticketId+" .punchOut").show();
+                jQuery("#timerContainer-" + ticketId + " .punchOut").show();
                 jQuery(".timerContainer .working").show();
-                jQuery("#timerContainer-"+ticketId+" .working").hide();
-                jQuery("#timerContainer-"+ticketId+" span.time").text(currentdate);
+                jQuery("#timerContainer-" + ticketId + " .working").hide();
+                jQuery("#timerContainer-" + ticketId + " span.time").text(currentdate);
 
             }
         );
 
         jQuery(".punchOut").on(
-            "click", function () {
+            "click",
+            function () {
 
                 var ticketId = jQuery(this).attr("data-value");
 
@@ -58,16 +61,16 @@ leantime.timesheetsController = (function () {
                             {
                                 ticketId : ticketId,
                                 action:"stop"
-                            },
+                        },
                         type: 'POST',
-                        url: leantime.appUrl+'/api/timer'
+                        url: leantime.appUrl + '/api/timer'
                     }
                 ).done(
                     function (hoursLogged) {
 
-                        if(hoursLogged == 0) {
+                        if (hoursLogged == 0) {
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.not_enough_time_logged"));
-                        }else{
+                        } else {
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged));
                         }
 
@@ -86,7 +89,7 @@ leantime.timesheetsController = (function () {
 
     var initTimesheetsTable = function (groupBy) {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
             var columnIndex = false;
@@ -139,22 +142,22 @@ leantime.timesheetsController = (function () {
                         exportOptions: {
                             format: {
                                 body: function ( data, row, column, node ) {
-                                    if( typeof jQuery(node).data('order') !== 'undefined'){
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         data = jQuery(node).data('order');
                                     }
                                     return data;
                                 }
                             }
                         }
-                    },
+                },
                     {
                         extend: 'colvis',
                         columns: ':not(.noVis)'
-                    }
+                }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            jQuery('#allTimesheetsTable').on( 'column-visibility.dt', function ( e, settings, column, state ) {
+            jQuery('#allTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
             });
 
@@ -174,9 +177,9 @@ leantime.timesheetsController = (function () {
             resizable: true,
             autoSizable: true,
             callbacks: {
-                beforeShowCont: function() {
+                beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
-                    if(closeModal == true){
+                    if (closeModal == true) {
                         closeModal = false;
                         location.reload();
                     }

@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delUser
     {
-
         /**
          * run - display template and edit data
          *
@@ -21,29 +20,23 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($_GET['id']) === true) {
-
                     $id = (int)($_GET['id']);
 
                     $user = $userRepo->getUser($id);
 
                     //Delete User
                     if (isset($_POST['del']) === true) {
-
-                        if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
+                        if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                             $userRepo->deleteUser($id);
 
                             $tpl->setNotification($language->__("notifications.user_deleted"), "success");
 
-                            $tpl->redirect(BASE_URL."/users/showAll");
-
-                        }else{
+                            $tpl->redirect(BASE_URL . "/users/showAll");
+                        } else {
                             $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
                         }
-
                     }
 
                     //Sensitive Form, generate form tokens
@@ -55,20 +48,12 @@ namespace leantime\domain\controllers {
                     $tpl->assign('user', $user);
 
                     $tpl->display('users.delUser');
-
                 } else {
-
                     $tpl->display('general.error');
-
                 }
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 }

@@ -9,8 +9,6 @@ namespace leantime\domain\repositories {
 
     class reports
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -20,7 +18,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -76,7 +73,6 @@ namespace leantime\domain\repositories {
 
             if ($sprintId !== "") {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
-
             } else {
                 $query .= " GROUP BY projectId";
             }
@@ -114,7 +110,6 @@ namespace leantime\domain\repositories {
 
             if ($sprintId !== "") {
                 $query .= " AND sprint = :sprint GROUP BY projectId, sprint";
-
             } else {
                 $query .= " GROUP BY projectId";
             }
@@ -274,10 +269,9 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
-        public function getSprintReport($sprint) :array
+        public function getSprintReport($sprint): array
         {
 
             $query = "SELECT * FROM zp_stats WHERE sprintId = :sprint ORDER BY date ASC";
@@ -292,7 +286,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         public function getBacklogReport($project)
@@ -310,7 +303,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         public function getFullReport($project)
@@ -358,10 +350,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
-
-
     }
 
 }

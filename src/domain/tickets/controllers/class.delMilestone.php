@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delMilestone
     {
-
         private $ticketService;
         private $tpl;
         private $language;
@@ -17,7 +16,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->language = new core\language();
             $this->ticketService = new services\tickets();
-
         }
 
 
@@ -25,54 +23,45 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
                 $this->tpl->displayPartial('tickets.delMilestone');
-
             } else {
-
                 $this->tpl->displayPartial('general.error');
-
             }
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($params['del'])) {
-
                     $result = $this->ticketService->deleteMilestone($id);
 
-                    if($result === true) {
+                    if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL."/tickets/roadmap");
-                    }else{
+                        $this->tpl->redirect(BASE_URL . "/tickets/roadmap");
+                    } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
                         $this->tpl->displayPartial('tickets.delMilestone');
                     }
-
-                }else{
+                } else {
                     $this->tpl->displayPartial('general.error');
                 }
-
-            }else{
+            } else {
                 $this->tpl->displayPartial('general.error');
             }
         }
-
     }
 
 }

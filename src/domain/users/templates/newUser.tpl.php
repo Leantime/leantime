@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access'); 
+defined('RESTRICTED') or die('Restricted access');
 $roles = $this->get('roles');
 $values = $this->get('values');
 $projects = $this->get('relations');
@@ -104,11 +104,12 @@ $projects = $this->get('relations');
                         <select name="role" id="role">
 
 
-                                <?php foreach($this->get('roles') as $key => $role){ ?>
+                                <?php foreach ($this->get('roles') as $key => $role) { ?>
                                     <option value="<?php  echo $key; ?>"
-                                        <?php if($key == $values['role']) { ?> selected="selected" <?php
+                                        <?php if ($key == $values['role']) {
+                                            ?> selected="selected" <?php
                                         } ?>>
-                                        <?=$this->__("label.roles.".$role) ?>
+                                        <?=$this->__("label.roles." . $role) ?>
                                        </option>
                                 <?php } ?>
 
@@ -116,12 +117,13 @@ $projects = $this->get('relations');
 
                         <label for="client"><?php echo $this->__('label.client') ?></label>
                         <select name='client' id="client">
-                            <?php if($login::userIsAtLeast("manager")){?>
+                            <?php if ($login::userIsAtLeast("manager")) {?>
                                 <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
                             <?php } ?>
-                            <?php foreach($this->get('clients') as $client): ?>
-                                <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
-                               endif; ?>><?php $this->e($client['name']) ?></option>
+                            <?php foreach ($this->get('clients') as $client) : ?>
+                                <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                                    ?>selected="selected"<?php
+                                               endif; ?>><?php $this->e($client['name']) ?></option>
                             <?php endforeach; ?>
                         </select><br/>
 
@@ -149,8 +151,8 @@ $projects = $this->get('relations');
                                          <span><?php echo $this->__('label.available_projects'); ?></span>
                                           <select class="uniformselect" name="select3" multiple="multiple" size="10" id="selectOrigin" style="width:100%">
 
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
+                                                            <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                <?php if (is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
                                                                     <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> / <?php $this->e($row['clientName']); ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
@@ -170,8 +172,8 @@ $projects = $this->get('relations');
                                             <select name="select4" multiple="multiple" size="10" id="selectDest" style="width:100%">
 
 
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
+                                                            <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
                                                                     <option value="<?php echo $row['id'] ?>"><?php echo $row['clientName']; ?> / <?php echo $row['name']; ?></option>
 
                                                                 <?php } ?>
@@ -190,8 +192,8 @@ $projects = $this->get('relations');
                                                 <select name="projects[]" multiple="multiple" size="10" id="projects" style="display:none;">
 
 
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
+                                                            <?php foreach ($this->get('allProjects') as $row) { ?>
+                                                                <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
                                                                     <option value="<?php echo $row['id'] ?>" selected="selected"><?php echo $row['name']; ?> / <?php echo $row['clientName']; ?></option>
                                                                 <?php } ?>
 

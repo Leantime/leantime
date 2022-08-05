@@ -16,7 +16,7 @@
     <div class="row onboarding">
         <div class="col-md-4">
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+                <?php    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
                 echo"</div>";?>
 
                 <br />
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-4">
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT."/images/svg/undraw_scrum_board_cesn.svg");
+                <?php    echo file_get_contents(ROOT . "/images/svg/undraw_scrum_board_cesn.svg");
                 echo"</div>";?>
                 <br />
             <h4 class="primaryColor"><?php echo $this->__('headlines.step_two_plan') ?></h4>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-4">
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT."/images/svg/undraw_time_management_30iu.svg");
+                <?php    echo file_get_contents(ROOT . "/images/svg/undraw_time_management_30iu.svg");
                 echo"</div>";?>
                 <br />
             <h4 class="primaryColor"><?php echo $this->__('headlines.step_three_track') ?></h4>

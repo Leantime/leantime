@@ -13,7 +13,6 @@ namespace leantime\core {
 
     class currentUser
     {
-
         private $id;
 
 
@@ -32,21 +31,16 @@ namespace leantime\core {
         {
 
             if (is_object(self::$instance) === false) {
-
-
                 self::$instance = new currentUser();
             }
 
             return self::$instance;
         }
 
-        public function getId() {
+        public function getId()
+        {
 
             return $this->id;
-
         }
-
-
-
     }
 }

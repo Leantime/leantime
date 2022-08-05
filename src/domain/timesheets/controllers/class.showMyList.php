@@ -8,12 +8,12 @@ namespace leantime\domain\controllers {
 
     class showMyList
     {
-
-        public function __construct() {
+        public function __construct()
+        {
 
             $this->tpl = new core\template();
             $this->timesheetService = new services\timesheets();
-            $_SESSION['lastPage'] = BASE_URL."/timesheets/showMyList";
+            $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
         }
 
         /**
@@ -34,21 +34,15 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
-
                 $kind = ($_POST['kind']);
-
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
                 $dateFrom =  $language->getISODateString($_POST['dateFrom']);
-
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
                 $dateTo =  $language->getISODateString($_POST['dateTo']);
-
             }
 
             $this->tpl->assign('dateFrom', $dateFrom);
@@ -58,10 +52,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0));
 
             $this->tpl->display('timesheets.showMyList');
-
-
         }
-
     }
 
 }

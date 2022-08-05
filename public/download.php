@@ -1,9 +1,11 @@
 <?php
+
 /**
  * downloads.php - For Handling Downloads.
  *
  */
-define('RESTRICTED', TRUE);
+
+define('RESTRICTED', true);
 define('ROOT', dirname(__FILE__));
 
 include_once '../config/appSettings.php';
@@ -15,34 +17,27 @@ $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
-if ($login->logged_in()!==true) {
-
+if ($login->logged_in() !== true) {
     exit();
-
 } else {
-
-    if($config->useS3 == true){
-
+    if ($config->useS3 == true) {
         getFileFromS3();
-
-    }else{
-
+    } else {
         getFileLocally();
-
     }
-
 }
 
-function getFileLocally(){
+function getFileLocally()
+{
 
-	$config = new leantime\core\config();
+    $config = new leantime\core\config();
 
-	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
- 	$realName = $_GET['realName'];
- 	$ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
- 	$module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
+    $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
+    $realName = $_GET['realName'];
+    $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
+    $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-	$mimes = array
+    $mimes = array
     (
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpg',
@@ -50,55 +45,47 @@ function getFileLocally(){
         'png' => 'image/png'
     );
 
-	//TODO: Replace with ROOT
-  	$path = realpath(__DIR__."/../".$config->userFilePath."/");
+    //TODO: Replace with ROOT
+    $path = realpath(__DIR__ . "/../" . $config->userFilePath . "/");
 
-  	$fullPath = $path."/".$encName.'.'.$ext;
+    $fullPath = $path . "/" . $encName . '.' . $ext;
 
-	if (file_exists(realpath($fullPath))) {
-
-		if ($fd = fopen(realpath($fullPath), 'rb')) {
-
+    if (file_exists(realpath($fullPath))) {
+        if ($fd = fopen(realpath($fullPath), 'rb')) {
             $path_parts = pathinfo($fullPath);
 
-            if($ext == 'pdf'){
+            if ($ext == 'pdf') {
                 header('Content-type: application/pdf');
-                header("Content-disposition: attachment; filename=\"".$realName.".".$ext."\"");
-
-            }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
-
-                header('content-type: '. $mimes[$ext]);
-                header('content-disposition: inline; filename="'.$realName.".".$ext.'";');
+                header("Content-disposition: attachment; filename=\"" . $realName . "." . $ext . "\"");
+            } elseif ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                header('content-type: ' . $mimes[$ext]);
+                header('content-disposition: inline; filename="' . $realName . "." . $ext . '";');
                 header('Cache-Control: max-age=300');
-
-            }else{
-
+            } else {
                 header("Content-type: application/octet-stream");
-                header("Content-Disposition: filename=\"".$realName.".".$ext."\"");
-
+                header("Content-Disposition: filename=\"" . $realName . "." . $ext . "\"");
             }
 
-            if(ob_get_length() > 0) {
+            if (ob_get_length() > 0) {
                 ob_end_clean();
             }
 
-            $chunkSize = 1024*1024;
+            $chunkSize = 1024 * 1024;
 
             while (!feof($fd)) {
                 $buffer = fread($fd, $chunkSize);
                 echo $buffer;
             }
             fclose($fd);
-
         }
-
-    }else{
+    } else {
         http_response_code(404);
         die();
     }
 }
 
-function getFileFromS3(){
+function getFileFromS3()
+{
 
     // Include the AWS SDK using the Composer autoloader.
     $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
@@ -130,27 +117,22 @@ function getFileFromS3(){
     ]);
 
     try {
-        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
-        $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
+        $fileName = implode('/', array_filter(array($config->s3FolderName, $encName . "." . $ext)));
         $cmd = $s3Client->getCommand('GetObject', [
             'Bucket' => $config->s3Bucket,
             'Key' => $fileName,
-            'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
+            'ResponseContentDisposition' => "filename=" . $realName . "." . $ext . ""
         ]);
 
         $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
         $presignedUrl = (string)$request->getUri();
 
-        header("Location:".$presignedUrl);
+        header("Location:" . $presignedUrl);
 
         exit();
-
-
-
     } catch (Aws\S3\Exception\S3Exception $e) {
-
-        echo $e->getMessage()."\n";
-
+        echo $e->getMessage() . "\n";
     }
 }

@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT."/images/svg/undraw_scrum_board_cesn.svg");
+                <?php    echo file_get_contents(ROOT . "/images/svg/undraw_scrum_board_cesn.svg");
                 echo"</div>";?>
             <h3 class="primaryColor"><?php echo $this->__('headlines.the_kanban_board') ?></h3><br />
             <p><?php echo $this->__('text.kanban_helper_content') ?></p>

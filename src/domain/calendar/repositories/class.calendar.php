@@ -7,12 +7,11 @@ namespace leantime\domain\repositories {
 
     class calendar
     {
-
         /**
          * @access public
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         private $language;
 
@@ -26,7 +25,6 @@ namespace leantime\domain\repositories {
 
             $this->db = core\db::getInstance();
             $this->language = new core\language();
-
         }
 
         public function getAllDates($dateFrom, $dateTo)
@@ -42,7 +40,6 @@ namespace leantime\domain\repositories {
             $allDates = $stmn->fetchAll();
 
             return $allDates;
-
         }
 
         public function getCalendar($id)
@@ -106,12 +103,11 @@ namespace leantime\domain\repositories {
             if (count($tickets)) {
                 foreach ($tickets as $ticket) {
                     $context = "";
-                    if($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-
+                    if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
                         $context = $this->language->__("label.due_todo");
-                    }else{
+                    } else {
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                         $context =  $this->language->__("label.planned_edit");
@@ -120,7 +116,7 @@ namespace leantime\domain\repositories {
 
 
                     $newValues[] = array(
-                        'title'  => $context.$ticket['headline'],
+                        'title'  => $context . $ticket['headline'],
                         'allDay' => true,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
@@ -210,22 +206,20 @@ namespace leantime\domain\repositories {
 
             if (count($tickets)) {
                 foreach ($tickets as $ticket) {
-
-                    if($ticket['dateToFinish'] != "0000-00-00 00:00:00") {
-
+                    if ($ticket['dateToFinish'] != "0000-00-00 00:00:00") {
                         $current = strtotime(date("Y-m-d"));
                         $date    = strtotime(date("Y-m-d", strtotime($ticket['dateToFinish'])));
 
                         $datediff = $date - $current;
-                        $difference = floor($datediff/(60*60*24));
-                    }else{
+                        $difference = floor($datediff / (60 * 60 * 24));
+                    } else {
                         $difference = 1;
                     }
 
-                    if($difference==0) {
+                    if ($difference == 0) {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
-                    }else{
+                    } else {
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                     }
@@ -303,7 +297,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function getEvent($id)
@@ -319,7 +312,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function editEvent($values, $id)
@@ -359,7 +351,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         public function getMyGoogleCalendars()
@@ -375,7 +366,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getGCal($id)
@@ -392,7 +382,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function editGUrl($values, $id)
@@ -413,7 +402,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function deleteGCal($id)
@@ -428,7 +416,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function addGUrl($values)
@@ -447,8 +434,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
-
     }
 }

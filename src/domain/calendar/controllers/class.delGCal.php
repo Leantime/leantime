@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class delGCal
     {
-
         /**
          * run - display template and edit data
          *
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
 
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
 
 
@@ -34,26 +32,18 @@ namespace leantime\domain\controllers {
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-
                     $calendarRepo->deleteGCal($id);
 
                     $msgKey = 'Kalender gelöscht';
-
                 }
 
                 //Assign variables
 
                 $tpl->assign('msg', $msgKey);
                 $tpl->display('calendar.delGCal');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
-
         }
-
     }
 }

@@ -29,14 +29,15 @@ $project = $this->get('project');
                         <div class="span6">
                             <select name="clientId" id="clientId">
 
-                            <?php foreach($this->get('clients') as $row){ ?>
+                            <?php foreach ($this->get('clients') as $row) { ?>
                                 <option value="<?php echo $row['id']; ?>"
-                                    <?php if($project['clientId'] == $row['id']) { ?> selected=selected
+                                    <?php if ($project['clientId'] == $row['id']) {
+                                        ?> selected=selected
                                     <?php } ?>><?php $this->e($row['name']); ?></option>
                             <?php } ?>
 
                             </select>
-                            <?php if($login::userIsAtLeast("manager")) { ?>
+                            <?php if ($login::userIsAtLeast("manager")) { ?>
                             <a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
                             <?php } ?>
                         </div>
@@ -47,11 +48,13 @@ $project = $this->get('project');
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
                         <div class="span6">
                             <select name="projectState" id="projectState">
-                                <option value="0" <?php if($project['state'] == 0) { ?> selected=selected
-                                <?php } ?>><?php echo $this->__('label.open'); ?></option>
+                                <option value="0" <?php if ($project['state'] == 0) {
+                                    ?> selected=selected
+                                                  <?php } ?>><?php echo $this->__('label.open'); ?></option>
 
-                                <option value="-1" <?php if($project['state'] == -1) { ?> selected=selected
-                               <?php } ?>><?php echo $this->__('label.closed'); ?></option>
+                                <option value="-1" <?php if ($project['state'] == -1) {
+                                    ?> selected=selected
+                                                   <?php } ?>><?php echo $this->__('label.closed'); ?></option>
 
                             </select>
                         </div>
@@ -80,14 +83,14 @@ $project = $this->get('project');
                         <br /><br />
 
                         <div class="assign-container">
-                            <?php foreach($this->get('availableUsers') as $row){ ?>
-
+                            <?php foreach ($this->get('availableUsers') as $row) { ?>
                                     <p class="half">
                                         <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php
+                                            <?php if (in_array($row['id'], $project['assignedUsers'])) :
+                                                ?> checked="checked"<?php
                                             endif; ?>/>
 
-                                        <label for="user-<?php echo $row['id'] ?>"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
+                                        <label for="user-<?php echo $row['id'] ?>"><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
                                     </p>
                             <?php } ?>
                         </div>
@@ -123,51 +126,55 @@ $project = $this->get('project');
 
     </div>
 
-	<div class="row-fluid  padding-top" style="display:none;">
-		<h4 class="widgettitle title-light">
-			<span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
-		</h4>
-	</div>
+    <div class="row-fluid  padding-top" style="display:none;">
+        <h4 class="widgettitle title-light">
+            <span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
+        </h4>
+    </div>
 
-	<div class="row-fluid  padding-top" style="display:none;">
-		<div class="span8">
-			<div class="form-group">
+    <div class="row-fluid  padding-top" style="display:none;">
+        <div class="span8">
+            <div class="form-group">
 
-				<label class="span4 control-label" for="ticketLayout"><?php echo $this->__('label.ticket_layout'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsTicketLayout" id="ticketLayout">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 0) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.classic'); ?></option>
+                <label class="span4 control-label" for="ticketLayout"><?php echo $this->__('label.ticket_layout'); ?></label>
+                <div class="span6">
+                    <div class="span6">
+                        <select name="settingsTicketLayout" id="ticketLayout">
+                            <option value="0" <?php if ($_SESSION["projectsettings"]['ticketLayout'] == 0) {
+                                ?> selected=selected
+                                              <?php } ?>><?php echo $this->__('label.classic'); ?></option>
 
-							<option value="1" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 1) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.oneView'); ?></option>
+                            <option value="1" <?php if ($_SESSION["projectsettings"]['ticketLayout'] == 1) {
+                                ?> selected=selected
+                                              <?php } ?>><?php echo $this->__('label.oneView'); ?></option>
 
-						</select>
+                        </select>
 
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="spsan4">
-			<div class="form-group">
-				<label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsCommentOrder" id="commentOrder">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "0") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.uptodown'); ?></option>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="spsan4">
+            <div class="form-group">
+                <label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
+                <div class="span6">
+                    <div class="span6">
+                        <select name="settingsCommentOrder" id="commentOrder">
+                            <option value="0" <?php if ($_SESSION["projectsettings"]['commentOrder'] == "0") {
+                                ?> selected=selected
+                                              <?php } ?>><?php echo $this->__('label.uptodown'); ?></option>
 
-							<option value="1" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "1") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.downtoup'); ?></option>
+                            <option value="1" <?php if ($_SESSION["projectsettings"]['commentOrder'] == "1") {
+                                ?> selected=selected
+                                              <?php } ?>><?php echo $this->__('label.downtoup'); ?></option>
 
-						</select>
+                        </select>
 
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="row-fluid padding-top">

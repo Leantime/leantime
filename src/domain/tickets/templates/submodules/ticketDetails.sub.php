@@ -37,7 +37,7 @@
         <div class="row-fluid">
             <?php if (isset($ticket->id) && $ticket->id != '') : ?>
                 <div class="pull-right padding-top">
-                    <?php echo $this->displayLink('tickets.delTicket', '<i class="fa fa-trash"></i> '.$this->__('links.delete_todo'), array('id' => $ticket->id), array('class' => 'delete')) ?>
+                    <?php echo $this->displayLink('tickets.delTicket', '<i class="fa fa-trash"></i> ' . $this->__('links.delete_todo'), array('id' => $ticket->id), array('class' => 'delete')) ?>
                 </div>
             <?php endif; ?>
             <input type="hidden" name="saveTicket" value="1" />
@@ -61,7 +61,7 @@
                         <select id="status-select" class="span11" name="status"
                                 data-placeholder="<?php echo $statusLabels[$ticket->status]["name"]; ?>">
 
-                            <?php  foreach($statusLabels as $key=>$label){?>
+                            <?php  foreach ($statusLabels as $key => $label) {?>
                                 <option value="<?php echo $key; ?>"
                                     <?php if ($ticket->status == $key) {
                                         echo "selected='selected'";
@@ -77,12 +77,12 @@
                     <div class="span6">
                         <select id='type' name='type' class="span11">
                             <?php foreach ($ticketTypes as $types) {
-
                                 echo "<option value='" . strtolower($types) . "' ";
-                                if(strtolower($types) == strtolower($ticket->type)) echo "selected='selected'";
+                                if (strtolower($types) == strtolower($ticket->type)) {
+                                    echo "selected='selected'";
+                                }
 
-                                echo ">" . $this->__("label.".strtolower($types)) . "</option>";
-
+                                echo ">" . $this->__("label." . strtolower($types)) . "</option>";
                             } ?>
                         </select><br/>
                     </div>
@@ -92,7 +92,7 @@
                     <div class="span6">
                         <select id='priority' name='priority' class="span11">
                             <option value=""><?php echo $this->__('label.priority_not_defined'); ?></option>
-                            <?php foreach ($this->get('priorities') as $priorityKey=>$priorityValue) {
+                            <?php foreach ($this->get('priorities') as $priorityKey => $priorityValue) {
                                 echo "<option value='" . $priorityKey . "' ";
                                 if ($priorityKey == $ticket->priority) {
                                     echo "selected='selected'";
@@ -107,7 +107,7 @@
                     <div class="span6">
                         <select id='storypoints' name='storypoints' class="span11">
                             <option value=""><?php echo $this->__('label.effort_not_defined'); ?></option>
-                            <?php foreach ($this->get('efforts') as $effortKey=>$effortValue) {
+                            <?php foreach ($this->get('efforts') as $effortKey => $effortValue) {
                                 echo "<option value='" . $effortKey . "' ";
                                 if ($effortKey == $ticket->storypoints) {
                                     echo "selected='selected'";
@@ -131,14 +131,14 @@
                         <div class="form-group">
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $this->__('label.not_assigned_to_milestone'); ?></option>
-                                <?php foreach($this->get('milestones') as $milestoneRow){     ?>
+                                <?php foreach ($this->get('milestones') as $milestoneRow) {     ?>
+                                    <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                    <?php echo"<option value='".$milestoneRow->id."'";
-
-                                    if(($ticket->dependingTicketId == $milestoneRow->id)) { echo" selected='selected' ";
+                                    if (($ticket->dependingTicketId == $milestoneRow->id)) {
+                                        echo" selected='selected' ";
                                     }
 
-                                    echo">".$this->escape($milestoneRow->headline)."</option>"; ?>
+                                    echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
 
                                 <?php }     ?>
                             </select>
@@ -154,7 +154,7 @@
                                 data-placeholder="<?php echo $ticket->sprint ?>">
                             <option value=""><?php echo $this->__('label.not_assigned_to_sprint'); ?></option>
                             <?php
-                            if($this->get('sprints')){
+                            if ($this->get('sprints')) {
                                 foreach ($this->get('sprints') as $sprintRow) { ?>
                                     <option value="<?php echo $sprintRow->id; ?>"
                                         <?php if ($ticket->sprint == $sprintRow->id) {
@@ -200,10 +200,11 @@
                                 name="editorId" class="user-select span11">
                             <option value=""><?php echo $this->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($this->get('users') as $userRow) { ?>
-
                                 <?php echo "<option value='" . $userRow["id"] . "'";
 
-                                if ($ticket->editorId == $userRow["id"]) { echo " selected='selected' ";}
+                                if ($ticket->editorId == $userRow["id"]) {
+                                    echo " selected='selected' ";
+                                }
 
                                 echo ">" . $this->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
 

@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class show
     {
-
         private $tpl;
         private $dashboardRepo;
         private $projectService;
@@ -45,8 +44,10 @@ namespace leantime\domain\controllers {
             $progress = $this->projectService->getProjectProgress($_SESSION['currentProject']);
 
             $this->tpl->assign('projectProgress', $progress);
-            $this->tpl->assign("currentProjectName",
-                $this->projectService->getProjectName($_SESSION['currentProject']));
+            $this->tpl->assign(
+                "currentProjectName",
+                $this->projectService->getProjectName($_SESSION['currentProject'])
+            );
 
             //Sprint Burndown
 
@@ -54,14 +55,12 @@ namespace leantime\domain\controllers {
 
             $sprintChart = false;
 
-            if($allSprints !== false && count($allSprints) > 0) {
-
+            if ($allSprints !== false && count($allSprints) > 0) {
                 if (isset($_GET['sprint'])) {
                     $sprintObject = $this->sprintService->getSprint((int)$_GET['sprint']);
                     $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
                     $this->tpl->assign('currentSprint', (int)$_GET['sprint']);
                 } else {
-
                     $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
                     if ($currentSprint !== false && $currentSprint != "all") {
@@ -69,7 +68,6 @@ namespace leantime\domain\controllers {
                         $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
                         $this->tpl->assign('currentSprint', $sprintObject->id);
                     } else {
-
                         $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);
                         $this->tpl->assign('currentSprint', $allSprints[0]->id);
                     }
@@ -93,15 +91,12 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('milestones', $milestones);
 
             $this->tpl->display('reports.show');
-
         }
 
         public function post($params)
         {
 
             $this->tpl->redirect(BASE_URL . "/dashboard/show");
-
         }
-
     }
 }

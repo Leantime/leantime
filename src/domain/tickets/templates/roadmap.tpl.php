@@ -6,16 +6,16 @@ $milestones = $this->get('milestones');
 ?>
 
 <?php
-if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
+if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
-}else{
+} else {
     $roadmapView = "Month";
 }
 ?>
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-sliders"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.milestones"); ?></h1>
     </div>
 </div><!--pageheader-->
@@ -36,19 +36,25 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
                         <?php
                             $currentView = "";
-                            if($roadmapView == 'Day') {
-                                $currentView = $this->__("buttons.day");
-                            }elseif($roadmapView == 'Week') {
-                                $currentView = $this->__("buttons.week");
-                            }elseif($roadmapView == 'Month') {
-                                $currentView = $this->__("buttons.month");
-                            }
+                        if ($roadmapView == 'Day') {
+                            $currentView = $this->__("buttons.day");
+                        } elseif ($roadmapView == 'Week') {
+                            $currentView = $this->__("buttons.week");
+                        } elseif ($roadmapView == 'Month') {
+                            $currentView = $this->__("buttons.month");
+                        }
                         ?>
                         <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if($roadmapView == 'Day') echo "active";?>"> <?=$this->__("buttons.day"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if($roadmapView == 'Week') echo "active";?>"><?=$this->__("buttons.week"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if($roadmapView == 'Month') echo "active";?>"><?=$this->__("buttons.month"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
+                                echo "active";
+                                                                                      }?>"> <?=$this->__("buttons.day"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
+                                echo "active";
+                                                                                       }?>"><?=$this->__("buttons.week"); ?></a></li>
+                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
+                                echo "active";
+                                                                                        }?>"><?=$this->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
 
@@ -65,17 +71,16 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
         </div>
 
         <?php
-        if(count($milestones) == 0) {
+        if (count($milestones) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
-            echo file_get_contents(ROOT."/images/svg/undraw_adjustments_p22m.svg");
+            echo file_get_contents(ROOT . "/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>".$this->__("headlines.no_milestones")."<br/>
+            <h4>" . $this->__("headlines.no_milestones") . "<br/>
             
             <br />
-            <a href=\"".BASE_URL."/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">".$this->__("links.add_milestone")."</a></h4></div>";
-
+            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="gantt-container" style="height:100%; overflow: auto;">
@@ -87,19 +92,18 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    <?php if(isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0){     ?>
+    <?php if (isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0) {     ?>
     leantime.helperController.showHelperModal("roadmap");
-    <?php
+        <?php
     //Only show once per session
-    $_SESSION['userdata']['settings']["modals"]["roadmap"] = 1;
+        $_SESSION['userdata']['settings']["modals"]["roadmap"] = 1;
     } ?>
 
-    <?php if(isset($_GET['showMilestoneModal'])) {
-
-        if($_GET['showMilestoneModal'] == "") {
+    <?php if (isset($_GET['showMilestoneModal'])) {
+        if ($_GET['showMilestoneModal'] == "") {
             $modalUrl = "";
-        }else{
-            $modalUrl = "/".(int)$_GET['showMilestoneModal'];
+        } else {
+            $modalUrl = "/" . (int)$_GET['showMilestoneModal'];
         }
         ?>
 
@@ -111,22 +115,20 @@ jQuery(document).ready(function(){
 
 });
 
-    <?php if(count($milestones) > 0) {?>
+    <?php if (count($milestones) > 0) {?>
         var tasks = [
 
-            <?php foreach($milestones as $mlst){
-
-
+            <?php foreach ($milestones as $mlst) {
                 echo"{
-                    id :'".$mlst->id."',
-                    name :".json_encode("".$mlst->headline." (".$mlst->percentDone."% Done)").",
-                    start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31')? $mlst->editFrom :  date('Y-m-d'))."',
-                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time())))."',
-                    progress :'".$mlst->percentDone."',
-                    dependencies :'".($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '')."',
+                    id :'" . $mlst->id . "',
+                    name :" . json_encode("" . $mlst->headline . " (" . $mlst->percentDone . "% Done)") . ",
+                    start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d')) . "',
+                    end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time()))) . "',
+                    progress :'" . $mlst->percentDone . "',
+                    dependencies :'" . ($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '') . "',
                     custom_class :'',
-                    color: '".$mlst->tags."',
-                    bgColor: '".$mlst->tags."',
+                    color: '" . $mlst->tags . "',
+                    bgColor: '" . $mlst->tags . "',
                    
                 },";
             }

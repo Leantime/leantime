@@ -36,7 +36,7 @@
             <div class="col-md-12" style="position:relative;">
                 <h1 class="mainWelcome"><?php echo $language->__("headlines.welcome_back"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
-				    <span class="iq-round"></span>
+                    <span class="iq-round"></span>
                 </span>
             </div>
         </div>
@@ -65,8 +65,7 @@
                         </div>
 
                         <?php
-                        if((isset($_GET["hash"]) === true && $login->validateResetLink()) || $login->resetInProgress === true) { ?>
-
+                        if ((isset($_GET["hash"]) === true && $login->validateResetLink()) || $login->resetInProgress === true) { ?>
                             <p><?php echo $this->language->__("text.enter_new_password"); ?><br /><br /></p>
                             <div class="">
                                 <input type="password" name="password" id="password" placeholder="<?php echo $this->language->__("input.placeholders.enter_new_password"); ?>" />
@@ -81,7 +80,7 @@
                                 <input type="submit" name="resetPassword" value="<?php echo $this->language->__("buttons.reset_password"); ?>" />
                             </div>
 
-                        <?php }else{ ?>
+                        <?php } else { ?>
                             <p><?php echo $this->language->__("text.enter_email_address_to_reset"); ?><br /><br /></p>
                             <div class="">
                                 <input type="text" name="username" id="username" placeholder="<?php echo $this->language->__("input.placeholders.enter_email"); ?>" />

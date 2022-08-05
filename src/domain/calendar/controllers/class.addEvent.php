@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class addEvent
     {
-
         public $language;
 
         /**
@@ -36,7 +35,6 @@ namespace leantime\domain\controllers {
             );
 
             if (isset($_POST['save']) === true) {
-
                 if (isset($_POST['allDay']) === true) {
                     $allDay = 'true';
                 } else {
@@ -47,12 +45,12 @@ namespace leantime\domain\controllers {
 
                 $dateFrom = null;
                 if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']." ".$_POST['timeFrom']);
+                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom'] . " " . $_POST['timeFrom']);
                 }
 
                 $dateTo = null;
                 if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo']." ".$_POST['timeTo']);
+                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo'] . " " . $_POST['timeTo']);
                 }
 
                 $values = array(
@@ -63,15 +61,11 @@ namespace leantime\domain\controllers {
                 );
 
                 if ($values['description'] !== '') {
-
                     $calendarRepo->addEvent($values);
 
                     $tpl->setNotification('notification.event_created_successfully', 'success');
-
                 } else {
-
                     $tpl->setNotification('notification.please_enter_title', 'error');
-
                 }
 
                 $tpl->assign('values', $values);
@@ -79,8 +73,6 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('values', $values);
             $tpl->display('calendar.addEvent');
-
         }
-
     }
 }

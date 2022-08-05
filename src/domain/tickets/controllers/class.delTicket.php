@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delTicket
     {
-
         private $ticketService;
         private $tpl;
         private $language;
@@ -17,7 +16,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->language = new core\language();
             $this->ticketService = new services\tickets();
-
         }
 
 
@@ -25,54 +23,45 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
-
+            if (core\login::userIsAtLeast("developer")) {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
                 $this->tpl->display('tickets.delTicket');
-
             } else {
-
                 $this->tpl->display('general.error');
-
             }
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
-
+            if (core\login::userIsAtLeast("developer")) {
                 if (isset($params['del'])) {
-
                     $result = $this->ticketService->deleteTicket($id);
 
-                    if($result === true) {
+                    if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");
                         $this->tpl->redirect($_SESSION['lastPage']);
-                    }else{
+                    } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
                         $this->tpl->display('tickets.delTicket');
                     }
-
-                }else{
+                } else {
                     $this->tpl->display('general.error');
                 }
-
-            }else{
+            } else {
                 $this->tpl->display('general.error');
             }
         }
-
     }
 
 }

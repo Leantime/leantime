@@ -13,7 +13,6 @@ namespace leantime\domain\controllers {
 
     class retroDialog
     {
-
         private $tpl;
         private $projects;
         private $sprintService;
@@ -44,8 +43,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(isset($params['id'])) {
-
+            if (isset($params['id'])) {
                 //Delete comment
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
@@ -64,17 +62,15 @@ namespace leantime\domain\controllers {
 
                 $comments = $this->commentsRepo->getComments('retrospective', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('retrospective', $canvasItem['id']));
-
-            }else{
-
-                if(isset($params['type'])) {
-                    $type=$params['type'];
+            } else {
+                if (isset($params['type'])) {
+                    $type = $params['type'];
                 } else {
                     $type = "well";
                 }
 
                 $canvasItem = array(
-                    "id"=>"",
+                    "id" => "",
                     "box" => $params['type'],
                     "description" => "",
                     "status" => "danger",
@@ -86,13 +82,12 @@ namespace leantime\domain\controllers {
                 );
 
                 $comments = [];
-
             }
 
             $this->tpl->assign('comments', $comments);
 
-            $this->tpl->assign("milestones",  $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
-            $this->tpl->assign('canvasTypes',  $this->retroRepo->canvasTypes);
+            $this->tpl->assign("milestones", $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+            $this->tpl->assign('canvasTypes', $this->retroRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->displayPartial('retrospectives.retroDialog');
         }
@@ -107,12 +102,9 @@ namespace leantime\domain\controllers {
         {
 
             //changeItem is set for new or edited item changes.
-            if(isset($params['changeItem'])) {
-
-                if(isset($params['itemId']) && $params['itemId'] != '') {
-
+            if (isset($params['changeItem'])) {
+                if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) === true) {
-
                         $currentCanvasId = (int)$_SESSION['currentRetroCanvas'];
 
                         $canvasItem = array(
@@ -130,18 +122,18 @@ namespace leantime\domain\controllers {
 
 
 
-                        if(isset($params['newMilestone']) && $params['newMilestone'] != '' ) {
+                        if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = "#ccc";
                             $params['editFrom'] = date("Y-m-d");
                             $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
                             $id = $this->ticketService->quickAddMilestone($params);
-                            if($id !== false) {
+                            if ($id !== false) {
                                 $canvasItem['milestoneId'] = $id;
                             }
                         }
 
-                        if(isset($params['existingMilestone']) && $params['existingMilestone'] != '' ) {
+                        if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
                             $canvasItem['milestoneId'] = $params['existingMilestone'];
                         }
 
@@ -153,17 +145,12 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification($this->language->__("notifications.canvas_item_updates"), 'success');
 
-                        $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$params['itemId']);
-
+                        $this->tpl->redirect(BASE_URL . "/retrospectives/retroDialog/" . $params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
-
                     }
-
-                }else{
-
+                } else {
                     if (isset($_POST['description']) === true) {
-
                         $currentCanvasId = (int)$_SESSION['currentRetroCanvas'];
 
                         $canvasItem = array(
@@ -181,20 +168,15 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification($this->language->__("notification.feedback_successfully_created"), 'success');
 
-                        $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$id);
-
-
+                        $this->tpl->redirect(BASE_URL . "/retrospectives/retroDialog/" . $id);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
-
                     }
                 }
-
             }
 
 
             if (isset($params['comment']) === true) {
-
                 $id = (int) $_GET['id'];
                 $values = array(
                     'text' => $params['text'],
@@ -207,12 +189,11 @@ namespace leantime\domain\controllers {
                 $message = $this->commentsRepo->addComment($values, 'retrospective');
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), "success");
 
-                $this->tpl->redirect(BASE_URL."/retrospectives/retroDialog/".$id);
-
+                $this->tpl->redirect(BASE_URL . "/retrospectives/retroDialog/" . $id);
             }
 
-            $this->tpl->assign('canvasTypes',  $this->retroRepo->canvasTypes);
-            $this->tpl->assign('canvasItem',  $this->retroRepo->getSingleCanvasItem($_GET['id']));
+            $this->tpl->assign('canvasTypes', $this->retroRepo->canvasTypes);
+            $this->tpl->assign('canvasItem', $this->retroRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial('retrospectives.retroDialog');
         }
 
@@ -224,7 +205,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -235,9 +215,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

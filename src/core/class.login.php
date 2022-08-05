@@ -7,6 +7,7 @@
  * @version 1.0
  * @license GNU/GPL, see license.txt
  */
+
 namespace leantime\core {
 
     use Exception;
@@ -18,7 +19,6 @@ namespace leantime\core {
 
     class login
     {
-
         /**
          * @access private
          * @var    int user id from DB
@@ -174,32 +174,30 @@ namespace leantime\core {
             $this->settingsRepo = new repositories\setting();
             $this->session = $sessionid;
 
-            if (isset($_POST['login'])===true && isset($_POST['username'])===true && isset($_POST['password'])===true) {
-
+            if (isset($_POST['login']) === true && isset($_POST['username']) === true && isset($_POST['password']) === true) {
                 $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
                 $this->username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
                 $this->password = ($_POST['password']);
 
                 //If login successful redirect to the correct url to avoid post on reload
-                if($this->login() === true){
+                if ($this->login() === true) {
                     $this->checkSessions();
 
-                    if($this->use2FA()) {
+                    if ($this->use2FA()) {
                         $this->redirect2FA($redirectUrl);
                     }
 
-                    header("Location:".$redirectUrl);
+                    header("Location:" . $redirectUrl);
                     exit();
                 }
-
             }
 
-            if(isset($_SESSION['userdata']) && $this->use2FA()) {
+            if (isset($_SESSION['userdata']) && $this->use2FA()) {
                 if (isset($_POST['twoFA_code']) === true) {
                     $redirectUrl = filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL);
-                    if($this->verify2FA($_POST['twoFA_code'])){
+                    if ($this->verify2FA($_POST['twoFA_code'])) {
                         $this->set2FAVerified();
-                        header("Location:".$redirectUrl);
+                        header("Location:" . $redirectUrl);
                         exit();
                     } else {
                         $this->error =  $this->language->__('notification.incorrect_twoFA_code');
@@ -208,60 +206,45 @@ namespace leantime\core {
             }
 
             //Reset password
-            if(isset($_POST["resetPassword"])) {
-
-                if(isset($_POST['username']) === true) {
+            if (isset($_POST["resetPassword"])) {
+                if (isset($_POST['username']) === true) {
                     //Look for email address and send email
                     $userFromDB = $this->getUser($_POST["username"]);
 
-                    if($userFromDB !== false && count($userFromDB) > 0) {
-
-                        if($userFromDB['pwResetCount'] < $this->pwResetLimit) {
-
+                    if ($userFromDB !== false && count($userFromDB) > 0) {
+                        if ($userFromDB['pwResetCount'] < $this->pwResetLimit) {
                             $this->generateLinkAndSendEmail($_POST["username"]);
                             $this->success = $this->language->__('notifications.email_was_sent_to_reset');
-
-                        }else{
+                        } else {
                             $this->error =  $this->language->__('notifications.could_not_reset_limit_reached');
                         }
-                    }else{
+                    } else {
                         $this->error =  $this->language->__('notifications.could_not_find_username');
                     }
                 }
 
-                if(isset($_POST['password']) === true && isset($_POST['password2']) === true) {
-
-                    if(strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
-
+                if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
+                    if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
                         $this->error = $this->language->__('notification.passwords_dont_match');
-
-                    }else{
-
+                    } else {
                         $this->changePW($_POST['password'], $_GET['hash']);
                         $this->success = $this->language->__('notifications.passwords_changed_successfully');
-
                     }
                 }
-
             }
 
-            if (isset($_GET['logout'])===true && $_GET['logout']==='1') {
-
+            if (isset($_GET['logout']) === true && $_GET['logout'] === '1') {
                 $this->logout();
-                header("Location:".BASE_URL."/");
+                header("Location:" . BASE_URL . "/");
                 exit();
-
             }
-
         }
 
-        public static function getInstance($sessionid="")
+        public static function getInstance($sessionid = "")
         {
 
             if (self::$instance === null) {
-
                 self::$instance = new self($sessionid);
-
             }
 
             return self::$instance;
@@ -283,21 +266,18 @@ namespace leantime\core {
             ////C: update users from the identity provider
 
             //Try Ldap
-            if($this->config->useLdap === true && extension_loaded('ldap')){
-
+            if ($this->config->useLdap === true && extension_loaded('ldap')) {
                 $ldap = new ldap();
 
                 if ($ldap->connect() && $ldap->bind($this->username, $this->password)) {
-
                     //Update username to include domain
-                    $usernameWDomain = $ldap->extractLdapFromUsername($this->username)."".$ldap->userDomain;
+                    $usernameWDomain = $ldap->extractLdapFromUsername($this->username) . "" . $ldap->userDomain;
 
                     //Get user
                     $userCheck = $this->getUser($usernameWDomain);
 
                     //If user does not exist create user
-                    if($userCheck == false) {
-
+                    if ($userCheck == false) {
                         $ldapUser = $ldap->getSingleUser($this->username);
 
                         $userArray = array(
@@ -333,17 +313,14 @@ namespace leantime\core {
                     $this->setCookie($this->cookieTime);
 
                     return true;
-
                 }
-
             }
 
             //TODO: Single Sign On?
 
             //Check if the user is in our db
             //Check even if ldap is turned on to allow contractors and clients to have an account
-            if($this->getUserByLogin($this->username, $this->password) === true) {
-
+            if ($this->getUserByLogin($this->username, $this->password) === true) {
                 $this->setSession();
 
                 $this->updateUserSession($this->session, time());
@@ -351,17 +328,15 @@ namespace leantime\core {
                 $this->setCookie($this->cookieTime);
 
                 return true;
-
-            }else{
-
+            } else {
                 $this->error = $this->language->__('notifications.username_or_password_incorrect');
 
                 return false;
-
             }
         }
 
-        private function setSession($isLdap=false) {
+        private function setSession($isLdap = false)
+        {
             //Set Sessions
             $_SESSION['userdata']['role'] = $this->role;
             $_SESSION['userdata']['id'] = $this->userId;
@@ -374,7 +349,6 @@ namespace leantime\core {
             $_SESSION['userdata']['twoFAVerified'] = false;
             $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
             $_SESSION['userdata']['isLdap'] = $isLdap;
-
         }
 
         /**
@@ -385,7 +359,7 @@ namespace leantime\core {
          */
         private function setCookie($time)
         {
-            $expiry = time()+$time;
+            $expiry = time() + $time;
             setcookie("sid", $this->session, (int)$expiry, "/");
         }
 
@@ -401,8 +375,7 @@ namespace leantime\core {
         {
 
 
-            try{
-
+            try {
                 $query = "SELECT count(username) AS userCounter FROM zp_user 
 		          WHERE session = :session LIMIT 1";
 
@@ -413,29 +386,21 @@ namespace leantime\core {
                 $stmn->execute();
 
                 $returnValues = $stmn->fetch();
-
-            }catch(PDOException $e){
-
-               return false;
-
+            } catch (PDOException $e) {
+                return false;
             }
 
             $userCounter = $returnValues['userCounter'];
 
             $stmn->closeCursor();
 
-            if($userCounter !=1) {
-
+            if ($userCounter != 1) {
                 $this->logout();
 
                 return false;
-
-            }else{
-
-                if(isset($_COOKIE['sid']) === true) {
-
-                    if(isset($_SESSION['userdata']) === true) {
-
+            } else {
+                if (isset($_COOKIE['sid']) === true) {
+                    if (isset($_SESSION['userdata']) === true) {
                         $this->userId = $_SESSION['userdata']['id'];
 
                         $this->setCookie($this->cookieTime);
@@ -443,23 +408,16 @@ namespace leantime\core {
                         $this->updateUserSession($this->session, time());
 
                         return true;
-
-                    }else{
-
+                    } else {
                         $this->logout();
 
                         return false;
-
                     }
-
-                }else{
-
+                } else {
                     $this->logout();
 
                     return false;
-
                 }
-
             }
         }
 
@@ -481,9 +439,9 @@ namespace leantime\core {
             $stmn->execute();
             $stmn->closeCursor();
 
-            $this->setCookie(time()-$this->cookieTime);
+            $this->setCookie(time() - $this->cookieTime);
 
-            if(isset($_SESSION)) {
+            if (isset($_SESSION)) {
                 unset($_SESSION['userdata']);
                 unset($_SESSION['template']);
                 unset($_SESSION["subdomainData"]);
@@ -509,12 +467,11 @@ namespace leantime\core {
         private function checkSessions()
         {
 
-            $query = "UPDATE zp_user SET session = '' WHERE (".time()." - sessionTime) > ".$this->cookieTime." ";
+            $query = "UPDATE zp_user SET session = '' WHERE (" . time() . " - sessionTime) > " . $this->cookieTime . " ";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
 
@@ -532,12 +489,9 @@ namespace leantime\core {
 
             $user = $this->getUser($username);
 
-            if($user === false || (!password_verify($password, $user['password']) && $ldapLogin == false)) {
-
+            if ($user === false || (!password_verify($password, $user['password']) && $ldapLogin == false)) {
                 return false;
-
-            }else{
-
+            } else {
                 $this->name = strip_tags($user['firstname']);
                 $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
                 $this->userId = $user['id'];
@@ -607,9 +561,9 @@ namespace leantime\core {
             $returnValues = $stmn->fetch();
             $stmn->closeCursor();
 
-            if($returnValues !== false && count($returnValues) > 0) {
+            if ($returnValues !== false && count($returnValues) > 0) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -649,8 +603,6 @@ namespace leantime\core {
             $stmn->closeCursor();
 
             return $returnValues;
-
-
         }
 
         public function generateLinkAndSendEmail($username)
@@ -678,15 +630,14 @@ namespace leantime\core {
             $count = $stmn->rowCount();
             $stmn->closeCursor();
 
-            if($count > 0) {
+            if ($count > 0) {
                 $mailer = new mailer();
                 $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
-                $actual_link = "".BASE_URL."/resetPassword/".$resetLink;
+                $actual_link = "" . BASE_URL . "/resetPassword/" . $resetLink;
                 $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
                 $to = array($username);
                 $mailer->sendMail($to, "Leantime System");
             }
-
         }
 
         private function changePW($password, $hash)
@@ -711,45 +662,48 @@ namespace leantime\core {
             $stmn->execute();
             $count = $stmn->rowCount();
             $stmn->closeCursor();
-
         }
 
-        public static function userIsAtLeast($role) {
+        public static function userIsAtLeast($role)
+        {
 
             $testKey = array_search($role, self::$userRoles);
 
-            if($role == "" || $testKey === false){
+            if ($role == "" || $testKey === false) {
                 throw new Exception("Role not defined");
             }
 
             $currentUserKey = array_search($_SESSION['userdata']['role'], self::$userRoles);
 
-            if($testKey <= $currentUserKey){
+            if ($testKey <= $currentUserKey) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
 
-        public static function userHasRole ($role) {
+        public static function userHasRole($role)
+        {
 
-            if($role == $_SESSION['userdata']['role']){
+            if ($role == $_SESSION['userdata']['role']) {
                 return true;
             }
 
             return false;
         }
 
-        public static function getRole () {
-
+        public static function getRole()
+        {
         }
 
-        public static function getUserClientId () {
+        public static function getUserClientId()
+        {
             return $_SESSION['userdata']['clientId'];
         }
 
 
-        public static function getUserId () {
+        public static function getUserId()
+        {
             return $_SESSION['userdata']['id'];
         }
 
@@ -763,7 +717,7 @@ namespace leantime\core {
 
         public function redirect2FA($redirectUrl)
         {
-            header("Location:".BASE_URL."/index.php?twoFA=1&redirectUrl=$redirectUrl");
+            header("Location:" . BASE_URL . "/index.php?twoFA=1&redirectUrl=$redirectUrl");
             exit();
         }
 
@@ -782,6 +736,5 @@ namespace leantime\core {
         {
             $_SESSION['userdata']['twoFAVerified'] = true;
         }
-
     }
 }

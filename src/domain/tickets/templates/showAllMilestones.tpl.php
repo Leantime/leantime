@@ -1,6 +1,6 @@
 <?php
 
-    defined( 'RESTRICTED' ) or die( 'Restricted access' );
+    defined('RESTRICTED') or die('Restricted access');
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
     $currentSprint  = $this->get("currentSprint");
@@ -11,7 +11,7 @@
     $statusLabels   = $this->get('allTicketStates');
 
     //All states >0 (<1 is archive)
-    $numberofColumns = count($this->get('allTicketStates'))-1;
+    $numberofColumns = count($this->get('allTicketStates')) - 1;
     $size = floor(100 / $numberofColumns);
 
 ?>
@@ -19,17 +19,17 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-sliders"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.milestones"); ?></h1>
     </div>
 </div><!--pageheader-->
 
 <div class="maincontent">
-	<div class="maincontentinner">
+    <div class="maincontentinner">
 
         <?php echo $this->displayNotification(); ?>
 
-		<form action="" method="get" id="ticketSearch">
+        <form action="" method="get" id="ticketSearch">
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
@@ -94,13 +94,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($this->get('allTickets') as $row){?>
+                    <?php foreach ($this->get('allTickets') as $row) {?>
                         <tr>
                             <td data-order="<?=$this->e($row->headline); ?>"><a href="<?=BASE_URL ?>/tickets/editMilestone/<?=$this->e($row->id); ?>" class="milestoneModal"><?=$this->e($row->headline); ?></a></td>
                             <?php
-                            if($row->dependingTicketId != "" && $row->dependingTicketId != 0){
+                            if ($row->dependingTicketId != "" && $row->dependingTicketId != 0) {
                                 $milestoneHeadline = $this->escape($row->milestoneHeadline);
-                            }else{
+                            } else {
                                 $milestoneHeadline = $this->__("label.no_milestone");
                             }?>
 
@@ -112,10 +112,10 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row->id?>">
                                         <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row->id."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row->id . "_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
-                                        <?php foreach($this->get('milestones') as $milestone){
-                                            if($milestone->id != $row->id) {
+                                        <?php foreach ($this->get('milestones') as $milestone) {
+                                            if ($milestone->id != $row->id) {
                                                 echo "<li class='dropdown-item'>
                                                 <a href='javascript:void(0);' data-label='" . $this->escape($milestone->headline) . "' data-value='" . $row->id . "_" . $milestone->id . "_" . $this->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row->id . $milestone->id . "' style='background-color:" . $this->escape($milestone->tags) . "'>" . $this->escape($milestone->headline) . "</a>";
                                                 echo "</li>";
@@ -135,9 +135,9 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row->id?>">
                                         <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
-                                        <?php foreach($statusLabels as $key=>$label){
+                                        <?php foreach ($statusLabels as $key => $label) {
                                             echo"<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$row->id."_".$key."_".$label["class"]."' id='ticketStatusChange".$row->id.$key."' >".$this->escape($label["name"])."</a>";
+                                                <a href='javascript:void(0);' class='" . $label["class"] . "' data-label='" . $this->escape($label["name"]) . "' data-value='" . $row->id . "_" . $key . "_" . $label["class"] . "' id='ticketStatusChange" . $row->id . $key . "' >" . $this->escape($label["name"]) . "</a>";
                                             echo"</li>";
                                         }?>
                                     </ul>
@@ -148,10 +148,10 @@
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
-                                                                    <?php if($row->editorFirstname != ""){
-                                                                        echo "<span id='userImage".$row->id."'><img src='".BASE_URL."/api/users?profileImage=".$row->editorProfileId."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row->id."'> ". $this->escape($row->editorFirstname). "</span>";
-                                                                    }else {
-                                                                        echo "<span id='userImage".$row->id."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row->id."'>".$this->__("dropdown.not_assigned")."</span>";
+                                                                    <?php if ($row->editorFirstname != "") {
+                                                                        echo "<span id='userImage" . $row->id . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row->editorProfileId . "' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row->id . "'> " . $this->escape($row->editorFirstname) . "</span>";
+                                                                    } else {
+                                                                        echo "<span id='userImage" . $row->id . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row->id . "'>" . $this->__("dropdown.not_assigned") . "</span>";
                                                                     }?>
                                                                 </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -159,9 +159,9 @@
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row->id?>">
                                         <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                        <?php foreach($this->get('users') as $user){
+                                        <?php foreach ($this->get('users') as $user) {
                                             echo"<li class='dropdown-item'>
-                                                                <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row->id."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row->id.$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row->id . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row->id . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                             echo"</li>";
                                         }?>
                                     </ul>
@@ -205,7 +205,7 @@
                 </tbody>
 
             </table>
-	</div>
+    </div>
 </div>
 
 <script type="text/javascript">

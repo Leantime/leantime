@@ -1,6 +1,6 @@
 <?php
 
-define('RESTRICTED', TRUE);
+define('RESTRICTED', true);
 define('ROOT', dirname(__FILE__));
 
 require_once '../config/configuration.php';
@@ -11,10 +11,10 @@ $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone, $config->debug ?? 0);
 
-if(isset($config->appUrl) && $config->appUrl != ""){
+if (isset($config->appUrl) && $config->appUrl != "") {
     define('BASE_URL', $config->appUrl);
-    define('CURRENT_URL', $config->appUrl.$settings->getRequestURI($config->appUrl));
-} else{
+    define('CURRENT_URL', $config->appUrl . $settings->getRequestURI($config->appUrl));
+} else {
     define('BASE_URL', $settings->getBaseURL());
     define('CURRENT_URL', $settings->getFullURL());
 }
@@ -25,23 +25,24 @@ ob_start();
 
 $loginContent = '';
 
-if($login->logged_in()!==true){
-	$loginContent = ob_get_clean();
-	ob_start();
+if ($login->logged_in() !== true) {
+    $loginContent = ob_get_clean();
+    ob_start();
 }
 
 //Bootstrap application
 $application = new leantime\core\application(
-                        $config,
-                        $settings,
-                        $login,
-                        leantime\core\frontcontroller::getInstance(ROOT),
-                        new leantime\core\language(),
-                        new leantime\domain\services\projects(),
-                        new leantime\domain\repositories\setting());
+    $config,
+    $settings,
+    $login,
+    leantime\core\frontcontroller::getInstance(ROOT),
+    new leantime\core\language(),
+    new leantime\domain\services\projects(),
+    new leantime\domain\repositories\setting()
+);
 
 $application->start();
 
-if(ob_get_length() > 0) {
+if (ob_get_length() > 0) {
     ob_end_flush();
 }

@@ -8,8 +8,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
-
         public function get()
         {
 
@@ -18,12 +16,10 @@ namespace leantime\domain\controllers {
             $ldapService = new services\ldap();
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
-                if(core\login::userIsAtLeast("manager")) {
+            if (core\login::userIsAtLeast("clientManager")) {
+                if (core\login::userIsAtLeast("manager")) {
                     $tpl->assign('allUsers', $userRepo->getAll());
-
-                }else{
+                } else {
                     $tpl->assign('allUsers', $userRepo->getAllClientUsers(core\login::getUserClientId()));
                 }
 
@@ -31,19 +27,14 @@ namespace leantime\domain\controllers {
                 $tpl->assign('roles', core\login::$userRoles);
 
                 $tpl->display('users.showAll');
-
-            }else{
-
+            } else {
                 $tpl->display('general.error');
-
             }
-
         }
 
-        public function post($params) {
-
+        public function post($params)
+        {
         }
-
     }
 
 }

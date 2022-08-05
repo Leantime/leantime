@@ -10,10 +10,9 @@
 
     <?php echo $this->displayNotification(); ?>
 
-    <?php if($this->get("confirmUsers") == true) { ?>
-
+    <?php if ($this->get("confirmUsers") == true) { ?>
         <form class="importModal userImportModal" method="post" action="<?=BASE_URL ?>/users/import">
-            <?php foreach($this->get("allLdapUsers") as $user) { ?>
+            <?php foreach ($this->get("allLdapUsers") as $user) { ?>
                 <input type="checkbox" value="<?php $this->e($user['user']); ?>" id="<?php $this->e($user['user']) ?>" name="users[]" checked="checked"/>
                 <label for="<?php $this->e($user['user']) ?>" style="display:inline;"><?php $this->e($user['user']) ?> - <?php $this->e($user['firstname']) ?>,  <?php $this->e($user['lastname']) ?><br />
             <?php } ?>
@@ -22,8 +21,7 @@
             <input type="submit" value="<?php echo $this->__("buttons.import") ?>" />
         </form>
 
-    <?php }else { ?>
-
+    <?php } else { ?>
         <form class="importModal userImportModal" method="post" action="<?=BASE_URL ?>/users/import">
             <label><?=$this->__("label.please_enter_password") ?> </label>
             <input type="password" name="password" />

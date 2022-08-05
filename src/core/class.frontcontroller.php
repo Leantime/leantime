@@ -14,7 +14,6 @@ namespace leantime\core {
 
     class frontcontroller
     {
-
         /**
          * @access private
          * @var    string - rootpath (is set in index.php)
@@ -60,11 +59,8 @@ namespace leantime\core {
         {
 
             if (is_object(self::$instance) === false) {
-
                 if (is_null($rootPath)) {
-
                     throw new Exception('No root path');
-
                 }
 
                 self::$instance = new frontcontroller($rootPath);
@@ -83,42 +79,26 @@ namespace leantime\core {
         {
 
             //Set action-name
-            if(isset($_REQUEST['act'])) {
-
+            if (isset($_REQUEST['act'])) {
                 $completeName = htmlspecialchars($_REQUEST['act']);
-
-            }else{
-
-                if($differentFirstAction == '') {
-
+            } else {
+                if ($differentFirstAction == '') {
                     $completeName = $this->firstAction;
-
-                }else{
-
+                } else {
                     $completeName = $differentFirstAction;
-
                 }
-
             }
 
-            if($completeName != '') {
-
+            if ($completeName != '') {
                 //execute action
                 try {
-
                     $this->executeAction($completeName);
-
                 } catch (Exception $e) {
-
                     echo $e->getMessage();
-
                 }
-
             } else {
-
                 header("HTTP/1.0 404 Not Found");
                 exit;
-
             }
         }
 
@@ -129,7 +109,7 @@ namespace leantime\core {
          * @param  $completeName
          * @return string|object
          */
-        private function executeAction($completeName, $params=array())
+        private function executeAction($completeName, $params = array())
         {
 
             //actionname.filename
@@ -141,11 +121,9 @@ namespace leantime\core {
             $moduleName = self::getModuleName($completeName);
 
             //Folder doesn't exist.
-            if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
-
+            if (is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
                 header("HTTP/1.0 404 Not Found");
                 exit();
-
             }
 
             //TODO: refactor to be psr 4 compliant
@@ -153,7 +131,6 @@ namespace leantime\core {
 
             //Initialize Action
             try {
-
                 $classname = "leantime\\domain\\controllers\\" . $actionName;
 
                 //Check if constructor of controller needs/accepts arguments
@@ -165,83 +142,66 @@ namespace leantime\core {
                 } else {
                     $action = new $classname();
                 }
-
-            }catch(Exception $e){
-
+            } catch (Exception $e) {
                 header("HTTP/1.0 501 Not Implemented");
                 error_log($e->getMessage(), 0);
                 exit();
             }
 
-            if(is_object($action) === false) {
-
+            if (is_object($action) === false) {
                 header("HTTP/1.0 501 Not Implemented");
                 exit();
-
-            }else{// Look at last else
-
+            } else {// Look at last else
                 try {
-
                     //Everything ok? run action
                     $method = $this->getRequestMethod();
 
-                    if(method_exists($action, $method)) {
-
+                    if (method_exists($action, $method)) {
                         $params = $this->getRequestParams($method);
                         $action->$method($params);
-
-                    }else {
-
+                    } else {
                         //Use run for all request types.
                         $action->run();
-
                     }
-
-                }catch (Exception $e) {
-
+                } catch (Exception $e) {
                     error_log($e->getMessage(), 0);
-
                 }
-
             }
 
             $this->lastAction = $completeName;
-
         }
 
         private function getRequestMethod()
         {
 
-            if(isset($_SERVER['REQUEST_METHOD'])) {
+            if (isset($_SERVER['REQUEST_METHOD'])) {
                 return strtolower($_SERVER['REQUEST_METHOD']);
             }
 
             return false;
-
         }
 
         private function getRequestParams($method)
         {
 
             switch ($method) {
-            case 'patch':
-                parse_str(file_get_contents("php://input"), $patch_vars);
-                return $patch_vars;
+                case 'patch':
+                    parse_str(file_get_contents("php://input"), $patch_vars);
+                    return $patch_vars;
                     break;
-            case 'post':
-                return $_POST;
+                case 'post':
+                    return $_POST;
                     break;
-            case 'get':
-                return $_GET;
+                case 'get':
+                    return $_GET;
                     break;
-            case 'delete':
-                return $_GET;
+                case 'delete':
+                    return $_GET;
                     break;
-            default:
-                throw(new Exception("Unexpected HTTP Method: ".$method));
+                default:
+                    throw(new Exception("Unexpected HTTP Method: " . $method));
                     break;
             }
-
         }
 
         /**
@@ -251,7 +211,7 @@ namespace leantime\core {
          * @param  $completeName
          * @return object
          */
-        public function includeAction($completeName, $params=array())
+        public function includeAction($completeName, $params = array())
         {
             $this->executeAction($completeName, $params);
         }
@@ -270,7 +230,6 @@ namespace leantime\core {
             $this->executeAction($completeName);
             $headerOutput = ob_get_clean();
             return $headerOutput;
-
         }
 
         /**
@@ -284,7 +243,6 @@ namespace leantime\core {
         {
 
             return substr($completeName, strrpos($completeName, ".") + 1);
-
         }
 
         /**
@@ -298,7 +256,6 @@ namespace leantime\core {
         {
 
             return substr($completeName, 0, strrpos($completeName, "."));
-
         }
 
 
@@ -309,12 +266,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return string
          */
-        public static function getCurrentRoute() 
+        public static function getCurrentRoute()
         {
 
             return htmlspecialchars($_REQUEST['act']);
-
         }
-
     }
 }

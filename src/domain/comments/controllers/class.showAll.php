@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
         private $projectService;
         private $tpl;
         private $commentService;
@@ -23,20 +22,17 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
 
 
-            if(!isset($params['module']) || !isset($params['entitiyId']) || !isset($params['entity'])) {
+            if (!isset($params['module']) || !isset($params['entitiyId']) || !isset($params['entity'])) {
                 throw new Exception("comments module needs to be initialized with module, entity id and entity");
             }
 
             $this->module = $params['module'];
             $this->id = $params['entitiyId'];
             $this->entity = $params['entity'];
-
-
-
-
         }
 
-        public function get($params) :void {
+        public function get($params): void
+        {
 
             $comments = $this->commentService->getComments($this->module, $this->id, $_SESSION["projectsettings"]['commentOrder']);
 
@@ -45,39 +41,33 @@ namespace leantime\domain\controllers {
 
             //Delete comment
             if (isset($params['delComment']) === true) {
-
                 $commentId = (int)($params['delComment']);
 
-                if($this->commentService->deleteComment($commentId)){
+                if ($this->commentService->deleteComment($commentId)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$this->id);
-                }else{
+                    $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
+                } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
                 }
             }
 
             $this->tpl->displayPartial('comments.showAll');
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             var_dump($params);
             exit();
 
             if (isset($params['comment']) === true) {
-
-                if($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
+                if ($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                }else {
+                } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                 }
             }
-
         }
-
-
-
     }
 
 }

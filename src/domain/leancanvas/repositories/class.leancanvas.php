@@ -1,13 +1,12 @@
 <?php
 
-    namespace leantime\domain\repositories {
+namespace leantime\domain\repositories {
 
     use leantime\core;
     use pdo;
 
     class leancanvas
     {
-
         /**
          * @access public
          * @var    object
@@ -24,21 +23,21 @@
          * @access private
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         public $canvasTypes = array(
-            "problem"=>"status.problem",
-            "solution"=>"status.solution",
-            "keymetrics"=>"status.keymetrics",
-            "uniquevalue"=>"status.uniquevalue",
-            "unfairadvantage"=>"status.unfairadvantage",
-            "channels"=>"status.channels",
-            "customersegment"=>"status.customersegment",
-            "cost"=>"status.cost",
-            "revenue"=>"status.revenue",
-            "alternatives"=>"status.alternatives",
-            "earlyadopters"=>"status.earlyadopters",
-            "highlevelconcept"=>"status.highlevelconcept"
+            "problem" => "status.problem",
+            "solution" => "status.solution",
+            "keymetrics" => "status.keymetrics",
+            "uniquevalue" => "status.uniquevalue",
+            "unfairadvantage" => "status.unfairadvantage",
+            "channels" => "status.channels",
+            "customersegment" => "status.customersegment",
+            "cost" => "status.cost",
+            "revenue" => "status.revenue",
+            "alternatives" => "status.alternatives",
+            "earlyadopters" => "status.earlyadopters",
+            "highlevelconcept" => "status.highlevelconcept"
             );
 
         public $statusLabels = array(
@@ -60,67 +59,57 @@
             $this->language = new core\language();
 
             $this->canvasTypes = $this->getCanvasLabels();
-
-
         }
 
-        public function getStatusLabels () {
+        public function getStatusLabels()
+        {
 
-            foreach($this->statusLabels as $key => $statusLabel){
+            foreach ($this->statusLabels as $key => $statusLabel) {
                 $this->statusLabels[$key] = $this->language->__($statusLabel);
             }
 
             return $this->statusLabels;
-
-
         }
 
 
         public function getCanvasLabels()
         {
 
-            if(isset($_SESSION['currentProject']) == false){
+            if (isset($_SESSION['currentProject']) == false) {
                 return;
             }
 
-            if(isset($_SESSION["projectsettings"]["researchlabels"])) {
-
+            if (isset($_SESSION["projectsettings"]["researchlabels"])) {
                 return $_SESSION["projectsettings"]["researchlabels"];
-
-            }else{
-
+            } else {
                 $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".researchlabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', "projectsettings." . $_SESSION['currentProject'] . ".researchlabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
 
-                if($values !== false) {
-
+                if ($values !== false) {
                     $labels = unserialize($values['value']);
 
-                    foreach($this->canvasTypes as $key => $typeLabel){
-                        if(isset($labels[$key])){
+                    foreach ($this->canvasTypes as $key => $typeLabel) {
+                        if (isset($labels[$key])) {
                             $this->canvasTypes[$key] = $labels[$key];
-                        }else{
+                        } else {
                             $this->canvasTypes[$key] = $this->language->__($typeLabel);
                         }
-
                     }
 
                     $labels = $this->canvasTypes;
                     $_SESSION["projectsettings"]["researchlabels"] = $this->canvasTypes;
-
-                }else{
-
-                    foreach($this->canvasTypes as $key => $typeLabel){
+                } else {
+                    foreach ($this->canvasTypes as $key => $typeLabel) {
                         $this->canvasTypes[$key] = $this->language->__($typeLabel);
                     }
 
@@ -129,7 +118,6 @@
                 }
 
                 return $labels;
-
             }
         }
 
@@ -158,7 +146,6 @@
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function deleteCanvas($id)
@@ -177,7 +164,6 @@
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
         public function addCanvas($values)
@@ -209,7 +195,6 @@
             $stmn->closeCursor();
 
             return $this->db->database->lastInsertId();
-
         }
 
         public function updateCanvas($values)
@@ -229,7 +214,6 @@
             $stmn->closeCursor();
 
             return $result;
-
         }
 
         public function editCanvasItem($values)
@@ -257,7 +241,6 @@
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
 
@@ -267,8 +250,8 @@
 
             $sql = "UPDATE zp_canvas_items SET ";
 
-            foreach($params as $key=>$value){
-                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            foreach ($params as $key => $value) {
+                $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -276,15 +259,14 @@
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
             $stmn->closeCursor();
 
             return $return;
-
         }
 
         public function getCanvasItemsById($id)
@@ -347,7 +329,6 @@
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getSingleCanvasItem($id)
@@ -404,7 +385,6 @@
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function addCanvasItem($values)
@@ -446,7 +426,7 @@
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -479,13 +459,13 @@
 				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
 				WHERE canvasBoard.type = 'leancanvas'  ";
 
-            if(!is_null($projectId)){
-                $sql.=" AND canvasBoard.projectId = :projectId";
+            if (!is_null($projectId)) {
+                $sql .= " AND canvasBoard.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -493,14 +473,14 @@
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['researchCount']) === true) {
+            if (isset($values['researchCount']) === true) {
                 return $values['researchCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
 
-        public function getNumberOfBoards($projectId=null)
+        public function getNumberOfBoards($projectId = null)
         {
 
             $sql = "SELECT
@@ -509,13 +489,13 @@
 				    zp_canvas
 				";
 
-            if(!is_null($projectId)){
-                $sql.=" WHERE canvasBoard.projectId = :projectId";
+            if (!is_null($projectId)) {
+                $sql .= " WHERE canvasBoard.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -523,13 +503,11 @@
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['boardCount'])) {
+            if (isset($values['boardCount'])) {
                 return $values['boardCount'];
             }
 
             return 0;
-
         }
-
     }
 }

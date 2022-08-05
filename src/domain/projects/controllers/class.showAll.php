@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
         /**
          * run - display template and edit data
          *
@@ -19,27 +18,22 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
 
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 $projectRepo = new repositories\projects();
 
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
-                if(core\login::userIsAtLeast("manager")) {
+                if (core\login::userIsAtLeast("manager")) {
                     $tpl->assign('allProjects', $projectRepo->getAll());
-                }else{
+                } else {
                     $tpl->assign('allProjects', $projectRepo->getClientProjects(core\login::getUserClientId()));
                 }
 
                 $tpl->display('projects.showAll');
-            }else{
-
+            } else {
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 
 }

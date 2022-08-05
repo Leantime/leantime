@@ -31,7 +31,7 @@ $install = new leantime\core\install($config, $settings);
             <div class="col-md-12" style="position:relative;">
                 <h1 class="mainWelcome"><?php echo $language->__("headlines.update_database"); ?></h1>
                 <span class="iq-objects-04 iq-fadebounce">
-				    <span class="iq-round"></span>
+                    <span class="iq-round"></span>
                 </span>
             </div>
         </div>
@@ -55,33 +55,31 @@ $install = new leantime\core\install($config, $settings);
                     $success = false;
 
 
-                    if(isset($_POST['updateDB'])) {
-
+                    if (isset($_POST['updateDB'])) {
                         $success = $install->updateDB();
-
                     }
 
                     ?>
                     <?php
-                        if(is_array($success) === true){
-                            echo "
+                    if (is_array($success) === true) {
+                        echo "
                                 <div class='inputwrapper login-alert'>
                                     <div class='alert alert-error'>";
-                                    foreach($success as $errorMessage) {
-                                        echo $errorMessage."<br />";
-                                    }
+                        foreach ($success as $errorMessage) {
+                            echo $errorMessage . "<br />";
+                        }
                             echo "</div>
                                 </div>";
-                        }
+                    }
 
-                        if($success === true) {
-                            echo "
+                    if ($success === true) {
+                        echo "
                                 <div class='inputwrapper login-alert'>
-                                    <div class='alert alert-success'>".sprintf($this->language->__("text.update_was_successful"),BASE_URL)."</div>
+                                    <div class='alert alert-success'>" . sprintf($this->language->__("text.update_was_successful"), BASE_URL) . "</div>
                                 </div>";
-                        }
+                    }
                     ?>
-                    <?php if($success !== true) { ?>
+                    <?php if ($success !== true) { ?>
                     <form action="<?=BASE_URL ?>/update" method="post" class="registrationForm">
                         <input type="hidden" name="updateDB" value="1" />
                        <p><input type="submit" name="updateAction" class="btn btn-primary" value="<?=$this->language->__("buttons.update_now")?>" onClick="this.form.submit(); this.disabled=true; this.value='Updating…'; "/></p>

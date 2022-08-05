@@ -1,8 +1,8 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-	$ticket = $this->get('ticket');
-	$projectData = $this->get('projectData');
+    $ticket = $this->get('ticket');
+    $projectData = $this->get('projectData');
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
 ?>
@@ -43,7 +43,7 @@
                 <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', "".BASE_URL."/tickets/showTicket/".$ticket->id."#comments");
+                    $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "#comments");
 
                     $this->displaySubmodule('comments-generalComment') ;
                     ?>

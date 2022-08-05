@@ -78,8 +78,8 @@ leantime.projectsController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css',
                 height:"300",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
@@ -95,7 +95,7 @@ leantime.projectsController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -148,7 +148,7 @@ leantime.projectsController = (function () {
 
     var initProjectTable = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
 
@@ -188,17 +188,17 @@ leantime.projectsController = (function () {
     };
 
     var initTodoStatusSortable = function (element) {
-        var sortCounter=1;
-        jQuery(element).find("input.sorter").each(function(index){
+        var sortCounter = 1;
+        jQuery(element).find("input.sorter").each(function (index) {
 
             jQuery(this).val(sortCounter);
             sortCounter++;
         });
 
         jQuery(element).sortable({
-            stop: function( event, ui ) {
-                sortCounter=1;
-                jQuery(element).find("input.sorter").each(function(index){
+            stop: function ( event, ui ) {
+                sortCounter = 1;
+                jQuery(element).find("input.sorter").each(function (index) {
                     jQuery(this).val(sortCounter);
                     sortCounter++;
                 });
@@ -207,61 +207,61 @@ leantime.projectsController = (function () {
 
     };
 
-    var initSelectFields = function() {
+    var initSelectFields = function () {
 
-        jQuery(document).ready(function(){
+        jQuery(document).ready(function () {
 
-            jQuery("#todosettings select.colorChosen").on('chosen:ready', function(e, chosen){
+            jQuery("#todosettings select.colorChosen").on('chosen:ready', function (e, chosen) {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#"+id+"_chzn a span").removeClass();
-                jQuery("#"+id+"_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chzn a span").removeClass();
+                jQuery("#" + id + "_chzn a span").addClass(params.selected);
 
             }).chosen({
                 disable_search_threshold: 10
             });
 
-            jQuery("#todosettings select.colorChosen").on('change', function(evt, params){
+            jQuery("#todosettings select.colorChosen").on('change', function (evt, params) {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#"+id+"_chzn a span").removeClass();
-                jQuery("#"+id+"_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chzn a span").removeClass();
+                jQuery("#" + id + "_chzn a span").addClass(params.selected);
 
             });
         });
     };
 
-    var removeStatus = function(id) {
+    var removeStatus = function (id) {
 
-        jQuery("#todostatus-"+id).parent().remove();
+        jQuery("#todostatus-" + id).parent().remove();
 
     };
 
-    var addToDoStatus = function(id) {
+    var addToDoStatus = function (id) {
 
         var highestKey = -1;
 
-        jQuery("#todosettings ul .statusList").each(function(){
+        jQuery("#todosettings ul .statusList").each(function () {
 
             var keyInt = jQuery(this).find('.labelKey').val();
 
-            if(keyInt >= highestKey) {
+            if (keyInt >= highestKey) {
                 highestKey = keyInt;
             }
 
         });
 
-        var newKey = parseInt(highestKey)+1;
+        var newKey = parseInt(highestKey) + 1;
 
         var statusCopy = jQuery(".newStatusTpl").clone();
 
-        statusCopy.html(function(i, oldHTML) {
+        statusCopy.html(function (i, oldHTML) {
             return updatedContent = oldHTML.replaceAll('XXNEWKEYXX', newKey);
         });
 
-        jQuery('#todoStatusList').append("<li>"+statusCopy.html()+"</li>");
+        jQuery('#todoStatusList').append("<li>" + statusCopy.html() + "</li>");
 
         jQuery("#todosettings select.colorChosen").chosen("destroy");
         leantime.projectsController.initSelectFields();

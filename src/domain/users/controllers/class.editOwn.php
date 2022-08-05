@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class editOwn
     {
-
         /**
          * run - display template and edit data
          *
@@ -41,9 +40,7 @@ namespace leantime\domain\controllers {
 
             //Save form
             if (isset($_POST['save'])) {
-
-                if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
+                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                     $values = array(
                         'firstname' => ($_POST['firstname']),
                         'lastname' => ($_POST['lastname']),
@@ -63,72 +60,44 @@ namespace leantime\domain\controllers {
                     $changedEmail = 0;
 
                     if ($row['username'] != $values['user']) {
-
                         $changedEmail = 1;
-
                     }
 
                     //Validation
                     if ($values['user'] !== '') {
-
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
-
                             if ($_POST['newPassword'] == $_POST['confirmPassword']) {
-
                                 if ($_POST['newPassword'] == '') {
-
                                     $values['password'] = '';
-
                                 } else {
-
                                     $userRepo->editOwn($values, $userId);
-
                                 }
 
                                 if ($changedEmail == 1) {
-
                                     if ($userRepo->usernameExist($values['user'], $userId) === false) {
-
                                         $userRepo->editOwn($values, $userId);
 
                                         $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
-
                                     } else {
-
                                         $tpl->setNotification($language->__("notification.user_exists"), 'error');
-
                                     }
-
                                 } else {
-
                                     $userRepo->editOwn($values, $userId);
 
                                     $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
-
                                 }
-
                             } else {
-
                                 $tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
-
                             }
-
                         } else {
-
                             $tpl->setNotification($language->__("notification.no_valid_email"), 'error');
-
                         }
-
                     } else {
-
                         $tpl->setNotification($language->__("notification.enter_email"), 'error');
-
                     }
-
-                }else{
+                } else {
                     $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
                 }
-
             }
 
             //Assign vars
@@ -146,9 +115,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('user', $row);
 
             $tpl->display('users.editOwn');
-
         }
-
     }
 }
-

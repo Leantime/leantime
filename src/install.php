@@ -5,7 +5,7 @@ $settings = new leantime\core\appSettings();
 $install = new leantime\core\install($config, $settings);
 
 if ($install->checkIfInstalled()) {
-    header('Location: '. BASE_URL);
+    header('Location: ' . BASE_URL);
     exit;
 }
 
@@ -49,48 +49,45 @@ if ($install->checkIfInstalled()) {
 
                         $error = false;
                         $values = array(
-                            'email'			=>"",
-                            'password'		=>"",
-                            'firstname'		=>"",
-                            'lastname'		=>""
+                            'email'         => "",
+                            'password'      => "",
+                            'firstname'     => "",
+                            'lastname'      => ""
                         );
 
-                        if(isset($_POST['install'])) {
-
+                        if (isset($_POST['install'])) {
                                 $values = array(
-                                    'email'			=>($_POST['email']),
-                                    'password'		=>$_POST['password'],
-                                    'firstname'		=>($_POST['firstname']),
-                                    'lastname'		=>($_POST['lastname']),
-                                    'company'		=>($_POST['company'])
+                                    'email'         => ($_POST['email']),
+                                    'password'      => $_POST['password'],
+                                    'firstname'     => ($_POST['firstname']),
+                                    'lastname'      => ($_POST['lastname']),
+                                    'company'       => ($_POST['company'])
                                 );
 
                                 if (isset($_POST['email']) == false || $_POST['email'] == '') {
                                     $error = $this->language->__("notification.enter_email");
-                                } else if (isset($_POST['password']) == false || $_POST['password'] == '') {
+                                } elseif (isset($_POST['password']) == false || $_POST['password'] == '') {
                                     $error = $this->language->__("notification.enter_password");
-                                } else if (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
+                                } elseif (isset($_POST['firstname']) == false || $_POST['firstname'] == '') {
                                     $error = $this->language->__("notification.enter_firstname");
-                                } else if (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
+                                } elseif (isset($_POST['lastname']) == false || $_POST['lastname'] == '') {
                                     $error = $this->language->__("notification.enter_lastname");
-                                } else if (isset($_POST['company']) == false || $_POST['company'] == '') {
+                                } elseif (isset($_POST['company']) == false || $_POST['company'] == '') {
                                     $error = $this->language->__("notification.enter_company");
                                 } else {
-
                                     $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
                                     $dbSetupResults = $install->setupDB($values);
-                                    if($dbSetupResults === true) {
-
+                                    if ($dbSetupResults === true) {
                                         echo "<div class='inputwrapper login-alert'>
                                             <div class='alert alert-success' style='padding:10px;'>
-                                                ".sprintf($this->language->__("notifications.installation_success"),BASE_URL)."
+                                                " . sprintf($this->language->__("notifications.installation_success"), BASE_URL) . "
                                             </div>
                                        </div>";
-                                    }else{
+                                    } else {
                                         echo "<div class='inputwrapper login-alert'>
                                             <div class='alert alert-error' style='padding:10px;'>
-                                                ".sprintf($this->language->__("notifications.installation_success"),$dbSetupResults)."   
+                                                " . sprintf($this->language->__("notifications.installation_success"), $dbSetupResults) . "   
                                             </div>
                                        </div>";
                                     }
@@ -99,12 +96,12 @@ if ($install->checkIfInstalled()) {
 
                         ?>
                         <?php
-                            if($error !== false){
-                                echo "
+                        if ($error !== false) {
+                            echo "
                                     <div class='inputwrapper login-alert'>
-                                        <div class='alert alert-error'>".$error."</div>
+                                        <div class='alert alert-error'>" . $error . "</div>
                                     </div>";
-                            }
+                        }
                         ?>
                             <form action="<?=BASE_URL ?>/install" method="post" class="registrationForm">
                                 <h3 class="subtitle"><?=$this->language->__("subtitles.login_info");?></h3>

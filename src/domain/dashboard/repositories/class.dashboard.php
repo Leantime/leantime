@@ -7,6 +7,7 @@
  * @version 1.0
  * @package classes
  */
+
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -14,7 +15,6 @@ namespace leantime\domain\repositories {
 
     class dashboard
     {
-
         /**
          * @access public
          * @var    object
@@ -37,9 +37,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
-
     }
 
 

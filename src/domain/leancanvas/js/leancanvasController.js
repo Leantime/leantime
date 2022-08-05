@@ -11,9 +11,9 @@ leantime.leanCanvasController = (function () {
         resizable: true,
         autoSizable: true,
         callbacks: {
-            beforeShowCont: function() {
+            beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
-                if(closeModal == true){
+                if (closeModal == true) {
                     closeModal = false;
                     location.reload();
                 }
@@ -27,8 +27,8 @@ leantime.leanCanvasController = (function () {
                         // General options
                         width: "100%",
                         height:"200px",
-                        skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                        content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                        skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                        content_css: leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css',
                         content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                         plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                         toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
@@ -43,7 +43,7 @@ leantime.leanCanvasController = (function () {
 
                             xhr = new XMLHttpRequest();
                             xhr.withCredentials = false;
-                            xhr.open('POST', leantime.appUrl+'/api/files');
+                            xhr.open('POST', leantime.appUrl + '/api/files');
 
                             xhr.onload = function () {
                                 var json;
@@ -73,7 +73,7 @@ leantime.leanCanvasController = (function () {
                             };
 
                             jQuery.nmManual(
-                                leantime.appUrl+'/files/showAll&modalPopUp=true',
+                                leantime.appUrl + '/files/showAll&modalPopUp=true',
                                 {
                                     stack: true,
                                     callbacks: shortOptions,
@@ -123,25 +123,24 @@ leantime.leanCanvasController = (function () {
     };
 
     var toggleMilestoneSelectors = function (trigger) {
-        if(trigger == 'existing') {
+        if (trigger == 'existing') {
             jQuery('#newMilestone, #milestoneSelectors').hide('fast');
             jQuery('#existingMilestone').show();
             _initModals();
-
         }
-        if(trigger == 'new') {
+        if (trigger == 'new') {
             jQuery('#newMilestone').show();
             jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
             _initModals();
         }
 
-        if(trigger == 'hide') {
+        if (trigger == 'hide') {
             jQuery('#newMilestone, #existingMilestone').hide('fast');
             jQuery('#milestoneSelectors').show('fast');
         }
     };
 
-    var setCloseModal = function() {
+    var setCloseModal = function () {
         closeModal = true;
     };
 
@@ -149,9 +148,9 @@ leantime.leanCanvasController = (function () {
 
         var maxHeight = 0;
 
-        jQuery("#firstRow div.contentInner").each(function(){
-            if(jQuery(this).height() > maxHeight){
-                maxHeight = jQuery(this).height()+100;
+        jQuery("#firstRow div.contentInner").each(function () {
+            if (jQuery(this).height() > maxHeight) {
+                maxHeight = jQuery(this).height() + 100;
             }
         });
 
@@ -163,7 +162,7 @@ leantime.leanCanvasController = (function () {
 
         var maxHeight = 0;
 
-        var height = jQuery("html").height()-320;
+        var height = jQuery("html").height() - 320;
         jQuery("#firstRow .column .contentInner").css("height", height);
 
     };
@@ -183,13 +182,13 @@ leantime.leanCanvasController = (function () {
 
     var initCanvasLinks = function () {
 
-        jQuery(".addCanvasLink").click(function() {
+        jQuery(".addCanvasLink").click(function () {
 
             jQuery('#addCanvas').modal('show');
 
         });
 
-        jQuery(".editCanvasLink").click(function() {
+        jQuery(".editCanvasLink").click(function () {
 
             jQuery('#editCanvas').modal('show');
 
@@ -200,13 +199,14 @@ leantime.leanCanvasController = (function () {
     var initUserDropdown = function () {
 
         jQuery("body").on(
-            "click", ".userDropdown .dropdown-menu a", function () {
+            "click",
+            ".userDropdown .dropdown-menu a",
+            function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 3) {
-
                     var canvasId = dataValue[0];
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
@@ -214,21 +214,20 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/leancanvas',
+                            url: leantime.appUrl + '/api/leancanvas',
                             data:
                                 {
                                     id : canvasId,
                                     author:userId
-                                }
+                            }
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#user"+canvasId).text(dataLabel);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + profileImageId);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#user" + canvasId).text(dataLabel);
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
                     );
-
                 }
             }
         );
@@ -237,13 +236,14 @@ leantime.leanCanvasController = (function () {
     var initStatusDropdown = function () {
 
         jQuery("body").on(
-            "click", ".statusDropdown .dropdown-menu a", function () {
+            "click",
+            ".statusDropdown .dropdown-menu a",
+            function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 2) {
-
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
 
@@ -251,22 +251,21 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/leancanvas',
+                            url: leantime.appUrl + '/api/leancanvas',
                             data:
                                 {
                                     id : canvasItemId,
                                     status:status
-                                }
+                            }
                         }
                     ).done(
                         function () {
-                            jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass("label-"+status+" dropdown-toggle f-left status ");
+                            jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
+                            jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("label-" + status + " dropdown-toggle f-left status ");
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
 
                         }
                     );
-
                 }
             }
         );

@@ -4,11 +4,11 @@
  * Module Manager
  *
  */
+
 namespace leantime\domain\services {
 
     class modulemanager
     {
-
         /**
          * @access private
          * @var    static object
@@ -50,7 +50,6 @@ namespace leantime\domain\services {
          */
         private function __construct()
         {
-
         }
 
         /**
@@ -68,20 +67,17 @@ namespace leantime\domain\services {
             return self::$instance;
         }
 
-        public static function isModuleEnabled($module) {
+        public static function isModuleEnabled($module)
+        {
 
-            if(isset(self::$modules[$module])) {
-                if(self::$modules[$module]['enabled'] === true) {
+            if (isset(self::$modules[$module])) {
+                if (self::$modules[$module]['enabled'] === true) {
                     return true;
                 }
             }
 
             return false;
-
         }
-
-
     }
 
 }
-

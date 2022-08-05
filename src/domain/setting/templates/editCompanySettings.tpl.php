@@ -1,5 +1,5 @@
 <?php
-$companySettings= $this->get('companySettings');
+$companySettings = $this->get('companySettings');
 ?>
 
 <div class="pageheader">
@@ -40,8 +40,10 @@ $companySettings= $this->get('companySettings');
                                             </div>
                                             <div class="col-md-8">
                                                 <select name="language" id="language">
-                                                    <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
-                                                        <option value="<?=$languagKey?>" <?php if($companySettings['language'] == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                                    <?php foreach ($this->get("languageList") as $languagKey => $languageValue) {?>
+                                                        <option value="<?=$languagKey?>" <?php if ($companySettings['language'] == $languagKey) {
+                                                            echo "selected='selected'";
+                                                                       } ?>><?=$languageValue?></option>
                                                     <?php } ?>
                                                 </select>
 
@@ -86,7 +88,7 @@ $companySettings= $this->get('companySettings');
                                                 <label><?=$this->__("label.send_telemetry")?></label>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?=$companySettings['telemetryActive']==true?'checked="checked"':'';?> />
+                                                <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?=$companySettings['telemetryActive'] == true ? 'checked="checked"' : '';?> />
                                                 <div class="clearall"></div>
                                                 <small style="vertical-align: text-top;"><?=$this->__("label.telemetry_background")?></small>
                                             </div>

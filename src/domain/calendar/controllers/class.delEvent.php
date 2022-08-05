@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class delEvent
     {
-
         /**
          * run - display template and edit data
          *
@@ -25,36 +24,23 @@ namespace leantime\domain\controllers {
             $calendarRepo = new repositories\calendar();
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
 
                 $msgKey = '';
 
                 if (isset($_POST['del']) === true) {
-
-                    if($calendarRepo->delPersonalEvent($id) == true) {
-
+                    if ($calendarRepo->delPersonalEvent($id) == true) {
                         $tpl->setNotification('notification.event_removed_successfully', 'success');
-
-                    }else{
-
+                    } else {
                         $tpl->setNotification('notification.could_not_delete_event', 'success');
-
                     }
-
                 }
 
                 $tpl->display('calendar.delEvent');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
-
         }
-
     }
 
 }

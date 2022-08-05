@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace leantime\core;
 
@@ -152,7 +154,6 @@ class config
         $this->ldapKeys = $this->configEnvironmentHelper("LEAN_LDAP_KEYS", $this->ldapKeys);
         $this->ldapLtGroupAssignments = $this->configEnvironmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $this->ldapLtGroupAssignments);
         $this->ldapDefaultRoleKey = $this->configEnvironmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $this->ldapDefaultRoleKey);
-
     }
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")
@@ -164,10 +165,10 @@ class config
         // we need to check to see if we need to conver the found data
         if ($dataType == "string") {
             return $found;
-        } else if ($dataType == "boolean") {
+        } elseif ($dataType == "boolean") {
             // if the string is true, then it is true, simple enough
             return $found == "true" ? true : false;
-        } else if ($dataType == "number") {
+        } elseif ($dataType == "number") {
             return intval($found);
         }
         return $found;

@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class showAllMilestones
     {
-
         private $projectService;
         private $tpl;
         private $ticketService;
@@ -23,11 +22,10 @@ namespace leantime\domain\controllers {
             $this->timesheetService = new services\timesheets();
 
             $_SESSION['lastPage'] = CURRENT_URL;
-
-
         }
 
-        public function get($params) {
+        public function get($params)
+        {
 
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
@@ -35,7 +33,7 @@ namespace leantime\domain\controllers {
             //Default to not_done tickets to reduce load and make the table easier to read.
             //User can recover by choosing status in the filter box
             //We only want this on the table view
-            if($searchCriteria["status"] == "") {
+            if ($searchCriteria["status"] == "") {
                 $searchCriteria["status"] = "not_done";
             }
 
@@ -52,11 +50,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showAllMilestones');
-
         }
-
-
-
     }
 
 }

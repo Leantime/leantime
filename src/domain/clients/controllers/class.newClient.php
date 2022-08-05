@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class newClient
     {
-
         /**
          * run - display template and edit data
          *
@@ -27,8 +26,7 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("manager")) {
-
+            if (core\login::userIsAtLeast("manager")) {
                 $values = array(
                     'name' => '',
                     'street' => '',
@@ -42,7 +40,6 @@ namespace leantime\domain\controllers {
                 );
 
                 if (isset($_POST['save']) === true) {
-
                     $values = array(
                         'name' => ($_POST['name']),
                         'street' => ($_POST['street']),
@@ -57,33 +54,23 @@ namespace leantime\domain\controllers {
 
                     if ($values['name'] !== '') {
                         if ($clientRepo->isClient($values) !== true) {
-
                             $id = $clientRepo->addClient($values);
                             $tpl->setNotification($language->__('notification.client_added_successfully'), 'success');
-                            $tpl->redirect(BASE_URL."/clients/showClient/".$id);
-
+                            $tpl->redirect(BASE_URL . "/clients/showClient/" . $id);
                         } else {
-
                             $tpl->setNotification($language->__('notification.client_exists_already'), 'error');
                         }
                     } else {
-
                         $tpl->setNotification($language->__('notification.client_name_not_specified'), 'error');
                     }
-
                 }
 
                 $tpl->assign('values', $values);
                 $tpl->display('clients.newClient');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 
 }

@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class leancanvas
     {
-
         private $tpl;
         private $projects;
         private $sprintService;
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->leanCanvasRepo = new repositories\leancanvas();
-
         }
 
 
@@ -38,7 +36,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -49,9 +46,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
-
         }
 
         /**
@@ -64,9 +58,9 @@ namespace leantime\domain\controllers {
         {
             $results = $this->leanCanvasRepo->patchCanvasItem($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -79,9 +73,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

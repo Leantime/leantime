@@ -44,12 +44,11 @@ $project = $this->get('values');
             leantime.projectsController.initProjectTabs();
             leantime.projectsController.initProjectsEditor();
 
-            <?php if((isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) && $_SESSION['currentProject'] != '') {     ?>
-
+            <?php if ((isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) && $_SESSION['currentProject'] != '') {     ?>
             leantime.helperController.showHelperModal("newProject");
-            <?php
+                <?php
             //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["newProject"] = 1;
+                $_SESSION['userdata']['settings']["modals"]["newProject"] = 1;
             } ?>
 
         }

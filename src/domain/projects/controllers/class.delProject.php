@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class delProject
     {
-
         /**
          * run - display template and edit data
          *
@@ -23,20 +22,15 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($_GET['id']) === true) {
-
                     $id = (int)($_GET['id']);
 
                     if ($projectRepo->hasTickets($id)) {
-
                         $tpl->setNotification($language->__("notification.project_has_tasks"), "info");
-
                     }
 
                     if (isset($_POST['del']) === true) {
-
                         $projectRepo->deleteProject($id);
                         $projectRepo->deleteAllUserRelations($id);
 
@@ -45,28 +39,19 @@ namespace leantime\domain\controllers {
 
                         $tpl->setNotification($language->__("notification.project_deleted"), "success");
                         $tpl->redirect(BASE_URL . "/projects/showAll");
-
                     }
 
                     //Assign vars
                     $tpl->assign('project', $projectRepo->getProject($id));
 
                     $tpl->display('projects.delProject');
-
                 } else {
-
                     $tpl->display('general.error');
-
                 }
-
-            }else{
-
+            } else {
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 
 }

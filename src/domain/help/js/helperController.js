@@ -16,7 +16,7 @@ leantime.helperController = (function () {
     var showHelperModal = function (module, minW, minH) {
 
         jQuery.nmManual(
-            leantime.appUrl+"/help/showOnboardingDialog?module="+module,
+            leantime.appUrl + "/help/showOnboardingDialog?module=" + module,
             {sizes: {
                 minW: minW || 200,
                 minH: minH || 500,
@@ -57,7 +57,8 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Left Nav', {
+            'Left Nav',
+            {
                 title: leantime.i18n.__("tour.left_navigation"),
                 text: leantime.i18n.__("tour.left_nav_text"),
                 attachTo: '.leftmenu ul right',
@@ -77,7 +78,8 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Project Selection', {
+            'Project Selection',
+            {
                 title: leantime.i18n.__("tour.project_selection"),
                 text: leantime.i18n.__("tour.project_selection_text"),
                 attachTo: '.project-selector right',
@@ -96,7 +98,8 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Header Navigation', {
+            'Header Navigation',
+            {
                 title: leantime.i18n.__("tour.top_navigation"),
                 text: leantime.i18n.__("tour.top_navigation_text"),
                 attachTo: '.headmenu bottom',
@@ -106,17 +109,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Project Status', {
+            'Project Status',
+            {
                 title: leantime.i18n.__("tour.project_progress"),
                 text: leantime.i18n.__("tour.project_progress_text"),
                 attachTo: '#projectProgressContainer left',
@@ -126,17 +130,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Your Todos', {
+            'Your Todos',
+            {
                 title: leantime.i18n.__("tour.milestone_progress"),
                 text: leantime.i18n.__("tour.milestone_progress_text"),
                 attachTo: '#milestoneProgressContainer left',
@@ -146,17 +151,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Your Todos', {
+            'Your Todos',
+            {
                 title: leantime.i18n.__("tour.your_todos"),
                 text: leantime.i18n.__("tour.your_todos_text"),
                 attachTo: '#yourToDoContainer top',
@@ -166,17 +172,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Your Todos', {
+            'Your Todos',
+            {
                 title: leantime.i18n.__("tour.congratulations"),
                 text: leantime.i18n.__("tour.congratulations_dashboard_text"),
                 buttons:[
@@ -206,7 +213,8 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Left Nav', {
+            'Left Nav',
+            {
                 title: leantime.i18n.__("tour.kanban"),
                 text: leantime.i18n.__("tour.kanban_text"),
                 attachTo: '.column right',
@@ -225,7 +233,8 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Left Nav', {
+            'Left Nav',
+            {
                 title: leantime.i18n.__("tour.drag_drop"),
                 text: leantime.i18n.__("tour.drag_drop_text"),
                 attachTo: '.ticketBox h4 right',
@@ -235,17 +244,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Change Views', {
+            'Change Views',
+            {
                 title: leantime.i18n.__("tour.change_views"),
                 text: leantime.i18n.__("tour.change_views_text"),
                 attachTo: '.btn-group .fa-columns left',
@@ -255,17 +265,18 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );
 
         tour.addStep(
-            'Your Todos', {
+            'Your Todos',
+            {
                 title: leantime.i18n.__("tour.congratulations"),
                 text: leantime.i18n.__("tour.congratulations_kanban_text"),
                 buttons:[
@@ -279,7 +290,8 @@ leantime.helperController = (function () {
         );
 
         tour.on(
-            'complete', function () {
+            'complete',
+            function () {
                 leantime.helperRepository.stopTour();
             }
         );

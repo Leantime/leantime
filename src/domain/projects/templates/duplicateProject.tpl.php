@@ -13,13 +13,14 @@ $project = $this->get('project');
     <input type="text" name="projectName" value="<?=$this->__('label.copy_of')?> <?php $this->e($project['name'])?>" /><br />
 
     <label><?=$this->__('label.planned_start_date') ?></label>
-    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo $this->getFormattedDateString( date("Y-m-d") ) ?>" placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintStart" /><br />
+    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo $this->getFormattedDateString(date("Y-m-d")) ?>" placeholder="<?=$this->__('language.jsdateformat') ?>" id="sprintStart" /><br />
 
     <label><?=$this->__('label.client_product') ?></label>
     <select name="clientId" id="clientId">
-        <?php foreach($this->get('allClients') as $row){ ?>
+        <?php foreach ($this->get('allClients') as $row) { ?>
             <option value="<?php echo $row['id']; ?>"
-                <?php if($project['clientId'] == $row['id']) { ?> selected=selected
+                <?php if ($project['clientId'] == $row['id']) {
+                    ?> selected=selected
                 <?php } ?>><?php $this->e($row['name']); ?></option>
         <?php } ?>
     </select>

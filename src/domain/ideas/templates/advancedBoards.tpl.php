@@ -7,7 +7,7 @@ $canvasTitle = "";
 
 //All states >0 (<1 is archive)
 $numberofColumns = count($this->get('canvasLabels'));
-$size = floor((100 / $numberofColumns)* 100) / 100;
+$size = floor((100 / $numberofColumns) * 100) / 100;
 ?>
 
 <div class="pageheader">
@@ -42,7 +42,6 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                             $lastClient = "";
                             $i = 0;
                             foreach ($this->get('allCanvas') as $canvasRow) { ?>
-
                                 <?php echo "<option value='" . $canvasRow["id"] . "'";
                                 if ($this->get('currentCanvas') == $canvasRow["id"]) {
                                     echo " selected='selected' ";
@@ -77,17 +76,15 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
         <div class="clearfix"></div>
         <?php if (count($this->get('allCanvas')) > 0) { ?>
-
             <div id="sortableIdeaKanban" class="sortableTicketList">
 
                 <div class="row-fluid">
 
-                    <?php foreach($this->get('canvasLabels') as $key => $statusRow){?>
-
+                    <?php foreach ($this->get('canvasLabels') as $key => $statusRow) {?>
                     <div class="column" style="width:<?=$size?>%;">
 
                         <h4 class="widgettitle title-primary">
-                            <?php if($login::userIsAtLeast("clientManager")) { ?>
+                            <?php if ($login::userIsAtLeast("clientManager")) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
                                    class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
@@ -103,7 +100,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                         <div class="row">
                                             <div class="col-md-12">
 
-                                                <?php if($login::userIsAtLeast("developer")) { ?>
+                                                <?php if ($login::userIsAtLeast("developer")) { ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
                                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -130,10 +127,10 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                 <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
-                                                                        <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                                                                        }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        <?php if ($row["authorFirstname"] != "") {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['authorProfileId'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                        } else {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -141,9 +138,9 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                         <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                        <?php foreach($this->get('users') as $user){
+                                                        <?php foreach ($this->get('users') as $user) {
                                                             echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                                             echo"</li>";
                                                         }?>
                                                     </ul>
@@ -190,14 +187,13 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
             </div>
             <div class="clearfix"></div>
 
-            <?php if($login::userIsAtLeast("clientManager")) { ?>
+            <?php if ($login::userIsAtLeast("clientManager")) { ?>
                 <br/>
                 <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>
             <?php } ?>
 
         <?php } else { ?>
-
             <br/><br/>
             <div class='center'>
                 <div style='width:50%' class='svgContainer'>
@@ -278,16 +274,18 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.setKanbanHeights();
 
-        var ideaStatusList = [<?php foreach($canvasLabels as $key => $statusRow){ echo "'".$key."',"; }?>];
+        var ideaStatusList = [<?php foreach ($canvasLabels as $key => $statusRow) {
+            echo "'" . $key . "',";
+                              }?>];
         leantime.ideasController.initIdeaKanban(ideaStatusList);
         leantime.ideasController.initUserDropdown();
 
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
+        <?php if (isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
         leantime.helperController.showHelperModal("advancedBoards");
-        <?php
+            <?php
         //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
+            $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
         } ?>
 
     });

@@ -18,7 +18,7 @@ $statusLabels = $this->get("statusLabels");
          leantime.leanCanvasController.initUserDropdown();
          leantime.leanCanvasController.initStatusDropdown();
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
+        <?php if (isset($_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
           leantime.helperController.showHelperModal("simpleLeanCanvas");
             <?php
             //Only show once per session
@@ -26,14 +26,13 @@ $statusLabels = $this->get("statusLabels");
         } ?>
 
 
-      <?php if(isset($_GET['showModal'])) {
-
-          if($_GET['showModal'] == "") {
-              $modalUrl = "&type=solution";
-          }else{
-              $modalUrl = "/".(int)$_GET['showModal'];
-          }
-          ?>
+      <?php if (isset($_GET['showModal'])) {
+            if ($_GET['showModal'] == "") {
+                $modalUrl = "&type=solution";
+            } else {
+                $modalUrl = "/" . (int)$_GET['showModal'];
+            }
+            ?>
 
           leantime.leanCanvasController.openModalManually("<?=BASE_URL?>/leancanvas/editCanvasItem<?php echo $modalUrl; ?>");
           window.history.pushState({},document.title, '<?=BASE_URL?>/leancanvas/simpleCanvas/');
@@ -48,7 +47,7 @@ $statusLabels = $this->get("statusLabels");
  <div class="pageheader">
     <div class="pageicon"><span class="fas fa-flask"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.research_board") ?></h1>
     </div>
 </div><!--pageheader-->
@@ -64,19 +63,18 @@ $statusLabels = $this->get("statusLabels");
             <div class="col-md-4 center">
                 <span class="currentSprint">
                     <form action="" method="post">
-                        <?php if(count($this->get('allCanvas')) > 0) {?>
+                        <?php if (count($this->get('allCanvas')) > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_board") ?>" name="searchCanvas" class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
-                            $i=0;
-                            foreach($this->get('allCanvas') as $canvasRow){ ?>
-
-                                <?php echo"<option value='".$canvasRow["id"]."'";
-                                if($this->get('currentCanvas') == $canvasRow["id"]) {
+                            $i = 0;
+                            foreach ($this->get('allCanvas') as $canvasRow) { ?>
+                                <?php echo"<option value='" . $canvasRow["id"] . "'";
+                                if ($this->get('currentCanvas') == $canvasRow["id"]) {
                                     $canvasTitle = $canvasRow["title"];
                                     echo" selected='selected' ";
                                 }
-                                echo">".$canvasRow["title"]."</option>"; ?>
+                                echo">" . $canvasRow["title"] . "</option>"; ?>
 
                             <?php }     ?>
                         </select><br />
@@ -89,8 +87,7 @@ $statusLabels = $this->get("statusLabels");
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
-                    <?php if(count($this->get('allCanvas')) > 0) {?>
-
+                    <?php if (count($this->get('allCanvas')) > 0) {?>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.simple_canvas") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
@@ -106,8 +103,7 @@ $statusLabels = $this->get("statusLabels");
         </div>
 
         <div class="clearfix"></div>
-    <?php if(count($this->get('allCanvas')) > 0) {?>
-
+    <?php if (count($this->get('allCanvas')) > 0) {?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
 
             <div class="row-fluid" id="firstRow">
@@ -120,8 +116,8 @@ $statusLabels = $this->get("statusLabels");
                         <?php echo $canvasLabels["customersegment"]; ?>
                     </h4>
                     <div class="contentInner even status_uniquevalue">
-                        <?php foreach($this->get('canvasItems') as $row) { ?>
-                            <?php if($row["box"] == "customersegment") {?>
+                        <?php foreach ($this->get('canvasItems') as $row) { ?>
+                            <?php if ($row["box"] == "customersegment") {?>
                                 <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
                                     <div class="row">
@@ -145,9 +141,9 @@ $statusLabels = $this->get("statusLabels");
                                             <h4><a href="<?=BASE_URL ?>/leancanvas/editCanvasItem/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <?php
-                                            if($row["conclusion"] != "") {
+                                            if ($row["conclusion"] != "") {
                                                 echo ($row["conclusion"]);
-                                            }else {
+                                            } else {
                                                 echo $this->__("text.no_conclusion_yet");
                                             }
                                             ?>
@@ -157,16 +153,16 @@ $statusLabels = $this->get("statusLabels");
                                                 <a class="dropdown-toggle f-left status label-<?=$row["status"]; ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
                                                                         echo $statusLabels[$row['status']];
-                                                                        ?>
+                                                                    ?>
                                                                     </span>
                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
 
-                                                    <?php foreach($statusLabels as $key=>$label){
+                                                    <?php foreach ($statusLabels as $key => $label) {
                                                         echo"<li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);' class='label-".$key."' data-label='".$this->escape($label)."' data-value='".$row['id']."_".$key."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label)."</a>";
+                                                                        <a href='javascript:void(0);' class='label-" . $key . "' data-label='" . $this->escape($label) . "' data-value='" . $row['id'] . "_" . $key . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $this->escape($label) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -175,10 +171,10 @@ $statusLabels = $this->get("statusLabels");
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
-                                                                        <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                                                                        }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        <?php if ($row["authorFirstname"] != "") {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['authorProfileId'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                        } else {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -186,9 +182,9 @@ $statusLabels = $this->get("statusLabels");
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                    <?php foreach($this->get('users') as $user){
+                                                    <?php foreach ($this->get('users') as $user) {
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -198,12 +194,12 @@ $statusLabels = $this->get("statusLabels");
 
 
 
-                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                    <?php if ($row['milestoneHeadline'] != '') {?>
                                         <hr />
                                         <div class="row">
 
                                             <div class="col-md-5" >
-                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20)." [..]") :  $this->e($row['milestoneHeadline']); ?>
+                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20) . " [..]") :  $this->e($row['milestoneHeadline']); ?>
                                             </div>
                                             <div class="col-md-7" style="text-align:right">
 
@@ -237,8 +233,8 @@ $statusLabels = $this->get("statusLabels");
                         <?php echo $canvasLabels["problem"]; ?>
                     </h4>
                     <div class="contentInner even status_problem">
-                        <?php foreach($this->get('canvasItems') as $row) { ?>
-                            <?php if($row["box"] == "problem") {?>
+                        <?php foreach ($this->get('canvasItems') as $row) { ?>
+                            <?php if ($row["box"] == "problem") {?>
                                 <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
                                     <div class="row">
@@ -262,9 +258,9 @@ $statusLabels = $this->get("statusLabels");
                                             <h4><a href="<?=BASE_URL ?>/leancanvas/editCanvasItem/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <?php
-                                            if($row["conclusion"] != "") {
+                                            if ($row["conclusion"] != "") {
                                                 echo ($row["conclusion"]);
-                                            }else {
+                                            } else {
                                                 echo $this->__("text.no_conclusion_yet");
                                             }
                                             ?>
@@ -274,16 +270,16 @@ $statusLabels = $this->get("statusLabels");
                                                 <a class="dropdown-toggle f-left status label-<?=$row["status"]; ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
                                                                         echo $statusLabels[$row['status']];
-                                                                        ?>
+                                                                    ?>
                                                                     </span>
                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
 
-                                                    <?php foreach($statusLabels as $key=>$label){
+                                                    <?php foreach ($statusLabels as $key => $label) {
                                                         echo"<li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);' class='label-".$key."' data-label='".$this->escape($label)."' data-value='".$row['id']."_".$key."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label)."</a>";
+                                                                        <a href='javascript:void(0);' class='label-" . $key . "' data-label='" . $this->escape($label) . "' data-value='" . $row['id'] . "_" . $key . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $this->escape($label) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -292,10 +288,10 @@ $statusLabels = $this->get("statusLabels");
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
-                                                                        <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                                                                        }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        <?php if ($row["authorFirstname"] != "") {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['authorProfileId'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                        } else {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -303,9 +299,9 @@ $statusLabels = $this->get("statusLabels");
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                    <?php foreach($this->get('users') as $user){
+                                                    <?php foreach ($this->get('users') as $user) {
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -315,12 +311,12 @@ $statusLabels = $this->get("statusLabels");
 
 
 
-                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                    <?php if ($row['milestoneHeadline'] != '') {?>
                                         <hr />
                                         <div class="row">
 
                                             <div class="col-md-5" >
-                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20)." [..]") :  $this->e($row['milestoneHeadline']); ?>
+                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20) . " [..]") :  $this->e($row['milestoneHeadline']); ?>
                                             </div>
                                             <div class="col-md-7" style="text-align:right">
 
@@ -353,8 +349,8 @@ $statusLabels = $this->get("statusLabels");
                         <?php echo $canvasLabels["solution"]; ?>
                     </h4>
                     <div class="contentInner even status_problem">
-                        <?php foreach($this->get('canvasItems') as $row) { ?>
-                            <?php if($row["box"] == "solution") {?>
+                        <?php foreach ($this->get('canvasItems') as $row) { ?>
+                            <?php if ($row["box"] == "solution") {?>
                                 <div class="ticketBox" id="item_<?php echo $row["id"];?>">
 
                                     <div class="row">
@@ -378,9 +374,9 @@ $statusLabels = $this->get("statusLabels");
                                             <h4><a href="<?=BASE_URL ?>/leancanvas/editCanvasItem/<?php echo $row["id"];?>" class="canvasModal" data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <?php
-                                            if($row["conclusion"] != "") {
+                                            if ($row["conclusion"] != "") {
                                                 echo ($row["conclusion"]);
-                                            }else {
+                                            } else {
                                                 echo $this->__("text.no_conclusion_yet");
                                             }
                                             ?>
@@ -390,16 +386,16 @@ $statusLabels = $this->get("statusLabels");
                                                 <a class="dropdown-toggle f-left status label-<?=$row["status"]; ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
                                                                         echo $statusLabels[$row['status']];
-                                                                        ?>
+                                                                    ?>
                                                                     </span>
                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
 
-                                                    <?php foreach($statusLabels as $key=>$label){
+                                                    <?php foreach ($statusLabels as $key => $label) {
                                                         echo"<li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);' class='label-".$key."' data-label='".$this->escape($label)."' data-value='".$row['id']."_".$key."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label)."</a>";
+                                                                        <a href='javascript:void(0);' class='label-" . $key . "' data-label='" . $this->escape($label) . "' data-value='" . $row['id'] . "_" . $key . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $this->escape($label) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -408,10 +404,10 @@ $statusLabels = $this->get("statusLabels");
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
-                                                                        <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                                                                        }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        <?php if ($row["authorFirstname"] != "") {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['authorProfileId'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                        } else {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -419,9 +415,9 @@ $statusLabels = $this->get("statusLabels");
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                    <?php foreach($this->get('users') as $user){
+                                                    <?php foreach ($this->get('users') as $user) {
                                                         echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                                         echo"</li>";
                                                     }?>
                                                 </ul>
@@ -431,12 +427,12 @@ $statusLabels = $this->get("statusLabels");
 
 
 
-                                    <?php if($row['milestoneHeadline'] != '') {?>
+                                    <?php if ($row['milestoneHeadline'] != '') {?>
                                         <hr />
                                         <div class="row">
 
                                             <div class="col-md-5" >
-                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20)." [..]") :  $this->e($row['milestoneHeadline']); ?>
+                                                <?php strlen($row['milestoneHeadline']) > 20 ? $this->e(substr(($row['milestoneHeadline']), 0, 20) . " [..]") :  $this->e($row['milestoneHeadline']); ?>
                                             </div>
                                             <div class="col-md-7" style="text-align:right">
 
@@ -475,23 +471,21 @@ $statusLabels = $this->get("statusLabels");
         <?php } ?>
 
         <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
+        if (isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
                 <p class="align-center"><br />
                 <?=$this->__('tour.once_your_done_research'); ?>
                 </p>
         <?php } ?>
 
     <?php } else {
-
         echo "<br /><br /><div class='center'>";
 
         echo"<div style='width:30%' class='svgContainer'>";
-        echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+        echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
         echo"</div>";
 
-        echo"<h4>".$this->__('headlines.research_next_big_product')."</h4><br />".$this->__('text.no_lean_canvas_content')."
+        echo"<h4>" . $this->__('headlines.research_next_big_product') . "</h4><br />" . $this->__('text.no_lean_canvas_content') . "
             </div>";
-
     }
     ?>
 

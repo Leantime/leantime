@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class showBoards
     {
-
         /**
          * run - display template and edit data
          *
@@ -23,9 +22,9 @@ namespace leantime\domain\controllers {
 
             $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
 
-            if(isset($_SESSION['currentRetroCanvas'])) {
+            if (isset($_SESSION['currentRetroCanvas'])) {
                 $currentCanvasId = $_SESSION['currentRetroCanvas'];
-            }else{
+            } else {
                 $currentCanvasId = -1;
                 $_SESSION['currentRetroCanvas'] = "";
             }
@@ -47,40 +46,30 @@ namespace leantime\domain\controllers {
 
             //Add Canvas
             if (isset($_POST["newCanvas"]) === true) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
                     $currentCanvasId = $retroRepo->addCanvas($values);
                     $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
 
                     $tpl->setNotification("New Board added", "success");
                     $_SESSION['currentRetroCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
-
-
+                    $tpl->redirect(BASE_URL . "/retrospectives/showBoards/");
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
                 }
-
             }
 
             //Edit Canvas
             if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $retroRepo->updateCanvas($values);
 
                     $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
-
-
+                    $tpl->redirect(BASE_URL . "/retrospectives/showBoards/");
                 } else {
                     $tpl->setNotification('ENTER_TITLE', 'error');
                 }
-
             }
 
             $tpl->assign('currentCanvas', $currentCanvasId);
@@ -94,9 +83,6 @@ namespace leantime\domain\controllers {
                 $tpl->display('retrospectives.showBoards');
             }
         }
-
     }
 
 }
-
-

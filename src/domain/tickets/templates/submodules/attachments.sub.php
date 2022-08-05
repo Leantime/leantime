@@ -31,7 +31,7 @@ $ticket = $this->get('ticket');
 <div class="mediamgr_content">
 
     <ul id='medialist' class='listfile'>
-    <?php foreach($this->get('files') as $file): ?>
+    <?php foreach ($this->get('files') as $file) : ?>
         <li class="<?php echo $file['moduleId'] ?>">
             <div class="inlineDropDownContainer" style="float:right;">
 
@@ -54,9 +54,9 @@ $ticket = $this->get('ticket');
               <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                   <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                       <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                    <?php else: ?>
+                  <?php else : ?>
                       <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
-                    <?php endif; ?>
+                  <?php endif; ?>
                 <span class="filename"><?php echo $file['realName'] ?></span>
               </a>
 

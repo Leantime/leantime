@@ -22,9 +22,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <h4 class="widgettitle title-light"><i
                 class="iconfa iconfa-columns"></i>
         <?php
-        if($canvasItem['description'] == "") {
+        if ($canvasItem['description'] == "") {
                 echo $this->__("headlines.ideas");
-        }else{
+        } else {
             $this->e($canvasItem['description']);
         } ?>
     </h4>
@@ -117,9 +117,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         </div>
                     </li>
                     <?php
-
                 } else {
-
                     if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
                         $date = $this->__("text.no_date_defined");
                     } else {
@@ -179,7 +177,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="comment" value="1"/>
 
         <?php
-        $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
+        $this->assign("formUrl", BASE_URL . "/ideas/ideaDialog/" . $id . "");
         $this->displaySubmodule('comments-generalComment'); ?>
     <?php } ?>
 

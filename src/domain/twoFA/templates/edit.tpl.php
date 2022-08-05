@@ -18,7 +18,7 @@
                 <div class="widget">
                     <h4 class="widgettitle"><?php echo $this->__('label.twoFA_setup'); ?></h4>
                     <div class="widgetcontent">
-                        <?php if(!$this->get('twoFAEnabled')) { ?>
+                        <?php if (!$this->get('twoFAEnabled')) { ?>
                             <h5>1. <?php echo $this->__('text.twoFA_qr'); ?></h5>
                             <img src="<?php echo $this->get("qrData"); ?>"/>
 

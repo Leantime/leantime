@@ -2,12 +2,7 @@
 
 class main
 {
-
     public function run()
     {
-
-        
-        
     }
 }
-

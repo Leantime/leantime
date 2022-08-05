@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
         /**
          * run - display template and edit data
          *
@@ -25,29 +24,21 @@ namespace leantime\domain\controllers {
             $clientRepo = new repositories\clients();
 
             //Only admins and employees
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if ($_SESSION['userdata']['role'] == 'admin') {
-
                     $tpl->assign('admin', true);
-
                 }
 
-                if(core\login::userIsAtLeast("manager")) {
+                if (core\login::userIsAtLeast("manager")) {
                     $tpl->assign('allClients', $clientRepo->getAll());
-                }else{
+                } else {
                     $tpl->assign('allClients', array($clientRepo->getClient(core\login::getUserClientId())));
                 }
 
                 $tpl->display('clients.showAll');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 }

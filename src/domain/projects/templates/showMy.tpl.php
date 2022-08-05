@@ -32,11 +32,15 @@
                 <div class="center">
                     <form>
                         <select id="client" name="client" class="mainSprintSelector" onchange="form.submit();">
-                            <option value="" <?php if($currentClient == "") echo " selected='selected' "; ?>><?=$this->__("headline.all_clients"); ?></option>
-                            <?php foreach($clients as $key=>$value) {
-                                echo "<option value='".$key."'";
-                                if($currentClient == $key) echo " selected='selected' ";
-                                echo">".$this->escape($value)."</option>";
+                            <option value="" <?php if ($currentClient == "") {
+                                echo " selected='selected' ";
+                                             } ?>><?=$this->__("headline.all_clients"); ?></option>
+                            <?php foreach ($clients as $key => $value) {
+                                echo "<option value='" . $key . "'";
+                                if ($currentClient == $key) {
+                                    echo " selected='selected' ";
+                                }
+                                echo">" . $this->escape($value) . "</option>";
                             }
                             ?>
                         </select>
@@ -54,7 +58,7 @@
         </div>
 
         <div class="row">
-            <?php foreach($allProjects as $project) { ?>
+            <?php foreach ($allProjects as $project) { ?>
             <div class="col-lg-4">
 
                 <div class="row" id="projectProgressContainer">
@@ -84,9 +88,9 @@
                             </div>
                             <div class="col-md-6 border-bottom">
                                 <?php
-                                if($project['report'] !== false) {
+                                if ($project['report'] !== false) {
                                     echo($project['report']['sum_open_todos'] + $project['report']['sum_progres_todos']);
-                                }else{
+                                } else {
                                     echo 0;
                                 }
                                 ?>
@@ -98,7 +102,11 @@
                                 <h5><?=$this->__("label.planned_hours") ?></h5>
                             </div>
                             <div class="col-md-6 border-bottom">
-                                <?php if($project['report'] !== false && $project['report']['sum_planned_hours'] != null) echo $project['report']['sum_planned_hours']; else echo 0; ?>
+                                <?php if ($project['report'] !== false && $project['report']['sum_planned_hours'] != null) {
+                                    echo $project['report']['sum_planned_hours'];
+                                } else {
+                                    echo 0;
+                                } ?>
                             </div>
                         </div>
 
@@ -107,7 +115,11 @@
                                 <h5><?=$this->__("label.estimated_hours_remaining") ?></h5>
                             </div>
                             <div class="col-md-6 border-bottom">
-                                <?php if($project['report'] !== false && $project['report']['sum_estremaining_hours'] != null) echo $project['report']['sum_estremaining_hours']; else echo 0; ?>
+                                <?php if ($project['report'] !== false && $project['report']['sum_estremaining_hours'] != null) {
+                                    echo $project['report']['sum_estremaining_hours'];
+                                } else {
+                                    echo 0;
+                                } ?>
                             </div>
                         </div>
 
@@ -116,7 +128,11 @@
                                 <h5><?=$this->__("label.booked_hours") ?></h5>
                             </div>
                             <div class="col-md-6 border-bottom">
-                                <?php if($project['report'] !== false && $project['report']['sum_logged_hours'] != null) echo $project['report']['sum_logged_hours']; else echo 0; ?>
+                                <?php if ($project['report'] !== false && $project['report']['sum_logged_hours'] != null) {
+                                    echo $project['report']['sum_logged_hours'];
+                                } else {
+                                    echo 0;
+                                } ?>
                             </div>
                         </div>
                         <br />
@@ -129,22 +145,22 @@
                         <h5 class="subtitle" style="font-size:14px;"><?=$this->__("headline.milestones") ?></h5>
                         <ul class="sortableTicketList" >
                             <?php
-                            if(count($project['milestones']) == 0){
-                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
-                                ".$this->__("text.milestones_help_organize_projects")."<br /><br />";
+                            if (count($project['milestones']) == 0) {
+                                echo"<div class='center'><br /><h4>" . $this->__("headlines.no_milestones") . "</h4>
+                                " . $this->__("text.milestones_help_organize_projects") . "<br /><br />";
                             }
                             ?>
-                            <?php foreach($project['milestones'] as $row){
+                            <?php foreach ($project['milestones'] as $row) {
                                 $percent = 0;
 
 
-                                if($row->editTo == "0000-00-00 00:00:00") {
+                                if ($row->editTo == "0000-00-00 00:00:00") {
                                     $date = $this->__("text.no_date_defined");
-                                }else {
+                                } else {
                                     $date = new DateTime($row->editTo);
-                                    $date= $date->format($this->__("language.dateformat"));
+                                    $date = $date->format($this->__("language.dateformat"));
                                 }
-                                if($row->percentDone < 100 || $date >= new DateTime()) {
+                                if ($row->percentDone < 100 || $date >= new DateTime()) {
                                     ?>
                                     <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
                                         <div class="ticketBox fixed">
@@ -199,7 +215,7 @@
 
    jQuery(document).ready(function() {
 
-       <?php foreach($allProjects as $project) { ?>
+       <?php foreach ($allProjects as $project) { ?>
         leantime.dashboardController.initProgressChart("chart-area-<?=$project['id']?>", <?php echo round($project['progress']['percent']); ?>, <?php echo round((100 - $project['progress']['percent'])); ?>);
        <?php }?>
 

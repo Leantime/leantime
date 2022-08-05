@@ -24,10 +24,10 @@ namespace leantime\domain\controllers {
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastTicketView'] = "kanban";
             $_SESSION['lastFilterdTicketKanbanView'] = CURRENT_URL;
-
         }
 
-        public function get(array $params) {
+        public function get(array $params)
+        {
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
@@ -57,27 +57,22 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showKanban');
-
         }
 
-        public function post(array $params) {
+        public function post(array $params)
+        {
 
             //QuickAdd
-            if(isset($_POST['quickadd']) == true) {
-
+            if (isset($_POST['quickadd']) == true) {
                 $result = $this->ticketService->quickAddTicket($params);
 
-                if(isset($result["status"]) ) {
+                if (isset($result["status"])) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 }
             }
 
             $this->tpl->redirect(CURRENT_URL);
-
         }
-
     }
 
 }
-
-

@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class roadmap
     {
-
         private $tpl;
         private $projects;
         private $sprintService;
@@ -28,7 +27,6 @@ namespace leantime\domain\controllers {
             $this->projects = new repositories\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
-
         }
 
 
@@ -58,7 +56,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
-
         }
 
         /**
@@ -69,7 +66,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -80,9 +76,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

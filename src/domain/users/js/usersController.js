@@ -41,7 +41,8 @@ leantime.usersController = (function () {
                     );
 
                 _uploadResult.croppie(
-                    'bind', {
+                    'bind',
+                    {
                         url: e.currentTarget.result
                     }
                 );
@@ -62,9 +63,10 @@ leantime.usersController = (function () {
 
         jQuery('#save-picture').addClass('running');
 
-        jQuery('#profileImg').attr('src', leantime.appUrl+'/images/loaders/loader28.gif');
+        jQuery('#profileImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
         _uploadResult.croppie(
-            'result', {
+            'result',
+            {
                 type: "blob",
                 circle: true
             }
@@ -77,7 +79,7 @@ leantime.usersController = (function () {
 
     var initUserTable = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
 

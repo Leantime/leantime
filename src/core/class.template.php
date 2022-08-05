@@ -11,7 +11,6 @@ namespace leantime\core {
 
     class template
     {
-
         /**
          * @access private
          * @var    array - vars that are set in the action
@@ -63,7 +62,7 @@ namespace leantime\core {
             'projects'     => 'iconfa-bar-chart',
             'setting'    => 'iconfa-cogs',
             'tickets'    => 'iconfa-pushpin',
-            'timesheets'=> 'iconfa-table',
+            'timesheets' => 'iconfa-table',
             'users'        => 'iconfa-group',
             'default'    => 'iconfa-off'
         );
@@ -78,7 +77,6 @@ namespace leantime\core {
             $this->controller = frontcontroller::getInstance();
 
             $this->language = new language();
-
         }
 
         /**
@@ -91,7 +89,6 @@ namespace leantime\core {
         {
 
             $this->vars[$name] = $value;
-
         }
 
         /**
@@ -101,12 +98,11 @@ namespace leantime\core {
          * @param  $type
          * @return string
          */
-        public function setNotification($msg,$type)
+        public function setNotification($msg, $type)
         {
 
             $_SESSION['notification'] = $msg;
             $_SESSION['notifcationType'] = $type;
-
         }
 
         public function getModulePicture()
@@ -141,7 +137,7 @@ namespace leantime\core {
 
             $this->template = $template;
 
-            require ROOT.'/../src/content.php';
+            require ROOT . '/../src/content.php';
 
             $mainContent = ob_get_clean();
             ob_start();
@@ -151,7 +147,7 @@ namespace leantime\core {
 
             $module = frontcontroller::getModuleName($template);
 
-            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            $strTemplate = '../src/domain/' . $module . '/templates/' . $action . '.tpl.php';
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
                 throw new Exception($this->__("notifications.no_template"));
             }
@@ -164,7 +160,6 @@ namespace leantime\core {
             $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
 
             echo $content;
-
         }
 
         /**
@@ -174,15 +169,15 @@ namespace leantime\core {
          * @param  $jsonContent
          * @return void
          */
-        public function displayJson($jsonContent) {
+        public function displayJson($jsonContent)
+        {
 
             header('Content-Type: application/json; charset=utf-8');
-            if($jsonContent !== false) {
+            if ($jsonContent !== false) {
                 echo $jsonContent;
-            }else{
+            } else {
                 echo "{Invalid Json}";
             }
-
         }
 
         /**
@@ -208,19 +203,14 @@ namespace leantime\core {
 
             $module = frontcontroller::getModuleName($template);
 
-                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+                $strTemplate = '../src/domain/' . $module . '/templates/' . $action . '.tpl.php';
 
             if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
                 error_log($this->__("notifications.no_template"), 0);
                 echo $this->__("notifications.no_template");
-
             } else {
-
                 include $strTemplate;
-
             }
-
         }
 
 
@@ -231,11 +221,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return void
          */
-        public function includeAction($completeName, $params=array())
+        public function includeAction($completeName, $params = array())
         {
 
             $this->controller->includeAction($completeName, $params);
-
         }
 
         /**
@@ -249,7 +238,6 @@ namespace leantime\core {
         {
 
             if (! isset($this->vars[$name])) {
-
                 return null;
             }
 
@@ -259,14 +247,10 @@ namespace leantime\core {
         public function getNotification()
         {
 
-            if(isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-
+            if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
                 return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
-
-            }else{
-
+            } else {
                 return array('type' => "", 'msg' => "");
-
             }
         }
 
@@ -286,22 +270,19 @@ namespace leantime\core {
             $login = login::getInstance();
 
 
-            $submodule = array("module"=>'', "submodule"=>'');
+            $submodule = array("module" => '', "submodule" => '');
 
             $aliasParts = explode("-", $alias);
-            if(count($aliasParts) > 1) {
+            if (count($aliasParts) > 1) {
                 $submodule['module'] = $aliasParts[0];
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $file = '../src/domain/' . $submodule['module'] . '/templates/submodules/' . $submodule['submodule'] . '.sub.php';
 
             if (file_exists($file)) {
-
                 include $file;
-
             }
-
         }
 
         /**
@@ -312,41 +293,35 @@ namespace leantime\core {
 
             $mod = explode('.', $module);
 
-            if(is_array($mod) === true && count($mod) == 2) {
-
+            if (is_array($mod) === true && count($mod) == 2) {
                 $action = $mod[1];
                 $module = $mod[0];
 
-                $mod = $module.'/class.'.$action.'.php';
-
-            }else{
-
+                $mod = $module . '/class.' . $action . '.php';
+            } else {
                 $mod = array();
                 return false;
-
             }
 
             $returnLink = false;
 
-            $url = "/".$module."/".$action."/";
+            $url = "/" . $module . "/" . $action . "/";
 
             if (!empty($params)) {
-
                 foreach ($params as $key => $value) {
-                    $url .= $value."/";
+                    $url .= $value . "/";
                 }
             }
 
             $attr = '';
 
-            if ($attribute!=null) {
-
-                foreach ($attribute as $key => $value){
-                    $attr .= $key." = '".$value."' ";
+            if ($attribute != null) {
+                foreach ($attribute as $key => $value) {
+                    $attr .= $key . " = '" . $value . "' ";
                 }
             }
 
-            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
+            $returnLink = "<a href='" . BASE_URL . "" . $url . "' " . $attr . ">" . $name . "</a>";
 
             return $returnLink;
         }
@@ -365,16 +340,15 @@ namespace leantime\core {
             );
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-
-                $notification = "<div class='alert alert-".$note['type']."'>
+                $notification = "<div class='alert alert-" . $note['type'] . "'>
                                     <div class='infoBox'>
-                                        ".$alertIcons[$note['type']]."
+                                        " . $alertIcons[$note['type']] . "
                                     </div>
 								<button data-dismiss='alert' class='close' type='button'>×</button>
 								<div class='alert-content'><h4>"
-                    .ucfirst($note['type']).
+                    . ucfirst($note['type']) .
                     "!</h4>"
-                    .$language->__($note['msg'], false).
+                    . $language->__($note['msg'], false) .
                     "
 								</div>
 								<div class='clearall'></div>
@@ -382,7 +356,6 @@ namespace leantime\core {
 
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
-
             }
 
             return $notification;
@@ -391,7 +364,7 @@ namespace leantime\core {
         public function redirect($url): void
         {
 
-            header("Location:".trim($url));
+            header("Location:" . trim($url));
             exit();
         }
 
@@ -405,14 +378,12 @@ namespace leantime\core {
             $subdomain = $tmp[0];
 
             return $subdomain;
-
         }
 
         public function __($index): string
         {
 
             return $this->language->__($index);
-
         }
 
         //Echos and escapes content
@@ -422,18 +393,16 @@ namespace leantime\core {
             $escaped = $this->escape($content);
 
             echo $escaped;
-
         }
 
         public function escape($content): string
         {
 
-            if(!is_null($content)) {
+            if (!is_null($content)) {
                 return htmlentities($content);
             }
 
             return '';
-
         }
 
         /**
@@ -446,8 +415,7 @@ namespace leantime\core {
         public function getFormattedDateString($date): string
         {
 
-           return  $this->language->getFormattedDateString($date);
-
+            return  $this->language->getFormattedDateString($date);
         }
 
         /**
@@ -461,12 +429,12 @@ namespace leantime\core {
         {
 
             return  $this->language->getFormattedTimeString($date);
-
         }
 
         //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
         //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
-        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {
+        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false)
+        {
             $printedLength = 0;
             $position = 0;
             $tags = array();
@@ -478,14 +446,12 @@ namespace leantime\core {
                 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}'
                 : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
 
-            while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position))
-            {
+            while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position)) {
                 list($tag, $tagPosition) = $match[0];
 
                 // Print text leading up to the tag.
                 $str = substr($html, $position, $tagPosition - $position);
-                if ($printedLength + strlen($str) > $maxLength)
-                {
+                if ($printedLength + strlen($str) > $maxLength) {
                     $truncate .= substr($str, 0, $maxLength - $printedLength);
                     $printedLength = $maxLength;
                     break;
@@ -493,34 +459,28 @@ namespace leantime\core {
 
                 $truncate .= $str;
                 $printedLength += strlen($str);
-                if ($printedLength >= $maxLength) break;
+                if ($printedLength >= $maxLength) {
+                    break;
+                }
 
-                if ($tag[0] == '&' || ord($tag) >= 0x80)
-                {
+                if ($tag[0] == '&' || ord($tag) >= 0x80) {
                     // Pass the entity or UTF-8 multibyte sequence through unchanged.
                     $truncate .= $tag;
                     $printedLength++;
-                }
-                else
-                {
+                } else {
                     // Handle the tag.
                     $tagName = $match[1][0];
-                    if ($tag[1] == '/')
-                    {
+                    if ($tag[1] == '/') {
                         // This is a closing tag.
 
                         $openingTag = array_pop($tags);
                         assert($openingTag == $tagName); // check that tags are properly nested.
 
                         $truncate .= $tag;
-                    }
-                    elseif ($tag[strlen($tag) - 2] == '/')
-                    {
+                    } elseif ($tag[strlen($tag) - 2] == '/') {
                         // Self-closing tag.
                         $truncate .= $tag;
-                    }
-                    else
-                    {
+                    } else {
                         // Opening tag.
                         $truncate .= $tag;
                         $tags[] = $tagName;
@@ -532,20 +492,19 @@ namespace leantime\core {
             }
 
             // Print any remaining text.
-            if ($printedLength < $maxLength && $position < strlen($html))
+            if ($printedLength < $maxLength && $position < strlen($html)) {
                 $truncate .= sprintf(substr($html, $position, $maxLength - $printedLength));
+            }
 
             // Close any open tags.
-            while (!empty($tags))
+            while (!empty($tags)) {
                 $truncate .= sprintf('</%s>', array_pop($tags));
+            }
 
             $truncate .= $ending;
 
             return $truncate;
         }
-
-
-
     }
 
 }

@@ -22,7 +22,7 @@ leantime.menuController = (function () {
 
     };
 
-    var _initLeftMenuHamburgerButton = function (){
+    var _initLeftMenuHamburgerButton = function () {
 
         if (jQuery('.barmenu').hasClass('open')) {
             jQuery('.rightpanel').css({marginLeft: '240px'});
@@ -42,20 +42,18 @@ leantime.menuController = (function () {
 
 
             if (!jQuery(this).hasClass('open')) {
-
                 jQuery('.header').animate({marginLeft: '240px', width:'-=240px'}, 'fast');
 
                 jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
 
-                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function(){
+                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
                     jQuery('.barmenu').addClass('open');
                 });
 
 
                 leantime.menuRepository.updateUserMenuSettings("open");
             } else {
-
-                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function() {
+                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function () {
                     jQuery('.barmenu').removeClass('open');
                 });
 
@@ -63,7 +61,6 @@ leantime.menuController = (function () {
                 jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '240px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");
-
             }
         });
 
@@ -91,14 +88,14 @@ leantime.menuController = (function () {
 
     };
 
-    var toggleClientList = function  (id, element) {
+    var toggleClientList = function (id, element) {
 
-        jQuery(".client_"+id).toggle("fast");
+        jQuery(".client_" + id).toggle("fast");
 
-        if(jQuery(element).find("i").hasClass("fa-caret-down")){
+        if (jQuery(element).find("i").hasClass("fa-caret-down")) {
             jQuery(element).find("i").removeClass("fa-caret-down");
             jQuery(element).find("i").addClass("fa-caret-up");
-        }else{
+        } else {
             jQuery(element).find("i").removeClass("fa-caret-up");
             jQuery(element).find("i").addClass("fa-caret-down");
         }

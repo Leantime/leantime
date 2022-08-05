@@ -8,7 +8,6 @@ namespace leantime\domain\repositories {
 
     class setting
     {
-
         private $db;
 
         public $applications = array(
@@ -25,7 +24,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         public function getSetting($type)
@@ -39,22 +37,20 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
-                try {
-                    $stmn->execute();
-                    $values = $stmn->fetch();
-                    $stmn->closeCursor();
+            try {
+                $stmn->execute();
+                $values = $stmn->fetch();
+                $stmn->closeCursor();
+            } catch (PDOException $e) {
+                return false;
+            }
 
-                }catch(PDOException $e){
-                    return false;
-                }
-
-                if($values !== false && isset($values['value'])) {
-                    return $values['value'];
-                }
+            if ($values !== false && isset($values['value'])) {
+                return $values['value'];
+            }
 
                 //TODO: This needs to return null or throw an exception if the setting doesn't exist.
                 return false;
-
         }
 
         public function saveSetting($type, $value)
@@ -72,8 +68,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $return;
-
-
         }
 
         public function deleteSetting($type)
@@ -86,8 +80,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
-
         }
 
         /**
@@ -100,7 +92,6 @@ namespace leantime\domain\repositories {
         {
 
             try {
-
                 $stmn = $this->db->database->prepare("SELECT COUNT(*) FROM zp_user");
 
                 $stmn->execute();
@@ -109,13 +100,9 @@ namespace leantime\domain\repositories {
                 $stmn->closeCursor();
 
                 return true;
-
             } catch (PDOException $e) {
-
                 return false;
-
             }
         }
-
     }
 }

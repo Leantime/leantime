@@ -9,7 +9,6 @@ namespace leantime\domain\repositories {
 
     class projects
     {
-
         /**
          * @access public
          * @var    string
@@ -56,7 +55,6 @@ namespace leantime\domain\repositories {
         {
             $config = new core\config();
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -105,7 +103,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects`";
 
-            if($clientId != null && is_numeric($clientId)){
+            if ($clientId != null && is_numeric($clientId)) {
                 $sql .= " WHERE clientId = :clientId";
             }
 
@@ -119,9 +117,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['projectCount']) === true) {
+            if (isset($values['projectCount']) === true) {
                 return $values['projectCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -150,7 +148,7 @@ namespace leantime\domain\repositories {
 
             if ($status == "open") {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
-            } else if ($status == "closed") {
+            } elseif ($status == "closed") {
                 $query .= " AND (project.state = -1)";
             }
 
@@ -308,7 +306,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
 
@@ -328,7 +325,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function recursive_array_search($needle, $haystack)
@@ -376,8 +372,6 @@ namespace leantime\domain\repositories {
                 $total = 0;
 
                 foreach ($period as $d) {
-
-
                     $day = $d->format('Y-m-d');
                     $dayKey = $d->getTimestamp();
 
@@ -392,13 +386,11 @@ namespace leantime\domain\repositories {
 
                     $total = $total + $value;
                     $chartArr[$dayKey] = $total;
-
                 }
             }
 
 
             return $chartArr;
-
         }
 
         public function getProjectBookedDollars($id)
@@ -417,7 +409,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         /**
@@ -440,7 +431,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         /**
@@ -481,15 +471,12 @@ namespace leantime\domain\repositories {
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-
                 foreach ($values['assignedUsers'] as $userId) {
                     $this->addProjectRelation($userId, $projectId);
                 }
-
             }
 
             return $projectId;
-
         }
 
         /**
@@ -532,13 +519,10 @@ namespace leantime\domain\repositories {
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-
                 foreach ($values['assignedUsers'] as $userId) {
                     $this->addProjectRelation($userId, $id);
                 }
-
             }
-
         }
 
         /**
@@ -557,7 +541,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -582,15 +565,10 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             if (count($values) == 0) {
-
                 return false;
-
             } else {
-
                 return true;
-
             }
-
         }
 
         /**
@@ -781,9 +759,7 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
-
     }
 
 }

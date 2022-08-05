@@ -1,6 +1,5 @@
 <?php
 
-
 /* Not production ready yet. Prepping for future version */
 
 namespace leantime\domain\controllers {
@@ -11,12 +10,14 @@ namespace leantime\domain\controllers {
 
     class import
     {
-
         private $language;
 
-        public function __construct() {
+        public function __construct()
+        {
             $this->language = new core\language();
-            if(!isset($_SESSION['tmp'])) $_SESSION['tmp'] = [];
+            if (!isset($_SESSION['tmp'])) {
+                $_SESSION['tmp'] = [];
+            }
         }
 
         public function get()
@@ -27,78 +28,63 @@ namespace leantime\domain\controllers {
             $ldapService = new services\ldap();
 
             //Only Admins
-            if(core\login::userIsAtLeast("manager")) {
-
+            if (core\login::userIsAtLeast("manager")) {
                 $tpl->assign('allUsers', $userRepo->getAll());
                 $tpl->assign('admin', true);
                 $tpl->assign('roles', core\login::$userRoles);
 
-                if(isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
+                if (isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
                     $tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
                     $tpl->assign('confirmUsers', true);
                 }
 
                 $tpl->displayPartial('users.importLdapDialog');
-
-            }else{
-
+            } else {
                 $tpl->display('general.error');
-
             }
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             $tpl = new core\template();
             $userRepo =  new repositories\users();
             $ldapService = new services\ldap();
 
             //Password Submit to connect to ldap and retrieve users. Sets tmp session var
-            if(isset($params['pwSubmit'])) {
-
+            if (isset($params['pwSubmit'])) {
                 $username = $ldapService->extractLdapFromUsername($_SESSION["userdata"]["mail"]);
 
                 $ldapService->connect();
 
-                if($ldapService->bind($username, $params['password'])) {
-
+                if ($ldapService->bind($username, $params['password'])) {
                     $_SESSION['tmp']["ldapUsers"] = $ldapService->getAllMembers();
-                    $tpl->assign('allLdapUsers',  $_SESSION['tmp']["ldapUsers"]);
+                    $tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
                     $tpl->assign('confirmUsers', true);
-
-                }else{
-
+                } else {
                     $tpl->setNotification($this->language->__("notifications.username_or_password_incorrect"), "error");
-
                 }
-
             }
 
             //Import/Update User Post
-            if(isset($params['importSubmit'])) {
-
+            if (isset($params['importSubmit'])) {
                 var_dump($params["users"]);
 
 
-                if(is_array($params["users"])){
-
+                if (is_array($params["users"])) {
                     $users = array();
-                    foreach($_SESSION['tmp']["ldapUsers"] as $user) {
-                        if(array_search($user['username'], $params["users"])){
+                    foreach ($_SESSION['tmp']["ldapUsers"] as $user) {
+                        if (array_search($user['username'], $params["users"])) {
                             $users[] = $user;
                         }
                     }
 
                     $ldapService->upsertUsers($users);
                 }
-
             }
 
             $tpl->displayPartial('users.importLdapDialog');
-
         }
-
     }
 
 }

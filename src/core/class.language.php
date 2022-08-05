@@ -11,7 +11,6 @@ namespace leantime\core {
 
     class language
     {
-
         /**
          * @access private
          * @var    string
@@ -60,29 +59,19 @@ namespace leantime\core {
             $config = new config();
 
             if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
-
                 $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
 
                 if ($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
-
                     $this->setLanguage($config->language);
-
                 } elseif (isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
-
                     $this->setLanguage($_SESSION['companysettings.language']);
-
                 } else {
-
                     $browserLang = $this->getBrowserLanguage();
                     $this->setLanguage($browserLang);
-
                 }
-
             } else {
-
                 throw new Exception("Language list missing");
             }
-
         }
 
         /**
@@ -98,7 +87,6 @@ namespace leantime\core {
             $this->language = $lang;
 
             $this->readIni();
-
         }
 
         /**
@@ -116,24 +104,19 @@ namespace leantime\core {
             $mainLanguageArray = parse_ini_file('' . $this->iniFolder . '/en-US.ini', false, INI_SCANNER_RAW);
 
             if (file_exists('' . $this->iniFolder . '/' . $this->language . '.ini') === true) {
-
                 $ini_overrides = parse_ini_file('' . $this->iniFolder . '/' . $this->language . '.ini', false, INI_SCANNER_RAW);
 
                 if (is_array($ini_overrides) == true) {
-
                     foreach ($mainLanguageArray as $languageKey => $languageValue) {
-
                         if (array_key_exists($languageKey, $ini_overrides)) {
                             $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
                         }
-
                     }
                 }
             }
 
             $this->ini_array = $mainLanguageArray;
             return $this->ini_array;
-
         }
 
         /**
@@ -146,16 +129,11 @@ namespace leantime\core {
         {
 
             if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
-
                 $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
                 return $this->langlist;
-
             } else {
-
                 return false;
-
             }
-
         }
 
 
@@ -171,44 +149,31 @@ namespace leantime\core {
             $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
             if (empty($language)) {
-
                 return $this->language;
-
             }
 
             $langCode = explode("-", $language);
 
             if (isset($this->langlist[$langCode[0]]) === true) {
-
                 return $langCode[0];
-
             }
-
         }
 
 
-        public function __(string $index) :string
+        public function __(string $index): string
         {
 
             if (isset($this->ini_array[$index]) === true) {
-
                 $index = trim($index);
 
                 return (string) $this->ini_array[$index];
-
             } else {
-
                 if ($this->alert === true) {
-
                     return '<span style="color: red; font-weight:bold;">' . $index . '</span>';
-
                 } else {
-
                     return $index;
-
                 }
             }
-
         }
 
         /**
@@ -218,10 +183,9 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedDateString($date) :string
+        public function getFormattedDateString($date): string
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
                 if (strlen($date) == 10) {
                     $timestamp = date_create_from_format("!Y-m-d", $date);
@@ -232,11 +196,9 @@ namespace leantime\core {
                 if (is_object($timestamp)) {
                     return date($this->__("language.dateformat"), $timestamp->getTimestamp());
                 }
-
             }
 
             return "";
-
         }
 
         /**
@@ -249,15 +211,12 @@ namespace leantime\core {
         public function getFormattedTimeString($date)
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
                 if (is_object($timestamp)) {
                     return date($this->__("language.timeformat"), $timestamp->getTimestamp());
                 }
-
             }
-
         }
 
         /**
@@ -270,17 +229,14 @@ namespace leantime\core {
         public function getISODateString($date)
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
                 if (is_object($timestamp)) {
                     return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
                 }
-
             }
 
             return false;
-
         }
 
 
@@ -294,19 +250,15 @@ namespace leantime\core {
         public function getISODateTimeString($date)
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format($this->__("language.dateformat") . " " . $this->__("language.timeformat"), $date);
 
                 if (is_object($timestamp)) {
                     return date("Y-m-d H:i:00", $timestamp->getTimestamp());
                 }
-
             }
 
             return false;
-
         }
-
     }
 
 }

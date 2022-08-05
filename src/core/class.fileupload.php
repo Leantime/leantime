@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\core;
 
 use Aws\S3\Exception\S3Exception;
@@ -12,7 +13,6 @@ use Exception;
  */
 class fileupload
 {
-
     /**
      * @access private
      * @var    string path on the server
@@ -102,15 +102,12 @@ class fileupload
                     ]
                 ]
             );
-
         } else {
             //Can discuss whether we want to allow local uploads again at some point...
             return false;
-
         }
 
         return false;
-
     }
 
     /**
@@ -186,7 +183,6 @@ class fileupload
         $this->real_name = $this->file_name;
 
         if ($name != '') {
-
             if (isset($this->path_parts['extension'])) {
                 $this->file_name = $name . '.' . $this->path_parts['extension'];
             } else {
@@ -194,13 +190,9 @@ class fileupload
             }
 
             return true;
-
         } else {
-
             return false;
-
         }
-
     }
 
     /**
@@ -216,22 +208,19 @@ class fileupload
             //S3 upload
             return $this->uplodToS3();
         } else {
-
             //Local upload
             return $this->uploadLocal();
         }
-
     }
 
     public function uploadPublic()
     {
 
         if ($this->config->useS3 == true) {
-
             try {
                 // Upload data.
                 $file = fopen($this->file_tmp_name, "rb");
-                // implode all non-empty elements to allow s3FolderName to be empty. 
+                // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
                 $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
@@ -239,32 +228,22 @@ class fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
-
             } catch (S3Exception $e) {
-
                 error_log($e->getMessage(), 0);
                 return false;
-
             }
-
         } else {
-
             try {
-
                 if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
                     return "/userfiles/" . $this->file_name;
                 }
-
             } catch (Exception $e) {
-
                 error_log($e->getMessage(), 0);
                 return false;
             }
-
         }
 
         return false;
-
     }
 
     private function uplodToS3()
@@ -273,42 +252,31 @@ class fileupload
         try {
             // Upload data.
             $file = fopen($this->file_tmp_name, "rb");
-            // implode all non-empty elements to allow s3FolderName to be empty. 
+            // implode all non-empty elements to allow s3FolderName to be empty.
             // otherwise you will get an error as the key starts with a slash
             $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
-
         } catch (S3Exception $e) {
-
             error_log($e->getMessage(), 0);
             return false;
-
         }
-
     }
 
     private function uploadLocal()
     {
 
         try {
-
             if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath() . "/" . $this->file_name)) {
                 return true;
             }
-
         } catch (Exception $e) {
-
             error_log($e->getMessage(), 0);
             return false;
         }
 
         return false;
-
     }
-
-
 }
-

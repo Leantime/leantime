@@ -4,23 +4,23 @@ $formUrl = CURRENT_URL;
 
 //Controller may not redirect. Make sure delComment is only added once
 if (strpos($formUrl, '?delComment=') !== false) {
-	$urlParts = explode('?delComment=', $formUrl);
-	$deleteUrlBase = $urlParts[0] . "?delComment=";
+    $urlParts = explode('?delComment=', $formUrl);
+    $deleteUrlBase = $urlParts[0] . "?delComment=";
 } else {
-	$deleteUrlBase = $formUrl . "?delComment=";
+    $deleteUrlBase = $formUrl . "?delComment=";
 }
 ?>
 
 <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
 
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>"
-	  id="commentForm">
-	<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-	   style="display:none;" id="mainToggler"><span
-				class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
-	</a>
-	<div id="comment0" class="commentBox">
-		<!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
+      id="commentForm">
+    <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
+       style="display:none;" id="mainToggler"><span
+                class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
+    </a>
+    <div id="comment0" class="commentBox">
+        <!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
         <div class="commentImage">
             <img src="<?= BASE_URL ?>/api/users?profileImage=currentUser"/>
         </div>
@@ -32,15 +32,15 @@ if (strpos($formUrl, '?delComment=') !== false) {
                        name="comment" class="btn btn-primary btn-success"
                        style="margin-left: 0px;"/>
         </div>
-		<input type="hidden" name="comment" value="1"/>
-		<input type="hidden" name="father" id="father" value="0"/>
-		<br/>
-	</div>
+        <input type="hidden" name="comment" value="1"/>
+        <input type="hidden" name="father" id="father" value="0"/>
+        <br/>
+    </div>
 
-	<div id="comments">
-		<div>
-			<?php foreach ($this->get('comments') as $row): ?>
-				<div class="clearall">
+    <div id="comments">
+        <div>
+            <?php foreach ($this->get('comments') as $row) : ?>
+                <div class="clearall">
 
                     <div class="commentImage">
                         <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
@@ -49,10 +49,13 @@ if (strpos($formUrl, '?delComment=') !== false) {
                     <div class="commentMain">
                         <div class="commentContent">
                             <div class="right commentDate">
-                                <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
-                                    $this->getFormattedTimeString($row['date']) ); ?>
+                                <?php printf(
+                                    $this->__('text.written_on'),
+                                    $this->getFormattedDateString($row['date']),
+                                    $this->getFormattedTimeString($row['date'])
+                                ); ?>
                             </div>
-                            <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
+                            <span class="name"><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
                             <div class="text"><?php echo ($row['text']); ?></div>
                         </div>
 
@@ -73,8 +76,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
                         <div class="replies">
                             <?php if ($comments->getReplies($row['id'])) : ?>
-                                <?php foreach ($comments->getReplies($row['id']) as $comment): ?>
-
+                                <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
                                     <div>
 
                                         <div class="commentImage">
@@ -84,10 +86,13 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                         <div class="commentMain">
                                             <div class="commentContent">
                                                 <div class="right commentDate">
-                                                    <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($comment['date']),
-                                                        $this->getFormattedTimeString($comment['date']) ); ?>
+                                                    <?php printf(
+                                                        $this->__('text.written_on'),
+                                                        $this->getFormattedDateString($comment['date']),
+                                                        $this->getFormattedTimeString($comment['date'])
+                                                    ); ?>
                                                 </div>
-                                                <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
+                                                <span class="name"><?php printf($this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
                                                 <div class="text"><?php echo ($comment['text']); ?></div>
                                             </div>
 
@@ -128,9 +133,9 @@ if (strpos($formUrl, '?delComment=') !== false) {
                 </div>
 
 
-			<?php endforeach; ?>
-		</div>
-	</div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
     <div class="clearall"></div>
 </form>

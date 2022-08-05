@@ -12,35 +12,34 @@ use PDOException;
 
 class db
 {
-
     /**
      * @access private
      * @var    string database host default: localhost
      */
-    private $host='';
+    private $host = '';
 
     /**
      * @access private
      * @var    string username for db
      */
-    private $user='';
+    private $user = '';
 
     /**
      * @access private
      * @var    string password for db
      */
-    private $password='';
+    private $password = '';
 
 
-    private $databaseName='';
+    private $databaseName = '';
 
 
-    public $database='';
+    public $database = '';
     /**
      * @access private
      * @var    pdo object
      */
-    private static $instance='';
+    private static $instance = '';
 
     /**
      * __construct - connect to database and select db
@@ -56,22 +55,17 @@ class db
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;
             $this->databaseName = $config->dbDatabase;
-            $this->host= $config->dbHost;
+            $this->host = $config->dbHost;
 
-        try{
-
+        try {
             $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
-            $this->database = new PDO('mysql:host=' . $this->host . ';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
+            $this->database = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->databaseName . '', $this->user, $this->password, $driver_options);
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        }catch(PDOException $e){
-
+        } catch (PDOException $e) {
             echo "No database connection, check your database credentials in your configuration file.";
 
             exit();
-
         }
-
     }
 
     public static function getInstance()
@@ -81,7 +75,6 @@ class db
             self::$instance = new self();
         }
         return self::$instance;
-
     }
 
     /**
@@ -100,7 +93,7 @@ class db
         $bindingStatement = "";
         for ($i = 0; $i < $count; $i++) {
             $bindingStatement .= ":" . $name . $i;
-            if ($i != $count-1) {
+            if ($i != $count - 1) {
                 $bindingStatement .= ",";
             }
         }
@@ -116,8 +109,8 @@ class db
      * @param $name string
      * @return string
      */
-    public static function sanitizeToColumnString($string) {
+    public static function sanitizeToColumnString($string)
+    {
         return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
     }
-
 }

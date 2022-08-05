@@ -3,7 +3,7 @@ $canvasItem = $this->get('canvasItem');
 $canvasTypes = $this->get('canvasTypes');
 
 $id = "";
-if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
+if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
 ?>
@@ -33,11 +33,14 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__("input.placeholders.describe_hypothesis") ?>" style="width:100%"/><br />
         <label><?=$this->__("label.status") ?></label>
         <select name="status">
-            <option value="danger" <?php if($canvasItem['status'] == 'danger') {echo"selected='selected' ";
-                                    }?>><?=$this->__("status.not_validated") ?></option>
-            <option value="info" <?php if($canvasItem['status'] == 'info') {echo"selected='selected' ";
-                                    }?>><?=$this->__("status.validated_false") ?></option>
-            <option value="success" <?php if($canvasItem['status'] == 'success') {echo"selected='selected' ";
+            <option value="danger" <?php if ($canvasItem['status'] == 'danger') {
+                echo"selected='selected' ";
+                                   }?>><?=$this->__("status.not_validated") ?></option>
+            <option value="info" <?php if ($canvasItem['status'] == 'info') {
+                echo"selected='selected' ";
+                                 }?>><?=$this->__("status.validated_false") ?></option>
+            <option value="success" <?php if ($canvasItem['status'] == 'success') {
+                echo"selected='selected' ";
                                     }?>><?=$this->__("status.validated_true") ?></option>
         </select><br />
         <label><?=$this->__("label.assumptions") ?></label>
@@ -49,12 +52,12 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
-        <?php if($id != '') {?>
+        <?php if ($id != '') {?>
             <a href="<?=BASE_URL ?>/leancanvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete") ?> </a>
         <?php } ?>
         <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
         <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.leanCanvasController.setCloseModal();"/>
-        <?php if($id !== '') { ?>
+        <?php if ($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
 
@@ -62,9 +65,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <ul class="sortableTicketList" style="width:99%">
             <?php
-            if($canvasItem['milestoneId'] == '') {
-
-
+            if ($canvasItem['milestoneId'] == '') {
                 ?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
@@ -93,15 +94,16 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                             <div class="col-md-12">
                                 <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                     <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                    <?php foreach($this->get('milestones') as $milestoneRow){
-                                            ?>
+                                    <?php foreach ($this->get('milestones') as $milestoneRow) {
+                                        ?>
 
-                                            <?php echo"<option value='".$milestoneRow->id."'";
+                                            <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                            if(isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) { echo" selected='selected' ";
+                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                                echo" selected='selected' ";
                                             }
 
-                                            echo">".$milestoneRow->headline."</option>"; ?>
+                                            echo">" . $milestoneRow->headline . "</option>"; ?>
                                         <?php
                                     }     ?>
                                 </select>
@@ -116,14 +118,12 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 </li>
                 <?php
-
-            }else{
-
-                if($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
+            } else {
+                if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
                     $date = $this->__("text.no_date_defined");
-                }else {
+                } else {
                     $date = new DateTime($canvasItem['milestoneEditTo']);
-                    $date= $date->format($this->__("language.dateformat"));
+                    $date = $date->format($this->__("language.dateformat"));
                 }
 
                 ?>
@@ -168,12 +168,12 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     </form>
 
-    <?php if($id !== '') { ?>
+    <?php if ($id !== '') { ?>
     <br />
     <input type="hidden" name="comment" value="1" />
 
         <?php
-        $this->assign("formUrl", "/leancanvas/editCanvasItem/".$id."");
+        $this->assign("formUrl", "/leancanvas/editCanvasItem/" . $id . "");
         $this->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>

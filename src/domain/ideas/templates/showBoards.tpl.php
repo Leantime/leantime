@@ -36,7 +36,6 @@ $canvasLabels = $this->get('canvasLabels');
                             $lastClient = "";
                             $i = 0;
                             foreach ($this->get('allCanvas') as $canvasRow) { ?>
-
                                 <?php echo "<option value='" . $canvasRow["id"] . "'";
                                 if ($this->get('currentCanvas') == $canvasRow["id"]) {
                                     $canvasTitle = $canvasRow["title"];
@@ -72,12 +71,10 @@ $canvasLabels = $this->get('canvasLabels');
 
         <div class="clearfix"></div>
         <?php if (count($this->get('allCanvas')) > 0) { ?>
-
             <div id="ideaMason" class="sortableTicketList">
 
 
                 <?php foreach ($this->get('canvasItems') as $row) { ?>
-
                     <div class="ticketBox" id="item_<?php echo $row["id"]; ?>" data-value="<?php echo $row["id"]; ?>">
 
                         <div class="row">
@@ -111,16 +108,16 @@ $canvasLabels = $this->get('canvasLabels');
                                     <a class="dropdown-toggle f-left status <?=$canvasLabels[$row['box']]['class'] ?> " href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
                                                                         echo $canvasLabels[$row['box']]['name'];
-                                                                        ?>
+                                                                    ?>
                                                                     </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                         <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
 
-                                        <?php foreach($canvasLabels as $key=>$label){
+                                        <?php foreach ($canvasLabels as $key => $label) {
                                             echo"<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' class='".$label['class']."' data-label='".$this->escape($label['name'])."' data-value='".$row['id']."_".$key."_".$label['class']."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label['name'])."</a>";
+                                                <a href='javascript:void(0);' class='" . $label['class'] . "' data-label='" . $this->escape($label['name']) . "' data-value='" . $row['id'] . "_" . $key . "_" . $label['class'] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $this->escape($label['name']) . "</a>";
                                             echo"</li>";
                                         }?>
                                     </ul>
@@ -129,10 +126,10 @@ $canvasLabels = $this->get('canvasLabels');
                                 <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
-                                                                        <?php if($row["authorFirstname"] != ""){
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                                                                        }else {
-                                                                            echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
+                                                                        <?php if ($row["authorFirstname"] != "") {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['authorProfileId'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                        } else {
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
                                                                     </span>
 
@@ -140,9 +137,9 @@ $canvasLabels = $this->get('canvasLabels');
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                         <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                        <?php foreach($this->get('users') as $user){
+                                        <?php foreach ($this->get('users') as $user) {
                                             echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                             echo"</li>";
                                         }?>
                                     </ul>
@@ -191,7 +188,6 @@ $canvasLabels = $this->get('canvasLabels');
             <?php } ?>
 
         <?php } else { ?>
-
             <br/><br/>
             <div class='center'>
                 <div style='width:30%' class='svgContainer'>
@@ -273,20 +269,20 @@ $canvasLabels = $this->get('canvasLabels');
         leantime.ideasController.initStatusDropdown();
         leantime.ideasController.initUserDropdown();
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
+        <?php if (isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
             leantime.helperController.showHelperModal("ideaBoard");
-        <?php
+            <?php
         //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
+            $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
         } ?>
 
-        <?php if(isset($_GET['showIdeaModal'])) {
-        if ($_GET['showIdeaModal'] == "") {
-            $modalUrl = "&type=idea";
-        } else {
-            $modalUrl = "/" . (int)$_GET['showIdeaModal'];
-        }
-        ?>
+        <?php if (isset($_GET['showIdeaModal'])) {
+            if ($_GET['showIdeaModal'] == "") {
+                $modalUrl = "&type=idea";
+            } else {
+                $modalUrl = "/" . (int)$_GET['showIdeaModal'];
+            }
+            ?>
 
         leantime.ideasController.openModalManually("<?=BASE_URL ?>/ideas/ideaDialog<?php echo $modalUrl; ?>");
         window.history.pushState({}, document.title, '<?=BASE_URL ?>/ideas/showBoards');

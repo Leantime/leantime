@@ -8,13 +8,13 @@ namespace leantime\domain\controllers {
 
     class showProject
     {
-
         /**
          * run - display template and edit data
          *
          * @access public
          */
-        public function __construct () {
+        public function __construct()
+        {
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();
             $this->language = new core\language();
@@ -22,17 +22,15 @@ namespace leantime\domain\controllers {
             $this->fileService = new services\files();
             $this->ticketService = new services\tickets();
 
-            if(!isset($_SESSION['lastPage'])) {
+            if (!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
             }
-
-
         }
 
 
-		/**
-		 * One Method to rule them all...
-		 */
+        /**
+         * One Method to rule them all...
+         */
         public function run()
         {
 
@@ -40,27 +38,24 @@ namespace leantime\domain\controllers {
             $projectRepo = new repositories\projects();
             $config = new core\config();
 
-            if(!core\login::userIsAtLeast("clientManager")) {
+            if (!core\login::userIsAtLeast("clientManager")) {
                 $tpl->display('general.error');
                 exit();
             }
 
 
             if (isset($_GET['id'])) {
-
                 $id = (int)($_GET['id']);
 
                 //Mattermost integration
-                if(isset($_POST['mattermostSave'])) {
+                if (isset($_POST['mattermostSave'])) {
                     $webhook = strip_tags($_POST['mattermostWebhookURL']);
                     $this->settingsRepo->saveSetting("projectsettings." . $id . ".mattermostWebhookURL", $webhook);
                     $tpl->setNotification($this->language->__("notification.saved_mattermost_webhook"), 'success');
-
                 }
 
                 //Slack integration
-                if(isset($_POST['slackSave'])) {
-
+                if (isset($_POST['slackSave'])) {
                     $webhook = strip_tags($_POST['slackWebhookURL']);
                     $this->settingsRepo->saveSetting("projectsettings." . $id . ".slackWebhookURL", $webhook);
                     $tpl->setNotification($this->language->__("notification.saved_slack_webhook"), 'success');
@@ -70,8 +65,7 @@ namespace leantime\domain\controllers {
                 //Zulip
                 $zulipWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".zulipHook");
 
-                if($zulipWebhook === false || $zulipWebhook == ""){
-
+                if ($zulipWebhook === false || $zulipWebhook == "") {
                     $zulipHook = array(
                         'zulipURL' => '',
                         'zulipEmail' => '',
@@ -80,13 +74,12 @@ namespace leantime\domain\controllers {
                         'zulipTopic' => '',
                     );
                     $tpl->assign('zulipHook', $zulipHook);
-                }else{
+                } else {
                     $tpl->assign('zulipHook', unserialize($zulipWebhook));
                 }
 
 
-                if(isset($_POST['zulipSave'])) {
-
+                if (isset($_POST['zulipSave'])) {
                     $zulipHook = array(
                         'zulipURL' => strip_tags($_POST['zulipURL']),
                         'zulipEmail' => strip_tags($_POST['zulipEmail']),
@@ -95,33 +88,29 @@ namespace leantime\domain\controllers {
                         'zulipTopic' => strip_tags($_POST['zulipTopic']),
                     );
 
-                    if($zulipHook['zulipURL'] == "" ||
+                    if (
+                        $zulipHook['zulipURL'] == "" ||
                         $zulipHook['zulipEmail'] == "" ||
                         $zulipHook['zulipBotKey'] == "" ||
                         $zulipHook['zulipStream'] == "" ||
-                        $zulipHook['zulipTopic'] == "") {
-
-
+                        $zulipHook['zulipTopic'] == ""
+                    ) {
                         $tpl->setNotification($this->language->__("notification.error_zulip_webhook_fill_out_fields"), 'error');
-
-                    }else{
-
+                    } else {
                         $this->settingsRepo->saveSetting("projectsettings." . $id . ".zulipHook", serialize($zulipHook));
                         $tpl->setNotification($this->language->__("notification.saved_zulip_webhook"), 'success');
                     }
 
                     $tpl->assign('zulipHook', $zulipHook);
-
-
                 }
 
                 //Discord integration; provide three possible webhooks per project
                 if (isset($_POST['discordSave'])) {
-                  for ($i = 1; 3 >= $i ; $i++) {
-                    $webhook = trim(strip_tags($_POST['discordWebhookURL' . $i]));
-                    $this->settingsRepo->saveSetting('projectsettings.' . $id . '.discordWebhookURL' . $i, $webhook);
-                  }
-                  $tpl->setNotification($this->language->__('notification.saved_discord_webhook'), 'success');
+                    for ($i = 1; 3 >= $i; $i++) {
+                        $webhook = trim(strip_tags($_POST['discordWebhookURL' . $i]));
+                        $this->settingsRepo->saveSetting('projectsettings.' . $id . '.discordWebhookURL' . $i, $webhook);
+                    }
+                    $tpl->setNotification($this->language->__('notification.saved_discord_webhook'), 'success');
                 }
 
                 $mattermostWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".mattermostWebhookURL");
@@ -130,41 +119,37 @@ namespace leantime\domain\controllers {
                 $slackWebhook = $this->settingsRepo->getSetting("projectsettings." . $id . ".slackWebhookURL");
                 $tpl->assign('slackWebhookURL', $slackWebhook);
 
-                for ($i = 1; 3 >= $i ; $i++) {
-                  $discordWebhook = $this->settingsRepo->getSetting('projectsettings.' . $id . '.discordWebhookURL' . $i);
-                  $tpl->assign('discordWebhookURL' . $i, $discordWebhook);
+                for ($i = 1; 3 >= $i; $i++) {
+                    $discordWebhook = $this->settingsRepo->getSetting('projectsettings.' . $id . '.discordWebhookURL' . $i);
+                    $tpl->assign('discordWebhookURL' . $i, $discordWebhook);
                 }
 
                 $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
                 $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
 
 
-                $_SESSION['lastPage'] = BASE_URL."/projects/showProject/".$id;
-                
+                $_SESSION['lastPage'] = BASE_URL . "/projects/showProject/" . $id;
+
                 $project = $projectRepo->getProject($id);
                 $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);
 
 
 
 
-                if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
+                if (core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
                 }
 
 
-                if(isset($_POST['submitSettings'])) {
-
-                    if(isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0){
-
-                        if($this->ticketService->saveStatusLabels($_POST)){
-
+                if (isset($_POST['submitSettings'])) {
+                    if (isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0) {
+                        if ($this->ticketService->saveStatusLabels($_POST)) {
                             $tpl->setNotification($this->language->__('notification.new_status_saved'), 'success');
-                        }else{
+                        } else {
                             $tpl->setNotification($this->language->__('notification.error_saving_status'), 'error');
                         }
-
-                    }else{
+                    } else {
                         $tpl->setNotification($this->language->__('notification.at_least_one_status'), 'error');
                     }
                 }
@@ -176,10 +161,8 @@ namespace leantime\domain\controllers {
                 $closedTickets = $project['numberOfTickets'] - $opentickets['openTickets'];
 
                 if ($project['numberOfTickets'] != 0) {
-
                     $projectPercentage = round($closedTickets / $project['numberOfTickets'] * 100, 2);
                 } else {
-
                     $projectPercentage = 0;
                 }
 
@@ -189,7 +172,6 @@ namespace leantime\domain\controllers {
 
                 //save changed project data
                 if (isset($_POST['save']) === true) {
-
                     if (isset($_POST['editorId']) && count($_POST['editorId'])) {
                         $assignedUsers = $_POST['editorId'];
                     } else {
@@ -211,17 +193,13 @@ namespace leantime\domain\controllers {
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
                         'assignedUsers' => $assignedUsers,
-						'dollarBudget' => $_POST['dollarBudget']
+                        'dollarBudget' => $_POST['dollarBudget']
                     );
 
                     if ($values['name'] !== '') {
-
                         if ($projectRepo->hasTickets($id) && $values['state'] == 1) {
-
                             $tpl->setNotification($this->language->__("notification.project_has_tickets"), 'error');
-
                         } else {
-
                             $projectRepo->editProject($values, $id);
 
                             $project = $projectRepo->getProject($id);
@@ -239,26 +217,19 @@ namespace leantime\domain\controllers {
 
                             $actual_link = CURRENT_URL;
 
-                            $this->projectService->notifyProjectUsers($message, $subject, $id, array("link"=>$actual_link, "text"=> $linkLabel));
-
+                            $this->projectService->notifyProjectUsers($message, $subject, $id, array("link" => $actual_link, "text" => $linkLabel));
                         }
-
                     } else {
-
                         $tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
-
                     }
-
                 }
 
                 // Manage Post comment
                 $comments = new repositories\comments();
                 if (isset($_POST['comment']) === true) {
-
-                    if($this->commentService->addComment($_POST, "project", $id, $project)) {
-
+                    if ($this->commentService->addComment($_POST, "project", $id, $project)) {
                         $tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                    }else {
+                    } else {
                         $tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                     }
                 }
@@ -267,12 +238,9 @@ namespace leantime\domain\controllers {
                 $file = new repositories\files();
                 if (isset($_POST['upload'])) {
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
-
                         $return = $file->upload($_FILES, 'project', $id);
                         $tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
-
-                    }else{
-
+                    } else {
                         $tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
                 }
@@ -287,22 +255,16 @@ namespace leantime\domain\controllers {
                 $allHours = 0;
                 $max = 0;
                 foreach ($results as $row) {
-
                     if ($row['month'] != null) {
-
                         $data[] = (int)$row['summe'];
                         $months[] = substr($this->language->__('MONTH_' . $row['month'] . ''), 0, 3);
 
                         if ($row['summe'] > $max) {
                             $max = $row['summe'];
                         }
-
                     } else {
-
                         $allHours = $row['summe'];
-
                     }
-
                 }
 
 
@@ -323,27 +285,23 @@ namespace leantime\domain\controllers {
 
                 //Delete File
                 if (isset($_GET['delFile']) === true) {
-
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
-                    if($result === true) {
+                    if ($result === true) {
                         $tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $tpl->redirect(BASE_URL."/projects/showProject/".$id."#files");
-                    }else {
+                        $tpl->redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
+                    } else {
                         $tpl->setNotification($result["msg"], "success");
                     }
-
                 }
 
                 //Delete comment
                 if (isset($_GET['delComment']) === true) {
-
                     $commentId = (int)($_GET['delComment']);
 
                     $comments->deleteComment($commentId);
 
                     $tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-
                 }
                 //Timesheets
                 $invEmplCheck = '0';
@@ -358,31 +316,22 @@ namespace leantime\domain\controllers {
 
 
                 if (isset($_POST['kind']) && $_POST['kind'] != '') {
-
                     $kind = ($_POST['kind']);
-
                 }
 
                 if (isset($_POST['userId']) && $_POST['userId'] != '') {
-
                     $userId = ($_POST['userId']);
-
                 }
 
                 if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
                     $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']);
-
                 }
 
                 if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
                     $dateTo = $this->language->getISODateTimeString($_POST['dateTo']);
-
                 }
 
                 if (isset($_POST['invEmpl']) === true) {
-
                     $invEmplCheck = $_POST['invEmpl'];
 
                     if ($invEmplCheck == 'on') {
@@ -390,13 +339,11 @@ namespace leantime\domain\controllers {
                     } else {
                         $invEmplCheck = '0';
                     }
-
                 } else {
                     $invEmplCheck = '0';
                 }
 
                 if (isset($_POST['invComp']) === true) {
-
                     $invCompCheck = ($_POST['invComp']);
 
                     if ($invCompCheck == 'on') {
@@ -404,7 +351,6 @@ namespace leantime\domain\controllers {
                     } else {
                         $invCompCheck = '0';
                     }
-
                 } else {
                     $invCompCheck = '0';
                 }
@@ -417,10 +363,10 @@ namespace leantime\domain\controllers {
 
                 $user = new repositories\users();
 
-                if(core\login::userIsAtLeast("manager")) {
+                if (core\login::userIsAtLeast("manager")) {
                     $tpl->assign('availableUsers', $user->getAll());
                     $tpl->assign('clients', $clients->getAll());
-                }else{
+                } else {
                     $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
                     $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
                 }
@@ -472,7 +418,7 @@ namespace leantime\domain\controllers {
 
                 $tpl->assign("bookedHoursArray", $projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $comments->getComments('project', $_GET['id'],"", $_SESSION["projectsettings"]['commentOrder']);
+                $comment = $comments->getComments('project', $_GET['id'], "", $_SESSION["projectsettings"]['commentOrder']);
                 $tpl->assign('comments', $comment);
                 $tpl->assign('numComments', $comments->countComments('project', $_GET['id']));
 
@@ -481,20 +427,14 @@ namespace leantime\domain\controllers {
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
                 $tpl->display('projects.showProject');
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
 
         private function generateOfcData()
         {
-
         }
-
     }
 
 }

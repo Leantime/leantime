@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delCanvas
     {
-
         /**
          * run - display template and edit data
          *
@@ -25,17 +24,13 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['del']) && isset($id)) {
-
                 $leancanvasRepo->deleteCanvas($id);
 
                 $tpl->setNotification($language->__("notification.research_board_deleted"), "success");
-                $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas");
-
+                $tpl->redirect(BASE_URL . "/leancanvas/simpleCanvas");
             }
 
             $tpl->display('leancanvas.delCanvas');
-
         }
-
     }
 }

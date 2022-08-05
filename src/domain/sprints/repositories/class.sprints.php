@@ -7,8 +7,6 @@ namespace leantime\domain\repositories {
 
     class sprints
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -18,7 +16,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -236,10 +233,7 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
-
         }
-
-
     }
 
-}?>
+}

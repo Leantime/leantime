@@ -19,7 +19,7 @@ $roles = $this->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <?php echo $this->displayLink('users.newUser', "<i class='iconfa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+                <?php echo $this->displayLink('users.newUser', "<i class='iconfa-plus'></i> " . $this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
             </div>
             <div class="col-md-6 align-right">
@@ -47,15 +47,19 @@ $roles = $this->get('roles');
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($this->get('allUsers') as $row): ?>
+            <?php foreach ($this->get('allUsers') as $row) : ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                        <?php echo $this->displayLink('users.editUser', sprintf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
+                        <?php echo $this->displayLink('users.editUser', sprintf($this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
                         </td>
                         <td><?php echo $row['username']; ?></td>
                         <td><?=$row['clientName']; ?></td>
-                        <td><?=$this->__("label.roles.".$roles[$row['role']]); ?></td>
-                        <td><?php if($row['twoFAEnabled']){ echo $this->__('label.yes'); }else{ echo $this->__('label.no'); } ?></td>
+                        <td><?=$this->__("label.roles." . $roles[$row['role']]); ?></td>
+                        <td><?php if ($row['twoFAEnabled']) {
+                            echo $this->__('label.yes');
+                            } else {
+                                echo $this->__('label.no');
+                            } ?></td>
                         <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete');?></a></td>
                     </tr>
             <?php endforeach; ?>

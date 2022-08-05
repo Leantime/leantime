@@ -6,7 +6,6 @@ namespace leantime\domain\controllers {
 
     class footer
     {
-
         private $tpl;
         private $settings;
 

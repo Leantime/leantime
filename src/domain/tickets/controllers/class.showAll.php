@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class showAll
     {
-
         private $projectService;
         private $tpl;
         private $ticketService;
@@ -25,10 +24,10 @@ namespace leantime\domain\controllers {
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastTicketView'] = "table";
             $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
-
         }
 
-        public function get($params) {
+        public function get($params)
+        {
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
@@ -55,11 +54,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showAll');
-
         }
-
-
-
     }
 
 }

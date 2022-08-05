@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class retrospectives
     {
-
         private $tpl;
         private $projects;
 
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->retroRepo = new repositories\retrospectives();
-
         }
 
 
@@ -37,7 +35,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -48,7 +45,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
         }
 
         /**
@@ -61,9 +57,9 @@ namespace leantime\domain\controllers {
         {
             $results = $this->retroRepo->patchCanvasItem($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -76,9 +72,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

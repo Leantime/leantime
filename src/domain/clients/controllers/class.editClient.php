@@ -4,6 +4,7 @@
  * editClient Class - Editing clients
  *
  */
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -11,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class editClient
     {
-
         /**
          * run - display template and edit data
          *
@@ -24,10 +24,8 @@ namespace leantime\domain\controllers {
             $clientRepo = new repositories\clients();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
+            if (core\login::userIsAtLeast("clientManager")) {
                 if (isset($_GET['id']) === true) {
-
                     $id = (int)($_GET['id']);
 
                     $row = $clientRepo->getClient($id);
@@ -47,7 +45,6 @@ namespace leantime\domain\controllers {
                     );
 
                     if (isset($_POST['save']) === true) {
-
                         $values = array(
                             'name' => $_POST['name'],
                             'street' => $_POST['street'],
@@ -61,13 +58,10 @@ namespace leantime\domain\controllers {
                         );
 
                         if ($values['name'] !== '') {
-
                             $clientRepo->editClient($values, $id);
 
                             $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success');
-
                         } else {
-
                             $tpl->setNotification('NO_NAME', 'error');
                         }
                     }
@@ -75,21 +69,12 @@ namespace leantime\domain\controllers {
                     $tpl->assign('values', $values);
 
                     $tpl->display('clients.editClient');
-
-
                 } else {
-
                     $tpl->display('general.error');
-
                 }
-
             } else {
-
                 $tpl->display('general.error');
-
             }
-
         }
-
     }
 }

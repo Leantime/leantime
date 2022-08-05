@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class delCanvasItem
     {
-
         /**
          * run - display template and edit data
          *
@@ -25,19 +24,15 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['del']) && isset($id)) {
-
                 $ideasRepo->delCanvasItem($id);
 
                 $tpl->setNotification($language->__("notification.idea_board_item_deleted"), "success");
 
-                $tpl->redirect(BASE_URL."/ideas/showBoards");
-
+                $tpl->redirect(BASE_URL . "/ideas/showBoards");
             }
 
             $tpl->displayPartial('ideas.delCanvasItem');
-
         }
-
     }
 
 }

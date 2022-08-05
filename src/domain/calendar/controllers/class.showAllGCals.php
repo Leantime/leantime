@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class showAllGCals
     {
-
         /**
          * run - display template and edit data
          *
@@ -29,10 +28,6 @@ namespace leantime\domain\controllers {
 
 
             $tpl->display('calendar.showAllGCals');
-
-
         }
-
     }
 }
-

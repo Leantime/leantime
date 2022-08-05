@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -6,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class headMenu
     {
-
         private $tpl;
         private $timesheets;
 
@@ -21,8 +21,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->displayPartial("general.headMenu");
-
         }
-
     }
 }

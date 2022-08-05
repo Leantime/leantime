@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -7,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class menu
     {
-
         public function run()
         {
 
@@ -26,8 +26,6 @@ namespace leantime\domain\controllers {
             $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
 
             $tpl->displayPartial('general.menu');
-
         }
-
     }
 }

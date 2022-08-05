@@ -7,7 +7,6 @@ namespace leantime\domain\repositories {
 
     class ideas
     {
-
         /**
          * @access public
          * @var    object
@@ -24,10 +23,10 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         public $canvasTypes = array(
-            "idea"=> "status.ideation",
+            "idea" => "status.ideation",
             "research" => "status.discovery",
             "prototype" => "status.delivering",
             "validation" => "status.inreview",
@@ -35,7 +34,7 @@ namespace leantime\domain\repositories {
             "deferred" => "status.deferred"
         );
 
-        public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" =>"label-default");
+        public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
         /**
          * __construct - get db connection
@@ -48,7 +47,6 @@ namespace leantime\domain\repositories {
 
             $this->db = core\db::getInstance();
             $this->language = new core\language();
-
         }
 
         public function getCanvasLabels()
@@ -57,20 +55,16 @@ namespace leantime\domain\repositories {
             //Todo: Remove!
             unset($_SESSION["projectsettings"]["idealabels"]);
 
-            if(isset($_SESSION["projectsettings"]["idealabels"])) {
-
-
+            if (isset($_SESSION["projectsettings"]["idealabels"])) {
                 return $_SESSION["projectsettings"]["idealabels"];
-
-            }else{
-
+            } else {
                 $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".idealabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', "projectsettings." . $_SESSION['currentProject'] . ".idealabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
@@ -79,17 +73,15 @@ namespace leantime\domain\repositories {
                 $labels = array();
 
                 //preseed state labels with default values
-                foreach($this->canvasTypes as $key=>$label) {
+                foreach ($this->canvasTypes as $key => $label) {
                     $labels[$key] = array(
                         "name" => $this->language->__($label),
                         "class" => $this->statusClasses[$key]
                     );
                 }
 
-                if($values !== false) {
-
-                    foreach(unserialize($values['value']) as $key=>$label) {
-
+                if ($values !== false) {
+                    foreach (unserialize($values['value']) as $key => $label) {
                         $labels[$key] = array(
                             "name" => $label,
                             "class" => $this->statusClasses[$key]
@@ -100,7 +92,6 @@ namespace leantime\domain\repositories {
                 $_SESSION["projectsettings"]["idealabels"] = $labels;
 
                 return $labels;
-
             }
         }
 
@@ -129,7 +120,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function deleteCanvas($id)
@@ -148,7 +138,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
         public function addCanvas($values)
@@ -180,7 +169,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $this->db->database->lastInsertId();
-
         }
 
         public function updateCanvas($values)
@@ -200,7 +188,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
         public function editCanvasItem($values)
@@ -228,7 +215,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function patchCanvasItem($id, $params)
@@ -236,8 +222,8 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_canvas_items SET ";
 
-            foreach($params as $key=>$value){
-                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            foreach ($params as $key => $value) {
+                $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -245,29 +231,29 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
             $stmn->closeCursor();
 
             return $return;
-
         }
 
-        public function updateIdeaSorting($sortingArray) {
+        public function updateIdeaSorting($sortingArray)
+        {
 
             $sql = "INSERT INTO zp_canvas_items (id, sortindex) VALUES ";
 
             $sqlPrep = array();
-            foreach($sortingArray as $idea){
-                $sqlPrep[] = "(".(int)$idea['id'].", ".(int)$idea['sortIndex'].")";
+            foreach ($sortingArray as $idea) {
+                $sqlPrep[] = "(" . (int)$idea['id'] . ", " . (int)$idea['sortIndex'] . ")";
             }
 
-            $sql.= implode(",", $sqlPrep);
+            $sql .= implode(",", $sqlPrep);
 
-            $sql.= " ON DUPLICATE KEY UPDATE sortindex = VALUES(sortindex)";
+            $sql .= " ON DUPLICATE KEY UPDATE sortindex = VALUES(sortindex)";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -275,7 +261,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $return;
-
         }
 
         public function getCanvasItemsById($id)
@@ -341,7 +326,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getSingleCanvasItem($id)
@@ -399,7 +383,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function addCanvasItem($values)
@@ -441,7 +424,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -482,7 +465,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
         public function getNumberOfIdeas($projectId = null)
@@ -495,13 +477,13 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
 				WHERE canvasBoard.type = 'idea'  ";
 
-            if(!is_null($projectId)){
-                $sql.=" AND canvasBoard.projectId = :projectId";
+            if (!is_null($projectId)) {
+                $sql .= " AND canvasBoard.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -509,9 +491,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['ideaCount']) === true) {
+            if (isset($values['ideaCount']) === true) {
                 return $values['ideaCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -525,35 +507,24 @@ namespace leantime\domain\repositories {
             //statusKey: item[]=X&item[]=X2...,
             //statusKey2: item[]=X&item[]=X2...,
             //This represents status & kanban sorting
-            foreach($params as $status=>$ideaList){
-
-
-
-
+            foreach ($params as $status => $ideaList) {
                 $ideas = explode("&", $ideaList);
 
 
                 if (is_array($ideas) === true && count($ideas) > 0) {
                     foreach ($ideas as $key => $ideaString) {
-                        if(strlen($ideaString) > 0) {
-
+                        if (strlen($ideaString) > 0) {
                             $id = substr($ideaString, 7);
 
                             if ($this->updateIdeaStatus($id, $status) === false) {
-
                                 return false;
                             }
                         }
-
                     }
                 }
-
             }
 
             return true;
-
-
         }
-
     }
 }

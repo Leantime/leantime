@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class i18n
     {
-
         private $tpl;
         private $i18n;
 
@@ -24,7 +23,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->i18n = new core\language();
-
         }
 
 
@@ -49,7 +47,7 @@ namespace leantime\domain\controllers {
             echo "var leantime = leantime || {};
                 var leantime = {
                     i18n: {
-                        dictionary: ".$result.",
+                        dictionary: " . $result . ",
                         __: function(index){ return leantime.i18n.dictionary[index];  }
                     }
                 };";
@@ -63,9 +61,7 @@ namespace leantime\domain\controllers {
                 };
             ";
 */
-
         }
-
     }
 
 }

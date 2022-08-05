@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class ideas
     {
-
         private $tpl;
         private $projects;
         private $sprintService;
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->ideaAPIRepo = new repositories\ideas();
-
         }
 
 
@@ -38,7 +36,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -50,43 +47,27 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
-
+            if (isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
                 $sortOrder = $params["payload"];
 
                 $results = $this->ideaAPIRepo->updateIdeaSorting($sortOrder);
 
                 if ($results === true) {
-
                     echo "{status:ok}";
-
                 } else {
-
                     echo "{status:failure}";
-
                 }
-
-            }elseif(isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true){
-
-
+            } elseif (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
                 $results = $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"]);
 
-                if($results === true) {
-
+                if ($results === true) {
                     echo "{status:ok}";
-
-                }else{
-
+                } else {
                     echo "{status:failure}";
-
                 }
-
-            }else{
-
+            } else {
                 echo "{status:failure}";
-
             }
-
         }
 
         /**
@@ -99,9 +80,9 @@ namespace leantime\domain\controllers {
         {
             $results = $this->ideaAPIRepo->patchCanvasItem($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -114,9 +95,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

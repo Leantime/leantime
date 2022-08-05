@@ -11,7 +11,7 @@ leantime.generalController = (function () {
                 _initSimpleEditor();
                 initComplexEditor();
 
-                if(jQuery('.login-alert .alert').text() !== ''){
+                if (jQuery('.login-alert .alert').text() !== '') {
                     jQuery('.login-alert').fadeIn();
                 }
             }
@@ -20,7 +20,7 @@ leantime.generalController = (function () {
     })();
 
     //Functions
-    var _initPopOvers = function() {
+    var _initPopOvers = function () {
         jQuery('.popoverlink').popover({trigger: 'hover'});
     };
 
@@ -54,8 +54,8 @@ leantime.generalController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css',
                 height:"150",
                 content_style: "img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
@@ -70,7 +70,7 @@ leantime.generalController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -100,7 +100,7 @@ leantime.generalController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -126,8 +126,8 @@ leantime.generalController = (function () {
             {
                 // General options
                 width: "98%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
@@ -144,7 +144,7 @@ leantime.generalController = (function () {
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -174,7 +174,7 @@ leantime.generalController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,

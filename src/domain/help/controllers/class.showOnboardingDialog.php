@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class showOnboardingDialog
     {
-
         private $tpl;
 
 
@@ -23,8 +22,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->tpl = new core\template();
-
-
         }
 
         /**
@@ -35,12 +32,10 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(isset($params['module']) && $params['module'] != "") {
+            if (isset($params['module']) && $params['module'] != "") {
                 $filteredInput = filter_var($params['module'], FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
-                $this->tpl->displayPartial('help.'.$filteredInput);
+                $this->tpl->displayPartial('help.' . $filteredInput);
             }
-
-
         }
 
         /**
@@ -51,7 +46,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
         }
 
         /**
@@ -62,7 +56,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -73,9 +66,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

@@ -7,7 +7,6 @@ namespace leantime\domain\repositories {
 
     class retrospectives
     {
-
         /**
          * @access public
          * @var    object
@@ -24,12 +23,12 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         public $canvasTypes = array(
-            "well"=>"status.continue" ,
-            "notwell"=>"status.stop_doing" ,
-            "startdoing"=>"status.start_doing"
+            "well" => "status.continue" ,
+            "notwell" => "status.stop_doing" ,
+            "startdoing" => "status.start_doing"
             );
 
         /**
@@ -45,42 +44,35 @@ namespace leantime\domain\repositories {
             $this->language = new core\language();
 
             $this->canvasTypes = $this->getCanvasLabels();
-
         }
 
         public function getCanvasLabels()
         {
 
-            if(isset($_SESSION['currentProject']) == false){
+            if (isset($_SESSION['currentProject']) == false) {
                 return;
             }
 
-            if(isset($_SESSION["projectsettings"]["retrolabels"])) {
-
+            if (isset($_SESSION["projectsettings"]["retrolabels"])) {
                 return $_SESSION["projectsettings"]["retrolabels"];
-
-            }else{
-
+            } else {
                 $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".retrolabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', "projectsettings." . $_SESSION['currentProject'] . ".retrolabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-                if($values !== false) {
-
+                if ($values !== false) {
                     $labels = unserialize($values['value']);
                     $_SESSION["projectsettings"]["retrolabels"] = $labels;
-
-                }else{
-
-                    foreach($this->canvasTypes as $key => $typeLabel){
+                } else {
+                    foreach ($this->canvasTypes as $key => $typeLabel) {
                         $this->canvasTypes[$key] = $this->language->__($typeLabel);
                     }
 
@@ -89,7 +81,6 @@ namespace leantime\domain\repositories {
                 }
 
                 return $labels;
-
             }
         }
 
@@ -118,7 +109,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function deleteCanvas($id)
@@ -137,7 +127,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
         public function addCanvas($values)
@@ -169,7 +158,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $this->db->database->lastInsertId();
-
         }
 
         public function updateCanvas($values)
@@ -189,7 +177,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
         public function editCanvasItem($values)
@@ -217,7 +204,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function patchCanvasItem($id, $params)
@@ -225,8 +211,8 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_canvas_items SET";
 
-            foreach($params as $key=>$value){
-                $sql .= " ".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            foreach ($params as $key => $value) {
+                $sql .= " " . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
             $sql .= " id=:id WHERE id=:id LIMIT 1";
@@ -234,15 +220,14 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
             $stmn->closeCursor();
 
             return $return;
-
         }
 
         public function getCanvasItemsById($id)
@@ -306,7 +291,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getSingleCanvasItem($id)
@@ -363,7 +347,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function addCanvasItem($values)
@@ -405,7 +388,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -438,13 +421,13 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
 				WHERE canvasBoard.type = 'retrospective'  ";
 
-            if(!is_null($projectId)){
-                $sql.=" AND canvasBoard.projectId = :projectId";
+            if (!is_null($projectId)) {
+                $sql .= " AND canvasBoard.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -452,12 +435,11 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['retroCount']) === true) {
+            if (isset($values['retroCount']) === true) {
                 return $values['retroCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
-
     }
 }

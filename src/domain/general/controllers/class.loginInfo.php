@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -6,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class loginInfo
     {
-
         public function run()
         {
 
@@ -41,15 +41,15 @@ namespace leantime\domain\controllers {
                 $urlParts = explode('/', $requestParams[1]);
                 $modal = "";
 
-                if(count($urlParts) > 2) {
-                    $urlKey =  $urlParts[1]."/".$urlParts[2];
+                if (count($urlParts) > 2) {
+                    $urlKey =  $urlParts[1] . "/" . $urlParts[2];
 
-                    if(isset($availableModals[$urlKey])) {
+                    if (isset($availableModals[$urlKey])) {
                         $modal = $availableModals[$urlKey];
-                    }else{
+                    } else {
                         $modal = "notfound";
                     }
-                }else{
+                } else {
                     $modal = "dashboard";
                 }
 
@@ -62,7 +62,6 @@ namespace leantime\domain\controllers {
                 $tpl->assign("profileId", $user["profileId"]);
 
                 $tpl->displayPartial("general.loginInfo");
-
         }
     }
 }

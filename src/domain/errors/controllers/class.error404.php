@@ -6,7 +6,6 @@ namespace leantime\domain\controllers {
 
     class error404
     {
-
         public function run()
         {
 

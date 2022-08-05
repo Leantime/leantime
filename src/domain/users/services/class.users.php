@@ -7,7 +7,6 @@ namespace leantime\domain\services {
 
     class users
     {
-
         private $userRepo;
         private $tpl;
 
@@ -57,7 +56,6 @@ namespace leantime\domain\services {
 
             return $this->userRepo->patchUser($_SESSION['userdata']['id'], array("settings" => $serializeSettings));
         }
-
     }
 
 }

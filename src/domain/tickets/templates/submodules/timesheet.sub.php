@@ -1,9 +1,11 @@
-<?php 
+<?php
     $values = $this->get('timesheetValues');
     $ticket = $this->get('ticket');
     $userInfo = $this->get('userInfo');
     $remainingHours = $this->get('remainingHours');
-    if($remainingHours < 0) {$remainingHours = 0;}
+if ($remainingHours < 0) {
+    $remainingHours = 0;
+}
     $currentPay = $this->get('userHours') * $userInfo['wage'];
 ?>
 
@@ -20,11 +22,11 @@
                     <span class="field">
                     <select id="kind" name="kind">
                     <?php foreach ($this->get('kind') as $key => $row) {
-                        echo'<option value="'.$key.'"';
-                        if($row == $values['kind']) { echo ' selected="selected"';
+                        echo'<option value="' . $key . '"';
+                        if ($row == $values['kind']) {
+                            echo ' selected="selected"';
                         }
-                        echo'>'.$this->__(strtolower($row)).'</option>';
-
+                        echo'>' . $this->__(strtolower($row)) . '</option>';
                     } ?>
                     </select>
                     </span>
@@ -68,16 +70,15 @@
         var labels = [];
         <?php
         $sum = 0;
-        foreach ($this->get('ticketHours') as $hours){
+        foreach ($this->get('ticketHours') as $hours) {
             $sum = $sum + $hours['summe'];
 
-            echo"labels.push('".date($this->__("language.dateformat"),  strtotime($hours['utc']))."');
+            echo"labels.push('" . date($this->__("language.dateformat"), strtotime($hours['utc'])) . "');
                     ";
-            echo"d2.push(".$sum.");
+            echo"d2.push(" . $sum . ");
                     ";
-            echo "d3.push(".$ticket->planHours.");
+            echo "d3.push(" . $ticket->planHours . ");
                     ";
-
         } ?>
 
         leantime.ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")

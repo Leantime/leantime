@@ -11,7 +11,6 @@ use leantime\core;
 
 class showMenu
 {
-
     /**
      * run - display template and edit data
      *
@@ -23,8 +22,5 @@ class showMenu
         $tpl = new core\template();
 
         $tpl->displayPartial('general.showMenu');
-
     }
-
 }
-

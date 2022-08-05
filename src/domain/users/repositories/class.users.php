@@ -7,7 +7,6 @@ namespace leantime\domain\repositories {
 
     class users
     {
-
         /**
          * @access public
          * @var    string
@@ -66,7 +65,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -98,7 +96,7 @@ namespace leantime\domain\repositories {
          * @param  $id
          * @return string|null returns datetime string with last login or null if nothing could be found
          */
-        public function getLastLogin() :string|null
+        public function getLastLogin(): string|null
         {
 
             $sql = "SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1";
@@ -109,7 +107,7 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['lastlogin'])) {
+            if (isset($values['lastlogin'])) {
                 return $values['lastlogin'];
             }
             return null;
@@ -149,9 +147,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['userCount']) === true) {
+            if (isset($values['userCount']) === true) {
                 return $values['userCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -181,7 +179,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         /**
@@ -304,11 +301,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-			$stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
+            $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -319,19 +315,16 @@ namespace leantime\domain\repositories {
          * @param  $userId
          * @return bool
          */
-        public function usernameExist($username, $userId ='')
+        public function usernameExist($username, $userId = '')
         {
 
             if ($userId != '') {
-
                 $queryOwn = " AND id != :id ";
-
             } else {
-
                 $queryOwn = "";
             }
 
-            $query = "SELECT COUNT(username) AS numUser FROM `zp_user` WHERE username = :username ".$queryOwn." LIMIT 1";
+            $query = "SELECT COUNT(username) AS numUser FROM `zp_user` WHERE username = :username " . $queryOwn . " LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':username', $username, PDO::PARAM_STR);
@@ -347,14 +340,10 @@ namespace leantime\domain\repositories {
 
 
 
-            if($result['numUser'] == 1) {
-
+            if ($result['numUser'] == 1) {
                 return true;
-
-            }else{
-
+            } else {
                 return false;
-
             }
         }
 
@@ -368,21 +357,17 @@ namespace leantime\domain\repositories {
         public function editOwn($values, $id)
         {
 
-            if($values['password'] != '') {
-
+            if ($values['password'] != '') {
                 $chgPW = " password = :password, ";
-
-            }else{
-
+            } else {
                 $chgPW = "";
-
             }
 
             $query = "UPDATE `zp_user` SET
 				lastname = :lastname, 
 				firstname = :firstname, 
 				username = :username, 
-				".$chgPW."
+				" . $chgPW . "
 				phone = :phone,
 				notifications = :notifications			 
 				WHERE id = :id LIMIT 1";
@@ -396,16 +381,12 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            if($values['password'] != '') {
-
+            if ($values['password'] != '') {
                 $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
-
             }
 
             $stmn->execute();
             $stmn->closeCursor();
-
-
         }
 
 
@@ -451,9 +432,9 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
 
-            if(isset($values['source'])){
+            if (isset($values['source'])) {
                 $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);
-            }else{
+            } else {
                 $stmn->bindValue(':source', '', PDO::PARAM_STR);
             }
 
@@ -465,7 +446,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return  $userId;
-
         }
 
         /**
@@ -484,7 +464,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -493,7 +472,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  string
          */
-        public function setPicture($_FILE,$id)
+        public function setPicture($_FILE, $id)
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE id=:id";
@@ -509,16 +488,15 @@ namespace leantime\domain\repositories {
 
             if (isset($values['profileId']) && $values['profileId'] > 0) {
                 $file = $files->getFile($values['profileId']);
-                $img = 'userdata/'.$file['encName'].$file['extension'];
+                $img = 'userdata/' . $file['encName'] . $file['extension'];
 
                 $files->deleteFile($values['profileId']);
-
             }
 
 
             $lastId = $files->upload($_FILE, 'user', $id, true, 200, 200);
 
-            if(isset($lastId['fileId'])) {
+            if (isset($lastId['fileId'])) {
                 $sql = 'UPDATE `zp_user` SET profileId = :fileId WHERE id = :userId';
 
                 $stmn = $this->db->database->prepare($sql);
@@ -545,22 +523,22 @@ namespace leantime\domain\repositories {
             $files = new files();
             $file = $files->getFile($value['profileId']);
 
-            $return = BASE_URL.'/images/default-user.png';
+            $return = BASE_URL . '/images/default-user.png';
             if ($file) {
-                $return = BASE_URL."/download.php?module=".$file['module'] ."&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName'];
+                $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
             }
 
             return $return;
         }
 
 
-        public function patchUser($id,$params)
+        public function patchUser($id, $params)
         {
 
             $sql = "UPDATE zp_user SET ";
 
-            foreach($params as $key=>$value){
-                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            foreach ($params as $key => $value) {
+                $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -568,8 +546,8 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
@@ -577,7 +555,6 @@ namespace leantime\domain\repositories {
 
             return $return;
         }
-
     }
 
 }

@@ -11,9 +11,9 @@ leantime.retroController = (function () {
         resizable: true,
         autoSizable: true,
         callbacks: {
-            beforeShowCont: function() {
+            beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
-                if(closeModal == true){
+                if (closeModal == true) {
                     closeModal = false;
                     location.reload();
                 }
@@ -87,38 +87,38 @@ leantime.retroController = (function () {
 
 
     var toggleMilestoneSelectors = function (trigger) {
-        if(trigger == 'existing') {
+        if (trigger == 'existing') {
             jQuery('#newMilestone, #milestoneSelectors').hide('fast');
             jQuery('#existingMilestone').show();
             _initModals();
-
         }
-        if(trigger == 'new') {
+        if (trigger == 'new') {
             jQuery('#newMilestone').show();
             jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
             _initModals();
         }
 
-        if(trigger == 'hide') {
+        if (trigger == 'hide') {
             jQuery('#newMilestone, #existingMilestone').hide('fast');
             jQuery('#milestoneSelectors').show('fast');
         }
     };
 
-    var setCloseModal = function() {
+    var setCloseModal = function () {
         closeModal = true;
     };
 
     var initUserDropdown = function () {
 
         jQuery("body").on(
-            "click", ".userDropdown .dropdown-menu a", function () {
+            "click",
+            ".userDropdown .dropdown-menu a",
+            function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 3) {
-
                     var canvasId = dataValue[0];
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
@@ -126,21 +126,20 @@ leantime.retroController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/retrospectives',
+                            url: leantime.appUrl + '/api/retrospectives',
                             data:
                                 {
                                     id : canvasId,
                                     author:userId
-                                }
+                            }
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + profileImageId);
 
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
                         }
                     );
-
                 }
             }
         );
@@ -152,7 +151,7 @@ leantime.retroController = (function () {
 
         var maxHeight = 0;
 
-        var height = jQuery("html").height()-320;
+        var height = jQuery("html").height() - 320;
         jQuery("#sortableRetroKanban .column .contentInner").css("height", height);
 
     };
