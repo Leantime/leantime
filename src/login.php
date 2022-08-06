@@ -32,7 +32,6 @@
         <div class="regpanel">
             <div class="regpanelinner">
 
-                <a href="<?=BASE_URL ?>" target="_blank"><img src="<?php echo htmlentities($_SESSION["companysettings.logoPath"]); ?>" /></a>
 
                 <div class="pageheader">
                     <div class="pagetitle">

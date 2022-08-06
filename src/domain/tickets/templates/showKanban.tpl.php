@@ -271,7 +271,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -285,8 +285,12 @@
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
                                                 <div class="kanbanCardContent">
+
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                    <p class="description"><?php echo $this->truncate(html_entity_decode($row["description"]), 200, '(...)', false, true);?></p>
+
+                                                    <p class="description"><?php echo $this->escapeMinimal(    $this->truncate(($row["description"]), 200, '(...)', false, true)); ?></p>
+
+
                                                 </div>
                                             </div>
 

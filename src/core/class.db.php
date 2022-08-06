@@ -40,7 +40,7 @@ class db
      * @access private
      * @var    pdo object
      */
-    private static $instance='';
+    private static $instance=null;
 
     /**
      * __construct - connect to database and select db
@@ -77,7 +77,7 @@ class db
     public static function getInstance()
     {
 
-        if (!(self::$instance instanceof self)) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;

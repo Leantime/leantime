@@ -1,1 +1,22 @@
-
+[06-Aug-2022 09:03:20 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: var_dump() expects at least 1 argument, 0 given in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php:288
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php(288): var_dump()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(165): require_once('/Users/marcel/S...')
+#2 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#4 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#5 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#6 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php on line 288
+[06-Aug-2022 09:03:22 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: var_dump() expects at least 1 argument, 0 given in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php:288
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php(288): var_dump()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(165): require_once('/Users/marcel/S...')
+#2 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#4 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#5 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#6 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/tickets/templates/showKanban.tpl.php on line 288

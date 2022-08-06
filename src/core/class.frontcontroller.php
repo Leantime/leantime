@@ -29,28 +29,22 @@ namespace leantime\core {
 
         /**
          * @access private
-         * @var    string set the first action to fire
-         */
-        private $firstAction = '';
-
-        /**
-         * @access private
          * @var    string - last action that was fired
          */
-        private $lastAction;
+        private static $lastAction;
 
         /**
          * @access public
          * @var    string - fully parsed action
          */
-        public $fullAction;
+        private static $fullAction;
 
         /**
          * __construct - Set the rootpath of the server
          *
          * @param $rootPath
          */
-        public function __construct($rootPath)
+        private function __construct($rootPath)
         {
             $this->rootPath = $rootPath;
         }
@@ -85,35 +79,30 @@ namespace leantime\core {
          * @access public
          * @return
          */
-        public function run($differentFirstAction = '')
+        public static function dispatch($action = '', $httpResponseCode=200)
         {
 
-            //Set action-name
+            //Set action-name from request
             if(isset($_REQUEST['act'])) {
 
-                $this->fullAction = htmlspecialchars($_REQUEST['act']);
-
-            }else{
-
-                if($differentFirstAction == '') {
-
-                    $this->fullAction = $this->firstAction;
-
-                }else{
-
-                    $this->fullAction = $differentFirstAction;
-
-                }
+                self::$fullAction = htmlspecialchars($_REQUEST['act']);
 
             }
 
+            //action parameter overrides Request['act']
+            if($action !== '') {
 
-            if($this->fullAction != '') {
+                self::$fullAction = $action;
+
+            }
+
+            if(self::$fullAction != '') {
+
 
                 //execute action
                 try {
 
-                    $this->executeAction($this->fullAction);
+                    self::executeAction(self::$fullAction, array(), $httpResponseCode);
 
                 } catch (Exception $e) {
 
@@ -123,9 +112,7 @@ namespace leantime\core {
 
             } else {
 
-                header("HTTP/1.0 404 Not Found");
-
-                $this->run("general.error404");
+                self::dispatch("general.error404", 404);
 
             }
         }
@@ -137,11 +124,10 @@ namespace leantime\core {
          * @param  $completeName
          * @return string|object
          */
-        private function executeAction($completeName, $params=array())
+        private static function executeAction($completeName, $params=array(), $httpResponseCode=200)
         {
 
             //actionname.filename
-
             //actionName is foldername
             $actionName = self::getActionName($completeName);
 
@@ -151,73 +137,51 @@ namespace leantime\core {
             //Folder doesn't exist.
             if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
 
-                header("HTTP/1.0 404 Not Found");
-                exit();
+                self::dispatch("general.error404", 404);
+                return;
 
             }
 
             //TODO: refactor to be psr 4 compliant
-            include_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
+            require_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
 
             //Initialize Action
             try {
 
-                $classname = "leantime\\domain\\controllers\\" . $actionName;
+                $classname = "leantime\\domain\\controllers\\".$actionName;
+                $action = new $classname();
 
-                //Check if constructor of controller needs/accepts arguments
-                $reflector = new \ReflectionClass($classname);
-                $constructor = $reflector->getConstructor();
+                //Todo plugin controller call
 
-                if ($constructor && $constructor->getParameters()) {
-                    $action = new $classname($params);
-                } else {
-                    $action = new $classname();
+                $method = self::getRequestMethod();
+
+                http_response_code($httpResponseCode);
+
+                if(method_exists($action, $method)) {
+
+                    $params = self::getRequestParams($method);
+                    $action->$method($params);
+
+                }else{
+
+                    //Use run for all other request types.
+                    $action->run();
+
                 }
 
             }catch(Exception $e){
 
-                header("HTTP/1.0 501 Not Implemented");
+                self::dispatch("general.error404", 501);
                 error_log($e->getMessage(), 0);
-                exit();
+
+                return;
             }
 
-            if(is_object($action) === false) {
-
-                header("HTTP/1.0 501 Not Implemented");
-                exit();
-
-            }else{// Look at last else
-
-                try {
-
-                    //Everything ok? run action
-                    $method = $this->getRequestMethod();
-
-                    if(method_exists($action, $method)) {
-
-                        $params = $this->getRequestParams($method);
-                        $action->$method($params);
-
-                    }else {
-
-                        //Use run for all request types.
-                        $action->run();
-
-                    }
-
-                }catch (Exception $e) {
-
-                    error_log($e->getMessage(), 0);
-
-                }
-
-            }
-
-            $this->lastAction = $completeName;
+            self::$lastAction = $completeName;
 
         }
 
-        private function getRequestMethod()
+        private static function getRequestMethod()
         {
 
             if(isset($_SERVER['REQUEST_METHOD'])) {
@@ -228,7 +192,7 @@ namespace leantime\core {
 
         }
 
-        private function getRequestParams($method)
+        private static function getRequestParams($method)
         {
 
             switch ($method) {
@@ -259,27 +223,11 @@ namespace leantime\core {
          * @param  $completeName
          * @return object
          */
-        public function includeAction($completeName, $params=array())
+        public static function includeAction($completeName, $params=array())
         {
-            $this->executeAction($completeName, $params);
+            self::executeAction($completeName, $params);
         }
 
-        /**
-         * includeAction - possible to include action from everywhere
-         *
-         * @access public
-         * @param  $completeName
-         * @return object
-         */
-        public function getRenderedOutput($completeName)
-        {
-
-            ob_start();
-            $this->executeAction($completeName);
-            $headerOutput = ob_get_clean();
-            return $headerOutput;
-
-        }
 
         /**
          * getActionName - split string to get actionName
@@ -288,10 +236,18 @@ namespace leantime\core {
          * @param  $completeName
          * @return string
          */
-        public static function getActionName($completeName)
+        public static function getActionName($completeName): string
         {
+            $actionParts = explode(".", $completeName);
 
-            return substr($completeName, strrpos($completeName, ".") + 1);
+            //If not action name was given, call index controller
+            if(is_array($actionParts) && count($actionParts) == 1){
+                return "index";
+            }elseif(is_array($actionParts) && count($actionParts) == 2){
+                return $actionParts[1];
+            }
+
+            return "";
 
         }
 
@@ -305,7 +261,13 @@ namespace leantime\core {
         public static function getModuleName($completeName)
         {
 
-            return substr($completeName, 0, strrpos($completeName, "."));
+            $actionParts = explode(".", $completeName);
+
+            if(is_array($actionParts)){
+                return $actionParts[0];
+            }
+
+            return "";
 
         }
 
@@ -325,6 +287,13 @@ namespace leantime\core {
 
             return '';
 
+        }
+
+        public static function redirect($url, $http_response_code = 303): void
+        {
+
+            header("Location:".trim($url),true, $http_response_code);
+            exit();
         }
 
     }
