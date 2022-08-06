@@ -74,9 +74,7 @@ namespace leantime\domain\controllers {
                 if($this->authService->login($username, $password) === true){
 
                     if($this->authService->use2FA()) {
-
                         core\frontcontroller::redirect(BASE_URL."/auth/twoFA");
-
                     }
 
                    core\frontcontroller::redirect($redirectUrl);

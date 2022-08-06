@@ -216,10 +216,9 @@ class application
                 if ($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false) {
 
                     //Don't redirect on i18n call
-                    if (!isset($_GET['act']) || $_GET['act'] != 'api.i18n') {
-
+                    if($this->frontController::getCurrentRoute() !== "install" &&
+                        $this->frontController::getCurrentRoute() !== "api.i18n") {
                         $this->frontController::redirect(BASE_URL . "/install");
-                        
                     }
 
                 }else{
@@ -228,16 +227,17 @@ class application
             }
 
 
-            if(!isset($_SESSION['isUpToDate']) || $_SESSION['isUpToDate'] === false) {
+            if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true && (!isset($_SESSION['isUpToDate']) || $_SESSION['isUpToDate'] === false)) {
                 $dbVersion = $this->settingsRepo->getSetting("db-version");
                 if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
 
                     //Don't redirect on i18n call
-                    if (!isset($_GET['act']) || $_GET['act'] != 'api.i18n') {
+                        if($this->frontController::getCurrentRoute() !== "install.update" &&
+                            $this->frontController::getCurrentRoute() !== "api.i18n"){
+                            $this->frontController::redirect(BASE_URL . "/install/update");
+                        }
 
-                        $this->frontController::redirect(BASE_URL . "/install/update");
 
-                    }
                 }else {
                     $_SESSION['isUpToDate'] = true;
                 }
