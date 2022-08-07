@@ -50,6 +50,13 @@ namespace leantime\core {
         private $host = '';
 
         /**
+         * database port
+         * @access private
+         * @var string
+         */
+        private $port = '3306';
+
+        /**
          * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
          * @access private
          * @var array
@@ -97,11 +104,12 @@ namespace leantime\core {
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
             $this->host = $this->config->dbHost;
+            $this->port = $this->config->dbPort;
 
             try {
 
                 $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
-                $this->database = new PDO('mysql:host=' . $this->host . '', $this->user, $this->password,
+                $this->database = new PDO('mysql:host=' . $this->host . ';port=' . $this->port, $this->user, $this->password,
                     $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
