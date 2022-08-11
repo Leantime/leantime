@@ -19,6 +19,7 @@ class config
     public $dbUser = ''; //Database username
     public $dbPassword = ''; //Database password
     public $dbDatabase = ''; //Database name
+    public $dbPort = '3306'; //Database port
 
     /* Fileupload */
     public $userFilePath = 'userfiles/'; //Local relative path to store uploaded files (if not using S3)
@@ -114,6 +115,7 @@ class config
         $this->dbUser = $this->configEnvironmentHelper("LEAN_DB_USER", $this->dbUser);
         $this->dbPassword = $this->configEnvironmentHelper("LEAN_DB_PASSWORD", $this->dbPassword);
         $this->dbDatabase = $this->configEnvironmentHelper("LEAN_DB_DATABASE", $this->dbDatabase);
+        $this->dbPort = $this->configEnvironmentHelper("LEAN_DB_PORT", $this->dbPort);
 
         /* Fileupload */
         $this->userFilePath = $this->configEnvironmentHelper("LEAN_USER_FILE_PATH", $this->userFilePath);
