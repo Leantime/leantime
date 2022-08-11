@@ -250,7 +250,7 @@ namespace leantime\core {
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new appSettings();
-            $login = login::getInstance();
+            $login = services\auth::getInstance();
 
 
             $submodule = array("module"=>'', "submodule"=>'');
