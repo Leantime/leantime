@@ -62,8 +62,9 @@ class db
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;
             $this->databaseName = $config->dbDatabase;
-            $this->host= $config->dbHost;
-            $this->port= $config->dbPort;
+            $this->host= $config->dbHost ?? "localhost";
+            $this->port= $config->dbPort ?? "3306";
+
 
         try{
 

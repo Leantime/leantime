@@ -27,7 +27,7 @@ namespace leantime\domain\controllers {
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("manager")) {
+            if(services\auth::userIsAtLeast("manager")) {
 
                 $values = array(
                     'name' => '',

@@ -19,7 +19,7 @@ namespace leantime\domain\controllers {
 			$tpl = new core\template();
 
 			//Only admins
-			if (core\login::userIsAtLeast("clientManager")) {
+			if (services\auth::userIsAtLeast("clientManager")) {
 
 				if (isset($_GET['id']) === true) {
 
@@ -32,7 +32,7 @@ namespace leantime\domain\controllers {
 					$edit = false;
 					$infoKey = '';
 
-					if (core\login::userHasRole("clientManager") && $row['clientId'] != core\login::getUserClientId()) {
+					if (services\auth::userHasRole("clientManager") && $row['clientId'] != services\auth::getUserClientId()) {
 						$tpl->display('general.error');
 						exit();
 					}
@@ -148,13 +148,13 @@ namespace leantime\domain\controllers {
 					$clients = new repositories\clients();
 
 
-					if (core\login::userIsAtLeast("manager")) {
+					if (services\auth::userIsAtLeast("manager")) {
 						$tpl->assign('allProjects', $project->getAll());
-						$tpl->assign('roles', core\login::$userRoles);
+						$tpl->assign('roles', services\auth::$userRoles);
 						$tpl->assign('clients', $clients->getAll());
 					} else {
 						$tpl->assign('allProjects', $project->getClientProjects($values['clientId']));
-						$tpl->assign('roles', core\login::$clientManagerRoles);
+						$tpl->assign('roles', services\auth::$clientManagerRoles);
 						$tpl->assign('clients', array($clients->getClient($values['clientId'])));
 					}
 

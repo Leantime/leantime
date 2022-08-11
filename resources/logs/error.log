@@ -1,0 +1,12 @@
+[11-Aug-2022 15:08:25 America/Los_Angeles] PHP Warning:  Undefined property: leantime\core\config::$dbPort in /Users/marcel/Sites/leantime-oss/src/core/class.db.php on line 66
+[11-Aug-2022 15:08:25 America/Los_Angeles] PHP Warning:  Undefined property: leantime\core\config::$dbPort in /Users/marcel/Sites/leantime-oss/src/core/class.db.php on line 66
+[11-Aug-2022 15:08:30 America/Los_Angeles] PHP Warning:  Undefined property: leantime\core\config::$dbPort in /Users/marcel/Sites/leantime-oss/src/core/class.db.php on line 66
+[11-Aug-2022 15:08:30 America/Los_Angeles] PHP Warning:  Undefined property: leantime\core\config::$dbPort in /Users/marcel/Sites/leantime-oss/src/core/class.db.php on line 66
+[11-Aug-2022 15:15:33 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\services\auth" not found in /Users/marcel/Sites/leantime-oss/src/domain/setting/controllers/class.editCompanySettings.php:45
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\editCompanySettings->get(Array)
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('setting.editCom...', Array, 200)
+#2 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#3 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/setting/controllers/class.editCompanySettings.php on line 45

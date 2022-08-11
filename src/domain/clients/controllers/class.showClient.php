@@ -64,9 +64,9 @@ namespace leantime\domain\controllers {
                 'email' => $row['email']
             );
 
-            if (empty($row) === false && core\login::userIsAtLeast("clientManager")) {
+            if (empty($row) === false && services\auth::userIsAtLeast("clientManager")) {
 
-                if(core\login::userHasRole("clientManager") && $id != core\login::getUserClientId()) {
+                if(services\auth::userHasRole("clientManager") && $id != services\auth::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
                 }

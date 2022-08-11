@@ -1,6 +1,6 @@
 :root {
 
-    --accent1: #1b75bb;
+    --accent1: #81B1A8;
     --accent1-hover: #555;
     --accent1-color:#fff;
 
@@ -16,8 +16,8 @@
 
     --neutral:#444c56;
 
-    --col-title-bg: #444c56;
-    --col-content-bg: #F4F4F6;
+    --col-title-bg: #373e47;
+    --col-content-bg: #444c56;
     --col-hover-bg: #c7c7d1;
 
     --primary-color: var(--accent1);
