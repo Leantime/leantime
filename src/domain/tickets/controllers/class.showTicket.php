@@ -219,8 +219,8 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->language->__($result["msg"]), "error");
                     }
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
 

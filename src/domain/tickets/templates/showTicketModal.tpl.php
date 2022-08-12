@@ -71,6 +71,10 @@
 <script type="text/javascript">
 
     jQuery(function(){
+        <?php if(isset($_GET['closeModal'])){ ?>
+            jQuery.nmTop().close();
+        <?php } ?>
+
         leantime.ticketsController.initAsyncInputChange();
         leantime.dashboardController._initDueDateTimePickers();
         leantime.ticketsController.initTicketTabs();
