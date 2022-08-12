@@ -327,4 +327,36 @@ body .tox .tox-toolbar-overlord{
 }
 
 
+div.jGrowl div.jGrowl-notification,
+div.jGrowl div.jGrowl-closer {
+	background:var(--secondary-background);
+	color:var(--primary-font-color);
+	padding:20px;
+	font-size:var(--base-font-size);
+	width:250px;
+	opacity:1;
+	border-radius:var(--box-radius);
+	box-shadow: var(--regular-shadow);
+	border:0px;
+
+}
+
+div.jGrowl div.jGrowl-notification div.jGrowl-close {
+	color:var(--primary-font-color);
+	font-size:var(--base-font-size);
+}
+
+div.jGrowl div.jGrowl-notification.success {
+	border-left:5px solid #86D628;
+}
+
+div.jGrowl div.jGrowl-notification.info {
+	border-left:5px solid #71B8EE;
+}
+
+div.jGrowl div.jGrowl-notification.error {
+	border-left:5px solid  #dd0000;
+}
+
+
 /* Playing with header */

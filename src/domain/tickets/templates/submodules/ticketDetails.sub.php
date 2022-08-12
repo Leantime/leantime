@@ -41,8 +41,9 @@
                 </div>
             <?php endif; ?>
             <input type="hidden" name="saveTicket" value="1" />
+            <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
             <input type="submit" name="saveTicket" value="<?php echo $this->__('buttons.save'); ?>"/>
-            <input type="submit" name="saveAndCloseTicket" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
+            <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
         </div>
 

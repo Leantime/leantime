@@ -278,14 +278,13 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            $alertIcons = array(
-                "success" => '<i class="far fa-check-circle"></i>',
-                "error" => '<i class="fas fa-exclamation-triangle"></i>',
-                "info" => '<i class="fas fa-info-circle"></i>'
-            );
-
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
+                $notification = '<script type="text/javascript">
+                                  jQuery.jGrowl("'.$language->__($note['msg'], false).'", {theme: "'.$note['type'].'"});
+                                </script>';
+
+                /*
                 $notification = "<div class='alert alert-".$note['type']."'>
                                     <div class='infoBox'>
                                         ".$alertIcons[$note['type']]."
@@ -299,7 +298,7 @@ namespace leantime\core {
 								</div>
 								<div class='clearall'></div>
 							</div>";
-
+                */
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
 
