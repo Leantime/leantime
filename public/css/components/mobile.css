@@ -12,6 +12,15 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
+    .head-icon.iconfa-calendar {
+        text-align:left !important;
+
+    }
+
+    .profileHandler .username {
+        display:none;
+    }
+
     .leftpanel {
         position:fixed;
     }
@@ -73,16 +82,15 @@ min-width: 1200px
     }
 
     .userloggedinfo .userinfo small {
-        display: none;
+
     }
 
     .userloggedinfo {
-        width: 220px;
+
     }
 
     .userloggedinfo .userinfo {
-        float: none;
-        margin-left: 100px;
+
     }
 
     /* media */
@@ -135,55 +143,6 @@ min-width: 1200px
 
     .headmenu > li.right {
         padding-bottom: 13px;
-    }
-
-    .userloggedinfo {
-        width: auto;
-    }
-
-    .userloggedinfo img {
-        cursor: pointer;
-    }
-
-    .userloggedinfo .userinfo {
-        position: absolute;
-        top: 110px;
-        z-index: 100;
-        right: -1px;
-        width: 200px;
-        background: #fff;
-        padding: 10px;
-        color: #333;
-        border: 2px solid #0866c6;
-        border-top: 0;
-        display: none;
-    }
-
-    .userloggedinfo .userinfo::after {
-        position: absolute;
-        top: -6px;
-        right: 45px;
-        display: inline-block;
-        border-right: 6px solid transparent;
-        border-bottom: 6px solid white;
-        border-left: 6px solid transparent;
-        content: '';
-    }
-
-    .userloggedinfo .userinfo small {
-        color: #999;
-    }
-
-    .userloggedinfo ul li a {
-        background: #eee;
-        color: #333;
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-
-    .userloggedinfo ul li a:hover {
-        background: #0866c6;
-        color: #fff;
     }
 
     .pageheader {
@@ -418,17 +377,6 @@ min-width: 1200px
         font-size: 12px;
     }
 
-    .userloggedinfo {
-        display: none;
-    }
-
-    .userloggedinfo img {
-        width: 60px;
-    }
-
-    .userloggedinfo .userinfo {
-        top: 90px;
-    }
 
     .header .logo {
         padding-top: 0;
@@ -438,9 +386,6 @@ min-width: 1200px
         left: 25px;
     }
 
-    .userloggedinfo .userinfo:after {
-        right: 35px;
-    }
 
     .searchbar input {
         background-position: 285px 10px;
@@ -1525,7 +1470,7 @@ min-width: 1200px
 
     .headerinner {
         width: 100%;
-        margin-left: 0;
+        margin-left: 0 !important;
     }
 
     .leftpanel {
