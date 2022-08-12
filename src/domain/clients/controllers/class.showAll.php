@@ -9,6 +9,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class showAll
     {
