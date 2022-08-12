@@ -1,5 +1,5 @@
 <?php
-/** @var leantime\core\login $login */
+/** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 ?>
     <div id="fileManager">

@@ -1,15 +1,19 @@
 <?php
 
-namespace leantime\core {
+namespace leantime\domain\repositories {
 
     use leantime\domain\repositories\setting;
     use leantime\core\migrations;
+    use Exception;
+    use leantime\core\appSettings;
     use PDO;
+    use leantime\domain\repositories;
+    use leantime\domain\services;
     use PDOException;
+    use leantime\core;
 
     class install
     {
-
         /**
          * @access public
          * @var string
@@ -59,6 +63,13 @@ namespace leantime\core {
         private $migration;
 
         /**
+         * database port
+         * @access private
+         * @var string
+         */
+        private $port = '3306';
+
+        /**
          * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
          * @access private
          * @var array
@@ -69,8 +80,8 @@ namespace leantime\core {
             20101,
             20102,
             20103,
-			20104,
-			20105,
+            20104,
+            20105,
             20106,
             20107
         );
@@ -94,28 +105,30 @@ namespace leantime\core {
          *
          * @access public
          */
-        public function __construct($config, $settings)
+        public function __construct()
         {
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
-            $this->config = $config;
-            $this->settings = $settings;
+            $this->config = new core\config();
+            $this->settings = new core\appSettings();
 
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
             $this->host = $this->config->dbHost;
+            $this->port = $this->config->dbPort;
 
             try {
 
                 $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
-                $this->database = new PDO('mysql:host=' . $this->host . '', $this->user, $this->password,
+                $this->database = new PDO('mysql:host=' . $this->host . ';port=' . $this->port, $this->user, $this->password,
                     $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             } catch (PDOException $e) {
 
+                error_log($e->getMessage());
                 echo $e->getMessage();
 
             }
@@ -160,21 +173,19 @@ namespace leantime\core {
         public function setupDB(array $values)
         {
 
-            $config = new config();
-            $settings = new appSettings();
 
             $sql = $this->sqlPrep();
 
             try {
 
-                $this->database->query("Use `" . $config->dbDatabase . "`;");
+                $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
                 $stmn = $this->database->prepare($sql);
                 $stmn->bindValue(':email', $values["email"], PDO::PARAM_STR);
                 $stmn->bindValue(':password', $values["password"], PDO::PARAM_STR);
                 $stmn->bindValue(':firstname', $values["firstname"], PDO::PARAM_STR);
                 $stmn->bindValue(':lastname', $values["lastname"], PDO::PARAM_STR);
-                $stmn->bindValue(':dbVersion', $settings->dbVersion, PDO::PARAM_STR);
+                $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
                 $stmn->bindValue(':company', $values["company"], PDO::PARAM_STR);
 
                 $stmn->execute();

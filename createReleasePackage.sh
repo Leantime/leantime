@@ -11,7 +11,9 @@ cd leantime
 
 #Pulling dependencies in
 npm install
-composer install --no-dev
+
+composer install --no-dev --optimize-autoloader
+
 
 #Building dependencies
 ./node_modules/.bin/grunt Build-All

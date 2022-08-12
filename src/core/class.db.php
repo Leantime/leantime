@@ -34,13 +34,19 @@ class db
 
     private $databaseName='';
 
+    /**
+     * @access private
+     * @var    string database port default: 3306
+     */
+    private $port='3306';
+
 
     public $database='';
     /**
      * @access private
      * @var    pdo object
      */
-    private static $instance='';
+    private static $instance=null;
 
     /**
      * __construct - connect to database and select db
@@ -56,12 +62,14 @@ class db
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;
             $this->databaseName = $config->dbDatabase;
-            $this->host= $config->dbHost;
+            $this->host= $config->dbHost ?? "localhost";
+            $this->port= $config->dbPort ?? "3306";
+
 
         try{
 
             $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
-            $this->database = new PDO('mysql:host=' . $this->host . ';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
+            $this->database = new PDO('mysql:host=' . $this->host . ';port='. $this->port .';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         }catch(PDOException $e){
@@ -77,7 +85,7 @@ class db
     public static function getInstance()
     {
 
-        if (!(self::$instance instanceof self)) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;

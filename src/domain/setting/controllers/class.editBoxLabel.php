@@ -46,7 +46,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(services\auth::userIsAtLeast("clientManager")) {
 
                 $currentLabel = "";
 

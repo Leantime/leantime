@@ -25,17 +25,17 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(services\auth::userIsAtLeast("clientManager")) {
 
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
                     $project = $this->projectService->getProject($id);
 
-                    if(core\login::userIsAtLeast("manager")) {
+                    if(services\auth::userIsAtLeast("manager")) {
                         $this->tpl->assign('allClients', $this->clientRepo->getAll());
                     }else{
-                        $this->tpl->assign('allClients', array($this->clientRepo->getClient(core\login::getUserClientId())));
+                        $this->tpl->assign('allClients', array($this->clientRepo->getClient(services\auth::getUserClientId())));
                     }
 
                     $this->tpl->assign("project", $project);
@@ -58,7 +58,7 @@ namespace leantime\domain\controllers {
         public function post($params) {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(services\auth::userIsAtLeast("clientManager")) {
 
                 $id = (int)($_GET['id']);
                 $projectName = $params['projectName'];

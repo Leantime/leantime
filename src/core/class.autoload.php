@@ -28,12 +28,10 @@ function leantimeAutoloader($class)
     $paths[] = "../src/domain/{$class}/{$namespace}/class.{$class}.php";
     $paths[] = "../src/resources/libs/{$class}/class.{$class}.php";
 
-
-
     foreach($paths as &$path){
 
         if(file_exists($path) === true) {
-            if((include_once $path) !== false) { return; 
+            if((require_once $path) !== false) { return;
             }
         }
             

@@ -37,7 +37,7 @@
         <div class="row-fluid">
             <?php if (isset($ticket->id) && $ticket->id != '') : ?>
                 <div class="pull-right padding-top">
-                    <?php echo $this->displayLink('tickets.delTicket', '<i class="fa fa-trash"></i> '.$this->__('links.delete_todo'), array('id' => $ticket->id), array('class' => 'delete')) ?>
+                    <a href="<?=BASE_URL."/tickets/delTicket/".$ticket->id.""?>" class="delete"><i class="fa fa-trash"></i><?=$this->__('links.delete_todo')?></a>
                 </div>
             <?php endif; ?>
             <input type="hidden" name="saveTicket" value="1" />

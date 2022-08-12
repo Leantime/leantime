@@ -109,7 +109,7 @@
                                                             </a>
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                                 <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -240,7 +240,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">

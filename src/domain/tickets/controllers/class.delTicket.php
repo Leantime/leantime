@@ -25,7 +25,7 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
+            if(services\auth::userIsAtLeast("developer")) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
@@ -49,7 +49,7 @@ namespace leantime\domain\controllers {
             }
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
+            if(services\auth::userIsAtLeast("developer")) {
 
                 if (isset($params['del'])) {
 

@@ -38,6 +38,11 @@ namespace leantime\domain\services {
             return $this->userRepo->getUser($id);
         }
 
+        public function getUserByEmail($email)
+        {
+            return $this->userRepo->getUserByEmail($email);
+        }
+
 
         //POST
         public function setProfilePicture($photo, $id)

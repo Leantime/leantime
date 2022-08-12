@@ -42,7 +42,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(core\login::userIsAtLeast("admin")) {
+            if(services\auth::userIsAtLeast("admin")) {
 
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
