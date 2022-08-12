@@ -970,8 +970,9 @@ a .label-default:after, a .label-primary:after {
     text-decoration:none;
 }
 
-.header a.barmenu {
-    float:left;
+.leftpanel a.barmenu {
+    position:absolute;
+    right:-50px;
     margin-top:0px;
     margin-left:20px;
     font-size:20px;
@@ -979,15 +980,14 @@ a .label-default:after, a .label-primary:after {
     cursor:pointer;
     width:30px;
     height:50px;
-    margin-right:-50px;
     line-height:50px;
 }
 
-.header a.barmenu.open {
-    margin-right: 20px;
+.leftpanel a.barmenu.open {
+
 }
 
-.header a.barmenu:hover {
+.leftpanel a.barmenu:hover {
    color:var(--header-action-hover-color);
 }
 

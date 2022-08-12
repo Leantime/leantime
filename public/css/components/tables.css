@@ -47,6 +47,7 @@
 
 .dataTables_wrapper {
     position: relative;
+    overflow-x:auto;
 }
 
 .dataTables_length, .dataTables_info {
