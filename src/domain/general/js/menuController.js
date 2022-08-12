@@ -67,20 +67,6 @@ leantime.menuController = (function () {
             }
         });
 
-        // show/hide left menu
-        jQuery(window).resize(function () {
-
-            if (jQuery('.barmenu').hasClass('open')) {
-                jQuery('.rightpanel, .headerinner').css({marginLeft: '240px'});
-                jQuery('.logo, .leftpanel').css({marginLeft: 0});
-                leantime.menuRepository.updateUserMenuSettings("open");
-            } else {
-                jQuery('.rightpanel, .headerinner').css({marginLeft: 0});
-                jQuery('.logo, .leftpanel').css({marginLeft: '-260px'});
-                leantime.menuRepository.updateUserMenuSettings("closed");
-            }
-        });
-
     };
 
     var _initProjectSelectorToggle = function (id, element) {

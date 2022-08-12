@@ -32,6 +32,7 @@ module.exports = function (grunt) {
                     "node_modules/jquery/dist/jquery.js",
                     "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
+                    "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/moment/moment.js",
                     "public/js/libs/bootstrap.min.js",

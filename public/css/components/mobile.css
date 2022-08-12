@@ -12,6 +12,20 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
+    .leftpanel {
+        position:fixed;
+    }
+
+    .header {
+        margin-left:0px !important;
+        width:100% !important;
+
+    }
+
+    .rightpanel {
+        margin-left:0px !important;
+        width:100% !important;
+    }
 
     .headmenu > li > a {
         padding: 15px 10px 9px;
@@ -669,7 +683,8 @@ min-width: 1200px
     }
 
     .column {
-        width:100% !important;
+        /*A little smaller so you can see the column to the right indicating there is more*/
+        width:85% !important;
     }
 
     .ui-tabs-nav > li a {
@@ -686,6 +701,22 @@ min-width: 1200px
 }
 
 @media (min-width: 576px) and (max-width:767px) {
+
+    .leftpanel {
+        position:fixed;
+    }
+
+    .header {
+        margin-left:0px !important;
+        width:100% !important;
+
+    }
+
+    .rightpanel {
+        margin-left:0px !important;
+        width:100% !important;
+    }
+
     .col-sm {
         -webkit-flex-basis: 0;
         -ms-flex-preferred-size: 0;
@@ -1171,6 +1202,21 @@ min-width: 1200px
 
 @media (min-width: 768px) and (max-width:991px) {
 
+    .leftpanel {
+        position:fixed;
+    }
+
+    .header {
+        margin-left:0px !important;
+        width:100% !important;
+
+    }
+
+    .rightpanel {
+        margin-left:0px !important;
+        width:100% !important;
+    }
+
     .col-md {
         -webkit-flex-basis: 0;
         -ms-flex-preferred-size: 0;
@@ -1500,7 +1546,7 @@ min-width: 1200px
     .barmenu {
         font-size: 18px;
         color: #fff;
-        background: url(../images/barmenu.png) no-repeat center center;
+
         width: 50px;
         height: 50px;
         display: block;
@@ -1581,6 +1627,22 @@ min-width: 1200px
 }
 
 @media (min-width: 992px) and (max-width:1199px) {
+
+    .leftpanel {
+        position:fixed;
+    }
+
+    .header {
+        margin-left:0px !important;
+        width:100% !important;
+
+    }
+
+    .rightpanel {
+        margin-left:0px !important;
+        width:100% !important;
+    }
+
     .col-md {
         -webkit-flex-basis: 0;
         -ms-flex-preferred-size: 0;

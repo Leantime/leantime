@@ -17,6 +17,7 @@
     "jquery": "^3.6.0",
     "jquery-migrate": "1.4.1",
     "jquery-ui-dist": "^1.13.1",
+    "jquery-ui-touch-punch":"^0.2.3",
     "masonry-layout": "^4.2.2",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
