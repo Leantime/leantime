@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
             $projectService = new services\projects();
             $language = new core\language();
 
-            if(!core\login::userIsAtLeast("clientManager")) {
+            if(!services\auth::userIsAtLeast("clientManager")) {
                 $tpl->display('general.error');
                 exit();
             }
@@ -127,12 +127,12 @@ namespace leantime\domain\controllers {
 
 
 
-            if(core\login::userIsAtLeast("manager")) {
+            if(services\auth::userIsAtLeast("manager")) {
                 $tpl->assign('availableUsers', $user->getAll());
                 $tpl->assign('clients', $clients->getAll());
             }else{
-                $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
-                $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
+                $tpl->assign('availableUsers', $user->getAllClientUsers(services\auth::getUserClientId()));
+                $tpl->assign('clients', array($clients->getClient(services\auth::getUserClientId())));
             }
 
             $tpl->assign('info', $msgKey);

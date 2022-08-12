@@ -22,7 +22,7 @@ namespace leantime\domain\controllers {
 
             $info = '';
             //Only admins and employees
-            if(core\login::userIsAtLeast("developer")) {
+            if(services\auth::userIsAtLeast("developer")) {
 
                 $projects = new repositories\projects();
                 $tickets = new repositories\tickets();
@@ -89,7 +89,7 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
 
-                        if(core\login::userIsAtLeast("clientManager")) {
+                        if(services\auth::userIsAtLeast("clientManager")) {
 
                             if ($_POST['invoicedComp'] == 'on') {
 

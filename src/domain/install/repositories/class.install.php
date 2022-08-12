@@ -1,14 +1,17 @@
 <?php
 
-namespace leantime\core {
+namespace leantime\domain\repositories {
 
-    use leantime\domain\repositories\setting;
+    use Exception;
+    use leantime\core\appSettings;
     use PDO;
+    use leantime\domain\repositories;
+    use leantime\domain\services;
     use PDOException;
+    use leantime\core;
 
     class install
     {
-
         /**
          * @access public
          * @var string
@@ -67,8 +70,8 @@ namespace leantime\core {
             20101,
             20102,
             20103,
-			20104,
-			20105,
+            20104,
+            20105,
             20106,
             20107
         );
@@ -92,14 +95,14 @@ namespace leantime\core {
          *
          * @access public
          */
-        public function __construct($config, $settings)
+        public function __construct()
         {
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
-            $this->config = $config;
-            $this->settings = $settings;
+            $this->config = new core\config();
+            $this->settings = new core\appSettings();
 
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
@@ -115,6 +118,7 @@ namespace leantime\core {
 
             } catch (PDOException $e) {
 
+                error_log($e->getMessage());
                 echo $e->getMessage();
 
             }
@@ -159,21 +163,19 @@ namespace leantime\core {
         public function setupDB(array $values)
         {
 
-            $config = new config();
-            $settings = new appSettings();
 
             $sql = $this->sqlPrep();
 
             try {
 
-                $this->database->query("Use `" . $config->dbDatabase . "`;");
+                $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
                 $stmn = $this->database->prepare($sql);
                 $stmn->bindValue(':email', $values["email"], PDO::PARAM_STR);
                 $stmn->bindValue(':password', $values["password"], PDO::PARAM_STR);
                 $stmn->bindValue(':firstname', $values["firstname"], PDO::PARAM_STR);
                 $stmn->bindValue(':lastname', $values["lastname"], PDO::PARAM_STR);
-                $stmn->bindValue(':dbVersion', $settings->dbVersion, PDO::PARAM_STR);
+                $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
                 $stmn->bindValue(':company', $values["company"], PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -207,18 +209,18 @@ namespace leantime\core {
 
             $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
-			$versionArray = explode(".", $this->settings->dbVersion);
-			if(is_array($versionArray) && count($versionArray) == 3) {
+            $versionArray = explode(".", $this->settings->dbVersion);
+            if(is_array($versionArray) && count($versionArray) == 3) {
 
-				$major = $versionArray[0];
-				$minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
-				$patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
-				$newDBVersion = $major . $minor . $patch;
+                $major = $versionArray[0];
+                $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+                $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+                $newDBVersion = $major . $minor . $patch;
 
-			}else{
-				$errors[0] = "Problem identifying the version number";
-				return $errors;
-			}
+            }else{
+                $errors[0] = "Problem identifying the version number";
+                return $errors;
+            }
 
             $setting = new setting();
             $dbVersion = $setting->getSetting("db-version");
@@ -1005,34 +1007,34 @@ namespace leantime\core {
 
         }
 
-		private function update_sql_20105()
-		{
-			$errors = array();
+        private function update_sql_20105()
+        {
+            $errors = array();
 
-			$sql = array(
-				"ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
-			);
+            $sql = array(
+                "ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
+            );
 
-			foreach ($sql as $statement) {
+            foreach ($sql as $statement) {
 
-				try {
+                try {
 
-					$stmn = $this->database->prepare($statement);
-					$stmn->execute();
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
 
-				} catch (PDOException $e) {
-					array_push($errors, $statement . " Failed:" . $e->getMessage());
-				}
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
 
-			}
+            }
 
-			if(count($errors) > 0) {
-				return $errors;
-			}else{
-				return true;
-			}
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
 
-		}
+        }
 
         private function update_sql_20106()
         {

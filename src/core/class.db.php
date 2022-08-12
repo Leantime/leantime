@@ -46,7 +46,7 @@ class db
      * @access private
      * @var    pdo object
      */
-    private static $instance='';
+    private static $instance=null;
 
     /**
      * __construct - connect to database and select db
@@ -62,8 +62,9 @@ class db
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;
             $this->databaseName = $config->dbDatabase;
-            $this->host= $config->dbHost;
-            $this->port= $config->dbPort;
+            $this->host= $config->dbHost ?? "localhost";
+            $this->port= $config->dbPort ?? "3306";
+
 
         try{
 
@@ -84,7 +85,7 @@ class db
     public static function getInstance()
     {
 
-        if (!(self::$instance instanceof self)) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;

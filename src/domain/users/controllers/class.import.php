@@ -27,11 +27,11 @@ namespace leantime\domain\controllers {
             $ldapService = new services\ldap();
 
             //Only Admins
-            if(core\login::userIsAtLeast("manager")) {
+            if(services\auth::userIsAtLeast("manager")) {
 
                 $tpl->assign('allUsers', $userRepo->getAll());
                 $tpl->assign('admin', true);
-                $tpl->assign('roles', core\login::$userRoles);
+                $tpl->assign('roles', services\auth::$userRoles);
 
                 if(isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
                     $tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);

@@ -3696,14 +3696,14 @@ ul.list-inline li {
 /*** FOOTER STYLES ***/
 
 .footer {
-    font-size: var(--base-font-size);
-    color: #555;
-    padding-top: 15px;
-    margin-top: 40px;
-    border-top: 1px solid #ccc;
+    font-size: var(--font-size-s);
+    background:var(--main-bg);
+    color: var(--primary-font-color);
+    padding:20px;
+    padding-top:10px;
     overflow: hidden;
     clear: both;
-    padding: 10px;
+    text-align: right;
 }
 
 .footer .footer-left {

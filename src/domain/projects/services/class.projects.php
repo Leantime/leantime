@@ -412,7 +412,7 @@ namespace leantime\domain\services {
 
                     if($route != "api.i18n") {
 
-                        if (core\login::userIsAtLeast("clientManager")) {
+                        if (services\auth::userIsAtLeast("clientManager")) {
 
                             $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
                                 "info");

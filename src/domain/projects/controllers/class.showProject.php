@@ -40,7 +40,7 @@ namespace leantime\domain\controllers {
             $projectRepo = new repositories\projects();
             $config = new core\config();
 
-            if(!core\login::userIsAtLeast("clientManager")) {
+            if(!services\auth::userIsAtLeast("clientManager")) {
                 $tpl->display('general.error');
                 exit();
             }
@@ -147,7 +147,7 @@ namespace leantime\domain\controllers {
 
 
 
-                if(core\login::userHasRole("clientManager") && $project['clientId'] != core\login::getUserClientId()) {
+                if(services\auth::userHasRole("clientManager") && $project['clientId'] != services\auth::getUserClientId()) {
                     $tpl->display('general.error');
                     exit();
                 }
@@ -417,12 +417,12 @@ namespace leantime\domain\controllers {
 
                 $user = new repositories\users();
 
-                if(core\login::userIsAtLeast("manager")) {
+                if(services\auth::userIsAtLeast("manager")) {
                     $tpl->assign('availableUsers', $user->getAll());
                     $tpl->assign('clients', $clients->getAll());
                 }else{
-                    $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
-                    $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
+                    $tpl->assign('availableUsers', $user->getAllClientUsers(services\auth::getUserClientId()));
+                    $tpl->assign('clients', array($clients->getClient(services\auth::getUserClientId())));
                 }
 
                 $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
