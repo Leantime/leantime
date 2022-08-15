@@ -22,10 +22,14 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 input:read-only,
-input:disabled {
+input:disabled,
+.btn-primary[disabled]{
     border:none;
     box-shadow:none;
+    padding-left: 0px;
 }
+
+
 
 body div.tagsinput {
     background-color: var(--secondary-background);
@@ -185,6 +189,7 @@ body .btn-primary,
 body btn.btn-primary,
 input[type='submit'],
 .btn-primary:link,
+.btn-primary[disabled],
 .dt-button,
 .btn-group.open .btn-primary.dropdown-toggle,
 .btn-group .btn.btn-primary{
@@ -211,6 +216,13 @@ body .btn-group.open .btn-primary.dropdown-toggle,
     background: var(--main-action-hover-bg);
     color:var(--main-action-hover-color);
     border:1px solid var(--main-action-hover-bg);
+}
+
+.btn-primary[disabled] {
+    background:var(--main-action-bg);
+    color: var(--main-action-color);
+    border: 1px solid var(--main-action-bg);
+    cursor:not-allowed;
 }
 
 

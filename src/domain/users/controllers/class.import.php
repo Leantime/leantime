@@ -8,6 +8,8 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
+    use leantime\domain\models\auth\roles;
 
     class import
     {
@@ -27,11 +29,11 @@ namespace leantime\domain\controllers {
             $ldapService = new services\ldap();
 
             //Only Admins
-            if(services\auth::userIsAtLeast("manager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
                 $tpl->assign('allUsers', $userRepo->getAll());
                 $tpl->assign('admin', true);
-                $tpl->assign('roles', services\auth::$userRoles);
+                $tpl->assign('roles', roles::getRoles());
 
                 if(isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
                     $tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);

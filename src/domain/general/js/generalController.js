@@ -196,11 +196,75 @@ leantime.generalController = (function () {
 
     };
 
+    var makeInputReadonly = function (container) {
+
+        if(typeof container === undefined) {
+            container = "body";
+        }
+
+        jQuery(container).find("input").not(".filterBar input").prop("readonly", true);
+        jQuery(container).find("input").not(".filterBar input").prop("disabled", true);
+
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
+
+        jQuery(container).find("textarea").not(".filterBar textarea").prop("disabled", true);
+
+        jQuery(container).find("a.delete").remove();
+
+        jQuery(container).find(".quickAddLink").hide();
+
+        if(jQuery(container).find(".complexEditor").length) {
+            jQuery(container).find(".complexEditor").each(function(element){
+
+                jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
+            });
+        }
+
+        if(jQuery(container).find(".tinymceSimple").length) {
+
+            jQuery(container).find(".tinymceSimple").each(function(element){
+
+                jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
+            });
+        }
+
+        jQuery(container).find(".tox-editor-header").hide();
+        jQuery(container).find(".tox-statusbar").hide();
+
+        jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
+
+        jQuery("#mainToggler").hide();
+        jQuery(".commentBox").hide();
+        jQuery(".deleteComment, .replyButton").hide();
+
+
+    };
+
+    var enableCommenterForms = function () {
+
+        jQuery(".commentBox").show();
+
+        //Hide reply comment boxes
+        jQuery("#comments .replies .commentBox").hide();
+        jQuery(".deleteComment, .replyButton").show();
+
+        jQuery(".commentReply .tinymceSimple").tinymce().getBody().setAttribute('contenteditable', "true");
+        jQuery(".commentReply .tox-editor-header").show();
+        jQuery(".commentBox input").prop("readonly", false);
+        jQuery(".commentBox input").prop("disabled", false);
+
+        jQuery(".commentBox textarea").prop("readonly", false);
+        jQuery(".commentBox textarea").prop("disabled", false);
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
         initSimpleEditor:_initSimpleEditor,
-        initComplexEditor:initComplexEditor
+        initComplexEditor:initComplexEditor,
+        makeInputReadonly:makeInputReadonly,
+        enableCommenterForms:enableCommenterForms
     };
 
 })();

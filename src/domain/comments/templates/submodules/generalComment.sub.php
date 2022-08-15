@@ -15,6 +15,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>"
 	  id="commentForm">
+    <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
 	<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
 	   style="display:none;" id="mainToggler"><span
 				class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
@@ -35,6 +36,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 		<input type="hidden" name="comment" value="1"/>
 		<input type="hidden" name="father" id="father" value="0"/>
 		<br/>
+        <?php } ?>
 	</div>
 
 	<div id="comments">
@@ -57,16 +59,18 @@ if (strpos($formUrl, '?delComment=') !== false) {
                         </div>
 
                         <div class="commentLinks">
-                            <a href="javascript:void(0);"
-                               onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                                <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
-                            </a>
-
-                            <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
-                                <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
-                                   class="deleteComment">
-                                    <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                            <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+                                <a href="javascript:void(0);"
+                                   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                    <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
                                 </a>
+
+                                <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
+                                    <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
+                                       class="deleteComment">
+                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                    </a>
+                                <?php } ?>
                             <?php } ?>
 
                         </div>
@@ -92,11 +96,17 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                             </div>
 
                                             <div class="commentLinks">
-                                                <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
-                                                    <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
-                                                       class="deleteComment">
-                                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+                                                    <a href="javascript:void(0);"
+                                                       onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                                        <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
                                                     </a>
+                                                    <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                        <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
+                                                           class="deleteComment">
+                                                            <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                        </a>
+                                                    <?php } ?>
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -132,26 +142,43 @@ if (strpos($formUrl, '?delComment=') !== false) {
 		</div>
 	</div>
 
+    <?php if(count($this->get('comments')) == 0){ ?>
+        <div class="text-center">
+            <div style='width:33%' class='svgContainer'>
+                <?php echo file_get_contents(ROOT."/images/svg/undraw_book_reading_re_fu2c.svg"); ?>
+                <?php echo $this->__('text.no_comments') ?>
+            </div>
+        </div>
+    <?php } ?>
+
     <div class="clearall"></div>
 </form>
 
 <script type='text/javascript'>
+    leantime.replaceSVGColors();
+
     leantime.generalController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
-        if (id == 0) {
-            jQuery('#mainToggler').hide();
-        } else {
-            jQuery('#mainToggler').show();
-        }
-        jQuery('.commentBox textarea').remove();
 
-        jQuery('.commentBox').hide('fast', function () {});
+        <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
 
-        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-        leantime.generalController.initSimpleEditor();
+            if (id == 0) {
+                jQuery('#mainToggler').hide();
+            } else {
+                jQuery('#mainToggler').show();
+            }
+            jQuery('.commentBox textarea').remove();
 
-        jQuery('#comment' + id + '').show('fast');
-        jQuery('#father').val(id);
+            jQuery('.commentBox').hide('fast', function () {});
+
+            jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            leantime.generalController.initSimpleEditor();
+
+            jQuery('#comment' + id + '').show('fast');
+            jQuery('#father').val(id);
+
+        <?php } ?>
+
     }
 </script>

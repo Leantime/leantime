@@ -1,0 +1,61 @@
+[15-Aug-2022 14:25:32 America/Los_Angeles] PHP Warning:  Undefined variable $tpl in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php on line 36
+[15-Aug-2022 14:25:32 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function assign() on null in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php:36
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(168): leantime\domain\controllers\pageBottom->run()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(228): leantime\core\frontcontroller::executeAction('general.pageBot...', Array)
+#2 /Users/marcel/Sites/leantime-oss/src/layouts/app.php(54): leantime\core\frontcontroller::includeAction('general.pageBot...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(147): require('/Users/marcel/S...')
+#4 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#5 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#6 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#7 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#9 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php on line 36
+[15-Aug-2022 14:25:52 America/Los_Angeles] PHP Warning:  Undefined variable $debugbarRenderer in /Users/marcel/Sites/leantime-oss/src/domain/general/templates/pageBottom.tpl.php on line 5
+[15-Aug-2022 14:25:52 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function render() on null in /Users/marcel/Sites/leantime-oss/src/domain/general/templates/pageBottom.tpl.php:5
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(168): require_once()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(207): leantime\core\template->display('general.pageBot...', 200, 'blank')
+#2 /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php(39): leantime\core\template->displayPartial('general.pageBot...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(168): leantime\domain\controllers\pageBottom->run()
+#4 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(228): leantime\core\frontcontroller::executeAction('general.pageBot...', Array)
+#5 /Users/marcel/Sites/leantime-oss/src/layouts/app.php(54): leantime\core\frontcontroller::includeAction('general.pageBot...')
+#6 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(147): require('/Users/marcel/S...')
+#7 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#8 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#9 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#10 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#12 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/general/templates/pageBottom.tpl.php on line 5
+[15-Aug-2022 14:27:15 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function render() on string in /Users/marcel/Sites/leantime-oss/src/domain/general/templates/pageBottom.tpl.php:5
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(168): require_once()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(207): leantime\core\template->display('general.pageBot...', 200, 'blank')
+#2 /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php(39): leantime\core\template->displayPartial('general.pageBot...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(168): leantime\domain\controllers\pageBottom->run()
+#4 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(228): leantime\core\frontcontroller::executeAction('general.pageBot...', Array)
+#5 /Users/marcel/Sites/leantime-oss/src/layouts/app.php(54): leantime\core\frontcontroller::includeAction('general.pageBot...')
+#6 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(147): require('/Users/marcel/S...')
+#7 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#8 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#9 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#10 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#12 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/general/templates/pageBottom.tpl.php on line 5
+[15-Aug-2022 14:28:57 America/Los_Angeles] PHP Warning:  Undefined variable $tpl in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php on line 37
+[15-Aug-2022 14:28:57 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function assign() on null in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php:37
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(168): leantime\domain\controllers\pageBottom->run()
+#1 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(228): leantime\core\frontcontroller::executeAction('general.pageBot...', Array)
+#2 /Users/marcel/Sites/leantime-oss/src/layouts/app.php(54): leantime\core\frontcontroller::includeAction('general.pageBot...')
+#3 /Users/marcel/Sites/leantime-oss/src/core/class.template.php(147): require('/Users/marcel/S...')
+#4 /Users/marcel/Sites/leantime-oss/src/domain/tickets/controllers/class.showKanban.php(59): leantime\core\template->display('tickets.showKan...')
+#5 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(163): leantime\domain\controllers\showKanban->get(Array)
+#6 /Users/marcel/Sites/leantime-oss/src/core/class.frontcontroller.php(105): leantime\core\frontcontroller::executeAction('tickets.showKan...', Array, 200)
+#7 /Users/marcel/Sites/leantime-oss/src/core/class.application.php(112): leantime\core\frontcontroller::dispatch()
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(25): leantime\core\application->start()
+#9 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/src/domain/general/controllers/class.pageBottom.php on line 37

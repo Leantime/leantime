@@ -3,9 +3,11 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use leantime\domain\services\auth;
 
     class newTicket
     {
@@ -22,6 +24,8 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $this->tpl = new core\template();
 
             $this->language = new core\language();
@@ -46,6 +50,8 @@ namespace leantime\domain\controllers {
          *
          * DEPRECATED
          */
+
+        /*
         public function run()
         {
 
@@ -156,7 +162,7 @@ namespace leantime\domain\controllers {
 
 
                     if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $tpl->redirect($_SESSION['lastPage']);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
 
@@ -182,7 +188,7 @@ namespace leantime\domain\controllers {
             $tpl->displayPartial('tickets.newTicketModal');
 
         }
-
+        */
 
         public function get () {
 
@@ -229,9 +235,9 @@ namespace leantime\domain\controllers {
 
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
+                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
 
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result."?closeModal=1");
 
                     }else {
 

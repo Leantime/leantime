@@ -24,12 +24,12 @@
         <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
             <ul>
-                <li><a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a></li>
-                <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
-                <li><a href="#comments"><?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
-                <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
-                <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
-                    <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
+                <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $this->__("tabs.ticketDetails") ?></a></li>
+                <li><a href="#subtasks"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
+                <li><a href="#comments"><span class="fa fa-comments"></span> <?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
+                <li><a href="#files"><span class="fa fa-file"></span> <?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
+                <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+                    <li><a href="#timesheet"><span class="fa fa-clock-o"></span> <?php echo $this->__("tabs.time_tracking") ?></a></li>
                 <?php }; ?>
             </ul>
 
@@ -58,7 +58,7 @@
                 <?php $this->displaySubmodule('tickets-attachments') ?>
             </div>
 
-            <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
+            <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
                 <div id="timesheet">
                     <?php $this->displaySubmodule('tickets-timesheet') ?>
                 </div>
@@ -75,13 +75,28 @@
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.ticketsController.initAsyncInputChange();
-        leantime.dashboardController._initDueDateTimePickers();
         leantime.ticketsController.initTicketTabs();
-        leantime.ticketsController.initTagsInput();
         leantime.generalController.initComplexEditor();
-        leantime.ticketsController.initEffortDropdown();
-        leantime.ticketsController.initStatusDropdown();
+
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
+            leantime.ticketsController.initAsyncInputChange();
+            leantime.ticketsController.initDueDateTimePickers();
+
+            leantime.ticketsController.initTagsInput();
+
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initStatusDropdown();
+
+        <?php }else{ ?>
+
+            leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+        <?php } ?>
+
+        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+            leantime.generalController.enableCommenterForms();
+        <?php }?>
 
     });
 

@@ -510,9 +510,7 @@ namespace leantime\domain\repositories {
                   `template` varchar(100) DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
-                insert  into `zp_roles`(`id`,`roleName`,`roleDescription`,`sysOrg`,`template`) values (2,'admin','Administrators',14,'zypro'),(3,'user','Clients',14,'zypro'),(4,'developer','Developer',14,'zypro'),(5,'manager','Manager',14,'zypro');
-                    
+                                    
                 CREATE TABLE `zp_submodulerights` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                   `alias` varchar(155) DEFAULT NULL,

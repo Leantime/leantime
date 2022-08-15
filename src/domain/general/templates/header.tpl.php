@@ -1,5 +1,7 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
 <?php $appSettings = $this->get('appSettings'); ?>
+<?php $debugRenderer = $this->get('debugRenderer'); ?>
+
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
 
@@ -26,6 +28,12 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
+
+<?php
+    if($appSettings->debug == 1) {
+        echo $debugRenderer->renderHead();
+    }
+?>
 
 <!-- Replace main theme colors -->
 <style>

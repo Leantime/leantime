@@ -9,9 +9,19 @@ body .tox-tinymce {
 
 body .tox .tox-toolbar,
 body .tox .tox-toolbar__overflow,
-body .tox .tox-toolbar__primary {
+body .tox .tox-toolbar__primary,
+body .tox .tox-edit-area{
     border-top:0px;
 }
+
+.tox-statusbar {
+    display:none;
+}
+
+body .tox-editor-header {
+    border-bottom:1px solid #ccc !important;
+}
+
 
 
 body .tox .tox-mbtn,

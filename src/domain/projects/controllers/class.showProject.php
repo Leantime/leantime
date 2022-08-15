@@ -3,8 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showProject
     {
@@ -15,6 +17,9 @@ namespace leantime\domain\controllers {
          * @access public
          */
         public function __construct () {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
+
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();
             $this->language = new core\language();
@@ -40,13 +45,7 @@ namespace leantime\domain\controllers {
             $projectRepo = new repositories\projects();
             $config = new core\config();
 
-            if(!services\auth::userIsAtLeast("clientManager")) {
-                $tpl->display('general.error');
-                exit();
-            }
-
-
-            if (isset($_GET['id'])) {
+            if (isset($_GET['id']) === true) {
 
                 $id = (int)($_GET['id']);
 
@@ -143,15 +142,6 @@ namespace leantime\domain\controllers {
                 
                 $project = $projectRepo->getProject($id);
                 $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);
-
-
-
-
-                if(services\auth::userHasRole("clientManager") && $project['clientId'] != services\auth::getUserClientId()) {
-                    $tpl->display('general.error');
-                    exit();
-                }
-
 
                 if(isset($_POST['submitSettings'])) {
 
@@ -417,13 +407,10 @@ namespace leantime\domain\controllers {
 
                 $user = new repositories\users();
 
-                if(services\auth::userIsAtLeast("manager")) {
-                    $tpl->assign('availableUsers', $user->getAll());
-                    $tpl->assign('clients', $clients->getAll());
-                }else{
-                    $tpl->assign('availableUsers', $user->getAllClientUsers(services\auth::getUserClientId()));
-                    $tpl->assign('clients', array($clients->getClient(services\auth::getUserClientId())));
-                }
+
+                $tpl->assign('availableUsers', $user->getAll());
+                $tpl->assign('clients', $clients->getAll());
+
 
                 $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
                 $tpl->assign('employeeFilter', $userId);

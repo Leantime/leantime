@@ -24,11 +24,13 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
         <div class="row">
             <div class="col-md-4">
+                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                 <?php if (count($this->get('allCanvas')) > 0) { ?>
                     <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea"); ?></a>
 
-                <?php } ?>
+                <?php }
+                }?>
             </div>
 
             <div class="col-md-4 center">
@@ -52,11 +54,13 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                             <?php } ?>
                         </select><br/>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <small><a href="javascript:void(0)"
                                       class="addCanvasLink"><?php echo $this->__("links.create_idea_board"); ?></a></small> |
                             <small><a href="javascript:void(0)"
                                       class="editCanvasLink "><?php echo $this->__("links.edit_idea_board"); ?></a></small>
-                        <?php } ?>
+                        <?php }
+                        } ?>
                     </form>
 
                     </span>
@@ -87,7 +91,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                     <div class="column" style="width:<?=$size?>%;">
 
                         <h4 class="widgettitle title-primary">
-                            <?php if($login::userIsAtLeast("clientManager")) { ?>
+                            <?php if($login::userIsAtLeast($roles::$manager)) { ?>
                                 <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
                                    class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
@@ -103,7 +107,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                         <div class="row">
                                             <div class="col-md-12">
 
-                                                <?php if($login::userIsAtLeast("developer")) { ?>
+                                                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                                                     <div class="inlineDropDownContainer" style="float:right;">
 
                                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -190,7 +194,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
             </div>
             <div class="clearfix"></div>
 
-            <?php if($login::userIsAtLeast("clientManager")) { ?>
+            <?php if($login::userIsAtLeast($roles::$manager)) { ?>
                 <br/>
                 <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
                    class="delete right"><?php echo $this->__("links.delete_board") ?></a>
@@ -206,8 +210,10 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 
                 <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>
                 <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
+                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="javascript:void(0);"
                    class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_new_idea_board") ?></a>
+                <?php } ?>
             </div>
 
         <?php } ?>
@@ -278,10 +284,16 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.setKanbanHeights();
 
-        var ideaStatusList = [<?php foreach($canvasLabels as $key => $statusRow){ echo "'".$key."',"; }?>];
-        leantime.ideasController.initIdeaKanban(ideaStatusList);
-        leantime.ideasController.initUserDropdown();
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
 
+        var ideaStatusList = [<?php foreach($canvasLabels as $key => $statusRow){ echo "'".$key."',"; }?>];
+            leantime.ideasController.initIdeaKanban(ideaStatusList);
+            leantime.ideasController.initUserDropdown();
+        <?php }else{ ?>
+
+            leantime.generalController.makeInputReadonly(".maincontentinner");
+
+        <?php } ?>
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
         leantime.helperController.showHelperModal("advancedBoards");

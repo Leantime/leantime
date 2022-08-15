@@ -17,12 +17,13 @@
     "jquery": "^3.6.0",
     "jquery-migrate": "1.4.1",
     "jquery-ui-dist": "^1.13.1",
-    "jquery-ui-touch-punch":"^0.2.3",
+    "jquery-ui-touch-punch": "^0.2.3",
     "masonry-layout": "^4.2.2",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
     "tether-shepherd": "^1.8.1",
-    "tinymce": "^5.10.5"
+    "tinymce": "^5.10.5",
+    "uppy": "^2.13.3"
   },
   "devDependencies": {
     "grunt": "^1.5.3",

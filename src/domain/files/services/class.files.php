@@ -35,8 +35,6 @@ namespace leantime\domain\services {
 
                 if($this->fileRepository->upload($file, $module, $entityId)){
 
-                    $currentUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
                     switch($module) {
                         case "ticket":
                             $subject = sprintf($this->language->__("email_notifications.new_file_todo_subject"), $entity->id, $entity->headline);
@@ -50,7 +48,7 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$currentUrl, "text"=> $linkLabel));
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>CURRENT_URL, "text"=> $linkLabel));
 
                     return true;
 

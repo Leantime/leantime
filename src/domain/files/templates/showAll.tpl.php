@@ -53,7 +53,7 @@
 
                                         <?php
 
-                                        if ($login::userIsAtLeast("developer")) { ?>
+                                        if ($login::userIsAtLeast($roles::$editor)) { ?>
                                             <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                                         <?php  } ?>
 

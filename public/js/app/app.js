@@ -20,6 +20,7 @@ jQuery(document).on('click', function (e) {
 
 
 leantime.replaceSVGColors = function () {
+
     jQuery(document).ready(function(){
 
         if(leantime.companyColor != "#1b75bb") {
@@ -31,6 +32,7 @@ leantime.replaceSVGColors = function () {
         }
 
     });
+
 };
 
 leantime.replaceSVGColors();

@@ -10,6 +10,7 @@ namespace leantime\domain\services {
     use League\HTMLToMarkdown\HtmlConverter;
     use GuzzleHttp\Client;
     use Psr\Http\Message\ResponseInterface;
+    use leantime\domain\models\auth\roles;
 
     class projects
     {
@@ -412,7 +413,7 @@ namespace leantime\domain\services {
 
                     if($route != "api.i18n") {
 
-                        if (services\auth::userIsAtLeast("clientManager")) {
+                        if(auth::userIsAtLeast(roles::$manager)) {
 
                             $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
                                 "info");
@@ -444,6 +445,8 @@ namespace leantime\domain\services {
 
             if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
+                //Get user project role
+
                 $project = $this->getProject($projectId);
 
                 if ($project) {
@@ -472,7 +475,6 @@ namespace leantime\domain\services {
 
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
 
                     return true;
 

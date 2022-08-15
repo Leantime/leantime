@@ -169,10 +169,9 @@ namespace leantime\domain\repositories {
             $sql = "SELECT 
 			zp_user.id,
 			zp_user.firstname,
-			zp_user.lastname,
-			zp_roles.roleDescription,
-			zp_roles.roleName AS role
-		 FROM zp_user LEFT JOIN zp_roles ON zp_user.role = zp_roles.id WHERE zp_roles.roleName IN('developer','admin','manager') ORDER BY lastname";
+			zp_user.lastname
+		 FROM zp_user 
+		    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
 

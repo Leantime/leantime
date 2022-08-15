@@ -51,6 +51,4 @@
 
 </div><!--mainwrapper-->
 
-
-</body>
-</html>
+<?php echo $this->frontcontroller->includeAction('general.pageBottom'); ?>
