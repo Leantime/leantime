@@ -14,7 +14,7 @@
 ?>
 
 <ul class="nav nav-tabs nav-stacked">
-    <?php if ($this->get('allProjects') !== false){?>
+    <?php if ($this->get('allAvailableProjects') !== false){?>
         <li class="project-selector">
 
             <div class="form-group">
@@ -32,8 +32,8 @@
                         <?php
                         $lastClient = "";
 
-                        if(count($this->get('allProjects')) > 1) {
-                            foreach ($this->get('allProjects') as $projectRow) {
+                        if($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) > 1) {
+                            foreach ($this->get('allAssignedProjects') as $projectRow) {
 
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];

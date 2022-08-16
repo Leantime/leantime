@@ -7,7 +7,7 @@
             <?=$this->__("menu.my_portfolio")?>
         </a>
     </li>
-    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+    <?php if($login::userIsAtLeast($roles::$editor, true)) { ?>
 
 
 

@@ -414,10 +414,21 @@
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                    <?php foreach($this->get('users') as $user){
-                                                        echo"<li class='dropdown-item'>
-                                                                <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
-                                                        echo"</li>";
+                                                    <?php
+                                                    if(is_array($this->get('users'))) {
+                                                        foreach ($this->get('users') as $user) {
+                                                            echo "<li class='dropdown-item'>
+                                                                <a href='javascript:void(0);' data-label='" . sprintf(
+                                                                    $this->__("text.full_name"),
+                                                                    $this->escape($user["firstname"]),
+                                                                    $this->escape($user['lastname'])
+                                                                ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(
+                                                                    $this->__("text.full_name"),
+                                                                    $this->escape($user["firstname"]),
+                                                                    $this->escape($user['lastname'])
+                                                                ) . "</a>";
+                                                            echo "</li>";
+                                                        }
                                                     }?>
                                                 </ul>
                                             </div>

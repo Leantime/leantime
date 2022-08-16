@@ -353,9 +353,38 @@ namespace leantime\domain\services {
 
         }
 
+
+
         public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+            if($projects) {
+                return $projects;
+            }else{
+                return false;
+            }
+
+        }
+
+        public function getProjectRole($userId, $projectId) {
+
+            $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+
+            if(is_array($project)) {
+                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+                    return $project[0]['projectRole'];
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;
@@ -451,6 +480,9 @@ namespace leantime\domain\services {
 
                 if ($project) {
 
+                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+
+
                     $_SESSION["currentProject"] = $projectId;
 
                     if (mb_strlen($project['name']) > 25) {
@@ -460,6 +492,8 @@ namespace leantime\domain\services {
                     }
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                    $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
 
                     $_SESSION["currentSprint"] = "";
                     $_SESSION['currentLeanCanvas'] = "";

@@ -107,7 +107,7 @@ namespace leantime\domain\repositories {
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
             $this->host = $this->config->dbHost;
-            $this->port = $this->config->dbPort;
+            $this->port = $this->config->dbPort ?? 3306;
 
             try {
 
@@ -497,9 +497,12 @@ namespace leantime\domain\repositories {
                   `userId` int(11) DEFAULT NULL,
                   `projectId` int(11) DEFAULT NULL,
                   `wage` int(11) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                  `projectRole` varchar(20)
+                  PRIMARY KEY (`id`),
+                  KEY zp_relationuserproject_projectId_index (`projectId`),
+                  KEY zp_relationuserproject_userId_index  (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
+
                 insert  into `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) values (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
                 
                 CREATE TABLE `zp_roles` (
@@ -1069,6 +1072,37 @@ namespace leantime\domain\repositories {
 
             $sql = array(
                 "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        private function update_sql_20108()
+        {
+            $errors = array();
+
+            $sql = array(
+                "alter table zp_relationuserproject add projectRole varchar(20) null",
+                "create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)",
+                "create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)"
             );
 
             foreach ($sql as $statement) {

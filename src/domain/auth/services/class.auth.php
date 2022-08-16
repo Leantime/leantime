@@ -325,7 +325,7 @@ namespace leantime\domain\services {
             if(isset($_SESSION['userdata']) === true) {
 
                 $this->authRepo->updateUserSession($_SESSION['userdata']['id'], $this->session, time());
-                $_SESSION['userdata']['role'] = "manager";
+
                 return true;
 
             //If the session doesn't have any session data we are out of sync. Start again
@@ -421,7 +421,32 @@ namespace leantime\domain\services {
             return $this->authRepo->changePW($password, $hash);
         }
 
-        public static function userIsAtLeast(string $role) {
+        public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false) {
+
+            //If statement split up for readability
+            //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+            if ($forceGlobalRoleCheck == true){
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //If projectRole is not defined or if it is set to inherited
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //Do not overwrite admin or owner roles
+            }elseif($_SESSION['userdata']['role'] == roles::$owner
+                || $_SESSION['userdata']['role'] == roles::$admin
+                || $_SESSION['userdata']['role'] == roles::$manager) {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //In all other cases check the project role
+            }else{
+
+                $roleToCheck = $_SESSION['userdata']['projectRole'];
+
+            }
 
             $testKey = array_search($role, roles::getRoles());
 
@@ -430,7 +455,7 @@ namespace leantime\domain\services {
                 return false;
             }
 
-            $currentUserKey = array_search($_SESSION['userdata']['role'], roles::getRoles());
+            $currentUserKey = array_search($roleToCheck, roles::getRoles());
 
             if($testKey <= $currentUserKey){
                 return true;
@@ -467,7 +492,9 @@ namespace leantime\domain\services {
                 $roleToCheck = $_SESSION['userdata']['role'];
 
             //Do not overwrite admin or owner roles
-            }elseif($_SESSION['userdata']['role'] == roles::$owner || $_SESSION['userdata']['role'] == roles::$admin) {
+            }elseif($_SESSION['userdata']['role'] == roles::$owner
+                || $_SESSION['userdata']['role'] == roles::$admin
+            || $_SESSION['userdata']['role'] == roles::$manager) {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 

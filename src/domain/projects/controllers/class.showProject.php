@@ -159,32 +159,30 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                //Calculate projectdetails
-                //TODO: Change to be from ticketRepo!!!
-                $opentickets = $projectRepo->getOpenTickets($id);
 
-                $closedTickets = $project['numberOfTickets'] - $opentickets['openTickets'];
-
-                if ($project['numberOfTickets'] != 0) {
-
-                    $projectPercentage = round($closedTickets / $project['numberOfTickets'] * 100, 2);
-                } else {
-
-                    $projectPercentage = 0;
-                }
-
-                if ($project['numberOfTickets'] == null) {
-                    $project['numberOfTickets'] = 1;
-                }
-
-                //save changed project data
-                if (isset($_POST['save']) === true) {
+                if (isset($_POST['saveUsers']) === true) {
 
                     if (isset($_POST['editorId']) && count($_POST['editorId'])) {
                         $assignedUsers = $_POST['editorId'];
                     } else {
                         $assignedUsers = array();
                     }
+
+                    $values = array(
+                        "assignedUsers"=>$assignedUsers,
+                        "globalProjectUserAccess" => $_POST['globalProjectUserAccess'] ?? null,
+                        "projectRoles" => $_POST
+                    );
+
+                    $projectRepo->editProjectRelations($values, $id);
+
+                    $project = $projectRepo->getProject($id);
+                    $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);
+
+                }
+
+                //save changed project data
+                if (isset($_POST['save']) === true) {
 
                     $this->settingsRepo->saveSetting("projectsettings." . $id . ".commentOrder", $_POST['settingsCommentOrder']);
                     $this->settingsRepo->saveSetting("projectsettings." . $id . ".ticketLayout", $_POST['settingsTicketLayout']);
@@ -200,7 +198,6 @@ namespace leantime\domain\controllers {
                         'clientId' => $_POST['clientId'],
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
-                        'assignedUsers' => $assignedUsers,
 						'dollarBudget' => $_POST['dollarBudget']
                     );
 
@@ -267,50 +264,6 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                //Manage timesheet Entries
-                $timesheets = new repositories\timesheets();
-
-                $data = array();
-                $months = array();
-                $results = $timesheets->getProjectHours($id);
-
-                $allHours = 0;
-                $max = 0;
-                foreach ($results as $row) {
-
-                    if ($row['month'] != null) {
-
-                        $data[] = (int)$row['summe'];
-                        $months[] = substr($this->language->__('MONTH_' . $row['month'] . ''), 0, 3);
-
-                        if ($row['summe'] > $max) {
-                            $max = $row['summe'];
-                        }
-
-                    } else {
-
-                        $allHours = $row['summe'];
-
-                    }
-
-                }
-
-
-                $steps = 10;
-
-                if ($max > 100) {
-                    $steps = 50;
-                }
-
-                $max = $max + $steps;
-
-                $tpl->assign('timesheetsAllHours', $allHours);
-
-                $chart = "";
-
-                $tpl->assign('chart', $chart);
-
-
                 //Delete File
                 if (isset($_GET['delFile']) === true) {
 
@@ -335,69 +288,9 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
 
                 }
-                //Timesheets
-                $invEmplCheck = '0';
-                $invCompCheck = '0';
-
-                $projectFilter = $id;
-                $dateFrom = mktime(0, 0, 0, date("m"), '1', date("Y"));
-                $dateFrom = date("Y-m-d", $dateFrom);
-                $dateTo = date("Y-m-d 00:00:00");
-                $kind = 'all';
-                $userId = 'all';
 
 
-                if (isset($_POST['kind']) && $_POST['kind'] != '') {
 
-                    $kind = ($_POST['kind']);
-
-                }
-
-                if (isset($_POST['userId']) && $_POST['userId'] != '') {
-
-                    $userId = ($_POST['userId']);
-
-                }
-
-                if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
-                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']);
-
-                }
-
-                if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
-                    $dateTo = $this->language->getISODateTimeString($_POST['dateTo']);
-
-                }
-
-                if (isset($_POST['invEmpl']) === true) {
-
-                    $invEmplCheck = $_POST['invEmpl'];
-
-                    if ($invEmplCheck == 'on') {
-                        $invEmplCheck = '1';
-                    } else {
-                        $invEmplCheck = '0';
-                    }
-
-                } else {
-                    $invEmplCheck = '0';
-                }
-
-                if (isset($_POST['invComp']) === true) {
-
-                    $invCompCheck = ($_POST['invComp']);
-
-                    if ($invCompCheck == 'on') {
-                        $invCompCheck = '1';
-                    } else {
-                        $invCompCheck = '0';
-                    }
-
-                } else {
-                    $invCompCheck = '0';
-                }
 
                 $user = new repositories\users();
                 $employees = $user->getEmployees();
@@ -413,26 +306,15 @@ namespace leantime\domain\controllers {
 
 
                 $tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
-                $tpl->assign('employeeFilter', $userId);
+
                 $tpl->assign('employees', $employees);
-                $tpl->assign('dateFrom', $this->language->getFormattedDateString($dateFrom));
-                $tpl->assign('dateTo', $this->language->getFormattedDateString($dateFrom));
-                $tpl->assign('actKind', $kind);
-                $tpl->assign('kind', $timesheets->kind);
-                $tpl->assign('invComp', $invCompCheck);
-                $tpl->assign('invEmpl', $invEmplCheck);
 
-                $tpl->assign('projectFilter', $projectFilter);
-
-
-                $tpl->assign('allTimesheets', $timesheets->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
 
                 //Assign vars
                 $ticket = new repositories\tickets();
                 $tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
                 $tpl->assign('projectTickets', $projectRepo->getProjectTickets($id));
-                $tpl->assign('projectPercentage', $projectPercentage);
-                $tpl->assign('openTickets', $opentickets['openTickets']);
+
                 $tpl->assign('project', $project);
 
                 $files = $file->getFilesByModule('project', $id);

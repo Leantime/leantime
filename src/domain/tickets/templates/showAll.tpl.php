@@ -456,6 +456,7 @@
         leantime.ticketsController.initEffortDropdown();
         leantime.ticketsController.initPriorityDropdown();
         leantime.ticketsController.initSprintDropdown();
+        leantime.ticketsController.initStatusDropdown();
     <?php }else{ ?>
     leantime.generalController.makeInputReadonly(".maincontentinner");
     <?php } ?>
