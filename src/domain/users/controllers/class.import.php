@@ -80,9 +80,6 @@ namespace leantime\domain\controllers {
             //Import/Update User Post
             if(isset($params['importSubmit'])) {
 
-                var_dump($params["users"]);
-
-
                 if(is_array($params["users"])){
 
                     $users = array();

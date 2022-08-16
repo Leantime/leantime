@@ -101,7 +101,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 				<?php endif; ?>
 			<?php endforeach; ?>
 		</div>
-        <?php var_dump($this->get('comments')) ?>
+
         <?php if(count($this->get('comments')) == 0){ ?>
             <div class="text-center">
                 <div style='width:33%' class='svgContainer'>

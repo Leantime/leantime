@@ -65,9 +65,6 @@ namespace leantime\domain\controllers {
 
         public function post($params) {
 
-            var_dump($params);
-            exit();
-
             if (isset($params['comment']) === true) {
 
                 if($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
