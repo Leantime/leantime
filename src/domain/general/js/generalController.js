@@ -48,16 +48,13 @@ leantime.generalController = (function () {
 
     var _initSimpleEditor = function () {
 
-
-
         jQuery('textarea.tinymceSimple').tinymce(
             {
                 // General options
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
-                height:"150",
-                content_style: "img { max-width: 100%; }",
+                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
+                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                 toolbar : "bold italic strikethrough |  link unlink image | bullist numlist | emoticons",
                 branding: true,
@@ -127,11 +124,11 @@ leantime.generalController = (function () {
                 // General options
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | bullist numlist | table | template",
                 branding: true,
                 statusbar: true,
                 convert_urls: false,

@@ -182,6 +182,8 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
+        leantime.generalController.initSimpleEditor();
+
         <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
 
             leantime.generalController.makeInputReadonly(".nyroModalCont");

@@ -82,6 +82,7 @@
 
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
+            leantime.ticketsController.initDates();
 
             leantime.ticketsController.initTagsInput();
 

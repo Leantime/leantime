@@ -277,8 +277,8 @@ namespace leantime\domain\repositories {
 								
 				WHERE 
 				  (zp_relationuserproject.userId = :id 
-						        OR zp_projects.psettings = 'all'
-				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+						        OR project.psettings = 'all'
+				                OR (project.psettings = 'client' AND project.clientId = :clientId)
 						        )
 				  
 				  AND ticket.type <> 'Milestone' AND ticket.type <> 'Subtask'

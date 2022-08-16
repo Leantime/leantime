@@ -71,7 +71,7 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter, roles::$client])) {
+            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
                 if (isset($params['quickadd']) == true) {
                     $result = $this->ticketService->quickAddTicket($params);
 

@@ -35,6 +35,7 @@ module.exports = function (grunt) {
                     "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/moment/moment.js",
+                    "node_modules/js-cookie/dist/js.cookie.js",
                     "public/js/libs/bootstrap.min.js",
                     "public/js/libs/bootstrap-timepicker.min.js",
                     "public/js/libs/bootstrap-fileupload.min.js",
