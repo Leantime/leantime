@@ -493,7 +493,10 @@ namespace leantime\domain\services {
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
 
-                    $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    $_SESSION['userdata']['projectRole'] = '';
+                    if($projectRole != '') {
+                        $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    }
 
                     $_SESSION["currentSprint"] = "";
                     $_SESSION['currentLeanCanvas'] = "";

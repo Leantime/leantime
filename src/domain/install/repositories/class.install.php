@@ -73,7 +73,8 @@ namespace leantime\domain\repositories {
             20104,
             20105,
             20106,
-            20107
+            20107,
+            20108
         );
 
         /**

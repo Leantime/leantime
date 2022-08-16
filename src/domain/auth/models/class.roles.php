@@ -21,7 +21,7 @@ namespace leantime\domain\models\auth {
         );
 
         public static function getRoleString($key) {
-            return self::$roleKeys[$key];
+            return self::$roleKeys[$key] ?? '';
         }
 
         public static function getRoles(){
