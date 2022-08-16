@@ -294,3 +294,13 @@ body .modal-footer {
     border-color:var(--neutral);
     box-shadow:none;
 }
+
+body .row .regLeft {
+    /*background: linear-gradient(45deg, var(--accent1) 20%,var(--accent2) 100%);*/
+    background: linear-gradient(45deg, var(--accent1) 0%,#282830 80%);
+}
+
+body .regpanelinner .pageheader .pagetitle h1,
+body .regpanelinner .pageheader .pageicon {
+    color:var(--primary-font-color);
+}

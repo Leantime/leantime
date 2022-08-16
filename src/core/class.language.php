@@ -8,6 +8,8 @@
 namespace leantime\core {
 
     use Exception;
+    use leantime\domain\repositories\reports;
+    use leantime\domain\repositories\setting;
 
     class language
     {
@@ -58,23 +60,38 @@ namespace leantime\core {
         {
 
             $config = new config();
+            $settingsRepo = new setting();
+
+            if(isset($_COOKIE['language'])){
+                $_SESSION['usersettings.language'] = htmlentities($_COOKIE['language']);
+            }
 
             if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
 
                 $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
 
-                if ($config->language != '' && (!isset($_SESSION['companysettings.language']) || $_SESSION['companysettings.language'] == '')) {
+                //Start checking if the user has a language set
+                if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
 
-                    $this->setLanguage($config->language);
+                    $this->setLanguage($_SESSION['usersettings.language']);
 
-                } elseif (isset($_SESSION['companysettings.language']) === true && $_SESSION['companysettings.language'] != '') {
+                //If not check for company default setting
+                } elseif (isset($_SESSION['companysettings.language']) === false || $_SESSION['companysettings.language'] == '') {
+
+                    $language = $settingsRepo->getSetting("companysettings.language");
+
+                    if ($language !== false) {
+                        $_SESSION["companysettings.language"] = $language;
+                    } else {
+                        $_SESSION["companysettings.language"] = $config->language ?? $this->getBrowserLanguage();
+                    }
 
                     $this->setLanguage($_SESSION['companysettings.language']);
 
-                } else {
+                //Language is not set, get config language
+                } else if(isset($_SESSION['companysettings.language']) === true) {
 
-                    $browserLang = $this->getBrowserLanguage();
-                    $this->setLanguage($browserLang);
+                    $this->setLanguage($_SESSION['companysettings.language']);
 
                 }
 
@@ -82,6 +99,7 @@ namespace leantime\core {
 
                 throw new Exception("Language list missing");
             }
+
 
         }
 
@@ -98,6 +116,26 @@ namespace leantime\core {
             $this->language = $lang;
 
             $this->readIni();
+
+        }
+
+        /**
+         * getLanguage - set the language (format: de-DE, languageCode-CountryCode)
+         *
+         * @access public
+         * @param  $lang
+         * @return array
+         */
+        public function getCurrentLanguage()
+        {
+
+            return $this->language;
+
+        }
+
+        public function isValidLanguage($langCode){
+
+            return isset($this->langlist[$langCode]);
 
         }
 
@@ -132,6 +170,8 @@ namespace leantime\core {
             }
 
             $this->ini_array = $mainLanguageArray;
+
+
             return $this->ini_array;
 
         }

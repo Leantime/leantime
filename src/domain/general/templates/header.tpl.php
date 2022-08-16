@@ -1,7 +1,7 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
 <?php $appSettings = $this->get('appSettings'); ?>
 <?php $debugRenderer = $this->get('debugRenderer'); ?>
-<?php $theme = $_SESSION['theme'] ?? 'dark' ?>
+<?php $theme = $_SESSION["usersettings.theme"] ?? 'default' ?>
 
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
@@ -23,9 +23,6 @@
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
 
-<script>
-    var leantime
-</script>
 
 <!-- libs -->
 <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>

@@ -360,7 +360,7 @@ h4 {
 html,
 body.loginpage {
    height:100%;
-    background:#fff !important;
+    background:var(--secondary-background) !important;
 }
 
 
@@ -736,7 +736,7 @@ a .label-default:after, a .label-primary:after {
 }
 
 .row .regRight img {
-    max-width:120px;
+    max-width:200px;
     margin-bottom:40px;
     margin-top:-40px;
 }

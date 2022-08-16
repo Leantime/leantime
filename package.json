@@ -23,7 +23,8 @@
     "packery": "^2.1.2",
     "tether-shepherd": "^1.8.1",
     "tinymce": "^5.10.5",
-    "uppy": "^2.13.3"
+    "uppy": "^2.13.3",
+    "js-cookie": "^3.0.1"
   },
   "devDependencies": {
     "grunt": "^1.5.3",

@@ -62,14 +62,10 @@ class application
 
         $this->loadHeaders();
 
-        //Override theme settings
-        $this->overrideThemeSettings();
-
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
         //Allow a limited set of actions to be public
-
 
         if($this->auth->logged_in()===true) {
 
@@ -134,74 +130,6 @@ class application
         header('X-XSS-Protection: 1; mode=block');
         header('X-Content-Type-Options: nosniff');
 
-    }
-
-    private function overrideThemeSettings()
-    {
-        if (isset($_SESSION["companysettings.logoPath"]) === false) {
-            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
-
-            if ($logoPath !== false) {
-                if (strpos($logoPath, 'http') === 0) {
-                    $_SESSION["companysettings.logoPath"] = $logoPath;
-                } else {
-                    $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
-                }
-            } else {
-                if (strpos($this->config->logoPath, 'http') === 0) {
-                    $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
-                } else {
-                    $_SESSION["companysettings.logoPath"] = BASE_URL . $this->config->logoPath;
-                }
-            }
-        }
-
-        if (isset($_SESSION["companysettings.primarycolor"]) === false) {
-            $_SESSION["companysettings.primarycolor"] = "#1b75bb";
-            $_SESSION["companysettings.secondarycolor"] = "#81B1A8";
-
-            //Old setting
-            $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
-            if ($mainColor !== false) {
-                $_SESSION["companysettings.primarycolor"] = "#" . $mainColor;
-                $_SESSION["companysettings.secondarycolor"] = "#" . $mainColor;
-            }
-
-            //new setting
-            $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
-            if ($primaryColor !== false) {
-                $_SESSION["companysettings.primarycolor"] = $primaryColor;
-                $_SESSION["companysettings.secondarycolor"] = $primaryColor;
-            }
-
-            $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
-            if ($secondaryColor !== false) {
-                $_SESSION["companysettings.secondarycolor"] = $secondaryColor;
-            }
-        } else {
-            if (!str_starts_with($_SESSION["companysettings.primarycolor"], "#")) {
-                $_SESSION["companysettings.primarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
-                $_SESSION["companysettings.secondarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
-            }
-        }
-
-        if (isset($_SESSION["companysettings.sitename"]) === false) {
-            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
-            if ($sitename !== false) {
-                $_SESSION["companysettings.sitename"] = $sitename;
-            } else {
-                $_SESSION["companysettings.sitename"] = $this->config->sitename;
-            }
-        }
-
-        if (isset($_SESSION["companysettings.language"]) === false || $_SESSION["companysettings.language"] == false) {
-            $language = $this->settingsRepo->getSetting("companysettings.language");
-            if ($language !== false) {
-                $_SESSION["companysettings.language"] = $language;
-            } else {
-                $_SESSION["companysettings.language"] = $this->config->language;
-            }
-        }
     }
 
     private function checkIfInstalled() {

@@ -91,6 +91,28 @@ $user = $this->get('user');
                                     <input type="checkbox" value="" name="notifications" class="input"
                                            id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
                                 </span>
+                            </p><br/>
+
+
+                            <p>
+                                <label for="language"><?php echo $this->__('label.language') ?></label>
+                                <span class='field'>
+                                    <select name="language" id="language">
+                                        <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
+                                            <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                        <?php } ?>
+                                    </select>
+                                </span>
+                            </p>
+
+                            <p>
+                                <label for="theme"><?php echo $this->__('label.theme') ?></label>
+                                <span class='field'>
+                                    <select name="theme" id="theme">
+                                        <option value="default" <?php if($this->get('userTheme') == "default") echo "selected='selected'" ?>><?php echo $this->__('label.light') ?></option>
+                                        <option value="dark" <?php if($this->get('userTheme') == "dark") echo "selected='selected'" ?>><?php echo $this->__('label.dark') ?></option>
+                                    </select>
+                                </span>
                             </p>
 
                             <p class='stdformbutton'>
