@@ -1105,7 +1105,7 @@ a .label-default:after, a .label-primary:after {
 }
 
 .userloggedinfo ul li.border {
-    border-top:1px solid #ccc;
+    border-top:1px solid var(--neutral);
 }
 
 .userloggedinfo ul li.nav-header {
@@ -1437,9 +1437,9 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 
 .widgetcontent {
-    background: #fff;
+    background: var(--secondary-background);
     padding: 15px 12px;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--neutral) !important;
     border-top: 0;
     margin-bottom: 20px;
 
@@ -5061,7 +5061,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .inlineDropDownContainer .dropdown-menu .border {
-    border-top:1px solid #ccc;
+    border-top:1px solid var(--neutral);
 }
 
 .inlineDropDownContainer .dropdown-menu li>span {
@@ -5233,7 +5233,7 @@ input.secretInput:active {
 }
 
 .border-bottom {
-    border-bottom:1px solid #ddd;
+    border-bottom:1px solid var(--neutral);
     padding-bottom:5px;
     margin-bottom:10px;
 }

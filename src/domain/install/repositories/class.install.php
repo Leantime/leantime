@@ -243,8 +243,7 @@ namespace leantime\domain\repositories {
             }
 
             if ($currentDBVersion == $newDBVersion) {
-                $errors[0] = "Database is up to date! <a href='".BASE_URL."/'> Login to continue</a>";
-                return $errors;
+                return true;
             }
 
             //Find all update functions that need to be executed
@@ -1101,7 +1100,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = array(
-                "alter table zp_relationuserproject add projectRole varchar(20) null",
+                "alter table zp_relationuserproject add `projectRole` varchar(20) null",
                 "create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)",
                 "create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)"
             );

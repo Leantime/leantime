@@ -206,7 +206,8 @@ class application
 
     private function checkIfInstalled() {
 
-        if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true) {
+        if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true
+        && isset($_SESSION['isUpToDate']) && $_SESSION['isUpToDate'] === true) {
             return;
         }
         //Only run this if the user is not logged in (db should be updated/installed before user login)

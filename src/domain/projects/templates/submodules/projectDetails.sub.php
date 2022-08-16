@@ -65,7 +65,7 @@ $project = $this->get('project');
                     <h4 class="widgettitle title-light">
                         <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
-                    <textarea name="details" id="details" class="projectTinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
             </div>

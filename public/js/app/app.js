@@ -4,6 +4,9 @@ var leantime = leantime || {};
 var themeColor = jQuery('meta[name=theme-color]').attr("content");
 leantime.companyColor = themeColor;
 
+var theme = jQuery('meta[name=color-scheme]').attr("content");
+leantime.theme = theme;
+
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
 leantime.appUrl = appURL;
 

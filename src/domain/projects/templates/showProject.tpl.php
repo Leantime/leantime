@@ -416,7 +416,6 @@
         <?php } ?>
 
         leantime.projectsController.initProjectTabs();
-        leantime.projectsController.initProjectsEditor();
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.projectsController.initSelectFields();

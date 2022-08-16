@@ -153,6 +153,7 @@ body input[type='submit'].btn-default:active,
 .btn-group.open .btn.dropdown-toggle{
     background:var(--secondary-action-hover-bg);
     color:var(--secondary-action-hover-color);
+    border-color:var(--secondary-action-hover-bg);
 }
 
 body .btn-default .caret,
@@ -187,6 +188,7 @@ body input[type='submit'].btn-default:active,
 
 body .btn-primary,
 body btn.btn-primary,
+body a.btn.btn-primary,
 input[type='submit'],
 .btn-primary:link,
 .btn-primary[disabled],
@@ -231,8 +233,15 @@ body .btn-group.open .btn-primary.dropdown-toggle,
     border:1px solid #bbb;
 }
 
+.chzn-container,
 .chzn-container-multi .chzn-choices .search-field input {
     font-size:var(--base-font-size);
+}
+
+.chzn-container-multi .chzn-choices {
+    background-color: var(--secondary-background);
+    line-height: 21px;
+    border: 1px solid var(--main-border-color);
 }
 
 
@@ -388,7 +397,7 @@ a:link.btn{
 }
 
 .btn-circle .iconsweets-white {
-    background-image: url("../images/iconsweets-icons.png");
+
 }
 
 .btn-group+.btn-group {
@@ -479,3 +488,10 @@ input[type=color] {
 
 }
 
+.backlogChartButtons {
+    margin-left:5px !important;
+}
+
+#calendar {
+    margin-top:10px;
+}

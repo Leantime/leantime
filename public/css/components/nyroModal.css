@@ -74,7 +74,7 @@
 	position: absolute;
 	width: 100px;
 	height: 100px;
-	background: #fff url(../../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
+	background: var(--secondary-background) url(../../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
 	padding: 0;
 	background-size: 100px 100px;
 }
