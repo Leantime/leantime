@@ -3,8 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class newProject
     {
@@ -16,6 +18,8 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
@@ -29,10 +33,6 @@ namespace leantime\domain\controllers {
             $projectService = new services\projects();
             $language = new core\language();
 
-            if(!services\auth::userIsAtLeast("clientManager")) {
-                $tpl->display('general.error');
-                exit();
-            }
 
             $msgKey = '';
             $values = array(
@@ -127,13 +127,10 @@ namespace leantime\domain\controllers {
 
 
 
-            if(services\auth::userIsAtLeast("manager")) {
-                $tpl->assign('availableUsers', $user->getAll());
-                $tpl->assign('clients', $clients->getAll());
-            }else{
-                $tpl->assign('availableUsers', $user->getAllClientUsers(services\auth::getUserClientId()));
-                $tpl->assign('clients', array($clients->getClient(services\auth::getUserClientId())));
-            }
+
+           $tpl->assign('availableUsers', $user->getAll());
+           $tpl->assign('clients', $clients->getAll());
+
 
             $tpl->assign('info', $msgKey);
 

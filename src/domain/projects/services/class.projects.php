@@ -10,6 +10,7 @@ namespace leantime\domain\services {
     use League\HTMLToMarkdown\HtmlConverter;
     use GuzzleHttp\Client;
     use Psr\Http\Message\ResponseInterface;
+    use leantime\domain\models\auth\roles;
 
     class projects
     {
@@ -352,9 +353,38 @@ namespace leantime\domain\services {
 
         }
 
+
+
         public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+            if($projects) {
+                return $projects;
+            }else{
+                return false;
+            }
+
+        }
+
+        public function getProjectRole($userId, $projectId) {
+
+            $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+
+            if(is_array($project)) {
+                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+                    return $project[0]['projectRole'];
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;
@@ -412,7 +442,7 @@ namespace leantime\domain\services {
 
                     if($route != "api.i18n") {
 
-                        if (services\auth::userIsAtLeast("clientManager")) {
+                        if(auth::userIsAtLeast(roles::$manager)) {
 
                             $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
                                 "info");
@@ -444,9 +474,14 @@ namespace leantime\domain\services {
 
             if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
+                //Get user project role
+
                 $project = $this->getProject($projectId);
 
                 if ($project) {
+
+                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+
 
                     $_SESSION["currentProject"] = $projectId;
 
@@ -457,6 +492,11 @@ namespace leantime\domain\services {
                     }
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                    $_SESSION['userdata']['projectRole'] = '';
+                    if($projectRole != '') {
+                        $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    }
 
                     $_SESSION["currentSprint"] = "";
                     $_SESSION['currentLeanCanvas'] = "";
@@ -472,7 +512,6 @@ namespace leantime\domain\services {
 
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
 
                     return true;
 

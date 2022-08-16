@@ -44,8 +44,6 @@ namespace leantime\domain\controllers {
 
             $result = $decodedString ? $decodedString : '{}';
 
-            //var_dump($result);
-
             echo "var leantime = leantime || {};
                 var leantime = {
                     i18n: {

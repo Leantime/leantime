@@ -21,6 +21,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 	   style="display:none;" id="mainToggler"><span
 				class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
 	</a>
+
 	<div id="comment0" class="commentBox">
 		<!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
 		<textarea rows="5" cols="50" class="tinymceSimple"
@@ -48,7 +49,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 					<div style="margin-left:60px;"><?php echo ($row['text']); ?></div>
 					<div class="clear"></div>
 					<div style="padding-left:60px">
-						<a href="javascript:void(0);"
+						<a href="javascript:void(0);" class="replyButton"
 						   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
 							<span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
 						</a>
@@ -100,24 +101,42 @@ if (strpos($formUrl, '?delComment=') !== false) {
 				<?php endif; ?>
 			<?php endforeach; ?>
 		</div>
+
+        <?php if(count($this->get('comments')) == 0){ ?>
+            <div class="text-center">
+                <div style='width:33%' class='svgContainer'>
+                    <?php echo file_get_contents(ROOT."/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
+                    <?php $this->e($language->__('text.no_comments')) ?>
+                </div>
+            </div>
+        <?php } ?>
 	</div>
 </form>
 
 <script type='text/javascript'>
-    leantime.generalController.initSimpleEditor();
-    function toggleCommentBoxes(id) {
-        if (id == 0) {
-            jQuery('#mainToggler').hide();
-        } else {
-            jQuery('#mainToggler').show();
-        }
-        jQuery('.commentBox').hide('fast', function () {
-            jQuery('.commentBox textarea').remove();
-            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-            leantime.generalController.initSimpleEditor();
-        });
 
-        jQuery('#comment' + id + '').show('fast');
-        jQuery('#father').val(id);
+
+    leantime.generalController.initSimpleEditor();
+
+    function toggleCommentBoxes(id) {
+        <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+            if (id == 0) {
+                jQuery('#mainToggler').hide();
+            } else {
+                jQuery('#mainToggler').show();
+            }
+            jQuery('.commentBox').hide('fast', function () {
+                jQuery('.commentBox textarea').remove();
+                jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+                leantime.generalController.initSimpleEditor();
+            });
+
+            jQuery('#comment' + id + '').show('fast');
+            jQuery('#father').val(id);
+        <?php } ?>
     }
+
+
+
+
 </script>

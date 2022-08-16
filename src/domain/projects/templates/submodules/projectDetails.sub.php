@@ -2,6 +2,7 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
+
 ?>
 
 
@@ -70,32 +71,7 @@ $project = $this->get('project');
             </div>
         </div>
         <div class="span4">
-            <div class="row-fluid">
-                <div class="span12">
-                    <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-group"></span><?php echo $this->__('label.team_members'); ?></h4>
-                    <div class="form-group">
-                        <?php echo $this->__('text.choose_access_for_users'); ?><br />
-                        <a href='<?=BASE_URL?>/users/showAll/'><?php echo $this->__('links.dont_do_it_alone'); ?></a>
-                        <br /><br />
 
-                        <div class="assign-container">
-                            <?php foreach($this->get('availableUsers') as $row){ ?>
-
-                                    <p class="half">
-                                        <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php
-                                            endif; ?>/>
-
-                                        <label for="user-<?php echo $row['id'] ?>"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
-                                    </p>
-                            <?php } ?>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
             <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span

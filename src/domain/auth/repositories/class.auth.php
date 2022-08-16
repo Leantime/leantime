@@ -125,24 +125,6 @@ namespace leantime\domain\repositories {
         public $hasher;
 
 
-        public static $userRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager',
-            40   => 'manager',
-            50   => 'admin'
-        );
-
-        /*
-         * Clientmanager roles
-         * ClientManagers can only add and remove a set of rules
-         */
-        public static $clientManagerRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager'
-        );
-
         private static $instance;
 
         /*

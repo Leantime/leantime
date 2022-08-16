@@ -3,10 +3,12 @@
 namespace leantime\domain\controllers {
 
 	use leantime\core;
-	use leantime\domain\repositories;
+    use leantime\domain\models\auth\roles;
+    use leantime\domain\repositories;
 	use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-	class newUser
+    class newUser
 	{
 
 		/**
@@ -17,7 +19,9 @@ namespace leantime\domain\controllers {
 		public function run()
 		{
 
-			$tpl = new core\template();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
+            $tpl = new core\template();
 			$userRepo = new repositories\users();
 			$project = new repositories\projects();
 			$language = new core\language();
@@ -33,7 +37,7 @@ namespace leantime\domain\controllers {
 			);
 
 			//only Admins
-			if (services\auth::userIsAtLeast("clientManager")) {
+			if (auth::userIsAtLeast(roles::$admin)) {
 
 				$projectrelation = array();
 
@@ -50,10 +54,6 @@ namespace leantime\domain\controllers {
 						'clientId' => ($_POST['client'])
 					);
 
-					//Choice is an illusion for client managers
-					if (services\auth::userHasRole("clientManager")) {
-						$values['clientId'] = services\auth::getUserClientId();
-					}
 
 					if ($values['user'] !== '') {
 						if ($_POST['password'] == $_POST['password2']) {
@@ -117,16 +117,11 @@ namespace leantime\domain\controllers {
 				$tpl->assign('values', $values);
 				$clients = new repositories\clients();
 
-				if (services\auth::userIsAtLeast("manager")) {
-					$tpl->assign('clients', $clients->getAll());
-					$tpl->assign('allProjects', $project->getAll());
-					$tpl->assign('roles', services\auth::$userRoles);
-				} else {
 
-					$tpl->assign('clients', array($clients->getClient(services\auth::getUserClientId())));
-					$tpl->assign('allProjects', $project->getClientProjects(services\auth::getUserClientId()));
-					$tpl->assign('roles', services\auth::$clientManagerRoles);
-				}
+				$tpl->assign('clients', $clients->getAll());
+				$tpl->assign('allProjects', $project->getAll());
+				$tpl->assign('roles', roles::getRoles());
+
 				$tpl->assign('relations', $projectrelation);
 
 

@@ -47,15 +47,16 @@
             <input type="hidden" value="<?php echo $_SESSION['currentProject']; ?>" name="projectId" id="projectIdInput"/>
             <div class="row">
                 <div class="col-md-4">
-                    <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket" class='ticketModal'> <?=$this->__("links.add_todo") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
-                        </ul>
-                    </div>
-
+                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                        <div class="btn-group">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?=BASE_URL ?>/tickets/newTicket" class='ticketModal'> <?=$this->__("links.add_todo") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
+                            </ul>
+                        </div>
+                    <?php } ?>
                 </div>
 
                 <div class="col-md-4 center">
@@ -84,13 +85,15 @@
                             <?php } 	?>
                             </select>
                             <br/>
-                        <small>
-                            <?php if($dates != "") {
-                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
-                            <?php }else{ ?>
-                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
-                            <?php } ?>
-                        </small>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small>
+                                    <?php if($dates != "") {
+                                        echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
+                                    <?php }else{ ?>
+                                        <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                                    <?php } ?>
+                                </small>
+                                <?php } ?>
                         <?php } ?>
                     </span>
                 </div>
@@ -214,7 +217,7 @@
 						<div class="column" style="width:<?=$size?>%;">
 
                             <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
-                            <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                 <div class="inlineDropDownContainer" style="float:right;">
                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
@@ -258,9 +261,9 @@
                                         <div class="row">
 
                                             <div class="col-md-12">
-                                                <?php
 
-                                                if ($login::userIsAtLeast("developer")) {
+
+                                                <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                     $clockedIn = $this->get("onTheClock");
 
                                                     ?>
@@ -411,10 +414,21 @@
                                                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
 
-                                                    <?php foreach($this->get('users') as $user){
-                                                        echo"<li class='dropdown-item'>
-                                                                <a href='javascript:void(0);' data-label='".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname']))."</a>";
-                                                        echo"</li>";
+                                                    <?php
+                                                    if(is_array($this->get('users'))) {
+                                                        foreach ($this->get('users') as $user) {
+                                                            echo "<li class='dropdown-item'>
+                                                                <a href='javascript:void(0);' data-label='" . sprintf(
+                                                                    $this->__("text.full_name"),
+                                                                    $this->escape($user["firstname"]),
+                                                                    $this->escape($user['lastname'])
+                                                                ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['profileId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(
+                                                                    $this->__("text.full_name"),
+                                                                    $this->escape($user["firstname"]),
+                                                                    $this->escape($user['lastname'])
+                                                                ) . "</a>";
+                                                            echo "</li>";
+                                                        }
                                                     }?>
                                                 </ul>
                                             </div>
@@ -447,13 +461,19 @@
 <script type="text/javascript">
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL?>/tickets/showKanban");
-
-    leantime.ticketsController.initUserDropdown();
-    leantime.ticketsController.initMilestoneDropdown();
-    leantime.ticketsController.initEffortDropdown();
-    leantime.ticketsController.initPriorityDropdown();
     leantime.ticketsController.initUserSelectBox();
     leantime.ticketsController.initStatusSelectBox();
+
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initUserDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initPriorityDropdown();
+
+    <?php }else{ ?>
+        leantime.generalController.makeInputReadonly(".maincontentinner");
+    <?php } ?>
+
 
     var ticketStatusList = [<?php foreach($this->get('allTicketStates') as $key => $statusRow){ echo "'".$key."',"; }?>];
     leantime.ticketsController.initTicketKanban(ticketStatusList);

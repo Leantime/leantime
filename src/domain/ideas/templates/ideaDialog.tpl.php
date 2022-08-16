@@ -43,7 +43,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
 
         <label><?php echo $this->__("label.description") ?></label>
-        <textarea rows="3" cols="10" name="data" class="ideaTextEditor"
+        <textarea rows="3" cols="10" name="data" class="tinymceSimple"
                   placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
@@ -69,12 +69,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
                         <?php echo $this->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
                                    onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
                                 | <a href="javascript:void(0);"
                                      onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
                             </div>
+                            <?php } ?>
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
@@ -184,3 +186,20 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <?php } ?>
 
 </div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+
+        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
+
+        leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+        <?php } ?>
+
+        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        leantime.generalController.enableCommenterForms();
+        <?php }?>
+
+
+    })
+</script>

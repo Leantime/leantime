@@ -3,11 +3,9 @@
 namespace leantime\domain\services {
 
     use Exception;
-    use leantime\domain\services\ldap;
-    use PDO;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\core;
-    use PDOException;
     use RobThree\Auth\TwoFactorAuth;
 
     class auth
@@ -123,24 +121,6 @@ namespace leantime\domain\services {
          */
         public $hasher;
 
-
-        public static $userRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager',
-            40   => 'manager',
-            50   => 'admin'
-        );
-
-        /*
-         * Clientmanager roles
-         * ClientManagers can only add and remove a set of rules
-         */
-        public static $clientManagerRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager'
-        );
 
         private static $instance = null;
 
@@ -306,7 +286,7 @@ namespace leantime\domain\services {
             $this->clientId = $user['clientId'];
             $this->twoFAEnabled = $user['twoFAEnabled'];
             $this->twoFASecret = $user['twoFASecret'];
-            $this->role = self::$userRoles[$user['role']];
+            $this->role = roles::getRoleString($user['role']);
             $this->profileId = $user['profileId'];
 
             //Set Sessions
@@ -441,15 +421,41 @@ namespace leantime\domain\services {
             return $this->authRepo->changePW($password, $hash);
         }
 
-        public static function userIsAtLeast($role) {
+        public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false) {
 
-            $testKey = array_search($role, self::$userRoles);
+            //If statement split up for readability
+            //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+            if ($forceGlobalRoleCheck == true){
 
-            if($role == "" || $testKey === false){
-                throw new Exception("Role not defined");
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //If projectRole is not defined or if it is set to inherited
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //Do not overwrite admin or owner roles
+            }elseif($_SESSION['userdata']['role'] == roles::$owner
+                || $_SESSION['userdata']['role'] == roles::$admin
+                || $_SESSION['userdata']['role'] == roles::$manager) {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+                //In all other cases check the project role
+            }else{
+
+                $roleToCheck = $_SESSION['userdata']['projectRole'];
+
             }
 
-            $currentUserKey = array_search($_SESSION['userdata']['role'], self::$userRoles);
+            $testKey = array_search($role, roles::getRoles());
+
+            if($role == "" || $testKey === false){
+                error_log("Check for invalid role detected: ".$role);
+                return false;
+            }
+
+            $currentUserKey = array_search($roleToCheck, roles::getRoles());
 
             if($testKey <= $currentUserKey){
                 return true;
@@ -458,9 +464,54 @@ namespace leantime\domain\services {
             }
         }
 
-        public static function userHasRole ($role) {
+        public static function authOrRedirect($role, $forceGlobalRoleCheck = false)
+        {
 
-            if($role == $_SESSION['userdata']['role']){
+            if(self::userHasRole($role, $forceGlobalRoleCheck)) {
+
+                return true;
+
+            }else{
+
+                core\frontcontroller::redirect(BASE_URL."/errors/error403");
+            }
+
+        }
+
+        public static function userHasRole (string|array $role, $forceGlobalRoleCheck=false): bool
+        {
+            //If statement split up for readability
+            //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+            if ($forceGlobalRoleCheck == true){
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+            //If projectRole is not defined or if it is set to inherited
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+            //Do not overwrite admin or owner roles
+            }elseif($_SESSION['userdata']['role'] == roles::$owner
+                || $_SESSION['userdata']['role'] == roles::$admin
+            || $_SESSION['userdata']['role'] == roles::$manager) {
+
+                $roleToCheck = $_SESSION['userdata']['role'];
+
+            //In all other cases check the project role
+            }else{
+
+                $roleToCheck = $_SESSION['userdata']['projectRole'];
+
+            }
+
+            if($_SESSION['userdata']['role'] == roles::$owner || $_SESSION['userdata']['role'] == roles::$admin) {
+                $roleToCheck = $_SESSION['userdata']['role'];
+            }
+
+            if(is_array($role) && in_array($roleToCheck, $role)){
+                return true;
+            }else if($role == $roleToCheck){
                 return true;
             }
 

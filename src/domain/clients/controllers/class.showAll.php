@@ -8,8 +8,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showAll
     {
@@ -22,11 +24,10 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
-
-            //Only admins and employees
-            if(services\auth::userIsAtLeast("clientManager")) {
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
 
@@ -34,19 +35,13 @@ namespace leantime\domain\controllers {
 
                 }
 
-                if(services\auth::userIsAtLeast("manager")) {
-                    $tpl->assign('allClients', $clientRepo->getAll());
-                }else{
-                    $tpl->assign('allClients', array($clientRepo->getClient(services\auth::getUserClientId())));
-                }
+
+                $tpl->assign('allClients', $clientRepo->getAll());
+
 
                 $tpl->display('clients.showAll');
 
-            } else {
 
-                $tpl->display('general.error');
-
-            }
 
         }
 

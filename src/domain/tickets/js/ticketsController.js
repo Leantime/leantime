@@ -31,7 +31,7 @@ leantime.ticketsController = (function () {
 
     var ticketModalConfig = {
         sizes: {
-            minW:  700,
+            minW:  800,
             minH: 1000
         },
         resizable: true,
@@ -66,8 +66,7 @@ leantime.ticketsController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
-                _initDueDateTimePickers();
-                _initDates();
+
                 _initModals();
             }
         );
@@ -114,7 +113,7 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initGanttChart = function (tasks, viewMode) {
+    var initGanttChart = function (tasks, viewMode, readonly) {
 
         function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -123,41 +122,78 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(
             function () {
 
-                var gantt_chart = new Gantt(
-                    "#gantt", tasks, {
-                        custom_popup_html: function (task) {
-                            // the task object will contain the updated
-                            // dates and progress value
-                            var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
-                            return '<div class="details-container"> ' +
-                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+htmlEntities(task.name)+'</a></h4><br /> ' +
-                            '<p>'+leantime.i18n.__("text.expected_to_finish_by")+' <strong>'+end_date+'</strong><br /> ' +
-                            ''+Math.round(task.progress)+'%</p> ' +
-                            '<a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
-                            '<a href="'+leantime.appUrl+'/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> '+leantime.i18n.__("links.view_todos")+'</a> ' +
+                if(readonly == false) {
 
-                            '</div>';
-                        },
-                        on_click: function (task) {
+                    var gantt_chart = new Gantt(
+                        "#gantt", tasks, {
+                            custom_popup_html: function (task) {
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                return '<div class="details-container"> ' +
+                                    '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
+                                    '' + Math.round(task.progress) + '%</p> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
-                        },
-                        on_date_change: function (task, start, end) {
+                                    '</div>';
+                            },
+                            on_click: function (task) {
 
-                            leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
-                            _initModals();
+                            },
+                            on_date_change: function (task, start, end) {
 
-                        },
-                        on_progress_change: function (task, progress) {
+                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
+                                _initModals();
 
-                            //_initModals();
-                        },
-                        on_view_change: function (mode) {
+                            },
+                            on_progress_change: function (task, progress) {
 
-                            leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-                            _initModals();
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
+                                _initModals();
+                            }
                         }
-                    }
-                ); 
+                    );
+                }else{
+                    var gantt_chart = new Gantt(
+                        "#gantt", tasks, {
+                            readonlyGantt: true,
+                            custom_popup_html: function (task) {
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                return '<div class="details-container"> ' +
+                                    '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
+                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
+                                    '' + Math.round(task.progress) + '%</p> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+
+                                    '</div>';
+                            },
+                            on_click: function (task) {
+
+                            },
+                            on_date_change: function (task, start, end) {
+
+
+                            },
+                            on_progress_change: function (task, progress) {
+
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
+                                _initModals();
+                            }
+                        }
+                    );
+                }
 
                 jQuery("#ganttTimeControl").on(
                     "click", "a", function () {
@@ -502,8 +538,8 @@ leantime.ticketsController = (function () {
 
         var modalConfig = {
             sizes: {
-                minW:  700,
-                minH: 1000
+                minW:  800,
+                minH: 500
             },
             resizable: true,
             autoSizable: true,
@@ -531,12 +567,10 @@ leantime.ticketsController = (function () {
 
         jQuery(".milestoneModal").nyroModal(modalConfig);
 
-
-
         var ticketModalConfig = {
             sizes: {
-                minW:  700,
-                minH: 1000
+                minW:  800,
+                minH: 500
             },
             resizable: true,
             autoSizable: true,
@@ -547,9 +581,6 @@ leantime.ticketsController = (function () {
                 },
                 beforeShowCont: function() {
 
-
-
-
                 },
                 afterShowCont: function () {
 
@@ -559,8 +590,6 @@ leantime.ticketsController = (function () {
 
                     location.reload();
                 },
-
-
 
             },
             titleFromIframe: true
@@ -1418,6 +1447,8 @@ leantime.ticketsController = (function () {
         initToolTips:initToolTips,
         initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
-        initAsyncInputChange:initAsyncInputChange
+        initAsyncInputChange:initAsyncInputChange,
+        initDueDateTimePickers:_initDueDateTimePickers,
+        initDates:_initDates
     };
 })();

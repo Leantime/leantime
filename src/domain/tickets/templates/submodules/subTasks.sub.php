@@ -6,7 +6,6 @@
 
 ?>
 
-<h4 class="widgettitle title-light"><span class="fa fa-list-ul"></span><?php echo $this->__('subtitles.subtasks'); ?></h4>
 <p><?=$this->__('text.what_are_subtasks') ?><br /><br /></p>
 
 
@@ -54,15 +53,17 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    <div class="inlineDropDownContainer">
-                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                    <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+                        <div class="inlineDropDownContainer">
+                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
 
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
+                    <?php } ?>
                     <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
                 </div>
 

@@ -33,7 +33,9 @@
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
+                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                     <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
+                    <?php } ?>
                 </div>
 
                 <div class="col-md-2 center">
@@ -212,15 +214,23 @@
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
+    leantime.ticketsController.initUserSelectBox();
+    leantime.ticketsController.initStatusSelectBox();
+
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
     leantime.ticketsController.initUserDropdown();
     leantime.ticketsController.initMilestoneDropdown();
     leantime.ticketsController.initEffortDropdown();
     leantime.ticketsController.initStatusDropdown();
     leantime.ticketsController.initSprintDropdown();
-    leantime.ticketsController.initUserSelectBox();
-    leantime.ticketsController.initStatusSelectBox();
-
     leantime.ticketsController.initMilestoneDatesAsyncUpdate();
+
+    <?php }else{ ?>
+        leantime.generalController.makeInputReadonly(".maincontentinner");
+    <?php } ?>
+
+
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
 

@@ -113,6 +113,18 @@ $statusLabels = $this->get('statusLabels');
     <script type="text/javascript">
         jQuery(document).ready(function(){
             leantime.ticketsController.initModals();
+
+            <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
+
+                leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+            <?php } ?>
+
+            <?php if($login::userHasRole([$roles::$commenter])) { ?>
+                leantime.generalController.enableCommenterForms();
+            <?php }?>
+
+
         })
     </script>
 

@@ -26,7 +26,6 @@
 
                 </div>
                 <div class="form-group">
-                    <label class="control-label"><?php echo $this->__('label.description'); ?></label>
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
                               class="complexEditor"><?php echo $ticket->description ?></textarea><br/>
                 </div>
@@ -52,9 +51,6 @@
     <div class="span4">
         <div class="row-fluid marginBottom">
             <div class="span12">
-
-                <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-certificate"></span><?php echo $this->__('subtitle.details'); ?></h4>
 
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_status'); ?></label>

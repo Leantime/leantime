@@ -29,7 +29,7 @@ if(isset($currentSprint->id)) {$id = $currentSprint->id;
             <input type="submit" value="<?=$this->__('buttons.save') ?>"/>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
-            <?php if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast("clientManager")) { ?>
+            <?php if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="<?=BASE_URL ?>/sprints/delSprint/<?php echo $currentSprint->id; ?>" class="delete formModal sprintModal"><i class="fa fa-trash"></i> <?=$this->__('links.delete_sprint') ?></a>
             <?php } ?>
         </div>

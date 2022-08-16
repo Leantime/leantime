@@ -8,42 +8,7 @@ $statusLabels = $this->get("statusLabels");
 
 ?>
 
- <script type="text/javascript">
 
-     jQuery(document).ready(function() {
-
-         leantime.leanCanvasController.setSimpleCanvasHeights();
-         leantime.leanCanvasController.initCanvasLinks();
-         leantime.leanCanvasController.initFilterBar();
-         leantime.leanCanvasController.initUserDropdown();
-         leantime.leanCanvasController.initStatusDropdown();
-
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
-          leantime.helperController.showHelperModal("simpleLeanCanvas");
-            <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] = 1;
-        } ?>
-
-
-      <?php if(isset($_GET['showModal'])) {
-
-          if($_GET['showModal'] == "") {
-              $modalUrl = "&type=solution";
-          }else{
-              $modalUrl = "/".(int)$_GET['showModal'];
-          }
-          ?>
-
-          leantime.leanCanvasController.openModalManually("<?=BASE_URL?>/leancanvas/editCanvasItem<?php echo $modalUrl; ?>");
-          window.history.pushState({},document.title, '<?=BASE_URL?>/leancanvas/simpleCanvas/');
-
-      <?php } ?>
-
-
-  });
-
-  </script>
 
  <div class="pageheader">
     <div class="pageicon"><span class="fas fa-flask"></span></div>
@@ -80,8 +45,10 @@ $statusLabels = $this->get("statusLabels");
 
                             <?php }     ?>
                         </select><br />
-                            <small><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.create_plan") ?></a></small> |
-                            <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.edit_board") ?></small>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.create_plan") ?></a></small> |
+                                <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.edit_board") ?></small>
+                            <?php } ?>
                         <?php } ?>
                     </form>
 
@@ -114,7 +81,7 @@ $statusLabels = $this->get("statusLabels");
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=customersegment" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["customersegment"]; ?>
@@ -127,7 +94,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php  if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -224,13 +191,15 @@ $statusLabels = $this->get("statusLabels");
                             <?php } ?>
                         <?php } ?>
                         <br />
+                        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=customersegment" class="canvasModal" id="customersegment"><?=$this->__('links.add_new_canvas_item') ?></a>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=problem" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
 
@@ -244,7 +213,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -341,13 +310,15 @@ $statusLabels = $this->get("statusLabels");
                             <?php } ?>
                         <?php } ?>
                         <br />
+                        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=problem" class="canvasModal" id="problem"><?=$this->__('links.add_new_canvas_item') ?></a>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <div class="column" style="width:33.33%">
                     <h4 class="widgettitle title-primary">
-                        <?php  if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=researchlabels&label=solution" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["solution"]; ?>
@@ -360,7 +331,7 @@ $statusLabels = $this->get("statusLabels");
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -457,11 +428,11 @@ $statusLabels = $this->get("statusLabels");
                             <?php } ?>
                         <?php } ?>
                         <br />
+                        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="<?=BASE_URL ?>/leancanvas/editCanvasItem?type=solution"  class="canvasModal" id="solution"><?=$this->__('links.add_new_canvas_item') ?></a>
+                        <?php } ?>
                     </div>
                 </div>
-
-
 
             </div>
 
@@ -469,7 +440,7 @@ $statusLabels = $this->get("statusLabels");
         </div>
         <div class="clearfix"></div>
 
-        <?php  if ($login::userIsAtLeast("clientManager")) { ?>
+        <?php if($login::userIsAtLeast($roles::$manager)) { ?>
             <br />
             <a href="<?=BASE_URL ?>/leancanvas/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?php echo $this->__("links.delete_board") ?></a>
         <?php } ?>
@@ -489,8 +460,12 @@ $statusLabels = $this->get("statusLabels");
         echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
         echo"</div>";
 
-        echo"<h4>".$this->__('headlines.research_next_big_product')."</h4><br />".$this->__('text.no_lean_canvas_content')."
-            </div>";
+        echo"<h4>".$this->__('headlines.research_next_big_product')."</h4>";
+         if($login::userIsAtLeast($roles::$editor)) {
+
+            echo"<br />".$this->__('text.no_lean_canvas_content');
+            }
+            echo"</div>";
 
     }
     ?>
@@ -542,3 +517,51 @@ $statusLabels = $this->get("statusLabels");
 
     </div>
 </div>
+
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+
+        leantime.leanCanvasController.setSimpleCanvasHeights();
+        leantime.leanCanvasController.initFilterBar();
+        leantime.generalController.initSimpleEditor();
+
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
+            leantime.leanCanvasController.initCanvasLinks();
+            leantime.leanCanvasController.initUserDropdown();
+            leantime.leanCanvasController.initStatusDropdown();
+
+        <?php }else{ ?>
+
+            leantime.generalController.makeInputReadonly(".maincontentinner");
+
+        <?php } ?>
+
+        <?php if(isset($_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"]) === false || $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] == 0) {     ?>
+        leantime.helperController.showHelperModal("simpleLeanCanvas");
+        <?php
+        //Only show once per session
+        $_SESSION['userdata']['settings']["modals"]["simpleLeanCanvas"] = 1;
+        } ?>
+
+
+        <?php if(isset($_GET['showModal'])) {
+
+        if($_GET['showModal'] == "") {
+            $modalUrl = "&type=solution";
+        }else{
+            $modalUrl = "/".(int)$_GET['showModal'];
+        }
+        ?>
+
+        leantime.leanCanvasController.openModalManually("<?=BASE_URL?>/leancanvas/editCanvasItem<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '<?=BASE_URL?>/leancanvas/simpleCanvas/');
+
+        <?php } ?>
+
+
+    });
+
+</script>
