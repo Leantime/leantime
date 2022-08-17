@@ -136,6 +136,8 @@ leantime.timesheetsController = (function () {
                     {
                         extend: 'csvHtml5',
                         title: leantime.i18n.__("label.filename_fileexport"),
+                        charset: 'utf-8',
+                        bom: true,
                         exportOptions: {
                             format: {
                                 body: function ( data, row, column, node ) {
