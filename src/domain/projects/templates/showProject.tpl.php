@@ -191,7 +191,7 @@
 
             <div id="comment">
 
-                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
+                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
                     $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");

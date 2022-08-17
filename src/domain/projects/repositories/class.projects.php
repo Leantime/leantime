@@ -805,7 +805,7 @@ namespace leantime\domain\repositories {
         public function editUserProjectRelations($id, $projects)
         {
 
-            $sql = "SELECT id,userId,projectId FROM zp_relationuserproject WHERE userId=:id";
+            $sql = "SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -826,7 +826,7 @@ namespace leantime\domain\repositories {
                     }
                 }
                 if (!$exists) {
-                    $this->addProjectRelation($id, $project);
+                    $this->addProjectRelation($id, $project, '');
                 }
             }
 
