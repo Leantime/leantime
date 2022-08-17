@@ -214,7 +214,8 @@ body .btn-primary:active,
 body .btn-primary:focus,
 body input[type='submit']:hover,
 body .btn-group.open .btn-primary.dropdown-toggle,
-.btn-group .btn.btn-primary:hover{
+.btn-group .btn.btn-primary:hover,
+body a.btn.btn-primary:hover{
     background: var(--main-action-hover-bg);
     color:var(--main-action-hover-color);
     border:1px solid var(--main-action-hover-bg);
@@ -488,7 +489,8 @@ input[type=color] {
 
 }
 
-.backlogChartButtons {
+.backlogChartButtons,
+.chartButtons{
     margin-left:5px !important;
 }
 
