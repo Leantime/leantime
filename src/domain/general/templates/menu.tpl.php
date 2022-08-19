@@ -13,6 +13,8 @@
 
 ?>
 
+<?php if(isset($_SESSION['currentProjectName'])){ ?>
+
 <ul class="nav nav-tabs nav-stacked">
     <?php if ($this->get('allAvailableProjects') !== false){?>
         <li class="project-selector">
@@ -98,6 +100,8 @@
     </li>
     <?php } ?>
 </ul>
+
+<?php } ?>
 
 
 

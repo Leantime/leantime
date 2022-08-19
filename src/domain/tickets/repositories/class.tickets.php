@@ -347,7 +347,8 @@ namespace leantime\domain\repositories {
 							milestone.headline AS milestoneHeadline,
 							IF((milestone.tags IS NULL OR milestone.tags = ''), '#999999', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
-							COUNT(DISTINCT zp_file.id) AS fileCount
+							COUNT(DISTINCT zp_file.id) AS fileCount,
+							COUNT(DISTINCT subtasks.id) AS subtaskCount
 						FROM 
 							zp_tickets 
 						LEFT JOIN zp_relationuserproject USING (projectId)
@@ -359,6 +360,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
 						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
 						LEFT JOIN zp_tickets AS milestone ON zp_tickets.dependingTicketId = milestone.id AND zp_tickets.dependingTicketId > 0 AND milestone.type = 'milestone'
+						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0 AND subtasks.type = 'subtask'
 						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
 						WHERE 
 						    (zp_relationuserproject.userId = :userId 

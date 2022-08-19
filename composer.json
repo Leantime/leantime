@@ -27,8 +27,7 @@
         "htmlawed/htmlawed": "1.2.6"
     },
     "require-dev": {
-        "phpstan/phpstan":"1.5.4",
-        "maximebf/debugbar": "1.13.1"
+        "phpstan/phpstan":"1.5.4"
     }
 
 }

@@ -95,12 +95,15 @@ namespace leantime\domain\services {
             $this->leancanvasRepo = new repositories\leancanvas();
             $this->retroRepository = new repositories\retrospectives();
             $this->timesheetRepo = new repositories\timesheets();
+            $this->config = new core\config();
+
+            $companyLang = $this->settings->getSetting("companysettings.language");
 
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
                 'version' => $this->appSettings->appVersion,
-                'language' => $_SESSION["companysettings.language"],
+                'language' => $companyLang ?? $this->config->language,
                 'numUsers' => $this->userRepository->getNumberOfUsers(),
                 'lastUserLogin' => $this->userRepository->getLastLogin(),
                 'numProjects' => $this->projectRepository->getNumberOfProjects(),

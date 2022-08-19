@@ -715,7 +715,6 @@ namespace leantime\domain\repositories {
         public function isUserAssignedToProject($userId, $projectId)
         {
 
-
             $userRepo = new users();
             $user = $userRepo->getUser($userId);
 
@@ -735,9 +734,6 @@ namespace leantime\domain\repositories {
 
             //Everyone in client is allowed to see project
             if($project['psettings'] == 'client'){
-
-
-
                 if($user['clientId'] == $project['clientId']) {
                     return true;
                 }

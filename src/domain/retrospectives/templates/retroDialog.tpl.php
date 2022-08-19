@@ -169,7 +169,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
     <?php if($id !== '') { ?>
     <br />
     <input type="hidden" name="comment" value="1" />
-
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
         $this->assign("formUrl", BASE_URL."/retrospectives/retroDialog/".$id."");
         $this->displaySubmodule('comments-generalComment');?>

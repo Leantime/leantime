@@ -69,6 +69,9 @@ $ticket = $this->get('ticket');
     </ul>
 
 </div><!--mediamgr_content-->
+
+
+
 <?php if(count($this->get('files')) == 0){ ?>
     <div class="text-center">
         <div style='width:33%' class='svgContainer'>
