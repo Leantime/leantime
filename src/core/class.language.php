@@ -68,8 +68,13 @@ namespace leantime\core {
 
             if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
 
-                $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
-
+                if(isset($_SESSION['cache.langlist'])){
+                    $this->langlist = $_SESSION['cache.langlist'];
+                }else {
+                    $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
+                    $_SESSION['cache.langlist'] =  $this->langlist;
+                }
+                
                 //Start checking if the user has a language set
                 if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
 
@@ -148,7 +153,10 @@ namespace leantime\core {
         public function readIni()
         {
 
-            //Todo: Add cache
+            if(isset($_SESSION['cache.language_resources_'.$this->language])) {
+                $this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
+                return $this->ini_array;
+            }
 
             //Default to english US
             $mainLanguageArray = parse_ini_file('' . $this->iniFolder . '/en-US.ini', false, INI_SCANNER_RAW);
@@ -170,7 +178,7 @@ namespace leantime\core {
             }
 
             $this->ini_array = $mainLanguageArray;
-
+            $_SESSION['cache.language_resources_'.$this->language] = $this->ini_array;
 
             return $this->ini_array;
 
