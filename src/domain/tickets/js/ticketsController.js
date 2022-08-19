@@ -74,6 +74,15 @@ leantime.ticketsController = (function () {
     })();
 
     //Functions
+    function countTickets () {
+
+        jQuery("#sortableTicketKanban .column").each(function(){
+            var counting= jQuery(this).find('.moveable').length;
+            jQuery(this).find(' .count').text(counting);
+        });
+
+    }
+
 
     var updateRemainingHours = function (element, id) {
         var value = jQuery(element).val();
@@ -1120,7 +1129,7 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var initTicketKanban = function (ticketStatusList) {
+    var setUpKanbanColumns = function () {
 
         jQuery(document).ready(function () {
 
@@ -1131,6 +1140,10 @@ leantime.ticketsController = (function () {
             jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
+
+    }
+
+    var initTicketKanban = function (ticketStatusList) {
 
         jQuery("#sortableTicketKanban .ticketBox").hover(function(){
             jQuery(this).css("background", "var(--kanban-card-hover)");
@@ -1160,8 +1173,6 @@ leantime.ticketsController = (function () {
 
                 countTickets();
 
-
-
                 var statusPostData = {
                     action: "kanbanSort",
                     payload: {},
@@ -1185,15 +1196,6 @@ leantime.ticketsController = (function () {
 
             }
         });
-
-        function countTickets () {
-
-            jQuery("#sortableTicketKanban .column").each(function(){
-                var counting= jQuery(this).find('.moveable').length;
-                jQuery(this).find(' .count').text(counting);
-            });
-
-        }
 
         function tilt_direction(item) {
             var left_pos = item.position().left,
@@ -1449,6 +1451,7 @@ leantime.ticketsController = (function () {
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:_initDueDateTimePickers,
-        initDates:_initDates
+        initDates:_initDates,
+        setUpKanbanColumns:setUpKanbanColumns
     };
 })();

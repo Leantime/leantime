@@ -492,7 +492,9 @@ namespace leantime\core {
             while (!empty($tags))
                 $truncate .= sprintf('</%s>', array_pop($tags));
 
-            $truncate .= $ending;
+            if(strlen($truncate)>$maxLength) {
+                $truncate .= $ending;
+            }
 
             return $truncate;
         }

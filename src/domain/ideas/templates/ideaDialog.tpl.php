@@ -180,9 +180,11 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <br/>
         <input type="hidden" name="comment" value="1"/>
 
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
-        $this->displaySubmodule('comments-generalComment'); ?>
+            $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
+
+            $this->displaySubmodule('comments-generalComment'); ?>
     <?php } ?>
 
 </div>

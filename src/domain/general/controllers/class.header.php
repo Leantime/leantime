@@ -20,19 +20,6 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $appSettings = new core\appSettings();
 
-
-            $debugbarRenderer = "";
-
-            if($appSettings->debug == 1) {
-
-                $debugbar = new StandardDebugBar();
-
-                $debugbarRenderer = $debugbar->getJavascriptRenderer(
-                    "/js/libs/DebugBar/Resources",
-                    "/js/libs/debugbar/"
-                );
-            }
-
             if(isset($_COOKIE['theme'])){
                 $_SESSION['usersettings.theme'] = htmlentities($_COOKIE['theme']);
             }
@@ -114,7 +101,6 @@ namespace leantime\domain\controllers {
             }
 
             $tpl->assign('theme', $_SESSION["usersettings.theme"]);
-            $tpl->assign('debugRenderer', $debugbarRenderer);
             $tpl->assign('appSettings', $appSettings);
             $tpl->displayPartial('general.header');
         }

@@ -206,7 +206,9 @@
 
                             <?php } ?>
                         </select>
-                        <a href="javascript:void(0);" onclick="jQuery('select[name=editorId]').val('<?php echo $_SESSION['userdata']['id']; ?>')"><?php echo $this->__('label.assign_to_me'); ?></a>
+                        <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+                            <a href="javascript:void(0);" onclick="jQuery('select[name=editorId]').val('<?php echo $_SESSION['userdata']['id']; ?>')"><?php echo $this->__('label.assign_to_me'); ?></a>
+                        <?php } ?>
                     </div>
                 </div>
 

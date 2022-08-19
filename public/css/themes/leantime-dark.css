@@ -120,6 +120,7 @@ body .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary 
     fill:var(--primary-font-color) !important;
 }
 
+
 .tox .tox-tbtn:hover,
 .tox .tox-tbtn--enabled, .tox .tox-tbtn--enabled:hover,
 .tox .tox-menu{
@@ -222,6 +223,10 @@ body .gantt .grid-row {
     fill: var(--col-content-bg);
 }
 
+body .gantt .grid-row:nth-child(even) {
+    fill: var(--col-hover-bg);
+}
+
 
 body .gantt .row-line {
     stroke: var(--neutral);
@@ -303,4 +308,14 @@ body .row .regLeft {
 body .regpanelinner .pageheader .pagetitle h1,
 body .regpanelinner .pageheader .pageicon {
     color:var(--primary-font-color);
+}
+
+body input[disabled],
+body select[disabled],
+body textarea[disabled],
+body input[readonly],
+body select[readonly],
+body textarea[readonly] {
+    cursor: not-allowed;
+    background-color: var(--secondary-background);
 }

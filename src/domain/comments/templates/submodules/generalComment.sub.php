@@ -11,43 +11,33 @@ if (strpos($formUrl, '?delComment=') !== false) {
 }
 ?>
 
-<h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
+<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm">
 
-<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>"
-	  id="commentForm">
     <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
-	<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
-	   style="display:none;" id="mainToggler"><span
-				class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
+	<a href="javascript:void(0);" onclick="toggleCommentBoxes(0)" style="display:none;" id="mainToggler">
+        <span class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
 	</a>
-	<div id="comment0" class="commentBox">
-		<!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
-        <div class="commentImage">
-            <img src="<?= BASE_URL ?>/api/users?profileImage=currentUser"/>
+        <div id="comment0" class="commentBox">
+            <div class="commentImage">
+                <img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" />
+            </div>
+            <div class="commentReply">
+                <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+                <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+            </div>
+            <input type="hidden" name="comment" value="1"/>
+            <input type="hidden" name="father" id="father" value="0"/>
+            <br/>
         </div>
-        <div class="commentReply">
-
-                <textarea rows="5" cols="50" class="tinymceSimple"
-                          name="text"></textarea>
-                <input type="submit" value="<?php echo $this->__('buttons.save') ?>"
-                       name="comment" class="btn btn-primary btn-success"
-                       style="margin-left: 0px;"/>
-        </div>
-		<input type="hidden" name="comment" value="1"/>
-		<input type="hidden" name="father" id="father" value="0"/>
-		<br/>
-        <?php } ?>
-	</div>
+    <?php } ?>
 
 	<div id="comments">
 		<div>
 			<?php foreach ($this->get('comments') as $row): ?>
 				<div class="clearall">
-
                     <div class="commentImage">
                         <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
                     </div>
-
                     <div class="commentMain">
                         <div class="commentContent">
                             <div class="right commentDate">
@@ -72,19 +62,15 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     </a>
                                 <?php } ?>
                             <?php } ?>
-
                         </div>
 
                         <div class="replies">
                             <?php if ($comments->getReplies($row['id'])) : ?>
                                 <?php foreach ($comments->getReplies($row['id']) as $comment): ?>
-
                                     <div>
-
                                         <div class="commentImage">
                                             <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['profileId'] ?>"/>
                                         </div>
-
                                         <div class="commentMain">
                                             <div class="commentContent">
                                                 <div class="right commentDate">
@@ -110,52 +96,33 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                                 <?php } ?>
                                             </div>
                                         </div>
-
                                         <div class="clearall"></div>
                                     </div>
-
                                 <?php endforeach; ?>
                             <?php endif; ?>
-
                             <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['profileId'] ?>"/>
                                 </div>
                                 <div class="commentReply">
-
-                                    <input type="submit"
-                                           value="<?php echo $this->__('links.reply') ?>"
-                                           name="comment" class="btn btn-default"/>
+                                    <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>
                                 </div>
                                 <div class="clearall"></div>
                             </div>
-
                         </div>
-
-
                     </div>
-
                 </div>
-
-
 			<?php endforeach; ?>
 		</div>
 	</div>
 
     <?php if(count($this->get('comments')) == 0){ ?>
-        <div class="text-center">
-            <div style='width:33%' class='svgContainer'>
-                <?php echo file_get_contents(ROOT."/images/svg/undraw_book_reading_re_fu2c.svg"); ?>
-                <?php echo $this->__('text.no_comments') ?>
-            </div>
-        </div>
+        <?php echo $this->__('text.no_comments') ?>
     <?php } ?>
-
     <div class="clearall"></div>
 </form>
 
 <script type='text/javascript'>
-    leantime.replaceSVGColors();
 
     leantime.generalController.initSimpleEditor();
 
