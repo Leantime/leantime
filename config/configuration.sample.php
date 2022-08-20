@@ -72,29 +72,33 @@ class config
 
     //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
+          "5": {
+            "ltRole":"readonly",
+            "ldapRole":""
+          },
           "10": {
-            "ltRole":"client",
+            "ltRole":"commenter",
             "ldapRole":""
           },
           "20": {
-            "ltRole":"developer",
+            "ltRole":"editor",
             "ldapRole":""
           },
           "30": {
-            "ltRole":"clientManager",
-            "ldapRole":""
-          },
-          "40": {
             "ltRole":"manager",
             "ldapRole":""
           },
-          "50": {
+          "40": {
             "ltRole":"admin",
+            "ldapRole":""
+          },
+          "50": {
+            "ltRole":"owner",
             "ldapRole":"administrators"
           }
         }';
 
-    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to developer)
+    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to editor)
 
     public function __construct()
     {
