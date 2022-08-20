@@ -24,14 +24,9 @@ namespace leantime\domain\controllers {
                 $_SESSION['usersettings.theme'] = htmlentities($_COOKIE['theme']);
             }
 
-            if(!isset($_SESSION["usersettings.theme"]) || $_SESSION["usersettings.theme"] == '' ){
+            if( (!isset($_SESSION["usersettings.theme"]) || $_SESSION["usersettings.theme"] == '') && isset($_SESSION["userdata"]["id"])){
 
-                //theme not set in cookie, pull from settings
-                if(isset($_SESSION["userdata"]["id"])) {
-                    $theme = $this->settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . "theme");
-                }else{
-                    $theme = "default";
-                }
+                $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
 
                 if($theme == "default" || $theme == "dark"){
                     $_SESSION["usersettings.theme"] = $theme;
@@ -100,7 +95,7 @@ namespace leantime\domain\controllers {
                 }
             }
 
-            $tpl->assign('theme', $_SESSION["usersettings.theme"]);
+            $tpl->assign('theme', $_SESSION["usersettings.theme"] ?? null);
             $tpl->assign('appSettings', $appSettings);
             $tpl->displayPartial('general.header');
         }
