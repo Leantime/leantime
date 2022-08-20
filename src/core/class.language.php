@@ -62,9 +62,24 @@ namespace leantime\core {
             $config = new config();
             $settingsRepo = new setting();
 
+            //Get user language
             if(isset($_COOKIE['language'])){
                 $_SESSION['usersettings.language'] = htmlentities($_COOKIE['language']);
             }
+
+            //Get default instance language
+            if(!isset($_SESSION["companysettings.language"])) {
+
+                $language = $settingsRepo->getSetting("companysettings.language");
+
+                if ($language !== false) {
+                    $_SESSION["companysettings.language"] = $language;
+                } else {
+                    $_SESSION["companysettings.language"] = $config->language ?? $this->getBrowserLanguage();
+                }
+
+            }
+
 
             if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
 
@@ -81,20 +96,7 @@ namespace leantime\core {
                     $this->setLanguage($_SESSION['usersettings.language']);
 
                 //If not check for company default setting
-                } elseif (isset($_SESSION['companysettings.language']) === false || $_SESSION['companysettings.language'] == '') {
-
-                    $language = $settingsRepo->getSetting("companysettings.language");
-
-                    if ($language !== false) {
-                        $_SESSION["companysettings.language"] = $language;
-                    } else {
-                        $_SESSION["companysettings.language"] = $config->language ?? $this->getBrowserLanguage();
-                    }
-
-                    $this->setLanguage($_SESSION['companysettings.language']);
-
-                //Language is not set, get config language
-                } else if(isset($_SESSION['companysettings.language']) === true) {
+                } else {
 
                     $this->setLanguage($_SESSION['companysettings.language']);
 

@@ -319,3 +319,11 @@ body textarea[readonly] {
     cursor: not-allowed;
     background-color: var(--secondary-background);
 }
+
+body .userloggedinfo .dropdown-menu::after {
+    border-bottom: 6px solid var(--secondary-background);
+}
+
+body .ticketDropdown ul::after {
+    border-bottom: 7px solid var(--secondary-background);
+}
