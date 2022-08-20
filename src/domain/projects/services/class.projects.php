@@ -546,7 +546,7 @@ namespace leantime\domain\services {
             $this->setCurrentProject();
         }
 
-        public function getUsersAssignedToProject($projectId)
+        public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
@@ -569,7 +569,7 @@ namespace leantime\domain\services {
 
             }
 
-            return false;
+            return array();
 
         }
 
