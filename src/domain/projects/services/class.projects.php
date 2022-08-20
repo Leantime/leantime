@@ -438,32 +438,6 @@ namespace leantime\domain\services {
 
                     }
 
-                    $route = core\FrontController::getCurrentRoute();
-
-                    if($route != "api.i18n") {
-
-                        if(auth::userIsAtLeast(roles::$manager)) {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
-                                "info");
-                            if ($route != "projects.newProject") {
-                                $this->tpl->redirect(BASE_URL . "/projects/newProject");
-                            }
-
-                        } else {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
-                                "info");
-
-
-
-                            if ($route != "users.editOwn") {
-                                $this->tpl->redirect(BASE_URL . "/users/editOwn");
-                            }
-
-                        }
-                    }
-
                 }
 
             }

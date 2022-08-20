@@ -617,8 +617,7 @@ leantime.ticketsController = (function () {
             }
         );
 
-        jQuery("body").on(
-            "click", ".sprintPopoverContainer input", function () {
+        jQuery(".sprintPopoverContainer input").unbind().on("click", function () {
 
                 var ticket = jQuery(this).attr("name").split("_");
                 var val = jQuery(this).val();
@@ -654,7 +653,7 @@ leantime.ticketsController = (function () {
             '13': "XXL"
         };
 
-        jQuery("body").on("click", ".effortDropdown .dropdown-menu a", function () {
+        jQuery(".effortDropdown .dropdown-menu a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
 
@@ -698,7 +697,7 @@ leantime.ticketsController = (function () {
             '5': "Lowest"
         };
 
-        jQuery("body").on("click", ".priorityDropdown .dropdown-menu a", function () {
+        jQuery(".priorityDropdown .dropdown-menu a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
 
@@ -741,8 +740,7 @@ leantime.ticketsController = (function () {
 
     var initMilestoneDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".milestoneDropdown .dropdown-menu a", function () {
+        jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -780,8 +778,7 @@ leantime.ticketsController = (function () {
 
     var initStatusDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".statusDropdown .dropdown-menu a", function () {
+        jQuery(".statusDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -819,8 +816,7 @@ leantime.ticketsController = (function () {
 
     var initUserDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".userDropdown .dropdown-menu a", function () {
+        jQuery(".userDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -888,8 +884,7 @@ leantime.ticketsController = (function () {
 
     var initSprintDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".sprintDropdown .dropdown-menu a", function () {
+        jQuery(".sprintDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');

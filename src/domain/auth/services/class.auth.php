@@ -320,7 +320,7 @@ namespace leantime\domain\services {
 
             //If the session doesn't have any session data we are out of sync. Start again
             }else{
-                $this->logout();
+
                 return false;
             }
 

@@ -501,13 +501,14 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`
 			) VALUES (
 				:name,
 				:details,
 				:clientId,
 				:hourBudget,
-				:dollarBudget
+				:dollarBudget,
+			    :psettings
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -517,6 +518,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 
@@ -556,7 +558,8 @@ namespace leantime\domain\repositories {
 				clientId = :clientId,
 				state = :state,
 				hourBudget = :hourBudget,
-				dollarBudget = :dollarBudget
+				dollarBudget = :dollarBudget,
+				psettings = :psettings
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -569,6 +572,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('state', $values['state'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -586,21 +590,6 @@ namespace leantime\domain\repositories {
          */
         public function editProjectRelations(array $values, $projectId)
         {
-
-            $query = "UPDATE zp_projects SET
-				psettings = :globalaccess
-				WHERE id = :id 
-				
-				LIMIT 1";
-
-            $stmn = $this->db->database->prepare($query);
-
-            $stmn->bindValue('globalaccess', $values['globalProjectUserAccess'], PDO::PARAM_STR);
-            $stmn->bindValue('id', $projectId, PDO::PARAM_STR);
-
-            $stmn->execute();
-
-            $stmn->closeCursor();
 
             $this->deleteAllUserRelations($projectId);
 
@@ -770,9 +759,14 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.userId, 
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
-				zp_projects.name
-			FROM zp_relationuserproject JOIN zp_projects 
-				ON zp_relationuserproject.projectId = zp_projects.id
+				zp_projects.name,
+				zp_user.firstname,
+				zp_user.lastname,
+				zp_user.profileId,
+				zp_user.role
+			FROM zp_relationuserproject 
+			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
+			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 			WHERE projectId = :id";
 
             $stmn = $this->db->database->prepare($query);
@@ -785,7 +779,7 @@ namespace leantime\domain\repositories {
 
             $users = array();
             foreach ($results as $row) {
-                $users[$row['userId']] = $row['projectRole'] ?? '';
+                $users[$row['userId']] = $row;
             }
 
             return $users;

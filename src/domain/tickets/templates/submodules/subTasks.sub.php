@@ -71,7 +71,7 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
                 <div class="col-md-9" style="padding:0 15px;">
                     <div class="row">
                         <div class="col-md-4">
-                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $subticket['id'];?>" name="date" />
+                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput quickDueDates" data-id="<?php echo $subticket['id'];?>" name="date" />
                         </div>
                         <div class="col-md-4">
                             <?php echo $this->__("label.planned_hours"); ?><input type="text" value="<?php echo $this->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
