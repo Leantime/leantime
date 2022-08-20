@@ -12,6 +12,7 @@ namespace leantime\domain\services {
         private $userRepo;
         private $settingsRepo;
         private $mailer;
+        private $language;
 
         public function __construct()
         {
@@ -22,6 +23,7 @@ namespace leantime\domain\services {
             $this->userRepo = new repositories\users();
             $this->settingsRepo = new \leantime\domain\repositories\setting();
             $this->mailer = new \leantime\core\mailer();
+            $this->language = new \leantime\core\language();
         }
 
         // Fake template to be replaced by something better
@@ -104,10 +106,18 @@ namespace leantime\domain\services {
                 // TODO here : set up a true templating system to format the messages
                 $formattedHTML=$this->doFormatMail($messageToSendToUser);
 
-                // TODO Tranlastion needed somewhere ? 
+                // DONE Tranlastion needed somewhere ? 
 
                 // DONE : Send the message with PHPMailer here
-                $this->mailer->setSubject("Leantime notification");
+		if (count($messageToSendToUser) == 1)
+                {
+                    reset($messageToSendToUser);
+                    $this->mailer->setSubject(current($messageToSendToUser)['subject']);
+
+                } else
+                {
+                    $this->mailer->setSubject($this->language->__("email_notifications.latest_updates_subject"));
+                }
                 $this->mailer->setHtml($formattedHTML);
                 $to = array($recipient);
                 $this->mailer->sendMail($to, "Leantime System");
