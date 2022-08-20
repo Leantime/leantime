@@ -67,7 +67,8 @@ class config
         "groups":"memberof",
         "email":"mail",
         "firstname":"displayname",
-        "lastname":""
+        "lastname":"",
+        "phonenumber":""
         }';
 
     //Default role assignments upon first login. (Optional) Can be updated in user settings for each user

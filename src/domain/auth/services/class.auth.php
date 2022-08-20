@@ -220,7 +220,7 @@ namespace leantime\domain\services {
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
-                            'phone' => '',
+                            'phone' => $ldapUser['phonenumber'],
                             'user' => $ldapUser['user'],
                             'role' => $ldapUser['role'],
                             'password' => '',
