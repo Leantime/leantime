@@ -278,12 +278,6 @@ div.tagsinput {
 	border:1px solid var(--main-border-color);
 }
 
-
-	 
-	 .tabbedwidget .btn-primary {
-	 	border:0px;
-	 }
-
 .gantt-container a:hover {
     text-decoration:underline !important;
 }

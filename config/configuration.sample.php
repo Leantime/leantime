@@ -159,19 +159,35 @@ class config
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")
     {
-        $found = getenv($envVar);
-        if (!$found || $found == "") {
-            return $default;
+
+        if(isset($_SESSION['mainconfig'][$envVar])){
+
+            return $_SESSION['mainconfig'][$envVar];
+
+        }else {
+
+            $found = getenv($envVar);
+            if (!$found || $found == "") {
+                $_SESSION['mainconfig'][$envVar] = $default;
+                return $default;
+            }
+
+            // we need to check to see if we need to conver the found data
+            if ($dataType == "string") {
+
+                $_SESSION['mainconfig'][$envVar] = $found;
+
+            } else if ($dataType == "boolean") {
+                // if the string is true, then it is true, simple enough
+                $_SESSION['mainconfig'][$envVar] = $found == "true" ? true : false;
+
+            } else if ($dataType == "number") {
+                $_SESSION['mainconfig'][$envVar] = intval($found);
+            }
+
+            return $_SESSION['mainconfig'][$envVar];
+
         }
-        // we need to check to see if we need to conver the found data
-        if ($dataType == "string") {
-            return $found;
-        } else if ($dataType == "boolean") {
-            // if the string is true, then it is true, simple enough
-            return $found == "true" ? true : false;
-        } else if ($dataType == "number") {
-            return intval($found);
-        }
-        return $found;
+
     }
 }

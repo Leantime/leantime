@@ -121,7 +121,8 @@
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
                                 <option value=""></option>
-                                <?php foreach($this->get('users') as $userRow){ 	?>
+                                <?php
+                                foreach($this->get('users') as $userRow){ 	?>
 
                                     <?php echo"<option value='".$userRow["id"]."'";
 
@@ -129,7 +130,7 @@
 
                                     echo">".sprintf( $this->__("text.full_name"), $this->escape($userRow["firstname"]), $this->escape($userRow['lastname']))."</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
 

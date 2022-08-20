@@ -145,45 +145,6 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function isActiveSession($sessionId): bool
-        {
-
-            try{
-
-                $query = "SELECT 
-                            count(username) AS userCounter,
-                            sessionTime
-                        FROM zp_user 
-		                WHERE session = :session 
-		                AND (".time()." - sessionTime) <= :sessionExpiration
-		                LIMIT 1";
-
-                $stmn = $this->db->database->prepare($query);
-
-                $stmn->bindValue(':session', $sessionId, PDO::PARAM_STR);
-                $stmn->bindValue(':sessionExpiration', $this->config->sessionExpiration, PDO::PARAM_INT);
-
-                $stmn->execute();
-
-                $returnValues = $stmn->fetch();
-
-            }catch(Exception $e){
-
-                error_log($e->getMessage());
-                return false;
-
-            }
-
-            $stmn->closeCursor();
-
-            if(isset($returnValues['userCounter']) && $returnValues['userCounter'] == 1){
-                return true;
-            }
-
-            return false;
-
-        }
-
         /**
          * logout - destroy sessions and cookies
          *

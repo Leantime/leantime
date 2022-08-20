@@ -313,18 +313,8 @@ namespace leantime\domain\services {
          */
         public function logged_in(){
 
-            $isActiveSession = $this->authRepo->isActiveSession($this->session);
-
-            if($isActiveSession === false){
-
-                return false;
-
-            }
-
             //Check if we actually have a php session available
             if(isset($_SESSION['userdata']) === true) {
-
-                $this->authRepo->updateUserSession($_SESSION['userdata']['id'], $this->session, time());
 
                 return true;
 
@@ -333,7 +323,6 @@ namespace leantime\domain\services {
                 $this->logout();
                 return false;
             }
-
 
             return false;
 
@@ -350,7 +339,6 @@ namespace leantime\domain\services {
 
             $this->authRepo->invalidateSession($this->session);
             core\session::destroySession();
-
 
             if(isset($_SESSION)) {
 
