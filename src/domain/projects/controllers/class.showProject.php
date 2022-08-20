@@ -170,7 +170,6 @@ namespace leantime\domain\controllers {
 
                     $values = array(
                         "assignedUsers"=>$assignedUsers,
-                        "globalProjectUserAccess" => $_POST['globalProjectUserAccess'] ?? null,
                         "projectRoles" => $_POST
                     );
 
@@ -178,6 +177,9 @@ namespace leantime\domain\controllers {
 
                     $project = $projectRepo->getProject($id);
                     $project['assignedUsers'] = $projectRepo->getProjectUserRelation($id);
+
+                    $tpl->setNotification($this->language->__("notifications.user_was_added_to_project"), "success");
+
 
                 }
 
@@ -198,7 +200,8 @@ namespace leantime\domain\controllers {
                         'clientId' => $_POST['clientId'],
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
-						'dollarBudget' => $_POST['dollarBudget']
+						'dollarBudget' => $_POST['dollarBudget'],
+                        'psettings' => $_POST['globalProjectUserAccess']
                     );
 
                     if ($values['name'] !== '') {

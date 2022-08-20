@@ -73,6 +73,22 @@ $project = $this->get('project');
         <div class="span4">
 
             <div class="row-fluid">
+                <div class="span12 ">
+                    <h4 class="widgettitle title-light"><span
+                                class="fa fa-lock-open"></span><?php echo $this->__('labels.defaultaccess'); ?></h4>
+                    <?php echo $this->__('text.who_can_access'); ?>
+                    <br /><br />
+
+                    <select name="globalProjectUserAccess" style="max-width:300px;">
+                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $this->__("labels.only_chose"); ?></option>
+                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_client"); ?></option>
+                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_org"); ?></option>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-money-bill-alt"></span><?php echo $this->__('label.budgets'); ?></h4>

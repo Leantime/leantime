@@ -43,6 +43,10 @@ namespace leantime\domain\controllers {
         public function get()
         {
 
+            if(!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
+                core\frontcontroller::redirect(BASE_URL."/projects/showMy");
+            }
+
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
             //Project Progress
