@@ -139,24 +139,31 @@ class application
         $audit = new \leantime\domain\repositories\audit();
 
         if(!isset($_SESSION['last_cron_call'])) {
-            $lastCronEvent = $audit->getLastEvent('cron');
+
+            $lastEvent = $audit->getLastEvent('cron');
+
+            if(isset($lastEvent['date'])) {
+                $lastCronEvent = strtotime($lastEvent['date']);
+            }else{
+                $lastCronEvent = 0;
+            }
+
         }else{
             $lastCronEvent = $_SESSION['last_cron_call'];
         }
 
         // Using audit system to prevent too frequent cron executions
-        $lastCronEventDate = strtotime($lastCronEvent['date']);
         $nowDate = time();
-        $timeSince = abs($nowDate - $lastCronEventDate);
+        $timeSince = abs($nowDate - $lastCronEvent);
 
         //Run every 5 min
         if ($timeSince >= 300)
         {
-            $_SESSION["DOCRON"] = true;
+            $_SESSION["do_cron"] = true;
             $_SESSION['last_cron_call'] = time();
 
         } else {
-            unset ($_SESSION["DOCRON"]);
+            unset ($_SESSION["do_cron"]);
         }
 
 

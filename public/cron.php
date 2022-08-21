@@ -34,12 +34,17 @@ $settings->loadSettings($config->defaultTimezone);
 // NEW Audit system
 $audit = new leantime\domain\repositories\audit();
 
-$LastEvent = $audit->getLastEvent('cron');
+$lastEvent = $audit->getLastEvent('cron');
+
+if(isset($lastEvent['date'])) {
+    $lastCronEvent = strtotime($lastEvent['date']);
+}else{
+    $lastCronEvent = 0;
+}
 
 // Using audit system to prevent too frequent executions
-$lastEventDate = strtotime($LastEvent['date']);
 $nowDate = time();
-$timeSince = abs($nowDate - $lastEventDate);
+$timeSince = abs($nowDate - $lastCronEvent);
 if ($timeSince < 300)
 {
     echo "Last cron execution was on ".$LastEvent['date']. " plz come back later";

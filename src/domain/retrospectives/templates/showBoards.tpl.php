@@ -106,7 +106,7 @@ $canvasTitle = "";
                                             <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -206,7 +206,7 @@ $canvasTitle = "";
                                             <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -306,7 +306,7 @@ $canvasTitle = "";
                                             <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
