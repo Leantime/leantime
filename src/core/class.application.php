@@ -65,8 +65,10 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        //Allow a limited set of actions to be public
+        //Run Cron
+        $this->cronExec();
 
+        //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
 
             //Send telemetry if user is opt in and if it hasn't been sent that day
@@ -132,7 +134,36 @@ class application
 
     }
 
+    private function cronExec() {
+
+        $audit = new \leantime\domain\repositories\audit();
+
+        if(!isset($_SESSION['last_cron_call'])) {
+            $lastCronEvent = $audit->getLastEvent('cron');
+        }else{
+            $lastCronEvent = $_SESSION['last_cron_call'];
+        }
+
+        // Using audit system to prevent too frequent cron executions
+        $lastCronEventDate = strtotime($lastCronEvent['date']);
+        $nowDate = time();
+        $timeSince = abs($nowDate - $lastCronEventDate);
+
+        //Run every 5 min
+        if ($timeSince >= 300)
+        {
+            $_SESSION["DOCRON"] = true;
+            $_SESSION['last_cron_call'] = time();
+
+        } else {
+            unset ($_SESSION["DOCRON"]);
+        }
+
+
+    }
+
     private function checkIfInstalled() {
+
 
         if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true
         && isset($_SESSION['isUpToDate']) && $_SESSION['isUpToDate'] === true) {

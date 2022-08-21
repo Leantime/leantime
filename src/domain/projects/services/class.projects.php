@@ -147,6 +147,7 @@ namespace leantime\domain\services {
                 return $user != $_SESSION['userdata']['mail']; 
             }, ARRAY_FILTER_USE_BOTH);
 
+
             $mailer = new core\mailer();
             $mailer->setSubject($subject);
 
@@ -155,7 +156,11 @@ namespace leantime\domain\services {
                 $emailMessage .= " <a href='".$url['link']."'>".$url['text']."</a>";
             }
             $mailer->setHtml($emailMessage);
-            $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+            //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+	    // NEW Queuing messaging system
+	    $queue = new repositories\queue();
+            $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
 
 
             //Prepare message for chat applications (Slack, Mattermost)

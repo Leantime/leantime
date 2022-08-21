@@ -65,7 +65,12 @@ namespace leantime\domain\controllers {
                     $message = sprintf($language->__('email_notifications.idea_board_created_message'), $_SESSION["userdata"]["name"], "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
 
                     $mailer->setHtml($message);
-                    $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+                    // NEW Queuing messaging system
+                    $queue = new repositories\queue();
+                    $queue->queueMessageToUsers($users, $message, $language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
+
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
                     $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
