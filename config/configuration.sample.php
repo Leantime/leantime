@@ -9,15 +9,17 @@ class config
     public $language = 'en-US'; //Default language
     public $logoPath = '/images/logo.svg'; //Default logo path, can be changed later
     public $appUrl = ''; //Base URL, trailing slash not needed
-    public $primarycolor = '#1b75bb'; //Base URL, trailing slash not needed
-    public $secondarycolor = '#81B1A8'; //Base URL, trailing slash not needed
+    public $primarycolor = '#1b75bb'; //Primary Theme color
+    public $secondarycolor = '#81B1A8'; //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone
+    public $debug = 0; //Debug flag
 
     /* Database */
     public $dbHost = 'localhost'; //Database host
     public $dbUser = ''; //Database username
     public $dbPassword = ''; //Database password
     public $dbDatabase = ''; //Database name
+    public $dbPort = '3306'; //Database port
 
     /* Fileupload */
     public $userFilePath = 'userfiles/'; //Local relative path to store uploaded files (if not using S3)
@@ -65,34 +67,39 @@ class config
         "groups":"memberof",
         "email":"mail",
         "firstname":"displayname",
-        "lastname":""
+        "lastname":"",
+        "phonenumber":""
         }';
 
     //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
+          "5": {
+            "ltRole":"readonly",
+            "ldapRole":""
+          },
           "10": {
-            "ltRole":"client",
+            "ltRole":"commenter",
             "ldapRole":""
           },
           "20": {
-            "ltRole":"developer",
+            "ltRole":"editor",
             "ldapRole":""
           },
           "30": {
-            "ltRole":"clientManager",
-            "ldapRole":""
-          },
-          "40": {
             "ltRole":"manager",
             "ldapRole":""
           },
-          "50": {
+          "40": {
             "ltRole":"admin",
+            "ldapRole":""
+          },
+          "50": {
+            "ltRole":"owner",
             "ldapRole":"administrators"
           }
         }';
 
-    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to developer)
+    public $ldapDefaultRoleKey = 20; //Default Leantime Role on creation. (set to editor)
 
     public function __construct()
     {
@@ -104,6 +111,8 @@ class config
         $this->primarycolor = $this->configEnvironmentHelper("LEAN_PRIMARY_COLOR", $this->primarycolor);
         $this->secondarycolor = $this->configEnvironmentHelper("LEAN_SECONDARY_COLOR", $this->secondarycolor);
 
+        $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);
+
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
 
         /* Database */
@@ -111,6 +120,7 @@ class config
         $this->dbUser = $this->configEnvironmentHelper("LEAN_DB_USER", $this->dbUser);
         $this->dbPassword = $this->configEnvironmentHelper("LEAN_DB_PASSWORD", $this->dbPassword);
         $this->dbDatabase = $this->configEnvironmentHelper("LEAN_DB_DATABASE", $this->dbDatabase);
+        $this->dbPort = $this->configEnvironmentHelper("LEAN_DB_PORT", $this->dbPort);
 
         /* Fileupload */
         $this->userFilePath = $this->configEnvironmentHelper("LEAN_USER_FILE_PATH", $this->userFilePath);
@@ -154,19 +164,35 @@ class config
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")
     {
-        $found = getenv($envVar);
-        if (!$found || $found == "") {
-            return $default;
+
+        if(isset($_SESSION['mainconfig'][$envVar])){
+
+            return $_SESSION['mainconfig'][$envVar];
+
+        }else {
+
+            $found = getenv($envVar);
+            if (!$found || $found == "") {
+                $_SESSION['mainconfig'][$envVar] = $default;
+                return $default;
+            }
+
+            // we need to check to see if we need to conver the found data
+            if ($dataType == "string") {
+
+                $_SESSION['mainconfig'][$envVar] = $found;
+
+            } else if ($dataType == "boolean") {
+                // if the string is true, then it is true, simple enough
+                $_SESSION['mainconfig'][$envVar] = $found == "true" ? true : false;
+
+            } else if ($dataType == "number") {
+                $_SESSION['mainconfig'][$envVar] = intval($found);
+            }
+
+            return $_SESSION['mainconfig'][$envVar];
+
         }
-        // we need to check to see if we need to conver the found data
-        if ($dataType == "string") {
-            return $found;
-        } else if ($dataType == "boolean") {
-            // if the string is true, then it is true, simple enough
-            return $found == "true" ? true : false;
-        } else if ($dataType == "number") {
-            return intval($found);
-        }
-        return $found;
+
     }
 }

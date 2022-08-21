@@ -41,11 +41,11 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     }?>><?=$this->__("status.validated_true") ?></option>
         </select><br />
         <label><?=$this->__("label.assumptions") ?></label>
-        <textarea rows="3" cols="10" name="assumptions" class="modalTextArea researchTextEditor" placeholder="<?=$this->__("input.placeholders.describe_assumption") ?>"><?php echo $canvasItem['assumptions'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="assumptions" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_assumption") ?>"><?php echo $canvasItem['assumptions'] ?></textarea><br />
         <label><?=$this->__("label.data") ?></label>
-        <textarea rows="3" cols="10" name="data" class="modalTextArea researchTextEditor" placeholder="<?=$this->__("input.placeholders.describe_data") ?>"><?php echo $canvasItem['data'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="data" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_data") ?>"><?php echo $canvasItem['data'] ?></textarea><br />
         <label><?=$this->__("label.conclusion") ?></label>
-        <textarea rows="3" cols="10" name="conclusion" class="modalTextArea researchTextEditor" placeholder="<?=$this->__("input.placeholders.describe_conclusion") ?>"><?php echo $canvasItem['conclusion'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="conclusion" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_conclusion") ?>"><?php echo $canvasItem['conclusion'] ?></textarea><br />
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
@@ -70,12 +70,13 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                     <?=$this->__("text.use_milestone_to_track_leancanvas") ?><br />
                         <div class="row" id="milestoneSelectors">
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
                                 <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
                                 | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
 
                             </div>
-
+                            <?php } ?>
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
@@ -171,9 +172,27 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <?php if($id !== '') { ?>
     <br />
     <input type="hidden" name="comment" value="1" />
-
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
         $this->assign("formUrl", "/leancanvas/editCanvasItem/".$id."");
         $this->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+
+        leantime.generalController.initSimpleEditor();
+
+        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
+
+            leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+        <?php } ?>
+
+        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+            leantime.generalController.enableCommenterForms();
+        <?php }?>
+
+    })
+</script>

@@ -12,31 +12,57 @@ spl_autoload_register("leantimeAutoloader", true, true);
 function leantimeAutoloader($class)
 {
 
-    $namespace = "";
+    $mvcFolder = "";
+    $module = "";
+    $path = "";
+
     $classArray = explode('\\', $class);
 
-    if(count($classArray) >0) {
-        $class = $classArray[count($classArray) - 1];
+    //namespace structure
+    //For core
+    // leantime \ core \ CLASS
+
+    //For Domain
+    // leantime \ domain \ MVC FOLDER \ CLASS
+    // leantime \ domain \ MVC FOLDER \ MODULE \ CLASS
+
+    //For Plugins
+    // leantime \ plugins \ plugin \ MVC FOLDER \ CLASS
+
+
+    //core
+
+    $classPartsCount = count($classArray);
+
+    if($classPartsCount == 3) {
+        $class = $classArray[2];
+        $srcFolder = $classArray[1];
+
+        $path = "../src/{$srcFolder}/class.{$class}.php";
+
     }
 
-    if(count($classArray) >1) {
-        $namespace = $classArray[count($classArray) - 2];
+    //domain
+    if($classPartsCount == 4) {
+        $class = $classArray[3];
+        $srcFolder = $classArray[1];
+        $mvcFolder = $classArray[2];
+
+        $path = "../src/{$srcFolder}/{$class}/{$mvcFolder}/class.{$class}.php";
     }
 
-    $paths = array();
-    $paths[] = "../src/{$namespace}/class.{$class}.php";
-    $paths[] = "../src/domain/{$class}/{$namespace}/class.{$class}.php";
-    $paths[] = "../src/resources/libs/{$class}/class.{$class}.php";
 
+    if($classPartsCount == 5) {
+        $class = $classArray[4];
+        $srcFolder = $classArray[1];
+        $mvcFolder = $classArray[2];
+        $module = $classArray[3];
 
+        $path = "../src/{$srcFolder}/{$module}/{$mvcFolder}/class.{$class}.php";
+    }
 
-    foreach($paths as &$path){
-
-        if(file_exists($path) === true) {
-            if((include_once $path) !== false) { return; 
-            }
-        }
-            
+    if($path != '') {
+        require_once $path;
     }
 
 }

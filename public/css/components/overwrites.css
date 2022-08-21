@@ -278,12 +278,6 @@ div.tagsinput {
 	border:1px solid var(--main-border-color);
 }
 
-
-	 
-	 .tabbedwidget .btn-primary {
-	 	border:0px;
-	 }
-
 .gantt-container a:hover {
     text-decoration:underline !important;
 }
@@ -295,6 +289,68 @@ body .tox .tox-toolbar-overlord{
 }
 
 
+.ui-datepicker-next {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	right: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px 1px;
+}
+
+.ui-datepicker-prev {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	left: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px -39px;
+}
+
+.ui-datepicker-header {
+	position: relative;
+	text-align: center;
+	padding: 5px;
+	color: #fff;
+	background: #0866c6;
+	text-transform: uppercase;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.ui-datepicker {
+	border-radius:5px;
+}
+
+
+div.jGrowl div.jGrowl-notification,
+div.jGrowl div.jGrowl-closer {
+	background:var(--secondary-background);
+	color:var(--primary-font-color);
+	padding:20px;
+	font-size:var(--base-font-size);
+	width:250px;
+	opacity:1;
+	border-radius:var(--box-radius);
+	box-shadow: var(--regular-shadow);
+	border:0px;
+
+}
+
+div.jGrowl div.jGrowl-notification div.jGrowl-close {
+	color:var(--primary-font-color);
+	font-size:var(--base-font-size);
+}
+
+div.jGrowl div.jGrowl-notification.success {
+	border-left:5px solid #86D628;
+}
+
+div.jGrowl div.jGrowl-notification.info {
+	border-left:5px solid #71B8EE;
+}
+
+div.jGrowl div.jGrowl-notification.error {
+	border-left:5px solid  #dd0000;
+}
 
 
 /* Playing with header */

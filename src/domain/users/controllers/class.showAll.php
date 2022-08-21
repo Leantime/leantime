@@ -3,8 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showAll
     {
@@ -13,22 +15,24 @@ namespace leantime\domain\controllers {
         public function get()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $userRepo =  new repositories\users();
             $ldapService = new services\ldap();
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
-                if(core\login::userIsAtLeast("manager")) {
+                if(auth::userIsAtLeast(roles::$admin)) {
                     $tpl->assign('allUsers', $userRepo->getAll());
 
                 }else{
-                    $tpl->assign('allUsers', $userRepo->getAllClientUsers(core\login::getUserClientId()));
+                    $tpl->assign('allUsers', $userRepo->getAllClientUsers(auth::getUserClientId()));
                 }
 
                 $tpl->assign('admin', true);
-                $tpl->assign('roles', core\login::$userRoles);
+                $tpl->assign('roles', roles::getRoles());
 
                 $tpl->display('users.showAll');
 

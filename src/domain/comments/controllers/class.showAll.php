@@ -4,7 +4,9 @@ namespace leantime\domain\controllers {
 
     use _PHPStan_ccec86fc8\Nette\Neon\Exception;
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showAll
     {
@@ -18,6 +20,7 @@ namespace leantime\domain\controllers {
          */
         public function __construct($params)
         {
+
             $this->tpl = new core\template();
             $this->projectService = new services\projects();
             $this->commentService = new services\comments();
@@ -61,9 +64,6 @@ namespace leantime\domain\controllers {
         }
 
         public function post($params) {
-
-            var_dump($params);
-            exit();
 
             if (isset($params['comment']) === true) {
 

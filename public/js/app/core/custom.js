@@ -21,17 +21,4 @@ jQuery(document).ready(function () {
         });
     }
 
-    // dropdown menu for profile image
-    jQuery('.userloggedinfo img').click(function () {
-        if (jQuery(window).width() < 480) {
-            var dm = jQuery('.userloggedinfo .userinfo');
-            if (dm.is(':visible')) {
-                dm.hide();
-            } else {
-                dm.show();
-            }
-        }
-    });
-
-
 });

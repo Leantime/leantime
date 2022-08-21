@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class delMilestone
     {
@@ -14,6 +16,8 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $this->tpl = new core\template();
             $this->language = new core\language();
             $this->ticketService = new services\tickets();
@@ -25,7 +29,7 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
@@ -49,7 +53,7 @@ namespace leantime\domain\controllers {
             }
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($params['del'])) {
 

@@ -8,7 +8,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class newClient
     {
@@ -21,13 +23,15 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
             $user = new repositories\users();
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("manager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
                 $values = array(
                     'name' => '',

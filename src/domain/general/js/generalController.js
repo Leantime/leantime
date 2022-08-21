@@ -11,7 +11,7 @@ leantime.generalController = (function () {
                 _initSimpleEditor();
                 initComplexEditor();
 
-                if(jQuery('.login-alert .alert').text() != ''){
+                if(jQuery('.login-alert .alert').text() !== ''){
                     jQuery('.login-alert').fadeIn();
                 }
             }
@@ -48,18 +48,15 @@ leantime.generalController = (function () {
 
     var _initSimpleEditor = function () {
 
-
-
         jQuery('textarea.tinymceSimple').tinymce(
             {
                 // General options
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
-                height:"150",
-                content_style: "img { max-width: 100%; }",
-                plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
-                toolbar : "bold italic strikethrough |  link unlink image | bullist numlist | emoticons",
+                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
+                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 branding: true,
                 statusbar: true,
                 convert_urls: false,
@@ -127,12 +124,12 @@ leantime.generalController = (function () {
                 // General options
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
-                branding: true,
+                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table | template",
+                branding: false,
                 statusbar: true,
                 convert_urls: false,
                 menubar:false,
@@ -196,11 +193,75 @@ leantime.generalController = (function () {
 
     };
 
+    var makeInputReadonly = function (container) {
+
+        if(typeof container === undefined) {
+            container = "body";
+        }
+
+        jQuery(container).find("input").not(".filterBar input").prop("readonly", true);
+        jQuery(container).find("input").not(".filterBar input").prop("disabled", true);
+
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("readonly", true);
+        jQuery(container).find("select").not(".filterBar select, .mainSprintSelector").prop("disabled", true);
+
+        jQuery(container).find("textarea").not(".filterBar textarea").prop("disabled", true);
+
+        jQuery(container).find("a.delete").remove();
+
+        jQuery(container).find(".quickAddLink").hide();
+
+        if(jQuery(container).find(".complexEditor").length) {
+            jQuery(container).find(".complexEditor").each(function(element){
+
+                jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
+            });
+        }
+
+        if(jQuery(container).find(".tinymceSimple").length) {
+
+            jQuery(container).find(".tinymceSimple").each(function(element){
+
+                jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
+            });
+        }
+
+        jQuery(container).find(".tox-editor-header").hide();
+        jQuery(container).find(".tox-statusbar").hide();
+
+        jQuery(container).find(".ticketDropdown a").removeAttr("data-toggle");
+
+        jQuery("#mainToggler").hide();
+        jQuery(".commentBox").hide();
+        jQuery(".deleteComment, .replyButton").hide();
+
+
+    };
+
+    var enableCommenterForms = function () {
+
+        jQuery(".commentBox").show();
+
+        //Hide reply comment boxes
+        jQuery("#comments .replies .commentBox").hide();
+        jQuery(".deleteComment, .replyButton").show();
+
+        jQuery(".commentReply .tinymceSimple").tinymce().getBody().setAttribute('contenteditable', "true");
+        jQuery(".commentReply .tox-editor-header").show();
+        jQuery(".commentBox input").prop("readonly", false);
+        jQuery(".commentBox input").prop("disabled", false);
+
+        jQuery(".commentBox textarea").prop("readonly", false);
+        jQuery(".commentBox textarea").prop("disabled", false);
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
         initSimpleEditor:_initSimpleEditor,
-        initComplexEditor:initComplexEditor
+        initComplexEditor:initComplexEditor,
+        makeInputReadonly:makeInputReadonly,
+        enableCommenterForms:enableCommenterForms
     };
 
 })();

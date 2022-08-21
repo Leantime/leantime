@@ -26,7 +26,6 @@
 
                 </div>
                 <div class="form-group">
-                    <label class="control-label"><?php echo $this->__('label.description'); ?></label>
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
                               class="complexEditor"><?php echo $ticket->description ?></textarea><br/>
                 </div>
@@ -37,12 +36,13 @@
         <div class="row-fluid">
             <?php if (isset($ticket->id) && $ticket->id != '') : ?>
                 <div class="pull-right padding-top">
-                    <?php echo $this->displayLink('tickets.delTicket', '<i class="fa fa-trash"></i> '.$this->__('links.delete_todo'), array('id' => $ticket->id), array('class' => 'delete')) ?>
+                    <a href="<?=BASE_URL."/tickets/delTicket/".$ticket->id.""?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete_todo')?></a>
                 </div>
             <?php endif; ?>
             <input type="hidden" name="saveTicket" value="1" />
+            <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
             <input type="submit" name="saveTicket" value="<?php echo $this->__('buttons.save'); ?>"/>
-            <input type="submit" name="saveAndCloseTicket" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
+            <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
         </div>
 
@@ -51,9 +51,6 @@
     <div class="span4">
         <div class="row-fluid marginBottom">
             <div class="span12">
-
-                <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-certificate"></span><?php echo $this->__('subtitle.details'); ?></h4>
 
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_status'); ?></label>
@@ -209,7 +206,9 @@
 
                             <?php } ?>
                         </select>
-                        <a href="javascript:void(0);" onclick="jQuery('select[name=editorId]').val('<?php echo $_SESSION['userdata']['id']; ?>')"><?php echo $this->__('label.assign_to_me'); ?></a>
+                        <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+                            <a href="javascript:void(0);" onclick="jQuery('select[name=editorId]').val('<?php echo $_SESSION['userdata']['id']; ?>')"><?php echo $this->__('label.assign_to_me'); ?></a>
+                        <?php } ?>
                     </div>
                 </div>
 

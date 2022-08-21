@@ -6,10 +6,6 @@
 ?>
 
 <div class="pageheader">
-    <div class="pull-right padding-top">
-        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
-    </div>
-
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
@@ -35,15 +31,157 @@
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><?php echo $this->__('tabs.projectdetails'); ?></a></li>
-                <li><a href="#integrations"><?php echo $this->__('tabs.Integrations'); ?></a></li>
-                <li><a href="#files"><?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
-                <li><a href="#comment"><?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
-                <li><a href="#todosettings"><?php echo $this->__('tabs.todosettings'); ?></a></li>
+                <li><a href="#projectdetails"><span class="iconfa iconfa-leaf"></span> <?php echo $this->__('tabs.projectdetails'); ?></a></li>
+                <li><a href="#team"><span class="iconfa iconfa-group"></span> <?php echo $this->__('tabs.team'); ?></a></li>
+
+                <li><a href="#integrations"> <span class="iconfa iconfa-asterisk"></span> <?php echo $this->__('tabs.Integrations'); ?></a></li>
+                <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
+                <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
+                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.todosettings'); ?></a></li>
             </ul>
 
             <div id="projectdetails">
                 <?php echo $this->displaySubmodule('projects-projectDetails'); ?>
+            </div>
+
+            <div id="team">
+                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#team">
+                    <input type="hidden" name="saveUsers" value="1" />
+
+
+                    <div class="row-fluid">
+                    <div class="span12">
+
+                         <div class="form-group">
+                             <br />
+                            <?php echo $this->__('text.choose_access_for_users'); ?><br />
+                             <br />
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-users"></span><?=$this->__('headlines.team_member'); ?>
+                                    </h4>
+                                </div>
+                            </div>
+
+                             <div class="row">
+                                <?php foreach($project['assignedUsers'] as $userId => $assignedUser){ ?>
+
+                                    <div class="col-md-4">
+                                        <div class="userBox">
+                                            <input type='checkbox' name='editorId[]' id="user-<?php echo $userId ?>" value='<?php echo $userId ?>'
+                                                checked="checked"
+                                                />
+                                            <div class="commentImage">
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
+                                            </div>
+                                            <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></label>
+                                            <?php
+                                            if(($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
+                                                <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>" />
+                                            <?php }else{ ?>
+
+                                                <select name="userProjectRole-<?php echo $userId ?>">
+                                                    <option value="inherit">Inherit</option>
+                                                    <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+
+                                                    <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                    <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                    <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                </select>
+                                            <?php } ?>
+                                            <div class="clearall"></div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
+                             </div>
+
+
+                `           <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-user-plus"></span><?=$this->__('headlines.add_more_users'); ?>
+                                    </h4>
+                                </div>
+                            </div>
+
+                             <div class="row">
+                                <?php foreach($this->get('availableUsers') as $row){ ?>
+                                    <?php if(!isset($project['assignedUsers'][$row['id']])) { ?>
+
+                                        <div class="col-md-4">
+                                            <div class="userBox">
+                                                <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
+
+                                                <div class="commentImage">
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
+                                                </div>
+                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
+                                                <?php if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
+                                                    <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$row['role']]) ?>" />
+                                                <?php }else{ ?>
+
+                                                    <select name="userProjectRole-<?php echo $row['id'] ?>">
+                                                        <option value="inherit">Inherit</option>
+                                                        <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
+                                                        <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                            ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+
+                                                        <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                        <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                        <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                    </select>
+                                                <?php } ?>
+                                                <div class="clearall"></div>
+                                            </div>
+                                        </div>
+
+
+                                <?php }
+                                } ?>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                    <br/>
+                    <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
+
+                </form>
+
             </div>
 
             <div id="files">
@@ -89,7 +227,7 @@
                                                         <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
                                                         <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
 
-                                                        <?php  if ($login::userIsAtLeast("developer")) { ?>
+                                                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                                             <li><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                                                         <?php  } ?>
 
@@ -117,7 +255,7 @@
 
             <div id="comment">
 
-                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
+                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
                     $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
@@ -342,7 +480,6 @@
         <?php } ?>
 
         leantime.projectsController.initProjectTabs();
-        leantime.projectsController.initProjectsEditor();
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.projectsController.initSelectFields();

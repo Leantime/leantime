@@ -1,15 +1,28 @@
 leantime.dashboardController = (function () {
 
     // Variables (underscore for private variables)
-    var  chartColors = {
-        red: 'rgb(201,48,44)',
-        orange: 'rgb(255, 159, 64)',
-        yellow: 'rgb(255, 205, 86)',
-        green: 'rgb(90,182,90)',
-        blue: 'rgb(54, 162, 235)',
-        purple: 'rgb(153, 102, 255)',
-        grey: 'rgb(201, 203, 207)'
-    };
+
+    if(leantime.theme == "dark") {
+        var chartColors = {
+            red: 'rgb(201,48,44)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(90,182,90)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(56, 56, 56)'
+        };
+    }else{
+        var chartColors = {
+            red: 'rgb(201,48,44)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(90,182,90)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+    }
 
     var _burndownConfig = '';
 
@@ -353,7 +366,8 @@ leantime.dashboardController = (function () {
         initBacklogBurndown:initBacklogBurndown,
         initBacklogChartButtonClick:initBacklogChartButtonClick,
         initProgressChart:initProgressChart,
-        prepareHiddenDueDate:prepareHiddenDueDate
+        prepareHiddenDueDate:prepareHiddenDueDate,
+        _initDueDateTimePickers:_initDueDateTimePickers
 
     };
 })();

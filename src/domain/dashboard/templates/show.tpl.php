@@ -57,24 +57,27 @@
                         ?>
 
                         <ul class="sortableTicketList" >
-                            <li class="">
-                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link" onclick="jQuery('#ticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
-                                <div class="ticketBox hideOnLoad" id="ticket_new" >
+                            <?php
+                            if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <li class="">
+                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link" onclick="jQuery('#ticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
+                                    <div class="ticketBox hideOnLoad" id="ticket_new" >
 
-                                    <form method="post" class="form-group">
-                                        <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
-                                        <input type="submit" value="<?php echo $this->__("buttons.save"); ?>" name="quickadd"  />
-                                        <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
-                                        <input type="hidden" name="status" value="3" />
-                                        <input type="hidden" name="sprint" value="<?php echo $_SESSION['currentSprint']; ?>" />
-                                        <a href="javascript:void(0);" onclick="jQuery('#ticket_new').toggle('fast'); jQuery('#ticket_new_link').toggle('fast');">
-                                            <?php echo $this->__("links.cancel"); ?>
-                                        </a>
-                                    </form>
+                                        <form method="post" class="form-group">
+                                            <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
+                                            <input type="submit" value="<?php echo $this->__("buttons.save"); ?>" name="quickadd"  />
+                                            <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
+                                            <input type="hidden" name="status" value="3" />
+                                            <input type="hidden" name="sprint" value="<?php echo $_SESSION['currentSprint']; ?>" />
+                                            <a href="javascript:void(0);" onclick="jQuery('#ticket_new').toggle('fast'); jQuery('#ticket_new_link').toggle('fast');">
+                                                <?php echo $this->__("links.cancel"); ?>
+                                            </a>
+                                        </form>
 
-                                    <div class="clearfix"></div>
-                                </div>
-                            </li>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </li>
+                            <?php } ?>
                             <?php
 
 
@@ -97,9 +100,7 @@
                                                 <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                                     <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
-                                                    <?php
-
-                                                    if ($login::userIsAtLeast("developer")) {
+                                                    <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                         $clockedIn = $this->get("onTheClock");
                                                     ?>
 
@@ -109,7 +110,7 @@
                                                             </a>
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                                 <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -229,8 +230,8 @@
                                                 <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                 <?php
-
-                                                if ($login::userIsAtLeast("developer")) {
+                            
+                                                if ($login::userIsAtLeast($roles::$editor)) {
                                                     $clockedIn = $this->get("onTheClock");
                                                     ?>
 
@@ -240,7 +241,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -420,10 +421,15 @@
 
    jQuery(document).ready(function() {
 
-       leantime.dashboardController.prepareHiddenDueDate();
-       leantime.ticketsController.initEffortDropdown();
-       leantime.ticketsController.initMilestoneDropdown();
-       leantime.ticketsController.initStatusDropdown();
+       <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+           leantime.dashboardController.prepareHiddenDueDate();
+           leantime.ticketsController.initEffortDropdown();
+           leantime.ticketsController.initMilestoneDropdown();
+           leantime.ticketsController.initStatusDropdown();
+           leantime.ticketsController.initDueDateTimePickers();
+       <?php }else{ ?>
+            leantime.generalController.makeInputReadonly(".maincontentinner");
+       <?php } ?>
 
        leantime.dashboardController.initProgressChart("chart-area", <?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
 

@@ -2,6 +2,7 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
+
 ?>
 
 
@@ -64,38 +65,29 @@ $project = $this->get('project');
                     <h4 class="widgettitle title-light">
                         <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
-                    <textarea name="details" id="details" class="projectTinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
             </div>
         </div>
         <div class="span4">
+
             <div class="row-fluid">
-                <div class="span12">
+                <div class="span12 ">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-group"></span><?php echo $this->__('label.team_members'); ?></h4>
-                    <div class="form-group">
-                        <?php echo $this->__('text.choose_access_for_users'); ?><br />
-                        <a href='<?=BASE_URL?>/users/showAll/'><?php echo $this->__('links.dont_do_it_alone'); ?></a>
-                        <br /><br />
+                                class="fa fa-lock-open"></span><?php echo $this->__('labels.defaultaccess'); ?></h4>
+                    <?php echo $this->__('text.who_can_access'); ?>
+                    <br /><br />
 
-                        <div class="assign-container">
-                            <?php foreach($this->get('availableUsers') as $row){ ?>
-
-                                    <p class="half">
-                                        <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php
-                                            endif; ?>/>
-
-                                        <label for="user-<?php echo $row['id'] ?>"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
-                                    </p>
-                            <?php } ?>
-                        </div>
-                    </div>
-
+                    <select name="globalProjectUserAccess" style="max-width:300px;">
+                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $this->__("labels.only_chose"); ?></option>
+                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_client"); ?></option>
+                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_org"); ?></option>
+                    </select>
 
                 </div>
             </div>
+
             <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span

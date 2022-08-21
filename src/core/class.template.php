@@ -7,7 +7,10 @@
 
 namespace leantime\core {
 
+    use JetBrains\PhpStorm\NoReturn;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class template
     {
@@ -23,7 +26,7 @@ namespace leantime\core {
          * @access private
          * @var    string
          */
-        private $controller = '';
+        private $frontcontroller = '';
 
         /**
          *
@@ -53,6 +56,11 @@ namespace leantime\core {
 
         public $template = '';
 
+        public $mainContent = '';
+
+        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+
+
         public $picture = array(
             'calendar'    => 'iconfa-calendar',
             'clients'     => 'iconfa-group',
@@ -75,9 +83,8 @@ namespace leantime\core {
          */
         public function __construct()
         {
-            $this->controller = frontcontroller::getInstance();
-
             $this->language = new language();
+            $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
         }
 
@@ -109,19 +116,6 @@ namespace leantime\core {
 
         }
 
-        public function getModulePicture()
-        {
-
-            $module = frontcontroller::getModuleName($this->template);
-
-            $picture = $this->picture['default'];
-            if (isset($this->picture[$module])) {
-                $picture = $this->picture[$module];
-            }
-
-            return $picture;
-        }
-
         /**
          * display - display template from folder template including main layout wrapper
          *
@@ -129,41 +123,56 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template)
+        public function display($template, $status = 200, $layout = "app")
         {
 
             //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new appSettings();
-            $login = login::getInstance();
+            $login = services\auth::getInstance();
+            $roles = new roles();
+
             $language = $this->language;
 
             $this->template = $template;
 
-            require ROOT.'/../src/content.php';
+            //http_response_code($this->validStatusCodes[$status] ?? 200);
 
-            $mainContent = ob_get_clean();
+            //Load Layout file
+            ob_start();
+
+            $layout = htmlspecialchars($layout);
+
+            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
+                require ROOT . '/../src/layouts/'.$layout.'.php';
+            }else{
+                require ROOT . '/../src/layouts/app.php';
+            }
+
+            $layoutContent = ob_get_clean();
+
+            //Load Template
             ob_start();
 
             //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
+            $action = $this->frontcontroller::getActionName($template);
 
-            $module = frontcontroller::getModuleName($template);
+            $module = $this->frontcontroller::getModuleName($template);
 
-            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-                throw new Exception($this->__("notifications.no_template"));
+            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
+                throw new \Exception($this->__("notifications.no_template"));
             }
 
-            include $strTemplate;
+            require_once $strTemplate;
 
+            $content = ob_get_clean();
 
-            $subContent = ob_get_clean();
+            //Load template content into layout content
+            $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
 
-            $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
-
-            echo $content;
+            echo $render;
 
         }
 
@@ -192,49 +201,10 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template)
+        public function displayPartial($template, $statusCode = 200)
         {
 
-            //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
-            $config = new config();
-            $settings = new appSettings();
-            $login = login::getInstance();
-
-            $this->template = $template;
-
-            //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
-
-            $module = frontcontroller::getModuleName($template);
-
-                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
-                error_log($this->__("notifications.no_template"), 0);
-                echo $this->__("notifications.no_template");
-
-            } else {
-
-                include $strTemplate;
-
-            }
-
-        }
-
-
-        /**
-         * includeAction - possible to include Actions from erverywhere
-         *
-         * @access public
-         * @param  $completeName
-         * @return void
-         */
-        public function includeAction($completeName, $params=array())
-        {
-
-            $this->controller->includeAction($completeName, $params);
+            $this->display($template, $statusCode, 'blank');
 
         }
 
@@ -283,7 +253,8 @@ namespace leantime\core {
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
             $settings = new appSettings();
-            $login = login::getInstance();
+            $login = services\auth::getInstance();
+            $roles = new roles();
 
 
             $submodule = array("module"=>'', "submodule"=>'');
@@ -304,53 +275,6 @@ namespace leantime\core {
 
         }
 
-        /**
-         * displayLink
-         */
-        public function displayLink($module, $name, $params = null, $attribute = null)
-        {
-
-            $mod = explode('.', $module);
-
-            if(is_array($mod) === true && count($mod) == 2) {
-
-                $action = $mod[1];
-                $module = $mod[0];
-
-                $mod = $module.'/class.'.$action.'.php';
-
-            }else{
-
-                $mod = array();
-                return false;
-
-            }
-
-            $returnLink = false;
-
-            $url = "/".$module."/".$action."/";
-
-            if (!empty($params)) {
-
-                foreach ($params as $key => $value) {
-                    $url .= $value."/";
-                }
-            }
-
-            $attr = '';
-
-            if ($attribute!=null) {
-
-                foreach ($attribute as $key => $value){
-                    $attr .= $key." = '".$value."' ";
-                }
-            }
-
-            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
-
-            return $returnLink;
-        }
-
         public function displayNotification()
         {
 
@@ -358,27 +282,36 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            $alertIcons = array(
-                "success" => '<i class="far fa-check-circle"></i>',
-                "error" => '<i class="fas fa-exclamation-triangle"></i>',
-                "info" => '<i class="fas fa-info-circle"></i>'
-            );
+            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
+
+                $notification = '<script type="text/javascript">
+                                  jQuery.jGrowl("'.$language->__($note['msg'], false).'", {theme: "'.$note['type'].'"});
+                                </script>';
+
+                $_SESSION['notification'] = "";
+                $_SESSION['notificationType'] = "";
+
+            }
+
+            return $notification;
+        }
+
+        public function displayInlineNotification()
+        {
+
+            $notification = '';
+            $note = $this->getNotification();
+            $language = $this->language;
+
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
-                $notification = "<div class='alert alert-".$note['type']."'>
-                                    <div class='infoBox'>
-                                        ".$alertIcons[$note['type']]."
+                $notification = "<div class='inputwrapper login-alert login-".$note['type']."'>
+                                    <div class='alert alert-".$note['type']."'>
+                                        ".$language->__($note['msg'], false)."
                                     </div>
-								<button data-dismiss='alert' class='close' type='button'>×</button>
-								<div class='alert-content'><h4>"
-                    .ucfirst($note['type']).
-                    "!</h4>"
-                    .$language->__($note['msg'], false).
-                    "
 								</div>
-								<div class='clearall'></div>
-							</div>";
+								";
 
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
@@ -419,6 +352,7 @@ namespace leantime\core {
         public function e($content): void
         {
 
+
             $escaped = $this->escape($content);
 
             echo $escaped;
@@ -430,6 +364,25 @@ namespace leantime\core {
 
             if(!is_null($content)) {
                 return htmlentities($content);
+            }
+
+            return '';
+
+        }
+
+        public function escapeMinimal($content): string
+        {
+
+            $config = array(
+                'safe'=>1,
+                'style_pass'=>1,
+                'cdata'=>1,
+                'comment'=>1,
+                'deny_attribute'=>'* -href -style',
+                'keep_bad'=>0);
+
+            if(!is_null($content)) {
+                return htmLawed($content, array('valid_xhtml'=>1));
             }
 
             return '';
@@ -539,11 +492,69 @@ namespace leantime\core {
             while (!empty($tags))
                 $truncate .= sprintf('</%s>', array_pop($tags));
 
-            $truncate .= $ending;
+            if(strlen($truncate)>$maxLength) {
+                $truncate .= $ending;
+            }
 
             return $truncate;
         }
 
+        public function getModulePicture()
+        {
+
+            $module = frontcontroller::getModuleName($this->template);
+
+            $picture = $this->picture['default'];
+            if (isset($this->picture[$module])) {
+                $picture = $this->picture[$module];
+            }
+
+            return $picture;
+        }
+
+        public function displayLink($module, $name, $params = null, $attribute = null)
+        {
+
+            $mod = explode('.', $module);
+
+            if(is_array($mod) === true && count($mod) == 2) {
+
+                $action = $mod[1];
+                $module = $mod[0];
+
+                $mod = $module.'/class.'.$action.'.php';
+
+            }else{
+
+                $mod = array();
+                return false;
+
+            }
+
+            $returnLink = false;
+
+            $url = "/".$module."/".$action."/";
+
+            if (!empty($params)) {
+
+                foreach ($params as $key => $value) {
+                    $url .= $value."/";
+                }
+            }
+
+            $attr = '';
+
+            if ($attribute!=null) {
+
+                foreach ($attribute as $key => $value){
+                    $attr .= $key." = '".$value."' ";
+                }
+            }
+
+            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
+
+            return $returnLink;
+        }
 
 
     }

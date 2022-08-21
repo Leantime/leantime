@@ -247,6 +247,9 @@ namespace leantime\domain\repositories {
         public function getUsersTickets($id,$limit)
         {
 
+            $users = new users();
+            $user = $users->getUser($id);
+
             $sql = "SELECT
 						ticket.id,
 						ticket.headline,
@@ -272,7 +275,13 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_user AS t1 ON ticket.userId = t1.id
 				LEFT JOIN zp_user AS t2 ON ticket.editorId = t2.id
 								
-				WHERE zp_relationuserproject.userId = :id AND ticket.type <> 'Milestone' AND ticket.type <> 'Subtask'
+				WHERE 
+				  (zp_relationuserproject.userId = :id 
+						        OR project.psettings = 'all'
+				                OR (project.psettings = 'client' AND project.clientId = :clientId)
+						        )
+				  
+				  AND ticket.type <> 'Milestone' AND ticket.type <> 'Subtask'
 				GROUP BY ticket.id
 				ORDER BY ticket.id DESC";
 
@@ -282,6 +291,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':clientId', $user['clientId'] ?? '', PDO::PARAM_STR);
             if($limit > -1) {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
             }
@@ -292,35 +302,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAvailableUsersForTicket()
-        {
 
-            //Get the projects the current user is assigned to
-
-            $sql = "SELECT 
-					DISTINCT user.username, 
-					user.firstname, 
-					user.lastname, 
-					user.id 
-				FROM zp_user as user 
-				JOIN zp_relationuserproject ON user.id = zp_relationuserproject.userId
-				
-				WHERE zp_relationuserproject.projectId IN 
-				(
-					SELECT 
-						zp_relationuserproject.projectId 
-					FROM zp_relationuserproject WHERE userId = ".$_SESSION['userdata']["id"]."
-				)";
-
-            $stmn = $this->db->database->prepare($sql);
-
-
-            $stmn->execute();
-            $admin = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $admin;
-        }
 
         /**
          * getAllBySearchCriteria - get Tickets by a serach term and/or a filter
@@ -365,7 +347,8 @@ namespace leantime\domain\repositories {
 							milestone.headline AS milestoneHeadline,
 							IF((milestone.tags IS NULL OR milestone.tags = ''), '#999999', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
-							COUNT(DISTINCT zp_file.id) AS fileCount
+							COUNT(DISTINCT zp_file.id) AS fileCount,
+							COUNT(DISTINCT subtasks.id) AS subtaskCount
 						FROM 
 							zp_tickets 
 						LEFT JOIN zp_relationuserproject USING (projectId)
@@ -377,12 +360,19 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
 						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
 						LEFT JOIN zp_tickets AS milestone ON zp_tickets.dependingTicketId = milestone.id AND zp_tickets.dependingTicketId > 0 AND milestone.type = 'milestone'
+						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0 AND subtasks.type = 'subtask'
 						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
-						WHERE zp_relationuserproject.userId = :userId AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
+						WHERE 
+						    (zp_relationuserproject.userId = :userId 
+						        OR zp_projects.psettings = 'all'
+				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+						        )
+						  
+						  AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-            if($_SESSION['currentProject']  != "") {
-                $query .= " AND zp_tickets.projectId = :projectId";
-            }
+                        if($_SESSION['currentProject']  != "") {
+                            $query .= " AND zp_tickets.projectId = :projectId";
+                        }
 
 
             if($searchCriteria["users"]  != "") {
@@ -445,6 +435,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
 
             if($_SESSION['currentProject'] != "") {
 
@@ -626,11 +617,11 @@ namespace leantime\domain\repositories {
 						zp_tickets.status,
 						zp_tickets.sprint,
 						zp_tickets.storypoints,
-						zp_tickets.hourRemaining,
+						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
 						zp_tickets.acceptanceCriteria,
 						zp_tickets.userId,
 						zp_tickets.editorId,
-						zp_tickets.planHours,
+						IFNULL(zp_tickets.planHours, 0) AS planHours,
 						zp_tickets.tags,
 						zp_tickets.url,
 						zp_tickets.editFrom,
@@ -650,7 +641,7 @@ namespace leantime\domain\repositories {
 					WHERE 
 						zp_tickets.dependingTicketId = :ticketId AND zp_tickets.type = 'subtask'
 					GROUP BY
-						zp_tickets.id";
+						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':ticketId', $id, PDO::PARAM_INT);
@@ -788,40 +779,6 @@ namespace leantime\domain\repositories {
                 return $this->priority[1];
 
             }
-        }
-
-        /**
-         * Checks whether a user has access to a ticket or not
-         */
-        public function getAccessRights($id)
-        {
-
-            $sql = "SELECT 
-				
-				zp_relationuserproject.userId
-				
-			FROM zp_tickets
-			
-			LEFT JOIN zp_relationuserproject ON zp_tickets.projectId = zp_relationuserproject.projectId
-			
-			WHERE zp_tickets.id=:id AND zp_relationuserproject.userId = :user";
-
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':user', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-
-
-            $stmn->execute();
-            $result = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            if (count($result) > 0) {
-                return true;
-            }else{
-                return false;
-            }
-
         }
 
         public function getFirstTicket($projectId)

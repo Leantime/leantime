@@ -13,11 +13,13 @@ class appSettings {
 	 * @access private
 	 * @var string - 1 debugmodus
 	 */
-	private $debug = 0;
+	public $debug = 0;
 
-	public $appVersion = "2.2.3";
+	public $appVersion = "2.2.5";
 
 	public $dbVersion = "2.1.9";
+
+
 
 	/**
 	 * __construct
@@ -30,13 +32,15 @@ class appSettings {
 	 * loadSettings - load all appSettings and set ini
 	 *
 	 */
-	public function loadSettings($timezone){
+	public function loadSettings($timezone, $debug = 0){
 
         if($timezone != '') {
             date_default_timezone_set($timezone);
         }else{
             date_default_timezone_set('America/Los_Angeles');
         }
+
+        $this->debug = $debug;
 
 		if($this->debug === 1){
             error_reporting(E_ALL);

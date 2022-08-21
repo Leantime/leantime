@@ -35,7 +35,7 @@
 .nyroModalCont {
 	position: relative;
 	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
-	background: #fff;
+	background: var(--secondary-background);
 	border-radius:5px;
 	margin-bottom:50px;
 }
@@ -74,7 +74,7 @@
 	position: absolute;
 	width: 100px;
 	height: 100px;
-	background: #fff url(../../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
+	background: var(--secondary-background) url(../../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
 	padding: 0;
 	background-size: 100px 100px;
 }
@@ -113,7 +113,7 @@
 .nyroModalCont textarea,
 .nyroModalCont input[type="text"],
 .nyroModalCont select {
-	width:100%;
+	/*width:100%;*/
 }
 
 .nyroModalCont select {

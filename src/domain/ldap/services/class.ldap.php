@@ -20,6 +20,7 @@ class ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
+        "phonenumber" => ''
         );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -158,12 +159,14 @@ class ldap
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
+        $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
 
         return array(
             "user" => $this->extractLdapFromUsername($username)."".$this->userDomain,
             "firstname" => $firstname,
             "lastname" => $lastname,
             "role" => $role,
+            "phonenumber" => $phonenumber
             );
     }
 

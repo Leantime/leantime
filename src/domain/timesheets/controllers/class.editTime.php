@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class editTime
     {
@@ -17,13 +19,16 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
+
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
             $this->language = new core\language();
 
             $info = '';
             //Only admins and employees
-            if(core\login::userIsAtLeast("developer")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
 
                 if (isset($_GET['id']) === true) {
@@ -51,7 +56,7 @@ namespace leantime\domain\controllers {
                         'invoicedCompDate' => $timesheet['invoicedCompDate']
                     );
 
-                    if(core\login::userIsAtLeast("admin") || $_SESSION['userdata']['id'] == $values['userId']) {
+                    if(auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
 
                         if (isset($_POST['saveForm']) === true) {
 
@@ -88,7 +93,7 @@ namespace leantime\domain\controllers {
 
                             }
 
-                            if(core\login::userIsAtLeast("clientManager")) {
+                            if(auth::userIsAtLeast(roles::$manager)){
 
                                 if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
 

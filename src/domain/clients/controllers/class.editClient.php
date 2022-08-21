@@ -7,7 +7,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class editClient
     {
@@ -20,11 +22,13 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
                 if (isset($_GET['id']) === true) {
 

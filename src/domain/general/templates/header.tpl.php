@@ -1,5 +1,8 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
 <?php $appSettings = $this->get('appSettings'); ?>
+<?php $debugRenderer = $this->get('debugRenderer'); ?>
+<?php $theme = $_SESSION["usersettings.theme"] ?? 'default' ?>
+
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
 
@@ -9,15 +12,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="theme-color" content="<?php $this->e($_SESSION["companysettings.primarycolor"]) ?>">
+<meta name="color-scheme" content="<?php $this->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 
-<link rel="shortcut icon" href="<?=BASE_URL?>/favicon.ico"/>
-<link rel="apple-touch-icon" href="<?=BASE_URL?>/apple-touch-icon.png">
+<link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
+<link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-default.css?v=<?php echo $settings->appVersion; ?>"/>
+<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-<?=$theme?>.css?v=<?php echo $settings->appVersion; ?>"/>
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
+
 
 <!-- libs -->
 <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
@@ -26,6 +31,12 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
+
+<?php
+    if($appSettings->debug == 1) {
+        echo $debugRenderer->renderHead();
+    }
+?>
 
 <!-- Replace main theme colors -->
 <style>

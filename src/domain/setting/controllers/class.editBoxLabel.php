@@ -3,12 +3,14 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
     use DateTime;
     use DateInterval;
+    use leantime\domain\services\auth;
 
 
     class editBoxLabel
@@ -26,6 +28,8 @@ namespace leantime\domain\controllers {
          */
         public function __construct()
         {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             $this->tpl = new core\template();
             $this->ticketsRepo = new repositories\tickets();
@@ -46,7 +50,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$manager)) {
 
                 $currentLabel = "";
 

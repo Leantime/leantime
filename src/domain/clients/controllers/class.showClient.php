@@ -9,8 +9,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showClient
     {
@@ -21,6 +23,9 @@ namespace leantime\domain\controllers {
          * @access public
          */
         public function __construct () {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
+
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();
             $this->language = new core\language();
@@ -64,13 +69,7 @@ namespace leantime\domain\controllers {
                 'email' => $row['email']
             );
 
-            if (empty($row) === false && core\login::userIsAtLeast("clientManager")) {
-
-                if(core\login::userHasRole("clientManager") && $id != core\login::getUserClientId()) {
-                    $tpl->display('general.error');
-                    exit();
-                }
-
+            if (empty($row) === false && auth::userIsAtLeast(roles::$admin)) {
 
                 $file = new repositories\files();
                 $project = new repositories\projects();
@@ -119,6 +118,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['save']) === true) {
 
                     $clientValues = array(
+                        'id' => $row['id'],
                         'name' => $_POST['name'],
                         'street' => $_POST['street'],
                         'zip' => $_POST['zip'],

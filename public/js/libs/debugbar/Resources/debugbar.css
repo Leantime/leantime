@@ -1,0 +1,292 @@
+/* Hide debugbar when printing a page */
+@media print {
+  div.phpdebugbar {
+    display: none;
+  }
+}
+
+div.phpdebugbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-top: 0;
+  font-family: arial, sans-serif;
+  background: #fff;
+  z-index: 10000;
+  font-size: 14px;
+  color: #000;
+  text-align: left;
+  line-height: 1;
+  letter-spacing: normal;
+  direction: ltr;
+}
+
+div.phpdebugbar a,
+div.phpdebugbar-openhandler {
+  cursor: pointer;
+}
+
+div.phpdebugbar-drag-capture {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  background: none;
+  display: none;
+  cursor: n-resize;
+}
+
+div.phpdebugbar-closed {
+    width: auto;
+}
+
+div.phpdebugbar * {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  text-decoration: none;
+  clear: initial;
+  width: auto;
+  -moz-box-sizing: content-box;
+       box-sizing: content-box;
+}
+
+div.phpdebugbar ol, div.phpdebugbar ul {
+  list-style: none;
+}
+
+div.phpdebugbar table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+div.phpdebugbar code, div.phpdebugbar pre {
+  background: none;
+  font-family: monospace;
+  font-size: 1em;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+a.phpdebugbar-restore-btn {
+  float: left;
+  padding: 5px 8px;
+  font-size: 14px;
+  color: #555;
+  text-decoration: none;
+  border-right: 1px solid #ddd;
+}
+
+div.phpdebugbar-resize-handle {
+  display: none;
+  height: 4px;
+  margin-top: -4px;
+  width: 100%;
+  background: none;
+  border-bottom: 1px solid #ccc;
+  cursor: n-resize;
+}
+
+div.phpdebugbar-closed, div.phpdebugbar-minimized{
+  border-top: 1px solid #ccc;
+}
+/* -------------------------------------- */
+
+div.phpdebugbar-header, a.phpdebugbar-restore-btn {
+    background: #efefef url(data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20fill%3D%22%23000%22%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M6.039%208.342c.463%200%20.772.084.927.251.154.168.191.455.11.862-.084.424-.247.727-.487.908-.241.182-.608.272-1.1.272h-.743l.456-2.293h.837zm-2.975%204.615h1.22l.29-1.457H5.62c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.13-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H4.153l-1.089%205.479zM9.235%206.02h1.21l-.289%201.458h1.079c.679%200%201.147.115%201.405.347.258.231.335.607.232%201.125l-.507%202.55h-1.23l.481-2.424c.055-.276.035-.464-.06-.565-.095-.1-.298-.15-.608-.15H9.98L9.356%2011.5h-1.21l1.089-5.48M15.566%208.342c.464%200%20.773.084.928.251.154.168.19.455.11.862-.084.424-.247.727-.488.908-.24.182-.607.272-1.1.272h-.742l.456-2.293h.836zm-2.974%204.615h1.22l.29-1.457h1.046c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.129-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H13.68l-1.089%205.479z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fsvg%3E)  no-repeat 5px 4px / 20px 20px;
+}
+div.phpdebugbar-header {
+  padding-left: 29px;
+  min-height: 26px;
+  line-height: 16px;
+}
+div.phpdebugbar-header:before, div.phpdebugbar-header:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+div.phpdebugbar-header:after {
+  clear: both;
+}
+div.phpdebugbar-header-left {
+  float: left;
+}
+div.phpdebugbar-header-right {
+  float: right;
+}
+div.phpdebugbar-header > div > * {
+  padding: 5px 5px;
+  font-size: 14px;
+  color: #555;
+  text-decoration: none;
+}
+div.phpdebugbar-header-left > * {
+  float: left;
+}
+div.phpdebugbar-header-right > * {
+  float: right;
+}
+div.phpdebugbar-header-right > select {
+  padding: 0;
+}
+
+/* -------------------------------------- */
+
+span.phpdebugbar-indicator,
+a.phpdebugbar-indicator,
+a.phpdebugbar-close-btn {
+  border-right: 1px solid #ddd;
+}
+
+a.phpdebugbar-tab.phpdebugbar-active {
+  background: #ccc;
+  color: #444;
+  background-image: linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
+  background-image: -o-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
+  background-image: -moz-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
+  background-image: -webkit-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
+  background-image: -ms-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.41, rgb(173,173,173)), color-stop(0.71, rgb(209,209,209)));
+}
+  a.phpdebugbar-tab span.phpdebugbar-badge {
+    display: none;
+    margin-left: 5px;
+    font-size: 11px;
+    line-height: 14px;
+    padding: 0px 6px;
+    background: #ccc;
+    border-radius: 4px;
+    color: #555;
+    font-weight: normal;
+    text-shadow: none;
+    vertical-align: middle;
+  }
+  a.phpdebugbar-tab i {
+    display: none;
+    vertical-align: middle;
+  }
+  a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-important {
+    background: #ed6868;
+    color: white;
+  }
+
+a.phpdebugbar-close-btn, a.phpdebugbar-open-btn, a.phpdebugbar-restore-btn, a.phpdebugbar-minimize-btn , a.phpdebugbar-maximize-btn {
+  width: 16px;
+  height: 16px;
+}
+
+a.phpdebugbar-minimize-btn , a.phpdebugbar-maximize-btn {
+  padding-right: 0px !important;
+}
+
+a.phpdebugbar-maximize-btn { display: none}
+
+a.phpdebugbar-minimize-btn { display: block}
+
+div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: block}
+
+div.phpdebugbar-minimized a.phpdebugbar-minimize-btn { display: none}
+
+a.phpdebugbar-minimize-btn {
+  background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201792%201792%22%20id%3D%22chevron-down%22%3E%3Cpath%20d%3D%22M1683%20808l-742%20741q-19%2019-45%2019t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19%2045-19t45%2019l531%20531%20531-531q19-19%2045-19t45%2019l166%20165q19%2019%2019%2045.5t-19%2045.5z%22%2F%3E%3C%2Fsvg%3E) no-repeat 6px 6px / 14px 14px;
+}
+
+a.phpdebugbar-maximize-btn {
+  background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201792%201792%22%20id%3D%22chevron-up%22%3E%3Cpath%20d%3D%22M1683%201331l-166%20165q-19%2019-45%2019t-45-19l-531-531-531%20531q-19%2019-45%2019t-45-19l-166-165q-19-19-19-45.5t19-45.5l742-741q19-19%2045-19t45%2019l742%20741q19%2019%2019%2045.5t-19%2045.5z%22%2F%3E%3C%2Fsvg%3E) no-repeat 6px 6px / 14px 14px;
+}
+
+a.phpdebugbar-close-btn {
+  background: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201792%201792%22%20id%3D%22close%22%3E%3Cpath%20d%3D%22M1490%201322q0%2040-28%2068l-136%20136q-28%2028-68%2028t-68-28l-294-294-294%20294q-28%2028-68%2028t-68-28l-136-136q-28-28-28-68t28-68l294-294-294-294q-28-28-28-68t28-68l136-136q28-28%2068-28t68%2028l294%20294%20294-294q28-28%2068-28t68%2028l136%20136q28%2028%2028%2068t-28%2068l-294%20294%20294%20294q28%2028%2028%2068z%22%2F%3E%3C%2Fsvg%3E) no-repeat 9px 6px / 14px 14px;
+}
+
+a.phpdebugbar-open-btn {
+  background: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201792%201792%22%20id%3D%22folder-open%22%3E%3Cpath%20d%3D%22M1815%20952q0%2031-31%2066l-336%20396q-43%2051-120.5%2086.5t-143.5%2035.5h-1088q-34%200-60.5-13t-26.5-43q0-31%2031-66l336-396q43-51%20120.5-86.5t143.5-35.5h1088q34%200%2060.5%2013t26.5%2043zm-343-344v160h-832q-94%200-197%2047.5t-164%20119.5l-337%20396-5%206q0-4-.5-12.5t-.5-12.5v-960q0-92%2066-158t158-66h320q92%200%20158%2066t66%20158v32h544q92%200%20158%2066t66%20158z%22%2F%3E%3C%2Fsvg%3E) no-repeat 8px 6px / 14px 14px;
+}
+
+.phpdebugbar-indicator {
+  position: relative;
+  cursor: pointer;
+}
+  .phpdebugbar-indicator span.phpdebugbar-text {
+    margin-left: 5px;
+  }
+  .phpdebugbar-indicator span.phpdebugbar-tooltip {
+    display: none;
+    position: absolute;
+    top: -30px;
+    background: #efefef;
+    opacity: .7;
+    border: 1px solid #ccc;
+    color: #555;
+    font-size: 11px;
+    padding: 2px 3px;
+    z-index: 1000;
+    text-align: center;
+    width: 200%;
+    right: 0;
+  }
+  .phpdebugbar-indicator:hover span.phpdebugbar-tooltip:not(.phpdebugbar-disabled) {
+    display: block;
+  }
+
+select.phpdebugbar-datasets-switcher {
+  float: right;
+  display: none;
+  margin: 2px 0 0 7px;
+  max-width: 200px;
+  max-height: 23px;
+  padding: 0;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-body {
+  border-top: 1px solid #ccc;
+  display: none;
+  position: relative;
+  height: 300px;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-panel {
+  display: none;
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+}
+div.phpdebugbar-panel.phpdebugbar-active {
+  display: block;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-mini-design a.phpdebugbar-tab {
+  position: relative;
+  border-right: 1px solid #ddd;
+}
+  div.phpdebugbar-mini-design a.phpdebugbar-tab span.phpdebugbar-text {
+    display: none;
+  }
+  div.phpdebugbar-mini-design a.phpdebugbar-tab:hover span.phpdebugbar-text {
+    display: block;
+    position: absolute;
+    top: -30px;
+    background: #efefef;
+    opacity: .7;
+    border: 1px solid #ccc;
+    color: #555;
+    font-size: 11px;
+    padding: 2px 3px;
+    z-index: 1000;
+    text-align: center;
+    right: 0;
+  }
+  div.phpdebugbar-mini-design a.phpdebugbar-tab i {
+    display:inline-block;
+  }

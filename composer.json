@@ -23,7 +23,8 @@
         "endroid/qr-code": "3.9.7",
         "ext-ldap":  "*",
         "league/html-to-markdown": "5.1",
-        "ramsey/uuid": "^4.3"
+        "ramsey/uuid": "^4.3",
+        "htmlawed/htmlawed": "1.2.6"
     },
     "require-dev": {
         "phpstan/phpstan":"1.5.4"

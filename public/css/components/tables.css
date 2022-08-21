@@ -14,7 +14,7 @@
 
 
 .table.table-bordered th {
-    border-color: #555;
+    border-color: var(--neutral);
 }
 
 .table .con0 {
@@ -27,13 +27,13 @@
 
 .table-bordered th,
 .table-bordered td {
-    border-right: 1px solid #ccc;
+    border-right: 1px solid var(--neutral);
     border-left:0px;
 }
 
 .table-bordered th:last-child,
 .table-bordered td:last-child {
-    border-right: 0px solid #ccc;
+    border-right: 0px solid var(--neutral);
 }
 
 
@@ -47,13 +47,14 @@
 
 .dataTables_wrapper {
     position: relative;
+    overflow-x:auto;
 }
 
 .dataTables_length, .dataTables_info {
     background: var(--kanban-col-title-bg);
     padding: 10px;
     font-size: var(--font-size-s);
-    border: 1px solid #ccc;
+    border: 1px solid var(--neutral);
 }
 
 .dataTables_length {
@@ -85,8 +86,8 @@
 .dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
 .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
     padding: 5px 10px;
-    border: 1px solid #ccc;
-    font-size: 12px;
+    border: 1px solid var(--neutral);
+    font-size: var(--font-size-s);
     background: var(--kanban-col-title-bg);
     cursor: pointer;
 }
@@ -96,11 +97,11 @@
 }
 
 .dataTables_paginate .first {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--neutral);
 }
 
 .dataTables_paginate .paginate_active {
-    background: #fff;
+    background: var(--primary-color);
 }
 
 .dataTables_paginate .paginate_button:hover {
@@ -109,7 +110,7 @@
 
 .dataTables_paginate .paginate_button_disabled {
     cursor: default;
-    color: #ccc;
+    color: var(--neutral);
     background: var(--kanban-col-title-bg);
 }
 
@@ -128,7 +129,7 @@
 }
 
 .dataTables_scrollHead {
-    background: #555;
+    background: var(--primary-font-color);
 }
 
 .dataTables_scrollHead table {
@@ -166,7 +167,7 @@
 }
 
 .maincontentinner .table {
-    border:1px solid #ccc;
+    border:1px solid var(--neutral);
 }
 
 .table-bordered {
@@ -187,8 +188,8 @@
     padding: 10px;
 
     border:0px;
-    border-right:1px solid #ccc;
-    border-color:#ccc;
+    border-right:1px solid var(--neutral);
+    border-color:var(--neutral);
     line-height: 17px;
 
     color: var(--kanban-col-title-color);
@@ -280,7 +281,7 @@
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
-    outline:2px solid #555;
+    outline:2px solid var(--neutral);
 }
 
 .paginate_button.current {
@@ -294,7 +295,7 @@
     padding: 5px 0;
     margin: 2px 0 0;
     list-style: none;
-    background-color: #ffffff;
+    background-color: var(--secondary-background);
     margin-top: 10px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -320,7 +321,7 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button.active{
     text-decoration: none;
-    color: #555;
+    color: var(--primary-font-color);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
@@ -334,7 +335,7 @@
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
-    border-color: #ccc;
+    border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
     padding: 3px 12px;
@@ -368,7 +369,7 @@
 
 .timesheetTable td.active,
 .timesheetTable th.active{
-   background:#555;
+   background:var(--col-title-bg);
 }
 
 .maincontentinner .timesheetTable td input {
@@ -386,6 +387,9 @@
     margin-top:0px;
 }
 
+.table th, .table td {
+    border-top:1px solid var(--neutral);
+}
 
 
 

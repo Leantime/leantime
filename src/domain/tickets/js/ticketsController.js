@@ -31,7 +31,7 @@ leantime.ticketsController = (function () {
 
     var ticketModalConfig = {
         sizes: {
-            minW:  700,
+            minW:  800,
             minH: 1000
         },
         resizable: true,
@@ -66,8 +66,7 @@ leantime.ticketsController = (function () {
     (function () {
         jQuery(document).ready(
             function () {
-                _initDueDateTimePickers();
-                _initDates();
+
                 _initModals();
             }
         );
@@ -75,12 +74,21 @@ leantime.ticketsController = (function () {
     })();
 
     //Functions
+    function countTickets () {
+
+        jQuery("#sortableTicketKanban .column").each(function(){
+            var counting= jQuery(this).find('.moveable').length;
+            jQuery(this).find(' .count').text(counting);
+        });
+
+    }
+
 
     var updateRemainingHours = function (element, id) {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updateRemainingHours(
             id, value, function () {
-                jQuery.jGrowl(leantime.i18n.__("short_notifications.remaining_hours_updated"));
+                jQuery.jGrowl(leantime.i18n.__("short_notifications.remaining_hours_updated"), {theme: "success"});
             }
         );
 
@@ -90,7 +98,7 @@ leantime.ticketsController = (function () {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updatePlannedHours(
             id, value, function () {
-                jQuery.jGrowl(leantime.i18n.__("short_notifications.planned_hours_updated"));
+                jQuery.jGrowl(leantime.i18n.__("short_notifications.planned_hours_updated"), {theme: "success"});
             }
         );
 
@@ -114,7 +122,7 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initGanttChart = function (tasks, viewMode) {
+    var initGanttChart = function (tasks, viewMode, readonly) {
 
         function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -123,41 +131,78 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(
             function () {
 
-                var gantt_chart = new Gantt(
-                    "#gantt", tasks, {
-                        custom_popup_html: function (task) {
-                            // the task object will contain the updated
-                            // dates and progress value
-                            var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
-                            return '<div class="details-container"> ' +
-                            '<h4><a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal">'+htmlEntities(task.name)+'</a></h4><br /> ' +
-                            '<p>'+leantime.i18n.__("text.expected_to_finish_by")+' <strong>'+end_date+'</strong><br /> ' +
-                            ''+Math.round(task.progress)+'%</p> ' +
-                            '<a href="'+leantime.appUrl+'/tickets/editMilestone/'+task.id+'" class="milestoneModal"><span class="fa fa-map"></span> '+leantime.i18n.__("links.edit_milestone") +'</a> | ' +
-                            '<a href="'+leantime.appUrl+'/tickets/showKanban&milestone='+task.id+'"><span class="iconfa-pushpin"></span> '+leantime.i18n.__("links.view_todos")+'</a> ' +
+                if(readonly == false) {
 
-                            '</div>';
-                        },
-                        on_click: function (task) {
+                    var gantt_chart = new Gantt(
+                        "#gantt", tasks, {
+                            custom_popup_html: function (task) {
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                return '<div class="details-container"> ' +
+                                    '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
+                                    '' + Math.round(task.progress) + '%</p> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
-                        },
-                        on_date_change: function (task, start, end) {
+                                    '</div>';
+                            },
+                            on_click: function (task) {
 
-                            leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
-                            _initModals();
+                            },
+                            on_date_change: function (task, start, end) {
 
-                        },
-                        on_progress_change: function (task, progress) {
+                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
+                                _initModals();
 
-                            //_initModals();
-                        },
-                        on_view_change: function (mode) {
+                            },
+                            on_progress_change: function (task, progress) {
 
-                            leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-                            _initModals();
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
+                                _initModals();
+                            }
                         }
-                    }
-                ); 
+                    );
+                }else{
+                    var gantt_chart = new Gantt(
+                        "#gantt", tasks, {
+                            readonlyGantt: true,
+                            custom_popup_html: function (task) {
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                return '<div class="details-container"> ' +
+                                    '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
+                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
+                                    '' + Math.round(task.progress) + '%</p> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+
+                                    '</div>';
+                            },
+                            on_click: function (task) {
+
+                            },
+                            on_date_change: function (task, start, end) {
+
+
+                            },
+                            on_progress_change: function (task, progress) {
+
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("roadmap", mode);
+                                _initModals();
+                            }
+                        }
+                    );
+                }
 
                 jQuery("#ganttTimeControl").on(
                     "click", "a", function () {
@@ -384,7 +429,7 @@ leantime.ticketsController = (function () {
 
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditFromDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"), {theme: "success"});
                         });
 
                         var dateTo = jQuery(".toDateTicket-"+id).val();
@@ -429,8 +474,7 @@ leantime.ticketsController = (function () {
 
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditToDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated")
-                            );
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"), {theme: "success"});
                         });
 
                         var dateFrom = jQuery(".fromDateTicket-"+id).val();
@@ -503,8 +547,8 @@ leantime.ticketsController = (function () {
 
         var modalConfig = {
             sizes: {
-                minW:  700,
-                minH: 1000
+                minW:  800,
+                minH: 500
             },
             resizable: true,
             autoSizable: true,
@@ -532,12 +576,10 @@ leantime.ticketsController = (function () {
 
         jQuery(".milestoneModal").nyroModal(modalConfig);
 
-
-
         var ticketModalConfig = {
             sizes: {
-                minW:  700,
-                minH: 1000
+                minW:  800,
+                minH: 500
             },
             resizable: true,
             autoSizable: true,
@@ -548,9 +590,6 @@ leantime.ticketsController = (function () {
                 },
                 beforeShowCont: function() {
 
-
-
-
                 },
                 afterShowCont: function () {
 
@@ -560,8 +599,6 @@ leantime.ticketsController = (function () {
 
                     location.reload();
                 },
-
-
 
             },
             titleFromIframe: true
@@ -580,8 +617,7 @@ leantime.ticketsController = (function () {
             }
         );
 
-        jQuery("body").on(
-            "click", ".sprintPopoverContainer input", function () {
+        jQuery(".sprintPopoverContainer input").unbind().on("click", function () {
 
                 var ticket = jQuery(this).attr("name").split("_");
                 var val = jQuery(this).val();
@@ -617,7 +653,7 @@ leantime.ticketsController = (function () {
             '13': "XXL"
         };
 
-        jQuery("body").on("click", ".effortDropdown .dropdown-menu a", function () {
+        jQuery(".effortDropdown .dropdown-menu a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
 
@@ -639,7 +675,7 @@ leantime.ticketsController = (function () {
                 ).done(
                     function () {
                         jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.effort_updated"));
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.effort_updated"), {theme: "success"});
 
                     }
                 );
@@ -661,7 +697,7 @@ leantime.ticketsController = (function () {
             '5': "Lowest"
         };
 
-        jQuery("body").on("click", ".priorityDropdown .dropdown-menu a", function () {
+        jQuery(".priorityDropdown .dropdown-menu a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
 
@@ -690,7 +726,7 @@ leantime.ticketsController = (function () {
                         jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-"+priorityId);
 
 
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.priority_updated"));
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.priority_updated"), {theme: "success"});
 
                     }
                 );
@@ -704,8 +740,7 @@ leantime.ticketsController = (function () {
 
     var initMilestoneDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".milestoneDropdown .dropdown-menu a", function () {
+        jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -732,7 +767,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
                             jQuery("#milestoneDropdownMenuLink"+ticketId).css("backgroundColor", color);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.milestone_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.milestone_updated"), {theme: "success"});
                         }
                     );
 
@@ -743,8 +778,7 @@ leantime.ticketsController = (function () {
 
     var initStatusDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".statusDropdown .dropdown-menu a", function () {
+        jQuery(".statusDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -769,7 +803,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"), {theme: "success"});
 
                         }
                     );
@@ -782,8 +816,7 @@ leantime.ticketsController = (function () {
 
     var initUserDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".userDropdown .dropdown-menu a", function () {
+        jQuery(".userDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -808,7 +841,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
                             jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
                         }
                     );
 
@@ -817,10 +850,41 @@ leantime.ticketsController = (function () {
         );
     };
 
+    var initAsyncInputChange = function() {
+
+        jQuery(".asyncInputUpdate").on("change", function(){
+            var dataLabel = jQuery(this).attr('data-label').split("-");
+
+            if(dataLabel.length == 2){
+                var fieldName = dataLabel[0];
+                var entityId = dataLabel[1];
+                var value = jQuery(this).val();
+
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl+'/api/tickets',
+                        data:
+                            {
+                                id : entityId,
+                                [fieldName]:value,
+
+                            }
+                    }
+                ).done(
+                    function () {
+                        jQuery.jGrowl(leantime.i18n.__("notifications.subtask_saved"), {theme: "success"});
+                    }
+                );
+
+            }
+
+        });
+    };
+
     var initSprintDropdown = function () {
 
-        jQuery("body").on(
-            "click", ".sprintDropdown .dropdown-menu a", function () {
+        jQuery(".sprintDropdown .dropdown-menu a").unbind().on("click", function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
@@ -843,7 +907,7 @@ leantime.ticketsController = (function () {
                     ).done(
                         function () {
                             jQuery("#sprintDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.sprint_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.sprint_updated"), {theme: "success"});
                         }
                     );
 
@@ -902,7 +966,7 @@ leantime.ticketsController = (function () {
                     newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function() {
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"));
+                        jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"), {theme: "success"});
                     });
 
                 }
@@ -1060,7 +1124,7 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var initTicketKanban = function (ticketStatusList) {
+    var setUpKanbanColumns = function () {
 
         jQuery(document).ready(function () {
 
@@ -1071,6 +1135,10 @@ leantime.ticketsController = (function () {
             jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
+
+    }
+
+    var initTicketKanban = function (ticketStatusList) {
 
         jQuery("#sortableTicketKanban .ticketBox").hover(function(){
             jQuery(this).css("background", "var(--kanban-card-hover)");
@@ -1100,8 +1168,6 @@ leantime.ticketsController = (function () {
 
                 countTickets();
 
-
-
                 var statusPostData = {
                     action: "kanbanSort",
                     payload: {},
@@ -1125,15 +1191,6 @@ leantime.ticketsController = (function () {
 
             }
         });
-
-        function countTickets () {
-
-            jQuery("#sortableTicketKanban .column").each(function(){
-                var counting= jQuery(this).find('.moveable').length;
-                jQuery(this).find(' .count').text(counting);
-            });
-
-        }
 
         function tilt_direction(item) {
             var left_pos = item.position().left,
@@ -1315,6 +1372,8 @@ leantime.ticketsController = (function () {
                     {
                         extend: 'csvHtml5',
                         title: leantime.i18n.__("label.filename_fileexport"),
+                        charset: 'utf-8',
+                        bom: true,
                         exportOptions: {
                             format: {
                                 body: function ( data, row, column, node ) {
@@ -1386,6 +1445,10 @@ leantime.ticketsController = (function () {
         initSprintDropdown:initSprintDropdown,
         initToolTips:initToolTips,
         initTagsInput:initTagsInput,
-        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate
+        initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
+        initAsyncInputChange:initAsyncInputChange,
+        initDueDateTimePickers:_initDueDateTimePickers,
+        initDates:_initDates,
+        setUpKanbanColumns:setUpKanbanColumns
     };
 })();

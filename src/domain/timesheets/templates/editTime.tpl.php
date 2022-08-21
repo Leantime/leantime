@@ -111,7 +111,7 @@ $values = $this->get('values');
 
 
 
-    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
 
         <input style="float:left; margin-right:5px;"
                 type="checkbox" name="invoicedEmpl" id="invoicedEmpl"

@@ -6,8 +6,8 @@
  */
 
 .mce-content-body {
-  font-size:13px;
-  color:#555555;
+  font-size:14px;
+  color:var(--primary-font-color);
 }
 
 .mce-content-body .mce-item-anchor {

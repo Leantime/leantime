@@ -82,6 +82,17 @@ namespace leantime\domain\controllers {
                     }
                 }
 
+                //Delete Subtask
+                if (isset($params['delSubtask']) === true) {
+
+                    $subtaskId = (int)$params['delSubtask'];
+                    if($this->ticketService->deleteTicket($subtaskId)) {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
+                    }else {
+                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
+                    }
+                }
+
                 $this->tpl->assign('ticket', $ticket);
                 $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
@@ -153,8 +164,11 @@ namespace leantime\domain\controllers {
                     if ($this->fileService->uploadFile($_FILES, "ticket", $id, $ticket)) {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), "success");
                     } else {
+
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), "error");
                     }
+
+                    $tab = "#files";
                 }
 
                 //Add a comment
@@ -193,17 +207,6 @@ namespace leantime\domain\controllers {
 
                 }
 
-                //Delete Subtask
-                if (isset($params['subtaskDelete']) === true) {
-
-                    $subtaskId = $params['subtaskId'];
-                    if($this->ticketService->deleteTicket($subtaskId)) {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
-                    }else {
-                        $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
-                    }
-                }
-
                 //Save Ticket
                 if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {
 
@@ -215,8 +218,8 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->language->__($result["msg"]), "error");
                     }
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
 

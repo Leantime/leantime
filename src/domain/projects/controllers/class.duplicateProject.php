@@ -3,8 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class duplicateProject
     {
@@ -12,6 +14,7 @@ namespace leantime\domain\controllers {
 
         public function __construct() {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             $this->tpl = new core\template();
             $this->projectRepo = new repositories\projects();
@@ -25,18 +28,16 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$manager)) {
 
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
                     $project = $this->projectService->getProject($id);
 
-                    if(core\login::userIsAtLeast("manager")) {
-                        $this->tpl->assign('allClients', $this->clientRepo->getAll());
-                    }else{
-                        $this->tpl->assign('allClients', array($this->clientRepo->getClient(core\login::getUserClientId())));
-                    }
+
+                    $this->tpl->assign('allClients', $this->clientRepo->getAll());
+
 
                     $this->tpl->assign("project", $project);
                     $this->tpl->displayPartial('projects.duplicateProject');
@@ -58,7 +59,7 @@ namespace leantime\domain\controllers {
         public function post($params) {
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$manager)) {
 
                 $id = (int)($_GET['id']);
                 $projectName = $params['projectName'];

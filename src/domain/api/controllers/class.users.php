@@ -102,7 +102,6 @@ namespace leantime\domain\controllers {
             }
 
             if(isset($params['patchViewSettings'])) {
-
                 if($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
                     echo "{status:ok}";
                 }

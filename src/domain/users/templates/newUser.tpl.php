@@ -103,7 +103,6 @@ $projects = $this->get('relations');
                         <label for="role"><?php echo $this->__('label.role'); ?></label>
                         <select name="role" id="role">
 
-
                                 <?php foreach($this->get('roles') as $key => $role){ ?>
                                     <option value="<?php  echo $key; ?>"
                                         <?php if($key == $values['role']) { ?> selected="selected" <?php

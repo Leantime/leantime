@@ -8,7 +8,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class delClient
     {
@@ -21,12 +23,14 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $clientRepo = new repositories\clients();
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
                 if (isset($_GET['id']) === true) {
 
