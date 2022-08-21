@@ -13,6 +13,7 @@ namespace leantime\domain\controllers {
         private $tpl;
         private $usersService;
         private $redirectUrl;
+        private $language;
 
 
         /**
@@ -26,6 +27,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->installRepo = new repositories\install();
+            $this->language = new core\language();
 
             if ($this->installRepo->checkIfInstalled()) {
                core\frontcontroller::redirect(BASE_URL);
@@ -85,6 +87,8 @@ namespace leantime\domain\controllers {
 
                                     if($this->installRepo->setupDB($values)) {
                                         $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"),BASE_URL), "success");
+                                    }else{
+                                        $this->tpl->setNotification($this->language->__('notification.error_installing'), "error");
                                     }
 
                                 }
