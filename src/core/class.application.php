@@ -65,11 +65,11 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        //Run Cron
-        $this->cronExec();
-
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
+
+            //Run Cron
+            $this->cronExec();
 
             //Send telemetry if user is opt in and if it hasn't been sent that day
             $telemetryResponse = $this->reportService->sendAnonymousTelemetry();

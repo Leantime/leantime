@@ -192,8 +192,8 @@ namespace leantime\domain\repositories {
                 return true;
 
             } catch (PDOException $e) {
-
-                return $e->getMessage();
+                error_log($e->getMessage());
+                return false;
 
             }
 
@@ -504,7 +504,7 @@ namespace leantime\domain\repositories {
                   `userId` int(11) DEFAULT NULL,
                   `projectId` int(11) DEFAULT NULL,
                   `wage` int(11) DEFAULT NULL,
-                  `projectRole` varchar(20)
+                  `projectRole` varchar(20),
                   PRIMARY KEY (`id`),
                   KEY zp_relationuserproject_projectId_index (`projectId`),
                   KEY zp_relationuserproject_userId_index  (`userId`)
