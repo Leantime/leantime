@@ -261,12 +261,15 @@ namespace leantime\domain\repositories {
             if(count($db_updates)){
                 foreach ($db_updates as $update_file) {
                     list($class, $version, $ext) = explode('.', $update_file);
-                    $update = "leantime\\core\\migrations\\$version";
-                    require_once $update;
-                    $db_migration = new $version();
 
-                    return [$db_migration->get_version()];
-                    // exit();
+                    require_once dirname(__FILE__) . '/migrations/' . $update_file . '.php';
+                    $classname = "leantime\\core\\migrations\\{$version}";
+                    echo $classname;
+                    return;
+                    $db_migration = new $classname();
+
+                    echo $db_migration->get_version();
+                    exit();
 
                     if ($currentDBVersion < $db_migration->get_version()) {
 
