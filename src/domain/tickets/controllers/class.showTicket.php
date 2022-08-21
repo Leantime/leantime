@@ -164,6 +164,7 @@ namespace leantime\domain\controllers {
                     if ($this->fileService->uploadFile($_FILES, "ticket", $id, $ticket)) {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), "success");
                     } else {
+
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), "error");
                     }
 
@@ -206,8 +207,6 @@ namespace leantime\domain\controllers {
 
                 }
 
-
-
                 //Save Ticket
                 if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {
 
@@ -219,8 +218,8 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->language->__($result["msg"]), "error");
                     }
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
 

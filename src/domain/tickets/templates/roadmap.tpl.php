@@ -28,7 +28,9 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <div class="row">
             <div class="col-md-6">
+                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
+                <?php } ?>
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
@@ -132,9 +134,12 @@ jQuery(document).ready(function(){
             }
             ?>
         ];
+        <?php } ?>
 
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>');
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
+    <?php }else { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
     <?php } ?>
 
 </script>
-

@@ -3,13 +3,14 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\services\auth;
 
     class logout
     {
 
         public function run()
         {
-            if (services\auth::logged_in() === true) {
+            if (auth::logged_in() === true) {
 
                 header("Location:".BASE_URL."/index.php?logout=1");
             }

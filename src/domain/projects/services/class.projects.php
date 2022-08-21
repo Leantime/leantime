@@ -10,6 +10,7 @@ namespace leantime\domain\services {
     use League\HTMLToMarkdown\HtmlConverter;
     use GuzzleHttp\Client;
     use Psr\Http\Message\ResponseInterface;
+    use leantime\domain\models\auth\roles;
 
     class projects
     {
@@ -352,9 +353,38 @@ namespace leantime\domain\services {
 
         }
 
+
+
         public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+            if($projects) {
+                return $projects;
+            }else{
+                return false;
+            }
+
+        }
+
+        public function getProjectRole($userId, $projectId) {
+
+            $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+
+            if(is_array($project)) {
+                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+                    return $project[0]['projectRole'];
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;
@@ -408,32 +438,6 @@ namespace leantime\domain\services {
 
                     }
 
-                    $route = core\FrontController::getCurrentRoute();
-
-                    if($route != "api.i18n") {
-
-                        if (services\auth::userIsAtLeast("clientManager")) {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
-                                "info");
-                            if ($route != "projects.newProject") {
-                                $this->tpl->redirect(BASE_URL . "/projects/newProject");
-                            }
-
-                        } else {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
-                                "info");
-
-
-
-                            if ($route != "users.editOwn") {
-                                $this->tpl->redirect(BASE_URL . "/users/editOwn");
-                            }
-
-                        }
-                    }
-
                 }
 
             }
@@ -444,9 +448,14 @@ namespace leantime\domain\services {
 
             if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
+                //Get user project role
+
                 $project = $this->getProject($projectId);
 
                 if ($project) {
+
+                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+
 
                     $_SESSION["currentProject"] = $projectId;
 
@@ -457,6 +466,11 @@ namespace leantime\domain\services {
                     }
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
+
+                    $_SESSION['userdata']['projectRole'] = '';
+                    if($projectRole != '') {
+                        $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    }
 
                     $_SESSION["currentSprint"] = "";
                     $_SESSION['currentLeanCanvas'] = "";
@@ -472,7 +486,6 @@ namespace leantime\domain\services {
 
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
 
                     return true;
 
@@ -507,7 +520,7 @@ namespace leantime\domain\services {
             $this->setCurrentProject();
         }
 
-        public function getUsersAssignedToProject($projectId)
+        public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
@@ -530,7 +543,7 @@ namespace leantime\domain\services {
 
             }
 
-            return false;
+            return array();
 
         }
 

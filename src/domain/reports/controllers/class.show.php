@@ -2,9 +2,11 @@
 
 namespace leantime\domain\controllers {
 
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\domain\services\auth;
 
     class show
     {
@@ -20,6 +22,8 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $this->tpl = new core\template();
             $this->dashboardRepo = new repositories\dashboard();
             $this->projectService = new services\projects();

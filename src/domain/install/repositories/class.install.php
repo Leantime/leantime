@@ -83,7 +83,8 @@ namespace leantime\domain\repositories {
             20104,
             20105,
             20106,
-            20107
+            20107,
+            20108
         );
 
         /**
@@ -117,7 +118,7 @@ namespace leantime\domain\repositories {
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
             $this->host = $this->config->dbHost;
-            $this->port = $this->config->dbPort;
+            $this->port = $this->config->dbPort ?? 3306;
 
             try {
 
@@ -251,8 +252,7 @@ namespace leantime\domain\repositories {
             }
 
             if ($currentDBVersion == $newDBVersion) {
-                $errors[0] = "Database is up to date! <a href='".BASE_URL."/'> Login to continue</a>";
-                return $errors;
+                return true;
             }
 
             $dir = dirname(__FILE__) .'/migrations/';
@@ -516,9 +516,12 @@ namespace leantime\domain\repositories {
                   `userId` int(11) DEFAULT NULL,
                   `projectId` int(11) DEFAULT NULL,
                   `wage` int(11) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                  `projectRole` varchar(20)
+                  PRIMARY KEY (`id`),
+                  KEY zp_relationuserproject_projectId_index (`projectId`),
+                  KEY zp_relationuserproject_userId_index  (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
+
                 insert  into `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) values (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
                 
                 CREATE TABLE `zp_roles` (
@@ -529,9 +532,7 @@ namespace leantime\domain\repositories {
                   `template` varchar(100) DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
-                insert  into `zp_roles`(`id`,`roleName`,`roleDescription`,`sysOrg`,`template`) values (2,'admin','Administrators',14,'zypro'),(3,'user','Clients',14,'zypro'),(4,'developer','Developer',14,'zypro'),(5,'manager','Manager',14,'zypro');
-                    
+                                    
                 CREATE TABLE `zp_submodulerights` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                   `alias` varchar(155) DEFAULT NULL,
@@ -1112,6 +1113,37 @@ namespace leantime\domain\repositories {
         //     }
 
         // }
+
+        private function update_sql_20108()
+        {
+            $errors = array();
+
+            $sql = array(
+                "alter table zp_relationuserproject add `projectRole` varchar(20) null",
+                "create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)",
+                "create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
 
     }
 }

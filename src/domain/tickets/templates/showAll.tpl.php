@@ -34,6 +34,7 @@
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
+                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
@@ -42,6 +43,7 @@
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
+                    <?php } ?>
 
                 </div>
 
@@ -70,13 +72,15 @@
                                 <?php } 	?>
                             </select>
                             <br/>
-                            <small>
-                            <?php if($dates != "") {
-                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
-                            <?php }else{ ?>
-                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small>
+                                <?php if($dates != "") {
+                                    echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
+                                <?php }else{ ?>
+                                    <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                                <?php } ?>
+                                </small>
                             <?php } ?>
-                        </small>
                         <?php } ?>
                     </span>
                 </div>
@@ -442,14 +446,21 @@
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
-    leantime.ticketsController.initUserDropdown();
-    leantime.ticketsController.initMilestoneDropdown();
-    leantime.ticketsController.initEffortDropdown();
-    leantime.ticketsController.initPriorityDropdown();
-    leantime.ticketsController.initStatusDropdown();
-    leantime.ticketsController.initSprintDropdown();
+
     leantime.ticketsController.initUserSelectBox();
     leantime.ticketsController.initStatusSelectBox();
+
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initUserDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initPriorityDropdown();
+        leantime.ticketsController.initSprintDropdown();
+        leantime.ticketsController.initStatusDropdown();
+    <?php }else{ ?>
+    leantime.generalController.makeInputReadonly(".maincontentinner");
+    <?php } ?>
+
 
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");

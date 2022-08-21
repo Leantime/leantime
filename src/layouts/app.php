@@ -9,6 +9,9 @@
 
     <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-240px;'; ?>">
 
+        <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);">
+            <span class="fa fa-bars"></span>
+        </a>
 
         <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
 
@@ -25,9 +28,7 @@
 
     <div class="header" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px; width:100%;'; ?>">
 
-        <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);">
-            <span class="fa fa-bars"></span>
-        </a>
+
 
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
 
@@ -50,6 +51,4 @@
 
 </div><!--mainwrapper-->
 
-
-</body>
-</html>
+<?php echo $this->frontcontroller->includeAction('general.pageBottom'); ?>

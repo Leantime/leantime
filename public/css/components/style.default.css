@@ -360,7 +360,7 @@ h4 {
 html,
 body.loginpage {
    height:100%;
-    background:#fff !important;
+    background:var(--secondary-background) !important;
 }
 
 
@@ -736,7 +736,7 @@ a .label-default:after, a .label-primary:after {
 }
 
 .row .regRight img {
-    max-width:120px;
+    max-width:200px;
     margin-bottom:40px;
     margin-top:-40px;
 }
@@ -970,8 +970,9 @@ a .label-default:after, a .label-primary:after {
     text-decoration:none;
 }
 
-.header a.barmenu {
-    float:left;
+.leftpanel a.barmenu {
+    position:absolute;
+    right:-50px;
     margin-top:0px;
     margin-left:20px;
     font-size:20px;
@@ -979,15 +980,14 @@ a .label-default:after, a .label-primary:after {
     cursor:pointer;
     width:30px;
     height:50px;
-    margin-right:-50px;
     line-height:50px;
 }
 
-.header a.barmenu.open {
-    margin-right: 20px;
+.leftpanel a.barmenu.open {
+
 }
 
-.header a.barmenu:hover {
+.leftpanel a.barmenu:hover {
    color:var(--header-action-hover-color);
 }
 
@@ -1105,7 +1105,7 @@ a .label-default:after, a .label-primary:after {
 }
 
 .userloggedinfo ul li.border {
-    border-top:1px solid #ccc;
+    border-top:1px solid var(--neutral);
 }
 
 .userloggedinfo ul li.nav-header {
@@ -1437,9 +1437,9 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 
 .widgetcontent {
-    background: #fff;
+    background: var(--secondary-background);
     padding: 15px 12px;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--neutral) !important;
     border-top: 0;
     margin-bottom: 20px;
 
@@ -5061,7 +5061,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .inlineDropDownContainer .dropdown-menu .border {
-    border-top:1px solid #ccc;
+    border-top:1px solid var(--neutral);
 }
 
 .inlineDropDownContainer .dropdown-menu li>span {
@@ -5233,7 +5233,7 @@ input.secretInput:active {
 }
 
 .border-bottom {
-    border-bottom:1px solid #ddd;
+    border-bottom:1px solid var(--neutral);
     padding-bottom:5px;
     margin-bottom:10px;
 }

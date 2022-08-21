@@ -67,7 +67,7 @@ namespace leantime\domain\controllers {
 
                 $result = $this->ticketService->quickAddTicket($params);
 
-                if(isset($result["status"]) ) {
+                if(is_array($result)) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 }
             }

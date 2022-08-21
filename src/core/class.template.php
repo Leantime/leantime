@@ -8,6 +8,7 @@
 namespace leantime\core {
 
     use JetBrains\PhpStorm\NoReturn;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
@@ -129,6 +130,8 @@ namespace leantime\core {
             $config = new config();
             $settings = new appSettings();
             $login = services\auth::getInstance();
+            $roles = new roles();
+
             $language = $this->language;
 
             $this->template = $template;
@@ -251,6 +254,7 @@ namespace leantime\core {
             $config = new config();
             $settings = new appSettings();
             $login = services\auth::getInstance();
+            $roles = new roles();
 
 
             $submodule = array("module"=>'', "submodule"=>'');
@@ -278,27 +282,11 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            $alertIcons = array(
-                "success" => '<i class="far fa-check-circle"></i>',
-                "error" => '<i class="fas fa-exclamation-triangle"></i>',
-                "info" => '<i class="fas fa-info-circle"></i>'
-            );
-
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
-                $notification = "<div class='alert alert-".$note['type']."'>
-                                    <div class='infoBox'>
-                                        ".$alertIcons[$note['type']]."
-                                    </div>
-								<button data-dismiss='alert' class='close' type='button'>×</button>
-								<div class='alert-content'><h4>"
-                    .ucfirst($note['type']).
-                    "!</h4>"
-                    .$language->__($note['msg'], false).
-                    "
-								</div>
-								<div class='clearall'></div>
-							</div>";
+                $notification = '<script type="text/javascript">
+                                  jQuery.jGrowl("'.$language->__($note['msg'], false).'", {theme: "'.$note['type'].'"});
+                                </script>';
 
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
@@ -363,6 +351,7 @@ namespace leantime\core {
         //Echos and escapes content
         public function e($content): void
         {
+
 
             $escaped = $this->escape($content);
 
@@ -503,7 +492,9 @@ namespace leantime\core {
             while (!empty($tags))
                 $truncate .= sprintf('</%s>', array_pop($tags));
 
-            $truncate .= $ending;
+            if(strlen($truncate)>$maxLength) {
+                $truncate .= $ending;
+            }
 
             return $truncate;
         }

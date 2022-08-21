@@ -6,7 +6,6 @@
 
 ?>
 
-<h4 class="widgettitle title-light"><span class="fa fa-list-ul"></span><?php echo $this->__('subtitles.subtasks'); ?></h4>
 <p><?=$this->__('text.what_are_subtasks') ?><br /><br /></p>
 
 
@@ -54,25 +53,25 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
-                    <div class="inlineDropDownContainer">
-                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                    <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+                        <div class="inlineDropDownContainer">
+                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
 
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
+                    <?php } ?>
                     <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
                 </div>
-
             </div>
             <div class="row">
                 <div class="col-md-9" style="padding:0 15px;">
                     <div class="row">
                         <div class="col-md-4">
-                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $subticket['id'];?>" name="date" />
-
+                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput quickDueDates" data-id="<?php echo $subticket['id'];?>" name="date" />
                         </div>
                         <div class="col-md-4">
                             <?php echo $this->__("label.planned_hours"); ?><input type="text" value="<?php echo $this->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
@@ -80,10 +79,7 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
                         <div class="col-md-4">
                             <?php echo $this->__("label.estimated_hours_remaining"); ?><input type="text" value="<?php echo $this->e($subticket['hourRemaining']); ?>" name="hourRemaining" data-label="hourRemaining-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
-
-
                     </div>
-
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >
                     <div class="right">
@@ -102,7 +98,7 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
                                 <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
                                 <?php foreach($efforts as $effortKey => $effortValue){
                                     echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-value='".$subticket['id']."_".$effortKey."' id='ticketEffortChange".$subticket['id'].$effortKey."'>".$effortValue."</a>";
+                                        <a href='javascript:void(0);' data-value='".$subticket['id']."_".$effortKey."' id='ticketEffortChange".$subticket['id'].$effortKey."'>".$effortValue."</a>";
                                     echo"</li>";
                                 }?>
                             </ul>
@@ -121,7 +117,7 @@ $sumEstHours = $sumEstHours + $subticket['hourRemaining'];
 
                                 <?php foreach($statusLabels as $key=>$label){
                                     echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$subticket['id']."_".$key."_".$label["class"]."' id='ticketStatusChange".$subticket['id'].$key."' >".$this->escape($label["name"])."</a>";
+                                        <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$subticket['id']."_".$key."_".$label["class"]."' id='ticketStatusChange".$subticket['id'].$key."' >".$this->escape($label["name"])."</a>";
                                     echo"</li>";
                                 }?>
                             </ul>

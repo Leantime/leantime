@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\domain\services\auth;
 
     class editOwn
     {
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $language = new core\language();
+            $settings = new \leantime\domain\services\setting();
 
             $userId = $_SESSION['userdata']['id'];
             $userRepo = new repositories\users();
@@ -26,7 +28,13 @@ namespace leantime\domain\controllers {
 
             $infoKey = '';
 
+            $userLang = $settings->settingsRepo->getSetting("usersettings.".$userId.".language");
 
+            if($userLang == false){
+                $userLang = $language->getCurrentLanguage();
+            }
+
+            $userTheme = $settings->settingsRepo->getSetting("usersettings.".$userId.".theme");
 
             //Build values array
             $values = array(
@@ -91,6 +99,13 @@ namespace leantime\domain\controllers {
 
                                         $userRepo->editOwn($values, $userId);
 
+                                        $postLang = htmlentities($_POST['language']);
+                                        $postTheme = htmlentities($_POST['theme']);
+
+                                        $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
+                                        $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
+
+
                                         $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
                                     } else {
@@ -101,9 +116,20 @@ namespace leantime\domain\controllers {
 
                                 } else {
 
+                                    $postLang = htmlentities($_POST['language']);
+                                    $postTheme = htmlentities($_POST['theme']);
+
+                                    $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
+                                    $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
+
+                                    setcookie('language', $postLang, time()+60*60*24*30, '/');
+                                    setcookie('theme', $postTheme, time()+60*60*24*30, '/');
+
                                     $userRepo->editOwn($values, $userId);
 
                                     $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
+
+                                    core\frontcontroller::redirect(BASE_URL."/users/editOwn");
 
                                 }
 
@@ -142,6 +168,10 @@ namespace leantime\domain\controllers {
             $tpl->assign('profilePic', $users->getProfilePicture($_SESSION['userdata']['id']));
             $tpl->assign('info', $infoKey);
             $tpl->assign('values', $values);
+
+            $tpl->assign('userLang', $userLang);
+            $tpl->assign('userTheme', $userTheme);
+            $tpl->assign("languageList", $language->getLanguageList());
 
             $tpl->assign('user', $row);
 

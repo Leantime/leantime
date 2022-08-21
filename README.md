@@ -3,10 +3,11 @@
 
 # Leantime&trade; #
 
-![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square) 
-![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)
-![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)
-<a href="https://discord.gg/4zMzJtAq9z">![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)</a>
+[![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+[![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
+[![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
+[![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
+
 <br />
 
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
@@ -83,7 +84,7 @@ We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Doc
 To run the image enter your MySQL credentials and execute
 
 ```
-docker run -d -p 80:80 --network leantime-net \
+docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 -e LEAN_DB_HOST=mysql_leantime \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \

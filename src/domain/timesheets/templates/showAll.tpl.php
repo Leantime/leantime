@@ -31,7 +31,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 
 	    leantime.timesheetsController.initTimesheetsTable();
 
-        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
 
@@ -183,7 +183,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 		$sum = $sum + $row['hours'];?>
 		<tr>
             <td data-order="<?=$this->e($row['id']); ?>">
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a>
                 <?php }else{ ?>
                     #<?=$row['id']?>
@@ -204,7 +204,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 			<td><?php $this->e($row['description']); ?></td>
 			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
 			<?php }else{ ?>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
 				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
 			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
@@ -212,7 +212,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                 <?php if($row['invoicedComp'] == '1'){?>
                     <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
 			    <?php }else{ ?>
-                    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
                     <?php } ?>
                     <?php } ?>
@@ -226,16 +226,16 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
 
 			<td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
 				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
                 <?php } ?>
             </td>
 			<td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
             <?php } ?>
             <td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?>
                 <?php } ?>
             </td>

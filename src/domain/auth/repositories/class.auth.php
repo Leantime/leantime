@@ -125,24 +125,6 @@ namespace leantime\domain\repositories {
         public $hasher;
 
 
-        public static $userRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager',
-            40   => 'manager',
-            50   => 'admin'
-        );
-
-        /*
-         * Clientmanager roles
-         * ClientManagers can only add and remove a set of rules
-         */
-        public static $clientManagerRoles = array(
-            10   => 'client',
-            20   => 'developer',
-            30   => 'clientManager'
-        );
-
         private static $instance;
 
         /*
@@ -160,45 +142,6 @@ namespace leantime\domain\repositories {
             $this->config = new core\config();
             $this->userService = new services\users();
             $this->userRepo = new repositories\users();
-
-        }
-
-        public function isActiveSession($sessionId): bool
-        {
-
-            try{
-
-                $query = "SELECT 
-                            count(username) AS userCounter,
-                            sessionTime
-                        FROM zp_user 
-		                WHERE session = :session 
-		                AND (".time()." - sessionTime) <= :sessionExpiration
-		                LIMIT 1";
-
-                $stmn = $this->db->database->prepare($query);
-
-                $stmn->bindValue(':session', $sessionId, PDO::PARAM_STR);
-                $stmn->bindValue(':sessionExpiration', $this->config->sessionExpiration, PDO::PARAM_INT);
-
-                $stmn->execute();
-
-                $returnValues = $stmn->fetch();
-
-            }catch(Exception $e){
-
-                error_log($e->getMessage());
-                return false;
-
-            }
-
-            $stmn->closeCursor();
-
-            if(isset($returnValues['userCounter']) && $returnValues['userCounter'] == 1){
-                return true;
-            }
-
-            return false;
 
         }
 

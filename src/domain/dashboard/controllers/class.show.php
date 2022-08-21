@@ -2,6 +2,7 @@
 
 namespace leantime\domain\controllers {
 
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\repositories;
     use leantime\core;
@@ -42,6 +43,10 @@ namespace leantime\domain\controllers {
         public function get()
         {
 
+            if(!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
+                core\frontcontroller::redirect(BASE_URL."/projects/showMy");
+            }
+
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
             //Project Progress
@@ -70,18 +75,21 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if (isset($params['quickadd']) == true) {
+            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
+                if (isset($params['quickadd']) == true) {
+                    $result = $this->ticketService->quickAddTicket($params);
 
-                $result = $this->ticketService->quickAddTicket($params);
+                    if (isset($result["status"])) {
+                        $this->tpl->setNotification($result["message"], $result["status"]);
+                    } else {
+                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    }
 
-                if (isset($result["status"])) {
-                    $this->tpl->setNotification($result["message"], $result["status"]);
-                } else {
-                    $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    $this->tpl->redirect(BASE_URL . "/dashboard/show");
                 }
-
-                $this->tpl->redirect(BASE_URL."/dashboard/show");
             }
+
+            $this->tpl->redirect(BASE_URL . "/dashboard/show");
 
 
         }

@@ -26,6 +26,9 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->installRepo = new repositories\install();
+            $this->language = new core\language();
+            $this->settingsRepo = new repositories\setting();
+            $this->appSettings = new core\appSettings();
 
 
         }
@@ -39,6 +42,10 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+            $dbVersion = $this->settingsRepo->getSetting("db-version");
+            if ($this->appSettings->dbVersion == $dbVersion){
+                core\frontcontroller::redirect(BASE_URL."/auth/login");
+            }
 
             $this->tpl->display("install.update", 200, "entry");
 
@@ -46,15 +53,19 @@ namespace leantime\domain\controllers {
 
         public function post($params) {
 
+
             if(isset($_POST['updateDB'])) {
 
                 $success = $this->installRepo->updateDB();
 
                 if(is_array($success) === true) {
 
+                    var_dump($success);
+
                     foreach($success as $errorMessage) {
-                        error_log($errorMessage);
+
                         $this->tpl->setNotification($errorMessage, "error");
+
                         core\frontcontroller::redirect(BASE_URL."/install/update");
                     }
                 }

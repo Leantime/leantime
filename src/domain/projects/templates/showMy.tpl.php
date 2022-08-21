@@ -31,6 +31,7 @@
             <div class="col-md-4">
                 <div class="center">
                     <form>
+                        <?php if(count($clients)>0){ ?>
                         <select id="client" name="client" class="mainSprintSelector" onchange="form.submit();">
                             <option value="" <?php if($currentClient == "") echo " selected='selected' "; ?>><?=$this->__("headline.all_clients"); ?></option>
                             <?php foreach($clients as $key=>$value) {
@@ -40,6 +41,7 @@
                             }
                             ?>
                         </select>
+                        <?php } ?>
                     </form>
                 </div>
             </div>
@@ -54,6 +56,19 @@
         </div>
 
         <div class="row">
+
+            <?php if(count($allProjects) == 0) {
+
+            echo "<div class='col-md-12'><br /><br /><div class='center'>";
+                echo"<div style='width:30%' class='svgContainer'>";
+                    echo file_get_contents(ROOT."/images/svg/undraw_a_moment_to_relax_bbpa.svg");
+                    echo $this->__('notifications.not_assigned_to_any_project');
+                    if($login::userIsAtLeast($roles::$manager)){
+                        echo"<a href='".BASE_URL."/projects/new' class='btn btn-primary'>".$this->__('link.new_project')."</a>";
+                    }
+                    echo"</div></div>";
+
+            }?>
             <?php foreach($allProjects as $project) { ?>
             <div class="col-lg-4">
 
