@@ -45,7 +45,7 @@ namespace leantime\domain\repositories {
         {
             $sql = 'SELECT * FROM zp_audit';
 
-	    if ( $action != '' )
+	        if ( $action != '' )
             {
                 $sql .= ' WHERE `action` = :action';
             }
@@ -53,7 +53,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
 
-	    if ( $action != '' )
+	        if ( $action != '' )
             {
                 $stmn->bindValue(':action', $action, PDO::PARAM_STR);
             }
@@ -63,7 +63,7 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-	    if (isset($values[0]))
+	        if (isset($values[0]))
             {
                 return $values[0];
             }
