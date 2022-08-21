@@ -30,10 +30,10 @@ namespace leantime\domain\services {
         // TODO : Rework email templating system
         private function doFormatMail ($messageToSendToUser)
         {
-            $outputHTML="Leantime has news for you...<br/>\n";
+            $outputHTML= $this->language->__('text.here_are_news')."<br/>\n";
             foreach ($messageToSendToUser as $chunk)
             {
-                 $outputHTML.="<div style=\"border: 1px solid grey; margin: 3px; padding: 3px;\">";
+                 $outputHTML.="<div style=\"border-top: 1px solid #ddd; margin: 3px; padding: 3px;\">";
                  $outputHTML.="<div style=\"margin: 0px; padding: 0px; float : right\">".$chunk['thedate']."</div>";
                  $outputHTML.="<div><p><em>".$chunk['subject']."</em></p>";
                  $outputHTML.=$chunk['message']."</div>";

@@ -1142,10 +1142,11 @@ namespace leantime\domain\repositories {
 
         private function update_sql_20109() {
 
+            $errors = array();
 
             $sql = array( "CREATE TABLE IF NOT EXISTS `zp_queue` (
                                `msghash` varchar(50) NOT NULL,
-                                `channel` varchar(255)
+                                `channel` varchar(255),
                                `userId` int(11) NOT NULL,
                                 `subject` varchar(255),
                                `message` text NOT NULL,
@@ -1165,7 +1166,9 @@ namespace leantime\domain\repositories {
                     $stmn->execute();
 
                 } catch (PDOException $e) {
+
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
+
                 }
 
             }
