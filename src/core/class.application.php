@@ -171,44 +171,36 @@ class application
 
     private function checkIfInstalled() {
 
+        if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {
+            if ($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false) {
 
-        if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true
-        && isset($_SESSION['isUpToDate']) && $_SESSION['isUpToDate'] === true) {
-            return;
+                //Don't redirect on i18n call
+                if($this->frontController::getCurrentRoute() !== "install" &&
+                    $this->frontController::getCurrentRoute() !== "api.i18n") {
+                    $this->frontController::redirect(BASE_URL . "/install");
+                }
+
+            }else{
+                $_SESSION['isInstalled'] = true;
+            }
         }
-        //Only run this if the user is not logged in (db should be updated/installed before user login)
-        if($this->auth->logged_in()===false) {
 
-            if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {
-                if ($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false) {
 
-                    //Don't redirect on i18n call
-                    if($this->frontController::getCurrentRoute() !== "install" &&
-                        $this->frontController::getCurrentRoute() !== "api.i18n") {
-                        $this->frontController::redirect(BASE_URL . "/install");
+        if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true) {
+
+            $dbVersion = $this->settingsRepo->getSetting("db-version");
+            if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
+
+                //Don't redirect on i18n call
+                    if($this->frontController::getCurrentRoute() !== "install.update" &&
+                        $this->frontController::getCurrentRoute() !== "api.i18n"){
+
+                        $this->frontController::redirect(BASE_URL . "/install/update");
                     }
 
-                }else{
-                    $_SESSION['isInstalled'] = true;
-                }
-            }
 
-
-            if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true && (!isset($_SESSION['isUpToDate']) || $_SESSION['isUpToDate'] === false)) {
-                $dbVersion = $this->settingsRepo->getSetting("db-version");
-                if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
-
-                    //Don't redirect on i18n call
-                        if($this->frontController::getCurrentRoute() !== "install.update" &&
-                            $this->frontController::getCurrentRoute() !== "api.i18n"){
-                            $this->frontController::redirect(BASE_URL . "/install/update");
-                        }
-
-
-                }else {
-                    $_SESSION['isUpToDate'] = true;
-                }
             }
         }
+
     }
 }
