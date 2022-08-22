@@ -47,7 +47,7 @@ $nowDate = time();
 $timeSince = abs($nowDate - $lastCronEvent);
 if ($timeSince < 300)
 {
-    echo "Last cron execution was on ".$LastEvent['date']. " plz come back later";
+    echo "Last cron execution was on ".$lastEvent['date']. " plz come back later";
     exit;
 }
 
