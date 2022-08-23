@@ -345,7 +345,7 @@ namespace leantime\domain\repositories {
 					zp_user.profileId
 				FROM zp_relationuserproject 
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId && zp_user.id IS NOT NULL
+				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
