@@ -203,7 +203,8 @@ namespace leantime\domain\services {
             if($this->config->useLdap === true && extension_loaded('ldap')){
 
                 $ldap = new ldap();
-
+                $this->username = $username;
+                $this->password = $password;
                 if ($ldap->connect() && $ldap->bind($this->username, $this->password)) {
 
                     //Update username to include domain
@@ -230,18 +231,15 @@ namespace leantime\domain\services {
 
                         $this->userRepo->addUser($userArray);
 
+                        $user = $this->userRepo->getUserByEmail($usernameWDomain);
                         //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
                         //TODO: create a better login response. This will return that the username or password was not correct
                     }
 
                     //TODO: if user exists in ldap, do an auto update of name
-
-
                     $this->setUserSession($user,true);
 
-                    $this->authRepo->updateUserSession($this->session, time());
-
-                    $this->setCookie($this->cookieTime);
+                    $this->authRepo->updateUserSession($user['id'], $this->session, time());
 
                     return true;
 

@@ -98,12 +98,17 @@ namespace leantime\domain\services {
             $this->config = new core\config();
 
             $companyLang = $this->settings->getSetting("companysettings.language");
+            if($companyLang != "" && $companyLang !== false){
+                $currentLanguage = $companyLang;
+            }else{
+                $currentLanguage = $this->config->language;
+            }
 
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
                 'version' => $this->appSettings->appVersion,
-                'language' => $companyLang ?? $this->config->language,
+                'language' => $currentLanguage,
                 'numUsers' => $this->userRepository->getNumberOfUsers(),
                 'lastUserLogin' => $this->userRepository->getLastLogin(),
                 'numProjects' => $this->projectRepository->getNumberOfProjects(),
