@@ -64,7 +64,7 @@
                     echo file_get_contents(ROOT."/images/svg/undraw_a_moment_to_relax_bbpa.svg");
                     echo $this->__('notifications.not_assigned_to_any_project');
                     if($login::userIsAtLeast($roles::$manager)){
-                        echo"<a href='".BASE_URL."/projects/new' class='btn btn-primary'>".$this->__('link.new_project')."</a>";
+                        echo"<br /><br /><a href='".BASE_URL."/projects/newProject' class='btn btn-primary'>".$this->__('link.new_project')."</a>";
                     }
                     echo"</div></div>";
 

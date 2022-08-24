@@ -66,7 +66,8 @@
                             </div>
 
                              <div class="row">
-                                <?php foreach($project['assignedUsers'] as $userId => $assignedUser){ ?>
+                                <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
+
 
                                     <div class="col-md-4">
                                         <div class="userBox">

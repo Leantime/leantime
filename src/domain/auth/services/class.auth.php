@@ -203,12 +203,11 @@ namespace leantime\domain\services {
             if($this->config->useLdap === true && extension_loaded('ldap')){
 
                 $ldap = new ldap();
-                $this->username = $username;
-                $this->password = $password;
-                if ($ldap->connect() && $ldap->bind($this->username, $this->password)) {
+
+                if ($ldap->connect() && $ldap->bind($username, $password)) {
 
                     //Update username to include domain
-                    $usernameWDomain = $ldap->extractLdapFromUsername($this->username)."".$ldap->userDomain;
+                    $usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
 
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
@@ -216,7 +215,7 @@ namespace leantime\domain\services {
                     //If user does not exist create user
                     if($user == false) {
 
-                        $ldapUser = $ldap->getSingleUser($this->username);
+                        $ldapUser = $ldap->getSingleUser($username);
 
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
