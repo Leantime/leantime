@@ -31,13 +31,6 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
-
-<?php
-    if($appSettings->debug == 1) {
-        echo $debugRenderer->renderHead();
-    }
-?>
-
 <!-- Replace main theme colors -->
 <style>
 

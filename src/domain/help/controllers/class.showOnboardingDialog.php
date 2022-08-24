@@ -36,7 +36,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
             if(isset($params['module']) && $params['module'] != "") {
-                $filteredInput = filter_var($params['module'], FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+                $filteredInput = htmlspecialchars($params['module']);
                 $this->tpl->displayPartial('help.'.$filteredInput);
             }
 

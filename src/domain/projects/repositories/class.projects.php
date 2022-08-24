@@ -767,7 +767,7 @@ namespace leantime\domain\repositories {
 			FROM zp_relationuserproject 
 			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
 			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-			WHERE projectId = :id";
+			WHERE projectId = :id AND zp_user.id IS NOT NULL";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);

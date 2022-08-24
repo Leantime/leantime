@@ -16,7 +16,7 @@
 <?php if(isset($_SESSION['currentProjectName'])){ ?>
 
 <ul class="nav nav-tabs nav-stacked">
-    <?php if ($this->get('allAvailableProjects') !== false){?>
+    <?php if ($this->get('allAvailableProjects') !== false || $_SESSION['currentProject'] != ""){?>
         <li class="project-selector">
 
             <div class="form-group">
