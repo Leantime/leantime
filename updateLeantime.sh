@@ -26,6 +26,8 @@ echo "                      \___/| .__/\__,_\__,_|\__\___|_|  "
 echo "                           |_|                          "
 echo -e "${NC}"
 
+echo -e "\nFor correct operation of this script, please ensure you have zip, unzip, wget and curl installed.\n"
+
 CURRENT_VERSION=$(grep "appVersion" config/appSettings.php |awk -F' = ' '{print "v"substr($2,2,length($2)-3)}')
 LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/leantime/leantime/releases/latest)
 LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
@@ -100,12 +102,13 @@ else
 			echo -e "\n${GREEN}Starting the update process${NC}"
 			FILE=$(basename "$DOWNLOAD_URL")
 			printf " - Downloading the updatefile ($FILE) in the 'update' folder "
-			wget -q -O "./updates/$FILE" "$DOWNLOAD_URL"
+			mkdir -p update
+			wget -q -O "./update/$FILE" "$DOWNLOAD_URL"
 			echo -e "(${GREEN}Done${NC})\n"
 
 			printf " - Extracting the updatefile "
 			rm -f -r /tmp/leantime/
-			unzip -qq -d /tmp/ "updates/$FILE"
+			unzip -qq -d /tmp/ "update/$FILE"
                         echo -e "(${GREEN}Done${NC})\n"
 
 			printf " - Applying the update "
