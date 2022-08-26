@@ -78,12 +78,6 @@ namespace leantime\domain\services {
         private $session = null;
 
         /**
-         * @access private
-         * @var    object - db connection
-         */
-        private $db = null;
-
-        /**
          * @access public
          * @var    string userrole (admin, client, employee)
          */
@@ -140,8 +134,6 @@ namespace leantime\domain\services {
          */
         protected function __construct($sessionid)
         {
-            $this->db = core\db::getInstance();
-
             $this->config = new core\config();
             $this->cookieTime = $this->config->sessionExpiration;
             $this->language = new core\language();
