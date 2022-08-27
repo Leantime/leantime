@@ -289,7 +289,7 @@
                 <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Slack</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-5guop3/Slack_RGB.png " width="200"/>
+                        <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
                     </div>
 
                     <div class="col-md-5">
