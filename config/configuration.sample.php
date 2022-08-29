@@ -7,6 +7,7 @@ namespace leantime\core;
 class config
 {
     /* General */
+
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
     public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
@@ -15,6 +16,7 @@ class config
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
     public $debug = 0;                                    //Debug flag
+
 
     /* Database */
     public $dbHost = 'localhost';                         //Database host
