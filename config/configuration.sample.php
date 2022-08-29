@@ -11,7 +11,7 @@ class config
     public $appUrl = ''; //Base URL, trailing slash not needed
     public $primarycolor = '#1b75bb'; //Primary Theme color
     public $secondarycolor = '#81B1A8'; //Secondary Theme Color
-    public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone
+    public $defaultTimezone = 'America/Los_Angeles'; //Set default timezone (look here for a complete list of options: https://www.php.net/manual/en/timezones.php)
     public $debug = 0; //Debug flag
 
     /* Database */
