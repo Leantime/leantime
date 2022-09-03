@@ -74,8 +74,19 @@ class db
 
         }catch(PDOException $e){
 
-            echo "No database connection, check your database credentials in your configuration file.";
+            echo "No database connection, check your database credentials in your configuration file.<br />\n";
+            echo "Checking common issues:<br />\n";
+            if (!extension_loaded('PDO')) { 
+                echo "- php-PDO is required, but not installed<br />\n";
+            }
+            if (!extension_loaded('pdo_mysql')) { 
+                echo "- php-pdo_mysql is required, but not installed<br />\n";
+            }
 
+            if($config->debug == '1') {
+                echo "<br />\Debug information<br />\n";
+                var_dump($e);
+            }
             exit();
 
         }
