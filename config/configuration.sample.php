@@ -98,12 +98,27 @@ class config
             "ldapRole":"administrators"
           }
         }';
-    public $ldapDefaultRoleKey = 20;
-//Default Leantime Role on creation. (set to editor)
+    public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
+
+    /* cache invalidation */
+    private $configurationLastModified = '';   //Last modified date of the configuration file
 
     public function __construct()
     {
-    /* General */
+        //Get the last modified configuration timestamp.
+        $this->configurationLastModified = filemtime('../config/configuration.php');
+
+        //if config file is newer then when the session cache was created, remove the session cache.
+        if( isset($_SESSION['mainconfig']['configurationLastModified']) && $_SESSION['mainconfig']['configurationLastModified'] != $this->configurationLastModified) {
+            unset($_SESSION['mainconfig']);
+        }
+
+        //set configurationLastModified (if missing)
+        if( ! isset($_SESSION['mainconfig']['configurationLastModified']) ){
+          $_SESSION['mainconfig']['configurationLastModified'] = $this->configurationLastModified;
+        }
+
+        /* General */
         $this->sitename = $this->configEnvironmentHelper("LEAN_SITENAME", $this->sitename);
         $this->language = $this->configEnvironmentHelper("LEAN_LANGUAGE", $this->language);
         $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
