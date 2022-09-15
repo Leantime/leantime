@@ -38,28 +38,26 @@ namespace leantime\domain\controllers {
 
             $projectResults = array();
             $i = 0;
-            foreach ($allprojects as $project) {
+
+            if(is_array($allprojects)) {
+                foreach ($allprojects as $project) {
+                    if (!array_key_exists($project["clientId"], $clients)) {
+                        $clients[$project["clientId"]] = $project['clientName'];
+                    }
+
+                    if ($clientId == "" || $project["clientId"] == $clientId) {
+                        $projectResults[$i] = $project;
+                        $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
+                        $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
 
 
-                if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = $project['clientName'];
+                        $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+
+                        $projectResults[$i]['report'] = $fullReport;
+
+                        $i++;
+                    }
                 }
-
-                if ($clientId == "" || $project["clientId"] == $clientId) {
-
-                    $projectResults[$i] = $project;
-                    $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
-                    $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
-
-
-                    $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
-
-                    $projectResults[$i]['report'] = $fullReport;
-
-                    $i++;
-
-                }
-
             }
 
             $this->tpl->assign("currentClient", $clientId);

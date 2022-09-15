@@ -1,0 +1,356 @@
+
+/* login */
+.inputwrapper button { background: var(--main-action-bg); border-color: var(--main-border-color) }
+.inputwrapper button:hover { background: var(--main-action-hover-bg); border-color: var(--main-border-color) }
+
+/* background */
+
+body.loginpage,
+.header,
+.leftmenu .nav-tabs.nav-stacked > li.active > a,
+.leftmenu .nav-tabs.nav-stacked > li.active > a:hover,
+.shortcuts li a,
+.widgettitle,
+.mediamgr .mediamgr_rightinner h4,
+.messagemenu, .msglist li.selected,
+.wizard .hormenu li a.done,
+.wizard .hormenu li a.selected,
+.actionBar a:hover, .actionBar a:hover,
+.wizard .tabbedmenu, .nav-tabs > .active > a:focus,
+.tabbable > .nav-tabs,
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus,
+.nav-pills > .active > a,
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:focus,
+.tabs-right .nav-tabs,
+.tabs-right > .nav-tabs > li > a,
+.tabs-left .nav-tabs,
+.tabs-left > .nav-tabs > li > a,
+.progress-primary .bar,
+.ui-datepicker-calendar td.ui-datepicker-today a,
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus,
+.nav-list > .active > a,
+.nav-list > .active > a:hover,
+.nav-list > .active > a:focus,
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice,
+div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
+.label-primary, .leftmenu .nav-tabs.nav-stacked
+{ background-color: var(--primary-color) }
+
+
+
+.loginpanelinner,
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
+	background-color: var(--primary-color) !important;
+	color:var(--main-action-color);
+}
+
+.header .logo {
+
+}
+
+.boxedHighlight{
+	background:var(--accent1);
+}
+
+/* color */
+
+a,a:hover,a:link,a:active,a:focus,
+.userlist li .uinfo h5,
+.messagemenu ul li.active a,
+.msglist li h4,
+.actionBar a,
+.actionBar a.buttonDisabled,
+.wizard .tabbedmenu li a.selected,
+.wizard .tabbedmenu li a.done,
+.tabbable > .nav-tabs > li.active > a,
+.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
+.tabs-right > .nav-tabs .active > a,
+.tabs-right > .nav-tabs .active > a:hover,
+.tabs-right > .nav-tabs .active > a:focus,
+.tabs-left > .nav-tabs .active > a,
+.tabs-left > .nav-tabs .active > a:hover,
+.tabs-left > .nav-tabs .active > a:focus,
+.ticketBox  a.userPopover:hover,
+.primaryColor,
+.optionLink,
+.inlineDropDownContainer .ticketDropDown:hover,
+.leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
+input.secretInput,
+.maincontentinner .ticketDropdown.noBg >a,
+.maincontentinner .ticketDropdown.noBg >a:link,
+.viewDropDown .dropdown-menu li a.active,
+.paginate_button.current:hover
+{ color: var(--primary-color); }
+
+
+input[type='submit'],
+button,
+.shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
+.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
+.paginate_button.current
+{ background-color:  var(--main-action-bg);  }
+
+input[type='submit']:hover, 
+button:hover {
+	background-color:  var(--main-action-hover-bg);
+	color:#fff;
+} 	
+
+.chzn-container-multi .chzn-choices .search-choice {
+	color:#fff;
+}
+
+.btn-white {
+	background:#fff;
+}
+
+span.btn-white:hover{
+	background:#fff;
+}
+
+	
+/* border color */
+.widgetcontent,
+.messagemenu ul li.active,
+.messageleft,
+.messageright,
+.messagesearch,
+.msgreply,
+.wizard .hormenu li a,
+.wizard .hormenu li:first-child a,
+.stepContainer,
+.actionBar,
+.actionBar a,
+.actionBar a.buttonDisabled,
+.tabbable > .nav-tabs,
+.tabbable > .tab-content,
+.nav-tabs.nav-stacked > li > a:focus,
+.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
+.nav-tabs,
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus,
+.tabs-below .tab-content,
+.tabs-below > .nav-tabs > li.active > a,
+.tabs-right,
+.tabs-left,
+.tab-primary.ui-tabs,
+.nav-tabs.nav-stacked > li > a,
+.nav-tabs.nav-stacked > li > a:hover,
+.nav-tabs.nav-stacked > li > a:hover,
+.nav-tabs.nav-stacked > li > a:focus,
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus,
+div.tagsinput span.tag
+{ border-color: var(--main-border-color) }
+
+
+.ui-datepicker-header { background-color: var(--primary-color) !important; }
+.ui-datepicker { border-color: var(--main-border-color) !important; }
+
+
+/* extras */
+
+.tabs-below > .nav-tabs > li.active > a { border-bottom: 1px solid var(--main-border-color) !important; }
+.nav-list > li > a { color: #666; }
+.tabs-left > .nav-tabs > li,
+.tabs-right > .nav-tabs > li { border-color: var(--main-border-color); }
+.leftmenu .nav-tabs.nav-stacked > li > a { border-color: var(--main-border-color) !important; }
+.leftmenu .nav-tabs.nav-stacked > li.active > a { border-color: var(--main-border-color) !important; }
+
+/* ie fix */
+
+.no-rgba .headmenu > li { border-right: 1px solid #ca5f46; }
+.no-rgba .headmenu > li:first-child { border-left: 1px solid #ca5f46; }
+
+
+@media screen and (max-width: 480px) {
+ 
+ .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
+ 
+  .userloggedinfo .userinfo,
+  .wizard .hormenu li,
+  .messageright { border-color: var(--main-border-color); }
+
+}
+
+.timesheetTable {
+	
+}
+
+.timesheetTable input {
+	width:70%;
+}
+
+.week-picker {
+	width:100px;
+}
+
+.timesheetTable select {
+	width:90%;
+}
+
+
+.ui-weekpicker td a.ui-state-hover{
+	background:#eee;
+}
+
+.ui-weekpicker td a.ui-state-highlight {
+	background-color: var(--primary-color);
+}
+
+
+.ui-state-highlight {
+	background:#eee;
+}
+
+.companyProject,
+.companyProject a{
+	color:#999;
+	font-weight:normal
+}
+
+.filterBar {
+	
+	border:1px solid var(--main-border-color);
+	padding:10px;
+	margin-bottom:5px;
+	background:var(--kanban-col-bg);
+	padding-top:5px;
+	margin-top: 10px;
+    border-radius:var(--box-radius);
+}
+
+.headtitle {
+	background:var(--kanban-col-bg);
+	border:1px solid var(--main-border-color);
+	border-radius:var(--box-radius);
+}
+
+.filterBar .filterBoxLeft {
+	float:left;
+	margin-right:15px;
+    min-width:50px;
+}
+
+.filterBar .filterBoxLeft input,
+.filterBar .filterBoxLeft select {
+	float:left;
+}
+
+label.inline {
+	float:left;
+	margin-right:5px;
+	padding-top:6px;	
+}
+
+.loading {
+	position:absolute;
+	width:100%;
+	height:40px;
+}
+
+body .widgettitle.title-light {
+	color:var(--primary-color);
+	padding-left:0px;
+	background-color: transparent !important;
+    border-left:0px !important;
+    border-top:0px !important;
+    border-right:0px !important;
+	border-bottom:0px solid #ccc;
+	margin-bottom:15px;
+
+}
+
+.nyroModalCont .widgettitle.title-light {
+    padding-top: 5px;
+font-size: 16px;
+}
+
+div.tagsinput {
+	border:1px solid var(--main-border-color);
+}
+
+.gantt-container a:hover {
+    text-decoration:underline !important;
+}
+
+
+body .tox .tox-edit-area__iframe,
+body .tox .tox-toolbar-overlord{
+	background-color:var(--secondary-background);
+}
+
+
+.ui-datepicker-next {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	right: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px 1px;
+}
+
+.ui-datepicker-prev {
+	cursor: pointer;
+	position: absolute;
+	top: 8px;
+	left: 5px;
+	background: url(../../images/calarrow.png) no-repeat 3px -39px;
+}
+
+.ui-datepicker-header {
+	position: relative;
+	text-align: center;
+	padding: 5px;
+	color: #fff;
+	background: #0866c6;
+	text-transform: uppercase;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.ui-datepicker {
+	border-radius:5px;
+}
+
+
+div.jGrowl div.jGrowl-notification,
+div.jGrowl div.jGrowl-closer {
+	background:var(--secondary-background);
+	color:var(--primary-font-color);
+	padding:20px;
+	font-size:var(--base-font-size);
+	width:250px;
+	opacity:1;
+	border-radius:var(--box-radius);
+	box-shadow: var(--regular-shadow);
+	border:0px;
+
+}
+
+div.jGrowl div.jGrowl-notification div.jGrowl-close {
+	color:var(--primary-font-color);
+	font-size:var(--base-font-size);
+}
+
+div.jGrowl div.jGrowl-notification.success {
+	border-left:5px solid #86D628;
+}
+
+div.jGrowl div.jGrowl-notification.info {
+	border-left:5px solid #71B8EE;
+}
+
+div.jGrowl div.jGrowl-notification.error {
+	border-left:5px solid  #dd0000;
+}
+
+
+/* Playing with header */

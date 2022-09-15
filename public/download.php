@@ -6,14 +6,18 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
-include_once '../config/settings.php';
+include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
-$login = leantime\core\login::getInstance(leantime\core\session::getSID());
+
+
+$login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
+
+
 
 if ($login->logged_in()!==true) {
 

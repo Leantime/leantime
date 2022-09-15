@@ -2,13 +2,16 @@
 
 namespace leantime\domain\services {
 
+    use GuzzleHttp\Exception\RequestException;
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\repositories;
-    use \DateTime;
-    use \DateInterval;
-    use PHPMailer\PHPMailer\PHPMailer;
-    use function Sodium\add;
+    use DateTime;
+    use DateInterval;
     use League\HTMLToMarkdown\HtmlConverter;
+    use GuzzleHttp\Client;
+    use Psr\Http\Message\ResponseInterface;
+    use leantime\domain\models\auth\roles;
 
     class projects
     {
@@ -95,17 +98,19 @@ namespace leantime\domain\services {
 
             //Fix this
             $currentDate = new DateTime();
-            if($today->format("Y") > ($currentDate->format("Y") +5)) {
-                $completionDate = "Past ".($currentDate->format("Y")+5);
+            $inFiveYears = intval($currentDate->format("Y")) + 5;
+            
+            if(intval($today->format("Y")) >= $inFiveYears) {
+                $completionDate = "Past ".$inFiveYears;
             }else{
-                $completionDate = $today->format('m/d/Y');
+                $completionDate = $today->format($this->language->__('language.dateformat'));
             }
 
 
             $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
             if($numberOfClosedTickets < 10) {
                 $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
-            }else if($finalPercent == 100) {
+            }elseif($finalPercent == 100) {
                 $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
 
             }
@@ -135,11 +140,14 @@ namespace leantime\domain\services {
 
             $projectName = $this->getProjectName($projectId);
 
+            $httpClient = new Client();
+
             //Email
             $users = $this->getUsersToNotify($projectId);
             $users = array_filter($users, function($user, $k) { 
                 return $user != $_SESSION['userdata']['mail']; 
             }, ARRAY_FILTER_USE_BOTH);
+
 
             $mailer = new core\mailer();
             $mailer->setSubject($subject);
@@ -149,7 +157,11 @@ namespace leantime\domain\services {
                 $emailMessage .= " <a href='".$url['link']."'>".$url['text']."</a>";
             }
             $mailer->setHtml($emailMessage);
-            $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+            //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+	    // NEW Queuing messaging system
+	    $queue = new repositories\queue();
+            $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
 
 
             //Prepare message for chat applications (Slack, Mattermost)
@@ -181,17 +193,15 @@ namespace leantime\domain\services {
                 );
 
                 $data_string = json_encode($data);
-                $ch = curl_init($slackWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                try {
+                    $httpClient->post($slackWebhookURL, [
+                        'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ]
+                    ]);
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
 
             }
 
@@ -230,7 +240,7 @@ namespace leantime\domain\services {
                       'description' => $converter->convert($message),
                       'url' => $url_link,
                       'timestamp' => $timestamp,
-                      'color' => hexdec('3366ff'),
+                      'color' => hexdec('1b75bb'),
                       'footer' => [
                         'text' => 'Leantime',
                         'icon_url' => $url_link,
@@ -245,20 +255,14 @@ namespace leantime\domain\services {
 
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-                $ch = curl_init($discordWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($data_string)
-                  ]
-                );
-
-                $result = curl_exec($ch);
+                try {
+                      $httpClient->post($discordWebhookURL, [
+                          'body' => $data_string,
+                          'headers' => [ 'Content-Type' => 'application/json' ]
+                      ]);
+                }catch (\Exception $e) {
+                      error_log($e->getMessage());
+                }
               }
             }
 
@@ -274,17 +278,15 @@ namespace leantime\domain\services {
                 );
 
                 $data_string = json_encode($data);
-                $ch = curl_init($mattermostWebhookURL);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                try {
+                    $httpClient->post($mattermostWebhookURL, [
+                        'body' => $data_string
+                    ]);
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
+
             }
 
 
@@ -301,7 +303,7 @@ namespace leantime\domain\services {
 
                 $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
                 if($url !== false){
-                    $prepareChatMessage .= "".$url['link']."";
+                    $prepareChatMessage .= " ".$url['link']."";
                 }
 
                 $data = array(
@@ -313,22 +315,22 @@ namespace leantime\domain\services {
 
                 $curlUrl = $botURL . '?' . http_build_query($data);
 
-                $ch = curl_init($curlUrl);
-
                 $data_string = json_encode($data);
 
-                curl_setopt($ch, CURLOPT_USERPWD, "$botEmail:$botKey");
-                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($data_string))
-                );
+                try {
 
-                //Execute CURL
-                $result = curl_exec($ch);
+                    $httpClient->post($curlUrl, [
+                        'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ],
+                        'auth' => [
+                            $botEmail,
+                            $botKey
+                        ]
+                    ]);
+
+                }catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
 
             }
 
@@ -357,9 +359,38 @@ namespace leantime\domain\services {
 
         }
 
+
+
         public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+            if($projects) {
+                return $projects;
+            }else{
+                return false;
+            }
+
+        }
+
+        public function getProjectRole($userId, $projectId) {
+
+            $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+
+            if(is_array($project)) {
+                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+                    return $project[0]['projectRole'];
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;
@@ -413,32 +444,6 @@ namespace leantime\domain\services {
 
                     }
 
-                    $route = core\FrontController::getCurrentRoute();
-
-                    if($route != "api.i18n") {
-
-                        if (core\login::userIsAtLeast("clientManager")) {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
-                                "info");
-                            if ($route != "projects.newProject") {
-                                $this->tpl->redirect(BASE_URL . "/projects/newProject");
-                            }
-
-                        } else {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
-                                "info");
-
-
-
-                            if ($route != "users.editOwn") {
-                                $this->tpl->redirect(BASE_URL . "/users/editOwn");
-                            }
-
-                        }
-                    }
-
                 }
 
             }
@@ -449,9 +454,14 @@ namespace leantime\domain\services {
 
             if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
+                //Get user project role
+
                 $project = $this->getProject($projectId);
 
                 if ($project) {
+
+                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+
 
                     $_SESSION["currentProject"] = $projectId;
 
@@ -463,6 +473,11 @@ namespace leantime\domain\services {
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
 
+                    $_SESSION['userdata']['projectRole'] = '';
+                    if($projectRole != '') {
+                        $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    }
+
                     $_SESSION["currentSprint"] = "";
                     $_SESSION['currentLeanCanvas'] = "";
                     $_SESSION['currentIdeaCanvas'] = "";
@@ -473,11 +488,13 @@ namespace leantime\domain\services {
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
+                    unset($_SESSION["projectsettings"]);
+
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-                    
-                    unset($_SESSION["projectsettings"]["ticketlabels"]);
-                    
+
+                    events::dispatch_event("projects.setCurrentProject");
+
                     return true;
 
                 } else {
@@ -504,13 +521,14 @@ namespace leantime\domain\services {
             $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
             $_SESSION['currentRetroCanvas'] = "";
+            unset($_SESSION["projectsettings"]);
 
             $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
             $this->setCurrentProject();
         }
 
-        public function getUsersAssignedToProject($projectId)
+        public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
@@ -533,7 +551,7 @@ namespace leantime\domain\services {
 
             }
 
-            return false;
+            return array();
 
         }
 

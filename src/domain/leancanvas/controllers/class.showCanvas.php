@@ -72,7 +72,12 @@ namespace leantime\domain\controllers {
                     $actual_link = "".CURRENT_URL."";
                     $message = sprintf($language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
                     $mailer->setHtml($message);
-                    $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+                    // NEW Queuing messaging system
+                    $queue = new repositories\queue();
+                    $queue->queueMessageToUsers($users, $message, $language->__('email_notifications.canvas_board_created'), $projectId);
+
 
                     $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');
 

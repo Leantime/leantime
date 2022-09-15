@@ -1,7 +1,6 @@
 <?php
 
 defined( 'RESTRICTED' ) or die( 'Restricted access' );
-$helper = $this->get('helper');
 ?>
 <script type="text/javascript">
 
@@ -32,13 +31,12 @@ $helper = $this->get('helper');
 
 	    leantime.timesheetsController.initTimesheetsTable();
 
-        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
 
 
         jQuery(".dateFrom, .dateTo").datepicker({
-            numberOfMonths: 1,
             dateFormat:  leantime.i18n.__("language.jsdateformat"),
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -47,10 +45,11 @@ $helper = $this->get('helper');
             currentText: leantime.i18n.__("language.currentText"),
             closeText: leantime.i18n.__("language.closeText"),
             buttonText: leantime.i18n.__("language.buttonText"),
+            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
             nextText: leantime.i18n.__("language.nextText"),
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
-            isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
         });
 	});
 
@@ -80,16 +79,16 @@ $helper = $this->get('helper');
         <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
     </div>
     <div class="clearfix"></div>
-    <div class="headtitle" style="margin:0px; background: #eee; <?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
+    <div class="headtitle" style="<?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
 
-	<table cellpadding="10" cellspacing="0" width="90%" style=" border: 1px solid #ccc; margin-top:0px;" class="table dataTable filterTable">
+	<table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
 
 		<tr>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
-                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
+                <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
 			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
-                <input type="text" id="dateTo" class="dateTo" name="dateTo"
+                <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
 			<td>
 			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
@@ -184,7 +183,7 @@ $helper = $this->get('helper');
 		$sum = $sum + $row['hours'];?>
 		<tr>
             <td data-order="<?=$this->e($row['id']); ?>">
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a>
                 <?php }else{ ?>
                     #<?=$row['id']?>
@@ -196,8 +195,8 @@ $helper = $this->get('helper');
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
 			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
 			<?php $diff = $row['planHours']-$row['hours']; ?>
-			<td data-order="<?php $diff; ?>"><?php echo $diff; ?></td>
-			<td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
+			<td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
+			<td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
 			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
 			<td><?php printf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])); ?></td>
@@ -205,7 +204,7 @@ $helper = $this->get('helper');
 			<td><?php $this->e($row['description']); ?></td>
 			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
 			<?php }else{ ?>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
 				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
 			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
@@ -213,7 +212,7 @@ $helper = $this->get('helper');
                 <?php if($row['invoicedComp'] == '1'){?>
                     <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
 			    <?php }else{ ?>
-                    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
                     <?php } ?>
                     <?php } ?>
@@ -227,16 +226,16 @@ $helper = $this->get('helper');
 			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
 
 			<td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
 				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
                 <?php } ?>
             </td>
 			<td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
             <?php } ?>
             <td>
-                <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?>
                 <?php } ?>
             </td>

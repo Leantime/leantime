@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class delUser
     {
@@ -16,13 +18,13 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
             $tpl = new core\template();
             $userRepo =  new repositories\users();
             $language = new core\language();
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
@@ -61,12 +63,6 @@ namespace leantime\domain\controllers {
                     $tpl->display('general.error');
 
                 }
-
-            } else {
-
-                $tpl->display('general.error');
-
-            }
 
         }
 

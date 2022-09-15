@@ -1,7 +1,18 @@
-# Leantime #
+
+<img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/>
+
+# Leantime&trade; #
+
+[![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+[![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
+[![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
+[![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
+
+<br />
 
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
+
 Features:
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
@@ -14,19 +25,24 @@ Features:
 * Multiple user roles (client, team member, client manager, manager, administrator)
 * Two-Factor Authentication
 * LDAP integration
-* Integrations with Mattermost, Slack & Zulip
+* Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
-* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T)	
+* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T), Japanese
 
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")        | ![alt text](public/images/Screenshots/TodoKanban.png "Kanban Board")  | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
-| ------------------------------------------------------------------------|:--------------------------------------------------------------------:| :--------------------------------------------------------------------: |
-| ![alt text](public/images/Screenshots/MilestoneGantt.png "Milestone Gantt Charts") | ![alt text](public/images/Screenshots/TimesheetsShowMy.png "My Timesheets") | ![alt text](public/images/Screenshots/Ideaboards.png "Idea Board")   |
-| ![alt text](public/images/Screenshots/Reports.png "Report Screens")   | ![alt text](public/images/Screenshots/LeanCanvas.png "Lean Canvas")    | ![alt text](public/images/Screenshots/MyCalendar.png "My Calendar") |
+| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")    | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+|---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+| ![alt text](public/images/Screenshots/ToDoView.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/images/Screenshots/Calendar.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
 
+### System Requirements ###
+
+* PHP 8+
+* MySQL 5.7+
+* Apache or Nginx (IIS works with some modifications)
 
 ### Installation (Production) ###
 
@@ -68,7 +84,7 @@ We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Doc
 To run the image enter your MySQL credentials and execute
 
 ```
-docker run -d -p 80:80 --network leantime-net \
+docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 -e LEAN_DB_HOST=mysql_leantime \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \
@@ -90,5 +106,5 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 ### Support ###
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Forum [https://community.leantime.io](https://community.leantime.io)
+* Discussions on [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
-* Contact Us [https://leantime.io/contact/](https://leantime.io/contact)

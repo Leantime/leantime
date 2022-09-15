@@ -11,36 +11,32 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
-                <h1><?php echo $this->__("headlines.project_with_name"); ?> <?php $this->e($this->get('currentProjectName')); ?></h1>
-            </div>
-            <div class="col-lg-4" style="text-align:right;padding-top:15px">
-                <?php if(count($this->get('allUsers')) == 1) {?>
 
-                        <a href="<?=BASE_URL ?>/users/newUser/" >
-                            <i class="fa fa-users" style="font-size:25px; margin-right:10px; vertical-align: middle"></i>
-                            <span style="font-size:14px; line-height:25px;">
-                                <?php echo $this->__("links.dont_do_it_alone"); ?>
-                            </span>
-                        </a>
+        <?php if(count($this->get('allUsers')) == 1) {?>
+            <a href="<?=BASE_URL ?>/users/newUser/" class="headerCTA">
+                <i class="fa fa-users"></i>
+                <span style="font-size:14px; line-height:25px;">
+                        <?php echo $this->__("links.dont_do_it_alone"); ?>
+                    </span>
+            </a>
+        <?php } ?>
 
-                <?php } ?>
+        <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
+        <h1><?php echo $this->__("headlines.project_with_name"); ?> <?php $this->e($this->get('currentProjectName')); ?></h1>
 
-            </div>
-        </div>
     </div>
+
 </div>
 
 <div class="maincontent">
-    <div class="maincontentinner">
+
 
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
             <div class="col-lg-8">
-               <div class="row" id="yourToDoContainer">
+                <div class="maincontentinner">
+                    <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle">
                             <?php echo sprintf($this->__("subtitles.todos_this_week"), count($this->get('tickets')["thisWeek"])); ?>
@@ -61,24 +57,27 @@
                         ?>
 
                         <ul class="sortableTicketList" >
-                            <li class="">
-                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link" onclick="jQuery('#ticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
-                                <div class="ticketBox hideOnLoad" id="ticket_new" style="text-align:center;">
+                            <?php
+                            if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <li class="">
+                                    <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link" onclick="jQuery('#ticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
+                                    <div class="ticketBox hideOnLoad" id="ticket_new" >
 
-                                    <form method="post" class="form-group">
-                                        <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:30%;" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
-                                        <input type="submit" value="<?php echo $this->__("buttons.save"); ?>" name="quickadd" style="margin-top:-1px;" />
-                                        <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
-                                        <input type="hidden" name="status" value="3" />
-                                        <input type="hidden" name="sprint" value="<?php echo $_SESSION['currentSprint']; ?>" />
-                                        <a href="javascript:void(0);" class="delete" onclick="jQuery('#ticket_new').toggle('fast'); jQuery('#ticket_new_link').toggle('fast');">
-                                            <i class="fas fa-times"></i> <?php echo $this->__("links.cancel"); ?>
-                                        </a>
-                                    </form>
+                                        <form method="post" class="form-group">
+                                            <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
+                                            <input type="submit" value="<?php echo $this->__("buttons.save"); ?>" name="quickadd"  />
+                                            <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
+                                            <input type="hidden" name="status" value="3" />
+                                            <input type="hidden" name="sprint" value="<?php echo $_SESSION['currentSprint']; ?>" />
+                                            <a href="javascript:void(0);" onclick="jQuery('#ticket_new').toggle('fast'); jQuery('#ticket_new_link').toggle('fast');">
+                                                <?php echo $this->__("links.cancel"); ?>
+                                            </a>
+                                        </form>
 
-                                    <div class="clearfix"></div>
-                                </div>
-                            </li>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </li>
+                            <?php } ?>
                             <?php
 
 
@@ -96,14 +95,12 @@
 
                                     ?>
                                     <li class="ui-state-default" id="ticket_<?php echo $row['id']; ?>" >
-                                        <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
+                                        <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                             <div class="row">
                                                 <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                    <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                    <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
-                                                    <?php
-
-                                                    if ($login::userIsAtLeast("developer")) {
+                                                    <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                         $clockedIn = $this->get("onTheClock");
                                                     ?>
 
@@ -113,7 +110,7 @@
                                                             </a>
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                                 <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -227,14 +224,14 @@
                                 }
                                 ?>
                                 <li class="ui-state-default" id="ticket_<?php echo $row['id']; ?>" >
-                                    <div class="ticketBox fixed" data-val="<?php echo $row['id']; ?>">
+                                    <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                         <div class="row">
                                             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                <strong><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                 <?php
-
-                                                if ($login::userIsAtLeast("developer")) {
+                            
+                                                if ($login::userIsAtLeast($roles::$editor)) {
                                                     $clockedIn = $this->get("onTheClock");
                                                     ?>
 
@@ -244,7 +241,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -339,83 +336,84 @@
                         <?php } ?>
                     </div>
                 </div>
-
+                </div>
             </div>
 
             <div class="col-lg-4">
+                <div class="maincontentinner">
+                    <div class="row" id="projectProgressContainer">
+                        <div class="col-md-12">
 
-                <div class="row" id="projectProgressContainer">
-                    <div class="col-md-12">
 
+                            <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
 
-                        <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
-
-                        <div id="canvas-holder" style="width:100%; height:250px;">
-                            <canvas id="chart-area" ></canvas>
+                            <div id="canvas-holder" style="width:100%; height:250px;">
+                                <canvas id="chart-area" ></canvas>
+                            </div>
+                            <br /><br />
                         </div>
-                        <br /><br />
                     </div>
-                </div>
-                <div class="row" id="milestoneProgressContainer">
-                    <div class="col-md-12">
-                        <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
-                        <ul class="sortableTicketList" >
-                            <?php
-                            if(count($this->get('milestones')) == 0){
-                                echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
-                                ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap'>".$this->__("links.goto_milestones")."</a>";
-                            }
-                            ?>
-                            <?php foreach($this->get('milestones') as $row){
-                                $percent = 0;
-
-
-                                if($row->editTo == "0000-00-00 00:00:00") {
-                                    $date = $this->__("text.no_date_defined");
-                                }else {
-                                    $date = new DateTime($row->editTo);
-                                    $date= $date->format($this->__("language.dateformat"));
+                    <div class="row" id="milestoneProgressContainer">
+                        <div class="col-md-12">
+                            <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
+                            <ul class="sortableTicketList" >
+                                <?php
+                                if(count($this->get('milestones')) == 0){
+                                    echo"<div class='center'><br /><h4>".$this->__("headlines.no_milestones")."</h4>
+                                    ".$this->__("text.milestones_help_organize_projects")."<br /><br /><a href='".BASE_URL."/tickets/roadmap'>".$this->__("links.goto_milestones")."</a>";
                                 }
-                                if($row->percentDone < 100 || $date >= new DateTime()) {
-                                    ?>
-                                    <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
-                                        <div class="ticketBox fixed">
+                                ?>
+                                <?php foreach($this->get('milestones') as $row){
+                                    $percent = 0;
 
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
-                                                </div>
-                                            </div>
-                                            <div class="row">
 
-                                                <div class="col-md-7">
-                                                    <?=$this->__("label.due") ?>
-                                                    <?php echo $date; ?>
+                                    if($row->editTo == "0000-00-00 00:00:00") {
+                                        $date = $this->__("text.no_date_defined");
+                                    }else {
+                                        $date = new DateTime($row->editTo);
+                                        $date= $date->format($this->__("language.dateformat"));
+                                    }
+                                    if($row->percentDone < 100 || $date >= new DateTime()) {
+                                        ?>
+                                        <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
+                                            <div class="ticketBox fixed">
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                <div class="row">
+
+                                                    <div class="col-md-7">
+                                                        <?=$this->__("label.due") ?>
+                                                        <?php echo $date; ?>
+                                                    </div>
+                                                    <div class="col-md-5" style="text-align:right">
+                                                        <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
+                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                <?php }
-                            } ?>
+                                        </li>
+                                    <?php }
+                                } ?>
 
-                        </ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
 </div>
 
 
@@ -423,29 +421,34 @@
 
    jQuery(document).ready(function() {
 
-       leantime.dashboardController.prepareHiddenDueDate();
-       leantime.ticketsController.initEffortDropdown();
-       leantime.ticketsController.initMilestoneDropdown();
-       leantime.ticketsController.initStatusDropdown();
+       <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+           leantime.dashboardController.prepareHiddenDueDate();
+           leantime.ticketsController.initEffortDropdown();
+           leantime.ticketsController.initMilestoneDropdown();
+           leantime.ticketsController.initStatusDropdown();
+           leantime.ticketsController.initDueDateTimePickers();
+       <?php }else{ ?>
+            leantime.generalController.makeInputReadonly(".maincontentinner");
+       <?php } ?>
 
        leantime.dashboardController.initProgressChart("chart-area", <?php echo round($projectProgress['percent']); ?>, <?php echo round((100 - $projectProgress['percent'])); ?>);
 
        <?php if($sprintBurndown != []){ ?>
 
-           //leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
-           leantime.dashboardController.initChartButtonClick('HourlyChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ]);
-           leantime.dashboardController.initChartButtonClick('EffortChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ]);
-           leantime.dashboardController.initChartButtonClick('NumChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
+           //leantime.dashboardController.initBurndown([<?php foreach($sprintBurndown as $value) echo "'".$value['date']."',"; ?>], [<?php foreach($sprintBurndown as $value) echo "'".round($value['plannedNum'], 2)."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
+           leantime.dashboardController.initChartButtonClick('HourlyChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedHours']."',"; ?>], [ <?php foreach($sprintBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; }  ?> ]);
+           leantime.dashboardController.initChartButtonClick('EffortChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedEffort']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; }  ?> ]);
+           leantime.dashboardController.initChartButtonClick('NumChartButton', [<?php foreach($sprintBurndown as $value) echo "'".$value['plannedNum']."',"; ?>], [ <?php foreach($sprintBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
 
        <?php } ?>
 
        <?php if($backlogBurndown != []){ ?>
 
-           //leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
+           //leantime.dashboardController.initBacklogBurndown([<?php foreach($backlogBurndown as $value) echo "'".$value['date']."',"; ?>], [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
 
-           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButton', [ <?php foreach($backlogBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; };  ?> ]);
-           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; };  ?> ]);
-           leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; };  ?> ]);
+           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButton', [ <?php foreach($backlogBurndown as $value) { if($value['actualHours'] !== '') echo "'".round($value['actualHours'])."',"; }  ?> ]);
+           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualEffort'] !== '') echo "'".$value['actualEffort']."',"; }  ?> ]);
+           leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
 
        <?php } ?>
 

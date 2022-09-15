@@ -3,9 +3,11 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use leantime\domain\services\auth;
 
     class newTicket
     {
@@ -22,6 +24,8 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $this->tpl = new core\template();
 
             $this->language = new core\language();
@@ -46,13 +50,14 @@ namespace leantime\domain\controllers {
          *
          * DEPRECATED
          */
+
+        /*
         public function run()
         {
 
             $tpl = new core\template();
             $ticketRepo = new repositories\tickets();
 
-            $helper = new core\helper();
             $projectObj = new repositories\projects();
             $user = new repositories\users();
             $language = new core\language();
@@ -105,7 +110,7 @@ namespace leantime\domain\controllers {
                     'userId' => $_SESSION['userdata']['id'],
                     'userFirstname' => $userinfo["firstname"],
                     'userLastname' => $userinfo["lastname"],
-                    'date' => $helper->timestamp2date(date("Y-m-d H:i:s"), 2),
+                    'date' => $this->language->getFormattedDateString(date("Y-m-d H:i:s")),
                     'dateToFinish' => $_POST['dateToFinish'],
                     'status' => $_POST['status'],
                     'storypoints' => $_POST['storypoints'],
@@ -131,10 +136,10 @@ namespace leantime\domain\controllers {
 
                 } else {
 
-                    $values['date'] = $helper->timestamp2date($values['date'], 4);
-                    $values['dateToFinish'] = $helper->timestamp2date($values['dateToFinish'], 4);
-                    $values['editFrom'] = $helper->timestamp2date($values['editFrom'], 4);
-                    $values['editTo'] = $helper->timestamp2date($values['editTo'], 4);
+                    $values['date'] = $this->language->getISODateString($values['date']);
+                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
 
                     // returns last inserted id
                     $id = $ticketRepo->addTicket($values);
@@ -157,7 +162,7 @@ namespace leantime\domain\controllers {
 
 
                     if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $tpl->redirect($_SESSION['lastPage']);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
 
@@ -180,12 +185,10 @@ namespace leantime\domain\controllers {
             $tpl->assign('employees', $user->getEmployees());
             $tpl->assign('timesheetsAllHours', 0);
 
-            $tpl->assign('helper', $helper);
-
-            $tpl->display('tickets.newTicket');
+            $tpl->displayPartial('tickets.newTicketModal');
 
         }
-
+        */
 
         public function get () {
 
@@ -217,7 +220,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-            $this->tpl->display('tickets.newTicket');
+            $this->tpl->displayPartial('tickets.newTicketModal');
 
 
         }
@@ -232,9 +235,9 @@ namespace leantime\domain\controllers {
 
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
-                    if(isset($params["saveAndCloseTicket"]) === true) {
+                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
 
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result."?closeModal=1");
 
                     }else {
 
@@ -266,7 +269,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-                    $this->tpl->display('tickets.newTicket');
+                    $this->tpl->displayPartial('tickets.newTicketModal');
 
                 }
 

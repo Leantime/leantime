@@ -28,7 +28,9 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         <div class="row">
             <div class="col-md-6">
+                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
+                <?php } ?>
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
@@ -67,7 +69,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
         <?php
         if(count($milestones) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
-            echo"<div style='width:50%' class='svgContainer'>";
+            echo"<div style='width:30%' class='svgContainer'>";
             echo file_get_contents(ROOT."/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
@@ -132,9 +134,12 @@ jQuery(document).ready(function(){
             }
             ?>
         ];
+        <?php } ?>
 
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>');
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
+    <?php }else { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
     <?php } ?>
 
 </script>
-

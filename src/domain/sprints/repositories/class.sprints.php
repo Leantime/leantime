@@ -9,13 +9,12 @@ namespace leantime\domain\repositories {
     {
 
 
-
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        function __construct()
+        public function __construct()
         {
 
             $this->db = core\db::getInstance();
@@ -118,7 +117,7 @@ namespace leantime\domain\repositories {
          * getCurrentSprintId - get current sprint for a project
          *
          * @access public
-         * @return array
+         * @return mixed
          */
         public function getCurrentSprint($projectId)
         {
@@ -131,7 +130,7 @@ namespace leantime\domain\repositories {
 					zp_sprints.endDate
 				FROM zp_sprints 
 				WHERE zp_sprints.projectId = :id
-				AND zp_sprints.startDate < NOW() && zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1";
+				AND zp_sprints.startDate < NOW() AND zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
@@ -243,4 +242,4 @@ namespace leantime\domain\repositories {
 
     }
 
-}?>
+}

@@ -23,7 +23,7 @@ namespace leantime\domain\controllers {
         {
 
             $this->tpl = new core\template();
-            $this->usersService = new services\users;
+            $this->usersService = new services\users();
             $this->filesRepository = new repositories\files();
 
         }
@@ -102,7 +102,6 @@ namespace leantime\domain\controllers {
             }
 
             if(isset($params['patchViewSettings'])) {
-
                 if($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
                     echo "{status:ok}";
                 }

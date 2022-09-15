@@ -65,6 +65,7 @@
         }
 
         public function getStatusLabels () {
+
             foreach($this->statusLabels as $key => $statusLabel){
                 $this->statusLabels[$key] = $this->language->__($statusLabel);
             }
@@ -83,7 +84,6 @@
             }
 
             if(isset($_SESSION["projectsettings"]["researchlabels"])) {
-
 
                 return $_SESSION["projectsettings"]["researchlabels"];
 
@@ -467,6 +467,68 @@
             $stmn->execute();
 
             $stmn->closeCursor();
+        }
+
+        public function getNumberOfResearchItems($projectId = null)
+        {
+
+            $sql = "SELECT
+					count(zp_canvas_items.id) AS researchCount	
+				FROM 
+				zp_canvas_items
+				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
+				WHERE canvasBoard.type = 'leancanvas'  ";
+
+            if(!is_null($projectId)){
+                $sql.=" AND canvasBoard.projectId = :projectId";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if(!is_null($projectId)){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['researchCount']) === true) {
+                return $values['researchCount'];
+            }else{
+                return 0;
+            }
+        }
+
+        public function getNumberOfBoards($projectId=null)
+        {
+
+            $sql = "SELECT
+						count(zp_canvas.id) AS boardCount
+				FROM 
+				    zp_canvas
+				";
+
+            if(!is_null($projectId)){
+                $sql.=" WHERE canvasBoard.projectId = :projectId";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if(!is_null($projectId)){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['boardCount'])) {
+                return $values['boardCount'];
+            }
+
+            return 0;
+
         }
 
     }

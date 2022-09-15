@@ -10,15 +10,15 @@ namespace leantime\domain\controllers {
         private $tpl;
         private $settings;
 
-
         public function __construct()
         {
             $this->tpl = new core\template();
-            $this->settings = new core\settings();
+            $this->settings = new core\appSettings();
         }
 
         public function run()
         {
+
             $this->tpl->assign("version", $this->settings->appVersion);
             $this->tpl->displayPartial('general.footer');
         }

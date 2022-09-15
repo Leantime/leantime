@@ -36,6 +36,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
+            $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
             $this->tpl->assign('types', $this->ticketService->getTicketTypes());
@@ -66,7 +67,7 @@ namespace leantime\domain\controllers {
 
                 $result = $this->ticketService->quickAddTicket($params);
 
-                if(isset($result["status"]) ) {
+                if(is_array($result)) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 }
             }

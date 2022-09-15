@@ -28,13 +28,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $role;
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $id;
 
@@ -92,6 +92,30 @@ namespace leantime\domain\repositories {
         }
 
         /**
+         * getLastLogin - get the date of the last login of any user
+         *
+         * @access public
+         * @param  $id
+         * @return string|null returns datetime string with last login or null if nothing could be found
+         */
+        public function getLastLogin() :string|null
+        {
+
+            $sql = "SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['lastlogin'])) {
+                return $values['lastlogin'];
+            }
+            return null;
+        }
+
+        /**
          * getUserByEmail - get on user from db
          *
          * @access public
@@ -145,10 +169,9 @@ namespace leantime\domain\repositories {
             $sql = "SELECT 
 			zp_user.id,
 			zp_user.firstname,
-			zp_user.lastname,
-			zp_roles.roleDescription,
-			zp_roles.roleName AS role
-		 FROM zp_user LEFT JOIN zp_roles ON zp_user.role = zp_roles.id WHERE zp_roles.roleName IN('developer','admin','manager') ORDER BY lastname";
+			zp_user.lastname
+		 FROM zp_user 
+		    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -293,7 +316,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  $username
          * @param  $userId
-         * @return boolean
+         * @return bool
          */
         public function usernameExist($username, $userId ='')
         {

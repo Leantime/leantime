@@ -44,9 +44,11 @@ $canvasTitle = "";
 
                             <?php }     ?>
                         </select><br />
+                             <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                         <small><a href="javascript:void(0)" class="addCanvasLink "><?=$this->__('links.create_plan'); ?></a></small> |
                         <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__('links.edit_board'); ?></a></small>
-                        <?php } ?>
+                        <?php }
+                        } ?>
                     </form>
 
                     </span>
@@ -72,7 +74,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php  if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=well" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["well"]; ?>
@@ -86,7 +88,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -104,7 +106,7 @@ $canvasTitle = "";
                                             <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -161,7 +163,9 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
-                        <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=well" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                        <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
+                            <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=well" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                        <?php } ?>
                     </div>
 
 
@@ -170,7 +174,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php  if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=notwell" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["notwell"]; ?>
@@ -184,7 +188,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -202,7 +206,7 @@ $canvasTitle = "";
                                             <h4><a href="/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -259,7 +263,9 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
+                        <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=notwell" class="retroModal" id="well"><?=$this->__('links.add_more');?></a>
+                        <?php } ?>
                     </div>
 
 
@@ -268,7 +274,7 @@ $canvasTitle = "";
                 <div class="column" style="width:33.33%">
 
                     <h4 class="widgettitle title-primary">
-                        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+                        <?php  if($login::userIsAtLeast($roles::$manager)) { ?>
                             <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=retrolabels&label=startdoing" class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
                         <?php } ?>
                         <?php echo $canvasLabels["startdoing"]; ?>
@@ -282,7 +288,7 @@ $canvasTitle = "";
                                     <div class="row">
                                         <div class="col-md-12">
 
-                                            <?php if ($login::userIsAtLeast("developer")) { ?>
+                                            <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
                                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -300,7 +306,7 @@ $canvasTitle = "";
                                             <h4><a href="<?=BASE_URL ?>/retrospectives/retroDialog/<?php echo $row["id"];?>" class="retroModal"  data="item_<?php echo $row["id"];?>"><?php $this->e($row["description"]);?></a></h4>
 
                                             <div class="mainIdeaContent">
-                                                <?php  $this->e($row["data"]); ?>
+                                                <?=$row["data"]; ?>
                                             </div>
 
                                             <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -357,7 +363,9 @@ $canvasTitle = "";
                             <?php } ?>
                         <?php } ?>
                         <br />
+                        <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="<?=BASE_URL ?>/retrospectives/retroDialog?type=startdoing" class="retroModal" id="startdoing"><?=$this->__('links.add_more');?></a>
+                        <?php } ?>
                     </div>
 
                 </div>
@@ -373,7 +381,7 @@ $canvasTitle = "";
 
         <div class="clearfix"></div>
 
-        <?php if ($login::userIsAtLeast("clientManager")) { ?>
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             <br />
             <a href="<?=BASE_URL ?>/retrospectives/delCanvas/<?php echo $this->get('currentCanvas')?>" class="delete right"><?=$this->__('links.delete_board') ?></a>
         <?php } ?>
@@ -381,7 +389,7 @@ $canvasTitle = "";
     <?php } else {
 
          echo "<br /><br /><div class='center'>";
-        echo"<div style='width:50%' class='svgContainer'>";
+        echo"<div style='width:30%' class='svgContainer'>";
             echo file_get_contents(ROOT."/images/svg/undraw_team_spirit_hrr4.svg");
         echo"</div>";
 
@@ -389,8 +397,10 @@ $canvasTitle = "";
 
         <br/><h4><?php echo $this->__("headline.no_retrospectives_yet") ?></h4><br/>
         <?php echo $this->__("subtitles.start_retro_and_discuss_improvements") ?><br/><br/>
+        <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
         <a href="javascript:void(0)"
            class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_retrospective") ?></a>
+        <?php } ?>
         </div>
 
     <?php
@@ -458,8 +468,17 @@ $canvasTitle = "";
 
         leantime.retroController.initModals();
         leantime.retroController.initBoardControlModal();
-        leantime.retroController.initUserDropdown();
+
         leantime.retroController.setKanbanHeights();
+
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
+            leantime.retroController.initUserDropdown();
+        <?php }else{ ?>
+
+        leantime.generalController.makeInputReadonly(".maincontentinner");
+
+        <?php } ?>
 
         <?php
         if(isset($_SESSION['userdata']['settings']["modals"]["retrospectives"]) === false || $_SESSION['userdata']['settings']["modals"]["retrospectives"] == 0) {     ?>

@@ -7,7 +7,10 @@
 
 namespace leantime\core {
 
+    use JetBrains\PhpStorm\NoReturn;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class template
     {
@@ -23,7 +26,7 @@ namespace leantime\core {
          * @access private
          * @var    string
          */
-        private $controller = '';
+        private $frontcontroller = '';
 
         /**
          *
@@ -53,6 +56,11 @@ namespace leantime\core {
 
         public $template = '';
 
+        public $mainContent = '';
+
+        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+
+
         public $picture = array(
             'calendar'    => 'iconfa-calendar',
             'clients'     => 'iconfa-group',
@@ -75,9 +83,8 @@ namespace leantime\core {
          */
         public function __construct()
         {
-            $this->controller = FrontController::getInstance();
-
             $this->language = new language();
+            $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
         }
 
@@ -109,19 +116,6 @@ namespace leantime\core {
 
         }
 
-        public function getModulePicture()
-        {
-
-            $module = frontcontroller::getModuleName($this->template);
-
-            $picture = $this->picture['default'];
-            if (isset($this->picture[$module])) {
-                $picture = $this->picture[$module];
-            }
-
-            return $picture;
-        }
-
         /**
          * display - display template from folder template including main layout wrapper
          *
@@ -129,40 +123,74 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template)
+        public function display($template, $status = 200, $layout = "app")
         {
 
             //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
+            $settings = new appSettings();
+            $login = services\auth::getInstance();
+            $roles = new roles();
+
             $language = $this->language;
 
             $this->template = $template;
 
-            include '../src/content.php';
+            //http_response_code($this->validStatusCodes[$status] ?? 200);
 
-            $mainContent = ob_get_clean();
+            //Load Layout file
+            ob_start();
+
+            $layout = htmlspecialchars($layout);
+
+            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
+                require ROOT . '/../src/layouts/'.$layout.'.php';
+            }else{
+                require ROOT . '/../src/layouts/app.php';
+            }
+
+            $layoutContent = ob_get_clean();
+
+            //Load Template
             ob_start();
 
             //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
+            $action = $this->frontcontroller::getActionName($template);
 
-            $module = frontcontroller::getModuleName($template);
+            $module = $this->frontcontroller::getModuleName($template);
 
-            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-                throw new Exception($this->__("notifications.no_template"));
+            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
+                throw new \Exception($this->__("notifications.no_template"));
             }
 
-            include $strTemplate;
+            require_once $strTemplate;
 
-            $subContent = ob_get_clean();
+            $content = ob_get_clean();
 
-            $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+            //Load template content into layout content
+            $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
 
-            echo $content;
+            echo $render;
+
+        }
+
+        /**
+         * displayJson - returns json data
+         *
+         * @access public
+         * @param  $jsonContent
+         * @return void
+         */
+        public function displayJson($jsonContent) {
+
+            header('Content-Type: application/json; charset=utf-8');
+            if($jsonContent !== false) {
+                echo $jsonContent;
+            }else{
+                echo "{Invalid Json}";
+            }
 
         }
 
@@ -173,49 +201,10 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template)
+        public function displayPartial($template, $statusCode = 200)
         {
 
-            //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
-            $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
-
-            $this->template = $template;
-
-            //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
-
-            $module = frontcontroller::getModuleName($template);
-
-                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
-                error_log($this->__("notifications.no_template"), 0);
-                echo $this->__("notifications.no_template");
-
-            } else {
-
-                include $strTemplate;
-
-            }
-
-        }
-
-
-        /**
-         * includeAction - possible to include Actions from erverywhere
-         *
-         * @access public
-         * @param  $completeName
-         * @return void
-         */
-        public function includeAction($completeName)
-        {
-
-            $this->controller->includeAction($completeName);
+            $this->display($template, $statusCode, 'blank');
 
         }
 
@@ -263,8 +252,9 @@ namespace leantime\core {
 
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
+            $settings = new appSettings();
+            $login = services\auth::getInstance();
+            $roles = new roles();
 
 
             $submodule = array("module"=>'', "submodule"=>'');
@@ -285,35 +275,243 @@ namespace leantime\core {
 
         }
 
-        public function displaySubmoduleTitle($alias)
+        public function displayNotification()
         {
 
-            $setting = new repositories\setting();
+            $notification = '';
+            $note = $this->getNotification();
             $language = $this->language;
 
-            $title = '';
+            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
-            if ($setting->submoduleHasRights($alias) !== false) {
+                $notification = '<script type="text/javascript">
+                                  jQuery.jGrowl("'.$language->__($note['msg'], false).'", {theme: "'.$note['type'].'"});
+                                </script>';
 
-                $submodule = $setting->getSubmodule($alias);
+                $_SESSION['notification'] = "";
+                $_SESSION['notificationType'] = "";
 
-                if ($submodule['title'] !== '') {
-
-                    $title = $this->__($submodule['title']);
-
-                } else {
-
-                    $title = ucfirst(str_replace('.sub.php', $submodule['submodule']));
-
-                }
             }
 
-            return $title;
+            return $notification;
+        }
+
+        public function displayInlineNotification()
+        {
+
+            $notification = '';
+            $note = $this->getNotification();
+            $language = $this->language;
+
+
+            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
+
+                $notification = "<div class='inputwrapper login-alert login-".$note['type']."'>
+                                    <div class='alert alert-".$note['type']."'>
+                                        ".$language->__($note['msg'], false)."
+                                    </div>
+								</div>
+								";
+
+                $_SESSION['notification'] = "";
+                $_SESSION['notificationType'] = "";
+
+            }
+
+            return $notification;
+        }
+
+        public function redirect($url): void
+        {
+
+            header("Location:".trim($url));
+            exit();
+        }
+
+        public function getSubdomain(): string
+        {
+
+            preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
+
+            $domain = $_SERVER['HTTP_HOST'];
+            $tmp = explode('.', $domain); // split into parts
+            $subdomain = $tmp[0];
+
+            return $subdomain;
+
+        }
+
+        public function __($index): string
+        {
+
+            return $this->language->__($index);
+
+        }
+
+        //Echos and escapes content
+        public function e($content): void
+        {
+
+
+            $escaped = $this->escape($content);
+
+            echo $escaped;
+
+        }
+
+        public function escape($content): string
+        {
+
+            if(!is_null($content)) {
+                return htmlentities($content);
+            }
+
+            return '';
+
+        }
+
+        public function escapeMinimal($content): string
+        {
+
+            $config = array(
+                'safe'=>1,
+                'style_pass'=>1,
+                'cdata'=>1,
+                'comment'=>1,
+                'deny_attribute'=>'* -href -style',
+                'keep_bad'=>0);
+
+            if(!is_null($content)) {
+                return htmLawed($content, array('valid_xhtml'=>1));
+            }
+
+            return '';
+
         }
 
         /**
-         * displayLink
+         * getFormattedDateString - returns a language specific formatted date string. wraps language class method
+         *
+         * @access public
+         * @param $date string
+         * @return string
          */
+        public function getFormattedDateString($date): string
+        {
+
+           return  $this->language->getFormattedDateString($date);
+
+        }
+
+        /**
+         * getFormattedTimeString - returns a language specific formatted time string. wraps language class method
+         *
+         * @access public
+         * @param $date string
+         * @return string
+         */
+        public function getFormattedTimeString($date): string
+        {
+
+            return  $this->language->getFormattedTimeString($date);
+
+        }
+
+        //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
+        //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
+        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {
+            $printedLength = 0;
+            $position = 0;
+            $tags = array();
+            $isUtf8 = true;
+            $truncate = "";
+
+            // For UTF-8, we need to count multibyte sequences as one character.
+            $re = $isUtf8
+                ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}'
+                : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
+
+            while ($printedLength < $maxLength && preg_match($re, $html, $match, PREG_OFFSET_CAPTURE, $position))
+            {
+                list($tag, $tagPosition) = $match[0];
+
+                // Print text leading up to the tag.
+                $str = substr($html, $position, $tagPosition - $position);
+                if ($printedLength + strlen($str) > $maxLength)
+                {
+                    $truncate .= substr($str, 0, $maxLength - $printedLength);
+                    $printedLength = $maxLength;
+                    break;
+                }
+
+                $truncate .= $str;
+                $printedLength += strlen($str);
+                if ($printedLength >= $maxLength) break;
+
+                if ($tag[0] == '&' || ord($tag) >= 0x80)
+                {
+                    // Pass the entity or UTF-8 multibyte sequence through unchanged.
+                    $truncate .= $tag;
+                    $printedLength++;
+                }
+                else
+                {
+                    // Handle the tag.
+                    $tagName = $match[1][0];
+                    if ($tag[1] == '/')
+                    {
+                        // This is a closing tag.
+
+                        $openingTag = array_pop($tags);
+                        assert($openingTag == $tagName); // check that tags are properly nested.
+
+                        $truncate .= $tag;
+                    }
+                    elseif ($tag[strlen($tag) - 2] == '/')
+                    {
+                        // Self-closing tag.
+                        $truncate .= $tag;
+                    }
+                    else
+                    {
+                        // Opening tag.
+                        $truncate .= $tag;
+                        $tags[] = $tagName;
+                    }
+                }
+
+                // Continue after the tag.
+                $position = $tagPosition + strlen($tag);
+            }
+
+            // Print any remaining text.
+            if ($printedLength < $maxLength && $position < strlen($html))
+                $truncate .= sprintf(substr($html, $position, $maxLength - $printedLength));
+
+            // Close any open tags.
+            while (!empty($tags))
+                $truncate .= sprintf('</%s>', array_pop($tags));
+
+            if(strlen($truncate)>$maxLength) {
+                $truncate .= $ending;
+            }
+
+            return $truncate;
+        }
+
+        public function getModulePicture()
+        {
+
+            $module = frontcontroller::getModuleName($this->template);
+
+            $picture = $this->picture['default'];
+            if (isset($this->picture[$module])) {
+                $picture = $this->picture[$module];
+            }
+
+            return $picture;
+        }
+
         public function displayLink($module, $name, $params = null, $attribute = null)
         {
 
@@ -357,231 +555,6 @@ namespace leantime\core {
 
             return $returnLink;
         }
-
-        public function displayNotification()
-        {
-
-            $notification = '';
-            $note = $this->getNotification();
-            $language = $this->language;
-
-            $alertIcons = array(
-                "success" => '<i class="far fa-check-circle"></i>',
-                "error" => '<i class="fas fa-exclamation-triangle"></i>',
-                "info" => '<i class="fas fa-info-circle"></i>'
-            );
-
-            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-
-                $notification = "<div class='alert alert-".$note['type']."'>
-                                    <div class='infoBox'>
-                                        ".$alertIcons[$note['type']]."
-                                    </div>
-								<button data-dismiss='alert' class='close' type='button'>×</button>
-								<div class='alert-content'><h4>"
-                    .ucfirst($note['type']).
-                    "!</h4>"
-                    .$language->__($note['msg'], false).
-                    "
-								</div>
-								<div class='clearall'></div>
-							</div>";
-
-                $_SESSION['notification'] = "";
-                $_SESSION['notificationType'] = "";
-
-            }
-
-            return $notification;
-        }
-
-        public function redirect($url): void
-        {
-
-            header("Location:".trim($url));
-            exit();
-        }
-
-        public function getSubdomain(): string
-        {
-
-            preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
-
-            $domain = $_SERVER['HTTP_HOST'];
-            $tmp = explode('.', $domain); // split into parts
-            $subdomain = $tmp[0];
-
-            return $subdomain;
-
-        }
-
-        public function __($index): string
-        {
-
-            return $this->language->__($index);
-
-        }
-
-        //Echos and escapes content
-        public function e($content): void
-        {
-
-            $escaped = $this->escape($content);
-
-            echo $escaped;
-
-        }
-
-        public function escape($content): string
-        {
-
-            return htmlentities($content);
-
-        }
-
-        /**
-         * getFormattedDateString - returns a language specific formatted date string. wraps language class method
-         *
-         * @access public
-         * @param $date string
-         * @return string
-         */
-        public function getFormattedDateString($date): string
-        {
-
-           return  $this->language->getFormattedDateString($date);
-
-        }
-
-        /**
-         * getFormattedTimeString - returns a language specific formatted time string. wraps language class method
-         *
-         * @access public
-         * @param $date string
-         * @return string
-         */
-        public function getFormattedTimeString($date): string
-        {
-
-            return  $this->language->getFormattedTimeString($date);
-
-        }
-
-
-        /**
-         * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
-         * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
-         *
-         * Licensed under The MIT License
-         * For full copyright and license information, please see the LICENSE.txt
-         * Redistributions of files must retain the above copyright notice.
-         *
-         * Copy of Truncates text method from cakePHP
-         *
-         * Cuts a string to the length of $length and replaces the last characters
-         * with the ellipsis if the text is longer than length.
-         *
-         * ### Options:
-         *
-         * - `ellipsis` Will be used as Ending and appended to the trimmed string
-         * - `exact` If false, $text will not be cut mid-word
-         * - `html` If true, HTML tags would be handled correctly
-         *
-         * @param string $text String to truncate.
-         * @param int $length Length of returned string, including ellipsis.
-         * @param array $options An array of HTML attributes and options.
-         * @return string Trimmed string.
-         * @see \Cake\Utility\Text::truncate()
-         * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-text
-         * @link https://github.com/cakephp/cakephp/blob/master/src/View/Helper/TextHelper.php
-         */
-        public function truncate($text, $length = 100, $ending = '...', $exact = true, $considerHtml = false) {
-            if (is_array($ending)) {
-                extract($ending);
-            }
-            if ($considerHtml) {
-                if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
-                    return $text;
-                }
-                $totalLength = mb_strlen($ending);
-                $openTags = array();
-                $truncate = '';
-                preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
-                foreach ($tags as $tag) {
-                    if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
-                        if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
-                            array_unshift($openTags, $tag[2]);
-                        } else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
-                            $pos = array_search($closeTag[1], $openTags);
-                            if ($pos !== false) {
-                                array_splice($openTags, $pos, 1);
-                            }
-                        }
-                    }
-                    $truncate .= $tag[1];
-
-                    $contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
-                    if ($contentLength + $totalLength > $length) {
-                        $left = $length - $totalLength;
-                        $entitiesLength = 0;
-                        if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
-                            foreach ($entities[0] as $entity) {
-                                if ($entity[1] + 1 - $entitiesLength <= $left) {
-                                    $left--;
-                                    $entitiesLength += mb_strlen($entity[0]);
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-
-                        $truncate .= mb_substr($tag[3], 0 , $left + $entitiesLength);
-                        break;
-                    } else {
-                        $truncate .= $tag[3];
-                        $totalLength += $contentLength;
-                    }
-                    if ($totalLength >= $length) {
-                        break;
-                    }
-                }
-
-            } else {
-                if (mb_strlen($text) <= $length) {
-                    return $text;
-                } else {
-                    $truncate = mb_substr($text, 0, $length - strlen($ending));
-                }
-            }
-            if (!$exact) {
-                $spacepos = mb_strrpos($truncate, ' ');
-                if (isset($spacepos)) {
-                    if ($considerHtml) {
-                        $bits = mb_substr($truncate, $spacepos);
-                        preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-                        if (!empty($droppedTags)) {
-                            foreach ($droppedTags as $closingTag) {
-                                if (!in_array($closingTag[1], $openTags)) {
-                                    array_unshift($openTags, $closingTag[1]);
-                                }
-                            }
-                        }
-                    }
-                    $truncate = mb_substr($truncate, 0, $spacepos);
-                }
-            }
-
-            $truncate .= $ending;
-
-            if ($considerHtml) {
-                foreach ($openTags as $tag) {
-                    $truncate .= '</'.$tag.'>';
-                }
-            }
-
-            return $truncate;
-        }
-
 
 
     }

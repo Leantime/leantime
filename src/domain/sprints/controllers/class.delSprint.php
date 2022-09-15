@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class delSprint
     {
@@ -16,12 +18,14 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $tpl = new core\template();
             $sprintRepo = new repositories\sprints();
             $language = new core\language();
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);

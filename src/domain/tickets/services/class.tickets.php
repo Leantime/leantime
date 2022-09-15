@@ -2,6 +2,7 @@
 
 namespace leantime\domain\services {
 
+    use DateTime;
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -25,6 +26,7 @@ namespace leantime\domain\services {
             $this->language = new core\language();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
+            $this->settingsRepo = new repositories\setting();
 
         }
 
@@ -32,6 +34,56 @@ namespace leantime\domain\services {
         public function getStatusLabels() {
 
             return $this->ticketRepository->getStateLabels();
+
+        }
+
+        public function saveStatusLabels($params) {
+
+            if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
+
+                $statusArray = array();
+
+                foreach($params['labelKeys'] as $labelKey) {
+
+                    $labelKey = filter_var($labelKey, FILTER_SANITIZE_NUMBER_INT);
+
+                    $statusArray[$labelKey] = array(
+                        "name" => $params['label-'.$labelKey] ?? '',
+                        "class" => $params['labelClass-'.$labelKey] ?? 'label-default',
+                        "statusType" => $params['labelType-'.$labelKey] ?? 'NEW',
+                        "kanbanCol" => $params['labelKanbanCol-'.$labelKey] ?? false,
+                        "sortKey" => $params['labelSort-'.$labelKey] ?? 99
+                    );
+                }
+
+                unset($_SESSION["projectsettings"]["ticketlabels"]);
+
+                return $this->settingsRepo->saveSetting("projectsettings.".$_SESSION['currentProject'].".ticketlabels", serialize($statusArray));
+
+            }else{
+
+                return false;
+
+            }
+        }
+
+        public function getKanbanColumns() {
+
+            $statusList = $this->ticketRepository->getStateLabels();
+
+            $visibleCols = array();
+
+            foreach($statusList as $key=>$status) {
+
+                if($status['kanbanCol']){
+
+                    $visibleCols[$key] = $status;
+
+                }
+
+            }
+
+            return $visibleCols;
 
         }
 
@@ -154,10 +206,10 @@ namespace leantime\domain\services {
                 if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                     $tickets["later"][] = $row;
                 }else {
-                    $date = new \DateTime($row['dateToFinish']);
+                    $date = new DateTime($row['dateToFinish']);
 
                     $nextFriday = strtotime('friday this week');
-                    $nextFridayDateTime = new \DateTime();
+                    $nextFridayDateTime = new DateTime();
                     $nextFridayDateTime->setTimestamp($nextFriday);
                     if($date <= $nextFridayDateTime){
                         $tickets["thisWeek"][] = $row;
@@ -186,7 +238,10 @@ namespace leantime\domain\services {
 
         public function getAllSubtasks($ticketId)
         {
-           return $this->ticketRepository->getAllSubtasks($ticketId);
+            $values = $this->ticketRepository->getAllSubtasks($ticketId);
+
+
+            return $values;
         }
 
         //Add
@@ -464,16 +519,17 @@ namespace leantime\domain\services {
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
-                'description' => $values['description'],
+                'description' => $values['description'] ?? '',
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
+                'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
                 'storypoints' => "",
-                'hourRemaining' => $values['hourRemaining'],
-                'planHours' => $values['planHours'],
+                'hourRemaining' => $values['hourRemaining'] ?? 0,
+                'planHours' => $values['planHours'] ?? 0,
                 'sprint' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",
@@ -512,7 +568,7 @@ namespace leantime\domain\services {
             //This represents status & kanban sorting
             foreach($params as $status=>$ticketList){
 
-                if(is_numeric($status)) {
+                if(is_numeric($status) && !empty($ticketList)) {
 
                     $tickets = explode("&", $ticketList);
 
@@ -522,7 +578,7 @@ namespace leantime\domain\services {
 
                             if($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false){
                                 return false;
-                            };
+                            }
 
                         }
                     }

@@ -20,7 +20,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $id;
 
@@ -126,6 +126,24 @@ namespace leantime\domain\repositories {
 
             return $values;
 
+        }
+
+        public function getNumberOfClients()
+        {
+
+            $sql = "SELECT COUNT(id) AS clientCount FROM `zp_clients`";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['clientCount']) === true) {
+                return $values['clientCount'];
+            }else{
+                return 0;
+            }
         }
 
         public function isClient($values)
@@ -259,7 +277,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function hasTickets($id)
         {

@@ -17,7 +17,7 @@ namespace leantime\domain\controllers {
          * constructor - initialize private variables
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function __construct()
         {
@@ -31,12 +31,12 @@ namespace leantime\domain\controllers {
          * get - handle get requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function get($params)
         {
             if(isset($params['module']) && $params['module'] != "") {
-                $filteredInput = filter_var($params['module'], FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+                $filteredInput = htmlspecialchars($params['module']);
                 $this->tpl->displayPartial('help.'.$filteredInput);
             }
 
@@ -47,7 +47,7 @@ namespace leantime\domain\controllers {
          * post - handle post requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function post($params)
         {
@@ -58,7 +58,7 @@ namespace leantime\domain\controllers {
          * put - handle put requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function put($params)
         {
@@ -69,7 +69,7 @@ namespace leantime\domain\controllers {
          * delete - handle delete requests
          *
          * @access public
-         * @param  paramters or body of the request
+         *
          */
         public function delete($params)
         {

@@ -39,15 +39,29 @@ namespace leantime\domain\controllers {
         {
 
             header('Content-Type: application/javascript');
-            echo "
-                var leantime = leantime || {};
+
+            $decodedString = json_encode($this->i18n->readIni());
+
+            $result = $decodedString ? $decodedString : '{}';
+
+            echo "var leantime = leantime || {};
                 var leantime = {
                     i18n: {
-                        dictionary: ".json_encode($this->i18n->readIni()).",
+                        dictionary: ".$result.",
+                        __: function(index){ return leantime.i18n.dictionary[index];  }
+                    }
+                };";
+/*
+            echo "var leantime = leantime || {};
+                var leantime = {
+                    i18n: {
+                        dictionary: " . $decodedString ? $decodedString : '{}' .",
                         __: function(index){ return leantime.i18n.dictionary[index];  }
                     }
                 };
             ";
+*/
+
         }
 
     }

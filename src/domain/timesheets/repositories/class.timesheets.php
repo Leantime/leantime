@@ -2,6 +2,7 @@
 
 namespace leantime\domain\repositories {
 
+    use DateTime;
     use leantime\core;
     use pdo;
 
@@ -216,6 +217,27 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getHoursBooked()
+        {
+            $sql = "SELECT SUM(hours) AS hoursBooked
+                    FROM zp_timesheets;";
+
+            $stmn = $this->db->database->prepare($sql);
+
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['hoursBooked']) === true) {
+                return $values['hoursBooked'];
+            }else{
+                return 0;
+            }
 
             return $values;
         }
@@ -688,8 +710,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
             $stmn->bindValue(':time', time(), PDO::PARAM_STR);
 
-            $stmn->execute();
+            $value = $stmn->execute();
             $stmn->closeCursor();
+
+            return $value;
 
         }
 
@@ -802,9 +826,9 @@ namespace leantime\domain\repositories {
                 $onTheClock["id"] = $results[0]["id"];
                 $onTheClock["since"] = $results[0]["punchIn"];
                 $onTheClock["headline"] = $results[0]["headline"];
-                $start_date = new \DateTime();
+                $start_date = new DateTime();
                 $start_date->setTimestamp($results[0]["punchIn"]);
-                $since_start = $start_date->diff(new \DateTime('NOW'));
+                $since_start = $start_date->diff(new DateTime('NOW'));
 
                 $r = $since_start->format('%H:%I');
 

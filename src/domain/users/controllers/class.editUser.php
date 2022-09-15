@@ -3,9 +3,11 @@
 namespace leantime\domain\controllers {
 
 	use leantime\core;
-	use leantime\domain\repositories;
+    use leantime\domain\models\auth\roles;
+    use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-	class editUser
+    class editUser
 	{
 
 		/**
@@ -16,10 +18,12 @@ namespace leantime\domain\controllers {
 		public function run()
 		{
 
-			$tpl = new core\template();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
+            $tpl = new core\template();
 
 			//Only admins
-			if (core\login::userIsAtLeast("clientManager")) {
+
 
 				if (isset($_GET['id']) === true) {
 
@@ -32,10 +36,7 @@ namespace leantime\domain\controllers {
 					$edit = false;
 					$infoKey = '';
 
-					if (core\login::userHasRole("clientManager") && $row['clientId'] != core\login::getUserClientId()) {
-						$tpl->display('general.error');
-						exit();
-					}
+
 
 					//Build values array
 					$values = array(
@@ -147,16 +148,10 @@ namespace leantime\domain\controllers {
 					//Assign vars
 					$clients = new repositories\clients();
 
+					$tpl->assign('allProjects', $project->getAll());
+					$tpl->assign('roles', roles::getRoles());
+					$tpl->assign('clients', $clients->getAll());
 
-					if (core\login::userIsAtLeast("manager")) {
-						$tpl->assign('allProjects', $project->getAll());
-						$tpl->assign('roles', core\login::$userRoles);
-						$tpl->assign('clients', $clients->getAll());
-					} else {
-						$tpl->assign('allProjects', $project->getClientProjects($values['clientId']));
-						$tpl->assign('roles', core\login::$clientManagerRoles);
-						$tpl->assign('clients', array($clients->getClient($values['clientId'])));
-					}
 
 
 					//Sensitive Form, generate form tokens
@@ -176,11 +171,7 @@ namespace leantime\domain\controllers {
 
 					$tpl->display('general.error');
 				}
-			} else {
 
-				$tpl->display('general.error');
-
-			}
 
 		}
 

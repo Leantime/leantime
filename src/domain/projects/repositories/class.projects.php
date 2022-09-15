@@ -3,6 +3,7 @@
 namespace leantime\domain\repositories {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use pdo;
     use DateInterval;
     use DatePeriod;
@@ -18,33 +19,33 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public $id = '';
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
-        public $clientId='';
+        public $clientId = '';
 
         /**
          * @access private
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         /**
          * @access public
          * @var    object
          */
-        public $result='';
+        public $result = '';
 
         /**
          * @access public
          * @var    array state for projects
          */
-        public $state=array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
+        public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
         /**
          * __construct - get database connection
@@ -52,7 +53,7 @@ namespace leantime\domain\repositories {
          * @access public
          */
 
-        function __construct()
+        public function __construct()
         {
             $config = new core\config();
             $this->db = core\db::getInstance();
@@ -100,6 +101,33 @@ namespace leantime\domain\repositories {
         }
 
 
+        public function getNumberOfProjects($clientId = null)
+        {
+
+            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects`";
+
+            if($clientId != null && is_numeric($clientId)){
+                $sql .= " WHERE clientId = :clientId";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if ($clientId != null && is_numeric($clientId)) {
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['projectCount']) === true) {
+                return $values['projectCount'];
+            }else{
+                return 0;
+            }
+        }
+
+
         // Get all open user projects /param: open, closed, all
 
         public function getUserProjects($userId, $status = "all", $clientId = "")
@@ -121,13 +149,13 @@ namespace leantime\domain\repositories {
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
 				WHERE relation.userId = :id AND (project.active > '-1' OR project.active IS NULL)";
 
-            if($status == "open") {
+            if ($status == "open") {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
-            }else if($status == "closed") {
+            } else if ($status == "closed") {
                 $query .= " AND (project.state = -1)";
             }
 
-            if($clientId != ""){
+            if ($clientId != "") {
                 $query .= " AND project.clientId = :clientId";
             }
 
@@ -138,10 +166,56 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-            if($clientId != ""){
+            if ($clientId != "") {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $status = "all", $clientId = "")
+        {
+
+            $query = "SELECT
+					project.id,
+					project.name,
+					project.clientId,
+					project.state,
+					project.hourBudget,
+					project.dollarBudget,
+					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
+					client.name AS clientName,
+					client.id AS clientId 
+				FROM zp_projects AS project
+				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
+				LEFT JOIN zp_clients as client ON project.clientId = client.id
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
+				WHERE 
+				    (   relation.userId = :id 
+				        OR project.psettings = 'all'
+				        OR (project.psettings = 'client' AND project.clientId = :clientId)
+				    )
+				  
+				  AND (project.active > '-1' OR project.active IS NULL)";
+
+            if ($status == "open") {
+                $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
+            } else if ($status == "closed") {
+                $query .= " AND (project.state = -1)";
+            }
+
+            $query .= " GROUP BY 
+					project.id
+				ORDER BY clientName, project.name";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -214,7 +288,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return mixed
          */
         public function getProject($id)
         {
@@ -227,6 +301,7 @@ namespace leantime\domain\repositories {
 					zp_projects.state,
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
+					zp_projects.psettings,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
 				FROM zp_projects 
@@ -270,7 +345,7 @@ namespace leantime\domain\repositories {
 					zp_user.profileId
 				FROM zp_relationuserproject 
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId && zp_user.id IS NOT NULL
+				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -304,11 +379,11 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function recursive_array_search($needle,$haystack)
+        public function recursive_array_search($needle, $haystack)
         {
-            foreach($haystack as $key=>$value) {
-                $current_key=$key;
-                if($needle===$value OR (is_array($value) && $this->recursive_array_search($needle, $value) !== false)) {
+            foreach ($haystack as $key => $value) {
+                $current_key = $key;
+                if ($needle === $value or (is_array($value) && $this->recursive_array_search($needle, $value) !== false)) {
                     return $current_key;
                 }
             }
@@ -335,31 +410,31 @@ namespace leantime\domain\repositories {
 
             $chartArr = array();
 
-            if(count($results) > 0) {
-                $begin=date_create($results[0]["workDate"]);
+            if (count($results) > 0) {
+                $begin = date_create($results[0]["workDate"]);
                 $begin->sub(new DateInterval('P1D'));
 
-                $end=date_create($results[(count($results)-1)]["workDate"]);
+                $end = date_create($results[(count($results) - 1)]["workDate"]);
                 $end->add(new DateInterval('P1D'));
 
                 $i = new DateInterval('P1D');
 
-                $period =new DatePeriod($begin, $i, $end);
+                $period = new DatePeriod($begin, $i, $end);
 
                 $total = 0;
 
-                foreach ($period as $d){
+                foreach ($period as $d) {
 
 
-                    $day=$d->format('Y-m-d');
-                    $dayKey=$d->getTimestamp();
+                    $day = $d->format('Y-m-d');
+                    $dayKey = $d->getTimestamp();
 
                     $key = $this->recursive_array_search($day, $results);
 
 
-                    if($key === false) {
+                    if ($key === false) {
                         $value = 0;
-                    }else {
+                    } else {
                         $value = $results[$key]['totalHours'];
                     }
 
@@ -420,19 +495,20 @@ namespace leantime\domain\repositories {
          * addProject - add a project to a client
          *
          * @access public
-         * @param  array $values
+         * @param array $values
          */
         public function addProject($values)
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`
 			) VALUES (
 				:name,
 				:details,
 				:clientId,
 				:hourBudget,
-				:dollarBudget
+				:dollarBudget,
+			    :psettings
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -442,6 +518,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 
@@ -450,16 +527,16 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId);
+            $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
 
             //Add users to relation
-            if(is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            /*if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
 
-                foreach($values['assignedUsers'] as $userId){
+                foreach ($values['assignedUsers'] as $userId) {
                     $this->addProjectRelation($userId, $projectId);
                 }
 
-            }
+            }*/
 
             return $projectId;
 
@@ -469,7 +546,7 @@ namespace leantime\domain\repositories {
          * editProject - edit a project
          *
          * @access public
-         * @param  array $values
+         * @param array $values
          * @param  $id
          */
         public function editProject(array $values, $id)
@@ -481,7 +558,8 @@ namespace leantime\domain\repositories {
 				clientId = :clientId,
 				state = :state,
 				hourBudget = :hourBudget,
-				dollarBudget = :dollarBudget
+				dollarBudget = :dollarBudget,
+				psettings = :psettings
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -494,25 +572,45 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('state', $values['state'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-			$stmn->bindValue('id', $id, PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
 
             $stmn->closeCursor();
 
-            $this->deleteAllUserRelations($id);
+        }
 
+        /**
+         * editProject - edit a project
+         *
+         * @access public
+         * @param array $values
+         * @param  $id
+         */
+        public function editProjectRelations(array $values, $projectId)
+        {
+
+            $this->deleteAllUserRelations($projectId);
 
             //Add users to relation
-            if(is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
 
-                foreach($values['assignedUsers'] as $userId){
-                    $this->addProjectRelation($userId, $id);
+                foreach ($values['assignedUsers'] as $userId) {
+
+                    $projectRole = null;
+                    if(isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != "40" && $values['projectRoles']['userProjectRole-'.$userId] != "50"){
+                        $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
+                    }
+
+                    $this->addProjectRelation($userId, $projectId, $projectRole);
                 }
 
             }
 
         }
+
+
 
         /**
          * deleteProject - delete a project
@@ -538,7 +636,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function hasTickets($id)
         {
@@ -554,11 +652,11 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            if(count($values) == 0) {
+            if (count($values) == 0) {
 
                 return false;
 
-            }else{
+            } else {
 
                 return true;
 
@@ -573,19 +671,28 @@ namespace leantime\domain\repositories {
          * @param  $id
          * @return array
          */
-        public function getUserProjectRelation($id)
+        public function getUserProjectRelation($id, $projectId = null)
         {
 
             $query = "SELECT
 				zp_relationuserproject.userId, 
 				zp_relationuserproject.projectId,
-				zp_projects.name 
+				zp_projects.name,
+				zp_relationuserproject.projectRole
 			FROM zp_relationuserproject JOIN zp_projects 
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :id";
 
+            if($projectId != null){
+                $query .= " AND  zp_projects.id = :projectId";
+            }
+
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+            if($projectId != null) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -597,6 +704,31 @@ namespace leantime\domain\repositories {
         public function isUserAssignedToProject($userId, $projectId)
         {
 
+            $userRepo = new users();
+            $user = $userRepo->getUser($userId);
+
+            //admins owners and managers can access everything
+            if(roles::getRoles()[$user['role']] == roles::$admin
+                || roles::getRoles()[$user['role']] == roles::$owner
+                || roles::getRoles()[$user['role']] == roles::$manager) {
+                return true;
+            }
+
+            $project = $this->getProject($projectId);
+
+            //Everyone in org is allowed to see the project
+            if($project['psettings'] == 'all') {
+                return true;
+            }
+
+            //Everyone in client is allowed to see project
+            if($project['psettings'] == 'client'){
+                if($user['clientId'] == $project['clientId']) {
+                    return true;
+                }
+            }
+
+            //Select users are allowed to see project
             $query = "SELECT
 				zp_relationuserproject.userId, 
 				zp_relationuserproject.projectId,
@@ -613,7 +745,7 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if($values && count($values) > 1){
+            if ($values && count($values) > 1) {
                 return true;
             }
 
@@ -626,10 +758,16 @@ namespace leantime\domain\repositories {
             $query = "SELECT
 				zp_relationuserproject.userId, 
 				zp_relationuserproject.projectId,
-				zp_projects.name 
-			FROM zp_relationuserproject JOIN zp_projects 
-				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE projectId = :id";
+				zp_relationuserproject.projectRole,
+				zp_projects.name,
+				zp_user.firstname,
+				zp_user.lastname,
+				zp_user.profileId,
+				zp_user.role
+			FROM zp_relationuserproject 
+			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
+			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
+			WHERE projectId = :id AND zp_user.id IS NOT NULL";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -640,8 +778,8 @@ namespace leantime\domain\repositories {
 
 
             $users = array();
-            foreach($results as $row) {
-                $users[] = $row['userId'];
+            foreach ($results as $row) {
+                $users[$row['userId']] = $row;
             }
 
             return $users;
@@ -654,10 +792,10 @@ namespace leantime\domain\repositories {
          * @param  $id
          * @return array
          */
-        public function editUserProjectRelations($id,$projects)
+        public function editUserProjectRelations($id, $projects)
         {
 
-            $sql = "SELECT id,userId,projectId FROM zp_relationuserproject WHERE userId=:id";
+            $sql = "SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -668,23 +806,23 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             // Add relations that don't exist
-            foreach($projects as $project) {
+            foreach ($projects as $project) {
                 $exists = false;
-                if(count($values)) {
-                    foreach($values as $value) {
-                        if ($project == $value['projectId'] ) {
+                if (count($values)) {
+                    foreach ($values as $value) {
+                        if ($project == $value['projectId']) {
                             $exists = true;
                         }
                     }
                 }
                 if (!$exists) {
-                    $this->addProjectRelation($id, $project);
+                    $this->addProjectRelation($id, $project, '');
                 }
             }
 
             // Delete relations that were removed in select
             if (count($values)) {
-                foreach($values as $value) {
+                foreach ($values as $value) {
                     if (in_array($value['projectId'], $projects) !== true) {
                         $this->deleteProjectRelation($id, $value['projectId']);
                     }
@@ -692,7 +830,7 @@ namespace leantime\domain\repositories {
             }
         }
 
-        public function deleteProjectRelation($userId,$projectId)
+        public function deleteProjectRelation($userId, $projectId)
         {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId";
@@ -735,21 +873,24 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
         }
 
-        public function addProjectRelation($userId,$projectId)
+        public function addProjectRelation($userId, $projectId, $projectRole)
         {
 
             $sql = "INSERT INTO zp_relationuserproject (
 					userId,
-					projectId
+					projectId,
+                    projectRole                
 				) VALUES (
 					:userId,
-					:projectId
+					:projectId,
+					:projectRole
 				)";
 
             $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            $stmn->bindValue(':projectRole', $projectRole, PDO::PARAM_STR);
 
             $stmn->execute();
 

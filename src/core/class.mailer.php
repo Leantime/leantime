@@ -11,6 +11,7 @@ namespace leantime\core {
 
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
+    use phpmailerException;
 
     class mailer
     {
@@ -26,12 +27,6 @@ namespace leantime\core {
          * @var    string
          */
         public $bcc;
-
-        /**
-         * @access public
-         * @var    string
-         */
-        public $from = '';
 
         /**
          * @access public
@@ -63,11 +58,16 @@ namespace leantime\core {
 
             $config = new config();
 
-            $this->from = $config->email;
 
+            if($config->email != '') {
+                $this->emailDomain = $config->email;
+            }else{
+                $host = $_SERVER['HTTP_HOST'] ?? "leantime";
+                $this->emailDomain = "no-reply@".$host;
+            }
             //PHPMailer
-            $this->mailAgent = new PHPMailer(true);
-		
+            $this->mailAgent = new PHPMailer(false);
+
 	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             //Use SMTP or php mail().
@@ -91,10 +91,8 @@ namespace leantime\core {
 
             }
 
-            $this->emailDomain = $config->email;
-
             $this->logo = $_SESSION["companysettings.logoPath"];
-            $this->companyColor = $_SESSION["companysettings.mainColor"];
+            $this->companyColor = $_SESSION["companysettings.primarycolor"];
 
             $this->language = new language();
 
@@ -151,7 +149,7 @@ namespace leantime\core {
          * @param  array $to
          * @param  $from
          * @return void
-         * @throws \phpmailerException
+         * @throws phpmailerException
          */
         public function sendMail(array $to, $from)
         {
@@ -180,7 +178,7 @@ namespace leantime\core {
 			<td align="center" valign="top">
 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
 					<tr>
-						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
+						<td style="padding:3px 10px; background-color:' . $this->companyColor . '">
 							<table>
 								<tr>
 								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>

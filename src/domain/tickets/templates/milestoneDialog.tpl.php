@@ -16,7 +16,6 @@ $statusLabels = $this->get('statusLabels');
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
 
 
     <h4 class="widgettitle title-light"><?=$this->__("headline.milestone"); ?> </h4>
@@ -79,10 +78,10 @@ $statusLabels = $this->get('statusLabels');
         <input type="text" name="tags" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$this->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
 
         <label><?=$this->__("label.planned_start_date"); ?></label>
-        <input type="text" name="editFrom" value="<?php echo $this->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
+        <input type="text" name="editFrom" autocomplete="off" value="<?php echo $this->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
 
         <label><?=$this->__("label.planned_end_date"); ?></label>
-        <input type="text" name="editTo" value="<?php echo $this->getFormattedDateString($currentMilestone->editTo) ?>"  placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
+        <input type="text" name="editTo" autocomplete="off" value="<?php echo $this->getFormattedDateString($currentMilestone->editTo) ?>"  placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
 
         <div class="row">
             <div class="col-md-6">
@@ -114,7 +113,18 @@ $statusLabels = $this->get('statusLabels');
     <script type="text/javascript">
         jQuery(document).ready(function(){
             leantime.ticketsController.initModals();
+
+            <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
+
+                leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+            <?php } ?>
+
+            <?php if($login::userHasRole([$roles::$commenter])) { ?>
+                leantime.generalController.enableCommenterForms();
+            <?php }?>
+
+
         })
     </script>
 
-</div>

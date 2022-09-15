@@ -38,18 +38,19 @@ class session
 
         $config = new config();
 
-        ini_set('session.gc_maxlifetime', $config->sessionExpiration);
+        ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
 
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
+        $testSession = false;
+
         if(isset($_COOKIE['sid']) === true) {
-            
+
             self::$sid=htmlspecialchars($_COOKIE['sid']);
+            $testSession = explode('-', self::$sid);
 
         }
-
-        $testSession = explode('-', self::$sid);
 
         //Don't allow session ids from user.
         if(is_array($testSession) === true && count($testSession) > 1) {
@@ -71,7 +72,9 @@ class session
         session_name("sid");
         session_id(self::$sid);
         session_start();
+
         setcookie("sid", self::$sid, time()+$config->sessionExpiration, "/");
+
 
     }
 
@@ -86,7 +89,7 @@ class session
 
         if (self::$instance === null) {
                 
-            self::$instance = new self;
+            self::$instance = new self();
 
         }
 
@@ -101,6 +104,14 @@ class session
      */
     public static function getSID()
     {
+
+        if (self::$instance === null) {
+
+            self::$instance = new self();
+            return self::$instance::$sid;
+
+        }
+
 
         return self::$sid;
 
@@ -121,7 +132,14 @@ class session
 
     }
 
-}
+    public static function destroySession() {
 
-/* @var string */
-$singlesession = session::getInstance();
+        if(isset($_COOKIE['sid'])){
+            unset($_COOKIE['sid']);
+        }
+
+        setcookie('sid', null, -1, '/');
+
+    }
+
+}

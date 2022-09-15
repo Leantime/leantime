@@ -4,6 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\domain\services\auth;
 
     class editOwn
     {
@@ -18,15 +19,23 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $language = new core\language();
+            $settings = new \leantime\domain\services\setting();
 
             $userId = $_SESSION['userdata']['id'];
             $userRepo = new repositories\users();
+            $settingsRepo = new \leantime\domain\repositories\setting();
 
             $row = $userRepo->getUser($userId);
 
             $infoKey = '';
 
+            $userLang = $settings->settingsRepo->getSetting("usersettings.".$userId.".language");
 
+            if($userLang == false){
+                $userLang = $language->getCurrentLanguage();
+            }
+
+            $userTheme = $settings->settingsRepo->getSetting("usersettings.".$userId.".theme");
 
             //Build values array
             $values = array(
@@ -37,6 +46,7 @@ namespace leantime\domain\controllers {
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
+                'messagesfrequency' => $settingsRepo->getSetting("usersettings.".$row['id'].".messageFrequency"),
             );
 
             //Save form
@@ -52,6 +62,7 @@ namespace leantime\domain\controllers {
                         'password' => (password_hash($_POST['newPassword'], PASSWORD_DEFAULT)),
                         'notifications' => $row['notifications'],
                         'twoFAEnabled' => $row['twoFAEnabled'],
+                        'messagesfrequency' => $_POST['messagesfrequency'],
                     );
 
                     if (isset($_POST['notifications']) == true) {
@@ -70,8 +81,6 @@ namespace leantime\domain\controllers {
 
                     //Validation
                     if ($values['user'] !== '') {
-
-                        $helper = new core\helper();
 
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 
@@ -93,6 +102,16 @@ namespace leantime\domain\controllers {
 
                                         $userRepo->editOwn($values, $userId);
 
+                                       // Storing option messagefrequency
+                                       $settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
+
+                                        $postLang = htmlentities($_POST['language']);
+                                        $postTheme = htmlentities($_POST['theme']);
+
+                                        $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
+                                        $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
+
+
                                         $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
                                     } else {
@@ -103,11 +122,26 @@ namespace leantime\domain\controllers {
 
                                 } else {
 
+                                    $postLang = htmlentities($_POST['language']);
+                                    $postTheme = htmlentities($_POST['theme']);
+
+                                    $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
+                                    $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
+
+                                    setcookie('language', $postLang, time()+60*60*24*30, '/');
+                                    setcookie('theme', $postTheme, time()+60*60*24*30, '/');
+
                                     $userRepo->editOwn($values, $userId);
+
+                                    // Storing option messagefrequency
+                                    $settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
 
                                     $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
+                                    core\frontcontroller::redirect(BASE_URL."/users/editOwn");
+
                                 }
+
 
                             } else {
 
@@ -128,9 +162,10 @@ namespace leantime\domain\controllers {
                     }
 
                 }else{
-                    $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
-                }
 
+                    $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+
+                }
             }
 
             //Assign vars
@@ -144,6 +179,10 @@ namespace leantime\domain\controllers {
             $tpl->assign('profilePic', $users->getProfilePicture($_SESSION['userdata']['id']));
             $tpl->assign('info', $infoKey);
             $tpl->assign('values', $values);
+
+            $tpl->assign('userLang', $userLang);
+            $tpl->assign('userTheme', $userTheme);
+            $tpl->assign("languageList", $language->getLanguageList());
 
             $tpl->assign('user', $row);
 

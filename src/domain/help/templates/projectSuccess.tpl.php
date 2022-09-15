@@ -10,7 +10,7 @@
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_events_2p66.svg");
                 echo"</div>";?>
             <h3 class="primaryColor"><?php echo $this->__('headlines.congrats_on_your_project') ?></h3><br />
-            <?php echo $this->__('text.project_success') ?>
+            <?php echo $this->__('notifications.project_created_successfully') ?>
         </div>
     </div>
 

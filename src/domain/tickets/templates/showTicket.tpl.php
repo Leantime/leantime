@@ -21,6 +21,7 @@
 </div><!--pageheader-->
 
 <div class="maincontent">
+
     <div class="maincontentinner">
 
         <?php echo $this->displayNotification(); ?>
@@ -31,10 +32,9 @@
                 <li><a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a></li>
                 <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
                 <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
-                <li><a href="#comments"><?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                     <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
-                <?php }; ?>
+                <?php } ?>
             </ul>
 
             <div id="ticketdetails">
@@ -44,9 +44,9 @@
             </div>
 
             <div id="subtasks">
-                <form method="post" action="#subtasks" class="ticketModal">
+
                     <?php $this->displaySubmodule('tickets-subTasks') ?>
-                </form>
+
             </div>
 
             <div id="files">
@@ -55,16 +55,6 @@
                 </form>
             </div>
 
-            <div id="comments">
-                <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
-                    <input type="hidden" name="comment" value="1" />
-                    <?php
-                    $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
-
-                    $this->displaySubmodule('comments-generalComment') ;
-                    ?>
-                </form>
-            </div>
 
             <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                 <div id="timesheet">
@@ -74,12 +64,29 @@
         </div>
 
     </div>
+
+    <div class="maincontentinner">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
+            <input type="hidden" name="comment" value="1" />
+            <?php
+            $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
+
+            $this->displaySubmodule('comments-generalComment') ;
+            ?>
+        </form>
+    </div>
+
+
+
+
+
+
+
 </div>
 
 <script type="text/javascript">
 
     leantime.ticketsController.initTicketTabs();
-    leantime.ticketsController.initTicketEditor();
     leantime.ticketsController.initTagsInput();
 
     jQuery(window).load(function () {

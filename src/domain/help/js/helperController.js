@@ -15,21 +15,24 @@ leantime.helperController = (function () {
     //Functions
     var showHelperModal = function (module, minW, minH) {
 
-        jQuery.nmManual(
-            leantime.appUrl+"/help/showOnboardingDialog?module="+module,
-            {sizes: {
-                minW: minW || 200,
-                minH: minH || 500,
-                },
-                resizable: true,
-                autoSizable: true,
-                callbacks: {
-                    beforeShowCont: function () {
-                        leantime.replaceSVGColors();
+        jQuery(document).ready(function(){
+            jQuery.nmManual(
+                leantime.appUrl+"/help/showOnboardingDialog?module="+module,
+                {sizes: {
+                        minW: minW || 200,
+                        minH: minH || 500,
+                    },
+                    resizable: true,
+                    autoSizable: true,
+                    callbacks: {
+                        beforeShowCont: function () {
+                            leantime.replaceSVGColors();
+                        }
                     }
                 }
-            }
-        );
+            );
+        });
+
     };
 
     //Functions

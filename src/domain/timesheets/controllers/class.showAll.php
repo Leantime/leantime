@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class showAll
     {
@@ -16,6 +18,8 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
             $_SESSION['lastPage'] = BASE_URL."/timesheets/showAll";
@@ -24,8 +28,6 @@ namespace leantime\domain\controllers {
             //Only admins and employees
 
             $projects = new repositories\projects();
-            $helper = new core\helper();
-
 
             if (isset($_POST['saveInvoice']) === true) {
 
@@ -135,7 +137,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('kind', $timesheetsRepo->kind);
             $tpl->assign('invComp', $invCompCheck);
             $tpl->assign('invEmpl', $invEmplCheck);
-            $tpl->assign('helper', $helper);
             $tpl->assign('projectFilter', $projectFilter);
             $tpl->assign('allTimesheets', $timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
 

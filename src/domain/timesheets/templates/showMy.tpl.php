@@ -1,8 +1,6 @@
 <?php
 defined( 'RESTRICTED' ) or die( 'Restricted access' );
 
-
-$helper = $this->get('helper');
 ?>
 <script type="text/javascript">
 
@@ -39,7 +37,7 @@ jQuery(document).ready(function(){
 
 
     jQuery('.week-picker').datepicker({
-    	firstDay: 1,
+
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
             selectCurrentWeek();
@@ -64,7 +62,6 @@ jQuery(document).ready(function(){
         onChangeMonthYear: function (year, month, inst) {
             selectCurrentWeek();
         },
-        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         dateFormat:  leantime.i18n.__("language.jsdateformat"),
         dayNames: leantime.i18n.__("language.dayNames").split(","),
         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
@@ -73,9 +70,11 @@ jQuery(document).ready(function(){
         currentText: leantime.i18n.__("language.currentText"),
         closeText: leantime.i18n.__("language.closeText"),
         buttonText: leantime.i18n.__("language.buttonText"),
+        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
         nextText: leantime.i18n.__("language.nextText"),
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
+        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
     });
     
     setDates('.week-picker');
@@ -167,7 +166,7 @@ jQuery(document).ready(function(){
     			rowSum = rowSum + currentValue;
     			
     			var currentClass = jQuery(this).parent().attr('class');
-                console.log(currentClass);
+
     			if(currentClass.indexOf("rowMo") > -1){ colSumMo = colSumMo + currentValue; }
                 if(currentClass.indexOf("rowTu") > -1){ colSumTu = colSumTu + currentValue; }
                 if(currentClass.indexOf("rowWe") > -1){ colSumWe = colSumWe + currentValue;  }
@@ -182,7 +181,6 @@ jQuery(document).ready(function(){
     		jQuery(this).find(".rowSum strong").text(rowSum);
     	});
 
-    	console.log(colSumMo);
     	jQuery("#sumMo").text(colSumMo.toFixed(2));
     	jQuery("#sumTu").text(colSumTu.toFixed(2));
     	jQuery("#sumWe").text(colSumWe.toFixed(2));
@@ -210,209 +208,211 @@ jQuery(document).ready(function(){
 
 <div class="pageheader">
 
-            <div class="pageicon"><span class="iconfa-time"></span></div>
-            <div class="pagetitle">
-                <h5><?php echo $this->__('headline.overview'); ?></h5>
-                <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
-            </div>
-        </div><!--pageheader-->
+    <div class="pageicon"><span class="iconfa-time"></span></div>
+    <div class="pagetitle">
+        <h5><?php echo $this->__('headline.overview'); ?></h5>
+        <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
+    </div>
+</div><!--pageheader-->
         
-        <div class="maincontent">
-            <div class="maincontentinner">
-                <?php
-                echo $this->displayNotification();
-                ?>
+<div class="maincontent">
+    <div class="maincontentinner">
+        <?php
+        echo $this->displayNotification();
+        ?>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="pull-right">
-                            <div class="btn-group viewDropDown">
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.week_view") ?> <?=$this->__("links.view") ?></button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$this->__("links.week_view") ?></a></li>
-                                    <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$this->__("links.list_view") ?></a></li>
-                                </ul>
-                            </div>
-                        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-right">
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.week_view") ?> <?=$this->__("links.view") ?></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$this->__("links.week_view") ?></a></li>
+                            <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$this->__("links.list_view") ?></a></li>
+                        </ul>
                     </div>
                 </div>
-
-                <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
-
-                    <div class="headtitle filterBar " style="margin:0px; background: #eee;">
-
-                        <div class="padding-top-sm">
-                            <span><?php echo $this->__('label.week_from')?></span>
-                            <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                            <input type="text" class="week-picker" name="startDate" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
-                            <input type="text" class="week-picker" name="endDate" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
-                            <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
-                            <input type="hidden" name="search" value="1" />
-
-
-                        </div>
-
-                    </div>
-                    <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
-                        <colgroup>
-                              <col class="con0" >
-                              <col class="con1" >
-                              <col class="con0" >
-                              <col class="con1" >
-                              <col class="con0" >
-                              <col class="con1" >
-                              <col class="con0" >
-                              <col class="con1" >
-                              <col class="con0" >
-                              <col class="con1">
-                              <col class="con0">
-                        </colgroup>
-                        <thead>
-                        <?php
-
-                        $dateFromHeader = clone $this->get("dateFrom");
-                        $currentDate = $dateFromHeader->format($this->__('language.dateformat'));
-                        $days = explode(',', $this->__('language.dayNamesShort'));
-                        $today = date($this->__('language.dateformat'));
-
-                        ?>
-                        <tr>
-                            <th><?php echo $this->__('label.client_product')?></th>
-                            <th><?php echo $this->__('subtitles.todo')?></th>
-                            <th><?php echo $this->__('label.type')?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[1]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[2]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[3]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[4]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[5]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[6]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[0]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                            <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $this->__('label.total')?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                                $sumMon = 0;
-                                $sumTu = 0;
-                                $sumWe = 0;
-                                $sumTh = 0;
-                                $sumFr = 0;
-                                $sumSa = 0;
-                                $sumSu = 0;
-
-                            $today = date($this->__('Y-m-d'));
-                            foreach($this->get('allTimesheets') as $timeRow){
-
-                                $sumMon = $timeRow["hoursMonday"] + $sumMon;
-                                $sumTu = $timeRow["hoursTuesday"] + $sumTu;
-                                $sumWe = $timeRow["hoursWednesday"] + $sumWe;
-                                $sumTh = $timeRow["hoursThursday"] + $sumTh;
-                                $sumFr = $timeRow["hoursFriday"] + $sumFr;
-                                $sumSa = $timeRow["hoursSaturday"] + $sumSa;
-                                $sumSu = $timeRow["hoursSunday"] + $sumSu;
-
-                                $dateFrom = clone $this->get("dateFrom");
-
-                                $timesheetId = "new";
-
-
-
-                                $workDatesArray = explode(",", $timeRow["workDates"]);
-
-                                $rowSum = $timeRow["hoursMonday"] + $timeRow["hoursTuesday"] + $timeRow["hoursWednesday"] + $timeRow["hoursThursday"] + $timeRow["hoursFriday"] + $timeRow["hoursSaturday"] + $timeRow["hoursSunday"];
-
-                            ?>
-
-                                <tr class="gradeA timesheetRow">
-                                    <td width="14%"><?php $this->e($timeRow["name"]); ?></td>
-                                    <td width="14%"><?php $this->e($timeRow["headline"]); ?></td>
-                                    <td width="10%"><?php echo $this->__($this->get('kind')[$timeRow['kind']]); ?></td>
-                                    <?php $currentDate = $dateFrom->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowMo <?php if($today == $currentDate)echo"active"; ?>" <?php if($today == $currentDate)echo"active"; ?>><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursMonday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowTu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursTuesday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowWe <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursWednesday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowTh <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursThursday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowFr <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursFriday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowSa <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSaturday"]; ?>" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowSu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSunday"]; ?>" /></td>
-                                    <td width="7%" class="rowSum <?php if($today == $currentDate)echo"active"; ?>"><strong><?php echo $rowSum; ?></strong></td>
-                                </tr>
-
-                            <?php } ?>
-                            <?php
-                                $dateFrom = clone $this->get("dateFrom");
-                            ?>
-                                <tr class="gradeA timesheetRow">
-                                    <td width="14%">
-                                        <div class="form-group">
-                                            <select data-placeholder="<?php echo $this->__('input.placeholders.choose_project')?>" style="" class="project-select" >
-                                                <option value=""></option>
-                                                <?php foreach($this->get('allProjects') as $projectRow){ ?>
-                                                    <?php echo"<option value=".$projectRow["id"].">".$this->escape($projectRow["clientName"])." / ".$this->escape($projectRow["name"])."</option>"; ?>
-                                                <?php }?>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td width="14%">
-                                        <div class="form-group" id="ticketSelect">
-                                            <select data-placeholder="<?php echo $this->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
-                                                <option value=""></option>
-                                                <?php foreach($this->get('allTickets') as $ticketRow){ ?>
-                                                    <?php echo"<option value=".$ticketRow["id"]." data-value='".$ticketRow["projectId"]."' class='project_".$ticketRow["projectId"]."'>".$ticketRow["id"]." ".$this->escape($ticketRow["headline"])."</option>"; ?>
-                                                <?php }?>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td width="14%">
-                                        <select class="kind-select" name="kindId">
-                                                <?php foreach($this->get('kind') as $key => $kindRow){ ?>
-                                                    <?php echo"<option value=".$key.">".$this->__($kindRow)."</option>"; ?>
-                                                <?php }?>
-                                            </select>
-                                    </td>
-                                    <?php $currentDate = $dateFrom->format('Y-m-d');?>
-                                    <td width="7%" class="rowMo <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowTu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowWe <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowTh <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowFr <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowSa <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
-                                    <td width="7%" class="rowSu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
-                                    <td width="7%" class="rowSum "><strong>0</strong></td>
-                                </tr>
-                        </tbody>
-
-                        <tfoot>
-                            <tr style="font-weight:bold;">
-                                <td colspan="3"><?php echo $this->__('label.total')?></td>
-                                <td id="sumMo"><?php echo $sumMon; ?></td>
-                                <td id="sumTu"><?php echo $sumTu; ?></td>
-                                <td id="sumWe"><?php echo $sumWe; ?></td>
-                                <td id="sumTh"><?php echo $sumTh; ?></td>
-                                <td id="sumFr"><?php echo $sumFr; ?></td>
-                                <td id="sumSa"><?php echo $sumSa; ?></td>
-                                <td id="sumSu"><?php echo $sumSu; ?></td>
-                                <td id="finalSum"><?php echo ($sumMon + $sumTu + $sumWe + $sumTh + $sumFr + $sumSa + $sumSu); ?></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    <div class="right">
-                        <input type="submit" name="saveTimeSheet" value="Save"/>
-                    </div>
-
-                </form>
-
             </div>
         </div>
+
+        <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
+
+            <div class="headtitle filterBar">
+
+                <div class="padding-top-sm">
+                    <span><?php echo $this->__('label.week_from')?></span>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
+                    <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
+                    <input type="hidden" name="search" value="1" />
+
+
+                </div>
+
+            </div>
+            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
+                <colgroup>
+                      <col class="con0" >
+                      <col class="con1" >
+                      <col class="con0" >
+                      <col class="con1" >
+                      <col class="con0" >
+                      <col class="con1" >
+                      <col class="con0" >
+                      <col class="con1" >
+                      <col class="con0" >
+                      <col class="con1">
+                      <col class="con0">
+                </colgroup>
+                <thead>
+                <?php
+
+                $dateFromHeader = clone $this->get("dateFrom");
+                $currentDate = $dateFromHeader->format($this->__('language.dateformat'));
+                $days = explode(',', $this->__('language.dayNamesShort'));
+                $today = date($this->__('language.dateformat'));
+
+                ?>
+                <tr>
+                    <th><?php echo $this->__('label.client_product')?></th>
+                    <th><?php echo $this->__('subtitles.todo')?></th>
+                    <th><?php echo $this->__('label.type')?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[1]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[2]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[3]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[4]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[5]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[6]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[0]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $this->__('label.total')?></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $sumMon = 0;
+                        $sumTu = 0;
+                        $sumWe = 0;
+                        $sumTh = 0;
+                        $sumFr = 0;
+                        $sumSa = 0;
+                        $sumSu = 0;
+
+                    $today = date($this->__('Y-m-d'));
+                    foreach($this->get('allTimesheets') as $timeRow){
+
+                        $sumMon = $timeRow["hoursMonday"] + $sumMon;
+                        $sumTu = $timeRow["hoursTuesday"] + $sumTu;
+                        $sumWe = $timeRow["hoursWednesday"] + $sumWe;
+                        $sumTh = $timeRow["hoursThursday"] + $sumTh;
+                        $sumFr = $timeRow["hoursFriday"] + $sumFr;
+                        $sumSa = $timeRow["hoursSaturday"] + $sumSa;
+                        $sumSu = $timeRow["hoursSunday"] + $sumSu;
+
+                        $dateFrom = clone $this->get("dateFrom");
+
+                        $timesheetId = "new";
+
+
+
+                        $workDatesArray = explode(",", $timeRow["workDates"]);
+
+                        $rowSum = $timeRow["hoursMonday"] + $timeRow["hoursTuesday"] + $timeRow["hoursWednesday"] + $timeRow["hoursThursday"] + $timeRow["hoursFriday"] + $timeRow["hoursSaturday"] + $timeRow["hoursSunday"];
+
+                    ?>
+
+                        <tr class="gradeA timesheetRow">
+                            <td width="14%"><?php $this->e($timeRow["name"]); ?></td>
+                            <td width="14%"><?php $this->e($timeRow["headline"]); ?></td>
+                            <td width="10%"><?php echo $this->__($this->get('kind')[$timeRow['kind']]); ?></td>
+                            <?php $currentDate = $dateFrom->format('Y-m-d'); ?>
+                            <td width="7%" class="rowMo <?php if($today == $currentDate)echo"active"; ?>" <?php if($today == $currentDate)echo"active"; ?>><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursMonday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowTu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursTuesday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowWe <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursWednesday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowTh <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursThursday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowFr <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursFriday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowSa <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSaturday"]; ?>" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowSu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if(in_array($currentDate, $workDatesArray) == true) echo "existing"; else echo "new";?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSunday"]; ?>" /></td>
+                            <td width="7%" class="rowSum <?php if($today == $currentDate)echo"active"; ?>"><strong><?php echo $rowSum; ?></strong></td>
+                        </tr>
+
+                    <?php } ?>
+                    <?php
+                        $dateFrom = clone $this->get("dateFrom");
+                    ?>
+                        <tr class="gradeA timesheetRow">
+                            <td width="14%">
+                                <div class="form-group">
+                                    <select data-placeholder="<?php echo $this->__('input.placeholders.choose_project')?>" style="" class="project-select" >
+                                        <option value=""></option>
+                                        <?php foreach($this->get('allProjects') as $projectRow){ ?>
+                                            <?php echo"<option value=".$projectRow["id"].">".$this->escape($projectRow["clientName"])." / ".$this->escape($projectRow["name"])."</option>"; ?>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="14%">
+                                <div class="form-group" id="ticketSelect">
+                                    <select data-placeholder="<?php echo $this->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
+                                        <option value=""></option>
+                                        <?php foreach($this->get('allTickets') as $ticketRow){ ?>
+                                            <?php echo"<option value=".$ticketRow["id"]." data-value='".$ticketRow["projectId"]."' class='project_".$ticketRow["projectId"]."'>".$ticketRow["id"]." ".$this->escape($ticketRow["headline"])."</option>"; ?>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="14%">
+                                <select class="kind-select" name="kindId">
+                                        <?php foreach($this->get('kind') as $key => $kindRow){ ?>
+                                            <?php echo"<option value=".$key.">".$this->__($kindRow)."</option>"; ?>
+                                        <?php }?>
+                                    </select>
+                            </td>
+                            <?php $currentDate = $dateFrom->format('Y-m-d');?>
+                            <td width="7%" class="rowMo <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowTu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowWe <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowTh <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowFr <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowSa <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
+                            <td width="7%" class="rowSu <?php if($today == $currentDate)echo"active"; ?>"><input type="text" class="hourCell" name="new|new|<?php  echo $currentDate ?>|GENERAL_BILLABLE" value="0" /></td>
+                            <td width="7%" class="rowSum "><strong>0</strong></td>
+                        </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr style="font-weight:bold;">
+                        <td colspan="3"><?php echo $this->__('label.total')?></td>
+                        <td id="sumMo"><?php echo $sumMon; ?></td>
+                        <td id="sumTu"><?php echo $sumTu; ?></td>
+                        <td id="sumWe"><?php echo $sumWe; ?></td>
+                        <td id="sumTh"><?php echo $sumTh; ?></td>
+                        <td id="sumFr"><?php echo $sumFr; ?></td>
+                        <td id="sumSa"><?php echo $sumSa; ?></td>
+                        <td id="sumSu"><?php echo $sumSu; ?></td>
+                        <td id="finalSum"><?php echo ($sumMon + $sumTu + $sumWe + $sumTh + $sumFr + $sumSa + $sumSu); ?></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="right">
+                <input type="submit" name="saveTimeSheet" value="Save"/>
+            </div>
+
+            <div class="clearall"></div>
+
+        </form>
+
+    </div>
+</div>

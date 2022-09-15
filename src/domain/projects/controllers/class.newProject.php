@@ -3,8 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class newProject
     {
@@ -16,6 +18,8 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
@@ -29,10 +33,6 @@ namespace leantime\domain\controllers {
             $projectService = new services\projects();
             $language = new core\language();
 
-            if(!core\login::userIsAtLeast("clientManager")) {
-                $tpl->display('general.error');
-                exit();
-            }
 
             $msgKey = '';
             $values = array(
@@ -43,7 +43,8 @@ namespace leantime\domain\controllers {
                 'hourBudget' => '',
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
-                'state' => ''
+                'state' => '',
+                'psettings' => ''
             );
 
             if (isset($_POST['save']) === true) {
@@ -72,6 +73,7 @@ namespace leantime\domain\controllers {
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
+                    'psettings' => $_POST['globalProjectUserAccess']
                 );
 
                 if ($values['name'] === '') {
@@ -104,7 +106,11 @@ namespace leantime\domain\controllers {
                         }
                     }
 
-                    $mailer->sendMail($to, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
+	            // NEW Queuing messaging system
+	            $queue = new repositories\queue();
+                    $queue->queueMessageToUsers($to, $message, $language->__('email_notifications.project_created_subject'), $id);
+
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
@@ -127,13 +133,10 @@ namespace leantime\domain\controllers {
 
 
 
-            if(core\login::userIsAtLeast("manager")) {
-                $tpl->assign('availableUsers', $user->getAll());
-                $tpl->assign('clients', $clients->getAll());
-            }else{
-                $tpl->assign('availableUsers', $user->getAllClientUsers(core\login::getUserClientId()));
-                $tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
-            }
+
+           $tpl->assign('availableUsers', $user->getAll());
+           $tpl->assign('clients', $clients->getAll());
+
 
             $tpl->assign('info', $msgKey);
 

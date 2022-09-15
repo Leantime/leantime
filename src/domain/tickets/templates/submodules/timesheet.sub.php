@@ -14,7 +14,7 @@
                 <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $this->__('headline.add_time_entry', false); ?></h4>
                 <br />
 
-                <form method="post" action="#timesheet" class="stdform">
+                <form method="post" action="<?=BASE_URL."/tickets/showTicket/".$ticket->id.""?>#timesheet" class="ticketModal">
 
                     <label for="kind"><?php echo $this->__('label.timesheet_kind') ?></label>
                     <span class="field">
@@ -40,7 +40,7 @@
                     <span class="field">
                         <textarea rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
                     </span>
-
+                    <input type="hidden" name="saveTimes" value="1" />
                     <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="saveTimes" class="button" />
 
                 </form>

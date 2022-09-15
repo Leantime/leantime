@@ -20,12 +20,14 @@ class ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
+        "phonenumber" => ''
         );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
     private $defaultRoleKey;
     private $bindUser;
     private $bindPassword;
+    private $directoryType = "OL";
 
     /**
      * @var config
@@ -67,27 +69,11 @@ class ldap
             $this->bindPassword = $this->config->bindPassword;
             $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
+            $this->directoryType = $this->config->ldapType;
 
-
-        }else{
-            //TODO
         }
 
 
-
-    }
-
-    private function getRoleAssignments (){
-
-        $assignedRoles = $this->config->assignedRoles;
-
-        //TODO: Should come from db roles table eventually
-        $availableRoles = core\login::$userRoles;
-        foreach($availableRoles as $key => $row) {
-            if(isset($this->ldapLtGroupAssignments[$row])) {
-                $this->ldapLtGroupAssignments[$key] = array("ltRole" => $row, "ldapRole" => $assignedRoles[$row]);
-            }
-        }
 
     }
 
@@ -100,6 +86,8 @@ class ldap
         if(function_exists("ldap_connect")) {
 
             $this->ldapConnection = ldap_connect($this->host, $this->port);
+
+            ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 7);
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
             ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
@@ -115,22 +103,33 @@ class ldap
     public function bind($username='', $password=''){
 
         if($username != '' && $password != ''){
-            $usernameDN = $this->ldapKeys->username."=".$username.",".$this->ldapDn;
+
+            if($this->directoryType=='AD'){
+                $usernameDN = $username;
+            } else {
+                $usernameDN = $this->ldapKeys->username."=".$username.",".$this->ldapDn;
+            }
             $passwordBind=$password;
+
         }else{
-            $usernameDN = $this->ldapKeys->username."=".$this->bindUser.",".$this->ldapDn;
+
+            if($this->directoryType=='AD') {
+                $usernameDN = $this->bindUser;
+            }else{
+                $usernameDN = $this->ldapKeys->username . "=" . $this->bindUser . "," . $this->ldapDn;
+            }
             $passwordBind = $this->bindPassword;
         }
 
 
-        return @ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+        return ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
     }
 
     public function getSingleUser($username) {
 
         if(!is_resource($this->ldapConnection)){
-            throw Exception("No connection");
+            error_log("No connection, last error: ".ldap_error($this->ldapConnection));
         }
 
         $filter = "(".$this->ldapKeys->username."=" . $this->extractLdapFromUsername($username) . ")";
@@ -160,12 +159,14 @@ class ldap
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
+        $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
 
         return array(
             "user" => $this->extractLdapFromUsername($username)."".$this->userDomain,
             "firstname" => $firstname,
             "lastname" => $lastname,
             "role" => $role,
+            "phonenumber" => $phonenumber
             );
     }
 

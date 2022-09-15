@@ -34,14 +34,16 @@
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
+                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                     <div class="btn-group">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/newTicket" class="ticketModal"> <?=$this->__("links.add_todo") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
                         </ul>
                     </div>
+                    <?php } ?>
 
                 </div>
 
@@ -70,13 +72,15 @@
                                 <?php } 	?>
                             </select>
                             <br/>
-                            <small>
-                            <?php if($dates != "") {
-                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
-                            <?php }else{ ?>
-                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small>
+                                <?php if($dates != "") {
+                                    echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
+                                <?php }else{ ?>
+                                    <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                                <?php } ?>
+                                </small>
                             <?php } ?>
-                        </small>
                         <?php } ?>
                     </span>
                 </div>
@@ -87,9 +91,10 @@
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
                         <div class="btn-group viewDropDown">
 
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "status"){echo "checked='checked'";}?> value="status" id="groupByStatusLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByStatusLink"><?=$this->__("label.todo_status") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
@@ -98,7 +103,7 @@
                         </div>
 
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != ""){ echo $_SESSION['lastFilterdTicketKanbanView']; }else{ echo BASE_URL."/tickets/showKanban"; } ?>" ><?=$this->__("links.kanban") ?></a></li>
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>
@@ -227,7 +232,7 @@
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1" width="20%">
+                <col class="con1">
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
@@ -242,7 +247,7 @@
             <thead>
             <tr>
                 <th><?= $this->__("label.title"); ?></th>
-                <th><?= $this->__("label.todo_status"); ?></th>
+                <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                 <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                 <th><?= $this->__("label.effort"); ?></th>
                 <th><?= $this->__("label.priority"); ?></th>
@@ -258,7 +263,7 @@
             <tbody>
                 <?php foreach($this->get('allTickets') as $row){?>
                     <tr>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -441,14 +446,21 @@
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
-    leantime.ticketsController.initUserDropdown();
-    leantime.ticketsController.initMilestoneDropdown();
-    leantime.ticketsController.initEffortDropdown();
-    leantime.ticketsController.initPriorityDropdown();
-    leantime.ticketsController.initStatusDropdown();
-    leantime.ticketsController.initSprintDropdown();
+
     leantime.ticketsController.initUserSelectBox();
     leantime.ticketsController.initStatusSelectBox();
+
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initUserDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initPriorityDropdown();
+        leantime.ticketsController.initSprintDropdown();
+        leantime.ticketsController.initStatusDropdown();
+    <?php }else{ ?>
+    leantime.generalController.makeInputReadonly(".maincontentinner");
+    <?php } ?>
+
 
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");

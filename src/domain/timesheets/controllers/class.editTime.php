@@ -3,7 +3,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class editTime
     {
@@ -17,19 +19,21 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
+
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
             $this->language = new core\language();
 
             $info = '';
             //Only admins and employees
-            if(core\login::userIsAtLeast("developer")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
 
                 if (isset($_GET['id']) === true) {
 
                     $projects = new repositories\projects();
-                    $helper = new core\helper();
                     $tickets = new repositories\tickets();
 
                     $id = ($_GET['id']);
@@ -52,7 +56,7 @@ namespace leantime\domain\controllers {
                         'invoicedCompDate' => $timesheet['invoicedCompDate']
                     );
 
-                    if(core\login::userIsAtLeast("admin") || $_SESSION['userdata']['id'] == $values['userId']) {
+                    if(auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
 
                         if (isset($_POST['saveForm']) === true) {
 
@@ -89,7 +93,7 @@ namespace leantime\domain\controllers {
 
                             }
 
-                            if(core\login::userIsAtLeast("clientManager")) {
+                            if(auth::userIsAtLeast(roles::$manager)){
 
                                 if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
 
@@ -159,7 +163,23 @@ namespace leantime\domain\controllers {
 
                                             $timesheetsRepo->updateTime($values);
                                             $tpl->setNotification('notifications.time_logged_success', 'success');
-                                            $values['description'] = $_POST['description'];
+
+                                            $timesheetUpdated = $timesheetsRepo->getTimesheet($id);
+
+                                            $values = array(
+                                                'id' => $id,
+                                                'userId' => $timesheetUpdated['userId'],
+                                                'ticket' => $timesheetUpdated['ticketId'],
+                                                'project' => $timesheetUpdated['projectId'],
+                                                'date' => $timesheetUpdated['workDate'],
+                                                'kind' => $timesheetUpdated['kind'],
+                                                'hours' => $timesheetUpdated['hours'],
+                                                'description' => $timesheetUpdated['description'],
+                                                'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
+                                                'invoicedComp' => $timesheetUpdated['invoicedComp'],
+                                                'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
+                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate']
+                                            );
 
                                         } else {
 
@@ -187,6 +207,7 @@ namespace leantime\domain\controllers {
                             }
 
                         }
+
 
                         $tpl->assign('values', $values);
 

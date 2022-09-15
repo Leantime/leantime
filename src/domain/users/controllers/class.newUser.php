@@ -3,10 +3,12 @@
 namespace leantime\domain\controllers {
 
 	use leantime\core;
-	use leantime\domain\repositories;
+    use leantime\domain\models\auth\roles;
+    use leantime\domain\repositories;
 	use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-	class newUser
+    class newUser
 	{
 
 		/**
@@ -17,7 +19,9 @@ namespace leantime\domain\controllers {
 		public function run()
 		{
 
-			$tpl = new core\template();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
+            $tpl = new core\template();
 			$userRepo = new repositories\users();
 			$project = new repositories\projects();
 			$language = new core\language();
@@ -33,7 +37,7 @@ namespace leantime\domain\controllers {
 			);
 
 			//only Admins
-			if (core\login::userIsAtLeast("clientManager")) {
+			if (auth::userIsAtLeast(roles::$admin)) {
 
 				$projectrelation = array();
 
@@ -50,10 +54,6 @@ namespace leantime\domain\controllers {
 						'clientId' => ($_POST['client'])
 					);
 
-					//Choice is an illusion for client managers
-					if (core\login::userHasRole("clientManager")) {
-						$values['clientId'] = core\login::getUserClientId();
-					}
 
 					if ($values['user'] !== '') {
 						if ($_POST['password'] == $_POST['password2']) {
@@ -117,16 +117,11 @@ namespace leantime\domain\controllers {
 				$tpl->assign('values', $values);
 				$clients = new repositories\clients();
 
-				if (core\login::userIsAtLeast("manager")) {
-					$tpl->assign('clients', $clients->getAll());
-					$tpl->assign('allProjects', $project->getAll());
-					$tpl->assign('roles', core\login::$userRoles);
-				} else {
 
-					$tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
-					$tpl->assign('allProjects', $project->getClientProjects(core\login::getUserClientId()));
-					$tpl->assign('roles', core\login::$clientManagerRoles);
-				}
+				$tpl->assign('clients', $clients->getAll());
+				$tpl->assign('allProjects', $project->getAll());
+				$tpl->assign('roles', roles::getRoles());
+
 				$tpl->assign('relations', $projectrelation);
 
 

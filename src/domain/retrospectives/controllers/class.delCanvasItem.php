@@ -13,7 +13,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
     class delCanvasItem
     {
@@ -25,6 +27,8 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             $tpl = new core\template();
             $retroRepo = new repositories\retrospectives();

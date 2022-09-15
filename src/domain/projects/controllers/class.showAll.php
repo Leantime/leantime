@@ -3,7 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services;
+    use leantime\domain\services\auth;
 
     class showAll
     {
@@ -17,19 +20,18 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
+
             $tpl = new core\template();
 
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$manager)) {
 
                 $projectRepo = new repositories\projects();
 
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
-                if(core\login::userIsAtLeast("manager")) {
-                    $tpl->assign('allProjects', $projectRepo->getAll());
-                }else{
-                    $tpl->assign('allProjects', $projectRepo->getClientProjects(core\login::getUserClientId()));
-                }
+
+                $tpl->assign('allProjects', $projectRepo->getAll());
 
                 $tpl->display('projects.showAll');
             }else{

@@ -16,12 +16,14 @@ namespace leantime\domain\controllers {
             $projectService = new services\projects();
             $ticketService = new services\tickets();
 
-            $allprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
-            $tpl->assign('current', explode(".", core\FrontController::getCurrentRoute()));
-            $tpl->assign('allProjects', $allprojects);
+            $allAvailableProjects = $projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
+
+            $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
+            $tpl->assign('allAssignedProjects', $allAssignedprojects);
+            $tpl->assign('allAvailableProjects', $allAvailableProjects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
-
 
             $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
 

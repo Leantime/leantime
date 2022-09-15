@@ -3,8 +3,11 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use Datetime;
+    use leantime\domain\services\auth;
+
     class showMy
     {
 
@@ -15,6 +18,7 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
@@ -23,7 +27,6 @@ namespace leantime\domain\controllers {
             $invCompCheck = '0';
 
             $projects = new repositories\projects();
-            $helper = new core\helper();
             $tickets = new repositories\tickets();
             $language = new core\language();
 
@@ -67,7 +70,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('dateFrom', new DateTime($dateFrom));
             $tpl->assign('actKind', $kind);
             $tpl->assign('kind', $timesheetsRepo->kind);
-            $tpl->assign('helper', $helper);
             $tpl->assign('allProjects', $projects->getUserProjects($_SESSION["userdata"]["id"]));
             $tpl->assign('allTickets', $tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $tpl->assign('allTimesheets', $myTimesheets);
