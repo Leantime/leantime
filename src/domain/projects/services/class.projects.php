@@ -4,6 +4,7 @@ namespace leantime\domain\services {
 
     use GuzzleHttp\Exception\RequestException;
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
@@ -493,6 +494,8 @@ namespace leantime\domain\services {
 
                     $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
                     $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
+
+                    events::dispatch_event("projects.setCurrentProject");
 
                     return true;
 

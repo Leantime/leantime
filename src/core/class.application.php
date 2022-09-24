@@ -65,6 +65,9 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
+        events::discover_listeners();
+        events::dispatch_event("application.start");
+
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
 

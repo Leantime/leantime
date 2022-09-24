@@ -102,6 +102,9 @@ namespace leantime\domain\controllers {
 
                                         $userRepo->editOwn($values, $userId);
 
+                                       // Storing option messagefrequency
+                                       $settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
+
                                         $postLang = htmlentities($_POST['language']);
                                         $postTheme = htmlentities($_POST['theme']);
 
@@ -130,14 +133,15 @@ namespace leantime\domain\controllers {
 
                                     $userRepo->editOwn($values, $userId);
 
+                                    // Storing option messagefrequency
+                                    $settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
+
                                     $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
                                     core\frontcontroller::redirect(BASE_URL."/users/editOwn");
 
                                 }
 
-                                // Storing option messagefrequency
-                               	$settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
 
                             } else {
 
