@@ -6,24 +6,18 @@
     $ticketTypes = $this->get('ticketTypes');
 
 ?>
+<input type="hidden" value="<?php $this->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
 
 <div class="row-fluid">
     <div class="span8">
         <div class="row-fluid marginBottom">
             <div class="span12">
-                <div class="form-group">
 
-                    <label class="span4 control-label"><?php echo $this->__('label.ticket_id'); ?></label>
-                    <div class="span6">
-                        <input type="text" value="<?php $this->e($ticket->id); ?>" name="id" autocomplete="off" style="width:99%;" readonly/>
-                    </div>
+                <div class="form-group">
+                        <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%;" placeholder="<?=$this->__('input.placeholders.enter_title_of_todo')?>"/>
                 </div>
                 <div class="form-group">
-                    <label class="span4 control-label"><?php echo $this->__('label.ticket_title'); ?>*</label>
-                    <div class="span6">
-
-                        <input type="text" value="<?php $this->e($ticket->headline); ?>" name="headline" autocomplete="off"  style="width:99%;"/>
-
+                    <input type="text" value="<?php $this->e($ticket->tags); ?>" name="tags" id="tags" />
                 </div>
                 <div class="form-group">
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
@@ -45,8 +39,6 @@
             <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
         </div>
-
-    </div>
     </div>
     <div class="span4">
         <div class="row-fluid marginBottom">
@@ -116,8 +108,8 @@
                 </div>
             </div>
         </div>
-            <div class="row-fluid marginBottom">
-                <div class="span12">
+        <div class="row-fluid marginBottom">
+            <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
                             class="iconfa iconfa-folder-open"></span><?php echo $this->__('subtitles.organization'); ?></h4>
@@ -164,19 +156,10 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="span4 control-label"><?php echo $this->__('label.tags'); ?></label>
-                    <div class="span6">
-                        <input type="text" value="<?php $this->e($ticket->tags); ?>" name="tags" id="tags" />
-                    </div>
-                </div>
-
-
-                </div>
             </div>
-                <div class="row-fluid marginBottom">
-                    <div class="span12">
-
+        </div>
+        <div class="row-fluid marginBottom">
+            <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
                             class="iconfa iconfa-group"></span><?php echo $this->__('subtitle.people'); ?></h4>
@@ -213,8 +196,8 @@
                 </div>
 
 
-            </div>
-        </div>
+    </div>
+</div>
         <div class="row-fluid marginBottom">
             <div class="span12">
                 <h4 class="widgettitle title-light"><span
@@ -283,13 +266,8 @@
                         <input type="text" disabled="disabled" value="<?php echo $remainingHours; ?>" style="width:90px;"/>
                     </div>
                 </div>
-
-
-
             </div>
         </div>
-
     </div>
-
 </div>
 

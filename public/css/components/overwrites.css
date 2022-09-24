@@ -266,12 +266,13 @@ body .widgettitle.title-light {
     border-right:0px !important;
 	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
+	font-size:var(--font-size-l);
 
 }
 
 .nyroModalCont .widgettitle.title-light {
     padding-top: 5px;
-font-size: 16px;
+	font-size:var(--font-size-l);
 }
 
 div.tagsinput {

@@ -53,8 +53,8 @@ namespace leantime\domain\services {
         public function updateUserSettings($category, $setting, $value)
         {
 
-            $filteredInput = filter_var($setting, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
-            $filteredValue = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+            $filteredInput = htmlspecialchars($setting);
+            $filteredValue = htmlspecialchars($value);
 
             $_SESSION['userdata']['settings'][$category][$filteredInput] =  $filteredValue;
 

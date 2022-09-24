@@ -1181,5 +1181,35 @@ namespace leantime\domain\repositories {
 
         }
 
+        /*
+         * alter table zp_canvas_items
+            add tags text null;
+
+        alter table zp_canvas_items
+            add title varchar(255) null;
+
+        alter table zp_canvas_items
+            add parent int null;
+
+        alter table zp_canvas_items
+            add featured int null;
+
+        create table zp_approvals
+        (
+            id               int auto_increment,
+            module           varchar(100) null,
+            entityId         int          null,
+            requestorId      int          null,
+            approverId       int          null,
+            approvalStatus   int          null,
+            requestedOn      datetime     null,
+            lastStatusChange datetime     null,
+            constraint zp_approvals_pk
+                primary key (id)
+        );
+
+
+         */
+
     }
 }

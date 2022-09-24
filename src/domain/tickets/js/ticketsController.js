@@ -578,7 +578,7 @@ leantime.ticketsController = (function () {
 
         var ticketModalConfig = {
             sizes: {
-                minW:  800,
+                minW:  1700,
                 minH: 500
             },
             resizable: true,

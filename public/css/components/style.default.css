@@ -402,6 +402,12 @@ h1, h2, h3, h4, h5 {
     line-height: normal;
 }
 
+h1 { font-size:var(--font-size-xxl);}
+h2 { font-size:var(--font-size-xl);}
+h3 { font-size:var(--font-size-l);}
+h4 { font-size:var(--base-font-size); font-weight:bold;}
+h5 { font-size:var(--base-font-size); font-weight:bold;}
+
 /* TOOLS */
 .f-right {
     float: right !important;
@@ -4673,13 +4679,11 @@ a.filter-term {
     text-align: center;
     border-radius: 14px;
     color: #999 !important;
-    visibility: hidden;
     z-index: 1000010;
     border: 0 solid #ddd;
     background: url(../../images/close.png) center center no-repeat;
-    padding-left: 1px;
-    margin-left: -27px;
-    margin-top: 15px;
+    top: 20px;
+    right: 20px;
 
 
 }
@@ -5340,4 +5344,31 @@ input.secretInput:active {
 
 .ui-tabs-panel {
     padding:15px 0px;
+}
+
+
+.articleHeadline {
+    font-size:var(--font-size-xxxl);
+    margin-bottom:10px;
+}
+
+.articleMeta {
+    font-style: italic;
+    margin-bottom:15px;
+}
+
+.articleMeta .tagsinput.readonly {
+    width:auto !important;
+    height:auto !important;
+    margin: 0px 0px;
+    vertical-align: middle;
+}
+
+.articleMeta div.tagsinput.readonly span.tag {
+    margin:0px 5px;
+    margin-left:0px;
+}
+
+.articleBody {
+    margin-bottom:25px;
 }

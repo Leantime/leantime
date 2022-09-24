@@ -71,7 +71,7 @@ namespace leantime\domain\controllers {
 
             if(isset($params['menuState'])) {
 
-                $_SESSION['menuState'] = filter_var($params['menuState'], FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+                $_SESSION['menuState'] = htmlentities($params['menuState']);
             }
         }
 

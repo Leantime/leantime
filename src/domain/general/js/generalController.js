@@ -57,11 +57,12 @@ leantime.generalController = (function () {
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
-                branding: true,
-                statusbar: true,
+                branding: false,
+                statusbar: false,
                 convert_urls: false,
                 paste_data_images: true,
                 menubar:false,
+                default_link_target: '_blank',
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
 
@@ -124,14 +125,94 @@ leantime.generalController = (function () {
                 // General options
                 width: "98%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css,'+leantime.appUrl+'/css/components/wysiwyg-overrides.css,'+leantime.appUrl+'/css/libs/roboto.css',
+                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                plugins : "embed,autoresize,shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table",
+                branding: false,
+                statusbar: false,
+                convert_urls: false,
+                menubar:false,
+                resizable: true,
+                paste_data_images: true,
+                min_height: 400,
+                default_link_target: '_blank',
+                images_upload_handler: function (blobInfo, success, failure) {
+                    var xhr, formData;
+
+                    xhr = new XMLHttpRequest();
+                    xhr.withCredentials = false;
+                    xhr.open('POST', leantime.appUrl+'/api/files');
+
+                    xhr.onload = function () {
+                        var json;
+
+                        if (xhr.status < 200 || xhr.status >= 300) {
+                            failure('HTTP Error: ' + xhr.status);
+                            return;
+                        }
+
+                        success(xhr.responseText);
+                    };
+
+                    formData = new FormData();
+                    formData.append('file', blobInfo.blob());
+
+                    xhr.send(formData);
+                },
+                file_picker_callback: function (callback, value, meta) {
+
+                    window.filePickerCallback = callback;
+
+                    var shortOptions = {
+                        afterShowCont: function () {
+                            jQuery(".fileModal").nyroModal({callbacks:shortOptions});
+
+                        }
+                    };
+
+                    jQuery.nmManual(
+                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        {
+                            stack: true,
+                            callbacks: shortOptions,
+                            sizes: {
+                                minW: 500,
+                                minH: 500,
+                            }
+                        }
+                    );
+                    jQuery.nmTop().elts.cont.css("zIndex", "1000010");
+                    jQuery.nmTop().elts.bg.css("zIndex", "1000010");
+                    jQuery.nmTop().elts.load.css("zIndex", "1000010");
+                    jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
+
+                }
+            }
+        );
+
+
+    };
+
+    var initFixedToolBarEditor = function () {
+
+       tinymce.init(
+            {
+                // General options
+                inline: true,
+                fixed_toolbar_container: ".externalToolbar",
+                width: "98%",
+                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table | template",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table",
                 branding: false,
                 statusbar: true,
                 convert_urls: false,
+
+                selector: '.fixedToolbarEditor',
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,
@@ -189,9 +270,7 @@ leantime.generalController = (function () {
                 }
             }
         );
-
-
-    };
+    }
 
     var makeInputReadonly = function (container) {
 
@@ -256,12 +335,27 @@ leantime.generalController = (function () {
 
     };
 
+    var copyUrl = function (event) {
+
+        event.preventDefault();
+        navigator.clipboard.writeText(event.target.getAttribute('href')).then(() => {
+            /* clipboard successfully set */
+            jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
+
+        }, () => {
+            /* clipboard write failed */
+        });
+
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         initSimpleEditor:_initSimpleEditor,
         initComplexEditor:initComplexEditor,
         makeInputReadonly:makeInputReadonly,
-        enableCommenterForms:enableCommenterForms
+        enableCommenterForms:enableCommenterForms,
+        initFixedToolBarEditor:initFixedToolBarEditor,
+        copyUrl:copyUrl
     };
 
 })();

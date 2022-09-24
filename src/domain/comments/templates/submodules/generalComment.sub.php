@@ -117,7 +117,9 @@ if (strpos($formUrl, '?delComment=') !== false) {
 	</div>
 
     <?php if(count($this->get('comments')) == 0){ ?>
-        <?php echo $this->__('text.no_comments') ?>
+        <div style="padding-left:40px;">
+            <?php echo $this->__('text.no_comments') ?>
+        </div>
     <?php } ?>
     <div class="clearall"></div>
 </form>

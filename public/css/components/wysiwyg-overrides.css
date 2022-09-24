@@ -18,11 +18,23 @@ body .tox .tox-edit-area{
     display:none;
 }
 
-body .tox-editor-header {
-    border-bottom:1px solid #ccc !important;
+body .tox-tinymce {
+    border:0px;
+    box-shadow:var(--regular-shadow);
 }
 
+body .tox-editor-header {
+    border:0px solid var(--main-border-color) !important;
+}
 
+body .tox-editor-container>:first-child{
+    border-bottom:0px solid var(--main-border-color) !important;
+}
+
+body .tox-edit-area {
+    cursor: text;
+
+}
 
 body .tox .tox-mbtn,
 body .tox .tox-collection__item-label {
@@ -56,3 +68,48 @@ body .tox .tox-mbtn--active {
 .tox-checklist {
     margin-left: 22px;
 }
+
+body.mce-content-body {
+    padding:10px 30px;
+}
+
+.mce-content-body {
+    font-family: var(--primary-font-family);
+}
+
+.mce-content-body h1,
+.mce-content-body h2,
+.mce-content-body h3,
+.mce-content-body h4,
+.mce-content-body h5 {
+    font-weight: normal;
+    line-height: normal;
+    color:var(--primary-color);
+    margin-top:25px;
+}
+
+
+.mce-content-body  h1 { font-size:var(--font-size-xxl); padding:5px 0px 10px 0px;}
+.mce-content-body  h2 { font-size:var(--font-size-xl); padding:5px 0px 10px 0px;}
+.mce-content-body  h3 { font-size:var(--font-size-l); padding:5px 0px 10px 0px;}
+.mce-content-body  h4 { font-size:var(--base-font-size); font-weight:bold; padding:5px 0px 5px 0px;}
+.mce-content-body  h5 { font-size:var(--base-font-size); font-weight:bold; padding:5px 0px 5px 0px;}
+
+.mce-content-body  ol,
+.mce-content-body  ul {
+    margin-left:15px;
+    margin-bottom:15px;
+}
+
+.mce-content-body table td {
+    padding:5px;
+}
+
+.mce-content-body  p {
+    margin-bottom:15px;
+}
+
+
+
+
+

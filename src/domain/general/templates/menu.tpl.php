@@ -34,7 +34,7 @@
                         <?php
                         $lastClient = "";
 
-                        if($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) > 1) {
+                        if($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
                             foreach ($this->get('allAssignedProjects') as $projectRow) {
 
                                 if ($lastClient != $projectRow['clientName']) {
@@ -73,15 +73,18 @@
                 <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>
             </li>
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
-            </li>
+                <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
+                </li>
             <?php } ?>
             <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
             </li>
             <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/ideas/showBoards"><?=$this->__("menu.ideas") ?></a>
+            </li>
+            <li <?php if($module == 'wiki') echo"  class='active' "; ?>>
+                <a href="<?=BASE_URL ?>/wiki/show"><?=$this->__("menu.documents") ?></a>
             </li>
             <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
                 <a href="<?=BASE_URL ?>/retrospectives/showBoards"><?=$this->__("menu.retrospectives") ?></a>
