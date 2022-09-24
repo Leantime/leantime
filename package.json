@@ -1,7 +1,7 @@
 {
   "name": "leantime",
-  "version": "2.2.4",
-  "description": "Open source project management system",
+  "version": "2.2.8",
+  "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
