@@ -51,7 +51,9 @@ namespace leantime\domain\repositories {
 					tickets.headline, 
 					tickets.id,
 					tickets.editFrom,
-					tickets.editTo
+					tickets.editTo,
+                    tickets.date,
+                    tickets.updatedAt
 				FROM zp_tickets AS tickets
 				WHERE (tickets.editorId = :userId OR tickets.userId = :userId) AND tickets.type <> 'Milestone' AND tickets.type <> 'Subtask'";
 
@@ -78,6 +80,7 @@ namespace leantime\domain\repositories {
 
                 $newValues[] = array(
                     'title'  => $value['description'],
+                    'updatedAt' => $value['updatedAt']?date('Ymd\THis\Z',strtotime($value['updatedAt'])):'',
                     'allDay' => $value['allDay'],
                     'dateFrom' => array(
                         'y' => date('Y', $dateFrom),
@@ -149,7 +152,9 @@ namespace leantime\domain\repositories {
 					tickets.headline, 
 					tickets.id,
 					tickets.editFrom,
-					tickets.editTo
+					tickets.editTo,
+                    tickets.date,
+                    tickets.updatedAt
 				FROM zp_tickets AS tickets
 				WHERE 
 					(tickets.userId = :userId OR tickets.editorId = :userId)
@@ -182,6 +187,8 @@ namespace leantime\domain\repositories {
 
                 $newValues[] = array(
                     'title'  => $value['description'],
+                    'createdAt'=>date('Ymd\THis\Z',strtotime($value['date'])),
+                    'updatedAt' => $value['updatedAt']?date('Ymd\THis\Z',strtotime($value['updatedAt'])):'',
                     'allDay' => $value['allDay'],
                     'dateFrom' => array(
                         'y' => date('Y', $dateFrom),
@@ -323,7 +330,8 @@ namespace leantime\domain\repositories {
 			dateFrom = :dateFrom,
 			dateTo = :dateTo, 
 			description = :description,
-			allDay = :allDay
+			allDay = :allDay,
+            updatedAt= UTC_TIMESTAMP
 			WHERE id = :id AND userId = :userId LIMIT 1";
 
 

@@ -279,6 +279,7 @@ namespace leantime\core {
                   `description` text,
                   `kind` varchar(255) DEFAULT NULL,
                   `allDay` varchar(10) DEFAULT NULL,
+                  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP() ,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
                 
@@ -496,6 +497,7 @@ namespace leantime\core {
                   `description` text,
                   `acceptanceCriteria` text,
                   `date` datetime DEFAULT NULL,
+                  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP() ,
                   `dateToFinish` datetime DEFAULT NULL,
                   `priority` varchar(60) DEFAULT NULL,
                   `status` int(2) DEFAULT NULL,

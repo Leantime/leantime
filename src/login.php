@@ -94,7 +94,7 @@
                             <input type="text" name="username" id="username" class="form-control" placeholder="Enter Email Address" value=""/>
                         </div>
                         <div class="">
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Enter Password" value=""/>
+                            <input autofocus type="password" name="password" id="password" class="form-control" placeholder="Enter Password" value=""/>
                         </div>
                         <div class="">
                             <a href="<?=BASE_URL ?>/resetPassword" style="float:right; margin-top:10px;">Forgot password</a>

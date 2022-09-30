@@ -1430,7 +1430,8 @@ namespace leantime\domain\repositories {
 				editFrom = :editFrom,
 				editTo = :editTo,
 				acceptanceCriteria = :acceptanceCriteria,
-				dependingTicketId = :dependingTicketId
+				dependingTicketId = :dependingTicketId,
+                updatedAt = UTC_TIMESTAMP()
 			WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->{'database'}->prepare($query);
