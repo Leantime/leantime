@@ -11,11 +11,9 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            $config = new core\config();
             $this->projectService = new services\projects();
-
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/tickets/showKanban/";
-            }
+            $_SESSION['lastPage'] = $config->appUrl . "/tickets/showKanban/";
         }
 
         /**
@@ -40,7 +38,6 @@ namespace leantime\domain\controllers {
             //Set current project ID
             if (isset($_COOKIE['searchCriteria']) === true) {
                 $searchCriteria = unserialize($_COOKIE['searchCriteria']);
-
             }
 
             $language->setModule('tickets');
@@ -102,11 +99,9 @@ namespace leantime\domain\controllers {
                 if ($values['headline'] === '') {
 
                     $tpl->setNotification('ERROR_NO_HEADLINE', 'error');
-
                 } elseif ($values['projectId'] === '') {
 
                     $tpl->setNotification('ERROR_NO_PROJECT', 'error');
-
                 } else {
 
                     $values['date'] = $helper->timestamp2date($values['date'], 4);
@@ -122,23 +117,22 @@ namespace leantime\domain\controllers {
 
 
                     $subject = "New To-Do has been added to one of your projects.";
-                    $actual_link = BASE_URL."/tickets/showTicket/". $id;
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".$values['headline']."'";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
+                    $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
+                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '" . $values['headline'] . "'";
+                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => "Click here to see it."));
 
 
                     $tpl->setNotification('To-Do created successfully', 'success');
 
                     if (isset($_POST['saveTicket'])) {
-                        $tpl->redirect(BASE_URL."/tickets/showTicket/" . $id);
+                        $tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id);
                     }
 
 
-                    if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
+                    if (isset($_POST["saveAndCloseTicket"]) === true) {
+                        $tpl->redirect( $_SESSION['lastPage']);
                     }
                 }
-
             }
 
             $tpl->assign('ticket', $values);
@@ -160,9 +154,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('helper', $helper);
 
             $tpl->display('tickets.newTicket');
-
         }
-
     }
-
 }

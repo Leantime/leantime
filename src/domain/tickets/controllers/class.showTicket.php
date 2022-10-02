@@ -11,12 +11,11 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
+            $config = new core\config();
+
             $this->projectService = new services\projects();
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = "/tickets/showKanban/";
-            }
-
+            $_SESSION['lastPage'] = $config->appUrl . "/tickets/showKanban/";
         }
         /**
          * run - display template and edit data
@@ -65,10 +64,9 @@ namespace leantime\domain\controllers {
                         $tpl->setNotification($message["msg"], $message["type"]);
 
                         $subject = "New file in ToDo [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
-                        $actual_link = "".CURRENT_URL."#files";
-                        $message = "" . $_SESSION["userdata"]["name"] . " a new file in To-Do: ".$ticket['headline'];
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
-
+                        $actual_link = "" . CURRENT_URL . "#files";
+                        $message = "" . $_SESSION["userdata"]["name"] . " a new file in To-Do: " . $ticket['headline'];
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
                     }
 
                     //Delete file
@@ -84,12 +82,11 @@ namespace leantime\domain\controllers {
                         $tpl->setNotification($message["msg"], $message["type"]);
 
                         $subject = "New comment in ToDo [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
-                        $actual_link = "".CURRENT_URL."#comments";
+                        $actual_link = "" . CURRENT_URL . "#comments";
                         $message = "" . $_SESSION["userdata"]["name"] . " added a new comment to To-Do:
-                        ".$_POST['text']."
+                        " . $_POST['text'] . "
                         ";
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
-
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
                     }
 
                     //Delete comment
@@ -115,11 +112,11 @@ namespace leantime\domain\controllers {
                         $subject = "One of your To-Dos was updated. [" . $ticket['id'] . "] - " . $ticket['headline'] . "";
                         $actual_link = CURRENT_URL;
                         $message = "" . $_SESSION["userdata"]["name"] . " updated  To-Do ";
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
+                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => "[" . $ticket['id'] . "] - " . $ticket['headline'] . ""));
 
-                        if(isset($_POST["saveAndCloseTicket"]) === true) {
+                        if (isset($_POST["saveAndCloseTicket"]) === true) {
 
-                            $tpl->redirect(BASE_URL.$_SESSION['lastPage']);
+                            $tpl->redirect($_SESSION['lastPage']);
                         }
                     }
 
@@ -172,7 +169,6 @@ namespace leantime\domain\controllers {
 
                         $this->editTicket($postTemp, $id, $ticket);
                         $ticket = $ticketRepo->getTicket($id);
-
                     }
 
                     //Delete Subtask
@@ -270,19 +266,14 @@ namespace leantime\domain\controllers {
                     $tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
                     $tpl->assign("sprints", $sprintService->getAllSprints($_SESSION["currentProject"]));
                     $tpl->display('tickets.showTicket');
-
                 } else {
 
                     $tpl->display('general.error');
-
                 }
-
             } else {
 
                 $tpl->display('general.error');
-
             }
-
         }
 
         public function uploadFile($post, $files, $id)
@@ -297,23 +288,18 @@ namespace leantime\domain\controllers {
 
                     $message["msg"] = "FILE_UPLOADED";
                     $message["type"] = "success";
-
                 } else {
 
                     $message["msg"] = "ERROR_WHILE_UPLOADING";
                     $message["type"] = "error";
-
                 }
-
             } else {
 
                 $message["msg"] = "NO_FILE";
                 $message["type"] = "error";
-
             }
 
             return $message;
-
         }
 
         public function deleteFile($file)
@@ -340,7 +326,6 @@ namespace leantime\domain\controllers {
             if (!$read->isRead('ticket', $id, $_SESSION['userdata']['id'])) {
                 $read->markAsRead('ticket', $id, $_SESSION['userdata']['id']);
             }
-
         }
 
         public function addComment($post, $id)
@@ -359,7 +344,6 @@ namespace leantime\domain\controllers {
             $comment->addComment($values, 'ticket');
 
             return array("msg" => "COMMENT_ADDED", "type" => "success");
-
         }
 
         public function addTimes($id, $post)
@@ -410,14 +394,12 @@ namespace leantime\domain\controllers {
 
                         $timesheets->addTime($values);
                         return array("msg" => "TIME_SAVED", "type" => "success");
-
                     } else {
                         return array("msg" => "NO_HOURS", "type" => "error");
                     }
                 } else {
                     return array("msg" => "NO_DATE", "type" => "error");
                 }
-
             } else {
                 return array("msg" => "NO_KIND", "type" => "error");
             }
@@ -455,7 +437,6 @@ namespace leantime\domain\controllers {
             if ($values['headline'] === '') {
 
                 return array("msg" => "ERROR_NO_HEADLINE", "type" => "error");
-
             } else {
 
                 //Prepare dates for db
@@ -469,10 +450,7 @@ namespace leantime\domain\controllers {
                 $ticketRepo->updateTicket($values, $id);
 
                 return array("msg" => "TICKET_EDIT_SUCCESS", "type" => "success");
-
             }
         }
-
     }
-
 }

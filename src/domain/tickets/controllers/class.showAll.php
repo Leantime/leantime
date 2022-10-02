@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+            $config = new core\config();
 
             $tpl = new core\template();
             $projects = new repositories\projects();
@@ -27,7 +28,7 @@ namespace leantime\domain\controllers {
             $sprintService = new services\sprints();
             $ticketService = new services\tickets();
 
-            $_SESSION['lastPage'] = "/tickets/showAll";
+            $_SESSION['lastPage'] = $config->appUrl."/tickets/showAll";
 
             $allprojects = $projects->getUserProjects();
             $allSprints = $sprintService->getAllSprints($_SESSION["currentProject"]);

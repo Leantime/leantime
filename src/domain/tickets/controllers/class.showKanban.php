@@ -21,6 +21,7 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+            $config = new core\config();
 
             $tpl = new core\template();
             $projects = new repositories\projects();
@@ -28,7 +29,7 @@ namespace leantime\domain\controllers {
             $sprintService = new services\sprints();
             $ticketService = new services\tickets();
 
-            $_SESSION['lastPage'] = "/tickets/showKanban";
+            $_SESSION['lastPage'] = $config->appUrl."/tickets/showKanban";
 
             //Default Search Criteria, set current project
 
