@@ -196,6 +196,7 @@ jQuery(document).ready(function(){
 
 <div class="headtitle" style="margin:0px; background: #eee;">
 	<h4 class="widgettitle title-primary">My TimeSheet</h4>
+	<div><input type='submit' name='delErr' class="form-control btn btn-primary" value='Delete Err Hours'></div>
 	<div class="padding10">
 		<span>Week from</span>
         <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>

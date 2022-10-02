@@ -31,6 +31,12 @@ namespace leantime\domain\controllers {
 
             $kind = 'all';
 
+            if(isset($_POST['delErr'])){
+                $timesheetsRepo->delErr();
+                $tpl->setNotification('Timesheet removed Error Hours', 'success');
+
+            }
+
             if (isset($_POST['search']) === true) {
 
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
@@ -74,6 +80,8 @@ namespace leantime\domain\controllers {
 
         }
 
+
+      
         public function saveTimeSheet($postData)
         {
             $ticketId = "";

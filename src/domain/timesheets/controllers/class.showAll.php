@@ -15,10 +15,11 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
+            $config = new core\config();
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
-            $_SESSION['lastPage'] = "/timesheets/showAll";
+            $_SESSION['lastPage'] = $config->appUrl."/timesheets/showAll";
 
             //Only admins and employees
 

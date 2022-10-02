@@ -467,6 +467,12 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
         }
 
+        public function delErr(){
+            $query="delete from zp_timesheets where hours > 100";
+            $this->db->dbQuery($query);
+
+        }
+        
         public function simpleInsert($values)
         {
 
