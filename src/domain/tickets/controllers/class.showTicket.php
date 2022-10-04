@@ -116,7 +116,7 @@ namespace leantime\domain\controllers {
 
                         if (isset($_POST["saveAndCloseTicket"]) === true) {
 
-                            $tpl->redirect($_SESSION['lastPage']);
+                            $tpl->redirect( $_SESSION['lastPage']);
                         }
                     }
 

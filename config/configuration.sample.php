@@ -4,11 +4,11 @@ namespace leantime\core;
 class config
 {
 	/* General */
-	public $sitename = "CALAW"; //Name of your site, can be changed later
+	public $sitename = "LeanTime"; //Name of your site, can be changed later
 	public $language = "en"; //Default language
     public $mainColor = "1b75bb"; //Default color, can be changed later
     public $logoPath = "/logo.png"; //Default logo path, can be changed later
-    public $appUrl = "/pm"; //Base URL, trailing slash not needed
+    public $appUrl = ""; //Base URL, trailing slash not needed
 
     /* Database */
     // public $dbHost="localhost"; //Database host
