@@ -19,6 +19,8 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+
+            $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->displayPartial("general.headMenu");
 

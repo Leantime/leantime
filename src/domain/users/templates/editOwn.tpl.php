@@ -92,6 +92,7 @@ $user = $this->get('user');
                                            id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
                                 </span>
                             </p>
+                            <br />
                             <p>
                                 <label for="messagesfrequency"><?php echo $this->__('label.messages_frequency') ?></label>
                                 <span class='field'>
@@ -109,7 +110,7 @@ $user = $this->get('user');
 					<option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
                                     </select> <br/>
                                 </span>
-                            </p><br/>
+                            </p>
 
                             <p>
                                 <label for="language"><?php echo $this->__('label.language') ?></label>

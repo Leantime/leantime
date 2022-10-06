@@ -1,9 +1,10 @@
 {
   "name": "leantime",
-  "version": "2.2.4",
-  "description": "Open source project management system",
+  "version": "2.2.8",
+  "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {
+    "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
     "chart.js": "^3.8.0",
     "chartjs-adapter-moment": "^1.0.0",
     "composer": "^4.1.0",
@@ -18,14 +19,15 @@
     "jquery-migrate": "1.4.1",
     "jquery-ui-dist": "^1.13.1",
     "jquery-ui-touch-punch": "^0.2.3",
+    "js-cookie": "^3.0.1",
+    "jstree": "^3.3.12",
     "masonry-layout": "^4.2.2",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
+    "rangy": "^1.3.0",
     "tether-shepherd": "^1.8.1",
     "tinymce": "^5.10.5",
-    "uppy": "^2.13.3",
-    "js-cookie": "^3.0.1",
-    "rangy": "^1.3.0"
+    "uppy": "^2.13.3"
   },
   "devDependencies": {
     "grunt": "^1.5.3",

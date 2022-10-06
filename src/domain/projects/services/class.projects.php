@@ -485,6 +485,8 @@ namespace leantime\domain\services {
                     $_SESSION['lastTicketView'] = "";
                     $_SESSION['lastFilterdTicketTableView'] = "";
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
+                    $_SESSION['currentWiki'] = '';
+                    $_SESSION['lastArticle'] = "";
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
@@ -882,6 +884,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getProjectUserRelation($id)
+        {
+            return $this->projectRepository->getProjectUserRelation($id);
+        }
     }
 
 }

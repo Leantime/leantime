@@ -76,9 +76,8 @@ namespace leantime\domain\repositories {
             20106,
             20107,
             20108,
-            20109
-
-
+            20109,
+            20110
         );
 
         /**
@@ -1180,6 +1179,55 @@ namespace leantime\domain\repositories {
             }
 
         }
+
+        private function update_sql_20110() {
+
+            $errors = array();
+
+            $sql = array( "alter table zp_canvas_items add tags text null",
+                "alter table zp_canvas_items add title varchar(255) null",
+                "alter table zp_canvas_items add parent int null",
+                "alter table zp_canvas_items add featured int null",
+                "create table zp_approvals
+                (
+                    id               int auto_increment,
+                    module           varchar(100) null,
+                    entityId         int          null,
+                    requestorId      int          null,
+                    approverId       int          null,
+                    approvalStatus   int          null,
+                    requestedOn      datetime     null,
+                    lastStatusChange datetime     null,
+                    constraint zp_approvals_pk
+                        primary key (id)
+                )",
+                "alter table zp_comment add status varchar(50) null"
+            );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+
 
     }
 }

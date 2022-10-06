@@ -204,10 +204,10 @@ namespace leantime\domain\services {
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
+                    $ldapUser = $ldap->getSingleUser($username);
+
                     //If user does not exist create user
                     if($user == false) {
-
-                        $ldapUser = $ldap->getSingleUser($username);
 
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
@@ -225,6 +225,14 @@ namespace leantime\domain\services {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                         //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
                         //TODO: create a better login response. This will return that the username or password was not correct
+
+                    } else {
+
+                        $user['firstname'] = $ldapUser['firstname'];
+                        $user['lastname'] = $ldapUser['lastname'];
+                        $user['phone'] = $ldapUser['phonenumber'];
+
+                        $this->userRepo->editUser($user, $user['id']);
                     }
 
                     //TODO: if user exists in ldap, do an auto update of name

@@ -92,18 +92,24 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/emoticons/js/emojis.min.js",
                     "node_modules/tinymce/plugins/template/plugin.js",
                     "node_modules/tinymce/plugins/advlist/plugin.js",
+                    "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
+                    "node_modules/jstree/dist/jstree.js",
+                    "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
                     "public/js/libs/tinymce-plugins/helper.js",
                     "public/js/libs/tinymce-plugins/checklist/index.js",
                     "public/js/libs/tinymce-plugins/shortlink/index.js",
                     "public/js/libs/tinymce-plugins/bettertable/index.js",
                     "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
+                    "public/js/libs/tinymce-plugins/embed/index.js",
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
                     "public/js/libs/simpleGantt/moment.min.js",
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
-                    "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"
+                    "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
+
+
                 ]
                 , dest: "public/js/compiled-extended-libs.min.js"
             }

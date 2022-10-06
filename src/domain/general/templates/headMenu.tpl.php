@@ -1,24 +1,34 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
 
+<?php
+$currentLink = $this->get('current');
+$module = '';
+$action = '';
+
+if(is_array($currentLink)) {
+
+    $module = $currentLink[0]??'';
+    $action = $currentLink[1]??'';
+}
+
+?>
+
 <ul class="headmenu">
 
     <li>
-        <a href='<?=BASE_URL ?>/projects/showMy'>
-            <?=$this->__("menu.my_portfolio")?>
+        <a href='<?=BASE_URL ?>/dashboard/home' <?php if($module == 'dashboard' && $action=='home') echo"class='active'"; ?>>
+            <?=$this->__("menu.home")?>
         </a>
     </li>
     <?php if($login::userIsAtLeast($roles::$editor, true)) { ?>
-
-
-
         <li>
-            <a href='<?=BASE_URL ?>/timesheets/showMy/'>
+            <a href='<?=BASE_URL ?>/timesheets/showMy/' <?php if($module == 'timesheets' && $action=='showMy') echo"class='active'"; ?>>
                 <?=$this->__("menu.my_timesheets")?>
             </a>
         </li>
 
         <li>
-            <a href='<?=BASE_URL ?>/calendar/showMyCalendar'>
+            <a href='<?=BASE_URL ?>/calendar/showMyCalendar' <?php if($module == 'calendar' && $action=='showMyCalendar') echo"class='active'"; ?>>
                 <?=$this->__("menu.my_calendar")?>
             </a>
         </li>

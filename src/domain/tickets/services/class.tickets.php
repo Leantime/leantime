@@ -113,7 +113,7 @@ namespace leantime\domain\services {
         {
 
             $searchCriteria = array(
-                "currentProject"=> $_SESSION["currentProject"],
+                "currentProject"=> "",
                 "users"=>"",
                 "status"=>"",
                 "term"=> "",
@@ -124,6 +124,14 @@ namespace leantime\domain\services {
                 "groupBy" => "",
                 "priority" => ""
             );
+
+            if(isset($_SESSION["currentProject"]) === true) {
+                $searchCriteria["currentProject"] = $_SESSION["currentProject"];
+            }
+
+            if(isset($searchParams["currentProject"]) === true) {
+                $searchCriteria["currentProject"] = $searchParams["currentProject"];
+            }
 
             if(isset($searchParams["users"]) === true) {
                 $searchCriteria["users"] = $searchParams["users"];
@@ -197,14 +205,21 @@ namespace leantime\domain\services {
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $tickets = array(
-                "thisWeek" => array(),
-                "later" => array()
             );
 
             foreach($allTickets as $row){
 
                 if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                    $tickets["later"][] = $row;
+
+                    if(isset($tickets["later"]["tickets"])) {
+                        $tickets["later"]["tickets"][] = $row;
+                    }else{
+                        $tickets['later'] = array(
+                            "labelName" => "subtitles.todos_later",
+                            "tickets" => array($row)
+                        );
+                    }
+
                 }else {
                     $date = new DateTime($row['dateToFinish']);
 
@@ -212,9 +227,26 @@ namespace leantime\domain\services {
                     $nextFridayDateTime = new DateTime();
                     $nextFridayDateTime->setTimestamp($nextFriday);
                     if($date <= $nextFridayDateTime){
-                        $tickets["thisWeek"][] = $row;
+
+                        if(isset($tickets["thisWeek"]["tickets"])) {
+                            $tickets["thisWeek"]["tickets"][] = $row;
+                        }else{
+                            $tickets['thisWeek'] = array(
+                                "labelName" => "subtitles.todos_this_week",
+                                "tickets" => array($row)
+                            );
+                        }
+
+
                     }else{
-                        $tickets["later"][] = $row;
+                        if(isset($tickets["later"]["tickets"])) {
+                            $tickets["later"]["tickets"][] = $row;
+                        }else{
+                            $tickets['later'] = array(
+                                "labelName" => "subtitles.todos_later",
+                                "tickets" => array($row)
+                            );
+                        }
                     }
                 }
 
@@ -224,6 +256,43 @@ namespace leantime\domain\services {
             return $tickets;
 
         }
+
+        public function getLastTickets($projectId, $limit=5){
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => "", "status" => "not_done", "sprint"=>"", "limit"=>$limit));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "date", $limit);
+
+            return $allTickets;
+
+        }
+
+        public function getOpenUserTicketsByProject ($userId, $projectId) {
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            $tickets = array();
+
+            foreach($allTickets as $row){
+
+                if(isset($tickets[$row['projectId']])) {
+                    $tickets[$row['projectId']]['tickets'][] = $row;
+                }else{
+                    $tickets[$row['projectId']] = array(
+                        "labelName" => $row['clientName']."//". $row['projectName'],
+                        "tickets" => array($row)
+                    );
+                }
+
+
+
+
+            }
+
+            return $tickets;
+
+        }
+
 
         public function getAllMilestones($projectId, $includeArchived = false, $sortBy="headline")
         {
@@ -252,7 +321,7 @@ namespace leantime\domain\services {
                 'headline' => $params['headline'],
                 'type' => 'Task',
                 'description' => isset($params['description']) ? $params['description'] : '',
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),

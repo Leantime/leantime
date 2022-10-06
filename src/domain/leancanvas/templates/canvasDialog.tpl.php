@@ -41,11 +41,11 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     }?>><?=$this->__("status.validated_true") ?></option>
         </select><br />
         <label><?=$this->__("label.assumptions") ?></label>
-        <textarea rows="3" cols="10" name="assumptions" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_assumption") ?>"><?php echo $canvasItem['assumptions'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="assumptions" id="assumptionsTextarea" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_assumption") ?>"><?php echo $canvasItem['assumptions'] ?></textarea><br />
         <label><?=$this->__("label.data") ?></label>
-        <textarea rows="3" cols="10" name="data" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_data") ?>"><?php echo $canvasItem['data'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="data" id="dataTextarea" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_data") ?>"><?php echo $canvasItem['data'] ?></textarea><br />
         <label><?=$this->__("label.conclusion") ?></label>
-        <textarea rows="3" cols="10" name="conclusion" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_conclusion") ?>"><?php echo $canvasItem['conclusion'] ?></textarea><br />
+        <textarea rows="3" cols="10" name="conclusion" id="conclusionTextarea" class="modalTextArea tinymceSimple" placeholder="<?=$this->__("input.placeholders.describe_conclusion") ?>"><?php echo $canvasItem['conclusion'] ?></textarea><br />
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 

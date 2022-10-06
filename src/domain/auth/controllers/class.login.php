@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
 
             $this->authService = services\auth::getInstance();
 
-            $this->redirectUrl = BASE_URL."/dashboard/show";
+            $this->redirectUrl = BASE_URL."/dashboard/home";
 
             if($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
                 $this->redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
@@ -46,7 +46,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            $redirectUrl = BASE_URL."/dashboard/show";
+            $redirectUrl = BASE_URL."/dashboard/home";
 
             if(isset($_SESSION['redirectOrigin'])){
                 $redirectUrl = $_SESSION['redirectOrigin'];

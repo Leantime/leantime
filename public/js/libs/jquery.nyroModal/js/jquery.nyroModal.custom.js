@@ -155,7 +155,7 @@ jQuery(function($, undefined) {
 					this.elts.hidden.empty();
 				} else {
 					this.sizes.w = this.sizes.initW;
-					this.sizes.h = this.sizes.initH+100;
+					this.sizes.h = this.sizes.initH;
 				}
 				this._unreposition();
 				this.size();
@@ -191,7 +191,7 @@ jQuery(function($, undefined) {
                     if (this.sizes.h > maxHeight || this.sizes.w > maxWidth) {
                         // We're gonna resize the modal as it will goes outside the view port
                         this.sizes.h = Math.min(this.sizes.h, (maxHeight));
-                        this.sizes.w = Math.min(this.sizes.w, (maxWidth));
+                        this.sizes.w = Math.min(this.sizes.w, (maxWidth-20));
                     }
 
 				}
@@ -515,7 +515,7 @@ jQuery(function($, undefined) {
 					var leftValue = "auto";
 					var rightValue = 0;
 				}else{
-					var topValue = (this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2;
+					var topValue = ((this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2) - 50;
 					if(topValue <=10) {
 						topValue = 50;
 					}
