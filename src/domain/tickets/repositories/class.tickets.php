@@ -312,7 +312,7 @@ namespace leantime\domain\repositories {
          * @param  $sort
          * @return array | bool
          */
-        public function getAllBySearchCriteria($searchCriteria, $sort='standard')
+        public function getAllBySearchCriteria($searchCriteria, $sort='standard', $limit = null)
         {
 
             $query = "SELECT
@@ -370,19 +370,19 @@ namespace leantime\domain\repositories {
 						  
 						  AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-                        if($_SESSION['currentProject']  != "") {
+                        if($searchCriteria["currentProject"]  != "") {
                             $query .= " AND zp_tickets.projectId = :projectId";
                         }
 
 
-            if($searchCriteria["users"]  != "") {
-                $editorIdIn = core\db::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
-                $query .= " AND zp_tickets.editorId IN(" . $editorIdIn. ")";
-            }
+                        if($searchCriteria["users"]  != "") {
+                            $editorIdIn = core\db::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
+                            $query .= " AND zp_tickets.editorId IN(" . $editorIdIn. ")";
+                        }
 
-            if($searchCriteria["milestone"]  != "") {
-                $query .= " AND zp_tickets.dependingTicketId = :milestoneId";
-            }
+                        if($searchCriteria["milestone"]  != "") {
+                            $query .= " AND zp_tickets.dependingTicketId = :milestoneId";
+                        }
 
 
             if($searchCriteria["status"]  != "") {
@@ -430,16 +430,22 @@ namespace leantime\domain\repositories {
             }elseif($sort == "kanbansort") {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
             }elseif($sort == "duedate") {
-                $query .= " ORDER BY zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+                $query .= " ORDER BY (zp_tickets.dateToFinish = '0000-00-00 00:00:00'), zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            }elseif($sort == "date") {
+                $query .= " ORDER BY zp_tickets.date DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            }
+
+            if($limit !== null && $limit > 0) {
+                $query .= " LIMIT :limit";
             }
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
 
-            if($_SESSION['currentProject'] != "") {
+            if($searchCriteria["currentProject"] != "") {
 
-                $stmn->bindValue(':projectId', $_SESSION['currentProject'], PDO::PARAM_INT);
+                $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
             if($searchCriteria["milestone"]  != "") {
@@ -476,6 +482,10 @@ namespace leantime\domain\repositories {
                 $termWild = "%".$searchCriteria["term"]."%";
                 $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
                 $stmn->bindValue(':termStandard', $searchCriteria["term"], PDO::PARAM_STR);
+            }
+
+            if($limit !== null && $limit > 0) {
+                $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
             }
 
             $stmn->execute();

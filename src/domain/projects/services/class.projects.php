@@ -884,6 +884,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getProjectUserRelation($id)
+        {
+            return $this->projectRepository->getProjectUserRelation($id);
+        }
     }
 
 }

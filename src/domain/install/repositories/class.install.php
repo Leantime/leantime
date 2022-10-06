@@ -1200,7 +1200,8 @@ namespace leantime\domain\repositories {
                     lastStatusChange datetime     null,
                     constraint zp_approvals_pk
                         primary key (id)
-                )"
+                )",
+                "alter table zp_comment add status varchar(50) null"
             );
 
             foreach ($sql as $statement) {

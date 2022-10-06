@@ -50,9 +50,31 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
+
+            <?php if(($currentArticle == false || $currentArticle->id != null) && ($wikis == false || count($wikis) == 0)) { ?>
+
+                <div class="col-md-12">
+                    <div class="maincontentinner">
+                        <?php
+                        echo"<div class='center'>";
+                        echo"<div  style='width:30%' class='svgContainer'>";
+                        echo file_get_contents(ROOT."/images/svg/undraw_book_reading_re_fu2c.svg");
+                        echo"</div>";
+                        echo"<br /><h4>".$this->__("headlines.no_articles_yet")."</h4>";
+
+
+                            echo "".$this->__("text.create_new_wiki")."<br /><br />
+                                            <a href='".BASE_URL."/wiki/wikiModal/' class='wikiModal inlineEdit btn btn-primary'>".$this->__("link.new_wiki")."</a><br/><br/>";
+                        echo"</div>";
+                        ?>
+                    </div>
+                </div>
+
+            <?php } ?>
+
             <?php if($wikis != false && count($wikis) > 0) {?>
 
-            <div class="col-lg-3">
+                <div class="col-lg-3">
                 <div class="maincontentinner">
                     <div class="row">
                         <div class="col-md-12">
@@ -113,10 +135,9 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                     </div>
                 </div>
             </div>
-            <?php } ?>
-            <div class="col-lg-9">
-                <div class="maincontentinner">
 
+                <div class="col-lg-9">
+                    <div class="maincontentinner">
                     <?php
 
                     if($currentArticle && $currentArticle->id != null){ ?>
@@ -199,29 +220,29 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                     </div>
 
                     <?php }else{?>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <?php
-                                echo"<div class='center'>";
-                                    echo"<div  style='width:30%' class='svgContainer'>";
-                                        echo file_get_contents(ROOT."/images/svg/undraw_book_reading_re_fu2c.svg");
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <?php
+                                    echo"<div class='center'>";
+                                        echo"<div  style='width:30%' class='svgContainer'>";
+                                            echo file_get_contents(ROOT."/images/svg/undraw_book_reading_re_fu2c.svg");
+                                            echo"</div>";
+                                        echo"<br /><h4>".$this->__("headlines.no_articles_yet")."</h4>";
+
+                                            echo "".$this->__("text.create_new_content")."<br /><br />
+                                            <a href='".BASE_URL."/wiki/articleDialog/' class='articleModal inlineEdit btn btn-primary'><i class='fa fa-plus'></i> ".$this->__("link.create_article")."</a><br/><br/>";
+
+
                                         echo"</div>";
-                                    echo"<br /><h4>".$this->__("headlines.no_articles_yet")."</h4>";
-
-                                    if ($wikis != false && count($wikis) > 0) {
-                                        echo "".$this->__("text.create_new_content")."<br /><br />
-                                        <a href='".BASE_URL."/wiki/articleDialog/' class='articleModal inlineEdit btn btn-primary'><i class='fa fa-plus'></i> ".$this->__("link.create_article")."</a><br/><br/>";
-
-                                    }else{
-                                        echo "".$this->__("text.create_new_wiki")."<br /><br />
-                                        <a href='".BASE_URL."/wiki/wikiModal/' class='wikiModal inlineEdit btn btn-primary'>".$this->__("link.new_wiki")."</a><br/><br/>";
-                                    }
-                                    ?>
-                                </div>
+                                        ?>
+                                    </div>
                             </div>
-                        </div>
                     <?php } ?>
                 </div>
+                </div>
+
+            <?php } ?>
+
             </div>
 
 
@@ -234,7 +255,10 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 <script type="text/javascript">
 
    jQuery(document).ready(function() {
-       leantime.wikiController.initTree("#article-toc-wrapper", <?=$currentArticle->id ?>);
+       <?php if($currentArticle){?>
+        leantime.wikiController.initTree("#article-toc-wrapper", <?=$currentArticle->id ?>);
+       <?php } ?>
+
        leantime.wikiController.wikiModal();
        leantime.wikiController.articleModal();
 

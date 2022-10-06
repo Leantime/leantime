@@ -420,6 +420,10 @@ select,
     margin-bottom:30px;
 }
 
+.marginBottomMd {
+    margin-bottom:15px;
+}
+
 
 .filterBar select {
     height: auto;

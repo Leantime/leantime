@@ -823,6 +823,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             if (count($results) > 0) {
+                $onTheClock = array();
                 $onTheClock["id"] = $results[0]["id"];
                 $onTheClock["since"] = $results[0]["punchIn"];
                 $onTheClock["headline"] = $results[0]["headline"];

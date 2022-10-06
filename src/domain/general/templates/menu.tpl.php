@@ -63,7 +63,7 @@
         </li>
     <li class="dropdown">
         <ul style='display:block'>
-            <li <?php if($module == 'dashboard') echo" class='active' "; ?>>
+            <li <?php if($module == 'dashboard' && $action == 'show') echo" class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
             </li>
             <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll'|| $action == 'showTicket')) echo"class=' active '"; ?>>
@@ -94,11 +94,7 @@
                 <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
             </li>
             <?php } ?>
-            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                <li <?php if($module == 'projects' && $action == 'showProject') echo"  class='active' "; ?>>
-                    <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
-                </li>
-            <?php } ?>
+
         </ul>
     </li>
     <?php } ?>

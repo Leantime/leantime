@@ -213,6 +213,7 @@
     padding: 0px 15px;
 }
 
+.headmenu > li > a.active,
 .headmenu > li > a:hover {
     text-decoration: none;
     background: rgba(255, 255, 255, 0.2);
