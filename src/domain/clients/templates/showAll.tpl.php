@@ -17,7 +17,7 @@
 
             <?php
             if($login::userIsAtLeast('manager')){
-            echo $this->displayLink('clients.newClient', "<i class='iconfa-plus'></i> ".$this->__('link.new_client'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
+            echo $this->displayLink('clients.newClient', "<i class='fa-plus'></i> ".$this->__('link.new_client'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
             <?php } ?>
 
             <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">

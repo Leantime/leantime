@@ -59,7 +59,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 <div class="pageheader">
 
 
-    <div class="pageicon"><span class="iconfa-time"></span></div>
+    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
             <div class="pagetitle">
                 <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
                 <h1><?php echo $this->__("headline.project_timesheets") ?></h1>

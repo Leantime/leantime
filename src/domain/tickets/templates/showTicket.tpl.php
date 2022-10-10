@@ -33,7 +33,7 @@
                 <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
                 <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
-                    <li><a href="#timesheet"><?php echo $this->__("tabs.time_tracking") ?></a></li>
+                    <li><a href="#timesheet" id="timesheetTab"><?php echo $this->__("tabs.time_tracking") ?></a></li>
                 <?php } ?>
             </ul>
 

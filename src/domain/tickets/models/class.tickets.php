@@ -15,6 +15,7 @@ namespace leantime\domain\models {
 
         public $date;
         public $dateToFinish;
+        public $timeToFinish;
         public $status;
         public $storypoints;
         public $hourRemaining;

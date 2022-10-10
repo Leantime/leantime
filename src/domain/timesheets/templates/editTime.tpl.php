@@ -56,7 +56,7 @@ $values = $this->get('values');
 
 <?php echo $this->displayNotification() ?>
 
-<h4  class="widgettitle title-light"><span class="iconfa-time"></span> <?php echo $this->__('headlines.edit_time'); ?></h4>
+<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $this->__('headlines.edit_time'); ?></h4>
 <form action="<?=BASE_URL?>/timesheets/editTime/<?=(int)$_GET['id']?>" method="post" class="editTimeModal">
 
 <label for="projects"><?php echo $this->__('label.project')?></label>

@@ -188,6 +188,7 @@ namespace leantime\domain\services {
                 //Fix date conversion
                 //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
+                $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
@@ -412,6 +413,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -439,7 +441,13 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
+
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
@@ -481,6 +489,7 @@ namespace leantime\domain\services {
                 'editorId' => $values['editorId'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -510,6 +519,10 @@ namespace leantime\domain\services {
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
 
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {

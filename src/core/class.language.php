@@ -358,6 +358,44 @@ namespace leantime\core {
 
         }
 
+        /**
+         * getISOTimeString - returns an ISO time string (hours, minutes seconds zeroed out) based on language specific format
+         *
+         * @access public
+         * @param $time string
+         * @return string|bool
+         */
+        public function getISOTimeString($time)
+        {
+            if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
+
+                if (is_object($timestamp)) {
+                    return date("H:i:00", $timestamp->getTimestamp());
+                }
+
+            }
+
+            return false;
+
+        }
+
+        public function extractTime($dateTime) {
+
+            if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
+
+                $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);
+
+                if (is_object($timestamp)) {
+                    return date("H:i:00", $timestamp->getTimestamp());
+                }
+
+            }
+
+            return false;
+        }
+
     }
 
 }

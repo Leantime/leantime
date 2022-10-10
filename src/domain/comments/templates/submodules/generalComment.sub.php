@@ -43,9 +43,30 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <div class="right commentDate">
                                 <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
                                     $this->getFormattedTimeString($row['date']) ); ?>
+                                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
+                                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                            </a>
+
+                                            <ul class="dropdown-menu">
+                                                <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                    <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
+                                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                    </a></li>
+                                                <?php } ?>
+                                                <?php
+                                                    if(isset($this->get('ticket')->id)){?>
+                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$this->get('ticket')->id ?>);"><?=$this->__("links.add_to_timesheets"); ?></a></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    <?php } ?>
                             </div>
                             <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
-                            <div class="text"><?php echo ($row['text']); ?></div>
+                            <div class="text" id="commentText-<?=$row['id']?>"><?php echo ($row['text']); ?></div>
+
+
                         </div>
 
                         <div class="commentLinks">
@@ -54,13 +75,6 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                    onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
                                     <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
                                 </a>
-
-                                <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
-                                    <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
-                                       class="deleteComment">
-                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
-                                    </a>
-                                <?php } ?>
                             <?php } ?>
                         </div>
 

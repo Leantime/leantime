@@ -208,7 +208,7 @@ jQuery(document).ready(function(){
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="iconfa-time"></span></div>
+    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.overview'); ?></h5>
         <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>

@@ -18,7 +18,7 @@ if(isset($canvasItem['id']) && $canvasItem['id'] != '') {$id = $canvasItem['id']
 
 <div class="showDialogOnLoad" style="display:none;">
 
-    <h4 class="widgettitle title-light"><i class="iconfa iconfa-columns"></i>
+    <h4 class="widgettitle title-light"><i class="fa fa-columns"></i>
         <?php
         if($canvasItem['description'] == "") {
             echo $this->__("headlines.retrospectives");

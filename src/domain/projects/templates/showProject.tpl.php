@@ -31,10 +31,10 @@
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><span class="iconfa iconfa-leaf"></span> <?php echo $this->__('tabs.projectdetails'); ?></a></li>
-                <li><a href="#team"><span class="iconfa iconfa-group"></span> <?php echo $this->__('tabs.team'); ?></a></li>
+                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> <?php echo $this->__('tabs.projectdetails'); ?></a></li>
+                <li><a href="#team"><span class="fa fa-group"></span> <?php echo $this->__('tabs.team'); ?></a></li>
 
-                <li><a href="#integrations"> <span class="iconfa iconfa-asterisk"></span> <?php echo $this->__('tabs.Integrations'); ?></a></li>
+                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $this->__('tabs.Integrations'); ?></a></li>
                 <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
                 <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
                 <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.todosettings'); ?></a></li>
@@ -196,7 +196,7 @@
                                         <input type="hidden" />
                                     <div class="input-append">
                                         <div class="uneditable-input span3">
-                                            <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                            <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                         </div>
                                         <span class="btn btn-file">
                                             <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>
@@ -268,7 +268,7 @@
 
             <div id="integrations">
 
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?=BASE_URL ?>/images/mattermost-logoHorizontal.png" width="200" />
@@ -286,7 +286,7 @@
                     </div>
                 </div>
                 <br />
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Slack</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
@@ -305,7 +305,7 @@
                     </div>
                 </div>
 
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Zulip</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?=BASE_URL ?>/images/zulip-org-logo.png" width="200"/>
@@ -338,7 +338,7 @@
                 </div>
 
                 <?php // Slack webhook ?>
-                <h4 class='widgettitle title-light'><span class='iconfa iconfa-leaf'></span>Discord</h4>
+                <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
                 <div class='row'>
                     <div class='col-md-3'>
                         <img src='<?= BASE_URL ?>/images/discord-logo.png' width='200'/>

@@ -163,7 +163,7 @@ $user = $this->get('user');
                                 <input type="hidden"/>
                                 <div class="input-append">
                                     <div class="uneditable-input span3">
-                                        <i class="iconfa-file fileupload-exists"></i>
+                                        <i class="fa-file fileupload-exists"></i>
                                         <span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">

@@ -52,7 +52,7 @@ $values = $this->get('values');
                placeholder="<?php echo $this->__('input.placeholders.search_type_hit_enter') ?>"/>
     </form>
 
-    <div class="pageicon"><span class="iconfa-laptop"></span></div>
+    <div class="pageicon"><span class="fa-laptop"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('OVERVIEW'); ?></h5>
         <h1><?php echo $this->__('MY_TIMESHEETS'); ?></h1>

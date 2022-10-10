@@ -121,7 +121,7 @@ namespace leantime\domain\repositories {
 
                     $newValues[] = array(
                         'title'  => $context.$ticket['headline'],
-                        'allDay' => true,
+                        'allDay' => false,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
                             'm' => date('m', $dateFrom),
@@ -232,6 +232,7 @@ namespace leantime\domain\repositories {
 
                     $newValues[] = array(
                         'title'  => 'To-Do: ' . $ticket['headline'],
+                        'allDay' => false,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
                             'm' => date('m', $dateFrom),
