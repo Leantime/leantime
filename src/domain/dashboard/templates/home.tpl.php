@@ -10,6 +10,7 @@
     $allProjects = $this->get('allProjects');
     $projectFilter = $_SESSION['userHomeProjectFilter'] ?? '';
     $groupBy = $_SESSION['userHomeGroupBy'] ?? '';
+    $milestones = $this->get('milestones');
 ?>
 
 <div class="pageheader">
@@ -235,7 +236,9 @@
                                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
                                                                     <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
-                                                                    <?php foreach($this->get('milestones') as $milestone){
+                                                                    <?php
+
+                                                                    foreach($milestones[$row['projectId']] as $milestone){
                                                                         echo"<li class='dropdown-item'>
                                                                             <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
                                                                         echo"</li>";
@@ -244,9 +247,9 @@
                                                             </div>
 
                                                             <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                                                <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <a class="dropdown-toggle f-left status <?=$statusLabels[$row['projectId']][$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    echo $statusLabels[$row['status']]["name"];
+                                                                    echo $statusLabels[$row['projectId']][$row['status']]["name"];
                                                                     ?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -254,7 +257,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                                                     <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
 
-                                                                    <?php foreach($statusLabels as $key=>$label){
+                                                                    <?php foreach($statusLabels[$row['projectId']] as $key=>$label){
                                                                         echo"<li class='dropdown-item'>
                                                                             <a href='javascript:void(0);' class='".$label["class"]."' data-label='".$this->escape($label["name"])."' data-value='".$row['id']."_".$key."_".$label["class"]."' id='ticketStatusChange".$row['id'].$key."' >".$this->escape($label["name"])."</a>";
                                                                         echo"</li>";

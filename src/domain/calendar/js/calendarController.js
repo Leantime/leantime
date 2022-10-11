@@ -165,10 +165,37 @@ leantime.calendarController = (function () {
 
     }
 
+    var initExportModal = function () {
+
+        var exportModalConfig = {
+            sizes: {
+                minW: 400,
+                minH: 350
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+
+                    jQuery(".formModal").nyroModal(exportModalConfig);
+                },
+                beforeClose: function () {
+                    location.reload();
+                }
+
+
+            },
+            titleFromIframe: true
+        };
+        jQuery(".exportModal").nyroModal(exportModalConfig);
+
+    }
+
 
     // Make public what you want to have public, everything else is private
     return {
         initCalendar:initCalendar,
-        initEventDatepickers:initEventDatepickers
+        initEventDatepickers:initEventDatepickers,
+        initExportModal:initExportModal
     };
 })();

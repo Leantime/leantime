@@ -88,14 +88,16 @@ namespace leantime\domain\repositories {
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
                         'h' => date('H', $dateFrom),
-                        'i' => date('i', $dateFrom)
+                        'i' => date('i', $dateFrom),
+                        'ical' => date('Ymd\THis\Z', $dateFrom)
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
                         'd' => date('d', $dateTo),
                         'h' => date('H', $dateTo),
-                        'i' => date('i', $dateTo)
+                        'i' => date('i', $dateTo),
+                        'ical' => date('Ymd\THis\Z', $dateTo)
                     ),
                     'id' => $value['id'],
                     'projectId' => '',
@@ -127,14 +129,16 @@ namespace leantime\domain\repositories {
                             'm' => date('m', $dateFrom),
                             'd' => date('d', $dateFrom),
                             'h' => date('H', $dateFrom),
-                            'i' => date('i', $dateFrom)
+                            'i' => date('i', $dateFrom),
+                            'ical' => date('Ymd\THis\Z', $dateFrom)
                         ),
                         'dateTo' => array(
                             'y' => date('Y', $dateTo),
                             'm' => date('m', $dateTo),
                             'd' => date('d', $dateTo),
                             'h' => date('H', $dateTo),
-                            'i' => date('i', $dateTo)
+                            'i' => date('i', $dateTo),
+                            'ical' => date('Ymd\THis\Z', $dateTo)
                         ),
                         'id' => $ticket['id'],
                         'projectId' => $ticket['projectId'],
@@ -144,6 +148,30 @@ namespace leantime\domain\repositories {
             }
 
             return $newValues;
+        }
+
+        public function getCalendarBySecretHash($userHash, $calHash) {
+
+            //get user
+
+            $userRepo = new \leantime\domain\repositories\users();
+            $user = $userRepo->getUserBySha($userHash);
+
+
+            if(!isset($user['id'])) {
+                return false;
+            }
+
+            //Check if setting exists
+            $settingService = new \leantime\domain\repositories\setting();
+            $hash = $settingService->getSetting("usersettings.".$user['id'].".icalSecret");
+
+            if($hash!== false && $calHash == $hash){
+                return $this->getCalendar($user['id']);
+            }else{
+                return false;
+            }
+
         }
 
         public function getCalendarEventsForToday($id)

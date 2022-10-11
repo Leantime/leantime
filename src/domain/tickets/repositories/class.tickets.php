@@ -151,16 +151,12 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getStateLabels()
+        public function getStateLabels($projectId = null)
         {
 
-            unset($_SESSION["projectsettings"]["ticketlabels"]);
-
-            if(isset($_SESSION["projectsettings"]["ticketlabels"])) {
-
-                return $_SESSION["projectsettings"]["ticketlabels"];
-
-            }else{
+            if($projectId == null) {
+                $projectId = $_SESSION['currentProject'];
+            }
 
                 $sql = "SELECT
 						value
@@ -168,7 +164,7 @@ namespace leantime\domain\repositories {
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".ticketlabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', "projectsettings.".$projectId.".ticketlabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
@@ -221,7 +217,7 @@ namespace leantime\domain\repositories {
 
                 return $statusList;
 
-            }
+
         }
 
         public function getStatusList() {

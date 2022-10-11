@@ -23,7 +23,8 @@ class application
         "install",
         "install.update",
         "general.error404",
-        "api.i18n"
+        "api.i18n",
+        "calendar.ical"
     );
 
 

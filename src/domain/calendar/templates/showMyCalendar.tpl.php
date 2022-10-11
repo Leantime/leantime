@@ -14,12 +14,16 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
+        <a href="<?=BASE_URL?>/calendar/export" class="btn btn-default right exportModal">Export</a>
+
         <?php echo $this->displayLink(
             'calendar.addEvent',
             "<i class='fa-plus'></i> ".$this->__('buttons.add_event'),
             null,
             array('class'=>'btn btn-primary btn-rounded')
         ) ?>
+
+
 
         <div id="calendar"></div>
 
@@ -65,6 +69,7 @@
             <?php endforeach; ?>];
 
         leantime.calendarController.initCalendar(events);
+        leantime.calendarController.initExportModal();
 
     });
 
