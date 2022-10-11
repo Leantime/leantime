@@ -13,7 +13,7 @@ $project = $this->get('project');
         <div class="span8">
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span><?=$this->__('label.general'); ?></h4>
+                    <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span><?=$this->__('label.general'); ?></h4>
 
                     <div class="form-group">
 
@@ -63,7 +63,7 @@ $project = $this->get('project');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light">
-                        <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
+                        <span class="fa fa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
@@ -117,7 +117,7 @@ $project = $this->get('project');
 
 	<div class="row-fluid  padding-top" style="display:none;">
 		<h4 class="widgettitle title-light">
-			<span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
+			<span class="fa fa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
 		</h4>
 	</div>
 

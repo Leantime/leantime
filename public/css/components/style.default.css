@@ -5079,6 +5079,11 @@ body .widgettitle .editHeadline:hover {
     left:auto;
 }
 
+.inlineDropDownContainer.dropright .dropdown-menu {
+
+    left:-5px;
+}
+
 .inlineDropDownContainer .dropdown-menu .border {
     border-top:1px solid var(--neutral);
 }

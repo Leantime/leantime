@@ -113,7 +113,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
             $this->tpl->assign("types", $this->ticketService->getTicketTypes());
-            $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
+            $this->tpl->assign("statusLabels", $this->ticketService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
+            $this->tpl->assign("milestones", $this->ticketService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]));
 
             $this->tpl->display('dashboard.home');
 

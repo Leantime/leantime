@@ -18,7 +18,7 @@
 					   	 	<input type="hidden" />
 							<div class="input-append">
 								<div class="uneditable-input span3">
-									<i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+									<i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
 								</div>
 								<span class="btn btn-file">
 									<span class="fileupload-new">Select file</span>
@@ -42,7 +42,7 @@
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
-                                <div class="inlineDropDownContainer" style="float:right;">
+                                <div class="inlineDropDownContainer dropright" style="float:right;">
 
                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>

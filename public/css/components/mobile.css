@@ -12,7 +12,7 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
-    .head-icon.iconfa-calendar {
+    .head-icon.fa-calendar {
         text-align:left !important;
 
     }

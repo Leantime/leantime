@@ -4,7 +4,7 @@ leantime.ticketsController = (function () {
 
     var milestoneModalConfig = {
         sizes: {
-            minW: 500,
+            minW: 1500,
             minH: 750
         },
         resizable: true,
@@ -144,7 +144,7 @@ leantime.ticketsController = (function () {
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
                                     '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                     '</div>';
                             },
@@ -180,7 +180,7 @@ leantime.ticketsController = (function () {
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
-                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="iconfa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                     '</div>';
                             },
@@ -578,7 +578,7 @@ leantime.ticketsController = (function () {
 
         var ticketModalConfig = {
             sizes: {
-                minW:  1700,
+                minW:  1500,
                 minH: 500
             },
             resizable: true,
@@ -1418,7 +1418,18 @@ leantime.ticketsController = (function () {
 
     var initTagsInput = function( ) {
         jQuery("#tags").tagsInput();
-    }
+    };
+
+    var addCommentTimesheetContent = function(commentId, taskId) {
+        var content = "Discussion on To-Do #"+taskId+":"
+        +"\n\r"
+        +jQuery("#commentText-"+commentId).text();
+
+        jQuery('li a[href*="timesheet"]').click();
+
+        jQuery("#timesheet #description").val(content);
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
@@ -1449,6 +1460,7 @@ leantime.ticketsController = (function () {
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:_initDueDateTimePickers,
         initDates:_initDates,
-        setUpKanbanColumns:setUpKanbanColumns
+        setUpKanbanColumns:setUpKanbanColumns,
+        addCommentTimesheetContent:addCommentTimesheetContent
     };
 })();

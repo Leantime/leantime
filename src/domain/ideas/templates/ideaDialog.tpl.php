@@ -20,7 +20,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <div class="showDialogOnLoad" >
 
     <h4 class="widgettitle title-light"><i
-                class="iconfa iconfa-columns"></i>
+                class="fa fa-columns"></i>
         <?php
         if($canvasItem['description'] == "") {
                 echo $this->__("headlines.ideas");

@@ -279,8 +279,8 @@
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                                <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="iconfa-time"></span> <?php echo $this->__("links.start_work"); ?></a>
-                                                                <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn === false || $clockedIn["id"] != $row["id"]) { echo"style='display:none;'"; }?>><span class="iconfa-stop"></span> <?php if(is_array($clockedIn) == true) { echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"])); }else{ echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time())); }?></a>
+                                                                <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn !== false) { echo"style='display:none;'"; }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                                                <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if($clockedIn === false || $clockedIn["id"] != $row["id"]) { echo"style='display:none;'"; }?>><span class="fa-stop"></span> <?php if(is_array($clockedIn) == true) { echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"])); }else{ echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time())); }?></a>
                                                                 <span class='working' <?php if($clockedIn === false || $clockedIn["id"] === $row["id"]) { echo"style='display:none;'"; }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
                                                             </li>
                                                         </ul>
@@ -291,7 +291,6 @@
                                                 <div class="kanbanCardContent">
 
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-                                                    <p class="description"><?php echo $this->escapeMinimal(    $this->truncate(($row["description"]), 200, '<small>(...)</small>', false, true)); ?></p>
 
 
                                                 </div>
@@ -313,27 +312,27 @@
 										<div class="timerContainer" id="timerContainer-<?php echo $row["id"]; ?>" >
                                             <?php if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){ ?>
                                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
-                                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="text"><?php
-                                                        if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
-                                                            $this->e($row['milestoneHeadline']);
-                                                        }else{
-                                                            echo $this->__("label.no_milestone");
-                                                        }?>
-                                                    </span>
-                                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                </a>
-                                                <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
-                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                                    <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                                    <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <span class="text"><?php
+                                                            if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){
+                                                                $this->e($row['milestoneHeadline']);
+                                                            }else{
+                                                                echo $this->__("label.no_milestone");
+                                                            }?>
+                                                        </span>
+                                                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
+                                                        <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
+                                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
-                                                    <?php foreach($this->get('milestones') as $milestone){
-                                                        echo"<li class='dropdown-item'>
-                                                            <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
-                                                        echo"</li>";
-                                                    }?>
-                                                </ul>
-                                            </div>
+                                                        <?php foreach($this->get('milestones') as $milestone){
+                                                            echo"<li class='dropdown-item'>
+                                                                <a href='javascript:void(0);' data-label='".$this->escape($milestone->headline)."' data-value='".$row['id']."_".$milestone->id."_".$this->escape($milestone->tags)."' id='ticketMilestoneChange".$row['id'].$milestone->id."' style='background-color:".$this->escape($milestone->tags)."'>".$this->escape($milestone->headline)."</a>";
+                                                            echo"</li>";
+                                                        }?>
+                                                    </ul>
+                                                </div>
                                             <?php } ?>
 
                                             <?php if($row['storypoints'] != '' && $row['storypoints'] > 0) { ?>
@@ -422,7 +421,7 @@
                                             <div class="col-md-6" style="white-space: nowrap;">
 
                                                 <?php if($row["commentCount"] > 0){?>
-                                                    &nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="iconfa-comments"></span> <?php echo $row["commentCount"] ?></a>
+                                                    &nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>
                                                 <?php } ?>
 
                                                 <?php if($row["subtaskCount"] > 0){?>
@@ -430,7 +429,7 @@
                                                 <?php } ?>
 
                                                 <?php
-                                                    /*<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="iconfa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;*/
+                                                    /*<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="fa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;*/
                                                 ?>
 
 

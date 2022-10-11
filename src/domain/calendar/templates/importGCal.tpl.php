@@ -10,7 +10,7 @@ $values = $this->get('values');
                 <input type="text" name="term" placeholder="To search type and hit enter..." />
             </form>
             
-            <div class="pageicon"><span class="iconfa-laptop"></span></div>
+            <div class="pageicon"><span class="fa-laptop"></span></div>
             <div class="pagetitle">
                 <h5><?php echo $this->__('OVERVIEW'); ?></h5>
                 <h1><?php echo $this->__('GOOGLE_CALENDAR_IMPORT'); ?></h1>

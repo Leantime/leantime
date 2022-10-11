@@ -66,6 +66,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->config = new core\config();
 
         }
 
@@ -90,6 +91,33 @@ namespace leantime\domain\repositories {
 
             return $values;
         }
+
+        /**
+         * getUser - get on user from db
+         *
+         * @access public
+         * @param  $id
+         * @return array
+         */
+        public function getUserBySha($hash)
+        {
+
+
+            $sql = "SELECT * FROM `zp_user` WHERE SHA1(CONCAT(id,:sessionSecret)) = :hash";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
+            $stmn->bindValue(':sessionSecret', $this->config->sessionpassword, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
+
 
         /**
          * getLastLogin - get the date of the last login of any user

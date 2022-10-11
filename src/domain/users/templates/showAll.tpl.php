@@ -19,7 +19,7 @@ $roles = $this->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <?php echo $this->displayLink('users.newUser', "<i class='iconfa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+                <?php echo $this->displayLink('users.newUser', "<i class='fa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
             </div>
             <div class="col-md-6 align-right">

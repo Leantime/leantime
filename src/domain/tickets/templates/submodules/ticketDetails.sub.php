@@ -112,7 +112,7 @@
             <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-folder-open"></span><?php echo $this->__('subtitles.organization'); ?></h4>
+                            class="fa fa-folder-open"></span><?php echo $this->__('subtitles.organization'); ?></h4>
 
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.milestone'); ?></label>
@@ -162,7 +162,7 @@
             <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-group"></span><?php echo $this->__('subtitle.people'); ?></h4>
+                            class="fa fa-group"></span><?php echo $this->__('subtitle.people'); ?></h4>
 
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.author'); ?></label>
@@ -201,7 +201,7 @@
         <div class="row-fluid marginBottom">
             <div class="span12">
                 <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-calendar"></span><?php echo $this->__('subtitles.dates'); ?></h4>
+                            class="fa fa-calendar"></span><?php echo $this->__('subtitles.dates'); ?></h4>
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.ticket_date'); ?></label>
                     <div class="span6">
@@ -217,6 +217,10 @@
                         <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
                                value="<?php echo $ticket->dateToFinish; ?>"
                                name="dateToFinish"/>
+                        -
+                        <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
+                               value="<?php echo $ticket->timeToFinish; ?>"
+                               name="timeToFinish"/>
                     </div>
                 </div>
 
@@ -235,7 +239,7 @@
         <div class="row-fluid marginBottom">
             <div class="span12">
                 <h4 class="widgettitle title-light"><span
-                            class="iconfa iconfa-time"></span><?php echo $this->__('subtitle.time_tracking'); ?></h4>
+                            class="fa-regular fa-clock"></span><?php echo $this->__('subtitle.time_tracking'); ?></h4>
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.planned_hours'); ?></label>
                     <div class="span6">

@@ -62,18 +62,18 @@ namespace leantime\core {
 
 
         public $picture = array(
-            'calendar'    => 'iconfa-calendar',
-            'clients'     => 'iconfa-group',
-            'dashboard' => 'iconfa-th-large',
-            'files'     => 'iconfa-picture',
-            'leads'     => 'iconfa-signal',
-            'messages'     => 'iconfa-envelope',
-            'projects'     => 'iconfa-bar-chart',
-            'setting'    => 'iconfa-cogs',
-            'tickets'    => 'iconfa-pushpin',
-            'timesheets'=> 'iconfa-table',
-            'users'        => 'iconfa-group',
-            'default'    => 'iconfa-off'
+            'calendar'    => 'fa-calendar',
+            'clients'     => 'fa-group',
+            'dashboard' => 'fa-th-large',
+            'files'     => 'fa-picture',
+            'leads'     => 'fa-signal',
+            'messages'     => 'fa-envelope',
+            'projects'     => 'fa-bar-chart',
+            'setting'    => 'fa-cogs',
+            'tickets'    => 'fa-pushpin',
+            'timesheets'=> 'fa-table',
+            'users'        => 'fa-group',
+            'default'    => 'fa-off'
         );
 
         /**

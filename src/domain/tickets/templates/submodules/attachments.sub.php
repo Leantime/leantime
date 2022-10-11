@@ -10,7 +10,7 @@ $ticket = $this->get('ticket');
              <input type="hidden" />
             <div class="input-append">
                 <div class="uneditable-input span3">
-                    <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                    <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                 </div>
                 <span class="btn btn-file">
                     <span class="fileupload-new"><?php echo $this->__("buttons.select_file"); ?></span>
@@ -34,14 +34,14 @@ $ticket = $this->get('ticket');
     <ul id='medialist' class='listfile'>
     <?php foreach($this->get('files') as $file): ?>
         <li class="<?php echo $file['moduleId'] ?>">
-            <div class="inlineDropDownContainer" style="float:right;">
+            <div class="inlineDropDownContainer dropright" style="float:right;">
 
                 <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                 </a>
                 <ul class="dropdown-menu">
                     <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
-                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank"><?php echo $this->__("links.download"); ?></a></li>
 
                     <?php
                     if ($login::userIsAtLeast($roles::$editor)) { ?>

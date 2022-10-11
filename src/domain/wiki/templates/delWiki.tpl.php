@@ -2,7 +2,7 @@
     defined('RESTRICTED') or die('Restricted access');
 ?>
 
-<h4 class="widgettitle title-light"><i class="iconfa iconfa-trash"></i> <?php echo $this->__("buttons.delete") ?></h4>
+<h4 class="widgettitle title-light"><i class="fa fa-trash"></i> <?php echo $this->__("buttons.delete") ?></h4>
 
 <form method="post" action="<?=BASE_URL ?>/wiki/delWiki/<?php echo $_GET['id']?>">
     <p><?php echo $this->__("text.are_you_sure_delete_wiki") ?></p>

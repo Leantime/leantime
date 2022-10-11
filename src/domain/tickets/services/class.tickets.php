@@ -37,6 +37,21 @@ namespace leantime\domain\services {
 
         }
 
+        public function getAllStatusLabelsByUserId($userId) {
+
+            $statusLabelsByProject = array();
+
+            $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+            foreach($userProjects as $project) {
+                $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+            }
+
+
+
+            return $statusLabelsByProject;
+
+        }
+
         public function saveStatusLabels($params) {
 
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
@@ -188,6 +203,7 @@ namespace leantime\domain\services {
                 //Fix date conversion
                 //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
+                $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
@@ -305,6 +321,19 @@ namespace leantime\domain\services {
 
         }
 
+        public function getAllMilestonesByUserProjects($userId) {
+
+            $milestones = array();
+
+            $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+            foreach($userProjects as $project) {
+                $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
+            }
+
+            return $milestones;
+
+        }
+
         public function getAllSubtasks($ticketId)
         {
             $values = $this->ticketRepository->getAllSubtasks($ticketId);
@@ -412,6 +441,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -439,7 +469,13 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
+
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
@@ -481,6 +517,7 @@ namespace leantime\domain\services {
                 'editorId' => $values['editorId'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -510,6 +547,10 @@ namespace leantime\domain\services {
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
 
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {

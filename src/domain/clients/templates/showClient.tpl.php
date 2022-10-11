@@ -32,7 +32,7 @@ $users = $this->get('users');
                 <form action="" method="post">
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span> <?php echo $this->__('subtitle.details'); ?></h4>
+                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> <?php echo $this->__('subtitle.details'); ?></h4>
 
                             <div class="form-group">
                                 <label class="span4 control-label"><?php echo $this->__('label.client_id') ?></label>
@@ -191,7 +191,7 @@ $users = $this->get('users');
                                 <input type="hidden" />
                                 <div class="input-append">
                                     <div class="uneditable-input span3">
-                                        <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                        <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
                                                          <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>

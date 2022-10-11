@@ -5,6 +5,7 @@
   "main": "gruntfile.js",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
+    "@fortawesome/fontawesome-free": "^6.2.0",
     "chart.js": "^3.8.0",
     "chartjs-adapter-moment": "^1.0.0",
     "composer": "^4.1.0",
@@ -13,6 +14,7 @@
     "datatables.net-buttons": "^1.7.1",
     "datatables.net-rowgroup": "^1.2.0",
     "datatables.net-rowreorder": "^1.2.8",
+    "font-awesome": "",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "^3.6.0",
