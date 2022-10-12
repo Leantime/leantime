@@ -308,7 +308,7 @@ namespace leantime\domain\services {
         }
 
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="headline")
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="duedate")
         {
 
             if($projectId > 0) {

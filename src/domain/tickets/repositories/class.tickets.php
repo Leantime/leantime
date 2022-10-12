@@ -754,6 +754,8 @@ namespace leantime\domain\repositories {
 
                 if($sortBy == "date") {
                     $query .= "	ORDER BY zp_tickets.editFrom ASC";
+                }elseif($sortBy == "duedate") {
+                    $query .= "	ORDER BY zp_tickets.editTo ASC";
                 }elseif($sortBy == "headline") {
                     $query .= "	ORDER BY zp_tickets.headline ASC";
                 }
