@@ -5,10 +5,10 @@ $roles = $this->get('roles');
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><h1><?php echo $this->__('headlines.users'); ?></h1></h1>
+        <h1><?php echo $this->__('headlines.users'); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -19,7 +19,7 @@ $roles = $this->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <?php echo $this->displayLink('users.newUser', "<i class='fa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+                <?php echo $this->displayLink('users.newUser', "<i class='fa fa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
             </div>
             <div class="col-md-6 align-right">
