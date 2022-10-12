@@ -170,11 +170,11 @@
                                 </div>
                             </td>
 
-                            <td data-order="<?php echo $this->getFormattedDateString($row->editFrom) ?>" >
+                            <td data-order="<?php echo $row->editFrom ?>" >
                                 <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.planned_start_date"); ?>" value="<?php echo $this->getFormattedDateString($row->editFrom) ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editFrom" class=""/>
                             </td>
 
-                            <td data-order="<?php echo $this->getFormattedDateString($row->editTo) ?>" >
+                            <td data-order="<?php echo $row->editTo ?>" >
                                 <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.planned_end_date"); ?>" value="<?php echo $this->getFormattedDateString($row->editTo) ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editTo" class="" />
 
                             </td>
