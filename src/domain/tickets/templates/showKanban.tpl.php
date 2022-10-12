@@ -26,7 +26,7 @@
 
  <div class="pageheader">
 
- 	<div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+ 	<div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
 	    <h1><?=$this->__("headlines.todos"); ?></h1>
@@ -288,20 +288,16 @@
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label.".strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
-                                                <div class="kanbanCardContent">
+                                                <div class="kanbanCardContent" style="margin-bottom:20px;">
 
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
-
-
                                                 </div>
-
-
                                                 <?php if($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
-                                                    echo "<br />";
+
                                                     $date = new DateTime($row['dateToFinish']);
                                                     $date = $date->format($this->__("language.dateformat"));
                                                     echo $this->__("label.due_icon"); ?>
-                                                    <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                                    <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
 
                                                 <?php } ?>
                                             </div>
@@ -309,7 +305,7 @@
 
                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-										<div class="timerContainer" id="timerContainer-<?php echo $row["id"]; ?>" >
+										<div class="timerContainer " id="timerContainer-<?php echo $row["id"]; ?>" >
                                             <?php if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){ ?>
                                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                     <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -416,16 +412,32 @@
 										</div>
 										<div class="clearfix"></div>
 
+                                        <?php if($row["commentCount"] > 0 || $row["subtaskCount"] > 0 || $row['tags'] != ''){?>
                                         <div class="row">
 
-                                            <div class="col-md-6" style="white-space: nowrap;">
-
+                                            <div class="col-md-12 border-top" style="white-space: nowrap;">
                                                 <?php if($row["commentCount"] > 0){?>
-                                                    &nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>
+                                                    <a href="/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
                                                 <?php } ?>
 
                                                 <?php if($row["subtaskCount"] > 0){?>
-                                                    &nbsp;<a href="/tickets/showTicket/<?php echo $row["id"];?>#subtasks" class="ticketModal"> <span class="fa fa-tasks"></span> <?php echo $row["subtaskCount"] ?></a>
+                                                    <a href="/tickets/showTicket/<?php echo $row["id"];?>#subtasks" class="ticketModal"> <span class="fa fa-code-branch"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
+                                                <?php } ?>
+                                                <?php if($row['tags'] != ''){?>
+                                                    <?php  $tagsArray = explode(",", $row['tags']); ?>
+                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa fa-tags" aria-hidden="true"></i> <?=count($tagsArray)?>
+                                                    </a>
+                                                    <ul class="dropdown-menu ">
+                                                        <li style="padding:10px"><div class='tagsinput readonly'>
+                                                        <?php
+
+                                                        foreach($tagsArray as $tag){
+                                                            echo"<span class='tag'><span>".$tag."</span></span>";
+                                                        }
+
+                                                        ?>
+                                                            </div></li></ul>
                                                 <?php } ?>
 
                                                 <?php
@@ -436,11 +448,10 @@
 
                                             </div>
 
-                                            <div class="col-md-6" style="padding-top:3px; text-align:right;">
-
-                                            </div>
 
                                         </div>
+                                            <?php } ?>
+                                        
 
 
 									</div>
