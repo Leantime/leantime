@@ -42,8 +42,17 @@ function leantimeAutoloader($class)
 
     }
 
+	//library
+    if($classPartsCount == 4 && $classArray[1] === 'library') {
+        $class = $classArray[3];
+        $srcFolder = $classArray[1];
+        $mvcFolder = $classArray[2];
+
+        $path = "../src/{$srcFolder}/{$mvcFolder}/class.{$class}.php";
+    }
+
     //domain
-    if($classPartsCount == 4) {
+    if($classPartsCount == 4 && $classArray[1] !== 'library') {
         $class = $classArray[3];
         $srcFolder = $classArray[1];
         $mvcFolder = $classArray[2];

@@ -62,6 +62,7 @@
             </div>
         </li>
     <li class="dropdown">
+		<?php $currentProjectType = $this->get('currentProjectType'); ?>
         <ul style='display:block'>
             <li <?php if($module == 'dashboard' && $action == 'show') echo" class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
@@ -77,12 +78,56 @@
                     <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
                 </li>
             <?php } ?>
-            <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
-            </li>
-            <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/ideas/showBoards"><?=$this->__("menu.ideas") ?></a>
-            </li>
+			<?php if ($currentProjectType === 'generic') { ?>
+                <li <?php if($module == 'swotcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/swotcanvas/swotCanvas?filter=all"><?=$this->__("menu.swotcanvas") ?></a>
+                </li>
+                <li <?php if($module == 'eacanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/eacanvas/eaCanvas?filter=all"><?=$this->__("menu.eacanvas") ?></a>
+                </li>
+                <li <?php if($module == 'bmcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/bmcanvas/lbmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
+                </li>
+            <?php } ?>
+			<?php if ($currentProjectType !== 'dts') { ?>
+                <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
+                </li>
+                <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/ideas/showBoards"><?=$this->__("menu.ideas") ?></a>
+                </li>
+			<?php } else { ?>
+                <li><a href="javascript:void(0);"><strong><?=$this->__("menu.dts.process") ?></strong></a></li>
+                <li <?php if($module == 'insightscanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/insightscanvas/insightsCanvas?filter=all"><?=$this->__("menu.insightscanvas") ?></a>
+                </li>
+                <li <?php if($module == 'ideation') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/ideation/showBoards"><?=$this->__("menu.ideation") ?></a>
+                </li>
+                <li><a href="javascript:void(0);"><strong><?=$this->__("menu.dts.frameworks") ?></a></strong></li>
+                <li <?php if($module == 'sbcanvcas') echo"class=' active '"; ?>>
+                    <a href="<?=BASE_URL ?>/sbcanvas/sbCanvas?filter=all"><?=$this->__("menu.sbcanvas") ?></a>
+                </li>
+                <li <?php if($module == 'riskscanvcas') echo"class=' active '"; ?>>
+                    <a href="<?=BASE_URL ?>/riskscanvas/risksCanvas?filter=all"><?=$this->__("menu.riskscanvas") ?></a>
+                </li>
+                <li <?php if($module == 'eacanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/eacanvas/eaCanvas?filter=all"><?=$this->__("menu.eacanvas") ?></a>
+                </li>
+                <li <?php if($module == 'bmcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/bmcanvas/lbmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
+                </li>
+                <li <?php if($module == 'sqcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/sqcanvas/sqCanvas?filter=all"><?=$this->__("menu.sqcanvas") ?></a>
+                </li>
+                <li <?php if($module == 'cpcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/cpcanvas/cpCanvas?filter=all"><?=$this->__("menu.cpcanvas") ?></a>
+                </li>
+                <li <?php if($module == 'smcanvas') echo"  class='active' "; ?>>
+                    <a href="<?=BASE_URL ?>/smcanvas/smCanvas?filter=all"><?=$this->__("menu.smcanvas") ?></a>
+                </li>
+                <li><a href="javascript:void(0);"><strong><?=$this->__("menu.dts.admin") ?></strong></a></li>
+            <?php } ?>
             <li <?php if($module == 'wiki') echo"  class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/wiki/show"><?=$this->__("menu.documents") ?></a>
             </li>

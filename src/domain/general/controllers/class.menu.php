@@ -20,10 +20,20 @@ namespace leantime\domain\controllers {
 
             $allAvailableProjects = $projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
 
+			if(isset($_SESSION['currentProject'])) {
+			    $projectRepo = new repositories\projects();
+			    $project = $projectRepo->getProject($_SESSION['currentProject']);
+				$projectType = $project['projectType'];
+			}
+            else {
+                $projectType = 'generic';
+			}
+			
             $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $tpl->assign('allAssignedProjects', $allAssignedprojects);
             $tpl->assign('allAvailableProjects', $allAvailableProjects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
+            $tpl->assign('currentProjectType', $projectType);
 
             $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
 

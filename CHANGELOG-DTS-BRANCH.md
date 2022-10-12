@@ -5,8 +5,8 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Major changes
 
-- Added new canvas: *Strategy Brief*, *Risk Analysis*, *PESTE Analysis*, *Business Model Canvas* (3 version), *Porter's
-  Strategy Questions*, *Competitive Positioning Canvas*, *Strategy Messaging*, *Insights*, *Ideation*
+- Added new canvas: *Strategy Brief*, *Risk Analysis*, *Environment Analysis*, *Business Model Canvas* (3 version), *Porter's
+  Strategy Questions*, *Competitive Positioning Canvas*, *Strategy Messaging*, *Insights*, *Ideation*, and *SWOT Analysis*
 - Added functionality to generate PDF files from canvas
 - Refactored canvas code and moved it into `src/library/canvas` allowing to create a new class by simply extending/including
   the code
@@ -54,3 +54,10 @@ Dr. Claude Diderich (diderich@yahoo.com)
   given project. Supported values are `NULL` (Generic), `lean` (Lean), and `dts` (DTS).
 - New: Added functionality to associated a process type to a project when creating a new or modifying an existing
   project. Currently *Generic*, *Lean Startup*, and *Design Thinking for Strategy* are supported.
+
+# 0.0.3 - 2022-10-12
+- Update: Update menu structure, adding new canvas and boards
+- Add: Library for extendable classes and includable templates for `canvas` and `pdf` as `src/library`
+- Add: Engine to generate PDF files from templates (`public.pdf`)
+- Add: Repositoriy `dts` for creating default templates and milestones recommended by DTS process (section 5.1.)
+
