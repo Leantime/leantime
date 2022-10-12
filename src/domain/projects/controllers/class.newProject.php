@@ -44,6 +44,7 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
+				'projectType' => 'generic',
                 'psettings' => ''
             );
 
@@ -73,7 +74,8 @@ namespace leantime\domain\controllers {
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
-                    'psettings' => $_POST['globalProjectUserAccess']
+                    'psettings' => $_POST['globalProjectUserAccess'],
+                    'projectType' => $_POST['projectType']
                 );
 
                 if ($values['name'] === '') {

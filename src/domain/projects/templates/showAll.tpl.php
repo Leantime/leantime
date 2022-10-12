@@ -28,12 +28,16 @@
 		        <col class="con0" />
 		      	<col class="con1"/>
                 <col class="con0"/>
+		      	<col class="con1"/>
+                <col class="con0"/>
 		    </colgroup>
 			<thead>
 				<tr>
 					<th class="head0"><?php echo $this->__('label.project_name'); ?></th>
 					<th class="head1"><?php echo $this->__('label.client_product'); ?></th>
                     <th class="head0"><?php echo $this->__('label.client_product'); ?></th>
+                    <th class="head1"><?php echo $this->__('label.projecttype'); ?></th>
+                    <th class="head0"><?php echo $this->__('label.project_state'); ?></th>
 					<th class="head1"><?php echo $this->__('label.num_tickets'); ?></th>
 					<th class="head0"><?php echo $this->__('label.hourly_budget'); ?></th>
 					<th class="head1"><?php echo $this->__('label.budget_cost'); ?></th>
@@ -49,6 +53,11 @@
 					<td>
 						<?php echo $this->displayLink('clients.showClient',$this->escape($row['clientName']), array('id' => $row['clientId']), NULL, true) ?>
 					</td>
+				    <td><?php switch($row['projectType']) {
+					  case 'lean': echo $this->__('label.projecttype.lean'); break; 
+                      case 'dts': echo $this->__('label.projecttype.dts'); break; 
+                      default: echo $this->__('label.projecttype.generic'); } ?></td>
+					<td><?php if($row['state'] == -1) echo $this->__('label.closed'); else echo $this->__('label.open'); ?></td>
                     <td class="center"><?php if($row['state'] == -1) echo "Closed"; else { echo "Active"; } ?></td>
 					<td class="center"><?php echo $row['numberOfTickets']; ?></td>
 					<td class="center"><?php $this->e($row['hourBudget']); ?></td>

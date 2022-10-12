@@ -579,6 +579,7 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
+				"projectType" => $projectValues['projectType'],
                 'assignedUsers' => array(),
             );
 

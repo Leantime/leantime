@@ -45,6 +45,24 @@ $project = $this->get('project');
 
                     <div class="form-group">
 
+                        <label class="span4 control-label" for="projectType"><?php echo $this->__('label.projecttype'); ?></label>
+                        <div class="span6">
+                            <select name="projectType" id="projectType">
+                                <option value="generic" <?=$project['projectType'] != "lean" && $project['projectType'] != "dts" ? "selected='selected'" : ''?>
+                                ><?php echo $this->__('label.projecttype.generic'); ?></option>
+
+                                <option value="lean" <?=$project['projectType'] == "lean" ? "selected='selected'" : ''?>
+                                ><?php echo $this->__('label.projecttype.lean'); ?></option>
+
+                                <option value="dts" <?=$project['projectType'] == "dts" ? "selected='selected'" : ''?>
+                                ><?php echo $this->__('label.projecttype.dts'); ?></option>
+							   
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
                         <div class="span6">
                             <select name="projectState" id="projectState">

@@ -48,6 +48,12 @@ namespace leantime\domain\repositories {
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
         /**
+         * @access public
+         * @var    array of types for projects
+         */
+        public $type = array('generic' => 'label.projecttype.generic', 'lean' => 'label.projecttype.lean', 'dts' => 'labe.projecttype.dts');
+
+        /**
          * __construct - get database connection
          *
          * @access public
@@ -78,6 +84,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+                    project.projectType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -140,6 +147,7 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.projectType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -188,6 +196,7 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.projectType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -234,6 +243,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+				    project.projectType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -302,6 +312,7 @@ namespace leantime\domain\repositories {
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
 					zp_projects.psettings,
+				    zp_projects.projectType,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
 				FROM zp_projects 
@@ -501,14 +512,15 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `projectType`
 			) VALUES (
 				:name,
 				:details,
 				:clientId,
 				:hourBudget,
 				:dollarBudget,
-			    :psettings
+			    :psettings,
+                :projectType
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -519,6 +531,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('projectType', $values['projectType'], PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 
@@ -559,7 +572,8 @@ namespace leantime\domain\repositories {
 				state = :state,
 				hourBudget = :hourBudget,
 				dollarBudget = :dollarBudget,
-				psettings = :psettings
+				psettings = :psettings,
+				projectType = :projectType
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -573,6 +587,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('projectType', $values['projectType'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();

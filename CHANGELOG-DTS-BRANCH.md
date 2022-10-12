@@ -44,6 +44,13 @@ Dr. Claude Diderich (diderich@yahoo.com)
 ## Change log
 
 ## 0.0.1 - 2022-10-12
-- Added `Makefile` to only compile/minify `js` and `css` files when changed
-- Added `yetiforce/yetiforcepdf` library in composer
-- Added print-ready `Roboto` and `RobotoCondensed` fonts in `public/fonts/roboto/`from (https://fonts.google.com/specimen/Roboto)
+- New: Documented changes in `CHANGELOG_DTS_BRANCH.md` (commits are numbered with version)
+- New: Added `Makefile` to only compile/minify `js` and `css` files when changed
+- New: Added `yetiforce/yetiforcepdf` library in composer
+- New: Added print-ready `Roboto` and `RobotoCondensed` fonts in `public/fonts/roboto/`from (https://fonts.google.com/specimen/Roboto)
+
+## 0.0.2 - 2022-10-12
+- New: Added column `type MEDIUMTEXT` to table `zp_projects`. Column allows storing which process is associated with a
+  given project. Supported values are `NULL` (Generic), `lean` (Lean), and `dts` (DTS).
+- New: Added functionality to associated a process type to a project when creating a new or modifying an existing
+  project. Currently *Generic*, *Lean Startup*, and *Design Thinking for Strategy* are supported.
