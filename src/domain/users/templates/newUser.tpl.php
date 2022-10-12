@@ -67,7 +67,7 @@ $projects = $this->get('relations');
 
 <div class="pageheader">
                        
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
         <h1><h1><?php echo $this->__('headlines.new_user'); ?></h1></h1>

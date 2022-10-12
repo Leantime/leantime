@@ -35,7 +35,7 @@ defined('RESTRICTED') or die('Restricted access');
                 <input type="text" name="term" placeholder="To search type and hit enter..." />
             </form>
             
-            <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+            <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
             <div class="pagetitle">
                 <h5><?php echo $this->__('OVERVIEW'); ?></h5>
                 <h1><?php echo $this->__('ALL_GCCALS'); ?></h1>
