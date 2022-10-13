@@ -42,8 +42,11 @@ namespace leantime\domain\services {
             $statusLabelsByProject = array();
 
             $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
-            foreach($userProjects as $project) {
-                $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+
+            if($userProjects){
+                foreach($userProjects as $project) {
+                    $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+                }
             }
 
 
@@ -133,7 +136,7 @@ namespace leantime\domain\services {
                 "status"=>"",
                 "term"=> "",
                 "type"=> "",
-                "sprint"=> $_SESSION['currentSprint'],
+                "sprint"=> $_SESSION['currentSprint'] ?? '',
                 "milestone"=>"",
                 "orderBy" => "sortIndex",
                 "groupBy" => "",
@@ -324,8 +327,10 @@ namespace leantime\domain\services {
             $milestones = array();
 
             $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
-            foreach($userProjects as $project) {
-                $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
+            if($userProjects) {
+                foreach ($userProjects as $project) {
+                    $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
+                }
             }
 
             return $milestones;

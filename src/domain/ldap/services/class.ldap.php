@@ -87,13 +87,18 @@ class ldap
 
             $this->ldapConnection = ldap_connect($this->host, $this->port);
 
-            ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 7);
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
             ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
 
+            if($this->config->debug) {
+                ldap_set_option($this->ldapConnection, LDAP_OPT_DEBUG_LEVEL, 7);
+            }
+
             return true;
+
         }else{
+
             error_log("ldap extension not installed", 0);
             return false;
         }
@@ -121,8 +126,20 @@ class ldap
             $passwordBind = $this->bindPassword;
         }
 
+        $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
-        return ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+        if($bind) {
+
+            return $bind;
+
+        }else{
+
+            error_log(ldap_error($this->ldapConnection));
+            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+            error_log($err);
+
+            return false;
+        }
 
     }
 
@@ -138,6 +155,12 @@ class ldap
 
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
+
+        if($entries === false){
+            error_log(ldap_error($this->ldapConnection));
+            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+            error_log($err);
+        }
 
         //Find Role
         $role = $this->defaultRoleKey;

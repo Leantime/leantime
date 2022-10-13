@@ -289,9 +289,8 @@
                     <?php if(count($allProjects) == 0) {
 
                         echo "<div class='col-md-12'><br /><br /><div class='center'>";
-                        echo"<div style='width:30%' class='svgContainer'>";
-                        echo file_get_contents(ROOT."/images/svg/undraw_a_moment_to_relax_bbpa.svg");
-                        echo $this->__('notifications.not_assigned_to_any_project');
+                        echo"<div style='width:70%' class='svgContainer'>";
+                         echo $this->__('notifications.not_assigned_to_any_project');
                         if($login::userIsAtLeast($roles::$manager)){
                             echo"<br /><br /><a href='".BASE_URL."/projects/newProject' class='btn btn-primary'>".$this->__('link.new_project')."</a>";
                         }
