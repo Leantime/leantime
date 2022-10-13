@@ -18,7 +18,7 @@
 
         <?php echo $this->displayLink(
             'calendar.addEvent',
-            "<i class='fa-plus'></i> ".$this->__('buttons.add_event'),
+            "<i class='fa fa-plus'></i> ".$this->__('buttons.add_event'),
             null,
             array('class'=>'btn btn-primary btn-rounded')
         ) ?>
