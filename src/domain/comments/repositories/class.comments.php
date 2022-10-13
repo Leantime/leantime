@@ -80,7 +80,7 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
 
-            if($module != null) {
+            if($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 

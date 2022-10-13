@@ -63,7 +63,7 @@ namespace leantime\core {
 
         public $picture = array(
             'calendar'    => 'fa-calendar',
-            'clients'     => 'fa-group',
+            'clients'     => 'fa-people-group',
             'dashboard' => 'fa-th-large',
             'files'     => 'fa-picture',
             'leads'     => 'fa-signal',
@@ -72,7 +72,7 @@ namespace leantime\core {
             'setting'    => 'fa-cogs',
             'tickets'    => 'fa-pushpin',
             'timesheets'=> 'fa-table',
-            'users'        => 'fa-group',
+            'users'        => 'fa-people-group',
             'default'    => 'fa-off'
         );
 

@@ -25,7 +25,7 @@
 ?>
 
  <div class="pageheader">
-
+     
  	<div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
