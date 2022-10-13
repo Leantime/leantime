@@ -361,9 +361,26 @@ namespace leantime\domain\repositories {
                   `sortindex` int(11) DEFAULT NULL,
                   `status` varchar(255) DEFAULT NULL,
                   `milestoneId` VARCHAR(255) NULL,
+                  `title` varchar(255) NULL,
+                  `parent` int NULL,
+                  `featured` int NULL,
+                  `tags` text NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+                
+                CREATE TABLE `zp_approvals`
+                (
+                    `id` int auto_increment,
+                    `module` varchar(100) NULL,
+                    `entityId` int NULL,
+                    `requestorId` int NULL,
+                    `approverId` int NULL,
+                    `approvalStatus` int NULL,
+                    `requestedOn` datetime NULL,
+                    `lastStatusChange` datetime NULL,
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                
                 CREATE TABLE `zp_clients` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `name` varchar(200) DEFAULT NULL,
@@ -390,6 +407,7 @@ namespace leantime\domain\repositories {
                   `date` datetime DEFAULT NULL,
                   `moduleId` int(11) DEFAULT NULL,
                   `text` text,
+                  `status` varchar(50) null,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
