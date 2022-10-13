@@ -18,7 +18,7 @@
 
         <?php echo $this->displayNotification(); ?>
 
-		<?php echo $this->displayLink('projects.newProject',"<i class='fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+		<?php echo $this->displayLink('projects.newProject',"<i class='fa fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
 
 		<table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 			<colgroup>
