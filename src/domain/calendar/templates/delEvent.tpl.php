@@ -5,7 +5,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.delete_event'); ?></h1>

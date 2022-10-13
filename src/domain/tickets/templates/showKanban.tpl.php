@@ -26,7 +26,7 @@
 
  <div class="pageheader">
 
- 	<div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+ 	<div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
 	<div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
 	    <h1><?=$this->__("headlines.todos"); ?></h1>
