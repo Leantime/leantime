@@ -13,7 +13,6 @@
     jQuery(document).ready(function() {
 
         leantime.<?=$canvasName ?>canvasController.initFilterBar();
-        leantime.<?=$canvasName ?>canvasController.setRowHeights();
         leantime.generalController.initSimpleEditor();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>

@@ -23,13 +23,13 @@ $filterStatus = match($filter)
                 <div class="pull-right">
                     <div class="btn-group viewDropDown">
                         <?php if(count($this->get('allCanvas')) > 0) {?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("status.".$filter) ?> <?=$this->__("links.view") ?></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("label.".$filter) ?> <?=$this->__("links.view") ?></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=all" <?php if($filter == 'all') { ?>class="active" <?php } ?>><?=$this->__("status.all") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=draft" <?php if($filter == 'draft') { ?>class="active" <?php } ?>><?=$this->__("status.draft") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=review" <?php if($filter == 'review') { ?>class="active" <?php } ?>><?=$this->__("status.review") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=valid" <?php if($filter == 'valid') { ?>class="active" <?php } ?>><?=$this->__("status.valid") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=invalid" <?php if($filter == 'invalid') { ?>class="active" <?php } ?>><?=$this->__("status.invalid") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=all" <?php if($filter == 'all') { ?>class="active" <?php } ?>><?=$this->__("label.all") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=draft" <?php if($filter == 'draft') { ?>class="active" <?php } ?>><?=$this->__("label.draft") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=review" <?php if($filter == 'review') { ?>class="active" <?php } ?>><?=$this->__("label.review") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=valid" <?php if($filter == 'valid') { ?>class="active" <?php } ?>><?=$this->__("label.valid") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasName ?>Canvas?filter=invalid" <?php if($filter == 'invalid') { ?>class="active" <?php } ?>><?=$this->__("label.invalid") ?></a></li>
                         </ul>
 							<?php } ?>
                     </div>
@@ -151,4 +151,12 @@ $filterStatus = match($filter)
 </div>
 
 <?php require(ROOT.'/../src/library/canvas/tpl.canvasBottom.inc.php'); ?>
-				   
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+
+        leantime.<?=$canvasName ?>canvasController.setRowHeights();
+    });
+
+</script>

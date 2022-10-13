@@ -1,6 +1,6 @@
 <?php
 /**
- * PESTLE Analysis Canvas - HTML code for PDF report
+ * Strategy Brief - HTML code for PDF report
  */
 namespace leantime\domain\pdf {
   
@@ -93,7 +93,7 @@ namespace leantime\domain\pdf {
          * @param  string $filter Filter value
          * @return string PDF filename
          */
-        public function reportGenerate(int $id, string $filter): string
+        public function reportGenerate(int $id, string $filter, string $template = ''): string
         {
             // Retrieve canvas data
             $sbCanvasRepo = new repositories\sbcanvas();

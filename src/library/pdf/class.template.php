@@ -93,7 +93,7 @@ namespace leantime\library\pdf {
             $html = $this->htmlInit();
             
             // Layout canvas page
-            if ($this->params['canvasShow']) {
+            if($this->params['canvasShow']) {
                 $html .= $this->htmlCanvasOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
@@ -105,7 +105,7 @@ namespace leantime\library\pdf {
             }
             
             // Layout list of element details
-            if ($this->params['listShow']) {
+            if($this->params['listShow']) {
                 $html .= $this->htmlListOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
@@ -482,7 +482,7 @@ namespace leantime\library\pdf {
             
             $html = '<table class="table" style="width: 100%"><tbody>';
             foreach($recordsAry as $record) {
-                if ($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
+                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
                     $status = match($record['status']) { 'info' => 'fa-question', 'danger' => 'fa-xmark', default => 'fa-check' };
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span>'.
@@ -523,31 +523,30 @@ namespace leantime\library\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
-                if ($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
-                    if (isset($record['description']) && !empty($record['description'])) {
-                        $html .= '<div class="list-elt-title">'.$this->language->__($this->params['elementTitle']).'</div>';
-                        $html .= '<div class="list-elt-box">'.$record['description'].'</div>';
+                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
+                    if(isset($record['description']) && !empty($record['description'])) {
+                        $html .= '<div class="list-elt-box"><strong>'.$record['description'].'</strong></div>';
                     }
-                    if (isset($record['status']) && !empty($record['status'])) {
+                    if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
-                        if (!empty($status)) {
-                            $html .= '<div class="list-elt-box"><strong>'.$this->language->__($this->params['elementStatus']).'</strong>: '.
+                        if(!empty($status)) {
+                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementStatus']).
                                 '<em>'.$status.'</em></div>';
                         }
                     }
-                    if ($this->params['listFirstTitle'] !== false && isset($record[$this->params['listFirstData']]) && 
+                    if($this->params['listFirstTitle'] !== false && isset($record[$this->params['listFirstData']]) && 
                         !empty($record[$this->params['listFirstData']])) {
                         $html .= '<div class="list-elt-title">'.
                             $this->language->__($this->params['listFirstTitle']).'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->params['listFirstData']]).'</div>';
                     }
-                    if ($this->params['listSecondTitle'] !== false && isset($record[$this->params['listSecondData']]) && 
+                    if($this->params['listSecondTitle'] !== false && isset($record[$this->params['listSecondData']]) && 
                         !empty($record[$this->params['listSecondData']])) {
                         $html .= '<div class="list-elt-title">'.
                             $this->language->__($this->params['listSecondTitle']).'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->params['listSecondData']]).'</div>';
                     }
-                    if ($this->params['listThirdTitle'] !== false && isset($record[$this->params['listThirdData']]) && 
+                    if($this->params['listThirdTitle'] !== false && isset($record[$this->params['listThirdData']]) && 
                         !empty($record[$this->params['listThirdData']])) {
                         $html .= '<div class="list-elt-title">'.
                             $this->language->__($this->params['listThirdTitle']).'</div>';
@@ -573,21 +572,21 @@ namespace leantime\library\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
-                if ($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
+                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
                     $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
-                    if (isset($record['description']) && !empty($record['description'])) {
+                    if(isset($record['description']) && !empty($record['description'])) {
                         $html .= '<strong>'.$record['description'].'</strong>';
                     }
-                    if (isset($record['conclusion']) && !empty($record['conclusion']) && 
+                    if(isset($record['conclusion']) && !empty($record['conclusion']) && 
                         isset($record['description']) && !empty($record['description'])) {
 						$html .= ' - ';
 					}
-                    if (isset($record['conclusion']) && !empty($record['conclusion'])) {
+                    if(isset($record['conclusion']) && !empty($record['conclusion'])) {
                         $html .= $this->htmlStripTags($record['conclusion']);
                     }
-                    if (isset($record['status']) && !empty($record['status'])) {
+                    if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
-                        if (!empty($status)) {
+                        if(!empty($status)) {
                             $html .= ' ('.$this->language->__($status).')';
                         }
                     }
@@ -609,8 +608,8 @@ namespace leantime\library\pdf {
         protected function htmlStripTags(string $html): string
         {
 
-            if (substr($html, 0, 3) === '<p>') { $html = substr($html, 3); }
-            if (substr($html, -4) === '</p>') { $html = substr($html, 0, strlen($html) - 4); }
+            if(substr($html, 0, 3) === '<p>') { $html = substr($html, 3); }
+            if(substr($html, -4) === '</p>') { $html = substr($html, 0, strlen($html) - 4); }
             $html = str_replace('<p>', '<br>', str_replace('</p>', '', $html));
             $html = str_replace('<ul>', '<br>', $html);
             $html = str_replace('<ol>', '<br>', $html);

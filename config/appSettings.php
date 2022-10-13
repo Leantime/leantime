@@ -17,7 +17,7 @@ class appSettings {
 
 	public $appVersion = "2.2.8";
 
-	public $dbVersion = "2.1.10";
+	public $dbVersion = "2.1.11";
 
 
 
@@ -50,10 +50,12 @@ class appSettings {
 			ini_set('display_errors', 0);
 		}
 
-		ini_set('session.use_cookies',1);
-		ini_set('session.use_only_cookies',1);
-        ini_set('session.cookie_httponly',1);
-		ini_set('session.use_trans_sid',0);
+		if(session_status() !== PHP_SESSION_ACTIVE) {
+			ini_set('session.use_cookies',1);
+			ini_set('session.use_only_cookies',1);
+			ini_set('session.cookie_httponly',1);
+			ini_set('session.use_trans_sid',0);
+		}
 
 		ini_set("log_errors", 1);
         ini_set('error_log', ROOT.'/../resources/logs/error.log');

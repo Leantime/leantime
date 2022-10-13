@@ -147,7 +147,7 @@ namespace leantime\library\canvas {
 
             }
 
-            $_SESSION[self::CANVAS_NAME]['template'] = static::CANVAS_TEMPLATE;
+            $_SESSION[self::CANVAS_NAME.'template'] = static::CANVAS_TEMPLATE;
             $tpl->assign('currentCanvas', $currentCanvasId);
             $tpl->assign('statusLabels', $canvasRepo->statusLabels);
             $tpl->assign('canvasLabels', $canvasRepo->canvasTypes);

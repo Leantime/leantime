@@ -16,7 +16,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.4
+Leantime DTS Branch 0.0.5
 
 
 ## Author
@@ -66,3 +66,6 @@ Dr. Claude Diderich (diderich@yahoo.com)
 # 0.0.4 - 2022-10-13
 - Update: Prepared `api` and `helper` files for new templates
 - Add: Added *Strategy Brief* canvas and pdf functionality
+
+# 0.0.5 - 2022-10-13
+- Add: Added *Business Model Canvas* canvas and pdf functionality

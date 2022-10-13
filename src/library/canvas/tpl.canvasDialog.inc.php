@@ -28,14 +28,13 @@ $params = [ 'elementTitle' => "label.title_element", 'elementPlaceholder' => "in
 			'statusTitle'  => "label.status",        'statusDropdown'     => $statusDropdown,
 			'firstTitle'   => 'label.assumptions',   'firstPlaceholder'   => 'input.placeholders.describe_assumption', 'firstData'  => 'assumptions',
 			'secondTitle'  => 'label.data',          'secondPlaceholder'  => 'input.placeholders.describe_data',       'secondData' => 'data',
-			'thirdTitle'   => 'label.conclusion', '   thirdPlaceholder'   => 'input.placeholders.describe_conclusion', 'thirdData'  => 'conclusion'
+			'thirdTitle'   => 'label.conclusion',    'thirdPlaceholder'   => 'input.placeholders.describe_conclusion', 'thirdData'  => 'conclusion'
 			];
 if(isset($options) && is_array($options)) {
 	foreach($options as $key => $value) {
 		$params[$key] = $value;
 	}
 }
-
 $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];

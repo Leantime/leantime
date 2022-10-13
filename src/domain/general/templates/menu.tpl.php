@@ -86,7 +86,8 @@
                     <a href="<?=BASE_URL ?>/eacanvas/eaCanvas?filter=all"><?=$this->__("menu.eacanvas") ?></a>
                 </li>
                 <li <?php if($module == 'bmcanvas') echo"  class='active' "; ?>>
-                    <a href="<?=BASE_URL ?>/bmcanvas/lbmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
+					<?php $canvasTemplate = $_SESSION['bmtemplate'] ?? 'l'; ?>
+                    <a href="<?=BASE_URL ?>/bmcanvas/<?=$canvasTemplate ?>bmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
                 </li>
             <?php } ?>
 			<?php if ($currentProjectType !== 'dts') { ?>
@@ -115,7 +116,8 @@
                     <a href="<?=BASE_URL ?>/eacanvas/eaCanvas?filter=all"><?=$this->__("menu.eacanvas") ?></a>
                 </li>
                 <li <?php if($module == 'bmcanvas') echo"  class='active' "; ?>>
-                    <a href="<?=BASE_URL ?>/bmcanvas/lbmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
+					<?php $canvasTemplate = $_SESSION['bmtemplate'] ?? 'l'; ?>
+                    <a href="<?=BASE_URL ?>/bmcanvas/<?=$canvasTemplate ?>bmCanvas?filter=all"><?=$this->__("menu.bmcanvas") ?></a>
                 </li>
                 <li <?php if($module == 'sqcanvas') echo"  class='active' "; ?>>
                     <a href="<?=BASE_URL ?>/sqcanvas/sqCanvas?filter=all"><?=$this->__("menu.sqcanvas") ?></a>

@@ -31,9 +31,9 @@ $id = (int)($_GET['id'] ?? -1);
 // TO DO: ???
 
 // Generate report
-$moduleName = "\\leantime\\domain\\pdf\\".$template.$module;
+$moduleName = "\\leantime\\domain\\pdf\\".$module;
 $reportEngine = new $moduleName();
-$reportData = $reportEngine->reportGenerate($id, $filter);
+$reportData = $reportEngine->reportGenerate($id, $filter, $template);
 // Service report
 clearstatcache();
 header("Content-type: application/pdf");

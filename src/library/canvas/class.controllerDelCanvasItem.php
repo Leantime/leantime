@@ -37,7 +37,7 @@ namespace leantime\library\canvas {
                 $id = (int)($_GET['id']);
             }
             
-            $canvasTemplate = ($_SESSION[self::CANVAS_NAME]['template'] ?? static::CANVAS_TEMPLATE).static::CANVAS_NAME;
+            $canvasTemplate = ($_SESSION[self::CANVAS_NAME.'template'] ?? static::CANVAS_TEMPLATE).static::CANVAS_NAME;
 
             if (isset($_POST['del']) && isset($id)) {
 
