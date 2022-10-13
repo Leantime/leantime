@@ -311,6 +311,7 @@ namespace leantime\domain\repositories {
         public function getAllBySearchCriteria($searchCriteria, $sort='standard', $limit = null)
         {
 
+
             $query = "SELECT
 							zp_tickets.id,
 							zp_tickets.headline, 
@@ -329,6 +330,8 @@ namespace leantime\domain\repositories {
 							zp_tickets.editorId,
 							zp_tickets.dependingTicketId,
 							zp_tickets.planHours,
+							zp_tickets.editFrom,
+							zp_tickets.editTo,
 							zp_tickets.hourRemaining,
 							(SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
 							zp_projects.name AS projectName,
@@ -386,7 +389,23 @@ namespace leantime\domain\repositories {
                 $statusArray = explode(",", $searchCriteria['status']);
 
                 if(array_search("not_done", $statusArray) !== false) {
-                    $query .= " AND zp_tickets.status > 0";
+
+                    //Project Id needs to be set to search for not_done due to custom done states across projects
+                    if($searchCriteria["currentProject"]  != "") {
+
+                        $statusLabels = $this->getStateLabels($searchCriteria["currentProject"]);
+
+                        $statusList = array();
+                        foreach($statusLabels as $key =>$status) {
+                            if($status['statusType'] !== "DONE"){
+                                $statusList[] = $key;
+                            }
+                        }
+
+                        $query .= " AND zp_tickets.status IN(".implode(",", $statusList).")";
+
+                    }
+
                 }else {
                     $statusIn = core\db::arrayToPdoBindingString("status", count(explode(",", $searchCriteria["status"])));
                     $query .= " AND zp_tickets.status IN(".$statusIn.")";
@@ -737,6 +756,8 @@ namespace leantime\domain\repositories {
 
                 if($sortBy == "date") {
                     $query .= "	ORDER BY zp_tickets.editFrom ASC";
+                }elseif($sortBy == "duedate") {
+                    $query .= "	ORDER BY zp_tickets.editTo ASC";
                 }elseif($sortBy == "headline") {
                     $query .= "	ORDER BY zp_tickets.headline ASC";
                 }

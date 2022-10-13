@@ -5262,6 +5262,12 @@ input.secretInput:active {
     margin-bottom:10px;
 }
 
+.border-top {
+    border-top:1px solid var(--neutral);
+    padding-top:5px;
+    margin-top:5px;
+}
+
 .commentMain {
     width:calc(100% - 40px);
     margin-bottom:10px;
@@ -5406,6 +5412,7 @@ input.secretInput:active {
     border:1px solid var(--main-border-color);
     border-radius: var(--box-radius);
     text-align:center;
+    margin-bottom: 20px;
 }
 
 .profileBox .commentImage {
