@@ -98,6 +98,7 @@
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
                                 <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
+                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "tags"){echo "checked='checked'";}?> value="tags" id="groupByTagsLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByTagsLink"><?=$this->__("label.tags") ?></label></span></li>
                             </ul>
 
                         </div>
@@ -123,7 +124,7 @@
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>"  style="width:130px;" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
                                 <option value=""></option>
                                 <?php foreach($this->get('users') as $userRow){ 	?>
 
@@ -243,6 +244,7 @@
                 <col class="con1">
                 <col class="con0">
                 <col class="con1">
+                <col class="con0">
             </colgroup>
             <thead>
             <tr>
@@ -253,6 +255,7 @@
                 <th><?= $this->__("label.priority"); ?></th>
                 <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
                 <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                <th class="tags-col"><?= $this->__("label.tags"); ?></th>
                 <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
                 <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
                 <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
@@ -406,6 +409,21 @@
                             </div>
                         </td>
 
+                        <td data-order="<?=$row['tags'] ?>">
+                            <?php if($row['tags'] != ''){?>
+                            <?php  $tagsArray = explode(",", $row['tags']); ?>
+                                <div class='tagsinput readonly'>
+                                    <?php
+
+                                    foreach($tagsArray as $tag){
+                                        echo"<span class='tag'><span>".$tag."</span></span>";
+                                    }
+
+                                    ?>
+                                </div>
+                            <?php } ?>
+                        </td>
+
                         <?php
                         if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                             $date = $this->__("text.anytime");
@@ -417,10 +435,7 @@
                         }
                         ?>
                         <td data-order="<?=$date?>" >
-
-
-                            <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
-
+                            <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">
                             <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />

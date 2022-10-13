@@ -435,7 +435,7 @@ select,
 }
 
 .chzn-choices {
-    max-height:29px;
+
 }
 
 .chzn-container-multi .chzn-choices .search-choice {
@@ -446,6 +446,7 @@ select,
     position: relative;
     cursor: default;
     border-radius:12px;
+    font-size:var(--font-size-s);
 }
 
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close {

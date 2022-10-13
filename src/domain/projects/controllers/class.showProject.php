@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
          */
         public function __construct () {
 
-            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();

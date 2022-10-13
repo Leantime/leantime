@@ -330,6 +330,8 @@ namespace leantime\domain\repositories {
 							zp_tickets.editorId,
 							zp_tickets.dependingTicketId,
 							zp_tickets.planHours,
+							zp_tickets.editFrom,
+							zp_tickets.editTo,
 							zp_tickets.hourRemaining,
 							(SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
 							zp_projects.name AS projectName,

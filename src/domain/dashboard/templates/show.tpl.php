@@ -39,13 +39,6 @@
 
             <div class="col-md-8">
                 <div class="maincontentinner">
-
-                    <div class="pull-right">
-
-                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>" class="btn btn-default"><?=$this->__("menu.project_settings") ?></a>
-                        <?php } ?>
-                    </div>
                     <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
                     <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
                     <?=$this->escapeMinimal($project['details']) ?>
