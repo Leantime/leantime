@@ -119,7 +119,7 @@
                 `           <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-plus"></span><?=$this->__('headlines.add_more_users'); ?>
+                                        <span class="fa fa-user-friends "></span><?=$this->__('headlines.assign_users_to_project'); ?>
                                     </h4>
                                 </div>
                             </div>
@@ -170,9 +170,28 @@
                                         </div>
 
 
+
+
                                 <?php }
+
                                 } ?>
+                                 <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                     <div class="col-md-4">
+                                         <div class="userBox">
+
+
+                                                 <a href="<?=BASE_URL?>/users/newUser" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
+
+                                             <div class="clearall"></div>
+                                         </div>
+                                     </div>
+                                 <?php } ?>
                             </div>
+                             <div class="row">
+                                 <div class="col-md-12">
+
+                                 </div>
+                             </div>
                         </div>
 
 
