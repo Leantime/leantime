@@ -94,6 +94,11 @@
                 <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
             </li>
             <?php } ?>
+            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?>>
+                <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
+            </li>
+            <?php } ?>
 
         </ul>
     </li>

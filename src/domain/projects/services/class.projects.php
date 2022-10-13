@@ -579,6 +579,7 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
+                'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
 
@@ -674,6 +675,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -727,6 +729,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -779,7 +782,9 @@ namespace leantime\domain\services {
                             "conclusion" => $item['conclusion'],
                             "box" => $item['box'],
                             "author" => $item['author'],
-
+                            "parent" => $item['parent'],
+                            "title" => $item['title'],
+                            "tags" => $item['tags'],
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
