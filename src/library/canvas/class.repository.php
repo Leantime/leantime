@@ -29,7 +29,6 @@ namespace leantime\library\canvas {
          * @acces public
          * @var   array
          */
-         */
         public $statusLabels = [
             "danger" => "status.not_validated",
             "info" => "status.validated_false",
@@ -91,9 +90,9 @@ namespace leantime\library\canvas {
                 return;
             }
 
-            if(isset($_SESSION["projectsettings"][static:CANVAS_NAME."canvaslabels"])) {
+            if(isset($_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"])) {
 
-                return $_SESSION["projectsettings"][static:CANVAS_NAME."canvaslabels"];
+                return $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"];
 
             }else{
 
@@ -103,7 +102,7 @@ namespace leantime\library\canvas {
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".".static:CANVAS_NAME."canvaslabels", 
+                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".".static::CANVAS_NAME."canvaslabels", 
                                  PDO::PARAM_STR);
 
                 $stmn->execute();
@@ -125,7 +124,7 @@ namespace leantime\library\canvas {
                     }
 
                     $labels = $this->canvasTypes;
-                    $_SESSION["projectsettings"][static:CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
+                    $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
 
                 }else{
 
@@ -134,7 +133,7 @@ namespace leantime\library\canvas {
                     }
 
                     $labels = $this->canvasTypes;
-                    $_SESSION["projectsettings"][static:CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
+                    $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
                 }
 
                 return $labels;
@@ -161,6 +160,34 @@ namespace leantime\library\canvas {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+
+        }
+
+        public function getSingleCanvas($canvasId)
+        {
+            $sql = "SELECT
+                        zp_canvas.id,
+                        zp_canvas.title,
+                        zp_canvas.author,
+                        zp_canvas.created,    
+                        zp_canvas.projectId,
+                        t1.firstname AS authorFirstname, 
+                        t1.lastname AS authorLastname
+                
+                FROM 
+                zp_canvas
+                LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
+                ORDER BY zp_canvas.title, zp_canvas.created";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -262,7 +289,6 @@ namespace leantime\library\canvas {
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
-
 
             $stmn->execute();
             $stmn->closeCursor();

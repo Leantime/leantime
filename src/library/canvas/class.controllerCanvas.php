@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic / Tempate of canvas controller
+ * Generic / Template of canvas controller
  */
 namespace leantime\library\canvas {
 
@@ -72,7 +72,7 @@ namespace leantime\library\canvas {
                         $projectService = new services\projects();
                         $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
                         
-                        $mailer->setSubject($language->__("notifications.new_canvas_created"));
+                        $mailer->setSubject($language->__("notification.board_created"));
                         
                         $actual_link = CURRENT_URL;
                         $message = sprintf($language->__("email_notifications.canvas_created_message"),
@@ -81,16 +81,16 @@ namespace leantime\library\canvas {
                         
                         // New queuing messaging system
                         $queue = new repositories\queue();
-                        $queue->queueMessageToUsers($users, $message, $language->__("notifications.new_canvas_created"),
+                        $queue->queueMessageToUsers($users, $message, $language->__("notification.baord_created"),
                                                     $_SESSION["currentProject"]);
                         
-                        $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');
+                        $tpl->setNotification($language->__("notification.board_created"), 'success');
                         
                         $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
                         $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
 
                     } else {
-                        $tpl->setNotification($language->__("notification.boeard_exists"), 'error');
+                        $tpl->setNotification($language->__("notification.board_exists"), 'error');
                     }
 
                 } else {
@@ -112,7 +112,7 @@ namespace leantime\library\canvas {
                         $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
 
                     } else {
-                        $tpl->setNotification($language->__("notification.boeard_exists"), 'error');
+                        $tpl->setNotification($language->__("notification.board_exists"), 'error');
                     }
 
                 } else {

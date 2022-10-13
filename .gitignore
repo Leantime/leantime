@@ -103,3 +103,4 @@ fabric.properties
 # Lock files
 composer.lock
 package-lock.json
+public/images/logo-dts.png

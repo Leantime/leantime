@@ -3,10 +3,12 @@
 The `dts` branch of the **Leantime&trade;** project implements views and canvas to allow implementing the *Design
 Thinking for Strategy* process from the book with the same name [https://inov.at/dts-sn](https://inov.at/dts-sn).
 
+
 ## Major changes
 
-- Added new canvas: *Strategy Brief*, *Risk Analysis*, *Environment Analysis*, *Business Model Canvas* (3 version), *Porter's
-  Strategy Questions*, *Competitive Positioning Canvas*, *Strategy Messaging*, *Insights*, *Ideation*, and *SWOT Analysis*
+- Added new canvas: *SWOT Analysis*, *Strategy Brief*, *Risk Analysis*, *Environment Analysis*, *Business Model Canvas*
+  (3 version), *Porter's Strategy Questions*, *Competitive Positioning Canvas*, *Strategy Messaging*, *Insights*,
+  *Ideation*, and *SWOT Analysis*
 - Added functionality to generate PDF files from canvas
 - Refactored canvas code and moved it into `src/library/canvas` allowing to create a new class by simply extending/including
   the code
@@ -14,7 +16,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.1
+Leantime DTS Branch 0.0.4
 
 
 ## Author
@@ -61,3 +63,6 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - Add: Engine to generate PDF files from templates (`public.pdf`)
 - Add: Repositoriy `dts` for creating default templates and milestones recommended by DTS process (section 5.1.)
 
+# 0.0.4 - 2022-10-13
+- Update: Prepared `api` and `helper` files for new templates
+- Add: Added *Strategy Brief* canvas and pdf functionality

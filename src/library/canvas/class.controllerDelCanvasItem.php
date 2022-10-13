@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic / Tempate of canvas controller / Delete Canvas Item
+ * Generic / Template of canvas controller / Delete Canvas Item
  */
 namespace leantime\library\canvas {
 

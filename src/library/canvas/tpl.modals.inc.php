@@ -14,7 +14,7 @@
         </div>
         <div class="modal-body">
           <label><?=$this->__("label.$canvasName.title_new") ?></label>
-          <input type="text" name="canvastitle" placeholder="<?=$this->__('input.placeholders.$canvasName.enter_title_for_board') ?>"
+          <input type="text" name="canvastitle" placeholder="<?=$this->__("input.placeholders.$canvasName.enter_title_for_board") ?>"
                  style="width: 100%"/>
         </div>
         <div class="modal-footer">

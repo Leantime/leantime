@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic / Tempate of canvas controller / Edit Canvas Item
+ * Generic / Template of canvas controller / Edit Canvas Item
  */
 namespace leantime\library\canvas {
 
@@ -143,6 +143,7 @@ namespace leantime\library\canvas {
                             $params['tags'] = "#ccc";
                             $params['editFrom'] = date("Y-m-d");
                             $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
+							$params['dependentMilestone'] = '';
                             $id = $this->ticketService->quickAddMilestone($params);
                             if ($id !== false) {
                                 $canvasItem['milestoneId'] = $id;

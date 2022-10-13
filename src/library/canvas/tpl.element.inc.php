@@ -6,7 +6,6 @@
  * - $canvasName       Name of current canvas
  * - $elementName      Name of the current element
  * - $filterStatus     Element status on which to filter
- * - $canvasModal      Name of canvas modal
  */
 ?>
 <div class="contentInner even status_<?php echo $elementName; ?>">

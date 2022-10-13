@@ -117,7 +117,11 @@ namespace leantime\domain\controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					if($values['projectType'] == 'dts') {
+						$tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/bmcanvas/lbmCanvas/'), 'success');
+                    } else {
+                        $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					}
 
                     $tpl->redirect(BASE_URL."/projects/showProject/". $id);
 

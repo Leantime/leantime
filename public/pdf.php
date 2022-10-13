@@ -31,7 +31,7 @@ $id = (int)($_GET['id'] ?? -1);
 // TO DO: ???
 
 // Generate report
-$moduleName = "\\leantime\\domain\\pdf".$template.$module;
+$moduleName = "\\leantime\\domain\\pdf\\".$template.$module;
 $reportEngine = new $moduleName();
 $reportData = $reportEngine->reportGenerate($id, $filter);
 // Service report

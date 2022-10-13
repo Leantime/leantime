@@ -216,8 +216,10 @@ namespace leantime\library\pdf {
 
             // Load FontAwsome icon font
             \YetiForcePDF\Document::addFonts([
-                ['family' => 'FontAwesome', 'weight' => '400', 'style' => 'normal', 'file' => ROOT.'fonts/fontawesome/fa-regular-400.ttf'],
-                ['family' => 'FontAwesome', 'weight' => '900', 'style' => 'normal', 'file' => ROOT.'/fonts/fontawesome/fa-solid-900.ttf']
+                ['family' => 'FontAwesome', 'weight' => '400', 'style' => 'normal', 
+				 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-regular-400.ttf'],
+                ['family' => 'FontAwesome', 'weight' => '900', 'style' => 'normal', 
+				 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-solid-900.ttf']
             ]);
 
             // Start document

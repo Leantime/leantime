@@ -21,5 +21,5 @@ $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 <form method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id; ?>">
     <p><?php echo $this->__('text.confirm_board_item_deletion'); ?></p><br />
     <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
-    <a class="btn btn-secondary" href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasTempate.$canvasName ?>Canvas"><?php echo $this->__('buttons.back'); ?></a>
+    <a class="btn btn-secondary" href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasTemplate.$canvasName ?>Canvas"><?php echo $this->__('buttons.back'); ?></a>
 </form>

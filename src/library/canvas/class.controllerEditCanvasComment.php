@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic / Tempate of canvas controller / Edit Comments
+ * Generic / Template of canvas controller / Edit Comments
  */
 namespace leantime\library\canvas {
 
