@@ -226,6 +226,7 @@ namespace leantime\domain\repositories {
                       firstname, 
                       role, 
                       profileId, 
+                      status,
                       username,
                       twoFAEnabled,
                       clientId,
@@ -258,6 +259,7 @@ namespace leantime\domain\repositories {
                         firstname, 
                         role, 
                         profileId, 
+                        status,
                         username,
                         twoFAEnabled,
                         zp_clients.name AS clientName
