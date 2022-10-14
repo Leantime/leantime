@@ -279,7 +279,7 @@ namespace leantime\domain\services {
             $this->name = strip_tags($user['firstname']);
             $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
             $this->userId = $user['id'];
-            $this->settings = unserialize($user['settings']);
+            $this->settings = $user['settings'] ? unserialize($user['settings']) : array();
             $this->clientId = $user['clientId'];
             $this->twoFAEnabled = $user['twoFAEnabled'];
             $this->twoFASecret = $user['twoFASecret'];

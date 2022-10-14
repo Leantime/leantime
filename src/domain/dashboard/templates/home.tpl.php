@@ -297,7 +297,7 @@
                         echo"</div></div>";
 
                     }?>
-                    <ul class="sortableTicketList">
+                    <ul class="sortableTicketList" id="projectProgressContainer">
                         <?php foreach($allProjects as $project) {
                             $percentDone = round($project['progress']['percent']);
                             ?>
@@ -401,11 +401,18 @@
 
        <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
 
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
+            leantime.helperController.showHelperModal("dashboard", 500, 700);
 
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
+            <?php
+           //Only show once per session
+            if(!isset($_SESSION['userdata']['settings']["modals"])) {
+                $_SESSION['userdata']['settings']["modals"] = array();
+            }
+
+           if(!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
+               $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
+           }
+
        } ?>
 
 

@@ -515,15 +515,6 @@
 
        <?php } ?>
 
-       <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
-
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-       } ?>
-
     });
 
 </script>

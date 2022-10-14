@@ -136,7 +136,9 @@ class ldap
 
             error_log(ldap_error($this->ldapConnection));
             ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            error_log($err);
+            if($err) {
+                error_log($err);
+            }
 
             return false;
         }
