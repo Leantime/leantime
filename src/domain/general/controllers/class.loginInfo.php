@@ -21,6 +21,7 @@ namespace leantime\domain\controllers {
                 $availableModals = array(
                     "tickets/showAll" => "backlog",
                     "dashboard/show" => "dashboard",
+                    "dashboard/home" => "dashboard",
                     "leancanvas/showCanvas" => "fullLeanCanvas",
                     "leancanvas/simpleCanvas" => "simpleLeanCanvas",
                     "ideas/showBoards" => "ideaBoard",

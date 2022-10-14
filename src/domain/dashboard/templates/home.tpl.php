@@ -289,16 +289,15 @@
                     <?php if(count($allProjects) == 0) {
 
                         echo "<div class='col-md-12'><br /><br /><div class='center'>";
-                        echo"<div style='width:30%' class='svgContainer'>";
-                        echo file_get_contents(ROOT."/images/svg/undraw_a_moment_to_relax_bbpa.svg");
-                        echo $this->__('notifications.not_assigned_to_any_project');
+                        echo"<div style='width:70%' class='svgContainer'>";
+                         echo $this->__('notifications.not_assigned_to_any_project');
                         if($login::userIsAtLeast($roles::$manager)){
                             echo"<br /><br /><a href='".BASE_URL."/projects/newProject' class='btn btn-primary'>".$this->__('link.new_project')."</a>";
                         }
                         echo"</div></div>";
 
                     }?>
-                    <ul class="sortableTicketList">
+                    <ul class="sortableTicketList" id="projectProgressContainer">
                         <?php foreach($allProjects as $project) {
                             $percentDone = round($project['progress']['percent']);
                             ?>
@@ -402,11 +401,18 @@
 
        <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
 
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
+            leantime.helperController.showHelperModal("dashboard", 500, 700);
 
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
+            <?php
+           //Only show once per session
+            if(!isset($_SESSION['userdata']['settings']["modals"])) {
+                $_SESSION['userdata']['settings']["modals"] = array();
+            }
+
+           if(!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
+               $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
+           }
+
        } ?>
 
 
