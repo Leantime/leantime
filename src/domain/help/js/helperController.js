@@ -138,25 +138,7 @@ leantime.helperController = (function () {
             }
         );
 
-        tour.addStep(
-            'Your Todos', {
-                title: leantime.i18n.__("tour.milestone_progress"),
-                text: leantime.i18n.__("tour.milestone_progress_text"),
-                attachTo: '#milestoneProgressContainer left',
-                advanceOn: '.headmenu click',
-                buttons: [
-                    {
-                        text: leantime.i18n.__("tour.back"),
-                        classes: 'shepherd-button-secondary',
-                        action: tour.back
-                    },
-                    {
-                        text: leantime.i18n.__("tour.next"),
-                        action: tour.next
-                    }
-                ]
-            }
-        );
+
 
         tour.addStep(
             'Your Todos', {

@@ -134,12 +134,15 @@ jQuery(document).ready(function(){
             }
             ?>
         ];
+
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
+        <?php }else { ?>
+        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
         <?php } ?>
 
-    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
-    <?php }else { ?>
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
-    <?php } ?>
+        <?php } ?>
+
+
 
 </script>

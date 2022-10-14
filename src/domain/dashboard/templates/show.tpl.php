@@ -45,6 +45,11 @@
                     <br />
                 </div>
                 <div class="maincontentinner">
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                        <div class="pull-right">
+                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-user-plus"></i> <?=$this->__('links.add_team_member') ?></a>
+                        </div>
+                    <?php } ?>
                     <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
                     <div class="row teamBox">
                         <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
@@ -509,15 +514,6 @@
            //leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
 
        <?php } ?>
-
-       <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
-
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-       } ?>
 
     });
 

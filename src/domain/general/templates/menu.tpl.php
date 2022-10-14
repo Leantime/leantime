@@ -142,7 +142,7 @@
             </li>
             <?php } ?>
             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-            <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?>>
+            <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px;">
                 <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
             </li>
             <?php } ?>
