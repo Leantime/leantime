@@ -65,6 +65,8 @@ namespace leantime\domain\controllers {
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
             $this->tpl->assign('milestones', $milestones);
 
+            $comments = new repositories\comments();
+
             //Delete comment
             if (isset($_GET['delComment']) === true) {
 
@@ -72,11 +74,11 @@ namespace leantime\domain\controllers {
 
                 $comments->deleteComment($commentId);
 
-                $tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
 
             }
 
-            $comments = new repositories\comments();
+
             $comment = $comments->getComments('project', $_SESSION['currentProject'],"", $_SESSION["projectsettings"]['commentOrder']);
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
