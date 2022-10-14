@@ -107,7 +107,7 @@
                 </li>
                 <li><a href="javascript:void(0);"><strong><?=$this->__("menu.dts.frameworks") ?></a></strong></li>
                 <li <?php if($module == 'sbcanvcas') echo"class=' active '"; ?>>
-                    <a href="<?=BASE_URL ?>/sbcanvas/sbCanvas?filter=all"><?=$this->__("menu.sbcanvas") ?></a>
+                    <a href="<?=BASE_URL ?>/sbcanvas/showCanvas?filter=all"><?=$this->__("menu.sbcanvas") ?></a>
                 </li>
                 <li <?php if($module == 'riskscanvcas') echo"class=' active '"; ?>>
                     <a href="<?=BASE_URL ?>/riskscanvas/risksCanvas?filter=all"><?=$this->__("menu.riskscanvas") ?></a>

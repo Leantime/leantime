@@ -4,7 +4,7 @@
  */
 namespace leantime\domain\controllers {
 
-    class editCanvasItem extends \leantime\library\canvas\controllerEditCanvasItem
+    class editCanvasItem extends \leantime\domain\controllers\editCanvasItem
     {
 
 	    protected const CANVAS_NAME = 'sb';

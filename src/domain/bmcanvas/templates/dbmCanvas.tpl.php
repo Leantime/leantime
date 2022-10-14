@@ -14,7 +14,7 @@ $statusLabels = $this->get("statusLabels");
 $filter = $_GET['filter'] ?? ($_SESSION['filter'] ?? 'all');
 $_SESSION['filter'] = $filter;
 $filterStatus = match($filter) {'validated_true' => 'success', 'validated_false' => 'danger', 'not_validated' => 'info', default => 'all' };
-
+?>
 <?php require(ROOT.'/../src/library/canvas/tpl.canvasTop.inc.php'); ?>
 
             <div class="col-md-4">

@@ -4,7 +4,7 @@
  */
 namespace leantime\domain\controllers {
 
-    class editCanvasComment extends \leantime\library\canvas\controllerEditCanvasComment
+    class editCanvasComment extends \leantime\leantime\domain\controllers\editCanvasComment
     {
 		
 	    protected const CANVAS_NAME = 'sb';

@@ -77,8 +77,7 @@ namespace leantime\domain\repositories {
             20107,
             20108,
             20109,
-            20110,
-            20111
+            20110
         );
 
         /**
@@ -477,7 +476,6 @@ namespace leantime\domain\repositories {
                   `dollarBudget` int(11) DEFAULT NULL,
                   `active` int(11) DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
-				  `projectType` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1229,36 +1227,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        /**
-		 * update_sql_20111 - Add project type column to table zp_projects
-		 */
-		 private function update_sql_20111() {
 
-			 $errors = array();
-
-			 $sql = array( "ALTER TABLE zp_projects ADD projectType MEDIUMTEXT NULL" );
-
-            foreach ($sql as $statement) {
-
-                try {
-
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-
-                } catch (PDOException $e) {
-
-                    array_push($errors, $statement . " Failed:" . $e->getMessage());
-
-                }
-
-            }
-
-            if(count($errors) > 0) {
-                return $errors;
-            }else{
-                return true;
-            }
-		 }
 
     }
 }

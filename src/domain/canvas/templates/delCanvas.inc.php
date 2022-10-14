@@ -4,11 +4,10 @@
  *
  * Required variables:
  * - $canvasName     Name of current canvas
- * - $canvasTemplate Template of current canvas
  */
 defined('RESTRICTED') or die('Restricted access');
 
-$canvasTemplate = $canvasTemplate ?? '';
+$id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 ?>
 
 <div class="pageheader">
@@ -23,10 +22,10 @@ $canvasTemplate = $canvasTemplate ?? '';
     <div class="maincontentinner">
         <h4 class="widget widgettitle"><?=$this->__("subtitles.delete") ?></h4>
         <div class="widgetcontent">
-            <form method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $_GET['id']?>">
+            <form method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?=$id ?>">
                 <p><?php echo $this->__('text.confirm_board_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-secondary" href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasTemplate.$canvasName ?>Canvas"><?php echo $this->__('buttons.back'); ?></a>
+                <a class="btn btn-secondary" href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas"><?php echo $this->__('buttons.back'); ?></a>
             </form>
         </div>
 

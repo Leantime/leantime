@@ -4,37 +4,15 @@
  *
  * Required variables:
  * - $canvasName   Name of current canvas
- * - $canvasTemplate Template of current canvas
- * - $options      Options that override defaut layout (see $params below for defaults)
  */
 defined('RESTRICTED') or die('Restricted access');
 
 $canvasItem = $this->get('canvasItem');
 $canvasTypes = $this->get('canvasTypes');
-$canvasTemplate = $canvasTemplate ?? '';
+$statusLabels = $this->get('statusLabels');
+$dataLabels = $this->get('dataLabels');
+$relationalLabels = $this->get('relationalLabels');
 
-// $statusDropdown: Default HTML code of status dropdown
-$statusDropdown = 
-	'<option value="info" '.($canvasItem['status'] == 'info' ? "selected='selected' " : '').'>'.
-	$this->__("status.not_validated").'</option>'."\n".
-	'<option value="success" '.($canvasItem['status'] == 'success' ? "selected='selected' " : '').'>'.
-	$this->__("status.validated_false").'</option>'."\n".
-	'<option value="danger" '.($canvasItem['status'] == 'danger' ? "selected='selected' " : '').'>'.
-	$this->__("status.validated_true").'</option>'."\n";
-
-// Only field changed need to be overwritten. XXXData must always contain assumptions, data, and conclusion (order is irrelevant)
-// If 'XXXTitle' is false, field is not displayed
-$params = [ 'elementTitle' => "label.title_element", 'elementPlaceholder' => "input.placeholders.describe_title",
-			'statusTitle'  => "label.status",        'statusDropdown'     => $statusDropdown,
-			'firstTitle'   => 'label.assumptions',   'firstPlaceholder'   => 'input.placeholders.describe_assumption', 'firstData'  => 'assumptions',
-			'secondTitle'  => 'label.data',          'secondPlaceholder'  => 'input.placeholders.describe_data',       'secondData' => 'data',
-			'thirdTitle'   => 'label.conclusion',    'thirdPlaceholder'   => 'input.placeholders.describe_conclusion', 'thirdData'  => 'conclusion'
-			];
-if(isset($options) && is_array($options)) {
-	foreach($options as $key => $value) {
-		$params[$key] = $value;
-	}
-}
 $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
@@ -45,14 +23,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/<?=$canvasTemplate.$canvasName ?>Canvas&showModal=<?php echo $canvasItem['id']; ?>";
+            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas&showModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
 
 <div class="showDialogOnLoad" style="display:none;">
 
-  <h4 class="widgettitle title-light" style="padding-bottom: 0"><?php echo $canvasTypes[$canvasItem['box']]; ?></h4>
+  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="<?=$canvasTypes[$canvasItem['box']]['icon'] ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title'] ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
     <?php echo $this->displayNotification(); ?>
 
@@ -62,48 +40,53 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-	    <?php if($params['elementTitle'] !== false) { ?>
-	        <label><?=$this->__($params['elementTitle']) ?></label>
-            <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>"
-	            placeholder="<?=$this->__($params['elementPlaceholder']) ?>" style="width:100%"/><br />
-		<?php } ?>
+	    <label><?=$this->__("label.description") ?></label>
+        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>"
+	         placeholder="<?=$this->__('placeholders.description') ?>" style="width:100%"/><br />
 
-	    <?php if($params['statusTitle'] !== false) { ?>
-	        <label><?=$this->__($params['statusTitle']) ?></label>
-            <select name="status"><?=$params['statusDropdown'] ?></select><br />
+	    <?php if(!empty($statusLabels)) { ?>
+	        <label><?=$this->__("label.status") ?></label>
+            <select name="status">
+			    <?php foreach($statusLabels as $key => $data) { ?>
+                    <?php if($data['active']) { ?>
+		                <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><?=$data['title'] ?></option>
+		            <?php } ?>
+		        <?php } ?>
+			</select><br />
 		<?php } else { ?>
             <input type="hidden" name="status" value="" />
 		<?php } ?>
 
-	    <?php if($params['firstTitle'] !== false) { ?>
-          <label><?=$this->__($params['firstTitle']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$params['firstData'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($params['firstPlaceholder']) ?>"><?=$canvasItem[$params['firstData']] ?></textarea><br />
+	    <?php if($dataLabels[1]['active']) { ?>
+          <label><?=$this->__($dataLabels[1]['title']) ?></label>
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"
+		      placeholder="<?=$this->__($dataLabels[1]['placeholder']) ?>"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
 		<?php } else { ?>
-            <input type="hidden" name="<?=$params['firstData'] ?>" value="" />
+            <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
 		<?php } ?>
 
-	    <?php if($params['secondTitle'] !== false) { ?>
-          <label><?=$this->__($params['secondTitle']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$params['secondData'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($params['secondPlaceholder']) ?>"><?=$canvasItem[$params['secondData']] ?></textarea><br />
+	    <?php if($dataLabels[2]['active']) { ?>
+          <label><?=$this->__($dataLabels[2]['title']) ?></label>
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"
+		      placeholder="<?=$this->__($dataLabels[2]['placeholder']) ?>"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
 		<?php } else { ?>
-            <input type="hidden" name="<?=$params['secondData'] ?>" value="" />
+            <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
 		<?php } ?>
 
-	    <?php if($params['thirdTitle'] !== false) { ?>
-          <label><?=$this->__($params['thirdTitle']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$params['thirdData'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($params['thirdPlaceholder']) ?>"><?=$canvasItem[$params['thirdData']] ?></textarea><br />
+	    <?php if($dataLabels[3]['active']) { ?>
+          <label><?=$this->__($dataLabels[3]['title']) ?></label>
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"
+		      placeholder="<?=$this->__($dataLabels[3]['placeholder']) ?>"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
 		<?php } else { ?>
-            <input type="hidden" name="<?=$params['thirdData'] ?>" value="" />
+            <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
 		<?php } ?>
+
 		
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"
 			    ><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
 								
@@ -178,7 +161,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 ?>
 
-                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>canvasCanvasMilestone" >
+                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="canvasMilestone" >
                         <div class="ticketBox fixed">
 
                             <div class="row">
@@ -186,7 +169,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="canvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
                                 </div>
                             </div>
                             <div class="row">

@@ -5,7 +5,6 @@
  * Required variables:
  * - $canvasName       Name of current canvas
  */
-$currentSprint = $this->get('sprint');
 ?>
 
 <div class="center padding-lg">

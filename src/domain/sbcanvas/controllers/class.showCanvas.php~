@@ -1,13 +1,14 @@
 <?php
 /**
- * Strategy Brief - Controller / Delete Canvas
+ * Strategy Brief - Controller
  */
 namespace leantime\domain\controllers {
 
-    class delCanvas extends \leantime\domain\controllers\delCanvas
+    class showCanvas extends \leantime\library\canvas\controllerShowCanvas
     {
 		
 	    protected const CANVAS_NAME = 'sb';
 
     }
+
 }

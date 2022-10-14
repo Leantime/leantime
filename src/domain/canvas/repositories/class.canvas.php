@@ -2,38 +2,65 @@
 /**
  * Generic / Tempalate of canvas repository class
  */
-namespace leantime\library\canvas {
+namespace leantime\domain\repositories {
 
     use leantime\core;
     use pdo;
 
-    class repository
+    class canvas
     {
 
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = '';
+        protected const CANVAS_NAME = '??';
 
         /**
          * canvasTypes - Must be extended
          *
-         * @acces public
+         * @acces protected
          * @var   array
          */
-        public $canvasTypes = [];
+		protected $canvasTypes = [
+	        // 'xx_' => [ 'icon' => 'faX fa-', 'color' => 'white', 'title' => 'box.xx.yy', 'active' => true], 
+		];
 
         /**
-         * statusLabels - Must be extended
+         * statusLabels - May be cextended
          *
-         * @acces public
+         * @acces protected
          * @var   array
          */
-        public $statusLabels = [
-            "danger" => "status.not_validated",
-            "info" => "status.validated_false",
-            "success" => "status.validated_true"
-        ];
+		protected $statusLabelsAll = [ 'icon' => 'fas fa-fw fa-globe', 'color' => '', 'title' => 'status.all', 'dropdown' => '', 'active' => true];
+		protected $statusLabels = [
+	        'status_draft' => 
+                [ 'icon' => 'fas fa-fw fa-file-lines','color' => 'white','title' => 'status.draft','dropdown' => 'info','active' => true],
+			'status_review' => 
+                [ 'icon' => 'fas fa-fw fa-magnify-glass','color' => 'white','title' => 'status.review','dropdown' => 'warning','active' => true],
+			'status_valid' => 
+                [ 'icon' => 'fas fa-fw fa-check','color' => 'white','title' => 'status.valid','dropdown' => 'success','active' => true],
+			'status_invalid' => 
+                [ 'icon' => 'fas fa-fw fa-triangle-questions','color' => 'white','title' => 'status.invalid','dropdown' => 'danger','active'=>true]
+	    ];
+
+		/**
+		 * dataLabels - May be extended
+         *
+         * @acces protected
+         * @var   array
+		 */
+		protected $dataLabels = [
+		    1 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'placeholder' => 'input.placeholders.describe_assumption', 'active' => true],
+			2 => [ 'title' => 'label.data',        'field' => 'data',        'placeholder' => 'input.placeholders.describe_data', 'active' => true],
+			3 => [ 'title' => 'label.conclusion',  'field' => 'conclusion',  'placeholder' => 'input.placeholders.describe_conclusion', 'active' => true]];
+
+		/**
+		 * relationLabels - Max be extended (same structure as `statusLabels`)
+		 *
+         * @acces public
+         * @var   array
+		 */
+		public $relationLabels = [];
 
         /**
          * @access public
@@ -65,82 +92,100 @@ namespace leantime\library\canvas {
             $this->db = core\db::getInstance();
             $this->language = new core\language();
 
-            $this->canvasTypes = $this->getCanvasLabels();
-            $this->statusLabels = $this->getStatusLabels();
-
-
         }
 
-        public function getStatusLabels () {
+		/**
+		 * getCanvasTypes() - Retrieve translated data
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getCanvasTypes(): array
+		{
+			
+			$canvasTypes = $this->canvasTypes;
+			foreach($canvasTypes as $key => $data) {
+				if(isset($data['title'])) {
+				    $data['title'] = $this->language->__($data['title']);
+				}
+			}
+			return $canvasTypes;
+			
+		}
+		
+		/**
+		 * getStatusLabelsAll() - Retrieve translated data
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getStatusLabelsAll(): array
+		{
+			
+			$statusLabelsAll = $this->statusLabelsAll;
+			if(isset($statusLabelsAll['title'])) {
+				    $$statusLabelsAll['title'] = $this->language->__($$statusLabelsAll['title']);
+				}
+			}
+		    return $statusLabelsAll;
+			
+		}
+		/**
+		 * getStatusLabels() - Retrieve translated data
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getStatusLabels(): array
+		{
+			
+			$statusLabel = $this->statusLabel;
+			foreach($statusLabel as $key => $data) {
+				if(isset($data['title'])) {
+				    $data['title'] = $this->language->__($data['title']);
+				}
+			}
+			
+		}
 
-            foreach($this->statusLabels as $key => $statusLabel){
-                $this->statusLabels[$key] = $this->language->__($statusLabel);
-            }
+		/**
+		 * getDataLabels() - Retrieve translated data
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getDataLabels(): array
+		{
+			
+			$dataLabels = $this->dataLabels;
+			foreach($dataLabels as $key => $data) {
+				if(isset($data['title'])) {
+				    $data['title'] = $this->language->__($data['title']);
+				}
+			}
+			return $dataLabels;
+			
+		}
 
-            return $this->statusLabels;
-
-
-        }
-
-
-        public function getCanvasLabels()
-        {
-
-            if(isset($_SESSION['currentProject']) == false){
-                return;
-            }
-
-            if(isset($_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"])) {
-
-                return $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"];
-
-            }else{
-
-                $sql = "SELECT
-						value
-				FROM zp_settings WHERE `key` = :key
-				LIMIT 1";
-
-                $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings.".$_SESSION['currentProject'].".".static::CANVAS_NAME."canvaslabels", 
-                                 PDO::PARAM_STR);
-
-                $stmn->execute();
-                $values = $stmn->fetch();
-                $stmn->closeCursor();
-
-
-                if($values !== false) {
-
-                    $labels = unserialize($values['value']);
-
-                    foreach($this->canvasTypes as $key => $typeLabel){
-                        if(isset($labels[$key])){
-                            $this->canvasTypes[$key] = $labels[$key];
-                        }else{
-                            $this->canvasTypes[$key] = $this->language->__($typeLabel);
-                        }
-
-                    }
-
-                    $labels = $this->canvasTypes;
-                    $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
-
-                }else{
-
-                    foreach($this->canvasTypes as $key => $typeLabel){
-                        $this->canvasTypes[$key] = $this->language->__($typeLabel);
-                    }
-
-                    $labels = $this->canvasTypes;
-                    $_SESSION["projectsettings"][static::CANVAS_NAME."canvaslabels"] = $this->canvasTypes;
-                }
-
-                return $labels;
-
-            }
-        }
-
+	    /**
+		 * getRelationLabels() - Retrieve translated data
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getRelationLabels(): array
+		{
+			
+			$relationLabels = $this->relationLabels;
+			foreach($relationLabels as $key => $data) {
+				if(isset($data['title'])) {
+				    $data['title'] = $this->language->__($data['title']);
+				}
+			}
+			return $relationLabels;
+			
+		}
+		
         public function getAllCanvas($projectId)
         {
 

@@ -3,15 +3,14 @@
  * Template - HTML code for PDF report
  */
 
-namespace leantime\library\pdf {
+namespace leantime\domain\repositories {
     
     use leantime\core;
-    use leantime\domain\layouts;
     
     /**
      * Template class for generating PDF reports
      */           
-    class template {
+    class pdf {
         
         // Color constants
         public const PDF_COLOR_BG = '#f4f4f6';           // Background color of canvas boxes

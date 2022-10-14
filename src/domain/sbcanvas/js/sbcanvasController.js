@@ -12,7 +12,7 @@ leantime.sbcanvasController = (function () {
         autoSizable: true,
         callbacks: {
             beforeShowCont: function() {
-				jQuery(".showDialogOnLoad").show();
+                jQuery(".showDialogOnLoad").show();
                 if(closeModal == true){
                     closeModal = false;
                     location.reload();
@@ -20,7 +20,7 @@ leantime.sbcanvasController = (function () {
             },
             afterShowCont: function () {
 
-                jQuery(".sbCanvasModal, #commentForm, #commentForm .deleteComment, .sbCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+                jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .canvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },
             beforeClose: function () {
@@ -45,7 +45,7 @@ leantime.sbcanvasController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery(".sbCanvasModal, #commentForm, #commentForm .deleteComment, .sbCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .canvasMilestone .deleteMilestone").nyroModal(canvasoptions);
     };
 
     var openModalManually = function (url) {
@@ -75,32 +75,6 @@ leantime.sbcanvasController = (function () {
         closeModal = true;
     };
 
-    var setRowHeights = function () {
-
-        var stakeholderRowHeight = 0;
-        jQuery("#stakeholderRow div.contentInner").each(function(){
-            if(jQuery(this).height() > stakeholderRowHeight){
-                stakeholderRowHeight = jQuery(this).height() + 35;
-            }
-        });
-        var financialsRowHeight = 0;
-        jQuery("#financialsRow div.contentInner").each(function(){
-            if(jQuery(this).height() > financialsRowHeight){
-                financialsRowHeight = jQuery(this).height() + 35;
-            }
-        });
-        var culturechangeRowHeight = 0;
-        jQuery("#culturechangeRow div.contentInner").each(function(){
-            if(jQuery(this).height() > culturechangeRowHeight){
-                culturechangeRowHeight = jQuery(this).height() + 35;
-            }
-        });
-        jQuery("#stakeholderRow .column .contentInner").css("height", stakeholderRowHeight);
-        jQuery("#financialsRow .column .contentInner").css("height", financialsRowHeight);
-        jQuery("#culturechangeRow .column .contentInner").css("height", culturechangeRowHeight);
-
-    };
-
     var initFilterBar = function () {
 
         jQuery(window).bind("load", function () {
@@ -125,7 +99,7 @@ leantime.sbcanvasController = (function () {
             jQuery('#editCanvas').modal('show');
 
         });
-		
+        
         jQuery(".cloneCanvasLink").click(function() {
 
             jQuery('#cloneCanvas').modal('show');
@@ -175,13 +149,14 @@ leantime.sbcanvasController = (function () {
         jQuery("body").on(
             "click", ".statusDropdown .dropdown-menu a", function () {
 
-                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataValue = jQuery(this).attr("data-value").split("/");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 2) {
 
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
+					var statusClass = jQuery(this).attr('class');
 
 
                     jQuery.ajax(
@@ -191,13 +166,13 @@ leantime.sbcanvasController = (function () {
                             data:
                                 {
                                     id : canvasItemId,
-                                    status:status
+                                    status: status
                                 }
                         }
                     ).done(
                         function () {
                             jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass("label-"+status+" dropdown-toggle f-left status ");
+                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(statusClass+" dropdown-toggle f-left status ");
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
 
                         }
@@ -214,11 +189,10 @@ leantime.sbcanvasController = (function () {
         setCloseModal:setCloseModal,
         toggleMilestoneSelectors: toggleMilestoneSelectors,
         openModalManually:openModalManually,
-        setRowHeights:setRowHeights,
         initFilterBar:initFilterBar,
         initCanvasLinks:initCanvasLinks,
         initUserDropdown:initUserDropdown,
         initStatusDropdown:initStatusDropdown,
     };
-	
+    
 })();

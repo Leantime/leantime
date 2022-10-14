@@ -2,20 +2,19 @@
 /**
  * Generic / Template of canvas controller
  */
-namespace leantime\library\canvas {
+namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class controllerCanvas
+    class showCanvas
     {
 
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = 'xx';
-        protected const CANVAS_TEMPLATE = '';
+        protected const CANVAS_NAME = '??';
 
         /**
          * run - display template and edit data
@@ -33,35 +32,35 @@ namespace leantime\library\canvas {
 
             $allCanvas = $canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-            if (isset($_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"])) {
+            if(isset($_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"])) {
                 $currentCanvasId = $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"];
             }else{
                 $currentCanvasId = -1;
                 $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = "";
             }
 
-            if (count($allCanvas) > 0 && $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] == '') {
+            if(count($allCanvas) > 0 && $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
                 $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
             }
 
-            if (isset($_GET["id"]) === true) {
+            if(isset($_GET["id"]) === true) {
                 $currentCanvasId = (int)$_GET["id"];
                 $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
             }
 
-            if (isset($_POST["searchCanvas"]) === true) {
+            if(isset($_POST["searchCanvas"]) === true) {
                 $currentCanvasId = (int)$_POST["searchCanvas"];
                 $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
-                $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
+                $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
             }
 
             // Add Canvas
-            if (isset($_POST["newCanvas"]) === true) {
+            if(isset($_POST["newCanvas"]) === true) {
 
-                if (isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
+                if(isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
 
-                  if (!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
+                  if(!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
                         $values = ["title" => $_POST['canvastitle'], 
                                    "author" => $_SESSION['userdata']["id"], 
                                    "projectId" => $_SESSION["currentProject"]];
@@ -87,7 +86,7 @@ namespace leantime\library\canvas {
                         $tpl->setNotification($language->__("notification.board_created"), 'success');
                         
                         $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
-                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
+                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
                     } else {
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
@@ -100,16 +99,16 @@ namespace leantime\library\canvas {
             }
 
             // Edit Canvas
-            if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
+            if(isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
 
-                if (isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
+                if(isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
 
-                    if (!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
+                    if(!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
                         $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                         $currentCanvasId = $canvasRepo->updateCanvas($values);
 
                         $tpl->setNotification($language->__("notification.board_edited"), "success");
-                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
+                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
                     } else {
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
@@ -122,11 +121,11 @@ namespace leantime\library\canvas {
             }
 
             // Clone canvas
-            if (isset($_POST["cloneCanvas"]) === true && $currentCanvasId > 0) {
+            if(isset($_POST["cloneCanvas"]) === true && $currentCanvasId > 0) {
 
-                if (isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
+                if(isset($_POST['canvastitle']) === true && !empty($_POST['canvastitle'])) {
 
-                    if (!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
+                    if(!$canvasRepo->existCanvas($_SESSION["currentProject"], $_POST['canvastitle'])) {
                         
                         $currentCanvasId = $canvasRepo->copyCanvas($_SESSION["currentProject"], $currentCanvasId,
                                                                      $_SESSION['userdata']["id"], $_POST['canvastitle']);
@@ -135,7 +134,7 @@ namespace leantime\library\canvas {
                         $tpl->setNotification($language->__("notification.board_copied"), "success");
                         
                         $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
-                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas/");
+                        $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
                     } else {
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
@@ -147,16 +146,18 @@ namespace leantime\library\canvas {
 
             }
 
-            $_SESSION[self::CANVAS_NAME.'template'] = static::CANVAS_TEMPLATE;
             $tpl->assign('currentCanvas', $currentCanvasId);
-            $tpl->assign('statusLabels', $canvasRepo->statusLabels);
-            $tpl->assign('canvasLabels', $canvasRepo->canvasTypes);
+            $tpl->assign('canvasTypes', $canvasRepo->getCanvasTypes());
+            $tpl->assign('statusLabels', $canvasRepo->getStatusLabels());
+            $tpl->assign('statusLabelsAll', $canvasRepo->getStatusLabelsAll());
+            $tpl->assign('dataLabels', $canvasRepo->getDataLabels());
+            $tpl->assign('relationLabels', $canvasRepo->getRelationLabels());
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $canvasRepo->getCanvasItemsById($currentCanvasId));
             $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-            if (isset($_GET["raw"]) === false) {
-                $tpl->display(static::CANVAS_NAME."canvas.".static::CANVAS_TEMPLATE.static::CANVAS_NAME."Canvas");
+            if(isset($_GET["raw"]) === false) {
+                $tpl->display(static::CANVAS_NAME."canvas.showCanvas");
             }
         }
 
