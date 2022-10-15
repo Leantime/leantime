@@ -4,7 +4,6 @@
  *
  * Required variables:
  * - $canvasName       Name of current canvas
- * - $canvasTemplate   Template name
  */
 ?>
     <?php if(count($this->get('allCanvas')) > 0) {
@@ -39,14 +38,15 @@
 
     jQuery(document).ready(function() {
 
-        leantime.<?=$canvasName ?>canvasController.initFilterBar();
-        leantime.generalController.initSimpleEditor();
+		leantime.<?=$canvasName ?>CanvasController.setRowHeights();
+        leantime.<?=$canvasName ?>CanvasController.initFilterBar();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-
-            leantime.<?=$canvasName ?>canvasController.initCanvasLinks();
-            leantime.<?=$canvasName ?>canvasController.initUserDropdown();
-            leantime.<?=$canvasName ?>canvasController.initStatusDropdown();
+            leantime.<?=$canvasName ?>CanvasController.initCanvasLinks();
+			
+            leantime.<?=$canvasName ?>CanvasController.initUserDropdown();
+            leantime.<?=$canvasName ?>CanvasController.initStatusDropdown();
+            leantime.<?=$canvasName ?>CanvasController.initRelatesDropdown();
 
         <?php } else { ?>
 
@@ -54,25 +54,27 @@
 
         <?php } ?>
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["<?=$canvasName ?>Canvas"]) === false || 
-            $_SESSION['userdata']['settings']["modals"]["<?=$canvasName ?>Canvas"] == 0) {     ?>
+        <?php if(isset($_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"]) === false || 
+            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] == 0) { ?>
+
             leantime.helperController.showHelperModal("<?=$canvasName ?>Canvas");
+
             <?php
             //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["<?=$canvasName ?>Canvas"] = 1;
+            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] = 1;
         } ?>
 
 
         <?php if(isset($_GET['showModal'])) {
 
         if($_GET['showModal'] == "") {
-            $modalUrl = "&type=";
+            $modalUrl = "&type=".array_key_first($canvasType);
         } else {
             $modalUrl = "/".(int)$_GET['showModal'];
         }
         ?>
 
-        leantime.<?=$canvasName ?>canvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?php echo $modalUrl; ?>");
+		leantime.<?=$canvasName ?>CanvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
         window.history.pushState({},document.title, '<?=BASE_URL?>/<?=$canvasName ?>canvas/showCanvas/');
 
         <?php } ?>

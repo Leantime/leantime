@@ -10,8 +10,8 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasItem = $this->get('canvasItem');
 $canvasTypes = $this->get('canvasTypes');
 $statusLabels = $this->get('statusLabels');
+$relatesLabels = $this->get('relatesLabels');
 $dataLabels = $this->get('dataLabels');
-$relationalLabels = $this->get('relationalLabels');
 
 $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
@@ -30,26 +30,25 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div class="showDialogOnLoad" style="display:none;">
 
-  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="<?=$canvasTypes[$canvasItem['box']]['icon'] ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title'] ?></h4>
+  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
     <?php echo $this->displayNotification(); ?>
 
-    <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <form class=canvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
 	    <label><?=$this->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>"
-	         placeholder="<?=$this->__('placeholders.description') ?>" style="width:100%"/><br />
+        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
 
 	    <?php if(!empty($statusLabels)) { ?>
 	        <label><?=$this->__("label.status") ?></label>
-            <select name="status">
+            <select name="status" style="min-width: 30%">
 			    <?php foreach($statusLabels as $key => $data) { ?>
                     <?php if($data['active']) { ?>
-		                <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><?=$data['title'] ?></option>
+		                <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
 		            <?php } ?>
 		        <?php } ?>
 			</select><br />
@@ -57,26 +56,36 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <input type="hidden" name="status" value="" />
 		<?php } ?>
 
+	    <?php if(!empty($relatesLabels)) { ?>
+	        <label><?=$this->__("label.relates") ?></label>
+            <select name="relates" style="min-width: 30%">
+			    <?php foreach($relatesLabels as $key => $data) { ?>
+                    <?php if($data['active']) { ?>
+		                <option value="<?=$key ?>" <?php echo $canvasItem['relates'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
+		            <?php } ?>
+		        <?php } ?>
+			</select><br />
+		<?php } else { ?>
+            <input type="hidden" name="relates" value="" />
+		<?php } ?>
+		
 	    <?php if($dataLabels[1]['active']) { ?>
           <label><?=$this->__($dataLabels[1]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($dataLabels[1]['placeholder']) ?>"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
 		<?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
 		<?php } ?>
 
 	    <?php if($dataLabels[2]['active']) { ?>
           <label><?=$this->__($dataLabels[2]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($dataLabels[2]['placeholder']) ?>"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
 		<?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
 		<?php } ?>
 
 	    <?php if($dataLabels[3]['active']) { ?>
           <label><?=$this->__($dataLabels[3]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"
-		      placeholder="<?=$this->__($dataLabels[3]['placeholder']) ?>"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
+          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
 		<?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
 		<?php } ?>
@@ -86,32 +95,29 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"
-			    ><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
 								
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>canvasController.setCloseModal();"/>
+            <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
         <?php } ?>
 
         <?php if($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
 
-            <ul class="sortableTicketList" style="width:99%">
-            <?php
-            if($canvasItem['milestoneId'] == '') {
+            <ul class="sortableTicketList" style="width: 100%">
 
-                ?>
+			<?php if($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">
                             <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>canvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
+                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
                             <?php if(count($this->get('milestones')) > 0) { ?>
-                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>canvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
+                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
                                 <?php } ?>
                              </div>
                             <?php } ?>
@@ -122,7 +128,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
                                 <input type="button" value="<?=$this->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
@@ -143,7 +149,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
                                 <input type="button" value="<?=$this->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
@@ -161,7 +167,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 ?>
 
-                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="canvasMilestone" >
+                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
                         <div class="ticketBox fixed">
 
                             <div class="row">
@@ -202,8 +208,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     </form>
 
     <?php if($id !== '') { ?>
-    <br />
-    <input type="hidden" name="comment" value="1" />
+        <br />
+        <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
         $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/".$id."");

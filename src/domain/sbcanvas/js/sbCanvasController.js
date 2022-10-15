@@ -1,5 +1,37 @@
-leantime.sbcanvasController = (function () {
+leantime.sbCanvasController = (function () {
 
+	// To be set
+	var canvasName = 'sb';
+
+	// To be implemented
+    var setRowHeights = function () {
+
+        var stakeholderRowHeight = 0;
+        jQuery("#stakeholderRow div.contentInner").each(function(){
+            if(jQuery(this).height() > stakeholderRowHeight){
+                stakeholderRowHeight = jQuery(this).height() + 35;
+            }
+        });
+        var financialsRowHeight = 0;
+        jQuery("#financialsRow div.contentInner").each(function(){
+            if(jQuery(this).height() > financialsRowHeight){
+                financialsRowHeight = jQuery(this).height() + 35;
+            }
+        });
+        var culturechangeRowHeight = 0;
+        jQuery("#culturechangeRow div.contentInner").each(function(){
+            if(jQuery(this).height() > culturechangeRowHeight){
+                culturechangeRowHeight = jQuery(this).height() + 35;
+            }
+        });
+        jQuery("#stakeholderRow .column .contentInner").css("height", stakeholderRowHeight);
+        jQuery("#financialsRow .column .contentInner").css("height", financialsRowHeight);
+        jQuery("#culturechangeRow .column .contentInner").css("height", culturechangeRowHeight);
+
+    };
+
+	// --- Internal (not to be changed beyond this point) ---
+	
     var closeModal = false;
 
     //Variables
@@ -19,8 +51,7 @@ leantime.sbcanvasController = (function () {
                 }
             },
             afterShowCont: function () {
-
-                jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .canvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+                jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },
             beforeClose: function () {
@@ -45,7 +76,7 @@ leantime.sbcanvasController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .canvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
     };
 
     var openModalManually = function (url) {
@@ -125,7 +156,7 @@ leantime.sbcanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/sbcanvas',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
                             data:
                                 {
                                     id : canvasId,
@@ -162,7 +193,7 @@ leantime.sbcanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/sbcanvas',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
                             data:
                                 {
                                     id : canvasItemId,
@@ -183,6 +214,46 @@ leantime.sbcanvasController = (function () {
         );
 
     };
+	
+    var initRelatesDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".relatesDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("/");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 2) {
+
+                    var canvasItemId = dataValue[0];
+                    var relates = dataValue[1];
+					var relatesClass = jQuery(this).attr('class');
+
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
+                            data:
+                                {
+                                    id : canvasItemId,
+                                    relates: relates
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#relatesDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
+                            jQuery("#relatesDropdownMenuLink"+canvasItemId).removeClass().addClass(relatesClass+" dropdown-toggle f-left relates ");
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.relates_updated"));
+
+                        }
+                    );
+
+                }
+            }
+        );
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
@@ -193,6 +264,8 @@ leantime.sbcanvasController = (function () {
         initCanvasLinks:initCanvasLinks,
         initUserDropdown:initUserDropdown,
         initStatusDropdown:initStatusDropdown,
+        initRelatesDropdown:initRelatesDropdown,
+        setRowHeights:setRowHeights
     };
     
 })();

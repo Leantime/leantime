@@ -3,15 +3,21 @@
  * Template - HTML code for PDF report
  */
 
-namespace leantime\domain\repositories {
+namespace leantime\domain\pdf {
     
     use leantime\core;
+    use leantime\domain\repositories;
     
     /**
      * Template class for generating PDF reports
      */           
-    class pdf {
+    class canvas {
         
+        /**
+         * Constant that must be redefined
+         */
+        protected const CANVAS_NAME = '??';
+
         // Color constants
         public const PDF_COLOR_BG = '#f4f4f6';           // Background color of canvas boxes
         public const PDF_COLOR_BG_TITLE = '#fefefe';     // Background color of list box titles
@@ -36,12 +42,17 @@ namespace leantime\domain\repositories {
         // Internal variables
         protected core\config $config;
         protected core\language $language;
+		protected $canvasRepo;
+		protected array $canvasType;
+		protected array $statusLabels;
+		protected array $relatesLabels;
+		protected array $dataLabels;
         protected array $params;
         protected int $fontSize;
         protected int $fontSizeLarge;
         protected int $fontSizeTitle;
         protected int $fontSizeSmall;
-        protected string $filterStatus;
+        protected array $filter;
         
         
         /***
@@ -52,16 +63,20 @@ namespace leantime\domain\repositories {
             
             $this->config = new core\config();
             $this->language = new core\language();
+			$canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME."canvas";
+			$this->canvasRepo = new $canvasRepoName();
+
+			$this->canvasType = $this->canvasRepo->getCanvasTypes();
+			$this->statusLabels = $this->canvasRepo->getStatusLabels();
+			$this->relatesLabels = $this->canvasRepo->getRelatesLabels();
+			$this->dataLabels = $this->canvasRepo->getDataLabels();
             
             // Set default parameters
             $this->params = [ 'disclaimer' => '', 'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
                               'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
                               'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
                               'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
-							  'elementTitle' => 'label.description', 'elementStatus' => 'label.status',
-                              'listFirstTitle' => 'label.assumptions', 'listFirstData' => 'assumptions',
-                              'listSecondTitle' => 'label.data', 'listSecondData' => 'data',
-                              'listThirdTitle' => 'label.conclusion', 'listThirdData' => 'conclusion'
+							  'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
                               ];
             
         }
@@ -70,23 +85,22 @@ namespace leantime\domain\repositories {
          * htmlReport - Generate report in HTML format
          *
          * @access public
-         * @param  string $templateName  Name of template (goes to footer / left)
          * @param  string $projectHeader Name of the project (goes to header / right)
          * @param  string $moduleTitle   Name of the canvas to be displayed (goes to header / centered)
          * @param  array  $recordsAry    Canvas data
-         * @param  array  $filter        Filter value
+         * @param  array  $filter        Filters (either [] for no filter, or filters in ['status'] and ['relates'])
          * @param  array  $options       Array of paramters to be overwritten (optional)
          * @return string HTML code
          */
-        public function htmlReport(string $templateName, string $projectTitle, string $moduleTitle, array $recordsAry,
-                                   string $filter = 'all', array $options = []): string
+        public function htmlReport(string $projectTitle, string $moduleTitle, array $recordsAry, array $filter = [],
+								   array $options = []): string
         {
             
             // Set options
             foreach($options as $key => $value) {
                 $this->params[$key] = $value;
             }
-            $this->filterStatus = $this->filterToStatus($filter);
+            $this->filter = $filter;
             
             // Initialize HTML page
             $html = $this->htmlInit();
@@ -96,7 +110,7 @@ namespace leantime\domain\repositories {
                 $html .= $this->htmlCanvasOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
-                $html .= $this->htmlFooter($templateName, $this->params['disclaimer']);
+                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= '<div style="height: '.$this->params['canvasHeight'].'px;">';
                 $html .= $this->htmlCanvas($recordsAry);
                 $html .= '</div>';
@@ -108,7 +122,7 @@ namespace leantime\domain\repositories {
                 $html .= $this->htmlListOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
-                $html .= $this->htmlFooter($templateName, $this->params['disclaimer']);
+                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= $this->htmlList($recordsAry);
                 $html .= $this->htmlPageClose();
             }
@@ -116,18 +130,6 @@ namespace leantime\domain\repositories {
             $html .= $this->htmlEnd();
             return $html;
             
-        }
-        
-        /** 
-         * filterToStatus - Convert a filter to a value of the status field
-         *
-         * @access protected
-         * @param  string $filter Filter name
-         * @return string Status value associated with filter
-         */
-        protected function filterToStatus(string $filter): string
-        {
-            return $filter;
         }
         
         /**
@@ -139,7 +141,10 @@ namespace leantime\domain\repositories {
          */
         protected function htmlCanvasStatus(string $status): string
         {
-            return '';
+			
+            return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
+                $this->htmlIcon($this->statusLabels[$status]['icon']).'/span>';
+
         }
     
         /**
@@ -151,9 +156,40 @@ namespace leantime\domain\repositories {
          */
         protected function htmlListStatus(string $status): string
         {
-            return '';
+
+            return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
+
         }
-        
+
+        /**
+         * htmlCanvasRelates - Return HTML code showing relates of canvas element
+         *
+         * @access protected
+         * @param  string $relates Element relates key
+         * @return string HTML code
+         */
+        protected function htmlCanvasRelates(string $relates): string
+        {
+			
+            return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
+                $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
+
+        }
+    
+        /*
+         * htmlListRelates - Return HTML code showing relates of list element
+         *
+         * @access protected
+         * @param  string $relates Element status key
+         * @return string HTML code
+         */
+        protected function htmlListRelates(string $relates): string
+        {
+
+            return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].'</span>';
+
+        }
+
         /**
          * htmlCanvas -  Layout canvas (must be implemented)
          *
@@ -394,7 +430,7 @@ namespace leantime\domain\repositories {
                 'fa-file-lines' => '&#xf15c',
                 'fa-people-group' => '&#xe533',
                 'fa-sitemap' => '&#xf0e8',
-                'fa-chalkboard-users' => '&#xf51c',
+                'fa-chalkboard-user' => '&#xf51c',
                 'fa-person-digging' => '&#xf85e',
                 'fa-money-bills' => '&#xe1f3',
                 'fa-business-time' => '&#xf64a',
@@ -442,6 +478,7 @@ namespace leantime\domain\repositories {
                 'fa-check' => '&#xf00c',
                 'fa-stop' => '&#xf04d',
                 'fa-circle-question' => '&#xf059',
+				'fa-circle-exclamation' => '&#xf06a',
                 'fa-circle-xmark' => '&#xf057',
                 'fa-circle-check' => '&#xf058',
                 default => ''
@@ -469,7 +506,7 @@ namespace leantime\domain\repositories {
         }
     
         /**
-         * htmlCanvcasElements - Typeset data of element box in canvas 
+         * htmlCanvasElements - Typeset data of element box in canvas 
          *
          * @access protected
          * @param  array  $recordsAry Array of canvas data records
@@ -481,10 +518,12 @@ namespace leantime\domain\repositories {
             
             $html = '<table class="table" style="width: 100%"><tbody>';
             foreach($recordsAry as $record) {
-                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
-                    $status = match($record['status']) { 'info' => 'fa-question', 'danger' => 'fa-xmark', default => 'fa-check' };
+				$filterStatus = $this->filter['status'] ?? 'all';
+				$filterRelates = $this->filter['relates'] ?? 'all';
+                if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
+				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
-                        '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span>'.
+                        '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
                         $this->htmlCanvasStatus($record['status']).'</td></tr>';
                 }
             }
@@ -522,10 +561,23 @@ namespace leantime\domain\repositories {
             
             $html = '';
             foreach($recordsAry as $record) {
-                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
+				$filterStatus = $this->filter['status'] ?? 'all';
+				$filterRelates = $this->filter['relates'] ?? 'all';
+                if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
+				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+
                     if(isset($record['description']) && !empty($record['description'])) {
                         $html .= '<div class="list-elt-box"><strong>'.$record['description'].'</strong></div>';
                     }
+					
+                    if(isset($record['relates']) && !empty($record['relates'])) {
+                        $relates = $this->htmlListRelates($record['relates']);
+                        if(!empty($relates)) {
+                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementRelates']).
+                                '<em>'.$relates.'</em></div>';
+                        }
+                    }
+					
                     if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
                         if(!empty($status)) {
@@ -533,23 +585,23 @@ namespace leantime\domain\repositories {
                                 '<em>'.$status.'</em></div>';
                         }
                     }
-                    if($this->params['listFirstTitle'] !== false && isset($record[$this->params['listFirstData']]) && 
-                        !empty($record[$this->params['listFirstData']])) {
-                        $html .= '<div class="list-elt-title">'.
-                            $this->language->__($this->params['listFirstTitle']).'</div>';
-                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->params['listFirstData']]).'</div>';
+					
+                    if($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) && 
+                        !empty($record[$this->dataLabels[1]['field']])) {
+                        $html .= '<div class="list-elt-title">'.$this->dataLabels[1]['title'].'</div>';
+                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[1]['field']]).'</div>';
                     }
-                    if($this->params['listSecondTitle'] !== false && isset($record[$this->params['listSecondData']]) && 
-                        !empty($record[$this->params['listSecondData']])) {
-                        $html .= '<div class="list-elt-title">'.
-                            $this->language->__($this->params['listSecondTitle']).'</div>';
-                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->params['listSecondData']]).'</div>';
+							
+                    if($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) && 
+                        !empty($record[$this->dataLabels[2]['field']])) {
+                        $html .= '<div class="list-elt-title">'.$this->dataLabels[2]['title'].'</div>';
+                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[2]['field']]).'</div>';
                     }
-                    if($this->params['listThirdTitle'] !== false && isset($record[$this->params['listThirdData']]) && 
-                        !empty($record[$this->params['listThirdData']])) {
-                        $html .= '<div class="list-elt-title">'.
-                            $this->language->__($this->params['listThirdTitle']).'</div>';
-                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->params['listThirdData']]).'</div>';
+							
+                    if($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) && 
+                        !empty($record[$this->dataLabels[3]['field']])) {
+                        $html .= '<div class="list-elt-title">'.$this->dataLabels[3]['title'].'</div>';
+                        $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[3]['field']]).'</div>';
                     }
                     $html .= '<hr class="hr-black"/>';
                 }
@@ -571,24 +623,53 @@ namespace leantime\domain\repositories {
             
             $html = '';
             foreach($recordsAry as $record) {
-                if($record['box'] === $box && ($this->filterStatus == $record['status'] || $this->filterStatus == 'all')) {
+				$filterStatus = $this->filter['status'] ?? 'all';
+				$filterRelates = $this->filter['relates'] ?? 'all';
+                if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
+				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+
                     $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
                     if(isset($record['description']) && !empty($record['description'])) {
                         $html .= '<strong>'.$record['description'].'</strong>';
                     }
-                    if(isset($record['conclusion']) && !empty($record['conclusion']) && 
+
+                    if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) && 
                         isset($record['description']) && !empty($record['description'])) {
 						$html .= ' - ';
 					}
-                    if(isset($record['conclusion']) && !empty($record['conclusion'])) {
-                        $html .= $this->htmlStripTags($record['conclusion']);
-                    }
+
+                    if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
+                        $html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
+					}
+					
+                    if((isset($record['status']) && !empty($record['status'])) ||
+					   (isset($record['relates']) && !empty($record['relates']))) {
+						$html .= ' (';
+					}
+
                     if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
                         if(!empty($status)) {
-                            $html .= ' ('.$this->language->__($status).')';
+                            $html .= $this->language->__($status);
                         }
                     }
+					
+                    if((isset($record['status']) && !empty($record['status'])) &&
+					   (isset($record['relates']) && !empty($record['relates']))) {
+						$html .= ', ';
+					}
+
+                    if(isset($record['relates']) && !empty($record['relates'])) {
+                        $relates = $this->htmlListRelates($record['relates']);
+                        if(!empty($relates)) {
+                            $html .= $this->language->__($relates);
+                        }
+                    }
+					
+                    if((isset($record['status']) && !empty($record['status'])) ||
+					   (isset($record['relates']) && !empty($record['relates']))) {
+						$html .= ')';
+					}
                     $html .= '<hr class="hr-black"/>';
 					$html .= '</div>';
                 }

@@ -88,6 +88,7 @@ namespace leantime\domain\controllers\canvas {
                     "box" => $type,
                     "description" => "",
                     "status" => array_key_first($this->canvasRepo->getStatusLabels()),
+                    "relates" => array_key_first($this->canvasRepo->getRelatesLabels()),
                     "assumptions" => "",
                     "data" => "",
                     "conclusion" => "",
@@ -103,11 +104,11 @@ namespace leantime\domain\controllers\canvas {
 
             $this->tpl->assign('milestones',  $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
             $this->tpl->assign('canvasItem', $canvasItem);
+            $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
+            $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
             $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
-            $this->tpl->assign('statusLabelsAll', $this->canvasRepo->getStatusLabelsAll());
             $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-            $this->tpl->assign('relationLabels', $this->canvasRepo->getRelationLabels());
             $this->tpl->displayPartial(static::CANVAS_NAME."canvas".'.canvasDialog');
         }
 
@@ -132,6 +133,7 @@ namespace leantime\domain\controllers\canvas {
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
                             "status" => $params['status'],
+                            "relates" => $params['relates'],
                             "assumptions" => $params['assumptions'],
                             "data" => $params['data'],
                             "conclusion" => $params['conclusion'],
@@ -190,6 +192,7 @@ namespace leantime\domain\controllers\canvas {
                             "author" => $_SESSION['userdata']["id"],
                             "description" => $params['description'],
                             "status" => $params['status'],
+                            "relates" => $params['relates'],
                             "assumptions" => $params['assumptions'],
                             "data" => $params['data'],
                             "conclusion" => $params['conclusion'],
@@ -199,8 +202,7 @@ namespace leantime\domain\controllers\canvas {
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
 						$canvasTypes = $this->canvasRepo->getCanvasTypes();
 						
-                        $this->tpl->setNotification($this->language->__($this->canvasRepo->canvasTypes[$params['box']]['title']).
-													' successfully created', 'success');
+                        $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully created', 'success');
 
                         $subject = $this->language->__("email_notifications.canvas_board_item_created");
                         $actual_link = BASE_URL."/".static::CANVAS_NAME."canvas"."/editCanvasItem/".(int)$params['itemId'];
@@ -247,6 +249,9 @@ namespace leantime\domain\controllers\canvas {
             }
 
             $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
+            $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
+            $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
+            $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
             $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial(static::CANVAS_NAME."canvas".'.canvasDialog');
         }

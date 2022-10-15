@@ -51,7 +51,7 @@ leantime.generalController = (function () {
         jQuery('textarea.tinymceSimple').tinymce(
             {
                 // General options
-                width: "98%",
+                width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
@@ -123,7 +123,7 @@ leantime.generalController = (function () {
         jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
-                width: "98%",
+                width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css,'+leantime.appUrl+'/css/components/wysiwyg-overrides.css,'+leantime.appUrl+'/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
@@ -201,7 +201,7 @@ leantime.generalController = (function () {
                 // General options
                 inline: true,
                 fixed_toolbar_container: ".externalToolbar",
-                width: "98%",
+                width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",

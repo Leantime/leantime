@@ -130,6 +130,7 @@ class config
         $this->secondarycolor = $this->configEnvironmentHelper("LEAN_SECONDARY_COLOR", $this->secondarycolor);
         $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
+        $this->enableProjectType = $this->configEnvironmentHelper("LEAN_ENABLE_PROJECT_TYPE", $this->enableProjectType);
 
     /* Database */
         $this->dbHost = $this->configEnvironmentHelper("LEAN_DB_HOST", $this->dbHost);

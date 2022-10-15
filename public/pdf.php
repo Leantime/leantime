@@ -24,7 +24,8 @@ if ($login->logged_in()!==true) die("User is not logged in to the system");
 // Retrieve parameters
 $module = $_GET['module'] ?? '';
 $template = $_GET['template'] ?? '';
-$filter = $_GET['filter'] ?? '';
+$filter['status'] = $_GET['filter.status'] ?? 'all';
+$filter['relates'] = $_GET['filter.relates'] ?? 'all';
 $id = (int)($_GET['id'] ?? -1);
 
 // Check access control

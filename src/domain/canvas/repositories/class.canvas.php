@@ -18,10 +18,10 @@ namespace leantime\domain\repositories {
 		/***
 		 * icon - Icon associated with canvas (must be extended)
 		 *
-		 * @access public
+		 * @access protected
 		 * @var    string Fontawesome icone
 		 */
-		 public string $icon = 'fa-x';
+		 protected string $icon = 'fa-x';
 
         /**
          * canvasTypes - Canvas elements / boxes (must be extended)
@@ -39,10 +39,10 @@ namespace leantime\domain\repositories {
          * @acces protected
          * @var   array
          */
-		protected array $statusLabels = [ 'status_draft' =>   [ 'icon' => 'fa-file-lines',        'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
-										  'status_review' =>  [ 'icon' => 'fa-magnify-glass',     'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
-										  'status_valid' =>   [ 'icon' => 'fa-check',             'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
-										  'status_invalid' => [ 'icon' => 'fa-triangle-questions','color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active '=> true]
+		protected array $statusLabels = [ 'status_draft' =>   [ 'icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
+										  'status_review' =>  [ 'icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
+										  'status_valid' =>   [ 'icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
+										  'status_invalid' => [ 'icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active' => true]
 										  ];
 
 		/**
@@ -51,15 +51,15 @@ namespace leantime\domain\repositories {
          * @acces public
          * @var   array
 		 */
-		public array $relatesLabels = [ 'relates_none'        => [ 'icon' => 'fa-border_none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
-										'relates_customers'   => [ 'icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
-										'relates_offerings'   => [ 'icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
-									    'relates_capabilities'=> [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
-								        'relates_financials'  => [ 'icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
-									    'relates_markets'     => [ 'icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
-								        'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
-									    'relates_firm'        => [ 'icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true]
-								        ];
+		protected array $relatesLabels = [ 'relates_none'        => [ 'icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
+										   'relates_customers'   => [ 'icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
+										   'relates_offerings'   => [ 'icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
+										   'relates_capabilities'=> [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
+										   'relates_financials'  => [ 'icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
+										   'relates_markets'     => [ 'icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
+										   'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
+										   'relates_firm'        => [ 'icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true]
+										   ];
 
 		/**
 		 * dataLabels - Data labels (may be extended)
@@ -105,6 +105,19 @@ namespace leantime\domain\repositories {
         }
 
 		/**
+		 * getIcon() - Retrieve canvas icon
+		 *
+		 * @access public
+		 * @return string Canvas icon
+		 */
+		public function getIcon(): string
+		{
+			
+			return $this->icon;
+			
+		}
+		
+		/**
 		 * getCanvasTypes() - Retrieve translated canvaas items
 		 *
 		 * @access public
@@ -116,7 +129,7 @@ namespace leantime\domain\repositories {
 			$canvasTypes = $this->canvasTypes;
 			foreach($canvasTypes as $key => $data) {
 				if(isset($data['title'])) {
-				    $canvasType[$key]['title'] = $this->language->__($data['title']);
+				    $canvasTypes[$key]['title'] = $this->language->__($data['title']);
 				}
 			}
 			return $canvasTypes;
@@ -143,7 +156,7 @@ namespace leantime\domain\repositories {
 		}
 
 	    /**
-		 * getRelatesLa%elatiobels() - Retrieve translated relates labels
+		 * getRelatesLabels() - Retrieve translated relates labels
 		 *
 		 * @access public
 		 * @return array  Array of data
@@ -344,7 +357,7 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_canvas_items SET ";
 
-            foreach($params as $key=>$value){
+            foreach($params as $key => $value){
                 $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
@@ -381,7 +394,10 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.sortindex,
 						zp_canvas_items.status,
 						zp_canvas_items.relates,
-						zp_canvas_items.milestoneId,						
+						zp_canvas_items.milestoneId,
+                        zp_canvas_items.parent,
+                        zp_canvas_items.title,
+                        zp_canvas_items.tags,
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
 						t1.profileId AS authorProfileId,
@@ -444,6 +460,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
 						zp_canvas_items.status,	
+						zp_canvas_items.relates,	
 						zp_canvas_items.milestoneId,				
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,

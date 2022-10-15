@@ -4,7 +4,6 @@
  *
  * Required variables:
  * - $canvasName   Name of current canvas
- * - $canvasTemplate Template of current canvas
  */
 defined('RESTRICTED') or die('Restricted access');
 
@@ -28,7 +27,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div class="showDialogOnLoad" style="display:none;">
 
-  <h4 class="widgettitle title-light" style="padding-bottom: 0"><?php echo $canvasTypes[$canvasItem['box']]; ?></h4>
+  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
 
     <?php echo $this->displayNotification(); ?>

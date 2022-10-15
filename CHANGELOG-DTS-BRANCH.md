@@ -79,3 +79,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - New: Added `relatesLabels` to canvas repository class
 - Updated: Moved library of extendable classes from `src/library` to `src/domain/canvas` and sib-directories
 - Updated: Made canvas and label definition variables in canvas repository class ony accessible through functions
+
+# 0.0.8 - 2022-10-15
+- Added: Template to be used for creating new canvas as `src/domain/canvas/NEwcanvas/...`
+- Update: Only the *Strategy Brief* canvas has been updated for the new structure

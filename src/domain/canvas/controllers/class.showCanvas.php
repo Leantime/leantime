@@ -80,7 +80,7 @@ namespace leantime\domain\controllers\canvas {
                         
                         // New queuing messaging system
                         $queue = new repositories\queue();
-                        $queue->queueMessageToUsers($users, $message, $language->__("notification.baord_created"),
+                        $queue->queueMessageToUsers($users, $message, $language->__("notification.board_created"),
                                                     $_SESSION["currentProject"]);
                         
                         $tpl->setNotification($language->__("notification.board_created"), 'success');
@@ -147,11 +147,11 @@ namespace leantime\domain\controllers\canvas {
             }
 
             $tpl->assign('currentCanvas', $currentCanvasId);
+            $tpl->assign('canvasIcon', $canvasRepo->getIcon());
             $tpl->assign('canvasTypes', $canvasRepo->getCanvasTypes());
             $tpl->assign('statusLabels', $canvasRepo->getStatusLabels());
-            $tpl->assign('statusLabelsAll', $canvasRepo->getStatusLabelsAll());
+            $tpl->assign('relatesLabels', $canvasRepo->getRelatesLabels());
             $tpl->assign('dataLabels', $canvasRepo->getDataLabels());
-            $tpl->assign('relationLabels', $canvasRepo->getRelationLabels());
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $canvasRepo->getCanvasItemsById($currentCanvasId));
             $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
