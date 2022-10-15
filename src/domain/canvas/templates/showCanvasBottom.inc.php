@@ -30,7 +30,7 @@
         echo"</div>";
 
     }
-    require(ROOT.'/../src/library/canvas/tpl.modals.inc.php');
+    require(ROOT.'/../src/domain/canvas/templates/modals.inc.php');
     ?>
     </div>
 </div>

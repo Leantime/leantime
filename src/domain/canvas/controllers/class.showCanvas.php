@@ -1,8 +1,8 @@
 <?php
 /**
- * Generic / Template of canvas controller
+ * Generic canvas controller
  */
-namespace leantime\domain\controllers {
+namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
     use leantime\domain\repositories;

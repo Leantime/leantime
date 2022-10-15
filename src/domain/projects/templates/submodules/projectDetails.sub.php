@@ -42,7 +42,7 @@ $project = $this->get('project');
                             <?php } ?>
                         </div>
                     </div>
-
+					<?php if($config->enableProjectType) {?>
                     <div class="form-group">
 
                         <label class="span4 control-label" for="projectType"><?php echo $this->__('label.projecttype'); ?></label>
@@ -60,7 +60,9 @@ $project = $this->get('project');
                             </select>
                         </div>
                     </div>
-
+					<?php } else { ?>
+		                <input type="hidden" name="projectType" id="projectType" value="generic">
+					<?php } ?>
                     <div class="form-group">
 
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>

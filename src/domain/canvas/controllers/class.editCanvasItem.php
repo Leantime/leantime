@@ -1,8 +1,8 @@
 <?php
 /**
- * Generic / Template of canvas controller / Edit Canvas Item
+ * Generic canvas controller / Edit Canvas Item
  */
-namespace leantime\domain\controllers {
+namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
     use leantime\domain\repositories;
@@ -87,7 +87,7 @@ namespace leantime\domain\controllers {
                     "id"=>"",
                     "box" => $type,
                     "description" => "",
-                    "status" => array_key_first($this->canvasRepo->statusLabels),
+                    "status" => array_key_first($this->canvasRepo->getStatusLabels()),
                     "assumptions" => "",
                     "data" => "",
                     "conclusion" => "",
@@ -197,7 +197,8 @@ namespace leantime\domain\controllers {
                         );
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
-
+						$canvasTypes = $this->canvasRepo->getCanvasTypes();
+						
                         $this->tpl->setNotification($this->language->__($this->canvasRepo->canvasTypes[$params['box']]['title']).
 													' successfully created', 'success');
 
@@ -245,7 +246,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->assign('canvasTypes',  $this->canvasRepo->canvasTypes);
+            $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial(static::CANVAS_NAME."canvas".'.canvasDialog');
         }

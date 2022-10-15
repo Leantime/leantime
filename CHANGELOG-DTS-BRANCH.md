@@ -16,7 +16,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.6
+Leantime DTS Branch 0.0.7
 
 
 ## Author
@@ -59,16 +59,23 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.3 - 2022-10-12
 - Update: Update menu structure, adding new canvas and boards
-- Add: Library for extendable classes and includable templates for `canvas` and `pdf` as `src/library`
-- Add: Engine to generate PDF files from templates (`public.pdf`)
-- Add: Repositoriy `dts` for creating default templates and milestones recommended by DTS process (section 5.1.)
+- New: Library for extendable classes and includable templates for `canvas` and `pdf` as `src/library`
+- New: Engine to generate PDF files from templates (`public.pdf`)
+- New: Repositoriy `dts` for creating default templates and milestones recommended by DTS process (section 5.1.)
 
 # 0.0.4 - 2022-10-13
 - Update: Prepared `api` and `helper` files for new templates
-- Add: Added *Strategy Brief* canvas and pdf functionality
+- New: Added *Strategy Brief* canvas and pdf functionality
 
 # 0.0.5 - 2022-10-13
-- Add: Added *Business Model Canvas* canvas and pdf functionality
+- New: Added *Business Model Canvas* canvas and pdf functionality
 
 # 0.0.6 - 2022-10-13
-- Add: Added *Porter's Five Strategic Questions* and *Strategy Message* canvas and pdf functionality
+- New: Added *Porter's Five Strategic Questions* and *Strategy Message* canvas and pdf functionality
+
+# 0.0.7 - 2022-10-15
+- Update: Make use of project type configurable (`$config->enableProjectType`)
+- New: Added `relates` field to database table `zp_canvas_items` to allow relating an element
+- New: Added `relatesLabels` to canvas repository class
+- Updated: Moved library of extendable classes from `src/library` to `src/domain/canvas` and sib-directories
+- Updated: Made canvas and label definition variables in canvas repository class ony accessible through functions

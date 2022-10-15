@@ -3,5 +3,5 @@
  * Strategy Brief - Dialog
  */
 $canvasName = 'sb';
-require(ROOT.'/../src/library/canvas/tpl.canvasDialog.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/canvasDialog.inc.php');
 ?>

@@ -360,6 +360,7 @@ namespace leantime\domain\repositories {
                   `canvasId` int(11) DEFAULT NULL,
                   `sortindex` int(11) DEFAULT NULL,
                   `status` varchar(255) DEFAULT NULL,
+                  `relates` varchar(255) DEFAULT NULL,
                   `milestoneId` VARCHAR(255) NULL,
                   `title` varchar(255) NULL,
                   `parent` int NULL,
@@ -493,6 +494,7 @@ namespace leantime\domain\repositories {
                   `hourBudget` varchar(255) NOT NULL,
                   `dollarBudget` int(11) DEFAULT NULL,
                   `active` int(11) DEFAULT NULL,
+				  `type` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1221,6 +1223,48 @@ namespace leantime\domain\repositories {
                 )",
                 "alter table zp_comment add status varchar(50) null"
             );
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+		/***
+		 * update_sql_XXX - Update database for new canvas
+		 *
+		 * @access private
+		 * @return bool    Succerss of database update
+		 */
+		private function update_sql_XXX(): bool {
+
+            $errors = array();
+
+			$sql = [ "ALTER TABLE zp_projects ADD type MEDIUMTEXT DEFAULT null",
+					 "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) DEFAULT null",
+					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_item.id ".
+					 "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
+					 "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'success' AND zp_canvas.type = 'leancanvas'",
+					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
+					 "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'"];
 
             foreach ($sql as $statement) {
 

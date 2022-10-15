@@ -1,8 +1,8 @@
 <?php
 /**
- * Generic / Template of canvas controller / Delete Canvas
+ * Generic canvas controller / Delete Canvas
  */
-namespace leantime\domain\controllers {
+namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
     use leantime\domain\models\auth\roles;

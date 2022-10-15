@@ -1,8 +1,8 @@
 <?php
 /**
- * Generic / Template of canvas controller / Edit Comments
+ * Generic canvas controller / Edit Comments
  */
-namespace leantime\domain\controllers {
+namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
     use leantime\domain\repositories;
@@ -95,7 +95,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('comments', $comments);
 
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
-            $this->tpl->assign('canvasTypes', $this->canvasRepo->canvasTypes);
+            $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
         }
@@ -172,6 +172,8 @@ namespace leantime\domain\controllers {
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
 
+						$canvasTypes = $this->canvasRepo->getCanvasTypes();
+
                         $this->tpl->setNotification($this->canvasRepo->canvasTypes[$params['box']].' successfully created', 'success');
 
                         $subject = $this->language->__("email_notifications.canvas_board_item_created");
@@ -218,7 +220,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->assign('canvasTypes',  $this->canvasRepo->canvasTypes);
+            $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
         }

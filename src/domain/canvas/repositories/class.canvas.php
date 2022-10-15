@@ -15,52 +15,62 @@ namespace leantime\domain\repositories {
          */
         protected const CANVAS_NAME = '??';
 
+		/***
+		 * icon - Icon associated with canvas (must be extended)
+		 *
+		 * @access public
+		 * @var    string Fontawesome icone
+		 */
+		 public string $icon = 'fa-x';
+
         /**
-         * canvasTypes - Must be extended
+         * canvasTypes - Canvas elements / boxes (must be extended)
          *
          * @acces protected
          * @var   array
          */
-		protected $canvasTypes = [
-	        // 'xx_' => [ 'icon' => 'faX fa-', 'color' => 'white', 'title' => 'box.xx.yy', 'active' => true], 
+		protected array $canvasTypes = [
+	        // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ], 
 		];
 
         /**
-         * statusLabels - May be cextended
+         * statusLabels - Status labels (may be extended)
          *
          * @acces protected
          * @var   array
          */
-		protected $statusLabelsAll = [ 'icon' => 'fas fa-fw fa-globe', 'color' => '', 'title' => 'status.all', 'dropdown' => '', 'active' => true];
-		protected $statusLabels = [
-	        'status_draft' => 
-                [ 'icon' => 'fas fa-fw fa-file-lines','color' => 'white','title' => 'status.draft','dropdown' => 'info','active' => true],
-			'status_review' => 
-                [ 'icon' => 'fas fa-fw fa-magnify-glass','color' => 'white','title' => 'status.review','dropdown' => 'warning','active' => true],
-			'status_valid' => 
-                [ 'icon' => 'fas fa-fw fa-check','color' => 'white','title' => 'status.valid','dropdown' => 'success','active' => true],
-			'status_invalid' => 
-                [ 'icon' => 'fas fa-fw fa-triangle-questions','color' => 'white','title' => 'status.invalid','dropdown' => 'danger','active'=>true]
-	    ];
+		protected array $statusLabels = [ 'status_draft' =>   [ 'icon' => 'fa-file-lines',        'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
+										  'status_review' =>  [ 'icon' => 'fa-magnify-glass',     'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
+										  'status_valid' =>   [ 'icon' => 'fa-check',             'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
+										  'status_invalid' => [ 'icon' => 'fa-triangle-questions','color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active '=> true]
+										  ];
 
 		/**
-		 * dataLabels - May be extended
-         *
-         * @acces protected
-         * @var   array
-		 */
-		protected $dataLabels = [
-		    1 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'placeholder' => 'input.placeholders.describe_assumption', 'active' => true],
-			2 => [ 'title' => 'label.data',        'field' => 'data',        'placeholder' => 'input.placeholders.describe_data', 'active' => true],
-			3 => [ 'title' => 'label.conclusion',  'field' => 'conclusion',  'placeholder' => 'input.placeholders.describe_conclusion', 'active' => true]];
-
-		/**
-		 * relationLabels - Max be extended (same structure as `statusLabels`)
+		 * relatesLabels - Relates to label (same structure as `statusLabels`)
 		 *
          * @acces public
          * @var   array
 		 */
-		public $relationLabels = [];
+		public array $relatesLabels = [ 'relates_none'        => [ 'icon' => 'fa-border_none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
+										'relates_customers'   => [ 'icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
+										'relates_offerings'   => [ 'icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
+									    'relates_capabilities'=> [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
+								        'relates_financials'  => [ 'icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
+									    'relates_markets'     => [ 'icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
+								        'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
+									    'relates_firm'        => [ 'icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true]
+								        ];
+
+		/**
+		 * dataLabels - Data labels (may be extended)
+         *
+         * @acces protected
+         * @var   array
+		 */
+		protected array $dataLabels = [ 1 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'active' => true],
+										2 => [ 'title' => 'label.data',        'field' => 'data',        'active' => true],
+										3 => [ 'title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true]
+                                        ];
 
         /**
          * @access public
@@ -95,7 +105,7 @@ namespace leantime\domain\repositories {
         }
 
 		/**
-		 * getCanvasTypes() - Retrieve translated data
+		 * getCanvasTypes() - Retrieve translated canvaas items
 		 *
 		 * @access public
 		 * @return array  Array of data
@@ -106,32 +116,15 @@ namespace leantime\domain\repositories {
 			$canvasTypes = $this->canvasTypes;
 			foreach($canvasTypes as $key => $data) {
 				if(isset($data['title'])) {
-				    $data['title'] = $this->language->__($data['title']);
+				    $canvasType[$key]['title'] = $this->language->__($data['title']);
 				}
 			}
 			return $canvasTypes;
 			
 		}
-		
+	
 		/**
-		 * getStatusLabelsAll() - Retrieve translated data
-		 *
-		 * @access public
-		 * @return array  Array of data
-		 */
-		public function getStatusLabelsAll(): array
-		{
-			
-			$statusLabelsAll = $this->statusLabelsAll;
-			if(isset($statusLabelsAll['title'])) {
-				    $$statusLabelsAll['title'] = $this->language->__($$statusLabelsAll['title']);
-				}
-			}
-		    return $statusLabelsAll;
-			
-		}
-		/**
-		 * getStatusLabels() - Retrieve translated data
+		 * getStatusLabels() - Retrieve translated status labels
 		 *
 		 * @access public
 		 * @return array  Array of data
@@ -139,17 +132,37 @@ namespace leantime\domain\repositories {
 		public function getStatusLabels(): array
 		{
 			
-			$statusLabel = $this->statusLabel;
-			foreach($statusLabel as $key => $data) {
+			$statusLabels = $this->statusLabels;
+			foreach($statusLabels as $key => $data) {
 				if(isset($data['title'])) {
-				    $data['title'] = $this->language->__($data['title']);
+				    $statusLabels[$key]['title'] = $this->language->__($data['title']);
 				}
 			}
+			return $statusLabels;
+			
+		}
+
+	    /**
+		 * getRelatesLa%elatiobels() - Retrieve translated relates labels
+		 *
+		 * @access public
+		 * @return array  Array of data
+		 */
+		public function getRelatesLabels(): array
+		{
+			
+			$relatesLabels = $this->relatesLabels;
+			foreach($relatesLabels as $key => $data) {
+				if(isset($data['title'])) {
+				    $relatesLabels[$key]['title'] = $this->language->__($data['title']);
+				}
+			}
+			return $relatesLabels;
 			
 		}
 
 		/**
-		 * getDataLabels() - Retrieve translated data
+		 * getDataLabels() - Retrieve translated data labels
 		 *
 		 * @access public
 		 * @return array  Array of data
@@ -160,31 +173,13 @@ namespace leantime\domain\repositories {
 			$dataLabels = $this->dataLabels;
 			foreach($dataLabels as $key => $data) {
 				if(isset($data['title'])) {
-				    $data['title'] = $this->language->__($data['title']);
+				    $dataLabels[$key]['title'] = $this->language->__($data['title']);
 				}
 			}
 			return $dataLabels;
 			
 		}
 
-	    /**
-		 * getRelationLabels() - Retrieve translated data
-		 *
-		 * @access public
-		 * @return array  Array of data
-		 */
-		public function getRelationLabels(): array
-		{
-			
-			$relationLabels = $this->relationLabels;
-			foreach($relationLabels as $key => $data) {
-				if(isset($data['title'])) {
-				    $data['title'] = $this->language->__($data['title']);
-				}
-			}
-			return $relationLabels;
-			
-		}
 		
         public function getAllCanvas($projectId)
         {
@@ -322,6 +317,7 @@ namespace leantime\domain\repositories {
 					conclusion =			:conclusion,
 					modified =			NOW(),
 					status =			:status,
+					relates =			:relates,
 					milestoneId =			:milestoneId
 					WHERE id = :id LIMIT 1	";
 
@@ -333,6 +329,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
 
             $stmn->execute();
@@ -383,6 +380,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
 						zp_canvas_items.status,
+						zp_canvas_items.relates,
 						zp_canvas_items.milestoneId,						
 						t1.firstname AS authorFirstname, 
 						t1.lastname AS authorLastname,
@@ -501,6 +499,7 @@ namespace leantime\domain\repositories {
 						modified,
 						canvasId,
 						status,
+						relates,
 						milestoneId
 				) VALUES (
 						:description,
@@ -513,6 +512,7 @@ namespace leantime\domain\repositories {
 						NOW(),
 						:canvasId,
 						:status,
+						:relates,
 						:milestoneId
 				)";
 
@@ -526,6 +526,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
 
             $stmn->execute();
@@ -656,8 +657,8 @@ namespace leantime\domain\repositories {
             
             // Copy elements from existing canvas to new canvas
             $sql = "INSERT INTO ".
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,milestoneId) ".
-              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, '' ".
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) ".
+              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' ".
               "FROM zp_canvas_items WHERE canvasId = $canvasId";
             $stmn = $this->db->database->prepare($sql);
 

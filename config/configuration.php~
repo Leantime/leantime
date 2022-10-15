@@ -8,23 +8,23 @@ class config
 {
     /* General */
 
-    public $sitename = 'Leantime';                        //Name of your site, can be changed later
+    public $sitename = 'Leantime DTS Branch';             //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
     public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
-    public $printLogoURL = '/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
-    public $appUrl = '';                                  //Base URL, trailing slash not needed
+    public $printLogoURL = 'http://www.didilan.net/dts/images/logo-dts.png';            //Default logo path, can be changed later
+    public $appUrl = 'https://www.didilan.net/dts';       //Base URL, trailing slash not needed
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
-    public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
-    public $enableProjectType = false;                    //Enable to specifiy project type
+    public $defaultTimezone = 'Europe/Zurich';            //Set default timezone
+    public $enableProjectType = true;                     //Enable to specifiy project type
     public $debug = 0;                                    //Debug flag
 
 
     /* Database */
     public $dbHost = 'localhost';                         //Database host
-    public $dbUser = '';                                  //Database username
-    public $dbPassword = '';                              //Database password
-    public $dbDatabase = '';                              //Database name
+    public $dbUser = 'leantimedts';                       //Database username
+    public $dbPassword = 'admDts@2022';                   //Database password
+    public $dbDatabase = 'leantimedts';                   //Database name
     public $dbPort = '3306';                              //Database port
 
     /* Fileupload */

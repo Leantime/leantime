@@ -51,7 +51,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array of types for projects
          */
-        public $type = array('generic' => 'label.projecttype.generic', 'lean' => 'label.projecttype.lean', 'dts' => 'labe.projecttype.dts');
+        public array $type = [ 'generic' => 'label.projecttype.generic' ];
 
         /**
          * __construct - get database connection
@@ -63,6 +63,12 @@ namespace leantime\domain\repositories {
         {
             $config = new core\config();
             $this->db = core\db::getInstance();
+			
+			if($config->enableProjectType) {
+				$this->type = ['generic' => 'label.projecttype.generic', 
+							   'lean' => 'label.projecttype.lean', 
+							   'dts' => 'labe.projecttype.dts'];
+			}
 
         }
 

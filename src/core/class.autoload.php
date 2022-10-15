@@ -60,7 +60,6 @@ function leantimeAutoloader($class)
 
         $path = "../src/{$srcFolder}/{$module}/{$mvcFolder}/class.{$class}.php";
     }
-
     if($path != '' && file_exists($path)) {
         require_once $path;
     }

@@ -17,7 +17,7 @@ class appSettings {
 
 	public $appVersion = "2.2.8";
 
-	public $dbVersion = "2.1.11";
+	public $dbVersion = "2.1.10";
 
 
 

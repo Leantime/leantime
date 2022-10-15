@@ -4,7 +4,7 @@
  */
 namespace leantime\domain\controllers {
 
-    class delCanvas extends \leantime\domain\controllers\delCanvas
+    class delCanvas extends \leantime\domain\controllers\canvas\delCanvas
     {
 		
 	    protected const CANVAS_NAME = 'sb';
