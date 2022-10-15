@@ -202,7 +202,7 @@ namespace leantime\domain\controllers {
                         'hourBudget' => $_POST['hourBudget'],
 						'dollarBudget' => $_POST['dollarBudget'],
                         'psettings' => $_POST['globalProjectUserAccess'],
-                        'projectType' => $_POST['projectType']
+                        'menuType' => $_POST['menuType']
                     );
 
                     if ($values['name'] !== '') {
@@ -349,8 +349,9 @@ namespace leantime\domain\controllers {
                 $tpl->assign('comments', $comment);
                 $tpl->assign('numComments', $comments->countComments('project', $_GET['id']));
 
+				$menuRepo = new repositories\menu();
+                $tpl->assign('menuTypes', $menuRepo->getMenuTypes());
 
-                $tpl->assign('projectType', $projectRepo->type);
                 $tpl->assign('state', $projectRepo->state);
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 

@@ -44,7 +44,7 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
-				'projectType' => 'generic',
+				'menuType' => repositories\menu::DEFAULT_MENU,
                 'psettings' => ''
             );
 
@@ -75,7 +75,7 @@ namespace leantime\domain\controllers {
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
-                    'projectType' => $_POST['projectType']
+                    'menuType' => $_POST['menuType']
                 );
 
                 if ($values['name'] === '') {
@@ -117,8 +117,8 @@ namespace leantime\domain\controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-					if($values['projectType'] == 'dts') {
-						$tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/bmcanvas/lbmCanvas/'), 'success');
+					if($values['menuType'] == 'dts') {
+						$tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/bmcanvas/showCanvas/'), 'success');
                     } else {
                         $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
 					}

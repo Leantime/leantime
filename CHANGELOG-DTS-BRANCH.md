@@ -16,7 +16,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.7
+Leantime DTS Branch 0.0.9
 
 
 ## Author
@@ -83,3 +83,8 @@ Dr. Claude Diderich (diderich@yahoo.com)
 # 0.0.8 - 2022-10-15
 - Added: Template to be used for creating new canvas as `src/domain/canvas/NEwcanvas/...`
 - Update: Only the *Strategy Brief* canvas has been updated for the new structure
+
+# 0.0.9 - 2022-01-15
+- New: Added configurable menu structure in `repositories/menu` based on menu type selectable on a project by project
+  basis
+  

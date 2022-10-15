@@ -199,7 +199,9 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvas(array $recordsAry): string
         {
+			
             return 'NOT IMPLEMENTED';
+
         }
         
         /**
@@ -211,7 +213,9 @@ namespace leantime\domain\pdf {
          */
         protected function htmlList(array $recordsAry): string
         {
+
             return 'NOT IMPLEMENTED';
+
         }
         
         /**

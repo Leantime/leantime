@@ -21,7 +21,7 @@
 		<?php echo $this->displayLink('projects.newProject',"<i class='fa fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
 
 		<table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
-			<?php if($config->enableProjectType) { ?>
+			<?php if($config->enableMenuType) { ?>
 			<colgroup>
 		      	<col class="con1"/>
 		        <col class="con0" />
@@ -35,7 +35,7 @@
 				<tr>
 					<th class="head0"><?php echo $this->__('label.project_name'); ?></th>
 					<th class="head1"><?php echo $this->__('label.client_product'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.projecttype'); ?></th>
+                    <th class="head0"><?php echo $this->__('label.menu_type'); ?></th>
                     <th class="head1"><?php echo $this->__('label.project_state'); ?></th>
 					<th class="head0"><?php echo $this->__('label.num_tickets'); ?></th>
 					<th class="head1"><?php echo $this->__('label.hourly_budget'); ?></th>
@@ -55,7 +55,7 @@
 				<tr>
 					<th class="head0"><?php echo $this->__('label.project_name'); ?></th>
 					<th class="head1"><?php echo $this->__('label.client_product'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.projecttype'); ?></th>
+                    <th class="head0"><?php echo $this->__('label.project_state'); ?></th>
 					<th class="head1"><?php echo $this->__('label.num_tickets'); ?></th>
 					<th class="head0"><?php echo $this->__('label.hourly_budget'); ?></th>
 					<th class="head1"><?php echo $this->__('label.budget_cost'); ?></th>
@@ -72,12 +72,7 @@
 					<td>
 						<?php echo $this->displayLink('clients.showClient',$this->escape($row['clientName']), array('id' => $row['clientId']), NULL, true) ?>
 					</td>
-                    <?php if($config->enableProjectType) { ?>
-				      <td><?php switch($row['projectType']) {
-					    case 'lean': echo $this->__('label.projecttype.lean'); break; 
-                        case 'dts': echo $this->__('label.projecttype.dts'); break; 
-                        default: echo $this->__('label.projecttype.generic'); } ?></td>
-                    <?php } ?>
+                    <?php if($config->enableMenuType) { ?><td><?php $menuTypes[$row['menuType']] ?? $defaultMenu; ?><?php } ?>
 					<td><?php if($row['state'] == -1) echo $this->__('label.closed'); else echo $this->__('label.open'); ?></td>
 					<td class="center"><?php echo $row['numberOfTickets']; ?></td>
 					<td class="center"><?php $this->e($row['hourBudget']); ?></td>

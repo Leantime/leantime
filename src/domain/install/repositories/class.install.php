@@ -494,7 +494,7 @@ namespace leantime\domain\repositories {
                   `hourBudget` varchar(255) NOT NULL,
                   `dollarBudget` int(11) DEFAULT NULL,
                   `active` int(11) DEFAULT NULL,
-				  `type` MEDIUMTEXT DEFAULT NULL,
+				  `menutype` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1257,7 +1257,7 @@ namespace leantime\domain\repositories {
 
             $errors = array();
 
-			$sql = [ "ALTER TABLE zp_projects ADD type MEDIUMTEXT DEFAULT null",
+			$sql = [ "ALTER TABLE zp_projects ADD menutype MEDIUMTEXT DEFAULT null",
 					 "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) DEFAULT null",
 					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_item.id ".
 					 "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",

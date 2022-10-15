@@ -42,26 +42,20 @@ $project = $this->get('project');
                             <?php } ?>
                         </div>
                     </div>
-					<?php if($config->enableProjectType) {?>
-                    <div class="form-group">
+					<?php if($config->enableMenuType) {?>
+                        <div class="form-group">
 
-                        <label class="span4 control-label" for="projectType"><?php echo $this->__('label.projecttype'); ?></label>
-                        <div class="span6">
-                            <select name="projectType" id="projectType">
-                                <option value="generic" <?=$project['projectType'] != "lean" && $project['projectType'] != "dts" ? "selected='selected'" : ''?>
-                                ><?php echo $this->__('label.projecttype.generic'); ?></option>
-
-                                <option value="lean" <?=$project['projectType'] == "lean" ? "selected='selected'" : ''?>
-                                ><?php echo $this->__('label.projecttype.lean'); ?></option>
-
-                                <option value="dts" <?=$project['projectType'] == "dts" ? "selected='selected'" : ''?>
-                                ><?php echo $this->__('label.projecttype.dts'); ?></option>
-							   
-                            </select>
+                            <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
+                            <div class="span6">
+                                <select name="menuType" id="menuType">
+						    		<?php foreach($menuType as $key => $menu) { ?>
+                                       <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
+							      <?php } ?>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 					<?php } else { ?>
-		                <input type="hidden" name="projectType" id="projectType" value="generic">
+		                <input type="hidden" name="menuType" id="menuType" value="<?php echo repositories\menu::DEFAULT_MENU; ?>">
 					<?php } ?>
                     <div class="form-group">
 

@@ -602,7 +602,7 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
-				"projectType" => $projectValues['projectType'],
+				"menuType" => $projectValues['menuType'],
                 'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
