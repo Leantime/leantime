@@ -32,7 +32,7 @@
                 <?php } ?>
 																	 
                 <?php if($nbc > 0) { ?>
-                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>" class="canvasModal"
+                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>" class="<?=$canvasName ?>CanvasModal"
                          data="item_<?=$row['id'] ?>"><span class="fas fa-comment"></span></a>
                 <?php } ?>
 									   
@@ -40,15 +40,15 @@
                   &nbsp;&nbsp;&nbsp;
                   <ul class="dropdown-menu">
                     <li class="nav-header"><?=$this->__("subtitles.edit"); ?></li>
-                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>" class="canvasModal"
+                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>" class="<?=$canvasName ?>CanvasModal"
                       data="item_<?php echo $row["id"];?>"> <?=$this->__("links.edit_canvas_item"); ?></a></li>
-                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete canvasModal"
+                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete <?=$canvasName ?>CanvasModal"
                       data="item_<?php echo $row["id"];?>"> <?=$this->__("links.delete_canvas_item"); ?></a></li>
                   </ul>
                 <?php } ?>
               </div>
 																	 
-            <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>" class="canvasModal"
+            <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>" class="<?=$canvasName ?>CanvasModal"
                    data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
 																							
             <?php if($row["conclusion"] != "") { echo '<small>'.$row["conclusion"].'</small>'; } ?>
@@ -144,6 +144,6 @@
   <?php } ?>
   <br />
   <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="canvasModal" id="<?php echo $elementName; ?>" style="padding-bottom: 10px;"><?=$this->__('links.add_new_canvas_item') ?></a>
+    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="<?=$canvasName ?>CanvasModal" id="<?php echo $elementName; ?>" style="padding-bottom: 10px;"><?=$this->__('links.add_new_canvas_item') ?></a>
   <?php } ?>
 </div>

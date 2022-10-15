@@ -85,7 +85,7 @@
                     <li><a href="javascript:void(0);"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
 			    <?php } ?>
 				<?php if($menuItem['type'] == 'item') { ?>
-                    <li <?php if($module == 'swotcanvas') echo"  class='active' "; ?>>
+					<li <?php if($module == $menuItem['module']) echo"  class='active' "; ?>>
                         <a href="<?=BASE_URL.$menuItem['action'] ?>"><?=$this->__($menuItem['title']) ?></a>
                     </li>
 			    <?php } ?>

@@ -34,7 +34,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
   <hr style="margin-top: 5px; margin-bottom: 15px;">
     <?php echo $this->displayNotification(); ?>
 
-    <form class=canvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
@@ -95,7 +95,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="canvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
 								
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
@@ -175,7 +175,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="canvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
                                 </div>
                             </div>
                             <div class="row">

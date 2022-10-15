@@ -68,7 +68,7 @@
         <?php if(isset($_GET['showModal'])) {
 
         if($_GET['showModal'] == "") {
-            $modalUrl = "&type=".array_key_first($canvasType);
+            $modalUrl = "&type=".array_key_first($canvasTypes);
         } else {
             $modalUrl = "/".(int)$_GET['showModal'];
         }
