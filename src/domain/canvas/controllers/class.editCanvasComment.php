@@ -55,7 +55,6 @@ namespace leantime\domain\controllers\canvas {
         public function get($params)
         {
 
-			error_log("GET");
 			$canvasTypes = $this->canvasRepo->getCanvasTypes();
             if(isset($params['id'])) {
 
@@ -111,7 +110,7 @@ namespace leantime\domain\controllers\canvas {
          */
         public function post($params)
         {
-			error_log("POST");
+			
             if(isset($params['changeItem'])) {
 
                 if(isset($params['itemId']) && $params['itemId'] != '') {

@@ -14,7 +14,6 @@ $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
-error_log("canvasComment:".$id);
 ?>
 
 <script type="text/javascript">
