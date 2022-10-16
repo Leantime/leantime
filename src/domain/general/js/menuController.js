@@ -16,6 +16,22 @@ leantime.menuController = (function () {
 
     //Functions
 
+	var toggleMenu = function (id) {
+		
+		var menuDisplay = jQuery('#menu-'+id).css('display');
+		console.log('#menu-'+id+'='+menuDisplay);
+		if(menuDisplay == 'none') {
+			jQuery('#menu-'+id).css('display', 'block');
+			jQuery('#menu-icon-'+id).removeClass('fa-angle-up');
+			jQuery('#menu-icon-'+id).addClass('fa-angle-down');
+		}
+		else {
+			jQuery('#menu-'+id).css('display', 'none');
+			jQuery('#menu-icon-'+id).removeClass('fa-angle-down');
+			jQuery('#menu-icon-'+id).addClass('fa-angle-up');
+		}
+	}
+	
     var _initProjectSelector = function () {
 
         jQuery(".project-select").chosen();
@@ -94,6 +110,7 @@ leantime.menuController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleClientList:toggleClientList,
+		toggleMenu:toggleMenu
     };
 
 })();

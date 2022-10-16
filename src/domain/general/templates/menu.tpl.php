@@ -46,7 +46,7 @@
                                     if ($this->get('currentProject') == $projectRow["id"]) { echo " active "; }
                                 echo"'><a href='".BASE_URL."/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
                             }
-                        }else{
+                        } else {
                             echo "<li class='nav-header border'></li><li><span class='info'>".$this->__("menu.you_dont_have_projects")."</span></li>";
                         }
                         ?>
@@ -67,8 +67,11 @@
         <ul style='display:block'>
 			<?php foreach($menuStructure as $key => $menuItem) { ?>
 							
+				<?php if($menuItem['type'] == 'header') { ?>
+                    <li><a href="javascript:void(0);"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
+				<?php } ?>
 				<?php if($menuItem['type'] == 'section') { ?>
-                    <li><a href="javascript:<?php echo $menuItem['visual'] == 'always' ? 'void(0)' : 'menuToggle(\''.$menuItem['id'].'\')'; ?>;"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
+                    <li><a href="javascript:<?php echo $menuItem['visual'] == 'always' ? 'void(0)' : 'leantime.menuController.toggleMenu(\''.$menuItem['id'].'\')'; ?>;"><strong><?=$this->__($menuItem['title']) ?></strong> <i class="fa fa-angle-<?php echo $menuItem['visual'] == 'closed' ? 'up' : 'down'; ?>" id="menu-icon-<?=$menuItem['id'] ?>"></i></a></li>
 					<ul style="display: <?php echo $menuItem['visual'] == 'closed' ? 'none' : 'block'; ?>;" id="menu-<?=$menuItem['id'] ?>">
 					<?php foreach($menuItem['submenu'] as $subkey => $submenuItem) { ?>
 				        <?php if($submenuItem['type'] == 'item') { ?>
