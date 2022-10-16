@@ -1,4 +1,4 @@
 <?php
 $canvasName = 'sq';
-require(ROOT.'/../src/domain/canvas/templates/tpl.helper.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/helper.inc.php');
 ?>

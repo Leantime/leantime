@@ -10,7 +10,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
   - *SWOT Analysis*
   - *Empathy Map*
   - *Strategy Brief* [done]
-  - *Risk Analysis*
+  - *Risk Analysis* [done]
   - *Environment Analysis*
   - *Lightweight Business Model*, *Osterwalter's Business Model*, and *Detailed Business Model*
   - *Porter's Strategy Questions*
@@ -27,7 +27,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.11
+Leantime DTS Branch 0.0.12
 
 
 ## Author
@@ -127,7 +127,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - New: Added configurable menu structure in `repositories/menu` based on menu type selectable on a project by project
   basis
   
-# 0.0.10 -2022-10-16
+# 0.0.10 - 2022-10-16
 - Updated: Added sub-menus to menu structure and allow them be toggled. Added access control to menu structure.
 - Bug: Corrected modal related bug in `xxCanvasController`
 - Check: Checked `canvas` code using PHPMD and removed unused variables
@@ -135,3 +135,6 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.11 - 2022-10-16
 - Add: *Observe / Learn - Insights* canvas added
+
+# 0.0.12 - 2022-10-16
+- Add: *Risk Analysis* canvas added
