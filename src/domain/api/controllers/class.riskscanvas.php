@@ -50,8 +50,6 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-
-
         }
 
         /**

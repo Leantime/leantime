@@ -214,7 +214,45 @@ namespace leantime\domain\pdf {
         protected function htmlList(array $recordsAry): string
         {
 
-            return 'NOT IMPLEMENTED';
+            return $this->thmlListDetailed($recordsAry);
+
+        }
+        
+        /**
+         * htmlListCompact - Layout element list in a compact form
+         *
+         * @access public
+         * @param  array  $recordsAry Array of canvas data records
+         * @return string HTML code
+         */
+        protected function htmlListCompact(array $recordsAry): string
+        {
+			
+			$html = '';
+			foreach($this->canvasType as $key => $data) {
+				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
+				$html .= '<div>'.$this->htmlListElementsCompact($recordsAry, $key).'</div>';
+			}
+            return $html;
+
+        }
+        
+        /**
+         * htmlListDetailed - Layout element list in a detailed form
+         *
+         * @access public
+         * @param  array  $recordsAry Array of canvas data records
+         * @return string HTML code
+         */
+        protected function htmlListDetailed(array $recordsAry): string
+        {
+
+			$html = '';
+			foreach($this->canvasType as $key => $data) {
+				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
+				$html .= '<div>'.$this->htmlListElementsDetailed($recordsAry, $key).'</div>';
+			}
+            return $html;
 
         }
         
@@ -553,14 +591,14 @@ namespace leantime\domain\pdf {
         }
     
         /**
-         * htmlListElements - Typeset data of element box in canvas 
+         * htmlListElementsDetailed - Typeset data of element box in canvas 
          *
          * @access protected
          * @param  array  $recordsAry Array of canvas data records
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
-        protected function htmlListElements(array $recordsAry, string $box): string
+        protected function htmlListElementsDetailed(array $recordsAry, string $box): string
         {
             
             $html = '';
@@ -615,14 +653,14 @@ namespace leantime\domain\pdf {
         }
 
         /**
-         * htmlListElementsShort - Typeset data of element box in canvas in short form
+         * htmlListElementsCompact - Typeset data of element box in canvas in short form
          *
          * @access protected
          * @param  array  $recordsAry Array of canvas data records
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
-        protected function htmlListElementsShort(array $recordsAry, string $box): string
+        protected function htmlListElementsCompact(array $recordsAry, string $box): string
         {
             
             $html = '';

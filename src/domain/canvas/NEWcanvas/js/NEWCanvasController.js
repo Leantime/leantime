@@ -1,32 +1,30 @@
-leantime.sbCanvasController = (function () {
+leantime.NEWCanvasController = (function () {
 
 	// To be set
-	var canvasName = 'sb';
+	var canvasName = 'NEW';
 
 	// To be implemented
     var setRowHeights = function () {
 
-        var stakeholderRowHeight = 0;
-        jQuery("#stakeholderRow div.contentInner").each(function(){
-            if(jQuery(this).height() > stakeholderRowHeight){
-                stakeholderRowHeight = jQuery(this).height() + 35;
+		var nbRows = 2;
+        var rowHeight = jQuery("html").height()- 320 - 20 * nbRows;
+		
+        var firstRowHeight = rowHeight / nbRows;
+        jQuery("#firstRow div.contentInner").each(function(){
+            if(jQuery(this).height() > firstRowHeight){
+                firstRowHeight = jQuery(this).height() + 25;
             }
         });
-        var financialsRowHeight = 0;
-        jQuery("#financialsRow div.contentInner").each(function(){
-            if(jQuery(this).height() > financialsRowHeight){
-                financialsRowHeight = jQuery(this).height() + 35;
+        jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
+
+        var secondRowHeight = rowHeight / nbRows;
+        jQuery("#secondRow div.contentInner").each(function(){
+            if(jQuery(this).height() > secondRowHeight){
+                secondRowHeight = jQuery(this).height() + 25;
             }
         });
-        var culturechangeRowHeight = 0;
-        jQuery("#culturechangeRow div.contentInner").each(function(){
-            if(jQuery(this).height() > culturechangeRowHeight){
-                culturechangeRowHeight = jQuery(this).height() + 35;
-            }
-        });
-        jQuery("#stakeholderRow .column .contentInner").css("height", stakeholderRowHeight);
-        jQuery("#financialsRow .column .contentInner").css("height", financialsRowHeight);
-        jQuery("#culturechangeRow .column .contentInner").css("height", culturechangeRowHeight);
+		
+        jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
 
     };
 

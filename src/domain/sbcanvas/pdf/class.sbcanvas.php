@@ -23,13 +23,13 @@ namespace leantime\domain\pdf {
             $html = '';
             $html .= '<div>'.$this->htmlListTitle("headline.".static::CANVAS_NAME.".board", $this->canvasRepo->getIcon()).'</div>';
 			$html .= '<div style="margin-top: 5px; margin-bottom: 5px;">'.$_SESSION['currentProjectName'].'</div><hr class="hr-black"/>';
-			foreach($this->canvasType as $key => $data) {
-				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
-				$html .= '<div>'.$this->htmlListElementsShort($recordsAry, $key).'</div>';
-			}
+
+			$html .= $this->htmlListCompact($recordsAry);
+
             $html .= '<div>'.$this->htmlListTitle('box.sb.risks', 'fa-person-falling').'</div>';
             $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">'.
                 sprintf($this->language->__('text.sb.risks_analysis'), $this->config->appUrl).'</div><hr class="hr-black"/>';
+
             return $html;
             
         }

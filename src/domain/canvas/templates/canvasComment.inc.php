@@ -14,6 +14,7 @@ $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
+error_log("canvasComment:".$id);
 ?>
 
 <script type="text/javascript">
@@ -39,7 +40,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/".$id."");
+        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasComment/".$id."");
         $this->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>

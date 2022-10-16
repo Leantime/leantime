@@ -65,42 +65,49 @@
     <li class="dropdown">
 		<?php $currentProjectType = $this->get('currentProjectType'); ?>
         <ul style='display:block'>
-            <li <?php if($module == 'dashboard' && $action == 'show') echo" class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
-            </li>
-            <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll'|| $action == 'showTicket')) echo"class=' active '"; ?>>
-                <a href="<?=$this->get('ticketMenuLink');?>"><?=$this->__("menu.todos") ?></a>
-            </li>
-            <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>
-            </li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
-                    <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
-                </li>
-            <?php } ?>
-
 			<?php foreach($menuStructure as $key => $menuItem) { ?>
+							
 				<?php if($menuItem['type'] == 'section') { ?>
-                    <li><a href="javascript:void(0);"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
-			    <?php } ?>
+                    <li><a href="javascript:<?php echo $menuItem['visual'] == 'always' ? 'void(0)' : 'menuToggle(\''.$menuItem['id'].'\')'; ?>;"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
+					<ul style="display: <?php echo $menuItem['visual'] == 'closed' ? 'none' : 'block'; ?>;" id="menu-<?=$menuItem['id'] ?>">
+					<?php foreach($menuItem['submenu'] as $subkey => $submenuItem) { ?>
+				        <?php if($submenuItem['type'] == 'item') { ?>
+				            <?php if(!isset($submenuItem['role']) || (isset($submenuItem['role']) && 
+                                 (($submenuItem['role'] == 'editor' && $login::userIsAtLeast($roles::$editor)) ||
+								  ($submenuItem['role'] == 'manager' && $login::userIsAtLeast($roles::$manager))))) { ?>
+								 <li <?php if($module == $submenuItem['module'] && 
+                                     (!isset($submenuItem['active']) || in_array($action, $submenuItem['active'])))
+                                          echo"  class='active' "; ?>>
+							         <?php if($submenuItem['module'] == 'tickets' && !isset($submenuItem['href'])) { ?>
+										  <a href="<?=$this->get('ticketMenuLink');?>" style="font-size: small; padding-top: 5px; padding-bottom: 5px"><?=$this->__($submenuItem['title']) ?></a>
+									 <?php } else { ?>
+                                         <a href="<?=BASE_URL.$submenuItem['href'] ?>" style="font-size: small; padding-top: 5px; padding-bottom: 5px"><?=$this->__($submenuItem['title']) ?></a>
+									 <?php } ?>
+                                 </li>
+					        <?php } ?>
+			            <?php } ?>
+					<?php } ?>
+					</ul>
+				<?php } ?>
+				
 				<?php if($menuItem['type'] == 'item') { ?>
-					<li <?php if($module == $menuItem['module']) echo"  class='active' "; ?>>
-                        <a href="<?=BASE_URL.$menuItem['action'] ?>"><?=$this->__($menuItem['title']) ?></a>
-                    </li>
+				    <?php if(!isset($menuItem['role']) || (isset($menuItem['role']) && 
+                         (($menuItem['role'] == 'editor' && $login::userIsAtLeast($roles::$editor)) ||
+						  ($menuItem['role'] == 'manager' && $login::userIsAtLeast($roles::$manager))))) { ?>
+						 <li <?php if(($module == $menuItem['module']) && 
+                             (!isset($menuItem['active']) || in_array( $action, $menuItem['active'])))
+                                 echo"  class='active' "; ?>>
+							 <?php if($menuItem['module'] == 'tickets' && !isset($menuItem['href'])) { ?>
+							     <a href="<?=$this->get('ticketMenuLink');?>"><?=$this->__($menuItem['title']) ?></a>
+							 <?php } else { ?>
+                                 <a href="<?=BASE_URL.$menuItem['href'] ?>"><?=$this->__($menuItem['title']) ?></a>
+							 <?php } ?>
+                        </li>
+					<?php } ?>
 			    <?php } ?>
+				
 			<?php } ?>
-            <li <?php if($module == 'wiki') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/wiki/show"><?=$this->__("menu.documents") ?></a>
-            </li>
-            <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
-                <a href="<?=BASE_URL ?>/retrospectives/showBoards"><?=$this->__("menu.retrospectives") ?></a>
-            </li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <li <?php if($module == 'reports') echo"class=' active '"; ?>>
-                <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
-            </li>
-            <?php } ?>
+
             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px;">
                 <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>

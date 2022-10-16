@@ -489,15 +489,18 @@ namespace leantime\domain\services {
                     $_SESSION['lastArticle'] = "";
 
                     $_SESSION['currentSWOTCanvas'] = "";
-                    $_SESSION['currentInsightsCanvas'] = "";
-                    $_SESSION['currentSBanvas'] = "";
-                    $_SESSION['currentRisksCanvas'] = "";
+                    $_SESSION['currentLEANCanvas'] = "";
+                    $_SESSION['currentEMCanvas'] = "";
+                    $_SESSION['currentINSIGHTSCanvas'] = "";
+                    $_SESSION['currentSBCanvas'] = "";
+                    $_SESSION['currentRISKSCanvas'] = "";
                     $_SESSION['currentEACanvas'] = "";
-                    $_SESSION['currentBMCanvas'] = "";
+                    $_SESSION['currentLBMCanvas'] = "";
+                    $_SESSION['currentOBMCanvas'] = "";
+                    $_SESSION['currentDBMCanvas'] = "";
                     $_SESSION['currentSQCanvas'] = "";
                     $_SESSION['currentCPCanvas'] = "";
                     $_SESSION['currentSMCanvas'] = "";
-                    $_SESSION['currentIdeationCanvas'] = "";
 					
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
@@ -536,15 +539,18 @@ namespace leantime\domain\services {
             $_SESSION['currentRetroCanvas'] = "";
 
 			$_SESSION['currentSWOTCanvas'] = "";
-			$_SESSION['currentInsightsCanvas'] = "";
-			$_SESSION['currentSBanvas'] = "";
-			$_SESSION['currentRisksCanvas'] = "";
+            $_SESSION['currentLEANCanvas'] = "";
+			$_SESSION['currentEMCanvas'] = "";
+			$_SESSION['currentINSIGHTSCanvas'] = "";
+			$_SESSION['currentSBCanvas'] = "";
+			$_SESSION['currentRISKSCanvas'] = "";
 			$_SESSION['currentEACanvas'] = "";
-			$_SESSION['currentBMCanvas'] = "";
+			$_SESSION['currentLBMCanvas'] = "";
+			$_SESSION['currentOBMCanvas'] = "";
+			$_SESSION['currentDBMCanvas'] = "";
 			$_SESSION['currentSQCanvas'] = "";
 			$_SESSION['currentCPCanvas'] = "";
 			$_SESSION['currentSMCanvas'] = "";
-			$_SESSION['currentIdeationCanvas'] = "";
 			
             unset($_SESSION["projectsettings"]);
 

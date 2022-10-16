@@ -6,17 +6,28 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Major changes
 
-- Added new canvas: *SWOT Analysis*, *Strategy Brief*, *Risk Analysis*, *Environment Analysis*, *Business Model Canvas*
-  (3 version), *Porter's Strategy Questions*, *Competitive Positioning Canvas*, *Strategy Messaging*, *Insights*,
-  *Ideation*, and *SWOT Analysis*
-- Added functionality to generate PDF files from canvas
-- Refactored canvas code and moved it into `src/library/canvas` allowing to create a new class by simply extending/including
-  the code
+- New canvas:
+  - *SWOT Analysis*
+  - *Empathy Map*
+  - *Strategy Brief*
+  - *Risk Analysis*
+  - *Environment Analysis*
+  - *Lightweight Business Model*, *Osterwalter's Business Model*, and *Detailed Business Model*
+  - *Porter's Strategy Questions*
+  - *Competitive Positioning Canvas*
+  - *Strategy Messaging*
+  - *Insights*
+- Revised canvas: *Lean Canvas* (full version only)
+- Generate PDF files from any canvas
+- Support for easily configurable muli-layer menu structure (support for project-specific menu structures can be enabled
+  via configuration)
+- Refactored generic canvas code in `src/domain/canvas` allowing to create a new canvas by simply extending/including
+  code
 
 
 ## Version
 
-Leantime DTS Branch 0.0.9
+Leantime DTS Branch 0.0.10
 
 
 ## Author
@@ -24,23 +35,51 @@ Leantime DTS Branch 0.0.9
 Dr. Claude Diderich (diderich@yahoo.com)
 
 
+## Basic principles underlying design decision
+1. The UX/UI design is key for software user buy-in. A poor layout will never make up for great content!
+2. The definition and layout of canvases is part of the configuration of the system and not part of the day-to-day
+   activity of using the system
+3. A well-defined and supported process is preferred over an overwhelming choice of options
+
+
 ## Details of changes
+
+### New canvas implementation
+- Refactored canvas code into a generic library of extendable classes and includable templates. Generic code is in
+  `src/domain/canvas` (with a template for a new canvas in `src/domain/canvas/NEWcanvas`)
+- Canvas details are defined in `domain/repository/XXcanvas`, rather than in templates (allowing specification to be
+  used for screen layout and PDF generation)
+- Added optional second drop-down allowing to relate an element/box to a specific concept (e.g., relating a strength in
+  a SWOT analysis to the firms' Capabilities)
+- Added separate access to comments from element/box
+- Added option to clone/copy existing canvas
+- Added selectors that allow to show sub-sets of elements/boxes in a canvas, based on drop-down values (e.g., only
+  showing elements/boxes that have been validated)
+- Added icons to element/box titles and removed option to change titles by the user
+  
+### Generating PDF files from  canvas
+- Added `yetiforce/yetiforcepdf` library in composer for rendering PDF files (available via *MIT License*)
+- Added print-ready `Roboto` and `RobotoCondensed` from (https://fonts.google.com/specimen/Roboto) (avaialable via
+  *Apache2* license)
+- Added functionality to generate PDF reports from templates (visual canvas report containing summary information and
+  detailed list report). Reports can be easily customized via coding on a canvas level 
+
+### Menu structure
+- Menu structure has been separated from menu rending/layout. Menu structure is defined in `domain/repositories/menu`.
+- Menu structure supports two layers, second layer can be shown/hidden by the user
+- Support for project specific menu structures added. It can be enabled through configuration (`$config->enablerMenuType`)
 
 ### System related changes
 - Added `Makefile` to minify/compile `js` and `css` files on a need to do basis
-	  
-### Canvas and kanbans specific for implementing *Design Thinking for Strategy*
-		  
-### Generating PDF files from  canvas
-- Added `yetiforce/yetiforcepdf` library in composer
-- Added print-ready `Roboto` and `RobotoCondensed` from (https://fonts.google.com/specimen/Roboto)
+  
 
-
-## To do items and open issues
-
-### System related
-
-## Printing canvcas and kanbans by generating PDF files
+## Open issues
+- Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists is limited
+- Complex tables may render poorly due to *YetiForcePDF* incorrecly handing some table borders
+- If an image cannot be accessed during PDF report generating, the resulting PDF report is compromised
+- New language tags have not been translated and are only available in *en-US*
+- Improve `Makefile` to support re-generating only those `js` and `css` files where the source has changed (currently
+  all-or-nothing approach implemented)
 
 
 ## Change log
@@ -84,7 +123,12 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - Added: Template to be used for creating new canvas as `src/domain/canvas/NEwcanvas/...`
 - Update: Only the *Strategy Brief* canvas has been updated for the new structure
 
-# 0.0.9 - 2022-01-15
+# 0.0.9 - 2022-10-15
 - New: Added configurable menu structure in `repositories/menu` based on menu type selectable on a project by project
   basis
   
+# 0.0.10 -2022-10-16
+- Updated: Added sub-menus to menu structure and allow them be toggled. Added access control to menu structure.
+- Bug: Corrected modal related bug in `xxCanvasController`
+- Check: Checked `canvas` code using PHPMD and removed unused variables
+- Add: Minor adjustments for adding additional templates

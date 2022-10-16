@@ -21,7 +21,6 @@ namespace leantime\domain\controllers\canvas {
         protected const CANVAS_NAME = '??';
 
         private $tpl;
-        private $projects;
         private $sprintService;
         private $language;
 
@@ -65,7 +64,6 @@ namespace leantime\domain\controllers\canvas {
 
                 // Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
-                    $milestoneId = (int)($params['removeMilestone']);
                     $this->canvasRepo->patchCanvasItem($params['id'], array("milestoneId" => ''));
                     $this->tpl->setNotification($this->language->__("notifications.milestone_detached"), "success");
                 }

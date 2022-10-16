@@ -22,7 +22,6 @@ namespace leantime\domain\controllers\canvas {
         protected const CANVAS_NAME = '??';
 
         private $tpl;
-        private $projects;
         private $sprintService;
         private $language;
 
@@ -55,6 +54,9 @@ namespace leantime\domain\controllers\canvas {
          */
         public function get($params)
         {
+
+			error_log("GET");
+			$canvasTypes = $this->canvasRepo->getCanvasTypes();
             if(isset($params['id'])) {
 
                 // Delete comment
@@ -69,11 +71,11 @@ namespace leantime\domain\controllers\canvas {
                 $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
 
-            }else{
+            } else {
                 if(isset($params['type'])) {
-                    $type=strip_tags($params['type']);
+                    $type = strip_tags($params['type']);
                 } else {
-                    $type = "pc_political";
+                    $type = array_key_first($canvasTypes);
                 }
 
                 $canvasItem = array(
@@ -95,10 +97,10 @@ namespace leantime\domain\controllers\canvas {
 
             $this->tpl->assign('comments', $comments);
 
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
-            $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
+            $this->tpl->assign('canvasTypes', $canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
+
         }
 
         /**
@@ -109,6 +111,7 @@ namespace leantime\domain\controllers\canvas {
          */
         public function post($params)
         {
+			error_log("POST");
             if(isset($params['changeItem'])) {
 
                 if(isset($params['itemId']) && $params['itemId'] != '') {
@@ -155,7 +158,7 @@ namespace leantime\domain\controllers\canvas {
 
                     }
 
-                }else{
+                } else {
 
                     if(isset($_POST['description']) && !empty($_POST['description'])) {
 
@@ -177,7 +180,7 @@ namespace leantime\domain\controllers\canvas {
 
 						$canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                        $this->tpl->setNotification($this->canvasRepo->canvasTypes[$params['box']].' successfully created', 'success');
+                        $this->tpl->setNotification($canvasTypes[$params['box']].' successfully created', 'success');
 
                         $subject = $this->language->__("email_notifications.canvas_board_item_created");
                         $actual_link = BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".(int)$params['itemId'];
@@ -226,6 +229,7 @@ namespace leantime\domain\controllers\canvas {
             $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.canvasComment');
+
         }
 
         /**

@@ -104,3 +104,4 @@ fabric.properties
 composer.lock
 package-lock.json
 public/images/logo-dts.png
+.github/workflows/phpmd.yml

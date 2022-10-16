@@ -2,6 +2,7 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
+$menuTypes = $this->get('menuTypes');
 
 ?>
 
@@ -48,7 +49,7 @@ $project = $this->get('project');
                             <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
                             <div class="span6">
                                 <select name="menuType" id="menuType">
-						    		<?php foreach($menuType as $key => $menu) { ?>
+						    		<?php foreach($menuTypes as $key => $menu) { ?>
                                        <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
 							      <?php } ?>
                                 </select>

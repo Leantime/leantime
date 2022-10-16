@@ -17,7 +17,7 @@
 
 	if($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates'])) {
 		$comments = new \leantime\domain\repositories\comments();
-        $nbc = $comments->countComments(moduleId: $row['id']);
+        $nbcomments = $comments->countComments(moduleId: $row['id']);
       ?>
 			
       <div class="ticketBox" id="item_<?php echo $row["id"];?>">
@@ -31,10 +31,8 @@
                     </a>
                 <?php } ?>
 																	 
-                <?php if($nbc > 0) { ?>
-                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>" class="<?=$canvasName ?>CanvasModal"
-                         data="item_<?=$row['id'] ?>"><span class="fas fa-comment"></span></a>
-                <?php } ?>
+                <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>" class="<?=$canvasName ?>CanvasModal"
+                     data="item_<?=$row['id'] ?>" <?php echo $nbcomments == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small> 
 									   
                 <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                   &nbsp;&nbsp;&nbsp;

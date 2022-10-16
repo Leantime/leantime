@@ -1,6 +1,8 @@
 <?php
 	defined( 'RESTRICTED' ) or die( 'Restricted access' );
 	$project = $this->get('project');
+	$menuTypes = $this->get('menuTypes');
+
 ?>
 
 <div class="pageheader">
@@ -72,7 +74,7 @@
 					<td>
 						<?php echo $this->displayLink('clients.showClient',$this->escape($row['clientName']), array('id' => $row['clientId']), NULL, true) ?>
 					</td>
-                    <?php if($config->enableMenuType) { ?><td><?php $menuTypes[$row['menuType']] ?? $defaultMenu; ?><?php } ?>
+		            <?php if($config->enableMenuType) { ?><td><?php echo $menuTypes[$row['menuType']] ?? \leantime\domain\repositories\menu::DEFAULT_MENU ?><?php } ?>
 					<td><?php if($row['state'] == -1) echo $this->__('label.closed'); else echo $this->__('label.open'); ?></td>
 					<td class="center"><?php echo $row['numberOfTickets']; ?></td>
 					<td class="center"><?php $this->e($row['hourBudget']); ?></td>

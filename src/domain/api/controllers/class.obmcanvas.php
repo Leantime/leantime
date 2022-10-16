@@ -7,7 +7,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class bmcanvas
+    class obmcanvas
     {
 
         private $tpl;
@@ -25,7 +25,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl = new core\template();
             $this->projects = new repositories\projects();
-            $this->bmCanvasRepo = new repositories\bmcanvas();
+            $this->obmCanvasRepo = new repositories\obmcanvas();
 
         }
 
@@ -62,7 +62,7 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-            $results = $this->bmCanvasRepo->patchCanvasItem($params['id'], $params);
+            $results = $this->obmCanvasRepo->patchCanvasItem($params['id'], $params);
 
             if($results === true) {
                 echo "{status:ok}";
