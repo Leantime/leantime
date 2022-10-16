@@ -19,6 +19,13 @@ namespace leantime\domain\pdf {
          */
         protected function htmlList(array $recordsAry): string
         {
+			
+			// Adjust status of record (only stakeholders have a status)
+			foreach($recordsAry as $key => $data) {
+				if(!in_array($data['box'], [ 'sb_st_design', 'sb_st_decision', 'sb_st_experts', 'sb_st_support' ])) {
+					$recordsAry[$key]['status'] = '';
+				}
+			}
             
             $html = '';
             $html .= '<div>'.$this->htmlListTitle("headline.".static::CANVAS_NAME.".board", $this->canvasRepo->getIcon()).'</div>';
@@ -44,6 +51,7 @@ namespace leantime\domain\pdf {
          */
         public function reportGenerate(int $id, array $filter = []): string
         {
+			
             // Retrieve canvas data
             $sbCanvasRepo = new repositories\sbcanvas();
             $sbCanvasAry = $sbCanvasRepo->getSingleCanvas($id);
@@ -62,6 +70,7 @@ namespace leantime\domain\pdf {
             $pdf->init();
             $pdf->loadHtml($this->htmlReport($projectAry['name'], $sbCanvasAry[0]['title'], $recordsAry, $filter, $options));
             return $pdf->render();
+			
         }
     
     }

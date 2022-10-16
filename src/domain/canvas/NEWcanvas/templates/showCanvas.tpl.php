@@ -15,7 +15,7 @@ $canvasName = 'NEW';
 
             <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="column" style="width:100%">
-				    <h4 class="widgettitle title-primary center"><i class="fas <?=$canvasTypes['NEW_XXX']['icon'] ?>"></i> <?=$this->__($canvasTypes['NEW_XXX']['title']) ?></h4>
+				    <h4 class="widgettitle title-primary center"><i class="fas <?=$canvasTypes['NEW_XXX']['icon'] ?>"></i> <?=$canvasTypes['NEW_XXX']['title'] ?></h4>
                     <?php $elementName = 'NEW_XXX'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
             </div>

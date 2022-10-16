@@ -1,8 +1,7 @@
 <?php
 /**
- * Strategy Brief - Dialog
+ * Dialog
  */
-$canvasName = 'sb';
-$statusLabels = [];
+$canvasName = 'insights';
 require(ROOT.'/../src/domain/canvas/templates/canvasDialog.inc.php');
 ?>

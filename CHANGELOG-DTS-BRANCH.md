@@ -9,14 +9,14 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 - New canvas:
   - *SWOT Analysis*
   - *Empathy Map*
-  - *Strategy Brief*
+  - *Strategy Brief* [done]
   - *Risk Analysis*
   - *Environment Analysis*
   - *Lightweight Business Model*, *Osterwalter's Business Model*, and *Detailed Business Model*
   - *Porter's Strategy Questions*
   - *Competitive Positioning Canvas*
   - *Strategy Messaging*
-  - *Insights*
+  - *Observe / Learn - Insights* [done]
 - Revised canvas: *Lean Canvas* (full version only)
 - Generate PDF files from any canvas
 - Support for easily configurable muli-layer menu structure (support for project-specific menu structures can be enabled
@@ -27,7 +27,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.10
+Leantime DTS Branch 0.0.11
 
 
 ## Author
@@ -132,3 +132,6 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - Bug: Corrected modal related bug in `xxCanvasController`
 - Check: Checked `canvas` code using PHPMD and removed unused variables
 - Add: Minor adjustments for adding additional templates
+
+# 0.0.11 - 2022-10-16
+- Add: *Observe / Learn - Insights* canvas added

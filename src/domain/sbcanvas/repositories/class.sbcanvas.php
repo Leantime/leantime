@@ -40,6 +40,25 @@ namespace leantime\domain\repositories {
 										 ];
 		
         /**
+         * statusLabels - Status labels
+         *
+         * @acces protected
+         * @var   array
+         */
+		protected array $statusLabels = [ 'status_pending'  => [ 'icon' => 'fa-person-circle-question', 'color' => 'blue',   'title' => 'status.pending',  'dropdown' => 'info',    'active' => true],
+										  'status_accepted' => [ 'icon' => 'fa-person-circle-check',    'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true],
+										  'status_rejected' => [ 'icon' => 'fa-person-circle-xmark',    'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true]
+										  ];
+
+		/**
+		 * relatesLabels - Relates to label
+		 *
+         * @acces public
+         * @var   array
+		 */
+		protected array $relatesLabels = [ ];
+
+        /**
          * dataLabels - Data labels
          *
          * @acces protected

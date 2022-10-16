@@ -9,8 +9,8 @@ $canvasTitle = '';
 $allCanvas = $this->get('allCanvas');
 $canvasIcon = $this->get('canvasIcon');
 $canvasTypes = $this->get('canvasTypes');
-$statusLabels = $this->get('statusLabels');
-$relatesLabels = $this->get('relatesLabels');
+$statusLabels = $statusLabels ?? $this->get('statusLabels');
+$relatesLabels = $relatesLabels ?? $this->get('relatesLabels');
 $dataLabels = $this->get('dataLabels');
 $canvasItems = $this->get('canvasItems');
 

@@ -43,7 +43,7 @@ namespace leantime\domain\pdf {
         protected core\config $config;
         protected core\language $language;
 		protected $canvasRepo;
-		protected array $canvasType;
+		protected array $canvasTypes;
 		protected array $statusLabels;
 		protected array $relatesLabels;
 		protected array $dataLabels;
@@ -66,7 +66,7 @@ namespace leantime\domain\pdf {
 			$canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME."canvas";
 			$this->canvasRepo = new $canvasRepoName();
 
-			$this->canvasType = $this->canvasRepo->getCanvasTypes();
+			$this->canvasTypes = $this->canvasRepo->getCanvasTypes();
 			$this->statusLabels = $this->canvasRepo->getStatusLabels();
 			$this->relatesLabels = $this->canvasRepo->getRelatesLabels();
 			$this->dataLabels = $this->canvasRepo->getDataLabels();
@@ -143,7 +143,7 @@ namespace leantime\domain\pdf {
         {
 			
             return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
-                $this->htmlIcon($this->statusLabels[$status]['icon']).'/span>';
+                $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
 
         }
     
@@ -214,7 +214,7 @@ namespace leantime\domain\pdf {
         protected function htmlList(array $recordsAry): string
         {
 
-            return $this->thmlListDetailed($recordsAry);
+            return $this->htmlListDetailed($recordsAry);
 
         }
         
@@ -229,7 +229,7 @@ namespace leantime\domain\pdf {
         {
 			
 			$html = '';
-			foreach($this->canvasType as $key => $data) {
+			foreach($this->canvasTypes as $key => $data) {
 				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
 				$html .= '<div>'.$this->htmlListElementsCompact($recordsAry, $key).'</div>';
 			}
@@ -248,7 +248,7 @@ namespace leantime\domain\pdf {
         {
 
 			$html = '';
-			foreach($this->canvasType as $key => $data) {
+			foreach($this->canvasTypes as $key => $data) {
 				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
 				$html .= '<div>'.$this->htmlListElementsDetailed($recordsAry, $key).'</div>';
 			}
@@ -465,6 +465,12 @@ namespace leantime\domain\pdf {
         {
             
             $iconCode = match($icon) {
+				// Observe / Learn - Insights
+                'fa-tower-observation' => '&#xe586',
+				'fa-people-arrows' => '&#xe068',
+				'fa-people-line' => '&#xe534',
+				'fa-book' => '&#xf02d',
+				'fa-file-signature' => '&#xf573',
                 // Strategy Brief
                 'fa-list-check' => '&#xf0ae',
                 'fa-heading' => '&#xf1dc',
@@ -480,6 +486,9 @@ namespace leantime\domain\pdf {
 				'fa-book-skull' => '&#xf6b7',
 				'fa-ruler-combined' => '&#xf546',
                 'fa-person-falling' => '&#xe546',
+				'fa-person-circle-question' => '&#xe542',
+				'fa-person-circle-check' => '&#xe55c',
+				'fa-person-circle-xmark' => '&#xe543',
 				// Risk analysis
 				'fa-tree' => '&#xf1bb',
 				'fa-city' => '&#xf64f',
@@ -615,7 +624,7 @@ namespace leantime\domain\pdf {
                     if(isset($record['relates']) && !empty($record['relates'])) {
                         $relates = $this->htmlListRelates($record['relates']);
                         if(!empty($relates)) {
-                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementRelates']).
+                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementRelates']).': '.
                                 '<em>'.$relates.'</em></div>';
                         }
                     }
@@ -623,7 +632,7 @@ namespace leantime\domain\pdf {
                     if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
                         if(!empty($status)) {
-                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementStatus']).
+                            $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementStatus']).': '.
                                 '<em>'.$status.'</em></div>';
                         }
                     }

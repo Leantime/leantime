@@ -9,8 +9,10 @@ defined('RESTRICTED') or die('Restricted access');
 
 $canvasItem = $this->get('canvasItem');
 $canvasTypes = $this->get('canvasTypes');
-$statusLabels = $this->get('statusLabels');
-$relatesLabels = $this->get('relatesLabels');
+$hiddenStatusLabels = $this->get('statusLabels');
+$statusLabels = $statusLabels ?? $hiddenStatusLabels;
+$hiddenRelatesLabels = $this->get('relatesLabels');
+$relatesLabels = $relatesLabels ?? $hiddenRelatesLabels;
 $dataLabels = $this->get('dataLabels');
 
 $id = "";
@@ -53,7 +55,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 		        <?php } ?>
 			</select><br />
 		<?php } else { ?>
-            <input type="hidden" name="status" value="" />
+            <input type="hidden" name="status" value="<?=array_key_first($hiddenStatusLabels) ?>" />
 		<?php } ?>
 
 	    <?php if(!empty($relatesLabels)) { ?>
@@ -66,7 +68,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 		        <?php } ?>
 			</select><br />
 		<?php } else { ?>
-            <input type="hidden" name="relates" value="" />
+            <input type="hidden" name="relates" value="<?=array_key_first($hiddenRelatesLabels) ?>" />
 		<?php } ?>
 		
 	    <?php if($dataLabels[1]['active']) { ?>

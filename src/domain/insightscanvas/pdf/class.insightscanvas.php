@@ -6,9 +6,9 @@ namespace leantime\domain\pdf {
   
 	use leantime\domain\repositories;
 	
-    class NEWcanvas extends \leantime\domain\pdf\canvas {
+    class insightscanvas extends \leantime\domain\pdf\canvas {
 
-		protected const CANVAS_NAME = 'NEW';
+		protected const CANVAS_NAME = 'insights';
         
         /**
          * htmlCanvas -  Layout canvas (must be implemented)
@@ -20,7 +20,21 @@ namespace leantime\domain\pdf {
         protected function htmlCanvas(array $recordsAry): string
         {
 			
-            return 'NOT IMPLEMENTED';
+			$html = '<table class="canvas" style="width: 100%"><tbody><tr>';
+
+            foreach($this->canvasTypes as $key => $box) {
+				$html .= '<td class="canvas-elt-title" style="width: 20%;">'.$this->htmlCanvasTitle($box['title'], $box['icon']).'</td>';
+			}
+
+			$html .= '</tr><tr>';
+
+            foreach($this->canvasTypes as $key => $box) {
+				$html .= '<td class="canvas-elt-box" style="height: 650px;">'.$this->htmlCanvasElements($recordsAry, $key).'</td>';
+			}
+
+			$html .= '</tr></tbody></table>';
+
+			return $html;
 
         }
         
@@ -36,11 +50,11 @@ namespace leantime\domain\pdf {
         {
 
             // Retrieve canvas data
-            $NEWCanvasRepo = new repositories\NEWcanvas();
-            $NEWCanvasAry = $NEWCanvasRepo->getSingleCanvas($id);
-            !empty($NEWCanvasAry) || die("Cannot find canvas with id '$id'");
-            $projectId = $NEWCanvasAry[0]['projectId'];
-            $recordsAry = $NEWCanvasRepo->getCanvasItemsById($id);
+            $insightsCanvasRepo = new repositories\insightscanvas();
+            $insightsCanvasAry = $insightsCanvasRepo->getSingleCanvas($id);
+            !empty($insightsCanvasAry) || die("Cannot find canvas with id '$id'");
+            $projectId = $insightsCanvasAry[0]['projectId'];
+            $recordsAry = $insightsCanvasRepo->getCanvasItemsById($id);
             $projectsRepo = new repositories\projects();
             $projectAry = $projectsRepo->getProject($projectId);
             !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
@@ -51,7 +65,7 @@ namespace leantime\domain\pdf {
             // Generate PDF content
             $pdf = new \YetiForcePDF\Document();
             $pdf->init();
-            $pdf->loadHtml($this->htmlReport($projectAry['name'], $NEWCanvasAry[0]['title'], $recordsAry, $filter, $options));
+            $pdf->loadHtml($this->htmlReport($projectAry['name'], $insightsCanvasAry[0]['title'], $recordsAry, $filter, $options));
             return $pdf->render();
 
         }

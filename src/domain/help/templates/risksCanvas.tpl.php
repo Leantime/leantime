@@ -1,4 +1,4 @@
 <?php
 $canvasName = 'risks';
-require(ROOT.'/../src/library/canvas/tpl.helper.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/tpl.helper.inc.php');
 ?>

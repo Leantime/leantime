@@ -8,7 +8,10 @@ $canvasName = 'sb';
 ?>
 
 <?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
-
+<?php
+    $stakeholderStatusLabels = $statusLabels;
+    $statusLabels = [];
+?>
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
@@ -34,6 +37,7 @@ $canvasName = 'sb';
                 </div>
             </div>
 
+			<?php $statusLabels = $stakeholderStatusLabels; ?>
             <div class="row" id="stakeholderRow" style="margin-left: 0px; margin-right: 0px">
                 <div class="column" style="width:25%">
                     <h4 class="widgettitle title-primary center"><i class="fas <?=$canvasTypes['sb_st_design']['icon'] ?>"></i> <?=$this->__($canvasTypes['sb_st_design']['title']) ?></h4>
@@ -52,6 +56,7 @@ $canvasName = 'sb';
                     <?php $elementName = 'sb_st_support'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
             </div>
+			<?php $statusLabels = []; ?>
 
             <div class="row" id="financialsRow" style="margin-left: 0px; margin-right: 0px">
                 <div class="column" style="width:50%">
