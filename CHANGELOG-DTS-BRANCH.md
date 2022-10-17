@@ -27,7 +27,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.12
+Leantime DTS Branch 0.0.13
 
 
 ## Author
@@ -138,3 +138,6 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.12 - 2022-10-16
 - Add: *Risk Analysis* canvas added
+
+# 0.0.13 - 2022-10-17
+- Add: Make submenus open/close persistent

@@ -16,20 +16,32 @@ leantime.menuController = (function () {
 
     //Functions
 
-	var toggleMenu = function (id) {
+	var toggleSubmenu = function (submenuName) {
 		
-		var menuDisplay = jQuery('#menu-'+id).css('display');
-		console.log('#menu-'+id+'='+menuDisplay);
-		if(menuDisplay == 'none') {
-			jQuery('#menu-'+id).css('display', 'block');
-			jQuery('#menu-icon-'+id).removeClass('fa-angle-up');
-			jQuery('#menu-icon-'+id).addClass('fa-angle-down');
+		var submenuDisplay = jQuery('#submenu-'+submenuName).css('display');
+		var submenuStatee = '';
+		
+		if(submenuDisplay == 'none') {
+			jQuery('#submenu-'+submenuName).css('display', 'block');
+			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-up');
+			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-down');
+			submenuState = 'open';
 		}
 		else {
-			jQuery('#menu-'+id).css('display', 'none');
-			jQuery('#menu-icon-'+id).removeClass('fa-angle-down');
-			jQuery('#menu-icon-'+id).addClass('fa-angle-up');
+			jQuery('#submenu-'+submenuName).css('display', 'none');
+			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-down');
+			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-up');
+			submenuState = 'closed';
 		}
+
+        jQuery.ajax( { 
+            type : 'PATCH',
+            url  : leantime.appUrl+'/api/submenu',
+            data : {
+                submenu : submenuName,
+				state   : submenuState
+            }
+		} );
 	}
 	
     var _initProjectSelector = function () {
@@ -110,7 +122,7 @@ leantime.menuController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleClientList:toggleClientList,
-		toggleMenu:toggleMenu
+		toggleSubmenu:toggleSubmenu
     };
 
 })();

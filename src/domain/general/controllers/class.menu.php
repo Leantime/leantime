@@ -33,9 +33,9 @@ namespace leantime\domain\controllers {
             $tpl->assign('allAssignedProjects', $allAssignedprojects);
             $tpl->assign('allAvailableProjects', $allAvailableProjects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
-			$tpl->assign('menuStructure', $menuRepo->getMenu($menuType));
+			$tpl->assign('menuStructure', $menuRepo->getMenuStructure($menuType));
 
-            $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
+            // $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
 
             $tpl->displayPartial('general.menu');
 
