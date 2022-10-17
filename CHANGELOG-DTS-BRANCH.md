@@ -27,7 +27,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.13
+Leantime DTS Branch 0.0.14
 
 
 ## Author
@@ -141,3 +141,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.13 - 2022-10-17
 - Add: Make submenus open/close persistent
+
+# 0.0.14 - 2022-10-17
+- Update: Make create/edit/delete board menu option in `insights` consistent with `canvas` boards (but missing `clone`
+  and `print`)

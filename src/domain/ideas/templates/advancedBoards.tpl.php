@@ -55,12 +55,13 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                             <?php } ?>
                         </select><br/>
                             <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-                            <small><a href="javascript:void(0)"
-                                      class="addCanvasLink"><?php echo $this->__("links.create_idea_board"); ?></a></small> |
-                            <small><a href="javascript:void(0)"
-                                      class="editCanvasLink "><?php echo $this->__("links.edit_idea_board"); ?></a></small>
-                        <?php }
-                        } ?>
+                                <small><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create") ?></a></small> |
+                                <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></small> |
+                            <?php } ?>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small><a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></small>
+                            <?php } ?>
+                        <?php } ?>
                     </form>
 
                     </span>
@@ -193,12 +194,6 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                 </div>
             </div>
             <div class="clearfix"></div>
-
-            <?php if($login::userIsAtLeast($roles::$manager)) { ?>
-                <br/>
-                <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
-                   class="delete right"><?php echo $this->__("links.delete_board") ?></a>
-            <?php } ?>
 
         <?php } else { ?>
 
