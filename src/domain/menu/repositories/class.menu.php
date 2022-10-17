@@ -156,7 +156,9 @@ namespace leantime\domain\repositories {
                     // Patch link
                     if($element['module'] == 'tickets' && !isset($element['href'])) {
                         $ticketService = new services\tickets();
-                        $menuStructure[$key]['href'] = $ticketService->getLastTicketViewUrl();
+						$config = new core\config();
+								
+						$menuStructure[$key]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
 					}
 					break;
 
@@ -200,8 +202,9 @@ namespace leantime\domain\repositories {
                             // Patch link
                             if($subelement['module'] == 'tickets' && !isset($subelement['href'])) {
 								$ticketService = new services\tickets();
-
-								$menuStructure[$key]['submenu'][$subkey]['href'] = $ticketService->getLastTicketViewUrl();
+								$config = new core\config();
+								
+								$menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
                             }
 							break;
 							
