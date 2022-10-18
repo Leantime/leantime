@@ -510,13 +510,16 @@ namespace leantime\domain\pdf {
 				'fa-tree' => '&#xf1bb',
 				'fa-city' => '&#xf64f',
                 'fa-person-skating' => '&#xf7c5',
-                // PESTEL canvas
+                // Environmental analysis
                 'fa-landmark' => '&#xf66f',
                 'fa-chart-line' => '&#xf201',
                 'fa-people-arrows' => '&#xe068',
                 'fa-computer' => '&#xe4e5',
                 'fa-scale-balanced' => '&#xf24e',
                 'fa-cloud-sun' => '&#xf6c4',
+				'fa-tower-observation' => '&#xe586',
+				'fa-cloud-bolt' => '&#xf76c',
+				'fa-arrow-trend-up' => '&#xe098',
                 // Business model canvas
                 'fa-users' => '&#xf0c0',
                 'fa-barcode' => '&#xf02a',
@@ -548,6 +551,7 @@ namespace leantime\domain\pdf {
                 'fa-circle-question' => '&#xf059',
 				'fa-circle-exclamation' => '&#xf06a',
                 'fa-circle-xmark' => '&#xf057',
+                'fa-circle-h' => '&#xf47e',
                 'fa-circle-check' => '&#xf058',
                 default => ''
             };
@@ -592,7 +596,7 @@ namespace leantime\domain\pdf {
 				   ($filterRelates == 'all' || (!empty($relatesLabels) && $filterRelates == $record['relates']))) {
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
-                        (!empty($statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
+                        (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
                 }
             }
             $html .= '</tbody></table>';

@@ -47,6 +47,17 @@ namespace leantime\domain\repositories {
 		];
 		
 		/**
+		 * dataLabels - Data labels (may be extended)
+         *
+         * @acces protected
+         * @var   array
+		 */
+		protected array $dataLabels = [ 1 => [ 'title' => 'label.em.description', 'field' => 'conclusion',  'active' => true],
+										2 => [ 'title' => 'label.data',           'field' => 'data',        'active' => false],
+										3 => [ 'title' => 'label.conclusion',     'field' => 'assumptions', 'active' => false]
+                                        ];
+
+		/**
 		 * relatesLabels - Relates to label (same structure as `statusLabels`)
 		 *
          * @acces public

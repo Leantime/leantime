@@ -149,7 +149,7 @@ error_log("CALLED");
             !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
             
             // Configuration
-            $options = [ 'disclaimer' => $this->language->__('text.em.disclaimer') ];
+            $options = [ 'disclaimer' => $emCanvasRepo->getDisclaimer() ];
             
             // Generate PDF content
             $pdf = new \YetiForcePDF\Document();

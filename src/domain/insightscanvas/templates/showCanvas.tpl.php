@@ -17,7 +17,6 @@ $canvasName = 'insights';
             <div class="row canvas-row" id="firstRow">
 			    <?php foreach($canvasTypes as $key => $box) { ?>
                     <div class="column" style="width:20%">
-				        <h4 class="widgettitle title-primary center"><i class="fas <?=$box['icon'] ?>"></i> <?=$box['title'] ?></h4>
                         <?php $elementName = $key; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                     </div>
 				<?php } ?>

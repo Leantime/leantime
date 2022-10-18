@@ -16,22 +16,18 @@ $canvasName = 'risks';
 
             <div class="row canvas-row" id="firstRow">
                 <div class="column" style="width:50%">
-				    <h4 class="widgettitle title-primary center"><?=$canvasTypes['risks_imp_low_pro_high']['title'] ?></h4>
                     <?php $elementName = 'risks_imp_low_pro_high'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
                 <div class="column" style="width:50%">
-				    <h4 class="widgettitle title-primary center"><?=$canvasTypes['risks_imp_high_pro_high']['title'] ?></h4>
                     <?php $elementName = 'risks_imp_high_pro_high'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
             </div>
 
             <div class="row canvas-row" id="secondRow">
                 <div class="column" style="width:50%">
-				    <h4 class="widgettitle title-primary center"><?=$canvasTypes['risks_imp_low_pro_low']['title'] ?></h4>
                     <?php $elementName = 'risks_imp_low_pro_low'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
                 <div class="column" style="width:50%">
-				    <h4 class="widgettitle title-primary center"><?=$canvasTypes['risks_imp_high_pro_low']['title'] ?></h4>
                     <?php $elementName = 'risks_imp_high_pro_low'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
             </div>

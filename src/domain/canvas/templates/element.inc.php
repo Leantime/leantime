@@ -9,8 +9,12 @@
  * - $bgColor     Optional: Background color of canvas element
  */
 ?>
+<h4 class="widgettitle title-primary center">
+    <?php if(isset($canvasTypes[$elementName]['icon'])) echo '<i class="fas '.$canvasTypes[$elementName]['icon'].'"></i> ';
+    ?><?=$canvasTypes[$elementName]['title'] ?>
+</h4>
 <div class="contentInner even status_<?php echo $elementName; ?>"
-    <?=(isset($bgColor) && !empty($bgColor) ? 'style="background: '.$bgcolor.';"' : '') ?>>
+    <?=(isset($bgColor) && !empty($bgColor) ? 'style="background: '.$bgColor.';"' : '') ?>>
 	  
   <?php foreach($canvasItems as $row) {
 	  
@@ -65,10 +69,12 @@
                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
                         <?php foreach($statusLabels as $key => $data) { ?>
-                            <li class='dropdown-item'>
-                                <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
-							        data-value="<?=$row['id']."/".$key ?>" id="ticketStatusChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
-                            </li>
+                            <?php if($data['active'] || true) { ?>
+                                <li class='dropdown-item'>
+                                    <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
+							          data-value="<?=$row['id']."/".$key ?>" id="ticketStatusChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
+                                </li>
+                            <?php } ?>
                         <?php } ?>
                     </ul>
                 </div>
@@ -84,10 +90,12 @@
                     <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_relates")?></li>
                         <?php foreach($relatesLabels as $key => $data) { ?>
-                            <li class='dropdown-item'>
-                                <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
-							        data-value="<?=$row['id']."/".$key ?>" id="ticketRelatesChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
-                            </li>
+                            <?php if($data['active'] || true) { ?>
+                                <li class='dropdown-item'>
+                                    <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
+							          data-value="<?=$row['id']."/".$key ?>" id="ticketRelatesChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
+                                </li>
+                            <?php } ?>
                         <?php } ?>
                     </ul>
                 </div>
