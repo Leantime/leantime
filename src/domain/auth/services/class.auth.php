@@ -422,7 +422,8 @@ namespace leantime\domain\services {
                 //Do not overwrite admin or owner roles
             }elseif($_SESSION['userdata']['role'] == roles::$owner
                 || $_SESSION['userdata']['role'] == roles::$admin
-                || $_SESSION['userdata']['role'] == roles::$manager) {
+                || $_SESSION['userdata']['role'] == roles::$manager
+                || $_SESSION['userdata']['role'] == roles::$editor) {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
@@ -479,7 +480,8 @@ namespace leantime\domain\services {
             //Do not overwrite admin or owner roles
             }elseif($_SESSION['userdata']['role'] == roles::$owner
                 || $_SESSION['userdata']['role'] == roles::$admin
-            || $_SESSION['userdata']['role'] == roles::$manager) {
+                || $_SESSION['userdata']['role'] == roles::$manager
+                || $_SESSION['userdata']['role'] == roles::$editor) {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
