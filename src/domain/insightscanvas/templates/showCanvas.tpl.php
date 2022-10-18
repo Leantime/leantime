@@ -12,8 +12,9 @@ $canvasName = 'insights';
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
+          <div class="row-fluid"><div class="column" style="width: 100%; min-width: calc(5 * 250px);">
 
-            <div class="row" style="margin-left: 0px; margin-right: 0px" id="firstRow">
+            <div class="row canvas-row" id="firstRow">
 			    <?php foreach($canvasTypes as $key => $box) { ?>
                     <div class="column" style="width:20%">
 				        <h4 class="widgettitle title-primary center"><i class="fas <?=$box['icon'] ?>"></i> <?=$box['title'] ?></h4>
@@ -21,7 +22,7 @@ $canvasName = 'insights';
                     </div>
 				<?php } ?>
             </div>
-
+          </div></div>
         </div>
         <div class="clearfix"></div>
     <?php } ?>

@@ -12,6 +12,7 @@ $canvasName = 'NEW';
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
+          <div class="row-fluid"><div class="column" style="width: 100%; min-width: calc(XXX * 250px);">
 
             <div class="row" style="margin-left: 0px; margin-right: 0px">
                 <div class="column" style="width:100%">
@@ -20,6 +21,7 @@ $canvasName = 'NEW';
                 </div>
             </div>
 
+          </div></div>
         </div>
         <div class="clearfix"></div>
     <?php } ?>

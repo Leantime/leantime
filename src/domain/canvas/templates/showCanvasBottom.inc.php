@@ -29,6 +29,10 @@
         echo"</div>";
 
     }
+    if(!empty($disclaimer)) { ?>
+        <small class="align-center"><?=$disclaimer ?></small>
+	<?php
+	}
     require(ROOT.'/../src/domain/canvas/templates/modals.inc.php');
     ?>
     </div>

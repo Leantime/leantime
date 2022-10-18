@@ -471,6 +471,23 @@ namespace leantime\domain\pdf {
 				'fa-people-line' => '&#xe534',
 				'fa-book' => '&#xf02d',
 				'fa-file-signature' => '&#xf573',
+				// SWOT Analysis
+				'fa-dumbbell' => '&#xf44b',
+				'fa-fire' => '&#xf06d',
+                'fa-clover' => '&#xe139',
+                'fa-bolt-lightning' => '&#xe0b7',
+				// Empathy Map
+				'fa-1' => '&#x0031',
+				'fa-2' => '&#x0032',
+				'fa-3' => '&#x0033',
+				'fa-4' => '&#x0034',
+				'fa-5' => '&#x0035',
+				'fa-6' => '&#x0036',
+				'fa-7' => '&#x0037',
+				'fa-face-frown' => '&#xf119',
+				'fa-face-smile' => '&#xf118',
+				'fa-face-rolling-eyes' => '&#xf5a5',
+				'fa-bullseye' => '&#xf140',
                 // Strategy Brief
                 'fa-list-check' => '&#xf0ae',
                 'fa-heading' => '&#xf1dc',
@@ -571,11 +588,11 @@ namespace leantime\domain\pdf {
             foreach($recordsAry as $record) {
 				$filterStatus = $this->filter['status'] ?? 'all';
 				$filterRelates = $this->filter['relates'] ?? 'all';
-                if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
-				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+                if($record['box'] === $box && ($filterStatus == 'all' || (!empty($statusLabels) && $filterStatus == $record['status'])) && 
+				   ($filterRelates == 'all' || (!empty($relatesLabels) && $filterRelates == $record['relates']))) {
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
-                        $this->htmlCanvasStatus($record['status']).'</td></tr>';
+                        (!empty($statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
                 }
             }
             $html .= '</tbody></table>';

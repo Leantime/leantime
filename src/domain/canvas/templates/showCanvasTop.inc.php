@@ -12,12 +12,18 @@ $canvasTypes = $this->get('canvasTypes');
 $statusLabels = $statusLabels ?? $this->get('statusLabels');
 $relatesLabels = $relatesLabels ?? $this->get('relatesLabels');
 $dataLabels = $this->get('dataLabels');
+$disclaimer = $this->get('disclaimer');
 $canvasItems = $this->get('canvasItems');
 
 $filter['status'] = $_GET['filter_status'] ?? ($_SESSION['filter_status'] ?? 'all'); $_SESSION['filter_status'] = $filter['status'];
 $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 'all'); $_SESSION['filter_relates'] = $filter['relates'];
 
 ?>
+<style>
+  .canvas-row { margin-left: 0px; margin-right: 0px;}
+  .canvas-title-only { border-radius: var(--box-radius-small); }
+</style>
+
  <div class="pageheader">
     <div class="pageicon"><span class='fa <?=$canvasIcon ?>'></span></div>
     <div class="pagetitle">

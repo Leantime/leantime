@@ -6,9 +6,11 @@
  * - $canvasName  Name of current canvas
  * - $elementName Name of the current element
  * - $filter      Array on which to filter
+ * - $bgColor     Optional: Background color of canvas element
  */
 ?>
-<div class="contentInner even status_<?php echo $elementName; ?>">
+<div class="contentInner even status_<?php echo $elementName; ?>"
+    <?=(isset($bgColor) && !empty($bgColor) ? 'style="background: '.$bgcolor.';"' : '') ?>>
 	  
   <?php foreach($canvasItems as $row) {
 	  

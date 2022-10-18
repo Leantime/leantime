@@ -14,15 +14,23 @@ namespace leantime\domain\repositories {
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = '??';
-
+		
 		/***
 		 * icon - Icon associated with canvas (must be extended)
 		 *
 		 * @access protected
 		 * @var    string Fontawesome icone
 		 */
-		 protected string $icon = 'fa-x';
-
+		protected string $icon = 'fa-x';
+		
+		/***
+		 * disclaimer - Disclaimer (may be extended)
+		 *
+		 * @access protected
+		 * @var    string Disclaimer (including href)
+		 */
+		protected string $disclaimer = '';
+		
         /**
          * canvasTypes - Canvas elements / boxes (must be extended)
          *
@@ -114,6 +122,20 @@ namespace leantime\domain\repositories {
 		{
 			
 			return $this->icon;
+			
+		}
+		
+		/**
+		 * getDisclaimer() - Retrieve disclaimer
+		 *
+		 * @access public
+		 * @return string Canvas disclaimer
+		 */
+		public function getDisclaimer(): string
+		{
+			
+			if(empty($this->disclaimer)) return '';
+            return $this->language->__($this->disclaimer);
 			
 		}
 		

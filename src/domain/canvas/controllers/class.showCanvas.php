@@ -152,6 +152,7 @@ namespace leantime\domain\controllers\canvas {
             $tpl->assign('statusLabels', $canvasRepo->getStatusLabels());
             $tpl->assign('relatesLabels', $canvasRepo->getRelatesLabels());
             $tpl->assign('dataLabels', $canvasRepo->getDataLabels());
+            $tpl->assign('disclaimer', $canvasRepo->getDisclaimer());
             $tpl->assign('allCanvas', $allCanvas);
             $tpl->assign('canvasItems', $canvasRepo->getCanvasItemsById($currentCanvasId));
             $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
