@@ -484,13 +484,18 @@
    jQuery(document).ready(function() {
 
 
+
        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
+
            leantime.dashboardController.prepareHiddenDueDate();
            leantime.ticketsController.initEffortDropdown();
            leantime.ticketsController.initMilestoneDropdown();
            leantime.ticketsController.initStatusDropdown();
            leantime.ticketsController.initDueDateTimePickers();
+
        <?php }else{ ?>
+
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
