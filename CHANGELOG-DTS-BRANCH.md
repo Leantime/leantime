@@ -150,4 +150,5 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.15 2022-10-18
 - Add: *Environmental Analysis* canvas
+- Add: *Lightweight Business Model* canvas
 - Update: Monor improvements of genric `domain/canvas`
