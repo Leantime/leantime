@@ -476,7 +476,7 @@ namespace leantime\domain\services {
                 $roleToCheck = $_SESSION['userdata']['role'];
 
             //If projectRole is not defined or if it is set to inherited
-            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
