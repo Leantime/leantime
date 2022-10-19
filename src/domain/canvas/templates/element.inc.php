@@ -6,7 +6,6 @@
  * - $canvasName  Name of current canvas
  * - $elementName Name of the current element
  * - $filter      Array on which to filter
- * - $bgColor     Optional: Background color of canvas element
  */
 ?>
 <h4 class="widgettitle title-primary center">
@@ -14,7 +13,7 @@
     ?><?=$canvasTypes[$elementName]['title'] ?>
 </h4>
 <div class="contentInner even status_<?php echo $elementName; ?>"
-    <?=(isset($bgColor) && !empty($bgColor) ? 'style="background: '.$bgColor.';"' : '') ?>>
+    <?=(isset($canvasTypes[$elementName]['color']) ? 'style="background: '.$canvasTypes[$elementName]['color'].';"' : '') ?>>
 	  
   <?php foreach($canvasItems as $row) {
 	  

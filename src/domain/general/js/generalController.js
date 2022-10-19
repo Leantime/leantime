@@ -314,8 +314,8 @@ leantime.generalController = (function () {
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
-		jQuery("container").find("statusDropdown").removeClass();
-		jQuery("container").find("relatesDropdown").removeClass();
+		jQuery(container).find(".statusDropdown i").removeClass();
+		jQuery(container).find(".relatesDropdown i").removeClass();
     };
 
     var enableCommenterForms = function () {

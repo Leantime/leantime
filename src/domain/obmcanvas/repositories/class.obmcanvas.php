@@ -1,0 +1,58 @@
+<?php
+/**
+ * Repository
+ */
+namespace leantime\domain\repositories {
+
+    class obmcanvas extends \leantime\domain\repositories\canvas
+    {
+        
+        /**
+         * Constant that must be redefined
+         */
+        protected const CANVAS_NAME = 'obm';
+
+		/***
+		 * icon - Icon associated with canvas (must be extended)
+		 *
+		 * @access public
+		 * @var    string Fontawesome icone
+		 */
+		protected string $icon = 'fa-building';
+        
+		/***
+		 * disclaimer - Disclaimer
+		 *
+		 * @access protected
+		 * @var    string Disclaimer (including href)
+		 */
+		protected string $disclaimer = 'text.obm.disclaimer';
+
+        /**
+         * canvasTypes - Must be extended
+         *
+         * @acces protected
+         * @var   array
+         */
+        protected array $canvasTypes = [
+			'obm_cs' => [ 'icon' => 'fa-person',              'title' => 'box.obm.cs' ], 
+			'obm_cr' => [ 'icon' => 'fa-heart',               'title' => 'box.obm.cr' ], 
+			'obm_ch' => [ 'icon' => 'fa-truck',               'title' => 'box.obm.ch' ], 
+			'obm_vp' => [ 'icon' => 'fa-gift',                'title' => 'box.obm.vp' ], 
+			'obm_ka' => [ 'icon' => 'fa-person-digging',      'title' => 'box.obm.ka' ], 
+			'obm_kr' => [ 'icon' => 'fa-hammer',              'title' => 'box.obm.kr' ], 
+			'obm_kp' => [ 'icon' => 'fa-ring',                'title' => 'box.obm.kp' ], 
+			'obm_fr' => [ 'icon' => 'fa-cash-register',       'title' => 'box.obm.fr' ], 
+			'obm_fc' => [ 'icon' => 'fa-file-invoice-dollar', 'title' => 'box.obm.fc' ], 
+		];
+		
+		/**
+		 * relatesLabels - Relates to label
+		 *
+         * @acces public
+         * @var   array
+		 */
+		protected array $relatesLabels = [ ];
+
+	}
+}

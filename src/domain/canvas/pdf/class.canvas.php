@@ -465,94 +465,93 @@ namespace leantime\domain\pdf {
         {
             
             $iconCode = match($icon) {
-				// Observe / Learn - Insights
-                'fa-tower-observation' => '&#xe586',
-				'fa-people-arrows' => '&#xe068',
-				'fa-people-line' => '&#xe534',
-				'fa-book' => '&#xf02d',
-				'fa-file-signature' => '&#xf573',
-				// SWOT Analysis
-				'fa-dumbbell' => '&#xf44b',
-				'fa-fire' => '&#xf06d',
-                'fa-clover' => '&#xe139',
-                'fa-bolt-lightning' => '&#xe0b7',
-				// Empathy Map
-				'fa-1' => '&#x0031',
-				'fa-2' => '&#x0032',
-				'fa-3' => '&#x0033',
-				'fa-4' => '&#x0034',
-				'fa-5' => '&#x0035',
-				'fa-6' => '&#x0036',
-				'fa-7' => '&#x0037',
-				'fa-face-frown' => '&#xf119',
-				'fa-face-smile' => '&#xf118',
-				'fa-face-rolling-eyes' => '&#xf5a5',
-				'fa-bullseye' => '&#xf140',
-                // Strategy Brief
-                'fa-list-check' => '&#xf0ae',
-                'fa-heading' => '&#xf1dc',
-                'fa-industry' => '&#xf275',
-                'fa-file-lines' => '&#xf15c',
-                'fa-people-group' => '&#xe533',
-                'fa-sitemap' => '&#xf0e8',
-                'fa-chalkboard-user' => '&#xf51c',
-                'fa-person-digging' => '&#xf85e',
-                'fa-money-bills' => '&#xe1f3',
-                'fa-business-time' => '&#xf64a',
-				'fa-masks-theater' => '&#xf630',
-				'fa-book-skull' => '&#xf6b7',
-				'fa-ruler-combined' => '&#xf546',
-                'fa-person-falling' => '&#xe546',
-				'fa-person-circle-question' => '&#xe542',
-				'fa-person-circle-check' => '&#xe55c',
-				'fa-person-circle-xmark' => '&#xe543',
-				// Risk analysis
-				'fa-tree' => '&#xf1bb',
-				'fa-city' => '&#xf64f',
-                'fa-person-skating' => '&#xf7c5',
-                // Environmental analysis
-                'fa-landmark' => '&#xf66f',
-                'fa-chart-line' => '&#xf201',
-                'fa-people-arrows' => '&#xe068',
-                'fa-computer' => '&#xe4e5',
-                'fa-scale-balanced' => '&#xf24e',
-                'fa-cloud-sun' => '&#xf6c4',
-				'fa-tower-observation' => '&#xe586',
-				'fa-cloud-bolt' => '&#xf76c',
-				'fa-arrow-trend-up' => '&#xe098',
-                // Business model canvas
-                'fa-users' => '&#xf0c0',
+                'fa-1' => '&#x0031',
+                'fa-2' => '&#x0032',
+                'fa-3' => '&#x0033',
+                'fa-4' => '&#x0034',
+                'fa-5' => '&#x0035',
+                'fa-6' => '&#x0036',
+                'fa-7' => '&#x0037',
+                'fa-apple-whole' => '&#xf5d1',
+                'fa-arrow-trend-up' => '&#xe098',
+				'fa-arrows-up-down' => '&#xf07d',
                 'fa-barcode' => '&#xf02a',
-                'fa-pen-ruler' => '&#xf5ae',
-                'fa-money-bill' => '&#xf0d6',
-                'fa-pen-to-square' => '&#xf044',
-                'fa-user-doctor' => '&#xf0f0',
-                'fa-heart' => '&#xf004',
-                'fa-truck' => '&#xf0d1',
-                'fa-money-bill-transfer' => '&#xe528',
+                'fa-bolt-lightning' => '&#xe0b7',
+                'fa-book' => '&#xf02d',
+                'fa-book-skull' => '&#xf6b7',
+                'fa-bullseye' => '&#xf140',
+                'fa-business-time' => '&#xf64a',
+                'fa-cash-register' => '&#xf788',
+				'fa-chalkboard-user' => '&#xf51c',
+                'fa-chart-line' => '&#xf201',
+                'fa-check' => '&#xf00c',
                 'fa-chess' => '&#xf439',
+                'fa-circle-check' => '&#xf058',
+                'fa-circle-exclamation' => '&#xf06a',
+                'fa-circle-h' => '&#xf47e',
+                'fa-circle-question' => '&#xf059',
+                'fa-circle-xmark' => '&#xf057',
+                'fa-city' => '&#xf64f',
+                'fa-clipboard-question', => '&#xe4e3',
+                'fa-cloud-bolt' => '&#xf76c',
+                'fa-cloud-sun' => '&#xf6c4',
+                'fa-clover' => '&#xe139',
+                'fa-computer' => '&#xe4e5',
+				'fa-cookie-bite' => '&#xf564',
+                'fa-dumbbell' => '&#xf44b',
+                'fa-envelope-open', => '&#xf2b6',
+                'fa-face-frown' => '&#xf119',
+                'fa-face-rolling-eyes' => '&#xf5a5',
+                'fa-face-smile' => '&#xf118',
+                'fa-file-invoice-dollar' => '&#xf571',
+				'fa-file-lines' => '&#xf15c',
+                'fa-file-signature' => '&#xf573',
+				'fa-fingerprint' => '&#xf577',
+                'fa-fire' => '&#xf06d',
+                'fa-gift' => '&#xf06b',
+				'fa-hammer' => '&#xf6e3',
                 'fa-hand-holding-dollar' => '&#xf4c0',
                 'fa-handshake' => '&#xf2b5',
-                'fa-apple-whole' => '&#xf5d1',
+                'fa-heading' => '&#xf1dc',
+                'fa-heart' => '&#xf004',
+				'fa-hand-holding-dollar' => '&#xf4c0',
                 'fa-industry' => '&#xf275',
-                'fa-person-digging' => '&#xf85e',
+                'fa-industry' => '&#xf275',
+                'fa-landmark' => '&#xf66f',
                 'fa-lightbulb' => '&#xf0eb',
-                'fa-sack-dollar' => '&#xf81d',
-                // Strategic Questions
-                'fa-clipboard-question', => '&#xe4e3',
-                // Strategic Message
-                'fa-envelope-open', => '&#xf2b6',
-                // Generic
-                'fa-tags' => '&#xf02c',
+                'fa-list-check' => '&#xf0ae',
+                'fa-masks-theater' => '&#xf630',
+                'fa-money-bill' => '&#xf0d6',
+                'fa-money-bill-transfer' => '&#xe528',
+                'fa-money-bills' => '&#xe1f3',
+                'fa-pen-ruler' => '&#xf5ae',
+                'fa-pen-to-square' => '&#xf044',
+                'fa-people-arrows' => '&#xe068',
+                'fa-people-group' => '&#xe533',
+                'fa-people-line' => '&#xe534',
+                'fa-person' => '&#xf183',
+                'fa-person-circle-check' => '&#xe55c',
+                'fa-person-circle-question' => '&#xe542',
+                'fa-person-circle-xmark' => '&#xe543',
+                'fa-person-digging' => '&#xf85e',
+                'fa-person-falling' => '&#xe546',
+                'fa-person-skating' => '&#xf7c5',
                 'fa-question' => '&#x003f',
-                'fa-xmark' => '&#xf00d',
-                'fa-check' => '&#xf00c',
+                'fa-ring' => '&#xf70b',
+                'fa-ruler-combined' => '&#xf546',
+                'fa-sack-dollar' => '&#xf81d',
+                'fa-scale-balanced' => '&#xf24e',
+                'fa-sitemap' => '&#xf0e8',
                 'fa-stop' => '&#xf04d',
-                'fa-circle-question' => '&#xf059',
-				'fa-circle-exclamation' => '&#xf06a',
-                'fa-circle-xmark' => '&#xf057',
-                'fa-circle-h' => '&#xf47e',
-                'fa-circle-check' => '&#xf058',
+				'fa-street-view' => '&#xf21d',
+                'fa-tags' => '&#xf02c',
+				'fa-thumbs-up' => '&#xf164',
+                'fa-tower-observation' => '&#xe586',
+                'fa-tree' => '&#xf1bb',
+                'fa-truck' => '&#xf0d1',
+                'fa-user-doctor' => '&#xf0f0',
+                'fa-users' => '&#xf0c0',
+                'fa-xmark' => '&#xf00d',
                 default => ''
             };
             $fontSize = ($fontSize === 0 ? $this->fontSize : $fontSize);
@@ -590,10 +589,10 @@ namespace leantime\domain\pdf {
             
             $html = '<table class="table" style="width: 100%"><tbody>';
             foreach($recordsAry as $record) {
-				$filterStatus = $this->filter['status'] ?? 'all';
-				$filterRelates = $this->filter['relates'] ?? 'all';
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
                 if($record['box'] === $box && ($filterStatus == 'all' || (!empty($statusLabels) && $filterStatus == $record['status'])) && 
-				   ($filterRelates == 'all' || (!empty($relatesLabels) && $filterRelates == $record['relates']))) {
+                   ($filterRelates == 'all' || (!empty($relatesLabels) && $filterRelates == $record['relates']))) {
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
                         (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
@@ -633,15 +632,15 @@ namespace leantime\domain\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
-				$filterStatus = $this->filter['status'] ?? 'all';
-				$filterRelates = $this->filter['relates'] ?? 'all';
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
                 if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
-				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+                   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
 
                     if(isset($record['description']) && !empty($record['description'])) {
                         $html .= '<div class="list-elt-box"><strong>'.$record['description'].'</strong></div>';
                     }
-					
+                    
                     if(isset($record['relates']) && !empty($record['relates'])) {
                         $relates = $this->htmlListRelates($record['relates']);
                         if(!empty($relates)) {
@@ -649,7 +648,7 @@ namespace leantime\domain\pdf {
                                 '<em>'.$relates.'</em></div>';
                         }
                     }
-					
+                    
                     if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
                         if(!empty($status)) {
@@ -657,19 +656,19 @@ namespace leantime\domain\pdf {
                                 '<em>'.$status.'</em></div>';
                         }
                     }
-					
+                    
                     if($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) && 
                         !empty($record[$this->dataLabels[1]['field']])) {
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[1]['title'].'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[1]['field']]).'</div>';
                     }
-							
+                            
                     if($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) && 
                         !empty($record[$this->dataLabels[2]['field']])) {
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[2]['title'].'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[2]['field']]).'</div>';
                     }
-							
+                            
                     if($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) && 
                         !empty($record[$this->dataLabels[3]['field']])) {
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[3]['title'].'</div>';
@@ -695,10 +694,10 @@ namespace leantime\domain\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
-				$filterStatus = $this->filter['status'] ?? 'all';
-				$filterRelates = $this->filter['relates'] ?? 'all';
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
                 if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
-				   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+                   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
 
                     $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
                     if(isset($record['description']) && !empty($record['description'])) {
@@ -707,17 +706,17 @@ namespace leantime\domain\pdf {
 
                     if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) && 
                         isset($record['description']) && !empty($record['description'])) {
-						$html .= ' - ';
-					}
+                        $html .= ' - ';
+                    }
 
                     if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
                         $html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
-					}
-					
+                    }
+                    
                     if((isset($record['status']) && !empty($record['status'])) ||
-					   (isset($record['relates']) && !empty($record['relates']))) {
-						$html .= ' (';
-					}
+                       (isset($record['relates']) && !empty($record['relates']))) {
+                        $html .= ' (';
+                    }
 
                     if(isset($record['status']) && !empty($record['status'])) {
                         $status = $this->htmlListStatus($record['status']);
@@ -725,11 +724,11 @@ namespace leantime\domain\pdf {
                             $html .= $this->language->__($status);
                         }
                     }
-					
+                    
                     if((isset($record['status']) && !empty($record['status'])) &&
-					   (isset($record['relates']) && !empty($record['relates']))) {
-						$html .= ', ';
-					}
+                       (isset($record['relates']) && !empty($record['relates']))) {
+                        $html .= ', ';
+                    }
 
                     if(isset($record['relates']) && !empty($record['relates'])) {
                         $relates = $this->htmlListRelates($record['relates']);
@@ -737,13 +736,13 @@ namespace leantime\domain\pdf {
                             $html .= $this->language->__($relates);
                         }
                     }
-					
+                    
                     if((isset($record['status']) && !empty($record['status'])) ||
-					   (isset($record['relates']) && !empty($record['relates']))) {
-						$html .= ')';
-					}
+                       (isset($record['relates']) && !empty($record['relates']))) {
+                        $html .= ')';
+                    }
                     $html .= '<hr class="hr-black"/>';
-					$html .= '</div>';
+                    $html .= '</div>';
                 }
             }
             return $html;

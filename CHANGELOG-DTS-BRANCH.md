@@ -27,7 +27,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.15
+Leantime DTS Branch 0.0.16
 
 
 ## Author
@@ -150,5 +150,11 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 # 0.0.15 2022-10-18
 - Add: *Environmental Analysis* canvas
-- Add: *Lightweight Business Model* canvas
-- Update: Monor improvements of genric `domain/canvas`
+- Add: *Lightweight Business Model* canvas from Design Thinking for Strategy
+- Update: Minor improvements of genric `domain/canvas`
+
+# 0.0.16 2022-10-19
+- Add: *Original Business Model* canvas from Osterwalder
+- Add: *Detailed Business Model* canvas from Design Thinking for Strategy
+- Add: *Competitive Positioning Canvas* from Design Thinking for Strategy
+- Update: Remove dropdown icon from status and relates if the user has read-only access

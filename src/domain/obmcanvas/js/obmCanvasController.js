@@ -1,21 +1,36 @@
-leantime.lbmCanvasController = (function () {
+leantime.obmCanvasController = (function () {
 
 	// To be set
-	var canvasName = 'lbm';
+	var canvasName = 'obm';
 
 	// To be implemented
     var setRowHeights = function () {
 
-		var nbRows = 2;
+		var nbRows = 3;
         var rowHeight = jQuery("html").height()- 320 - 20 * nbRows;
 		
-        var firstRowHeight = rowHeight * 0.666;
+        var firstRowHeight = rowHeight * 0.6666;
         jQuery("#firstRow div.contentInner").each(function(){
             if(jQuery(this).height() > firstRowHeight){
                 firstRowHeight = jQuery(this).height() + 25;
             }
         });
-        jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
+
+		var firstRowHeightTop = firstRowHeight * 0.5;
+        jQuery("#firstRowTop div.contentInner").each(function(){
+            if(jQuery(this).height() > firstRowHeightTop){
+                firstRowHeightTop = jQuery(this).height() + 25;
+            }
+        });
+		var firstRowHeightBottom = firstRowHeight * 0.5;
+        jQuery("#firstRowBottom div.contentInner").each(function(){
+            if(jQuery(this).height() > firstRowHeightBottom){
+                firstRowHeightBottom = jQuery(this).height() + 25;
+            }
+        });
+		if(firstRowHeightTop + firstRowHeightBottom+25 > firstRowHeight) {
+			firstRowHeight = firstRowHeightTop + firstRowHeightBottom + 50;
+		}
 
         var secondRowHeight = rowHeight * 0.333;
         jQuery("#secondRow div.contentInner").each(function(){
@@ -23,6 +38,10 @@ leantime.lbmCanvasController = (function () {
                 secondRowHeight = jQuery(this).height() + 25;
             }
         });
+
+        jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
+        jQuery("#firstRowTop div.contentInner").css("height", firstRowHeightTop);
+        jQuery("#firstRowBottom div.contentInner").css("height", firstRowHeightBottom);
         jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
 
     };

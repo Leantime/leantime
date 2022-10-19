@@ -1,15 +1,15 @@
-leantime.lbmCanvasController = (function () {
+leantime.cpCanvasController = (function () {
 
 	// To be set
-	var canvasName = 'lbm';
+	var canvasName = 'cp';
 
 	// To be implemented
     var setRowHeights = function () {
 
-		var nbRows = 2;
-        var rowHeight = jQuery("html").height()- 320 - 20 * nbRows;
+		var nbRows = 4;
+        var rowHeight = jQuery("html").height()- 320 - 20 * nbRows - 5 * 25;
 		
-        var firstRowHeight = rowHeight * 0.666;
+        var firstRowHeight = rowHeight / nbRows;
         jQuery("#firstRow div.contentInner").each(function(){
             if(jQuery(this).height() > firstRowHeight){
                 firstRowHeight = jQuery(this).height() + 25;
@@ -17,13 +17,29 @@ leantime.lbmCanvasController = (function () {
         });
         jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
 
-        var secondRowHeight = rowHeight * 0.333;
+        var secondRowHeight = rowHeight / nbRows;
         jQuery("#secondRow div.contentInner").each(function(){
             if(jQuery(this).height() > secondRowHeight){
                 secondRowHeight = jQuery(this).height() + 25;
             }
         });
         jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
+
+		var thirdRowHeight = rowHeight / nbRows;
+        jQuery("#thirdRow div.contentInner").each(function(){
+            if(jQuery(this).height() > thirdRowHeight){
+                thirdRowHeight = jQuery(this).height() + 25;
+            }
+        });
+        jQuery("#thirdRow .column .contentInner").css("height", thirdRowHeight);
+
+		var fourthRowHeight = rowHeight / nbRows;
+        jQuery("#fourthRow div.contentInner").each(function(){
+            if(jQuery(this).height() > fourthRowHeight){
+                fourthRowHeight = jQuery(this).height() + 25;
+            }
+        });
+        jQuery("#fourthRow .column .contentInner").css("height", fourthRowHeight);
 
     };
 

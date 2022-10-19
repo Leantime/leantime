@@ -22,6 +22,8 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
 <style>
   .canvas-row { margin-left: 0px; margin-right: 0px;}
   .canvas-title-only { border-radius: var(--box-radius-small); }
+  h4.canvas-element-title-empty { background: white !important; border-color: white !important; }
+  div.canvas-element-center-middle { text-align: center; }
 </style>
 
  <div class="pageheader">
