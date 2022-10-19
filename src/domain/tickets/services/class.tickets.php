@@ -47,9 +47,15 @@ namespace leantime\domain\services {
                 foreach($userProjects as $project) {
                     $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
                 }
+            }elseif(isset($_SESSION['currentProject'])){
+
+                $statusLabelsByProject[$_SESSION['currentProject']] = $this->ticketRepository->getStateLabels($_SESSION['currentProject']);
+
+            }else{
+
+                $statusLabelsByProject[-1]=$this->ticketRepository->getStateLabels();
+
             }
-
-
 
             return $statusLabelsByProject;
 
@@ -231,6 +237,7 @@ namespace leantime\domain\services {
             foreach($allTickets as $row){
 
                 if($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
+
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;

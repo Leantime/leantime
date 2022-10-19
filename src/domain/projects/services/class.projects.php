@@ -378,11 +378,13 @@ namespace leantime\domain\services {
             $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
             if(is_array($project)) {
+
                 if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
                     return $project[0]['projectRole'];
                 }else{
                     return "";
                 }
+
             }else{
                 return "";
             }
