@@ -5,7 +5,7 @@ labels: ["bug"]
 body:
 - type: markdown
   attributes: 
-   value: | Fill out this form to report bugs and help us improve Leantime!
+  value: | Fill out this form to report bugs and help us improve Leantime!
 - type: checkboxes
   id: new-bug
   attributes: 
