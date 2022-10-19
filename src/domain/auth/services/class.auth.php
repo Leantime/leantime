@@ -231,6 +231,7 @@ namespace leantime\domain\services {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
                         $user['phone'] = $ldapUser['phonenumber'];
+                        $user['user'] = $user['username'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
@@ -408,6 +409,8 @@ namespace leantime\domain\services {
 
         public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false) {
 
+
+
             //If statement split up for readability
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
             if ($forceGlobalRoleCheck == true){
@@ -415,7 +418,7 @@ namespace leantime\domain\services {
                 $roleToCheck = $_SESSION['userdata']['role'];
 
                 //If projectRole is not defined or if it is set to inherited
-            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
@@ -443,6 +446,7 @@ namespace leantime\domain\services {
             $currentUserKey = array_search($roleToCheck, roles::getRoles());
 
             if($testKey <= $currentUserKey){
+
                 return true;
             }else{
                 return false;
@@ -472,7 +476,7 @@ namespace leantime\domain\services {
                 $roleToCheck = $_SESSION['userdata']['role'];
 
             //If projectRole is not defined or if it is set to inherited
-            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
