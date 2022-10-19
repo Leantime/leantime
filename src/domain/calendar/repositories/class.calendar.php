@@ -78,7 +78,6 @@ namespace leantime\domain\repositories {
 				}elseif($ticketArray["later"]["tickets"]) {
 					$tickets = $ticketArray["later"]["tickets"];
 				}
-			}
             }else{
                 $tickets = array();
             }
