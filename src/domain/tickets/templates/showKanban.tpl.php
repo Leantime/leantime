@@ -291,6 +291,12 @@
                                                 <div class="kanbanCardContent" style="margin-bottom:20px;">
 
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+
+                                                    <div class="kanbanContent">
+                                                        <?php echo $this->escapeMinimal($row['description']); ?>
+                                                    </div>
+
+
                                                 </div>
                                                 <?php if($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
 

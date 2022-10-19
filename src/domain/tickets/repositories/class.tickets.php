@@ -312,6 +312,7 @@ namespace leantime\domain\repositories {
         {
 
 
+
             $query = "SELECT
 							zp_tickets.id,
 							zp_tickets.headline, 
@@ -506,6 +507,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
+
+
 
             return $values;
 
