@@ -231,6 +231,7 @@ namespace leantime\domain\services {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
                         $user['phone'] = $ldapUser['phonenumber'];
+                        $user['user'] = $user['username'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
