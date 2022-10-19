@@ -63,8 +63,7 @@
                 <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
                     <a class="dropdown-toggle f-left status label-<?=$statusLabels[$row['status']]['dropdown'] ?>" href="javascript:void(0);" role="button"
                       id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			          <span class="text"><?=$statusLabels[$row['status']]['title'] ?></span>
-                      &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+			          <span class="text"><?=$statusLabels[$row['status']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
@@ -84,8 +83,7 @@
                 <div class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
                     <a class="dropdown-toggle f-left relates label-<?=$relatesLabels[$row['relates']]['dropdown'] ?>" href="javascript:void(0);" role="button"
                         id="relatesDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			            <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span>
-                        &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+			            <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_relates")?></li>
