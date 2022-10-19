@@ -5,30 +5,30 @@ labels: ["bug"]
 body:
 - type: markdown
   attributes: 
-  value: | 
-     Fill out this form to report bugs and help us improve Leantime!
+  value: 
+     "Fill out this form to report bugs and help us improve Leantime!"
 - type: checkboxes
   id: new-bug
   attributes: 
     label: Is there an existing issue for this? 
-    description: Be sure to see if there are existing reports of this issue.
+    description: "Be sure to see if there are existing reports of this issue."
     options: I have searched the existing issues
 - type: textarea
   id: bug-description
   attributes:
     label: Description of the Bug
-    description: Tell us what you expected and then what happened instead
+    description: "Tell us what you expected and then what happened instead"
 - type: textarea
   id: steps-to-reproduce
   attributes:
     label: Steps to Reproduce
-    description: What steps could we take to reproduce the error?
+    description: "What steps could we take to reproduce the error?"
     placeholder: Please write the steps in a list form
 - type: dropdown
   id: versions
   attributes:
     label: Which version of the app are you using?
-    description: Tell us which version of Leantime are you currently using
+    description: "Tell us which version of Leantime are you currently using"
     options: 
     - 2.2.0
     - 2.2.1
