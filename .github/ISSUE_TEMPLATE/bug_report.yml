@@ -25,11 +25,11 @@ body:
     description: What steps could we take to reproduce the error?
     placeholder: Please write the steps in a list form
 - type: dropdown
-	id: versions
+  id: versions
   attributes:
-  label: Which version of the app are you using?
-  description: Tell us which version of Leantime are you currently using
-  options: 
+    label: Which version of the app are you using?
+    description: Tell us which version of Leantime are you currently using
+    options: 
   - 2.2.0
   - 2.2.1
   - 2.2.2
