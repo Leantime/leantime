@@ -14,10 +14,10 @@ body:
    description: Be sure to see if there are existing reports of this issue.
    options: I have searched the existing issues
 - type: textarea
-  id: bug-description
+   id: bug-description
   attributes:
-  label: Description of the Bug
-  description: Tell us what you expected and then what happened instead
+    label: Description of the Bug
+    description: Tell us what you expected and then what happened instead
   - type: textarea
     id: steps-to-reproduce
     attributes:
