@@ -35,6 +35,8 @@ namespace leantime\domain\controllers {
                     $_SESSION["usersettings.theme"] = "default";
                 }
 
+                setcookie('theme', $_SESSION["usersettings.theme"], time()+60*60*24*30, '/');
+
             }
 
             if (isset($_SESSION["companysettings.logoPath"]) === false) {

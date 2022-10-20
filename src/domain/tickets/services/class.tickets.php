@@ -338,6 +338,10 @@ namespace leantime\domain\services {
                 }
             }
 
+            if(isset($_SESSION['currentProject'])){
+                $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
+            }
+
             return $milestones;
 
         }
