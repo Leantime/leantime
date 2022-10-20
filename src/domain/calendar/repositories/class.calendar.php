@@ -70,8 +70,14 @@ namespace leantime\domain\repositories {
             $ticketService = new \leantime\domain\services\tickets();
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($id, "");
 
-            if(!empty($ticketArray) && isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
-                $tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
+            if(!empty($ticketArray)) {
+				if(isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
+					$tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
+				}elseif(isset($ticketArray["thisWeek"]["tickets"])){
+					$tickets = $ticketArray["thisWeek"]["tickets"];
+				}elseif($ticketArray["later"]["tickets"]) {
+					$tickets = $ticketArray["later"]["tickets"];
+				}
             }else{
                 $tickets = array();
             }
