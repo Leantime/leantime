@@ -22,6 +22,8 @@ New features included in this release:
 *  * Updated Dashboard for project updates and team overview 
 *  * iCal calendar export (Thank you @calawhkbu). 
 
+| ![alt text](public/images/Screenshots/DocsWiki.png "Document Manager")    |
+
 For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.8
 
 ## Features: ##
