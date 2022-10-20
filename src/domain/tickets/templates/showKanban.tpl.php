@@ -423,11 +423,11 @@
 
                                             <div class="col-md-12 border-top" style="white-space: nowrap;">
                                                 <?php if($row["commentCount"] > 0){?>
-                                                    <a href="/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
+                                                    <a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
                                                 <?php } ?>
 
                                                 <?php if($row["subtaskCount"] > 0){?>
-                                                    <a href="/tickets/showTicket/<?php echo $row["id"];?>#subtasks" class="ticketModal"> <span class="fa fa-code-branch"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
+                                                    <a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#subtasks" class="ticketModal"> <span class="fa fa-code-branch"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
                                                 <?php } ?>
                                                 <?php if($row['tags'] != ''){?>
                                                     <?php  $tagsArray = explode(",", $row['tags']); ?>
@@ -447,7 +447,7 @@
                                                 <?php } ?>
 
                                                 <?php
-                                                    /*<a href="/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="fa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;*/
+                                                    /*<a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="fa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;*/
                                                 ?>
 
 
