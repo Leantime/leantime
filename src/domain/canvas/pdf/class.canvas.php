@@ -42,11 +42,11 @@ namespace leantime\domain\pdf {
         // Internal variables
         protected core\config $config;
         protected core\language $language;
-		protected $canvasRepo;
-		protected array $canvasTypes;
-		protected array $statusLabels;
-		protected array $relatesLabels;
-		protected array $dataLabels;
+        protected $canvasRepo;
+        protected array $canvasTypes;
+        protected array $statusLabels;
+        protected array $relatesLabels;
+        protected array $dataLabels;
         protected array $params;
         protected int $fontSize;
         protected int $fontSizeLarge;
@@ -63,20 +63,20 @@ namespace leantime\domain\pdf {
             
             $this->config = new core\config();
             $this->language = new core\language();
-			$canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME."canvas";
-			$this->canvasRepo = new $canvasRepoName();
+            $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME."canvas";
+            $this->canvasRepo = new $canvasRepoName();
 
-			$this->canvasTypes = $this->canvasRepo->getCanvasTypes();
-			$this->statusLabels = $this->canvasRepo->getStatusLabels();
-			$this->relatesLabels = $this->canvasRepo->getRelatesLabels();
-			$this->dataLabels = $this->canvasRepo->getDataLabels();
+            $this->canvasTypes = $this->canvasRepo->getCanvasTypes();
+            $this->statusLabels = $this->canvasRepo->getStatusLabels();
+            $this->relatesLabels = $this->canvasRepo->getRelatesLabels();
+            $this->dataLabels = $this->canvasRepo->getDataLabels();
             
             // Set default parameters
             $this->params = [ 'disclaimer' => '', 'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
                               'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
                               'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
                               'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
-							  'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
+                              'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
                               ];
             
         }
@@ -93,7 +93,7 @@ namespace leantime\domain\pdf {
          * @return string HTML code
          */
         public function htmlReport(string $projectTitle, string $moduleTitle, array $recordsAry, array $filter = [],
-								   array $options = []): string
+                                   array $options = []): string
         {
             
             // Set options
@@ -141,7 +141,7 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvasStatus(string $status): string
         {
-			
+            
             return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
                 $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
 
@@ -170,7 +170,7 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvasRelates(string $relates): string
         {
-			
+            
             return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
                 $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
 
@@ -199,7 +199,7 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvas(array $recordsAry): string
         {
-			
+            
             return 'NOT IMPLEMENTED';
 
         }
@@ -227,12 +227,12 @@ namespace leantime\domain\pdf {
          */
         protected function htmlListCompact(array $recordsAry): string
         {
-			
-			$html = '';
-			foreach($this->canvasTypes as $key => $data) {
-				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
-				$html .= '<div>'.$this->htmlListElementsCompact($recordsAry, $key).'</div>';
-			}
+            
+            $html = '';
+            foreach($this->canvasTypes as $key => $data) {
+                $html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
+                $html .= '<div>'.$this->htmlListElementsCompact($recordsAry, $key).'</div>';
+            }
             return $html;
 
         }
@@ -247,11 +247,11 @@ namespace leantime\domain\pdf {
         protected function htmlListDetailed(array $recordsAry): string
         {
 
-			$html = '';
-			foreach($this->canvasTypes as $key => $data) {
-				$html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
-				$html .= '<div>'.$this->htmlListElementsDetailed($recordsAry, $key).'</div>';
-			}
+            $html = '';
+            foreach($this->canvasTypes as $key => $data) {
+                $html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
+                $html .= '<div>'.$this->htmlListElementsDetailed($recordsAry, $key).'</div>';
+            }
             return $html;
 
         }
@@ -294,9 +294,9 @@ namespace leantime\domain\pdf {
             // Load FontAwsome icon font
             \YetiForcePDF\Document::addFonts([
                 ['family' => 'FontAwesome', 'weight' => '400', 'style' => 'normal', 
-				 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-regular-400.ttf'],
+                 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-regular-400.ttf'],
                 ['family' => 'FontAwesome', 'weight' => '900', 'style' => 'normal', 
-				 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-solid-900.ttf']
+                 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-solid-900.ttf']
             ]);
 
             // Start document
@@ -473,8 +473,9 @@ namespace leantime\domain\pdf {
                 'fa-6' => '&#x0036',
                 'fa-7' => '&#x0037',
                 'fa-apple-whole' => '&#xf5d1',
+                'fa-arrow-down-up-across-line' => '&#xe4af',
                 'fa-arrow-trend-up' => '&#xe098',
-				'fa-arrows-up-down' => '&#xf07d',
+                'fa-arrows-up-down' => '&#xf07d',
                 'fa-barcode' => '&#xf02a',
                 'fa-bolt-lightning' => '&#xe0b7',
                 'fa-book' => '&#xf02d',
@@ -482,13 +483,16 @@ namespace leantime\domain\pdf {
                 'fa-bullseye' => '&#xf140',
                 'fa-business-time' => '&#xf64a',
                 'fa-cash-register' => '&#xf788',
-				'fa-chalkboard-user' => '&#xf51c',
+                'fa-chalkboard-user' => '&#xf51c',
+                'fa-chart-column' => '&#xe0e3',
                 'fa-chart-line' => '&#xf201',
+                'fa-chart-pie' => '&#xf200',
                 'fa-check' => '&#xf00c',
                 'fa-chess' => '&#xf439',
                 'fa-circle-check' => '&#xf058',
                 'fa-circle-exclamation' => '&#xf06a',
                 'fa-circle-h' => '&#xf47e',
+                'fa-circle-plus' => '&#xf055',
                 'fa-circle-question' => '&#xf059',
                 'fa-circle-xmark' => '&#xf057',
                 'fa-city' => '&#xf64f',
@@ -497,29 +501,30 @@ namespace leantime\domain\pdf {
                 'fa-cloud-sun' => '&#xf6c4',
                 'fa-clover' => '&#xe139',
                 'fa-computer' => '&#xe4e5',
-				'fa-cookie-bite' => '&#xf564',
+                'fa-cookie-bite' => '&#xf564',
                 'fa-dumbbell' => '&#xf44b',
                 'fa-envelope-open', => '&#xf2b6',
                 'fa-face-frown' => '&#xf119',
                 'fa-face-rolling-eyes' => '&#xf5a5',
                 'fa-face-smile' => '&#xf118',
+				'fa-file-circle-plus' => '&#x494',
                 'fa-file-invoice-dollar' => '&#xf571',
-				'fa-file-lines' => '&#xf15c',
+                'fa-file-lines' => '&#xf15c',
                 'fa-file-signature' => '&#xf573',
-				'fa-fingerprint' => '&#xf577',
+                'fa-fingerprint' => '&#xf577',
                 'fa-fire' => '&#xf06d',
                 'fa-gift' => '&#xf06b',
-				'fa-hammer' => '&#xf6e3',
+                'fa-hammer' => '&#xf6e3',
                 'fa-hand-holding-dollar' => '&#xf4c0',
                 'fa-handshake' => '&#xf2b5',
                 'fa-heading' => '&#xf1dc',
                 'fa-heart' => '&#xf004',
-				'fa-hand-holding-dollar' => '&#xf4c0',
                 'fa-industry' => '&#xf275',
-                'fa-industry' => '&#xf275',
+                'fa-key' => '&#xf084',
                 'fa-landmark' => '&#xf66f',
                 'fa-lightbulb' => '&#xf0eb',
                 'fa-list-check' => '&#xf0ae',
+                'fa-lock' => '&#xf023',
                 'fa-masks-theater' => '&#xf630',
                 'fa-money-bill' => '&#xf0d6',
                 'fa-money-bill-transfer' => '&#xe528',
@@ -539,18 +544,23 @@ namespace leantime\domain\pdf {
                 'fa-question' => '&#x003f',
                 'fa-ring' => '&#xf70b',
                 'fa-ruler-combined' => '&#xf546',
+                'fa-run' => '&#xf70c',
+                'fa-sack-dollar' => '&#xf81d',
                 'fa-sack-dollar' => '&#xf81d',
                 'fa-scale-balanced' => '&#xf24e',
                 'fa-sitemap' => '&#xf0e8',
                 'fa-stop' => '&#xf04d',
-				'fa-street-view' => '&#xf21d',
+                'fa-street-view' => '&#xf21d',
                 'fa-tags' => '&#xf02c',
-				'fa-thumbs-up' => '&#xf164',
+                'fa-thumbs-up' => '&#xf164',
+                'fa-thumbs-down' => '&#xf165',
                 'fa-tower-observation' => '&#xe586',
                 'fa-tree' => '&#xf1bb',
                 'fa-truck' => '&#xf0d1',
                 'fa-user-doctor' => '&#xf0f0',
+				'fa-user-graduate' => '&#xf501',
                 'fa-users' => '&#xf0c0',
+                'fa-wand-magic-sparkles' => '&#xe2ca',
                 'fa-xmark' => '&#xf00d',
                 default => ''
             };

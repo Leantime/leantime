@@ -13,7 +13,7 @@ $canvasName = 'cp';
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
             <div class="row-fluid">
-                <div class="column" style="width: 100%; min-width: calc(4 * 250px);">
+                <div class="column" style="width: 100%; min-width: calc(7 * 250px);">
               
                     <div class="row canvas-row">
                         <div class="column" style="width: 16%">

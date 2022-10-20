@@ -1,40 +1,71 @@
 <?php
 /**
- * Porter's Five Strategy Questions - Repository
+ * Repository
  */
 namespace leantime\domain\repositories {
 
-    class sqcanvas extends \leantime\library\canvas\repository
+    class sqcanvas extends \leantime\domain\repositories\canvas
     {
-		
-	    /**
-		 * Constant that must be redefined
+        
+        /**
+         * Constant that must be redefined
+         */
+        protected const CANVAS_NAME = 'sq';
+
+		/***
+		 * icon - Icon associated with canvas (must be extended)
+		 *
+		 * @access public
+		 * @var    string Fontawesome icone
 		 */
-	    protected const CANVAS_NAME = 'sq';
+		protected string $icon = 'fa-chess';
+        
+        /**
+         * canvasTypes - Must be extended
+         *
+         * @acces protected
+         * @var   array
+         */
+        protected array $canvasTypes = [
+		    'sq_qa' => [ 'icon' => 'fa-1', 'title' => 'box.sq.qa' ], 
+		    'sq_qb' => [ 'icon' => 'fa-2', 'title' => 'box.sq.qb' ], 
+		    'sq_qc' => [ 'icon' => 'fa-3', 'title' => 'box.sq.qc' ], 
+		    'sq_qd' => [ 'icon' => 'fa-4', 'title' => 'box.sq.qd' ], 
+		    'sq_qe' => [ 'icon' => 'fa-5', 'title' => 'box.sq.qe' ],
+		];
 		
 		/**
-		 * canvasTypes - Must be extended
-		 *
-		 * @acces public
-		 * @var   array
+		 * dataLabels - Data labels (may be extended)
+         *
+         * @acces protected
+         * @var   array
 		 */
-        public $canvasTypes = [ "sq_a" => "box.sq.a",
-								 "sq_b" => "box.sq.b",
-								 "sq_c" => "box.sq.c",
-								 "sq_d" => "box.sq.d",
-								 "sq_e" => "box.sq.e"
-								];
+		protected array $dataLabels = [
+		    1 => [ 'title' => 'label.sq.description', 'field' => 'conclusion',  'active' => true],
+			2 => [ 'title' => 'label.data',           'field' => 'data',        'active' => false],
+			3 => [ 'title' => 'label.assumptions',    'field' => 'assumptions', 'active' => false]
+         ];
 		
+        /**
+         * statusLabels - Status labels (may be extended)
+         *
+         * @acces protected
+         * @var   array
+         */
+		protected array $statusLabels = [
+		    'status_draft'    => [ 'icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',    'dropdown' => 'info',    'active' => true ],
+			'status_review'   => [ 'icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review',   'dropdown' => 'warning', 'active' => true ],
+			'status_accepted' => [ 'icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.accepted', 'dropdown' => 'success', 'active' => true ],
+			'status_rejected' => [ 'icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.rejected', 'dropdown' => 'danger',  'active' => true ]
+										  ];
+
 		/**
-		 * statusLabels - Must be extended
+		 * relatesLabels - Relates to label (same structure as `statusLabels`)
 		 *
-		 * @acces public
-		 * @var   array
+         * @acces public
+         * @var   array
 		 */
-        public $statusLabels = [ "info" => "print.draft",
-								 "warning" => "print.review",
-								 "success" => "print.valid",
-								 "danger" => "print.invalid"
-								 ];
-    }
+		protected array $relatesLabels = [ ];
+
+	}
 }

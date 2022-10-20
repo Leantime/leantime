@@ -1,8 +1,7 @@
 <?php
 /**
- * Strategy Message - Comments
+ * Comments
  */
 $canvasName = 'sm';
-$canvasTemplate = '';
-require(ROOT.'/../src/library/canvas/tpl.canvasComment.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/canvasComment.inc.php');
 ?>

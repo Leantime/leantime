@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92be0803c0a565206e76f6efb5c63d6c",
+    "content-hash": "c7b01a10e6f412d6f8ea385796f23d92",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -382,23 +382,23 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "2.0.5",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "ade2b3bbfb776f27f0558e26eed43b5d9fe1b392"
+                "reference": "d9d313a36c872fd6ee06d9a6cbcf713eaa40f024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/ade2b3bbfb776f27f0558e26eed43b5d9fe1b392",
-                "reference": "ade2b3bbfb776f27f0558e26eed43b5d9fe1b392",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/d9d313a36c872fd6ee06d9a6cbcf713eaa40f024",
+                "reference": "d9d313a36c872fd6ee06d9a6cbcf713eaa40f024",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^9",
+                "doctrine/coding-standard": "^10",
                 "phpstan/phpstan": "^1.8",
                 "phpstan/phpstan-phpunit": "^1.1",
                 "phpstan/phpstan-strict-rules": "^1.3",
@@ -453,7 +453,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/inflector/issues",
-                "source": "https://github.com/doctrine/inflector/tree/2.0.5"
+                "source": "https://github.com/doctrine/inflector/tree/2.0.6"
             },
             "funding": [
                 {
@@ -469,7 +469,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-07T09:01:28+00:00"
+            "time": "2022-10-20T09:10:12+00:00"
         },
         {
             "name": "endroid/qr-code",
@@ -3587,6 +3587,61 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "deeplcom/deepl-php",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DeepLcom/deepl-php.git",
+                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DeepLcom/deepl-php/zipball/bb6ab74e3d90a543d7effd5ee2578d450a744c12",
+                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3",
+                "phpunit/phpunit": "^9",
+                "ramsey/uuid": "^4.2",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DeepL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "DeepL SE",
+                    "email": "open-source@deepl.com"
+                }
+            ],
+            "description": "Official DeepL API Client Library",
+            "keywords": [
+                "api",
+                "deepl",
+                "translation",
+                "translator"
+            ],
+            "support": {
+                "issues": "https://github.com/DeepLcom/deepl-php/issues",
+                "source": "https://github.com/DeepLcom/deepl-php/tree/v1.1.0"
+            },
+            "time": "2022-09-28T08:44:58+00:00"
+        },
         {
             "name": "phpstan/phpstan",
             "version": "1.5.4",

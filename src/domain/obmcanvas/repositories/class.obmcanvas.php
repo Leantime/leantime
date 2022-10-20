@@ -35,15 +35,15 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-			'obm_cs' => [ 'icon' => 'fa-person',              'title' => 'box.obm.cs' ], 
-			'obm_cr' => [ 'icon' => 'fa-heart',               'title' => 'box.obm.cr' ], 
-			'obm_ch' => [ 'icon' => 'fa-truck',               'title' => 'box.obm.ch' ], 
-			'obm_vp' => [ 'icon' => 'fa-gift',                'title' => 'box.obm.vp' ], 
-			'obm_ka' => [ 'icon' => 'fa-person-digging',      'title' => 'box.obm.ka' ], 
-			'obm_kr' => [ 'icon' => 'fa-hammer',              'title' => 'box.obm.kr' ], 
 			'obm_kp' => [ 'icon' => 'fa-ring',                'title' => 'box.obm.kp' ], 
-			'obm_fr' => [ 'icon' => 'fa-cash-register',       'title' => 'box.obm.fr' ], 
+			'obm_kr' => [ 'icon' => 'fa-hammer',              'title' => 'box.obm.kr' ], 
+			'obm_ka' => [ 'icon' => 'fa-person-digging',      'title' => 'box.obm.ka' ], 
+			'obm_vp' => [ 'icon' => 'fa-gift',                'title' => 'box.obm.vp' ], 
+			'obm_ch' => [ 'icon' => 'fa-truck',               'title' => 'box.obm.ch' ], 
+			'obm_cr' => [ 'icon' => 'fa-heart',               'title' => 'box.obm.cr' ], 
+			'obm_cs' => [ 'icon' => 'fa-person',              'title' => 'box.obm.cs' ], 
 			'obm_fc' => [ 'icon' => 'fa-file-invoice-dollar', 'title' => 'box.obm.fc' ], 
+			'obm_fr' => [ 'icon' => 'fa-cash-register',       'title' => 'box.obm.fr' ], 
 		];
 		
 		/**

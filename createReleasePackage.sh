@@ -21,6 +21,10 @@ composer install --no-dev --optimize-autoloader
 #Remove font for QR code generator (not needed if no label is used)
 rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
+#Remove DeepL.com and mltranslate engine (not needed in production)
+rm -f vendor/deeplcom
+rm -f resources/languages/mltranslate
+
 #Removing unneeded items for release
 rm -f -R .git
 rm -f -R .github

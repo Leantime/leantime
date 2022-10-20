@@ -481,9 +481,7 @@ namespace leantime\domain\services {
                     }
 
                     $_SESSION["currentSprint"] = "";
-                    $_SESSION['currentLeanCanvas'] = "";
                     $_SESSION['currentIdeaCanvas'] = "";
-                    $_SESSION['currentRetroCanvas'] = "";
                     $_SESSION['lastTicketView'] = "";
                     $_SESSION['lastFilterdTicketTableView'] = "";
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
@@ -503,6 +501,7 @@ namespace leantime\domain\services {
                     $_SESSION['currentSQCanvas'] = "";
                     $_SESSION['currentCPCanvas'] = "";
                     $_SESSION['currentSMCanvas'] = "";
+                    $_SESSION['currentRETROSCanvas'] = "";
 					
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
@@ -536,9 +535,7 @@ namespace leantime\domain\services {
             $_SESSION["currentProjectName"] = "";
 
             $_SESSION["currentSprint"] = "";
-            $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
-            $_SESSION['currentRetroCanvas'] = "";
 
 			$_SESSION['currentSWOTCanvas'] = "";
             $_SESSION['currentLEANCanvas'] = "";
@@ -553,6 +550,7 @@ namespace leantime\domain\services {
 			$_SESSION['currentSQCanvas'] = "";
 			$_SESSION['currentCPCanvas'] = "";
 			$_SESSION['currentSMCanvas'] = "";
+            $_SESSION['currentRETROSCanvas'] = "";
 			
             unset($_SESSION["projectsettings"]);
 
@@ -874,7 +872,7 @@ namespace leantime\domain\services {
             }
 
             //Retros
-            $retroRepo = new repositories\retrospectives();
+            $retroRepo = new repositories\retroscanvas();
             $canvasBoards = $retroRepo->getAllCanvas($projectId);
             foreach($canvasBoards as $canvas) {
 

@@ -1261,11 +1261,11 @@ namespace leantime\domain\repositories {
 					 "UPDATE zp_projects SET = menuType = '".repositories\menu::DEFAULT_MENU."' ".
 					 "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) DEFAULT null",
 					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_item.id ".
-					 "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+					 "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
 					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
-					 "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'success' AND zp_canvas.type = 'leancanvas'",
+					 "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
 					 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
-					 "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'"];
+					 "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'"];
 
             foreach ($sql as $statement) {
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * Strategy Message - Controller / Delete Canvas Item
+ * Controller / Delete Canvas Item
  */
 namespace leantime\domain\controllers {
 
-    class delCanvasItem extends \leantime\library\canvas\controllerDelCanvasItem
+    class delCanvasItem extends \leantime\domain\controllers\canvas\delCanvasItem
     {
 		
 	    protected const CANVAS_NAME = 'sm';

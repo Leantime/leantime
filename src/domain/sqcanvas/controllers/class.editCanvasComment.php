@@ -1,10 +1,10 @@
 <?php
 /**
- * Porter's Five Strategy Questions - Controller / Edit Comments
+ * Controller / Edit Comments
  */
 namespace leantime\domain\controllers {
 
-    class editCanvasComment extends \leantime\library\canvas\controllerEditCanvasComment
+    class editCanvasComment extends \leantime\domain\controllers\canvas\editCanvasComment
     {
 		
 	    protected const CANVAS_NAME = 'sq';

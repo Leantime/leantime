@@ -1,8 +1,7 @@
 <?php
 /**
- * Porter's Five Strategy Questions - Comments
+ * Comments
  */
 $canvasName = 'sq';
-$canvasTemplate = '';
-require(ROOT.'/../src/library/canvas/tpl.canvasComment.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/canvasComment.inc.php');
 ?>

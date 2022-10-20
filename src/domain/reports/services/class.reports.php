@@ -93,7 +93,7 @@ namespace leantime\domain\services {
             $this->clientRepository = new repositories\clients();
             $this->commentsRepository = new repositories\comments();
             $this->leancanvasRepo = new repositories\leancanvas();
-            $this->retroRepository = new repositories\retrospectives();
+            $this->retroRepository = new repositories\retroscanvas();
             $this->timesheetRepo = new repositories\timesheets();
             $this->config = new core\config();
 

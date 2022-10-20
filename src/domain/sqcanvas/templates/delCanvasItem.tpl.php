@@ -1,8 +1,7 @@
 <?php
 /**
- * Porter's Five Strategy Questions - Delete Item
+ * Delete Item
  */
 $canvasName = 'sq';
-$canvasTemplate = '';
-require(ROOT.'/../src/library/canvas/tpl.delCanvasItem.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/delCanvasItem.inc.php');
 ?>

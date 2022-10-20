@@ -1,8 +1,7 @@
 <?php
 /**
- * Strategy Message - Delete Canvas
+ * Delete Canvas
  */
 $canvasName = 'sm';
-$canvasTemplate = '';
-require(ROOT.'/../src/library/canvas/tpl.delCanvas.inc.php');
+require(ROOT.'/../src/domain/canvas/templates/delCanvas.inc.php');
 ?>

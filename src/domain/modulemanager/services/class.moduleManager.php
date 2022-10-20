@@ -31,7 +31,7 @@ namespace leantime\domain\services {
             "projects" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "read" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "reports" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
-            "retrospectives" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
+            "retroscanvas" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "setting" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "sprints" => array("required" => false, "enabled" => true, "dependsOn" => "tickets", "scope" => "project"),
             "tickets" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "project"),

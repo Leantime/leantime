@@ -114,6 +114,11 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </a>
+                                                 <?php } ?>
+																	 
+                                                       <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small> 
+                                                 <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                                        &nbsp;&nbsp;&nbsp;
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
                                                             <li><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>

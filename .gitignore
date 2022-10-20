@@ -105,3 +105,4 @@ composer.lock
 package-lock.json
 public/images/logo-dts.png
 .github/workflows/phpmd.yml
+resources/language/mltranslate/mltranslate-key.inc.php

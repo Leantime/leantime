@@ -8,26 +8,32 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 - New canvas:
   - *SWOT Analysis*
-  - *Empathy Map*
-  - *Strategy Brief* [done]
-  - *Risk Analysis* [done]
   - *Environment Analysis*
-  - *Lightweight Business Model*, *Osterwalter's Business Model*, and *Detailed Business Model*
+  - *Risk Analysis*
+  - *Empathy Map*
+  - *Observe / Learn - Insights*
+  - *Strategy Brief*
+  - *Lightweight Business Model*, *Osterwalder's Business Model*, and *Detailed Business Model*
   - *Porter's Strategy Questions*
   - *Competitive Positioning Canvas*
   - *Strategy Messaging*
-  - *Observe / Learn - Insights* [done]
-- Revised canvas: *Lean Canvas* (full version only)
+  - Note: Due to copyright restrictions, the *Value Proposition Canvas* cannot be included:
+    https://strategyzer.uservoice.com/knowledgebase/articles/506842-can-i-use-the-business-model-canvas-or-value-propo 
+- Revised canvas:
+  - *Lean Canvas* (full version only)
+  - *Retrospective* (called `retroscanvas`)
 - Generate PDF files from any canvas
-- Support for easily configurable muli-layer menu structure (support for project-specific menu structures can be enabled
+- Support for easily configurable multi-layer menu structure (support for project-specific menu structures can be enabled
   via configuration)
 - Refactored generic canvas code in `src/domain/canvas` allowing to create a new canvas by simply extending/including
   code
+- Engine to translate language string using AI/machine learning from https://www.deepl.com (registration needed, 500'000
+  characters per month are free)
 
 
 ## Version
 
-Leantime DTS Branch 0.0.16
+Leantime DTS Branch 0.0.17
 
 
 ## Author
@@ -42,44 +48,63 @@ Dr. Claude Diderich (diderich@yahoo.com)
 3. A well-defined and supported process is preferred over an overwhelming choice of options
 
 
-## Details of changes
+## Some details of changes
 
 ### New canvas implementation
 - Refactored canvas code into a generic library of extendable classes and includable templates. Generic code is in
   `src/domain/canvas` (with a template for a new canvas in `src/domain/canvas/NEWcanvas`)
 - Canvas details are defined in `domain/repository/XXcanvas`, rather than in templates (allowing specification to be
   used for screen layout and PDF generation)
-- Added optional second drop-down allowing to relate an element/box to a specific concept (e.g., relating a strength in
-  a SWOT analysis to the firms' Capabilities)
-- Added separate access to comments from element/box
+- Added optional second drop-down called `relates`allowing to relate an element/box to a specific concept (e.g.,
+  relating a strength in a SWOT analysis to the firms' Capabilities)
+- Added separate access to comments from element/box (without the full dialogue)
 - Added option to clone/copy existing canvas
 - Added selectors that allow to show sub-sets of elements/boxes in a canvas, based on drop-down values (e.g., only
   showing elements/boxes that have been validated)
-- Added icons to element/box titles and removed option to change titles by the user
-  
-### Generating PDF files from  canvas
+- Added icons and colour (both are optional) to elements and removed option to change titles by the user
+
+### Ideas Kanban
+The following changes have been applied to the *Ideas* Kanban to make the user experience similar to that of canvas:
+- Menu naming for creating new/editing idea Kanbans. Moving the delete menu next to create
+- Number of comments per element is shown in the same way as in canvas (but cannot be clicked to add/edit comments)
+
+### Generating PDF files from canvas
 - Added `yetiforce/yetiforcepdf` library in composer for rendering PDF files (available via *MIT License*)
-- Added print-ready `Roboto` and `RobotoCondensed` from (https://fonts.google.com/specimen/Roboto) (avaialable via
+- Added print-ready `Roboto` and `RobotoCondensed` from (https://fonts.google.com/specimen/Roboto) (available via
   *Apache2* license)
 - Added functionality to generate PDF reports from templates (visual canvas report containing summary information and
-  detailed list report). Reports can be easily customized via coding on a canvas level 
+  detailed list report)
 
 ### Menu structure
-- Menu structure has been separated from menu rending/layout. Menu structure is defined in `domain/repositories/menu`.
+- Menu structure has been separated from menu rending/layout. Menu structure is defined in `domain/repositories/menu`
 - Menu structure supports two layers, second layer can be shown/hidden by the user
-- Support for project specific menu structures added. It can be enabled through configuration (`$config->enablerMenuType`)
+- Support for project specific menu structures added. It can be enabled through configuration (`$config->enableMenuType`)
+
+### Translation
+- Added script in `resources/language/mltranslate` to translate messages using DeepL.com AI algorithm
+- DeeplL is preferred over Google Translate because of the translation quality
+- Use requires a (free) API key.
+- Only not yet translated text strings are translated 
 
 ### System related changes
 - Added `Makefile` to minify/compile `js` and `css` files on a need to do basis
+- Added this file `CHANGELOG-DTS-BRANCH.md`
+- Adjusted `createReleasePackage.sh` to remove AI translation engine
   
 
 ## Open issues
-- Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists is limited
-- Complex tables may render poorly due to *YetiForcePDF* incorrecly handing some table borders
-- If an image cannot be accessed during PDF report generating, the resulting PDF report is compromised
-- New language tags have not been translated and are only available in *en-US*
+- Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists in PDF is limited
+- Complex tables may render poorly due to *YetiForcePDF* incorrectly handing some table borders and line breaks in nested tables
+- If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised
 - Improve `Makefile` to support re-generating only those `js` and `css` files where the source has changed (currently
   all-or-nothing approach implemented)
+- If the menu structure is larger than the browser's height, some menu items will not be displayed (and thus not
+  accessible) #1061
+- Print and clone functionality are not available for `ideas` Kanban
+- Filtering on status is not available for `ideas` Kanban
+- Documentation of step-by-step how to create a new canvas and add it to the system missing
+- New language tags have been generated for most languages, but need validation before being installed (they can be
+  found in `resources/language/mltranslate`)
 
 
 ## Change log
@@ -158,3 +183,14 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - Add: *Detailed Business Model* canvas from Design Thinking for Strategy
 - Add: *Competitive Positioning Canvas* from Design Thinking for Strategy
 - Update: Remove dropdown icon from status and relates if the user has read-only access
+
+# 0.0.17 2022-10-20
+- Add: Added new composer module `deeplcom/deepl-php` to translate messages (removed from production version)
+- Add: New script `resources/languages/mlstranslate/mltranslate.php` which uses machine learning from DeepL.com to
+  tanslate messages
+- Update: *Lean Canvas* and added data migration
+- Add: *Porter's Strategy Questions* canvas from Design Thinking for Strategy
+- Add: *Strategy Message* canvas from Design Thinking for Strategy
+- Add: *Value Proposition Canvas* from Osterwalder
+- Update: Show number of comments consistent with canvas in ideas Kanban
+- Update: Re-implemented *Retrospectives* and added data migration under new name `retrocanvas`

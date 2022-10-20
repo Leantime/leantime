@@ -41,7 +41,7 @@ namespace leantime\domain\repositories {
                                        70 => [ 'type' => 'item', 'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
                            71 => [ 'type' => 'header', 'title' => 'menu.default.tools' ],
                            72 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                           73 => [ 'type' => 'item', 'module' => 'retrospectives','title' => 'menu.retrospectives', 'href' => '/retrospectives/showBoards', 'active' => [ 'showBoards' ] ],
+                           73 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
                            74 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
             'dts' => [  11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                         21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
@@ -67,7 +67,7 @@ namespace leantime\domain\repositories {
                        80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open', 
                                'submenu' => [
                                81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                               82 => [ 'type' => 'item', 'module' => 'retrospectives','title' => 'menu.retrospectives', 'href' => '/retrospectives/showBoards', 'active' => [ 'showBoards' ] ],
+                               82 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
                                83 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ] ] ],
             'lean' => [  11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',  'active' => [ 'show' ] ],
                          12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                    'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
@@ -76,7 +76,7 @@ namespace leantime\domain\repositories {
                          14 => [ 'type' => 'item', 'module' => 'ideas',     'title' => 'menu.ideas',    'href' => '/ideas/showBoards' ],
                          15 => [ 'type' => 'item', 'module' => 'leancanvas','title' => 'menu.research', 'href' => '/leancanvas/showCanvas' ],
                          16 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                         17 => [ 'type' => 'item', 'module' => 'retrospectives','title' => 'menu.retrospectives', 'href' => '/retrospectives/showBoards', 'active' => [ 'showBoards' ] ],
+                         17 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
                          18 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ]
         ];
 

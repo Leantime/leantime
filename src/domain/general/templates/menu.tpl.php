@@ -64,7 +64,7 @@
         </li>
     <li class="dropdown">
 		<?php $currentProjectType = $this->get('currentProjectType'); ?>
-        <ul style='display:block'>
+		<ul style='display:block;'>
 			<?php foreach($menuStructure as $key => $menuItem) { ?>
 				<?php if($menuItem['type'] == 'header') { ?>
                     <li><a href="javascript:void(0);"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
@@ -90,13 +90,14 @@
 					</ul>
 				<?php } ?>
 			<?php } ?>
-            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-            <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px;">
-                <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
-            </li>
-            <?php } ?>
-
         </ul>
+        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            <ul style='display:block'>
+                <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px; background: white">
+                    <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
+                </li>
+            </ul>
+       <?php } ?>
     </li>
     <?php } ?>
 </ul>

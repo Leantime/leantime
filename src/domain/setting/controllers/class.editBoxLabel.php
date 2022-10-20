@@ -35,7 +35,7 @@ namespace leantime\domain\controllers {
             $this->ticketsRepo = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->canvasRepo = new repositories\leancanvas();
-            $this->retroRepo = new repositories\retrospectives();
+            $this->retroRepo = new repositories\retroscanvas();
             $this->ideaRepo = new repositories\ideas();
             $this->language = new core\language();
 
