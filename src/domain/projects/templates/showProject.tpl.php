@@ -53,8 +53,7 @@
                     <div class="span12">
 
                          <div class="form-group">
-                             <br />
-                            <?php echo $this->__('text.choose_access_for_users'); ?><br />
+                             <br /><?=$this->__('text.choose_access_for_users'); ?><br />
                              <br />
 
                             <div class="row">
