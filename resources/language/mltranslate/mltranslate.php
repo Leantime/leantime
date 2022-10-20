@@ -49,10 +49,9 @@ if(file_exists($tra_file)) {
 		isset($match[1]) ? $key = trim($match[1]) : die("Error: Cannot find text key in line '$line'\n");
 		if(!$match[2]) die("Error: Cannot find text in line '$line'\n");
 		preg_match('/"(.*?)"/', $match[2], $submatch);
-		echo print_r($submatch,true);
-		isset($submatch[1]) ? $tra_text = trim($submatch[1]) : die("Error: Cannot find text in line '$line'\n");
-
-		$tra_text_ary[$key] = $tra_text;
+		if(isset($submatch[1])) {
+			$tra_text_ary[$key] = trim($submatch[1]);
+		}
 	}
 
 	fclose($tra_stream);
@@ -85,24 +84,26 @@ while(!feof($src_stream)) {
 	isset($match[1]) ? $key = trim($match[1]) : die("Error: Cannot find text key in line '$line'\n");
     if(!$match[2]) die("Error: Cannot find text in line '$line'\n");
 	preg_match('/"(.*?)"/', $match[2], $submatch);
-	isset($submatch[1]) ? $src_text = trim($submatch[1]) : die("Error: Cannot find text in line '$line'\n");
+	if(isset($submatch[1])) {
+		$src_text = trim($submatch[1]);
 
-	// Translating
-	if(!isset($tra_text_ary[$key])) {
-		try {
-			$result = $trAPI->translateText($src_text, $src_lang, $dst_lang);
+		// Translating
+		if(!isset($tra_text_ary[$key])) {
+			try {
+				$result = $trAPI->translateText($src_text, $src_lang, $dst_lang);
+			}
+			catch(\DeepL\QuotaExceededException) {
+				die("Error: Translation quota exceeded for this month\n");
+			}
+			$dst_text = $result->text;
 		}
-		catch(\DeepL\QuotaExceededException) {
-			die("Error: Translation quota exceeded for this month\n");
+		else {
+			$dst_text = $tra_text_ary[$key];
 		}
-		$dst_text = $result->text;
+		
+		// Output result
+		echo $key.' = "'.$dst_text.'"'.PHP_EOL;
 	}
-	else {
-		$dst_text = $tra_text_ary[$key];
-	}
-
-	// Output result
-	echo $key.' = "'.$dst_text.'"'.PHP_EOL;
 }
 
 // Close file and database connection

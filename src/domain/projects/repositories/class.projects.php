@@ -21,25 +21,25 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    int
          */
-        public $id = '';
+        public $id = 0; // WAS: '';
 
         /**
          * @access public
          * @var    int
          */
-        public $clientId = '';
+        public $clientId = 0; // WAS: '';
 
         /**
          * @access private
          * @var    object
          */
-        private $db = '';
+        private $db; // WAS: = '';
 
         /**
          * @access public
          * @var    object
          */
-        public $result = '';
+        public $result; // WAS: = '';
 
         /**
          * @access public

@@ -546,7 +546,6 @@ namespace leantime\domain\pdf {
                 'fa-ring' => '&#xf70b',
                 'fa-ruler-combined' => '&#xf546',
                 'fa-sack-dollar' => '&#xf81d',
-                'fa-sack-dollar' => '&#xf81d',
                 'fa-scale-balanced' => '&#xf24e',
                 'fa-sitemap' => '&#xf0e8',
                 'fa-stop' => '&#xf04d',
@@ -601,8 +600,9 @@ namespace leantime\domain\pdf {
             foreach($recordsAry as $record) {
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
-                if($record['box'] === $box && ($filterStatus == 'all' || (!empty($statusLabels) && $filterStatus == $record['status'])) && 
-                   ($filterRelates == 'all' || (!empty($relatesLabels) && $filterRelates == $record['relates']))) {
+                if($record['box'] === $box && 
+                   ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) && 
+                   ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
                         (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
