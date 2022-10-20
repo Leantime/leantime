@@ -69,7 +69,7 @@
         <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $this->assign('formUrl', "/tickets/showTicket/".$ticket->id."");
+            $this->assign('formUrl', BASE_URL."/tickets/showTicket/".$ticket->id."");
 
             $this->displaySubmodule('comments-generalComment') ;
             ?>
