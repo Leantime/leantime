@@ -47,13 +47,11 @@ namespace leantime\domain\services {
                 foreach($userProjects as $project) {
                     $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
                 }
-            }elseif(isset($_SESSION['currentProject'])){
+            }
+
+            if(isset($_SESSION['currentProject'])){
 
                 $statusLabelsByProject[$_SESSION['currentProject']] = $this->ticketRepository->getStateLabels($_SESSION['currentProject']);
-
-            }else{
-
-                $statusLabelsByProject[-1]=$this->ticketRepository->getStateLabels();
 
             }
 
@@ -338,6 +336,10 @@ namespace leantime\domain\services {
                 foreach ($userProjects as $project) {
                     $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
                 }
+            }
+
+            if(isset($_SESSION['currentProject'])){
+                $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
             }
 
             return $milestones;

@@ -277,5 +277,5 @@ body .maincontent .priority-bg-5 {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, white 70% 100%);
+    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
 }
