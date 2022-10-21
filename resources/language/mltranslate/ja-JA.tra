@@ -1503,7 +1503,7 @@ MTR.headlines.dbm.welcome_to_board = "ビジネスモデル詳細掲示板へよ
 
 MTR.text.dbm.helper_content = "詳細なビジネスモデル</em>は、現在の組織、競合他社、業界を文書化するのに役立ちます。それは，あなたの戦略が望ましく，実行可能で，実現可能であることを確認するのをサポートします。<br /> <a href='https://inov.at/dts'></em>Design Thinking for Strategy</a>の第3章に詳細が記載されています。<br /> 特定のビジネスアイデアをプロトタイプ化し、それが望ましい、実行可能、かつ実現可能なビジネスになることを確実にしたい場合、詳細ビジネスモデルを使用することをお勧めします。"
 MTR.tour.dbm.once_your_done = "<em>詳細なビジネス モデルが決まったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
-MTR.text.lbm.disclaimer = "<em>Detailed Business Model Canvas</em> は <a href='https://inov.at/dts'>Design Thinking for Strategy</a> から引用し、<a href='https://www.strategyzer.com'>Strategyzer</a> の <em>Business Model Canvas</em> を基にしています。これは、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で提供されています。"
+MTR.text.dbm.disclaimer = "<em>Detailed Business Model Canvas</em> は <a href='https://inov.at/dts'>Design Thinking for Strategy</a> から引用し、<a href='https://www.strategyzer.com'>Strategyzer</a> の <em>Business Model Canvas</em> を基にしています。これは、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で提供されています。"
 
 
 ## Competitive Positioning Canvas

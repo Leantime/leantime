@@ -1425,7 +1425,7 @@ MTR.headlines.lbm.welcome_to_board = "Bem-vindo ao Quadro de Modelo Empresarial 
 
 MTR.text.lbm.helper_content = "O <em>Modelo de Negócio Leve</em> irá ajudá-lo a documentar sua organização atual, seus concorrentes e a indústria. Ele apóia a identificação do foco estratégico de uma empresa e estabelece a base para a concepção de um novo modelo de negócios detalhado e competitivo.<br /> Você pode encontrar mais detalhes no capítulo 3 do livro <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em>>/a>.<br/> Recomendamos o uso da variante leve da tela do modelo de negócios cada vez que você não precisar das especificidades do modelo de negócios detalhado ou do modelo original Osterwalter."
 MTR.tour.lbm.once_your_done = "<em>Se você se sente confortável com seu modelo de negócio leve, vá para o href='%s/tickets/roadmap/' class='btn btn-primary'><<span class='fas fa-map'></span> Roadmap Planner</a>"
-MTR.text.lbm.disclaimer = "O <em>Light Weight Business Model Canvas</em> é retirado de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> e é baseado no <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. É licenciado sob a licença <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>"
+MTR.text.dbm.disclaimer = "O <em>Light Weight Business Model Canvas</em> é retirado de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> e é baseado no <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. É licenciado sob a licença <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>"
 
 
 ## Osterwalder's Business Model

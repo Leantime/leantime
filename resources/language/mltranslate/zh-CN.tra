@@ -1503,7 +1503,7 @@ MTR.headlines.dbm.welcome_to_board = "欢迎来到详细的商业模式委员会
 
 MTR.text.dbm.helper_content = "<em>详细商业模式</em>将帮助你记录你目前的组织、竞争对手和行业。它支持确保您的战略是理想的、可行的和可操作的。它通常建立在<em>轻量级商业模型</em>的基础上，并通过考虑与公司成功相关的额外细节来进行扩展。<br />你可以在<a href='https://inov.at/dts'></em>战略的设计思维</em></a>一书的第三章中找到进一步的细节。<br />我们建议在对具体的商业想法进行原型设计并希望确保其产生一个理想的、可行的业务时使用详细商业模型。"
 MTR.tour.dbm.once_your_done = "<em>一旦你对你的详细商业模式感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
-MTR.text.lbm.disclaimer = "<em>详细商业模式画布</em>取自<a href='https://inov.at/dts'>战略设计思维</a>，并基于<a href='https://www.strategyzer.com'>Strategyzer</a>中的<em>商业模式画布</em>。它是在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权的。"
+MTR.text.dbm.disclaimer = "<em>详细商业模式画布</em>取自<a href='https://inov.at/dts'>战略设计思维</a>，并基于<a href='https://www.strategyzer.com'>Strategyzer</a>中的<em>商业模式画布</em>。它是在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权的。"
 
 
 ## Competitive Positioning Canvas
