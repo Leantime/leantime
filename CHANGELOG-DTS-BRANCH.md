@@ -33,7 +33,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.17
+Leantime DTS Branch 0.0.18
 
 
 ## Author
@@ -194,3 +194,9 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Add: *Value Proposition Canvas* from Osterwalder
 - Update: Show number of comments consistent with canvas in ideas Kanban
 - Update: Re-implemented *Retrospectives* and added data migration under new name `retrocanvas`
+
+# 0.0.18 2022-10-21
+- Update: Updated database update to reflect change of *Refletion* canvas name from `reflection` to `reflectscanvas`
+  (this new name is required to allow using the generic `canvas`engine)
+- Update: Moved PDF rendering from canvas specific PDF class to generic PDF class `domain/canvas/pdf/class.pdf.php`
+- Update: Use colors when generating PDF file only when user has configured them

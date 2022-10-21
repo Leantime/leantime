@@ -94,7 +94,6 @@ namespace leantime\domain\pdf {
          */
         protected function htmlListDetailed(array $recordsAry): string
         {
-error_log("CALLED");
 			$html = '';
 			$html .= '<div>'.$this->htmlListTitleTop($this->language->__('box.em.header.goal'), 'fa-bullseye').'</div>';
 			$html .= '<div>'.$this->htmlListTitle($this->canvasTypes['em_who']['title'], $this->canvasTypes['em_who']['icon']).'</div>';
@@ -135,28 +134,12 @@ error_log("CALLED");
          * @param  string $filter Filter value
          * @return string PDF filename
          */
-        public function reportGenerate(int $id, array $filter = []): string
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            // Retrieve canvas data
-            $emCanvasRepo = new repositories\emcanvas();
-            $emCanvasAry = $emCanvasRepo->getSingleCanvas($id);
-            !empty($emCanvasAry) || die("Cannot find canvas with id '$id'");
-            $projectId = $emCanvasAry[0]['projectId'];
-            $recordsAry = $emCanvasRepo->getCanvasItemsById($id);
-            $projectsRepo = new repositories\projects();
-            $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
+            $options = [ 'disclaimer' => $this->canvasRepo->getDisclaimer() ];
+			return parent::reportGenerate($id, $filter, $options);
             
-            // Configuration
-            $options = [ 'disclaimer' => $emCanvasRepo->getDisclaimer() ];
-            
-            // Generate PDF content
-            $pdf = new \YetiForcePDF\Document();
-            $pdf->init();
-            $pdf->loadHtml($this->htmlReport($projectAry['name'], $emCanvasAry[0]['title'], $recordsAry, $filter, $options));
-            return $pdf->render();
-
         }
     
     }

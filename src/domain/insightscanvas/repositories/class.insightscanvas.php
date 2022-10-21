@@ -31,7 +31,8 @@ namespace leantime\domain\repositories {
 			'insights_interview'          => [ 'icon' => 'fa-people-arrows',     'title' => 'box.insights.interview' ], 
             'insights_focus_groups'       => [ 'icon' => 'fa-people-line',       'title' => 'box.insights.focus_groups' ], 
 			'insights_secondary_research' => [ 'icon' => 'fa-book',              'title' => 'box.insights.secondary_research' ], 
-            'insights_knowledge'          => [ 'icon' => 'fa-file-signature',    'title' => 'box.insights.knowledge' ], 
+            'insights_knowledge'          => [ 'icon' => 'fa-file-signature',    'title' => 'box.insights.knowledge', 
+											   'color' => '#e3e3e3' ], 
 		];
 
 		/**

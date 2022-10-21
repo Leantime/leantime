@@ -2,7 +2,7 @@
 /**
  * pdf.php - Generate PDF reports
  *
- * pdf.php?module=bmcanvas&template=lbm&id=123
+ * pdf.php?module=bmcanvas&id=123
  *
  */
 define('RESTRICTED', TRUE);
@@ -20,7 +20,6 @@ $settings->loadSettings($config->defaultTimezone);
 
 // Retrieve parameters
 $module = $_GET['module'] ?? '';
-$template = $_GET['template'] ?? '';
 $filter['status'] = $_GET['filter_status'] ?? 'all';
 $filter['relates'] = $_GET['filter_relates'] ?? 'all';
 $canvasId = (int)($_GET['id'] ?? -1);
@@ -47,7 +46,8 @@ $accessGranted || die("User is not authorized to access specified canvas");
 // Generate report
 $moduleName = "\\leantime\\domain\\pdf\\".$module;
 $reportEngine = new $moduleName();
-$reportData = $reportEngine->reportGenerate($canvasId, $filter, $template);
+$reportData = $reportEngine->reportGenerate($canvasId, $filter);
+
 // Service report
 clearstatcache();
 header("Content-type: application/pdf");

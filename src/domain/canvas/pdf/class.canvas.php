@@ -81,6 +81,35 @@ namespace leantime\domain\pdf {
             
         }
         
+        /***
+         * reportGenerate - Generate report for module
+         *
+         * @access public
+         * @param  int    $id      Canvas identifier
+         * @param  string $filter  Filter value
+		 * @param  string $options Options
+         * @return string PDF filename
+         */
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string
+        {
+
+            // Retrieve canvas data
+            $canvasAry = $this->canvasRepo->getSingleCanvas($id);
+            !empty($canvasAry) || die("Cannot find canvas with id '$id'");
+            $projectId = $canvasAry[0]['projectId'];
+            $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
+            $projectsRepo = new repositories\projects();
+            $projectAry = $projectsRepo->getProject($projectId);
+            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
+            
+            // Generate PDF content
+            $pdf = new \YetiForcePDF\Document();
+            $pdf->init();
+            $pdf->loadHtml($this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options));
+            return $pdf->render();
+
+        }
+		
         /**
          * htmlReport - Generate report in HTML format
          *
@@ -141,9 +170,11 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvasStatus(string $status): string
         {
-            
-            return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
-                $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
+            if(isset($this->statusLabels[$status]['color'])) {
+				return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
+					$this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
+			}
+			return $this->htmlIcon($this->statusLabels[$status]['icon']);
 
         }
     
@@ -157,8 +188,10 @@ namespace leantime\domain\pdf {
         protected function htmlListStatus(string $status): string
         {
 
-            return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
-
+            if(isset($this->statusLabels[$status]['color'])) {
+				return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
+            }
+            return $this->statusLabels[$status]['title'];
         }
 
         /**
@@ -171,8 +204,11 @@ namespace leantime\domain\pdf {
         protected function htmlCanvasRelates(string $relates): string
         {
             
-            return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
-                $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
+            if(isset($this->relatesLabels[$relates]['color'])) {
+				return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
+					$this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
+            }
+			return $this->htmlIcon($this->statusLabels[$relates]['icon']);
 
         }
     
@@ -186,7 +222,11 @@ namespace leantime\domain\pdf {
         protected function htmlListRelates(string $relates): string
         {
 
-            return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].'</span>';
+            if(isset($this->relatesLabels[$relates]['color'])) {
+				return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].
+					'</span>';
+			}
+			return $this->relatesLabels[$relates]['title'];
 
         }
 

@@ -103,27 +103,11 @@ namespace leantime\domain\pdf {
          * @param  string $filter Filter value
          * @return string PDF filename
          */
-        public function reportGenerate(int $id, array $filter = []): string
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            // Retrieve canvas data
-            $cpCanvasRepo = new repositories\cpcanvas();
-            $cpCanvasAry = $cpCanvasRepo->getSingleCanvas($id);
-            !empty($cpCanvasAry) || die("Cannot find canvas with id '$id'");
-            $projectId = $cpCanvasAry[0]['projectId'];
-            $recordsAry = $cpCanvasRepo->getCanvasItemsById($id);
-            $projectsRepo = new repositories\projects();
-            $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
-            
-            // Configuration
-            $options = [ 'disclaimer' => $cpCanvasRepo->getDisclaimer() ];
-            
-            // Generate PDF content
-            $pdf = new \YetiForcePDF\Document();
-            $pdf->init();
-            $pdf->loadHtml($this->htmlReport($projectAry['name'], $cpCanvasAry[0]['title'], $recordsAry, $filter, $options));
-            return $pdf->render();
+            $options = [ 'disclaimer' => $this->canvasRepo->getDisclaimer() ];
+			return parent::reportGenerate($id, $filter, $options);
 
         }
     

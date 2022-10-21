@@ -67,28 +67,12 @@ namespace leantime\domain\pdf {
          * @param  string $filter Filter value
          * @return string PDF filename
          */
-        public function reportGenerate(int $id, array $filter = []): string
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            // Retrieve canvas data
-            $eaCanvasRepo = new repositories\eacanvas();
-            $eaCanvasAry = $eaCanvasRepo->getSingleCanvas($id);
-            !empty($eaCanvasAry) || die("Cannot find canvas with id '$id'");
-            $projectId = $eaCanvasAry[0]['projectId'];
-            $recordsAry = $eaCanvasRepo->getCanvasItemsById($id);
-            $projectsRepo = new repositories\projects();
-            $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
-            
-            // Configuration
             $options = [ ];
+			return parent::reportGenerate($id, $filter, []);
             
-            // Generate PDF content
-            $pdf = new \YetiForcePDF\Document();
-            $pdf->init();
-            $pdf->loadHtml($this->htmlReport($projectAry['name'], $eaCanvasAry[0]['title'], $recordsAry, $filter, $options));
-            return $pdf->render();
-
         }
     
     }
