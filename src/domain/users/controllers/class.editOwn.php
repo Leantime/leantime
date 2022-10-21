@@ -55,10 +55,10 @@ namespace leantime\domain\controllers {
                 if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
                     $values = array(
-                        'firstname' => ($_POST['firstname']),
-                        'lastname' => ($_POST['lastname']),
-                        'user' => ($_POST['user']),
-                        'phone' => ($_POST['phone']),
+                        'firstname' => ($_POST['firstname']) ?? $row['firstname'],
+                        'lastname' => ($_POST['lastname']) ?? $row['lastname'],
+                        'user' => ($_POST['user']) ?? $row['username'],
+                        'phone' => ($_POST['phone']) ?? $row['phone'],
                         'password' => (password_hash($_POST['newPassword'], PASSWORD_DEFAULT)),
                         'notifications' => $row['notifications'],
                         'twoFAEnabled' => $row['twoFAEnabled'],
