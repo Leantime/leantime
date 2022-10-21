@@ -139,7 +139,7 @@ class session
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "", -1, '/');
+        setcookie('sid', "", time() - 42000, '/');
 
     }
 
