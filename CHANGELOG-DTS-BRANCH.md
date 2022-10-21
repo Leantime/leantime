@@ -119,70 +119,70 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - New: Added functionality to associated a process type to a project when creating a new or modifying an existing
   project. Currently *Generic*, *Lean Startup*, and *Design Thinking for Strategy* are supported.
 
-# 0.0.3 - 2022-10-12
+## 0.0.3 - 2022-10-12
 - Update: Update menu structure, adding new canvas and boards
 - New: Library for extendable classes and includable templates for `canvas` and `pdf` as `src/library`
 - New: Engine to generate PDF files from templates (`public.pdf`)
 - New: Repositoriy `dts` for creating default templates and milestones recommended by DTS process (section 5.1.)
 
-# 0.0.4 - 2022-10-13
+## 0.0.4 - 2022-10-13
 - Update: Prepared `api` and `helper` files for new templates
 - New: Added *Strategy Brief* canvas and pdf functionality
 
-# 0.0.5 - 2022-10-13
+## 0.0.5 - 2022-10-13
 - New: Added *Business Model Canvas* canvas and pdf functionality
 
-# 0.0.6 - 2022-10-13
+## 0.0.6 - 2022-10-13
 - New: Added *Porter's Five Strategic Questions* and *Strategy Message* canvas and pdf functionality
 
-# 0.0.7 - 2022-10-15
+## 0.0.7 - 2022-10-15
 - Update: Make use of project type configurable (`$config->enableProjectType`)
 - New: Added `relates` field to database table `zp_canvas_items` to allow relating an element
 - New: Added `relatesLabels` to canvas repository class
 - Updated: Moved library of extendable classes from `src/library` to `src/domain/canvas` and sib-directories
 - Updated: Made canvas and label definition variables in canvas repository class ony accessible through functions
 
-# 0.0.8 - 2022-10-15
+## 0.0.8 - 2022-10-15
 - Added: Template to be used for creating new canvas as `src/domain/canvas/NEwcanvas/...`
 - Update: Only the *Strategy Brief* canvas has been updated for the new structure
 
-# 0.0.9 - 2022-10-15
+## 0.0.9 - 2022-10-15
 - New: Added configurable menu structure in `repositories/menu` based on menu type selectable on a project by project
   basis
   
-# 0.0.10 - 2022-10-16
+## 0.0.10 - 2022-10-16
 - Updated: Added sub-menus to menu structure and allow them be toggled. Added access control to menu structure.
 - Bug: Corrected modal related bug in `xxCanvasController`
 - Check: Checked `canvas` code using PHPMD and removed unused variables
 - Add: Minor adjustments for adding additional templates
 
-# 0.0.11 - 2022-10-16
+## 0.0.11 - 2022-10-16
 - Add: *Observe / Learn - Insights* canvas added
 
-# 0.0.12 - 2022-10-16
+## 0.0.12 - 2022-10-16
 - Add: *Risk Analysis* canvas added
 
-# 0.0.13 - 2022-10-17
+## 0.0.13 - 2022-10-17
 - Add: Make submenus open/close persistent
 
-# 0.0.14 - 2022-10-17
+## 0.0.14 - 2022-10-17
 - Add: *Empathy Map*
 - Add: *SWOT Analysis*
 - Update: Make create/edit/delete board menu option in `insights` consistent with `canvas` boards (but missing `clone`
   and `print`)
 
-# 0.0.15 2022-10-18
+## 0.0.15 2022-10-18
 - Add: *Environmental Analysis* canvas
 - Add: *Lightweight Business Model* canvas from Design Thinking for Strategy
 - Update: Minor improvements of genric `domain/canvas`
 
-# 0.0.16 2022-10-19
+## 0.0.16 2022-10-19
 - Add: *Original Business Model* canvas from Osterwalder
 - Add: *Detailed Business Model* canvas from Design Thinking for Strategy
 - Add: *Competitive Positioning Canvas* from Design Thinking for Strategy
 - Update: Remove dropdown icon from status and relates if the user has read-only access
 
-# 0.0.17 2022-10-20
+## 0.0.17 2022-10-20
 - Add: Added new composer module `deeplcom/deepl-php` to translate messages (removed from production version)
 - Add: New script `resources/languages/mltranslate/mltranslate.php` which uses machine learning from DeepL.com to
   tanslate messages
@@ -193,18 +193,18 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Update: Show number of comments consistent with canvas in ideas Kanban
 - Update: Re-implemented *Retrospectives* and added data migration under new name `retrocanvas`
 
-# 0.0.18 2022-10-21
+## 0.0.18 2022-10-21
 - Update: Updated database update to reflect change of *Refletion* canvas name from `reflection` to `reflectscanvas`
   (this new name is required to allow using the generic `canvas`engine)
 - Update: Moved PDF rendering from canvas specific PDF class to generic PDF class `domain/canvas/pdf/class.pdf.php`
 - Update: Use colors when generating PDF file only when user has configured them
 
-# 0.0.19 2022-10-21
+## 0.0.19 2022-10-21
 - Update: Updated `grunt.js` by adding targets that allow minifying selectively
 - Update: Added rules to `Makefile` to selectively minify js/css libraries
 - Update: Added rules to automatically translate files
 
-# 0.0.20 1011-10-21
+## 0.0.20 1011-10-21
 - Add: Machine learning driven translation of stored as `resources/languages/mltranstlate/*.tra` for the languages de,
   es, fr, it, ja, nl, pt-BR, pt-PT, ru, tr, and zh-CH
 - Update: Reviewed french translations and installed them as `fr-FR.ini`
