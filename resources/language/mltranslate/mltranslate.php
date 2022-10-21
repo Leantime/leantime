@@ -3,7 +3,7 @@
 /**
  * mltranslate - Automatically translate text
  *
- * Usage: ./mltranslate src_filename src_lang dst_lan [tra_filename] >out_filename
+ * Usage: ./mltranslate src_lang dst_lang src_file dts_file tra_file
  * Configuration: Put DeepL.com API key in file KEYFILE as $apikey = 'KEY';
  */
 const KEYFILE = '/var/lib/wwwrun/private/mltranslate-key.inc.php';
@@ -14,14 +14,15 @@ require('../../../vendor/autoload.php');
 require(KEYFILE);
 
 // Get command line arguments
-$src_file = isset($argv[1]) ? $argv[1] : die("Usage: $argv[0] src_filename src_lang dst_lan [tra_filename] >dst_filename\n");
-$src_lang = isset($argv[2]) ? $argv[2] : die("Usage: ./mltranslate src_filename src_lang dst_lan [tra_filename] >dst_filename\n");
-$dst_lang = isset($argv[3]) ? $argv[3] : die("Usage: ./mltranslate src_filename src_lang dst_lan [tra_filename] >dst_filename\n");
-$tra_file = isset($argv[4]) ? $argv[4] : '';
+$src_lang = isset($argv[1]) ? $argv[1] : die("Usage: $argv[0] /mltranslate src_lang dst_lang src_file dts_file tra_file\n");
+$dst_lang = isset($argv[2]) ? $argv[2] : die("Usage: $argv[0] /mltranslate src_lang dst_lang src_file dts_file tra_file\n");
+$src_file = isset($argv[3]) ? $argv[3] : die("Usage: $argv[0] /mltranslate src_lang dst_lang src_file dts_file tra_file\n");
+$dst_file = isset($argv[4]) ? $argv[4] : die("Usage: $argv[0] /mltranslate src_lang dst_lang src_file dts_file tra_file\n");
+$tra_file = isset($argv[5]) ? $argv[5] : die("Usage: $argv[0] /mltranslate src_lang dst_lang src_file dts_file tra_file\n");
 
 // Check source and destination languages
 in_array($src_lang, [ 'en' ]) || die("Error: Source language '$src_lang' not supported\n");
-$dst_langs = [ 'de', 'es', 'fr', 'it', 'ja', 'nl', 'pt-BR', 'pr-PT', 'ru', 'zh' ];
+$dst_langs = [ 'de', 'es', 'fr', 'it', 'ja', 'nl', 'pt-BR', 'pr-PT', 'ru', 'tr', 'zh' ];
 in_array($dst_lang, $dst_langs) ||
     die("Error: Destination language '$dst_lang' not supported\n"."Supported languages are: ".implode(', ', $dst_langs));
 
@@ -29,12 +30,12 @@ in_array($dst_lang, $dst_langs) ||
 $trAPI = new \DeepL\Translator($apikey);
 
 // Read already tanslated file
-$tra_text_ary = [];
-if(file_exists($tra_file)) {
-	$tra_stream = fopen($tra_file, 'r');
+$dst_text_ary = [];
+if(file_exists($dst_file)) {
+	$dst_stream = fopen($dst_file, 'r');
 	
-	while(!feof($tra_stream)) {
-		$line = fgets($tra_stream);
+	while(!feof($dst_stream)) {
+		$line = fgets($dst_stream);
 
 		// Remove comment
 		$comment_pos = strpos($line, '#');
@@ -50,39 +51,49 @@ if(file_exists($tra_file)) {
 		if(!$match[2]) die("Error: Cannot find text in line '$line'\n");
 		preg_match('/"(.*?)"/', $match[2], $submatch);
 		if(isset($submatch[1])) {
-			$tra_text_ary[$key] = trim($submatch[1]);
+			$dst_text_ary[$key] = trim($submatch[1]);
 		}
 	}
 
-	fclose($tra_stream);
+	fclose($dst_stream);
 }
 
 // Open file to translate
 $src_stream = fopen($src_file, 'r');
 if($src_stream === false) die("Error: Cannot open file '$src_file'\n");
+$tra_stream = fopen($tra_file, 'w');
+if($tra_stream === false) die("Error: Cannot open file '$tra_file'\n");
 
 // Translate line by line
-while(!feof($src_stream)) {
-	$line = fgets($src_stream);
+while(!feof($tra_stream)) {
+	$line = fgets($tra_stream);
 
 	// Remove comment
 	$comment_pos = strpos($line, '#');
 	if($comment_pos === 0) {
-		echo $line.PHP_EOL;
+		fwrite($tra_stream, $line.PHP_EOL);
 		continue;
 	}
 
 	// Remove white spaces
 	$line = trim($line);
 	if(empty($line)) {
-		echo PHP_EOL;
+		fwrite($tra_stream, PHP_EOL);
 		continue;
 	}
 
 	// Extract key and text
 	preg_match('/([^=]*)=(.*)/', $line, $match);
-	isset($match[1]) ? $key = trim($match[1]) : die("Error: Cannot find text key in line '$line'\n");
-    if(!$match[2]) die("Error: Cannot find text in line '$line'\n");
+	if(isset($match[1])) {
+		$key = trim($match[1]);
+	}else{
+		echo "Warning: Cannot find text key in line '$line'\n";
+		continue;
+	}
+    if(!$match[2]) {
+		echo "Warning: Cannot find text in line '$line'\n";
+		continue;
+	}
 	preg_match('/"(.*?)"/', $match[2], $submatch);
 	if(isset($submatch[1])) {
 		$src_text = trim($submatch[1]);
@@ -95,18 +106,23 @@ while(!feof($src_stream)) {
 			catch(\DeepL\QuotaExceededException) {
 				die("Error: Translation quota exceeded for this month\n");
 			}
-			$dst_text = $result->text;
+			$tra_text = $result->text;
 		}
 		else {
-			$dst_text = $tra_text_ary[$key];
+			$tra_text = $dst_text_ary[$key];
 		}
 		
 		// Output result
-		echo $key.' = "'.$dst_text.'"'.PHP_EOL;
+		fwrite($tra_stream, $key.' = "'.$tra_text.'"'.PHP_EOL);
+
+		// Show on screen
+		echo $key.' = "'.$tra_text.'"'.PHP_EOL;
+		echo $key.' = "'.$src_text.'"'.PHP_EOL;
 	}
 }
 
 // Close file and database connection
 fclose($src_stream);
+fclose($tra_stream);
 
 ?>

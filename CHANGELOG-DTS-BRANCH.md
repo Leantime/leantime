@@ -33,7 +33,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.18
+Leantime DTS Branch 0.0.19
 
 
 ## Author
@@ -96,8 +96,6 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists in PDF is limited
 - Complex tables may render poorly due to *YetiForcePDF* incorrectly handing some table borders and line breaks in nested tables
 - If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised
-- Improve `Makefile` to support re-generating only those `js` and `css` files where the source has changed (currently
-  all-or-nothing approach implemented)
 - If the menu structure is larger than the browser's height, some menu items will not be displayed (and thus not
   accessible) #1061
 - Print and clone functionality are not available for `ideas` Kanban
@@ -200,3 +198,9 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
   (this new name is required to allow using the generic `canvas`engine)
 - Update: Moved PDF rendering from canvas specific PDF class to generic PDF class `domain/canvas/pdf/class.pdf.php`
 - Update: Use colors when generating PDF file only when user has configured them
+
+# 0.0.19 2022-10-21
+- Update: Updated `grunt.js` by adding targets that allow minifying selectively
+- Update: Added rules to `Makefile` to selectively minify js/css libraries
+- Update: Added rules to automatically translate files
+

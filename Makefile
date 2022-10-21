@@ -72,18 +72,32 @@ JS_EXTENDED_LIB_FILES = node_modules/croppie/croppie.js \
 	public/js/libs/simpleGantt/snap.svg-min.js \
 	public/js/libs/simpleGantt/frappe-gantt.min.js \
 	public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js
+CSS_FILES = public/less/main.less
 
-JS_MINIFIED = $(wildcard public/js/compiled-*.js)
-CC_FILES = public/less/main.less
-
+JS_MINIFIED = public/js/compiled-app.min.js public/js/jsSourceMapAppSrc.map \
+	public/js/compiled-base-libs.min.js public/js/jsSourceMapBaseLib.map \
+	public/js/compiled-extended-libs.min.js public/js/jsSourceMapExtendedSrc.map
 CSS_MINIFIED = public/css/main.css
+
+LANG_DIR = ./resources/language
+MLTR_DIR = ./resources/language/mltranslate
+
+GRUNT_CMD = ./node_modules/grunt/bin/grunt
+MLTR_CMD = echo ./resources/language/mltranslate/mltranslate.php
+
+
 # Generic actions
 all:		composer npm minify 
 			@/usr/bin/rm -fv resources/logs/error.log
 
-clean:
+translate:	mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-zh-CN
 
-zip:
+clean:
+			@/usr/bin/rm -fv resources/logs/error.log
+
+release:
+			./createReleasePackage.sh
+
 
 # Specific actions
 
@@ -94,10 +108,76 @@ composer:
 npm:
 			npm update
 
-# Minfy files using Grunt
-$(JS_MINIFIED) $(CSS_MINIFIED):	$(JS_APP_FILES) $(JS_BASE_LIB_FILES) $(JS_EXTENDED_LIB_FILES) $(CSS_FILES)
-			./node_modules/grunt/bin/grunt Build-All
-
+# - Minfy files using Grunt
 minify:	$(JS_MINIFIED) $(CSS_MINIFIED)
 
+public/js/compiled-app.min.js public/js/jsSourceMapAppSrc.map:	$(JS_APP_FILES)
+			$GRUNT_CMD) Build-App-Src
+
+public/js/compiled-base-libs.min.js public/js/jsSourceMapBaseLib.map:	$(JS_BASE_LIB_FILES)
+			$GRUNT_CMD) Build-Base-Lib
+
+public/js/compiled-extended-libs.min.js public/js/jsSourceMapExtendedSrc.map:	$(JS_EXTENDED_LIB_FILES)
+			$GRUNT_CMD) Build-Extended-Src
+
+public/css/main.css: $(CSS_FILES)
+			$GRUNT_CMD) Build-Less-Dev
+
+
+# - Translate language files
+mltr-de:	$(MLTR_DIR)/de-DE.tra
+
+mltr-es:	$(MLTR_DIR)/es-ES.tra
+
+mltr-fr:	$(MLTR_DIR)/fr-FR.tra
+
+mltr-it:	$(MLTR_DIR)/it-IT.tra
+
+mltr-ja:	$(MLTR_DIR)/ja-JA.tra
+
+mltr-nl:	$(MLTR_DIR)/nl-NL.tra
+
+mltr-pt-BR:	$(MLTR_DIR)/pt-BR.tra
+
+mltr-pt-PT:	$(MLTR_DIR)/pt-PT.tra
+
+mltr-ru:	$(MLTR_DIR)/ru-RU.tra
+
+mltr-tr:	$(MLTR_DIR)/tr-TR.tra
+
+mltr-zh-CN:	$(MLTR_DIR)/zh-CN.tra
+
+
+$(MLTR_DIR)/de-DE.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini
+			$(MLTR_CMD) en de $(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini $(MLTR_DIR)/de-DE.tra
+
+$(MLTR_DIR)/es-ES.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/es-ES.ini
+			$(MLTR_CMD) en es $(LANG_DIR)/en-US.ini $(LANG_DIR)/es-ES.ini $(MLTR_DIR)/es-ES.tra
+
+$(MLTR_DIR)/fr-FR.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/fr-FR.ini
+			$(MLTR_CMD) en fr $(LANG_DIR)/en-US.ini $(LANG_DIR)/fr-FR.ini $(MLTR_DIR)/fr-FR.tra
+
+$(MLTR_DIR)/it-IT.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/it-IT.ini
+			$(MLTR_CMD) en it $(LANG_DIR)/en-US.ini $(LANG_DIR)/it-IT.ini $(MLTR_DIR)/it-IT.tra
+
+$(MLTR_DIR)/ja-JA.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/ja-JA.ini
+			$(MLTR_CMD) en ja $(LANG_DIR)/en-US.ini $(LANG_DIR)/ja-JA.ini $(MLTR_DIR)/ja-JA.tra
+
+$(MLTR_DIR)/nl-NL.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/nl-NL.ini
+			$(MLTR_CMD) en nl $(LANG_DIR)/en-US.ini $(LANG_DIR)/nl-NL.ini $(MLTR_DIR)/nl-NL.tra
+
+$(MLTR_DIR)/pt-BR.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/pt-BR.ini
+			$(MLTR_CMD) en pt-BR $(LANG_DIR)/en-US.ini $(LANG_DIR)/pt-BR.ini $(MLTR_DIR)/pt-BR.tra
+
+$(MLTR_DIR)/pt-PT.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/pt-PT.ini
+			$(MLTR_CMD) en pt-PT $(LANG_DIR)/en-US.ini $(LANG_DIR)/pt-PT.ini $(MLTR_DIR)/pt-PT.tra
+
+$(MLTR_DIR)/ru-RU.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/ru-RU.ini
+			$(MLTR_CMD) en ru $(LANG_DIR)/en-US.ini $(LANG_DIR)/ru-RU.ini $(MLTR_DIR)/ru-RU.tra
+
+$(MLTR_DIR)/tr-TR.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/tr-TR.ini
+			$(MLTR_CMD) en tr $(LANG_DIR)/en-US.ini $(LANG_DIR)/tr-TR.ini $(MLTR_DIR)/tr-TR.tra
+
+$(MLTR_DIR)/zh-CN.tra:	$(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini
+			$(MLTR_CMD) en zh $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini $(MLTR_DIR)/zh-CN.tra
 

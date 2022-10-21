@@ -158,4 +158,9 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
+	
+    grunt.registerTask("Build-App-Src", ["uglify:app_src", "jshint"]);
+    grunt.registerTask("Build-Base-Lib", ["uglify:base_lib_src"]);
+    grunt.registerTask("Build-Extended-Src", ["uglify:extended_lib_src"]);
+    grunt.registerTask("Build-Less-Dev", ["less:dev"]);
 };
