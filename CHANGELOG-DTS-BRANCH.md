@@ -33,7 +33,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.19
+Leantime DTS Branch 0.0.20
 
 
 ## Author
@@ -184,7 +184,7 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 
 # 0.0.17 2022-10-20
 - Add: Added new composer module `deeplcom/deepl-php` to translate messages (removed from production version)
-- Add: New script `resources/languages/mlstranslate/mltranslate.php` which uses machine learning from DeepL.com to
+- Add: New script `resources/languages/mltranslate/mltranslate.php` which uses machine learning from DeepL.com to
   tanslate messages
 - Update: *Lean Canvas* and added data migration
 - Add: *Porter's Strategy Questions* canvas from Design Thinking for Strategy
@@ -204,3 +204,7 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Update: Added rules to `Makefile` to selectively minify js/css libraries
 - Update: Added rules to automatically translate files
 
+# 0.0.20 1011-10-21
+- Add: Machine learning driven translation of stored as `resources/languages/mltranstlate/*.tra` for the languages de,
+  es, fr, it, ja, nl, pt-BR, pt-PT, ru, tr, and zh-CH
+- Update: Reviewed french translations and installed them as `fr-FR.ini`

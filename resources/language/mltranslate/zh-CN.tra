@@ -8,11 +8,13 @@ language.jstimeformat = "h:mm A"
 language.momentJSDate = "YYYY/MM/DD"
 language.currency = "¥"
 
-# 0 is Sunday，1 is Monday
+#0 is Sunday, 1 is Monday
+
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
 # special
+
 label.classic = "经典视图"
 label.oneView = "现代视图"
 label.ticket_layout = "选择工单布局"
@@ -22,10 +24,11 @@ label.downtoup = "从下到上"
 label.uptodown = "从上到下"
 
 #Datepicker translations
+
 language.dayNames = "星期日,星期一,星期二,星期三,星期四,星期五,星期六"
 language.dayNamesMin = "日,一,二,三,四,五,六"
 language.dayNamesShort = "日,一,二,三,四,五,六"
-language.monthNames= "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月"
+language.monthNames = "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月"
 language.monthNamesShort = "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月"
 language.currentText = "现在"
 language.closeText = "关闭"
@@ -37,14 +40,14 @@ language.columnFormatMonth = "ddd"
 language.columnFormatWeek = "ddd M/d"
 language.columnFormatday = "dddd M/d"
 
-
 headlines.all_times = "所有时间"
 headlines.edit_time = "编辑时间"
 headlines.confirm_delete = "确认删除"
-headlines.delete_time = "删除时间 "
+headlines.delete_time = "删除时间"
 headlines.drive_impact = "项目管理平台"
+MTR.headlines.welcome_back = "欢迎回来"
 headlines.login = "登录"
-headlines.project_with_name = "项目: "
+headlines.project_with_name = "项目:"
 headlines.no_active_sprint = "您没有生效的 Sprint 冲刺！"
 headlines.sprint_starts_on = "您的 Sprint 冲刺始于<strong>%1$s</strong>"
 headlines.no_todos_this_week = "您本周没有待办任务！"
@@ -75,14 +78,22 @@ headline.overview = "项目总览"
 headlines.todos = "待办任务"
 headlines.delete_project_x = "删除项目 %1$s"
 headlines.duplicate_project_x = "复制项目 %1$s"
+MTR.headlines.logo = "徽标"
+MTR.headlines.team_member = "目前的团队成员"
+MTR.headlines.add_more_users = "添加更多用户"
+MTR.headlines.assign_users_to_project = "为这个项目分配更多的用户"
+MTR.headlines.no_articles_yet = "目前还没有任何文章"
+MTR.headline.your_projects = "您的项目"
+MTR.headlines.your_todos = "您的待办事项"
+MTR.headlines.home = "首页"
+MTR.headlines.project_dashboard = "项目仪表板"
 
-headline.lean_canvas = "精益画布"
+MTR.headlines.page_forbidden = "你无权查看此页面"
+
+headlines.delete_project_x = "删除项目 %1$s"
 headlines.research_next_big_product = "为您下一个新产品进行调研并记录在此。"
 headline.research_board = "调研画布"
 headline.delete_board = "删除板块"
-headline.retrospective = "回顾"
-headline.no_retrospectives_yet = "您之前没有任何回顾。"
-headline.start_a_new_retrospective = "开启新的回顾看板"
 headline.all_clients = "所有客户"
 headline.new_client = "新客户"
 headline.delete_client = "删除客户: %1$s"
@@ -113,19 +124,21 @@ headlines.the_timesheets = "时间表"
 headlines.welcome_to_your_project = "欢迎来到项目管理页面！"
 headlines.help = "帮助..."
 headlines.congrats_on_your_project = "恭喜，新增项目成功！"
-headlines.welcome_to_retros = "欢迎来到回顾看板！"
 headlines.welcome_to_your_roadmap = "欢迎使用您的路线图！"
 headlines.welcome_to_clients_products = "欢迎来到客户管理页面！"
 headlines.welcome_to_projects = "欢迎来到项目！"
 headlines.welcome_to_simple_research_board = "欢迎来到调研画布页面！"
 headlines.update_database = "更新数据库"
-headlines.retrospectives = "回顾"
 headlines.installation = "安装"
 headlines.reset_password = "重置密码"
 headlines.reports = "报告"
 headlines.twoFA_login = "请输入双因素认证验证码"
 headlines.twoFA = "双因素认证"
 headlines.my_portfolio = "我的档案柜"
+MTR.headlines.import_ldap_users = "导入LDAP用户"
+MTR.headlines.documents = "文件"
+MTR.headlines.latest_todos = "最新待办事项"
+
 
 subtitles.sprint_burndown = "Sprint 冲刺燃尽图"
 subtitles.backlog_burndown = "Backlog 待办任务列表燃尽图"
@@ -157,7 +170,11 @@ subtitles.user_info = "成员信息"
 subtitles.file = "文件"
 subtitles.summary = "概要"
 subtitles.cummulative_flow = "流程累积"
-
+MTR.subtitles.organization = "组织机构"
+MTR.subtitles.companydetails = "公司详情"
+MTR.subtitles.look_and_feel = "外观和感觉"
+MTR.subtitles.approvals = "审批"
+MTR.subtitles.project_updates = "项目更新"
 
 notifications.no_template = "找不到模板"
 notifications.file_upload_success = "文件上传成功"
@@ -194,6 +211,18 @@ notification.project_has_tickets = "该项目仍有工单"
 notification.project_saved = "项目成功保存"
 notification.no_project_name = "未指定项目名称"
 notification.no_client = "未选择客户"
+MTR.notification.wiki_created_successfully = "维基成功创建"
+MTR.notification.article_deleted = "文章删除"
+MTR.notification.wiki_deleted = "维基删除"
+
+MTR.notification.new_status_saved = "成功保存待办事项状态列表"
+MTR.notification.error_saving_status = "保存状态时出现了错误。"
+MTR.notification.at_least_one_status = "至少需要创建一个状态。"
+MTR.notification.error_installing = "安装数据库时出现了错误，请查看错误日志以了解更多细节。"
+
+MTR.notifications.user_was_added_to_project = "团队成员被成功更新"
+MTR.notifications.not_assigned_to_any_project = "你没有被分配到任何项目。你可以更新你的资料或放松地喝杯咖啡。"
+
 
 notification.project_has_tasks = "无法删除项目；此项目中仍有待办任务，请先删除所有待办任务"
 notification.project_deleted = "成功删除项目"
@@ -217,7 +246,6 @@ notification.idea_board_deleted = "创意板已删除"
 notification.idea_board_created = "创意板已新建"
 notification.idea_edited = "成功编辑创意"
 notification.idea_created = "成功新增创意"
-notification.retrospective_item_deleted = "成功删除反馈"
 notification.client_saved_successfully = "成功编辑客户"
 notification.client_name_not_specified = "请输入客户名称"
 notification.client_added_successfully = "客户新增成功"
@@ -225,11 +253,14 @@ notification.client_exists_already = "客户已存在"
 notification.client_has_todos = "客户已分配待办任务和项目"
 notification.client_deleted = "客户成功删除"
 notification.event_created_successfully = "事件新增成功"
+MTR.notification.event_edited_successfully = "事件编辑成功"
 notification.event_removed_successfully = "事件成功删除"
 notification.could_not_delete_event = "无法删除事件"
 notification.user_created = "成功新增新成员"
 notification.user_exists = "此电子邮件地址已被使用"
 notification.passwords_dont_match = "密码不相同"
+MTR.notification.username_or_password_missing = "用户名或密码丢失"
+MTR.notifications.problem_resetting_password = "重置密码时出现了问题"
 notification.no_valid_email = "电子邮件地址无效"
 notification.enter_email = "请输入电子邮件地址"
 notification.enter_password = "请输入密码"
@@ -259,6 +290,13 @@ notification.form_token_incorrect = "Form Token 验证码错误，请重新输�
 notifications.could_not_reset_limit_reached = "您已达到账户的重置密码限制，请使用最后一个重置密码连接"
 notifications.project_copied_successfully = "成功复制项目，<br/> <a href='%1$s'>按此打开已复制项目</a>"
 
+MTR.notification.article_updated_successfully = "文章已成功更新"
+MTR.notification.article_created_successfully = "文章已成功创建"
+
+MTR.notifications.ical_success = "成功创建iCal URL"
+MTR.notifications.ical_removed_success = "iCal URL已被删除"
+
+
 short_notifications.effort_updated = "成功更新工作量"
 short_notifications.priority_updated = "成功更新优先级"
 short_notifications.milestone_updated = "成功更新里程碑"
@@ -275,6 +313,7 @@ short_notifications.date_updated = "日期已更改"
 short_notifications.remaining_hours_updated = "剩余时数已更新！"
 short_notifications.planned_hours_updated = "计划时数已更新！"
 
+MTR.short_notifications.url_copied = "复制的网址"
 
 input.placeholders.enter_email = "请输入电子邮件地址"
 input.placeholders.enter_password = "请输入密码"
@@ -298,7 +337,7 @@ input.placeholders.describe_hypothesis = "您的设想是"
 input.placeholders.describe_assumption = "用几句话描述您的设想"
 input.placeholders.describe_data = "您需要哪些数据来验证您的设想"
 input.placeholders.describe_conclusion = "您根据收集到的数据得出什么结论"
-input.placeholders.sprint_x="Sprint 冲刺 A"
+input.placeholders.sprint_x = "Sprint 冲刺 A"
 input.placeholders.you_can_use_milestone_or_sprint = "您可以使用里程碑或 Sprint 冲刺名称（例如: 里程碑1 回顾）"
 input.placeholders.describe_situation = "请描述情况"
 input.placeholders.list_examples = "请列举一些例子"
@@ -306,6 +345,8 @@ input.placeholders.enter_new_password = "请输入新密码"
 input.placeholders.confirm_password = "确认密码"
 input.placeholders.choose_project = "请选择一个项目"
 input.placeholders.choose_todo = "请选择待办任务"
+MTR.input.placeholders.wiki_title = "为你的维基输入一个标题"
+MTR.input.placeholders.enter_title_of_todo = "输入你的待办事项的标题"
 
 buttons.reload = "重新加载"
 buttons.login = "登录"
@@ -331,7 +372,6 @@ buttons.week = "周"
 buttons.month = "月"
 buttons.today = "今天"
 buttons.timeframe = "时间表"
-buttons.start_retrospective = "开启新的回顾看板"
 buttons.add_event = "新增事件"
 buttons.add_user = "新增成员"
 buttons.take_backlog_tour = "<i class='fas fa-map-signs'></i> 开始 Backlog 待办任务列表引导之旅"
@@ -342,6 +382,7 @@ buttons.install = "安装"
 buttons.install_in_progress = "正在安装..."
 buttons.reset_password = "重置密码"
 buttons.duplicate = "复制项目"
+MTR.buttons.find_users = "查找用户"
 
 links.skip_tour_dont_show_again = "跳过引导并且不再显示"
 links.skip_tour_start_project = "跳过引导并且开始一个项目"
@@ -368,6 +409,7 @@ links.start_work = "开始工作"
 links.stop_work_started_at = "<span>于 <span class='time'>%1$s</span></span>停止工作"
 links.go_back = "返回"
 links.add_new_comment = "新增新评论"
+MTR.links.add_new_report = "更新状态"
 links.reply = "回复"
 links.delete = "删除"
 links.add_todo = "<span class='fa-pushpin'></span> 新增待办"
@@ -414,6 +456,20 @@ links.back_to_login = "返回登录"
 links.download = "<i class='fa fa-download'></i> 下载"
 links.duplicate_project = "<i class='fa fa-copy'></i> 复制项目"
 links.open_project = "<i class='fa fa-open'></i> 打开项目"
+MTR.links.add_status = "<i class='fas fa-plus-circle'></i> 添加状态"
+MTR.links.add_remove_col = "<i class='fas fa-plus'></i> 添加/删除栏目"
+MTR.link.edit_wiki = "<i class='fa fa-edit'></i> 编辑此维基"
+MTR.link.new_wiki = "<i class='fas fa-plus'></i> 创建一个新的wiki"
+MTR.link.create_article = "创建文章"
+MTR.links.edit_article = "<i class='fa-edit'></i> 编辑文章"
+MTR.links.copy_url = "<i class='fa fa-link'></i> Copy Url"
+MTR.links.delete_wiki = "删除维基"
+MTR.links.delete_article = "删除文章"
+MTR.links.add_to_timesheets = "<span class='fa-clock-o'></span>添加到时间表上"
+MTR.links.read_more = "阅读更多"
+MTR.links.add_team_member = "添加团队成员"
+MTR.links.create_user = "创建新用户"
+
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>我的时间表</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>我的日历</span>"
@@ -439,12 +495,13 @@ menu.milestones = "<span class='fa fa-fw fa-sliders'></span> 里程碑"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> 时间表"
 menu.research = "<span class='fas fa-fw fa-flask'></span> 调研画布"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> 创意看板"
-menu.retrospectives = "<span class='far fa-fw fa-hand-spock'></span> 回顾看板"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> 当前项目设置"
 menu.reports = "<span class='fa fa-fw fa-chart-bar'></span> 报告"
 menu.community = "<span class='fa fa-fw fa-comments'></span> 讨论区"
 menu.my_portfolio = "<span class='head-icon fa fa-briefcase'></span><span class='headmenu-label'> 我的档案柜</span>"
-
+MTR.menu.documents = "<span class='fa fa-fw fa-book'></span> 文件"
+MTR.menu.home = "<span class='head-icon fa fa-home'></span><span class='headmenu-label'>Home</span>"
+MTR.text.hi = "尊敬的先生，您好"
 text.sprint_is_short_iteration = "Sprint 冲刺是完成任务的短迭代。"
 text.update_sprint_chart_add_todos = "将更新此图表; 与此同时，开始向您的 Sprint 冲刺新增待办任务。"
 text.take_the_day_off = "休息一下 😊 要不开始处理累积的待办任务吧。"
@@ -457,22 +514,25 @@ text.no_date_defined = "未设置日期"
 text.percent_complete = "%1$s%% 完成"
 text.what_are_subtasks = "使用子任务将您的主任务分为更小颗粒的工作。您可以在此处新增计划时间及剩余时间。<strong>我们建议子任务少于 4 小时。</strong>"
 text.no_subtasks = "您没有任何子任务"
-text.create_new_subtask = "新增新的子任务: "
+text.create_new_subtask = "新增新的子任务:"
 text.written_on_by = "填写于 %1$s 在 %2$s 由 %3$s %4$s"
 text.written_on = "在 %1$s 的 %2$s"
 text.no_comments = "暂无评论"
+MTR.text.no_updates = "☕ 还没有更新。"
 text.comments = "评论"
 text.num_comments = "<span class='fa-regular fa-comments'></span> %1$s 个评论"
 text.full_name = "%2$s %1$s"
-
+MTR.text.no_files = "还没有上传文件"
+MTR.text.here_are_news = "来自您的Leantime项目的新闻"
+MTR.text.create_new_content = "创建你的第一篇文章。"
+MTR.text.create_new_wiki = "创建你的第一个维基。"
 text.last_modified = "最后修改于 %1$s"
-text.are_you_sure_delete_canvas_item = "确定删除此条目？"
-text.are_you_sure_delete_retro = "确定删除此回顾？"
 text.are_you_sure_delete_idea = "确定删除此创意？"
 text.are_you_sure_delete_idea_board = "确定删除此创意墙？"
-text.are_you_sure_delete_retro_board = "确定删除此回顾看板？"
-text.are_you_sure_delete_feedback = "确定删除此反馈？"
 text.are_you_sure_delete_sprint = "确定删除此 Sprint 冲刺？"
+MTR.text.are_you_sure_delete_wiki = "你确定要删除这个维基吗？这也会删除所有的文章。"
+MTR.text.are_you_sure_delete_article = "你确定要删除这篇文章吗？"
+
 text.use_milestone_to_track_retro = "使用里程碑来跟踪回顾的落实进度。"
 text.use_milestone_to_track_leancanvas = "使用里程碑来跟踪精益画布的落实进度。"
 text.use_milestone_to_track_idea = "使用里程碑来跟踪创意的落实进度。"
@@ -527,11 +587,23 @@ text.twoFA_already_enabled = "账户已开启双因素认证，需要验证码�
 text.twoFA_enabled = "账户已<strong>开启</strong>双因素认证登录。"
 text.twoFA_disabled = "账户已<strong>关闭</strong>双因素认证登录。"
 text.twoFA_manage = "<span class='fa fa-lock'></span> 管理账户双因素认证"
+MTR.text.who_can_access = "选择谁可以查看这个项目。默认情况下，用户将继承他们被设置的角色。你可以在 "团队 "标签下改变这些角色。"
+MTR.text.ical_export_description = "在这里你可以创建一个独特的日历URL，让你在任何支持 "iCal "格式的应用程序中整合你的Leantime日历。"
+MTR.text.you_ical_url = "你的日历网址在下面。<br /> 请注意，任何拥有这个URL的人都可以访问日历。请像保护密码一样保护它。"
+MTR.text.no_url = "通过点击下面的按钮生成一个URL"
+MTR.buttons.generate_ical_url = "生成iCal URL"
+MTR.links.remove_access = "删除日历访问"
+
+MTR.labels.defaultaccess = "谁可以访问这个项目？"
+MTR.labels.everyone_in_org = "这个组织中的每个人"
+MTR.labels.everyone_in_client = "分配给该客户的所有人"
+MTR.labels.only_chose = "只有我在 "团队 "下选择的用户"
+
 
 label.id = "ID"
-label.due = "到期日: "
-label.due_todo = "即将到期的待办任务: "
-label.planned_edit = "已计划编辑: "
+label.due = "到期日:"
+label.due_todo = "即将到期的待办任务:"
+label.planned_edit = "已计划编辑:"
 label.effort_not_clear = "工作量不明确"
 label.priority_not_clear = "优先级不明确"
 label.no_milestone = "没有里程碑"
@@ -573,7 +645,6 @@ label.due_date = "到期日"
 label.due_icon = "<span class='fa-regular fa-calendar'></span>"
 label.title_idea_board = "创意墙的标题是什么？"
 label.topic_idea_board = "创意墙的主题是什么？"
-label.title_retrospective_board = "回顾看板的名称是什么？"
 label.administration = "管理"
 label.calendar = "日历"
 label.general = "一般信息"
@@ -623,7 +694,7 @@ label.estimated_hours_remaining = "预估剩余时数"
 label.booked_hours = "已记录时数"
 label.actual_hours_remaining = "实际剩余时数"
 label.not_assigned_to_user = "未分配"
-label.total_hours = "总时数: "
+label.total_hours = "总时数:"
 label.actions = "行动"
 label.timesheet_kind = "类型"
 label.general_billable = "一般，可计费"
@@ -656,7 +727,7 @@ label.billable_hours = "计费时数"
 label.plan_hours = "计划时数"
 label.difference = "差距"
 label.date_from = "起始于"
-label.date_to = " - 到"
+label.date_to = "- 到"
 label.filter = "筛选"
 label.project = "项目"
 label.select_all = "↑ 全选"
@@ -692,6 +763,7 @@ label.firstname = "名"
 label.lastname = "姓"
 label.no_clients = "未分配客户"
 label.password = "密码"
+MTR.label.please_enter_password = "请输入密码"
 label.new_password = "新密码"
 label.old_password = "旧密码"
 label.password_repeat = "重输密码"
@@ -714,6 +786,12 @@ label.roles.developer = "团队成员"
 label.roles.clientManager = "客户经理"
 label.roles.manager = "公司经理"
 label.roles.admin = "管理员"
+
+MTR.label.roles.readonly = "只读"
+MTR.label.roles.commenter = "评论者"
+MTR.label.roles.editor = "编辑"
+MTR.label.roles.owner = "业主"
+
 label.client = "客户"
 label.filename_fileexport = "文件导出"
 label.progress = "进度"
@@ -727,9 +805,68 @@ label.twoFACode = "双因素认证验证码"
 label.twoFACode_short = "验证码"
 label.twoFA = "双因素认证"
 label.twoFA_setup = "设置双因素认证"
-label.copy_of = "(复制) "
+label.copy_of = "(复制)"
 label.assignSameUsers = "分配相同成员"
 label.newProjectName = "新项目名称"
+MTR.label.client_id = "客户ID"
+MTR.label.ticket_id = "车票编号"
+MTR.label.primary_color = "主要颜色"
+MTR.label.secondary_color = "次要颜色"
+MTR.label.wiki = "维基"
+MTR.label.wiki_title = "标题"
+MTR.label.current_wiki = "当前的维基"
+MTR.label.ical_export = "整合日历"
+
+MTR.links.delete_article = "删除文章"
+
+MTR.tabs.todosettings = "待办事项状态设置"
+MTR.label.sortindex = "分类位置"
+MTR.label.reportType = "报告为"
+MTR.label.showInKanban = "在看板上显示"
+MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span>查看作品集"
+
+
+
+MTR.label.send_telemetry = "帮助使Leantime变得更好!"
+MTR.label.telemetry_background = "向Leantime.io发送匿名数据<a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>关于项目、用户、票据等的数量</a>。我们不会发送任何可识别的个人数据，也不可能跟踪个别用户。"
+
+MTR.label.blue = "蓝色"
+MTR.label.yellow = "黄色"
+MTR.label.green = "绿色"
+MTR.label.red = "红色"
+MTR.label.grey = "灰色"
+
+MTR.labels.all_projects = "所有项目"
+MTR.label.dates = "应付日期"
+
+
+MTR.labels.createdBy_on = "由 %s %s 于 %s 创建，于 %s 修改"
+MTR.labels.tags = "标签"
+
+# Cron setup
+
+MTR.label.messages_frequency = "电子邮件频率"
+MTR.label.choose_option = "选择你的选项"
+MTR.label.5min = "5分钟"
+MTR.label.15min = "15分钟"
+MTR.label.30min = "半小时"
+MTR.label.1h = "1小时"
+MTR.label.3h = "3小时"
+MTR.label.6h = "6小时"
+MTR.label.12h = "12小时"
+MTR.label.24h = "1天"
+MTR.label.48h = "2天"
+MTR.label.1w = "1周"
+
+MTR.label.theme = "主题"
+MTR.label.auto = "自动"
+MTR.label.light = "亮度"
+MTR.label.dark = "黑暗"
+
+MTR.label.draft = "草案"
+MTR.label.published = "已出版"
+MTR.label.draft_parenth = "(草案)"
+
 
 dropdown.how_big_todo = "任务大小如何？"
 dropdown.select_priority = "优先级是什么？"
@@ -768,15 +905,11 @@ status.inreview = "评审中"
 status.accepted = "已接受"
 status.deferred = "已后延"
 
-status.continue = "继续干 - 哪些很顺利？"
-status.stop_doing = "停止干 - 哪些该停止？"
-status.start_doing = "开始干 - 该改进什么？"
-
 email_notifications.hi = "您好，"
 email_notifications.unsubscribe = "要<a href='%1$s'>退订</a>此类通知，请登录并编辑您的通知设置"
 
 email_notifications.new_todo_subject = "待办任务新增"
-email_notifications.new_todo_message = "%1$s增加了一个新的待办任务: “%2$s” "
+email_notifications.new_todo_message = "%1$s增加了一个新的待办任务: “%2$s”"
 email_notifications.new_todo_cta = "点击查看"
 
 email_notifications.new_file_todo_subject = "待办任务[%1$s] - %2$s 新增文件"
@@ -860,6 +993,8 @@ email_notifications.new_user_message = "%1$s为您新增了一个新成员账户
 email_notifications.password_reset_subject = "重置 Leantime 密码"
 email_notifications.password_reset_message = "我们已收到您发出的要求重置 Leantime 密码的电子邮件。<br/><br/>重置密码，请点击链接:<br/><a href='%1$s' target='_blank'>重置密码</a><br/><br/>否则，请忽略此邮件。<br/><br/>谢谢。"
 
+MTR.email_notifications.latest_updates_subject = "Leantime - 最新更新"
+
 tabs.ticketDetails = "工单详情"
 tabs.subtasks = "子任务"
 tabs.files = "文件"
@@ -869,6 +1004,8 @@ tabs.projectdetails = "项目详情"
 tabs.Integrations = "集成"
 tabs.files_with_count = "文件（%1$s）"
 tabs.discussion_with_count = "讨论（%1$s）"
+MTR.tabs.projectaccess = "用户访问"
+MTR.tabs.team = "团队"
 
 tooltip.how_many_hours_remaining = "您认为此待办任务还需要几个小时完成"
 
@@ -880,17 +1017,17 @@ tour.once_done_go_to_kanban = "<em>在您为 Sprint 冲刺新增了一些项目�
 tour.once_youre_done_adding_milestones_go_todos = "<em>一旦新增里程碑完成，您就可以增加待办任务了"
 tour.once_your_done_research = "<em>一旦您对调研结果感到满意，就可以进入</em><br/> <a href='/tickets/roadmap/' class='btn btn-primary'> <span class='fasfa-map'></span> 路线图规划 </a>"
 
-datatables.decimal= ""
+datatables.decimal = ""
 datatables.emptyTable = "没有结果！"
 datatables.info = "显示_START_至_END_共_TOTAL_个条目"
 datatables.infoEmpty = "显示从 0 到 0 共 0 个条目"
 datatables.infoFiltered = "(从_MAX_个条目中筛选)"
-datatables.infoPostFix= ""
+datatables.infoPostFix = ""
 datatables.thousands = "，"
 datatables.lengthMenu = "显示_MENU_条目"
 datatables.loadingRecords = "正在加载..."
 datatables.processing = "正在处理..."
-datatables.search = "搜索: "
+datatables.search = "搜索:"
 datatables.zeroRecords = "找不到匹配的记录"
 datatables.buttons.colvis = "<i class='fa fa-eye-slash'></i> 列"
 datatables.buttons.download = "<i class='fa fa-download'></i> 输出"
@@ -930,72 +1067,619 @@ tour.change_views = "切换视图"
 tour.change_views_text = "这些按钮可让您在表格和看板视图之间切换"
 tour.congratulations_kanban_text = "您已经完成了看板之旅！<br/>如果需要更多帮助，请访问我们的知识库：<a href='https://help.leantime.io' target='_blank'>https://help.leantime.io</a><br/><br/>不要犹豫，联系我们的支持团队以获得任何额外的帮助！<br/>我们的努力让您的生活更轻松。"
 
-#Missing options
-#===============
-#buttons.find_users
-#email_notifications.latest_updates_subject
-#headlines.add_more_users
-#headlines.import_ldap_users
-#headlines.logo
-#headlines.page_forbidden
-#headlines.team_member
-#headlines.welcome_back
-#label.12h
-#label.15min
-#label.1h
-#label.1w
-#label.24h
-#label.30min
-#label.3h
-#label.48h
-#label.5min
-#label.6h
-#label.auto
-#label.blue
-#label.choose_option
-#label.client_id
-#label.dark
-#label.green
-#label.grey
-#label.light
-#label.messages_frequency
-#label.please_enter_password
-#label.primary_color
-#label.red
-#label.reportType
-#label.roles.commenter
-#label.roles.editor
-#label.roles.owner
-#label.roles.readonly
-#label.secondary_color
-#label.send_telemetry
-#label.showInKanban
-#label.sortindex
-#label.telemetry_background
-#label.theme
-#label.ticket_id
-#label.yellow
-#labels.defaultaccess
-#labels.everyone_in_client
-#labels.everyone_in_org
-#labels.only_chose
-#links.add_remove_col
-#links.add_status
-#notification.at_least_one_status
-#notification.error_installing
-#notification.error_saving_status
-#notification.event_edited_successfully
-#notification.new_status_saved
-#notification.username_or_password_missing
-#notifications.not_assigned_to_any_project
-#notifications.problem_resetting_password
-#notifications.user_was_added_to_project
-#subtitles.companydetails
-#subtitles.look_and_feel
-#subtitles.organization
-#tabs.projectaccess
-#tabs.team
-#tabs.todosettings
-#text.here_are_news
-#text.no_files
-#text.who_can_access
+
+
+## Leantime DTS Branch
+
+
+# Supported menut types
+
+MTR.label.menu_type = "菜单类型"
+MTR.label.menu_type.default = "默认菜单"
+MTR.label.menu_type.lean = "精简菜单"
+MTR.label.menu_type.dts = "战略菜单的设计思维"
+
+# Menu subtitles
+
+MTR.menu.default.advanced = "高级"
+MTR.menu.default.various = "各种各样的"
+MTR.menu.default.define = "感同身受/定义"
+MTR.menu.default.ideate = "创意/原型"
+MTR.menu.default.test = "测试&amp; 验证"
+MTR.menu.default.tools = "工具"
+
+MTR.menu.dts.process = "战略流程"
+MTR.menu.dts.frameworks = "战略框架"
+MTR.menu.dts.admin = "管理层"
+MTR.menu.dts.observe = "观察和学习"
+MTR.menu.dts.design = "设计"
+MTR.menu.dts.validate = "验证"
+
+# Menu items
+
+MTR.menu.cpcanvas = "<span class='fas fa-fw fa-city'></span> 竞赛画布"
+MTR.menu.dbmcanvas = "<span class='fas fa-fw fa-building'></span> 详细商业模式"
+MTR.menu.eacanvas = "<span class='fas fa-fw fa-tree'></span> 环境分析"
+MTR.menu.emcanvas = "<span class='fas fa-fw fa-heart'></span> 移情地图"
+MTR.menu.ideation = "<span class='far fa-fw fa-lightbulb'></span> 设计/验证 - 构思"
+MTR.menu.insights = "<span class='far fa-fw fa-note-sticky'></span> Insights &amp Knowledge"
+MTR.menu.insightscanvas = "<span class='far fa-fw fa-note-sticky'></span> 观察/学习-洞察力"
+MTR.menu.lbmcanvas = "<span class='fas fa-fw fa-building'></span> 轻量级商业模式"
+MTR.menu.leancanvas = "<span class='fas fa-fw fa-flask'></span> 精益帆布"
+MTR.menu.obmcanvas = "<span class='fas fa-fw fa-building'></span> 原始商业模式"
+MTR.menu.retroscanvas = "<span class='far fa-fw fa-hand-spock'></span> 回顧"
+MTR.menu.riskscanvas = "<span class='fas fa-fw fa-person-falling'></span> 风险分析"
+MTR.menu.sbcanvas = "<span class='fas fa-fw fa-list-check'></span> 战略简介"
+MTR.menu.smcanvas = "<span class='fas fa-fw fa-message'></span>策略信息"
+MTR.menu.sqcanvas = "<span class='fas fa-fw fa-chess'></span>策略问题"
+MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT分析"
+
+# Links
+
+MTR.links.icon.create = "<i class='fa fa-plus'></i> 创建新的"
+MTR.links.icon.edit = "<i class='fa-edit'></i> 编辑</a>。"
+MTR.links.icon.clone = "<i class='fa-clone'></i> 复制</a>。"
+MTR.links.icon.delete = "<i class='fa-trash-can'></i> 删除"
+MTR.links.icon.print = "<i class='fa-print'></i> 打印"
+
+# Buttons
+
+MTR.buttons.cancel = "取消"
+
+# Labels for status and relates
+
+label.status = "状态"
+MTR.status.all = "所有状态"
+MTR.status.draft = "草案"
+MTR.status.review = "审查中"
+MTR.status.valid = "已验证。有效"
+MTR.status.hold = "搁置中"
+MTR.status.invalid = "已验证。无效"
+MTR.status.pending = "待定"
+status.accepted = "已接受"
+MTR.status.rejected = "被拒绝的"
+
+MTR.label.relates = "关系到"
+MTR.relates.all = "所有相关"
+MTR.relates.none = "无"
+MTR.relates.customers = "客户"
+MTR.relates.offerings = "祭品"
+MTR.relates.capabilities = "能力"
+MTR.relates.financials = "财务状况"
+MTR.relates.markets = "市场"
+MTR.relates.environment = "环境"
+MTR.relates.firm = "稳固"
+MTR.relates.stakeholders = "持有人"
+MTR.dropdown.choose_relates = "该元素与什么有关？"
+
+# Board and element labels
+
+MTR.subtitle.clone_board = "复制板"
+MTR.label.title_element = "元素名称"
+MTR.input.placeholders.describe_element = "描述一下该元素"
+
+MTR.text.confirm_board_deletion = "你确定你要删除这个板块吗？"
+MTR.text.confirm_board_item_deletion = "你确定要删除这个元素吗？"
+MTR.notification.board_created = "董事会成功创建"
+MTR.notification.board_copied = "董事会成功复制了"
+MTR.notification.board_deleted = "板块成功删除"
+MTR.notification.board_exists = "董事会名称已经存在"
+MTR.notification.element_created = "元素成功创建"
+MTR.notification.element_deleted = "元素成功删除"
+MTR.short_notifications.relates_updated = "与成功更新有关"
+
+# PDF labels
+
+MTR.pdf.label.page = "页码"
+MTR.pdf.language.longdateformat = "l, F j, Y"
+
+
+## Insights
+
+
+# Title
+
+MTR.headline.insights.board = "观察/学习 - 洞察板"
+
+# Element/Box Labels
+
+MTR.box.insights.observe = "人种学观察"
+MTR.box.insights.interview = "人种学访谈"
+MTR.box.insights.focus_groups = "焦点小组"
+MTR.box.insights.secondary_research = "二级研究"
+MTR.box.insights.knowledge = "衍生的知识"
+
+# Data Field Labels and placeholders
+
+MTR.label.insights.title_new = "你的新洞察力分析的标题是什么？"
+MTR.label.insights.title_edited = "你的洞察力分析的新标题是什么？"
+MTR.label.insights.title_clone = "你复制的洞察力分析报告的标题是什么？"
+MTR.input.placeholders.insights.enter_title_for_board = "输入你的新洞察力分析的标题"
+MTR.label.insights.insight = "洞察力描述"
+MTR.label.insights.data = "收集的支持性数据"
+
+# Notifications
+
+MTR.headlines.insights.analysis = "描述你的洞察力分析"
+MTR.headlines.insights.welcome_to_board = "欢迎来到 "洞察力板"!"
+
+MTR.text.insights.helper_content = "<em>观察/学习--见解</em>板帮助你从四个不同的来源（人种学观察、访谈、焦点小组和二次研究）收集结构化的见解，并将它们转化为知识。<br/>它支持设计思考过程中的观察和学习阶段，有时也被称为移情和定义。<br/>你可以在<a href='https://inov.at/dts'></em>战略设计思考</em></a>一书的第2、8和9章中找到进一步的细节。<br/>我们建议你在每次收集和分析新的见解时都使用<em>观察/学习-见解</em>板，无论是风险分析、环境分析、发现行业趋势，还是设计新产品和服务，仅此而已。"
+MTR.tour.insights.once_your_done = "<em>一旦你对自己的见解收集和知识创造感到满意，就去</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>"
+
+
+## Strategy Brief
+
+
+# Title
+
+MTR.headline.sb.board = "战略简报委员会"
+
+# Element/Box Labels
+
+MTR.box.sb.title = "战略简介"
+MTR.box.sb.industry = "目标行业"
+MTR.box.sb.description = "战略项目目标说明"
+MTR.box.sb.st_design = "设计团队"
+MTR.box.sb.st_decision = "决策人"
+MTR.box.sb.st_experts = "专家"
+MTR.box.sb.st_support = "支持人员"
+MTR.box.sb.budget = "高级别预算"
+MTR.box.sb.time = "高级别时间轴"
+MTR.box.sb.culture = "文化"
+MTR.box.sb.change = "改变能力"
+MTR.box.sb.principles = "指导原则"
+MTR.box.sb.risks = "风险评估"
+
+# Data Field Labels and placeholders
+
+MTR.label.sb.title_new = "你的新战略简报的标题是什么？"
+MTR.label.sb.title_edited = "你的战略简报的新标题是什么？"
+MTR.label.sb.title_clone = "你复制的战略简报的标题是什么？"
+MTR.input.placeholders.sb.enter_title_for_board = "输入你的新战略简报的标题"
+
+# Notifications
+
+MTR.headlines.sb.analysis = "描述你的战略项目"
+MTR.headlines.sb.welcome_to_board = "欢迎来到《战略简报》栏目!"
+
+MTR.text.sb.helper_content = "<em>战略概要</em>可以帮助您启动下一个战略项目。<br />你可以在《<a href='https://inov.at/dts'></em>战略设计思维》一书的第4章和第5章中找到更多的细节。<br />我们建议你为你开始的每个战略项目创建一个战略简报。"
+MTR.tour.sb.once_your_done = "<em>一旦你对你的战略简报感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图计划器</a>"
+MTR.text.sb.risks_analysis = "风险分析可以在<a href='%s/riskscanvas/showCanvas/'>风险分析</a>下找到。"
+
+
+## Risk Analysis
+
+
+# Title
+
+MTR.headline.risks.board = "风险分析委员会"
+
+# Element/Box Labels
+
+MTR.box.risks.imp_low_pro_low = "低影响/低概率"
+MTR.box.risks.imp_low_pro_high = "低影响/高概率"
+MTR.box.risks.imp_high_pro_low = "高影响/低概率"
+MTR.box.risks.imp_high_pro_high = "高影响/高概率"
+
+# Data Field Labels and placeholders
+
+MTR.label.risks.title_new = "你的新风险分析的标题是什么？"
+MTR.label.risks.title_edited = "你的风险分析的新标题是什么？"
+MTR.label.risks.title_clone = "你复制的风险分析的标题是什么？"
+MTR.input.placeholders.risks.enter_title_for_board = "输入你的新风险分析的标题"
+MTR.label.risks.description = "风险描述"
+MTR.label.risks.mitigation = "计划中的风险缓解措施"
+
+# Notifications
+
+MTR.headlines.risks.analysis = "描述你的风险分析"
+MTR.headlines.risks.welcome_to_board = "欢迎来到风险分析委员会!"
+
+MTR.text.risks.helper_content = "<em>风险分析</em>将帮助你识别和减轻或避免项目中可能发生的风险。<br/>我们建议你在每个项目开始时进行风险分析并定期更新。"
+MTR.tour.risks.once_your_done = "<em>一旦你对你的风险分析感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图计划器</a>"
+
+
+## SWOT Analysis
+
+
+# Title
+
+MTR.headline.swot.board = "SWOT分析板"
+
+# Element/Box Labels
+
+MTR.box.swot.strengths = "优势"
+MTR.box.swot.weaknesses = "弱点"
+MTR.box.swot.opportunities = "机会"
+MTR.box.swot.threats = "威胁"
+MTR.box.header.swot.helpful = "有帮助的"
+MTR.box.header.swot.harmful = "有害的"
+MTR.box.header.swot.internal = "内源性"
+MTR.box.header.swot.external = "外源性"
+
+# Data Field Labels and placeholders
+
+MTR.label.swot.title_new = "你的新SWOT分析的标题是什么？"
+MTR.label.swot.title_edited = "你的SWOT分析的新标题是什么？"
+MTR.label.swot.title_clone = "你复制的SWOT分析的标题是什么？"
+MTR.input.placeholders.swot.enter_title_for_board = "输入你的新SWOT分析的标题"
+MTR.label.swot.description = "风险描述"
+MTR.label.swot.mitigation = "计划中的风险缓解措施"
+
+# Notifications
+
+MTR.headlines.swot.analysis = "描述一下你的SWOT分析"
+MTR.headlines.swot.welcome_to_board = "欢迎来到SWOT分析板!"
+
+MTR.text.swot.helper_content = "<em>SWOT分析</em>将帮助你确定优势、劣势、机会和威胁，在构思和原型设计时可以利用这些优势、劣势、机会和威胁。<br/>我们建议你在项目开始时进行SWOT分析。"
+MTR.tour.swot.once_your_done = "<em>一旦你对你的SWOT分析感到满意，去</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>"
+
+
+## Empathy map
+
+
+# Title
+
+MTR.headline.em.board = "同理心地图板"
+
+# Element/Box Labels
+
+MTR.box.em.header.goal = "目标"
+MTR.box.em.who = "我们对谁有同情心？"
+MTR.box.em.what = "他们需要做的是什么？"
+MTR.box.em.header.empathy = "同情心"
+MTR.box.em.see = "他们看到了什么？"
+MTR.box.em.say = "他们是怎么说的？"
+MTR.box.em.do = "他们做了什么？"
+MTR.box.em.hear = "他们听到了什么？"
+MTR.box.em.header.think_feel = "他们的想法和感觉是什么？"
+MTR.box.em.pains = "痛苦 - 他们的恐惧、沮丧和焦虑是什么？"
+MTR.box.em.gains = "GAINS - 他们的愿望、需求、希望和梦想是什么？"
+MTR.box.em.motives = "促使其行为的其他想法和感受"
+
+# Data Field Labels and placeholders
+
+MTR.label.em.title_new = "你的新同理心地图的标题是什么？"
+MTR.label.em.title_edited = "你的同理心地图的新标题是什么？"
+MTR.label.em.title_clone = "你复制的移情地图的标题是什么？"
+MTR.input.placeholders.em.enter_title_for_board = "输入你的新移情地图的标题"
+MTR.label.em.description = "对问题的详细回答"
+
+# Notifications
+
+MTR.headlines.em.analysis = "描述你的同理心地图"
+MTR.headlines.em.welcome_to_board = "欢迎来到同理心地图板!"
+
+MTR.text.em.helper_content = "<em>共鸣图</em>将帮助你建立起对终端用户的理解。在其应用范围内，它被用来建立对用户需求的共同理解，并为以用户为中心的解决方案提供背景。你可以在Dave Gray的博文中找到进一步的细节<em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Updated Empathy Map Canvas</a></em>。"
+MTR.tour.em.once_your_done = "<em>一旦你对你的共鸣地图感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
+MTR.text.em.disclaimer = "<a href='https://gamestorming.com/empathy-map/'>同情地图</a>是基于Dave Gray的工作。"
+
+
+## Environmental / PESTLE Analysis
+
+
+# Title
+
+MTR.headline.ea.board = "环境分析委员会"
+
+# Element/Box Labels
+
+MTR.box.ea.title = "环境/PESTLE分析"
+MTR.box.ea.political = "政治"
+MTR.box.ea.economic = "经济"
+MTR.box.ea.societal = "社会"
+MTR.box.ea.technological = "技术性"
+MTR.box.ea.legal = "法律"
+MTR.box.ea.ecological = "生态学"
+
+# Status
+
+MTR.status.ea.observation = "观察"
+MTR.status.ea.threat = "威胁"
+MTR.status.ea.trend = "趋势"
+
+# Relates
+
+
+# Data Field Labels and placeholders
+
+MTR.label.ea.title_new = "你的新环境分析的标题是什么？"
+MTR.label.ea.title_edited = "你的环境分析的新标题是什么？"
+MTR.label.ea.title_clone = "你所复制的环境分析的标题是什么？"
+MTR.input.placeholders.ea.enter_title_for_board = "输入你的新环境分析的标题"
+
+# Notifications
+
+MTR.headlines.ea.analysis = "描述你的环境分析"
+MTR.headlines.ea.welcome_to_board = "欢迎来到环境分析委员会!"
+
+MTR.text.ea.helper_content = "<em>环境分析</em>，也被称为<em>PESTLE分析</em>，将帮助您从六个方面评估您所处的当前和/或未来环境。<br/>我们建议你在项目的早期就进行环境分析，至少在开始构思阶段之前，并在整个项目中保持更新。"
+MTR.tour.ea.once_your_done = "<em>一旦你对你的环境分析感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
+
+
+## Lightweight Business Model
+
+
+# Title
+
+MTR.headline.lbm.board = "轻量级商业模式板"
+
+# Element/Box Labels
+
+MTR.box.lbm.customers = "客户"
+MTR.box.lbm.offerings = "祭品"
+MTR.box.lbm.capabilities = "能力"
+MTR.box.lbm.financials = "财务状况"
+
+# Data Field Labels and placeholders
+
+MTR.label.lbm.title_new = "你的新轻量级商业模式的名称是什么？"
+MTR.label.lbm.title_edited = "你的轻型商业模式的新标题是什么？"
+MTR.label.lbm.title_clone = "你复制的轻量级商业模式的标题是什么？"
+MTR.input.placeholders.lbm.enter_title_for_board = "输入你的新轻量级商业模式的标题"
+
+# Notifications
+
+MTR.headlines.lbm.analysis = "描述一下你的轻量级商业模式"
+MTR.headlines.lbm.welcome_to_board = "欢迎来到轻量级商业模式委员会!"
+
+MTR.text.lbm.helper_content = "<em>轻量级商业模式</em>将帮助你记录你目前的组织、竞争对手和行业。它支持确定公司的战略重点，并为设计新颖和有竞争力的详细商业模式奠定基础。<br />你可以在《<a href='https://inov.at/dts'></em>战略设计思维</em></a>》一书的第三章中找到进一步的细节。<br />我们建议每次当你不需要详细或原始奥斯特瓦尔特商业模式的具体内容时，使用商业模式画布的轻型变量。"
+MTR.tour.lbm.once_your_done = "<em>一旦你对你的轻量级商业模式感到满意，请进入</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
+MTR.text.lbm.disclaimer = "<em>轻量级商业模式画布</em>取自<a href='https://inov.at/dts'>战略设计思维</a>，并基于<a href='https://www.strategyzer.com'>Strategyzer</a>中的<em>商业模式画布</em>。它是在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权的。"
+
+
+## Osterwalder's Business Model
+
+
+# Title
+
+MTR.headline.obm.board = "商业模式委员会"
+
+# Element/Box Labels
+
+MTR.box.obm.cs = "客户分类"
+MTR.box.obm.cr = "客户关系"
+MTR.box.obm.ch = "渠道"
+MTR.box.obm.vp = "价值主张"
+MTR.box.obm.ka = "主要活动"
+MTR.box.obm.kr = "关键资源"
+MTR.box.obm.kp = "主要合作伙伴"
+MTR.box.obm.fr = "收入来源"
+MTR.box.obm.fc = "成本结构"
+
+# Data Field Labels and placeholders
+
+MTR.label.obm.title_new = "你的新商业模式的名称是什么？"
+MTR.label.obm.title_edited = "你的商业模式的新标题是什么？"
+MTR.label.obm.title_clone = "你复制的商业模式的标题是什么？"
+MTR.input.placeholders.obm.enter_title_for_board = "输入你的新商业模式的标题"
+
+# Notifications
+
+MTR.headlines.obm.analysis = "描述一下你的商业模式"
+MTR.headlines.obm.welcome_to_board = "欢迎来到商业模式委员会!"
+
+MTR.text.obm.helper_content = "<em>原始商业模式画布</em>是由Alex Osterwalder和Yves Pigneur开发。它将帮助你记录你目前的组织、竞争对手和行业。<br/><em>``商业模式描述了一个组织如何创造、交付和捕获价值的原理'</em> - <strong>Alex Osterwalder</trong>。"
+MTR.tour.obm.once_your_done = "<em>一旦你对你的商业模式感到满意，请进入</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图计划器</a>"
+MTR.text.obm.disclaimer = "<em>商业模式画布</em>取自<a href='https://www.strategyzer.com'>Strategyzer</a>，并在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权。"
+
+
+## Detailed Business Model
+
+
+# Title
+
+MTR.headline.dbm.board = "详细的商业模式委员会"
+
+# Element/Box Labels
+
+MTR.box.dbm.cs = "客户分类"
+MTR.box.dbm.cj = "客户待办事项"
+MTR.box.dbm.cr = "客户关系"
+MTR.box.dbm.cd = "客户交付"
+MTR.box.dbm.ovp = "价值主张"
+MTR.box.dbm.ops = "产品&amp; 服务"
+MTR.box.dbm.kad = "竞争优势活动"
+MTR.box.dbm.kac = "成本优势活动"
+MTR.box.dbm.kao = "外包活动"
+MTR.box.dbm.krp = "易腐烂的资源"
+MTR.box.dbm.krc = "资本资源"
+MTR.box.dbm.krl = "劳动"
+MTR.box.dbm.krs = "技能"
+MTR.box.dbm.fr = "收入来源"
+MTR.box.dbm.fc = "成本结构"
+
+# Data Field Labels and placeholders
+
+MTR.label.dbm.title_new = "你的新的详细商业模式的标题是什么？"
+MTR.label.dbm.title_edited = "你的详细商业模式的新标题是什么？"
+MTR.label.dbm.title_clone = "你复制的详细商业模式的标题是什么？"
+MTR.input.placeholders.dbm.enter_title_for_board = "输入你的新的详细商业模式的标题"
+
+# Notifications
+
+MTR.headlines.dbm.analysis = "描述你的详细商业模式"
+MTR.headlines.dbm.welcome_to_board = "欢迎来到详细的商业模式委员会!"
+
+MTR.text.dbm.helper_content = "<em>详细商业模式</em>将帮助你记录你目前的组织、竞争对手和行业。它支持确保您的战略是理想的、可行的和可操作的。它通常建立在<em>轻量级商业模型</em>的基础上，并通过考虑与公司成功相关的额外细节来进行扩展。<br />你可以在<a href='https://inov.at/dts'></em>战略的设计思维</em></a>一书的第三章中找到进一步的细节。<br />我们建议在对具体的商业想法进行原型设计并希望确保其产生一个理想的、可行的业务时使用详细商业模型。"
+MTR.tour.dbm.once_your_done = "<em>一旦你对你的详细商业模式感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
+MTR.text.lbm.disclaimer = "<em>详细商业模式画布</em>取自<a href='https://inov.at/dts'>战略设计思维</a>，并基于<a href='https://www.strategyzer.com'>Strategyzer</a>中的<em>商业模式画布</em>。它是在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权的。"
+
+
+## Competitive Positioning Canvas
+
+
+# Title
+
+MTR.headline.cp.board = "竞争定位板"
+
+# Element/Box Labels
+
+MTR.box.header.cp.cj = "基于客户待办事项的决策因素"
+MTR.box.header.cp.ovp = "产品&amp; 服务/价值主张如何满足客户工作的需要"
+MTR.box.label.cp.need = "来自客户待办工作的需求和愿望"
+MTR.box.label.cp.unique = "独特性"
+MTR.box.label.cp.superior = "优越性"
+MTR.box.label.cp.indifferent = "差异性"
+MTR.box.cp.cj_rv = "理性价值因素"
+MTR.box.cp.cj_rc = "合理的成本因素"
+MTR.box.cp.cj_e = "情感因素"
+MTR.box.cp.ou_rv = "理性价值因素"
+MTR.box.cp.ou_rc = "合理的成本因素"
+MTR.box.cp.ou_e = "情感因素"
+MTR.box.cp.os_rv = "理性价值因素"
+MTR.box.cp.os_rc = "合理的成本因素"
+MTR.box.cp.os_e = "情感因素"
+MTR.box.cp.oi_rv = "理性价值因素"
+MTR.box.cp.oi_rc = "合理的成本因素"
+MTR.box.cp.oi_e = "情感因素"
+
+# Data Field Labels and placeholders
+
+MTR.label.cp.title_new = "你的新竞争定位的标题是什么？"
+MTR.label.cp.title_edited = "你的竞争定位的新标题是什么？"
+MTR.label.cp.title_clone = "你复制的竞争定位的标题是什么？"
+MTR.input.placeholders.cp.enter_title_for_board = "输入你的新竞争定位的标题"
+
+# Notifications
+
+MTR.headlines.cp.analysis = "描述你的竞争定位"
+MTR.headlines.cp.welcome_to_board = "欢迎来到竞争定位板!"
+
+MTR.text.cp.helper_content = "<em>竞争定位画布</em>将帮助你从客户，而不是竞争对手的立场来评估你的竞争定位。<br />你可以在<a href='https://inov.at/dts'></em>战略设计思维</em></a>一书的第12章中找到更多的细节。<br />我们建议在你设计好详细的商业模式之后再使用竞争定位画布。"
+MTR.tour.cp.once_your_done = "<em>一旦你对自己的竞争定位感到满意，请进入</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图规划器</a>"
+MTR.text.cp.disclaimer = "<em>竞争定位画布</em>摘自<a href='https://inov.at/dts'>战略设计思维</a>，并以<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可证授权。"
+
+
+## Lean Canvas
+
+
+# Title
+
+MTR.headline.lean.board = "精益帆布板"
+
+# Element/Box Labels
+
+MTR.box.lean.problem = "问题"
+MTR.box.lean.alternatives = "现有的替代方案"
+MTR.box.lean.solution = "解决方案"
+MTR.box.lean.keymetrics = "关键指标"
+MTR.box.lean.uniquevalue = "独特的价值主张"
+MTR.box.lean.highlevelconcept = "高级别的概念"
+MTR.box.lean.unfairadvantage = "不公平的优势"
+MTR.box.lean.channels = "渠道"
+MTR.box.lean.customersegment = "客户分类"
+MTR.box.lean.earlyadopters = "早期采用者"
+MTR.box.lean.cost = "成本结构"
+MTR.box.lean.revenue = "收入来源"
+
+# Data Field Labels and placeholders
+
+MTR.label.lean.title_new = "你的新瘦身画布的标题是什么？"
+MTR.label.lean.title_edited = "你的精益画布的新标题是什么？"
+MTR.label.lean.title_clone = "你复制的精益画布的标题是什么？"
+MTR.input.placeholders.lean.enter_title_for_board = "输入你的新瘦身画布的标题"
+
+# Notifications
+
+MTR.headlines.lean.analysis = "描述一下你的精益画布"
+MTR.headlines.lean.welcome_to_board = "欢迎来到Lean Canvas Board!"
+
+MTR.text.lean.helper_content = "<br/>您将讨论您的<em>客户群</em>、<em>问题、解决方案</em>。<br/>从那里，您将进入您的<em>独特的价值主张</em>（是什么使您的想法比其他产品更好？）、您的<em>分销渠道</em>（您将如何把您的解决方案送到客户那里？你的<em>收益流</em>（你的解决方案如何赚钱？），你的<em>成本结构</em>（你的解决方案值多少钱？），<em>关键指标</em>（你将如何衡量成功？），以及你的<em>不公平优势</em>（你有什么可以帮助你在竞争中取得成功？）<br/>回答这些问题旨在促进成功，减少失败，并允许你跟踪和验证你的假设。精益就是要消除浪费，努力打造客户需要的产品、业务和解决方案。"
+MTR.text.lean.disclaimer = "精益画布改编自<a href='https://strategyzer.com/' target='_blank'>商业模式画布</a>，并在<a href='https://creativecommons.org/licenses/by-sa/3.0/'>创作共用署名-相同方式共享3.0</a>许可下授权。"
+MTR.tour.lean.once_your_done = "<em>一旦你对你的精益画布感到满意，就去</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>"
+
+
+## Porter's Strategy Questions
+
+
+# Title
+
+MTR.headline.sq.board = "波特的战略问题板"
+
+# Element/Box Labels
+
+MTR.box.sq.qa = "公司的价值主张与竞争对手的价值主张有什么区别？"
+MTR.box.sq.qb = "公司在哪些活动上的表现与竞争对手不同或更胜一筹？"
+MTR.box.sq.qc = "公司做出了哪些与竞争对手不同的权衡？"
+MTR.box.sq.qd = "公司的哪些战略配合？"
+MTR.box.sq.qe = "该战略如何支持长期的连续性？"
+
+# Data Field Labels and placeholders
+
+MTR.label.sq.title_new = "你对波特的战略问题的新答案的标题是什么？"
+MTR.label.sq.title_edited = "你对波特的战略问题的答案的新标题是什么？"
+MTR.label.sq.title_clone = "你复制的对波特战略问题的答案的标题是什么？"
+MTR.input.placeholders.sq.enter_title_for_board = "输入你对波特的战略问题的新答案的标题"
+MTR.label.sq.description = "对战略问题的回答"
+
+# Notifications
+
+MTR.headlines.sq.analysis = "描述你对波特的战略问题的答案"
+MTR.headlines.sq.welcome_to_board = "欢迎来到波特的战略问题板!"
+
+MTR.text.sq.helper_content = "回答<em>波特的战略问题</em>将帮助你确保你设计的战略具有竞争力。你可以在《<a href='https://inov.at/dts'></em>战略设计思维</em></a>》一书的第12章中找到关于波特战略问题的进一步细节。<br/>我们建议你在战略过程结束时回答波特的战略问题。"
+MTR.tour.sq.once_your_done = "<em>一旦你对波特的战略问题的答案感到满意，请进入</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>路线图规划器</a>。"
+
+
+## Strategy Message
+
+
+# Title
+
+MTR.headline.sm.board = "战略留言板"
+
+# Element/Box Labels
+
+MTR.box.sm.qa = "谁是<em>目标客户群</em>，谁是<em>明确的范围外</em>？"
+MTR.box.sm.qb = "你将向你的目标客户提供什么<em>价值主张</em>？"
+MTR.box.sm.qc = "为什么客户应该选择与你做生意，而不是与你的竞争对手做生意？我们有哪些难以复制的<em>显著特征</em>？"
+MTR.box.sm.qd = "为什么你能实现对客户的承诺？你拥有和利用哪些<em>独特的能力</em>？"
+MTR.box.sm.qe = "在新的或修订的战略下，什么将<em>改变</em>，什么<em>将在一段时间内保持不变</em>？您如何确保仍在范围内的现有客户不会流失？"
+MTR.box.sm.qf = "为什么该战略将允许<em>在一段时间内产生和/或增加利润</em>？"
+MTR.box.sm.qg = "新战略或修订后的战略所设定的目标<em>实际可实现的</em>有哪些？"
+
+# Data Field Labels and placeholders
+
+MTR.label.sm.title_new = "你的新战略信息的标题是什么？"
+MTR.label.sm.title_edited = "你的战略信息的新标题是什么？"
+MTR.label.sm.title_clone = "你复制的战略信息的标题是什么？"
+MTR.input.placeholders.sm.enter_title_for_board = "输入你的新策略信息的标题"
+
+# Notifications
+
+MTR.headlines.sm.analysis = "描述你的战略信息"
+MTR.headlines.sm.welcome_to_board = "欢迎来到《战略》留言板!"
+
+MTR.text.sm.helper_content = "<em>战略信息</em>将帮助你为你的后期战略精心设计一个成功的信息。你可以在《战略设计思维》一书的第13章中找到关于沟通战略的更多细节。<br/>我们建议你在完成新的/修订的战略制定后，使用战略信息画布。"
+MTR.tour.sm.once_your_done = "<em>一旦你对你的策略信息感到满意，请到</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> 路线图计划器</a>"
+
+
+## Retrospectives
+
+
+# Title
+
+MTR.headline.retros.board = "回顾过去"
+
+# Element/Box Labels
+
+MTR.box.retros.continue = "继续 - 哪些方面进展顺利？"
+MTR.box.retros.stop_doing = "停止 - 我们应该停止做什么？"
+MTR.box.retros.start_doing = "开始 - 我们应该开始做什么来改善？"
+
+# Data Field Labels and placeholders
+
+MTR.label.retros.title_new = "你的新回顾展的标题是什么？"
+MTR.label.retros.title_edited = "您的回顾展的新标题是什么？"
+MTR.label.retros.title_clone = "您复制的回顾展的标题是什么？"
+MTR.input.placeholders.retros.enter_title_for_board = "输入你的新回顾展的标题"
+
+# Notifications
+
+MTR.headlines.retros.analysis = "描述一下你的回顾性工作"
+MTR.headlines.retros.welcome_to_board = "欢迎来到 "回顾板"!"
+
+MTR.text.retros.helper_content = "<em>回顾</em>是对工作、团队运作，当然还有进展的快速反思。<br/>这时，你的团队可以花点时间来磨合哪些地方做得好，哪些地方做得不好，以及下次可以采取哪些不同的方法。"
+MTR.tour.retros.once_your_done = "<em>一旦你对你的回顾性分析感到满意，去</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>"
+

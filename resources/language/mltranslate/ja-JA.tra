@@ -9,14 +9,26 @@ language.momentJSDate = "YYYY/MM/DD"
 language.currency = "￥"
 
 #0 is Sunday, 1 is Monday
+
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
+# special
+
+MTR.label.classic = "クラシックタブビュー"
+MTR.label.oneView = "モダンワンビュー"
+MTR.label.ticket_layout = "チケットのレイアウトを選択する"
+MTR.label.additional_settings = "追加設定"
+MTR.label.comment_order = "コメント順"
+MTR.label.downtoup = "古いものから順に"
+MTR.label.uptodown = "最新順"
+
 #Datepicker translations
+
 language.dayNames = "日曜日,月曜日,火曜日,水曜日,木曜日,金曜日,土曜日"
 language.dayNamesMin = "日,月,火,水,木,金,土"
 language.dayNamesShort = "日曜,月曜,火曜,水曜,木曜,金曜,土曜"
-language.monthNames= "1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月"
+language.monthNames = "1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月"
 language.monthNamesShort = "1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月"
 language.currentText = "現在"
 language.closeText = "閉じる"
@@ -28,12 +40,12 @@ language.columnFormatMonth = "ddd"
 language.columnFormatWeek = "ddd M/d"
 language.columnFormatday = "dddd M/d"
 
-
 headlines.all_times = "すべての作業時間"
 headlines.edit_time = "作業時間編集"
 headlines.confirm_delete = "削除確認"
-headlines.delete_time = "作業時間削除 "
+headlines.delete_time = "作業時間削除"
 headlines.drive_impact = "プロジェクト管理"
+MTR.headlines.welcome_back = "ウェルカムバック"
 headlines.login = "Login"
 headlines.project_with_name = "Project:"
 headlines.no_active_sprint = "有効なsprintがありません！"
@@ -66,14 +78,22 @@ headline.overview = "概要"
 headlines.todos = "タスク一覧"
 headlines.delete_project_x = "%1$s プロジェクトを削除"
 headlines.duplicate_project_x = "%1$s プロジェクトをコピー"
+MTR.headlines.logo = "ロゴマーク"
+MTR.headlines.team_member = "現在のチームメンバー"
+MTR.headlines.add_more_users = "ユーザーを追加する"
+MTR.headlines.assign_users_to_project = "このプロジェクトにユーザーを追加登録する"
+MTR.headlines.no_articles_yet = "まだ記事はありません"
+MTR.headline.your_projects = "あなたのプロジェクト"
+MTR.headlines.your_todos = "あなたのToDo"
+MTR.headlines.home = "ホーム"
+MTR.headlines.project_dashboard = "プロジェクトダッシュボード"
 
-headline.lean_canvas = "Lean Canvas"
+MTR.headlines.page_forbidden = "このページを表示する権限がありません"
+
+headlines.delete_project_x = "%1$s プロジェクトを削除"
 headlines.research_next_big_product = "次の大きなプロダクトを研究し、実験をここに集めます。"
 headline.research_board = "リサーチ掲示板"
 headline.delete_board = "掲示板削除"
-headline.retrospective = "振り返り"
-headline.no_retrospectives_yet = "まだ振り返りがありません。"
-headline.start_a_new_retrospective = "新しい振り返りを始める"
 headline.all_clients = "クライアント一覧"
 headline.new_client = "新規クライアント"
 headline.delete_client = "クライアント削除: %1$s"
@@ -104,19 +124,21 @@ headlines.the_timesheets = "タイムシート！"
 headlines.welcome_to_your_project = "プロジェクトへようこそ！"
 headlines.help = "Help..."
 headlines.congrats_on_your_project = "おめでとうございます！"
-headlines.welcome_to_retros = "振り返りページへようこそ！"
 headlines.welcome_to_your_roadmap = "ロードマップへようこそ！"
 headlines.welcome_to_clients_products = "クライアント / プロダクト へようこそ！"
 headlines.welcome_to_projects = "プロジェクト一覧へようこそ！"
 headlines.welcome_to_simple_research_board = "簡易リサーチ掲示板へようこそ！"
 headlines.update_database = "データベース更新"
-headlines.retrospectives = "振り返り一覧"
 headlines.installation = "インストール"
 headlines.reset_password = "パスワードリセット"
 headlines.reports = "レポート一覧"
 headlines.twoFA_login = "二段階認証コードを入力してください"
 headlines.twoFA = "二段階認証"
 headlines.my_portfolio = "自分のポートフォリオ"
+MTR.headlines.import_ldap_users = "LDAPユーザーのインポート"
+MTR.headlines.documents = "ドキュメント"
+MTR.headlines.latest_todos = "最新のToDo"
+
 
 subtitles.sprint_burndown = "スプリント バーンダウン"
 subtitles.backlog_burndown = "残りタスク バーンダウン"
@@ -148,7 +170,11 @@ subtitles.user_info = "ユーザ情報"
 subtitles.file = "ファイル"
 subtitles.summary = "概要"
 subtitles.cummulative_flow = "累積フロー"
-
+MTR.subtitles.organization = "組織図"
+MTR.subtitles.companydetails = "会社概要"
+MTR.subtitles.look_and_feel = "ルック＆フィール"
+MTR.subtitles.approvals = "認証取得状況"
+MTR.subtitles.project_updates = "プロジェクトの最新情報"
 
 notifications.no_template = "テンプレートが見つかりませんでした"
 notifications.file_upload_success = "ファイルのアップロードが成功しました"
@@ -178,12 +204,25 @@ notification.todo_deleted = "タスクを削除しました"
 notification.milestone_deleted = "マイルストーンを削除しました"
 notification.saved_mattermost_webhook = "MattermostのWebhookURLを保存しました"
 notification.saved_slack_webhook = "SlackのWebhookURLを保存しました"
+MTR.notification.saved_discord_webhook = "Discord WebhookのURLは正常に保存されました。"
 notification.saved_zulip_webhook = "Zulipのintegrationを保存しました"
 notification.error_zulip_webhook_fill_out_fields = "Zulipのintegrationを保存できませんでした。 すべての項目を入力してください"
 notification.project_has_tickets = "プロジェクトにまだタスクが残っています"
 notification.project_saved = "プロジェクトを保存しました"
 notification.no_project_name = "プロジェクト名が指定されていません"
 notification.no_client = "クライアントが選択されていません"
+MTR.notification.wiki_created_successfully = "Wikiの作成に成功"
+MTR.notification.article_deleted = "記事削除"
+MTR.notification.wiki_deleted = "Wiki削除"
+
+MTR.notification.new_status_saved = "ToDoステータスリストが正常に保存された"
+MTR.notification.error_saving_status = "ステータスの保存にエラーが発生しました。"
+MTR.notification.at_least_one_status = "少なくとも1つのステータスを作成する必要があります。"
+MTR.notification.error_installing = "データベースのインストールにエラーが発生しました。詳細はエラーログをご確認ください。"
+
+MTR.notifications.user_was_added_to_project = "チームメンバーが正常にアップデートされました"
+MTR.notifications.not_assigned_to_any_project = "プロジェクトにアサインされることはありません。プロフィールを更新したり、コーヒーを飲んだり、リラックスして過ごすことができます。"
+
 
 notification.project_has_tasks = "このプロジェクトにはまだタスクが残っています。すべて削除されます"
 notification.project_deleted = "プロジェクトを削除しました"
@@ -207,7 +246,6 @@ notification.idea_board_deleted = "アイデア掲示板を削除しました"
 notification.idea_board_created = "アイデア掲示板を作成しました"
 notification.idea_edited = "アイデアを編集しました"
 notification.idea_created = "アイデアを作成しました"
-notification.retrospective_item_deleted = "フィードバックを削除しました"
 notification.client_saved_successfully = "クライアントを編集しました"
 notification.client_name_not_specified = "クライアント名を入力してください"
 notification.client_added_successfully = "クライアントを追加しました"
@@ -215,11 +253,14 @@ notification.client_exists_already = "クライアントはすでに存在して
 notification.client_has_todos = "クライアントはタスクとプロジェクトに割り当てられています"
 notification.client_deleted = "クライアントを削除しました"
 notification.event_created_successfully = "イベントを作成しました"
+MTR.notification.event_edited_successfully = "イベントの編集に成功"
 notification.event_removed_successfully = "イベントを削除しました"
 notification.could_not_delete_event = "イベントを削除できませんでした"
 notification.user_created = "新規ユーザを作成しました"
 notification.user_exists = "このメールアドレスは既に使用されています"
 notification.passwords_dont_match = "パスワードが一致しません"
+MTR.notification.username_or_password_missing = "ユーザー名またはパスワードが見つからない"
+MTR.notifications.problem_resetting_password = "パスワードの再設定に問題が発生しました"
 notification.no_valid_email = "有効なメールアドレスではありません"
 notification.enter_email = "メールアドレスを入力してください"
 notification.enter_password = "パスワードを入力してください"
@@ -235,8 +276,8 @@ notifications.sprint_deleted_successfully = "スプリントを削除しまし�
 notifications.comment_added_successfully = "コメントを追加しました"
 notifications.problem_saving_your_comment = "コメントの保存に失敗しました"
 notifications.project_created_successfully = "新しいプロジェクトを作成しました。<a href='%1$s'>リサーチ</a>にアクセスして、続けてください。"
-notifications.installation_success = " インストールが成功しました。<br/><br/>ワークスペースのURLでログインできます:<a href='%1$s'>%1$s</a>"
-notifications.installation_error = " なにかがおかしいようです<br/>%1$s<br/><br/>続行する前にデータベースのすべてのテーブルを削除してください。 "
+notifications.installation_success = "インストールが成功しました。<br/><br/>ワークスペースのURLでログインできます:<a href='%1$s'>%1$s</a>"
+notifications.installation_error = "なにかがおかしいようです<br/>%1$s<br/><br/>続行する前にデータベースのすべてのテーブルを削除してください。"
 notifications.database_exists = "データベースは既にインストールされています。ログインしてください"
 notifications.email_was_sent_to_reset = "パスワードをリセットするためのメールが送信されました"
 notifications.could_not_find_username = "ユーザ名が見つかりませんでした"
@@ -249,7 +290,15 @@ notification.form_token_incorrect = "フォームのトークンが正しくあ�
 notifications.could_not_reset_limit_reached = "アカウントのパスワードリセットの上限に達しました。最後のリセットリンクを使用してパスワードをリセットしてください。"
 notifications.project_copied_successfully = "プロジェクトのコピーが成功しました。<br/><a href='%1$s'>ここをクリックしてアクセスしてください</a>"
 
+MTR.notification.article_updated_successfully = "記事の更新が完了しました"
+MTR.notification.article_created_successfully = "記事が正常に作成されました"
+
+MTR.notifications.ical_success = "iCalのURLの作成に成功"
+MTR.notifications.ical_removed_success = "iCalのURLを削除しました"
+
+
 short_notifications.effort_updated = "労力を更新しました"
+MTR.short_notifications.priority_updated = "優先順位の更新に成功"
 short_notifications.milestone_updated = "マイルストーンを更新しました"
 short_notifications.status_updated = "ステータスを更新しました"
 short_notifications.duedate_updated = "期限を変更しました"
@@ -264,13 +313,15 @@ short_notifications.date_updated = "日付を更新しました"
 short_notifications.remaining_hours_updated = "残り時間を更新しました!"
 short_notifications.planned_hours_updated = "予定時間を更新しました!"
 
+MTR.short_notifications.url_copied = "コピーしたUrl"
 
-input.placeholders.enter_email="メールアドレスを入力"
-input.placeholders.enter_password="パスワードを入力"
+input.placeholders.enter_email = "メールアドレスを入力"
+input.placeholders.enter_password = "パスワードを入力"
 input.placeholders.filter_by_sprint = "スプリントで絞り込む..."
 input.placeholders.filter_by_user = "ユーザで絞り込む..."
 input.placeholders.filter_by_milestone = "マイルストーンで絞り込む..."
 input.placeholders.filter_by_type = "タイプで絞り込む..."
+MTR.input.placeholders.filter_by_priority = "優先順位で絞り込む..."
 input.placeholders.short_name = "短縮名"
 input.placeholders.name_for_idea_board = "アイデア掲示板の名前"
 input.placeholders.filter_by_status = "ステータスで絞り込む..."
@@ -279,20 +330,23 @@ input.placeholders.pick_a_color = "色を選択"
 input.placeholders.what_are_you_working_on = "何に取り組んでいますか？"
 input.placeholders.search_type_hit_enter = "検索するには、入力してエンターキーを押してください..."
 input.placeholders.zulip_url = "例: https://company.zulipchat.com"
+MTR.input.placeholders.discord_url = "例）https://discord.com/api/webhooks/123/abc"
 input.placeholders.filter_by_board = "掲示板で絞り込む..."
 input.placeholders.enter_title_for_board = "新しいキャンバスのタイトルを入力してください"
 input.placeholders.describe_hypothesis = "仮説を簡潔に説明してください"
 input.placeholders.describe_assumption = "あなたの仮定は何ですか"
 input.placeholders.describe_data = "仮説を検証するために必要なデータは何ですか"
 input.placeholders.describe_conclusion = "収集したデータに基づいてどのような結論を導きますか"
-input.placeholders.sprint_x="スプリント X"
+input.placeholders.sprint_x = "スプリント X"
 input.placeholders.you_can_use_milestone_or_sprint = "マイルストーン名を使用できます (e.g. Milestone 1 Review)"
 input.placeholders.describe_situation = "状況を説明してください"
 input.placeholders.list_examples = "いくつかの例を挙げてください"
-input.placeholders.enter_new_password="新しいパスワードを入力"
+input.placeholders.enter_new_password = "新しいパスワードを入力"
 input.placeholders.confirm_password = "パスワードを確認"
 input.placeholders.choose_project = "プロジェクトを選択"
 input.placeholders.choose_todo = "タスクを選択"
+MTR.input.placeholders.wiki_title = "Wikiのタイトルを入力します。"
+MTR.input.placeholders.enter_title_of_todo = "ToDoのタイトルを入力します。"
 
 buttons.reload = "再読み込み"
 buttons.login = "ログイン"
@@ -305,7 +359,7 @@ buttons.change = "変更"
 buttons.remove = "削除"
 buttons.upload = "更新"
 buttons.search = "検索"
-buttons.add_idea = " アイデアを追加"
+buttons.add_idea = "アイデアを追加"
 buttons.idea_wall = "<i class='fas fa-columns'></i> アイデア板"
 buttons.idea_kanban = "<i class='fa-list'></i> アイデア カンバン"
 buttons.back = "戻る"
@@ -314,11 +368,10 @@ buttons.start_new_idea_board = "<i class='fa fa-plus'></i> 新しいアイデア
 buttons.create_board = "掲示板を作成する"
 buttons.yes_delete = "はい、削除します！"
 buttons.day = "日"
-buttons.week ="週"
+buttons.week = "週"
 buttons.month = "月"
 buttons.today = "今日"
 buttons.timeframe = "時間枠"
-buttons.start_retrospective = "振り返りを始める"
 buttons.add_event = "イベントを追加"
 buttons.add_user = "ユーザを追加"
 buttons.take_backlog_tour = "<i class='fas fa-map-signs'></i> バックログのチュートリアルに参加する"
@@ -329,6 +382,7 @@ buttons.install = "インストール"
 buttons.install_in_progress = "インストール中…"
 buttons.reset_password = "パスワードをリセットする"
 buttons.duplicate = "コピー"
+MTR.buttons.find_users = "ユーザーを探す"
 
 links.skip_tour_dont_show_again = "チュートリアルをスキップ＆今後表示しない"
 links.skip_tour_start_project = "チュートリアルをスキップして、プロジェクトを始める"
@@ -340,6 +394,7 @@ links.forgot_password = "パスワードを忘れましたか？"
 links.dont_do_it_alone = "一人でやらないで！ここにユーザーを追加してください！"
 links.num_of_todos = "# のタスク"
 links.effort = "労力"
+MTR.links.priority = "優先順位"
 links.hourly = "毎時"
 links.create_sprint = "スプリントを作成"
 links.goto_backlog = "すべてのタスクを表示"
@@ -354,6 +409,7 @@ links.start_work = "作業開始"
 links.stop_work_started_at = "作業停止, <span><span class='time'>%1$s</span>に開始</span>"
 links.go_back = "戻る"
 links.add_new_comment = "新しいコメントを追加"
+MTR.links.add_new_report = "更新状況"
 links.reply = "返信"
 links.delete = "削除"
 links.add_todo = "<span class='fa-pushpin'></span> タスク追加"
@@ -400,6 +456,20 @@ links.back_to_login = "ログイン画面に戻る"
 links.download = "<i class='fa fa-download'></i> ダウンロード"
 links.duplicate_project = "<i class='fa fa-copy'></i> プロジェクトをコピー"
 links.open_project = "<i class='fa fa-open'></i> プロジェクトを開く"
+MTR.links.add_status = "<i class='fas fa-plus-circle'></i> ステータスを追加する。"
+MTR.links.add_remove_col = "<i class='fas fa-plus'></i> カラムの追加と削除"
+MTR.link.edit_wiki = "<i class='fa fa-edit'></i> このWikiを編集する。"
+MTR.link.new_wiki = "<i class='fas fa-plus'></i> 新しいWikiを作成する。"
+MTR.link.create_article = "記事を作成する"
+MTR.links.edit_article = "<i class='fa fa-edit'></i> 記事を編集する"
+MTR.links.copy_url = "<i class='fa fa-link'></i> URLをコピーする。"
+MTR.links.delete_wiki = "Wikiの削除"
+MTR.links.delete_article = "記事削除"
+MTR.links.add_to_timesheets = "<span class='fa fa-clock-o'></span> タイムシートに追加する。"
+MTR.links.read_more = "続きを読む"
+MTR.links.add_team_member = "チームメンバー追加"
+MTR.links.create_user = "新規ユーザー作成"
+
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock'></span><span class='headmenu-label'>タイムシート</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>カレンダー</span>"
@@ -425,12 +495,13 @@ menu.milestones = "<span class='fa fa-fw fa-sliders'></span> マイルストー�
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> タイムシート"
 menu.research = "<span class='fas fa-fw fa-flask'></span> リサーチ"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> アイデア"
-menu.retrospectives = "<span class='far fa-fw fa-hand-spock'></span> 振り返り"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> プロジェクト設定"
 menu.reports = "<span class='fa fa-fw fa-chart-bar'></span> レポート"
 menu.community = "<span class='fa fa-fw fa-comments'></span> コミュニティフォーラム"
 menu.my_portfolio = "<span class='head-icon fa fa-briefcase'></span><span class='headmenu-label'>ポートフォリオ</span>"
-
+MTR.menu.documents = "<span class='fa fa-fw fa-book'></span> ドキュメント"
+MTR.menu.home = "<span class='head-icon fa fa-home'></span><span class='headmenu-label'>Home</span> 。"
+MTR.text.hi = "ハイ"
 text.sprint_is_short_iteration = "スプリントとは、タスクが完成してリリースされるまでの短い反復のことです。"
 text.update_sprint_chart_add_todos = "このチャートはその時に更新されます。それまでの間に、あなたのスプリントにタスクを追加し始めてください。"
 text.take_the_day_off = "休みを取るか、バックログの作業を開始してください。"
@@ -447,17 +518,21 @@ text.create_new_subtask = "新しいサブタスクを作成:"
 text.written_on_by = "%3$s %4$s によって %2$s に %1$s が書き込まれました"
 text.written_on = "%1$s at %2$s"
 text.no_comments = "まだ何もありません"
+MTR.text.no_updates = "☕ まだ更新されていません。"
 text.comments = "コメント一覧"
 text.num_comments = "<span class='fa-regular fa-comments'></span> %1$s コメント"
-
+MTR.text.full_name = "1$s %2$s"
+MTR.text.no_files = "まだファイルがアップロードされていません"
+MTR.text.here_are_news = "Leantimeプロジェクトからのお知らせ"
+MTR.text.create_new_content = "最初の記事を作成する。"
+MTR.text.create_new_wiki = "最初のWikiを作成する。"
 text.last_modified = "最終更新 %1$s"
-text.are_you_sure_delete_canvas_item = "この項目を削除してもよろしいですか？"
-text.are_you_sure_delete_retro = "この振り返りを削除してもよろしいですか？"
 text.are_you_sure_delete_idea = "このアイデアを削除してもよろしいですか？"
 text.are_you_sure_delete_idea_board = "このアイデアの掲示板を削除してもよろしいですか？"
-text.are_you_sure_delete_retro_board = "この振り返りの掲示板を削除してもよろしいですか？"
-text.are_you_sure_delete_feedback = "このフィードバックを削除してもよろしいですか？"
 text.are_you_sure_delete_sprint = "このスプリントを削除してよろしいですか？"
+MTR.text.are_you_sure_delete_wiki = "本当にこのWikiを削除してよろしいですか？これですべての記事も削除されます。"
+MTR.text.are_you_sure_delete_article = "本当にこの記事を削除しますか？"
+
 text.use_milestone_to_track_retro = "マイルストーンを使用して、振り返りに向けての進捗状況を追跡します。"
 text.use_milestone_to_track_leancanvas = "マイルストーンを使用して、リーンキャンバスに向けての進捗状況を追跡します。"
 text.use_milestone_to_track_idea = "マイルストーンを使用して、アイデアの進捗状況を確認します。"
@@ -470,11 +545,12 @@ text.confirm_event_deletion = "このイベントを削除してもよろしい�
 text.confirm_research_board_item_deletion = "この仮説を削除してもよろしいですか？"
 text.confirm_research_board_deletion = "このリサーチ掲示板を削除してもよろしいですか？"
 text.confirm_user_deletion = "このユーザーを削除してもよろしいですか？"
-text.mattermost_instructions = " この統合により、選択したチャンネルに更新通知が投稿されます。<br/>Mattermostから<a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>Incoming Webhook URLを取得するためにここをクリック</a>。次に、右のフォームにリンクを貼り付けて保存をクリックしてください。"
+text.mattermost_instructions = "この統合により、選択したチャンネルに更新通知が投稿されます。<br/>Mattermostから<a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>Incoming Webhook URLを取得するためにここをクリック</a>。次に、右のフォームにリンクを貼り付けて保存をクリックしてください。"
 text.slack_instructions = "この統合により、選択したチャンネルに更新通知が投稿されます。<br/>Slackから<a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>Incoming Webhook URLを取得するためにここをクリック</a>。次に、右のフォームにリンクを貼り付けて保存をクリックしてください。"
 text.choose_access_for_users = "このプロジェクトへのアクセス権を持つユーザーを選択します。"
 text.expected_to_finish_by = "終了予定:"
 text.zulip_instructions = "この統合により、お好みのストリームや掲示板に更新通知を投稿することができます。<br/>指示に従って <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>ここから新しいボットを作成してください</a>。次に、右のフォームにリンクを貼り付けて保存をクリックしてください。"
+MTR.text.discord_instructions = "<br/> <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>here to create new webhook(s)</a> の説明に従って、右側のフィールドにリンクを貼り付けて、[保存] をクリックします。"
 text.no_conclusion_yet = "<i>まだ結論は出ていません</i>"
 text.no_lean_canvas_content = "リーンキャンバスは、顧客、問題、解決策を通してあなたを導きます。<br/>プロダクトを開始するたびに新しいキャンバスを作成することをお勧めします。<br/><br/><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> 新し計画を作成する。</a>"
 text.lean_canvas_is_adapted_message = "リーンキャンバスは<a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a>に適応しており、the Creative Commons Attribution-Share Alike 3.0ライセンスです。"
@@ -511,12 +587,25 @@ text.twoFA_already_enabled = "二段階認証はすでにアカウントで有�
 text.twoFA_enabled = "あなたのアカウントの二段階認証は<strong>有効です</strong>."
 text.twoFA_disabled = "Yあなたのアカウントの二段階認証<strong>無効です</strong>."
 text.twoFA_manage = "<span class='fa fa-lock'></span> 二段階認証の管理"
+MTR.text.who_can_access = "このプロジェクトの閲覧を許可するユーザーを選択します。デフォルトでは、ユーザーは設定されたロールを引き継ぎます。これらのロールは、「チーム」タブで変更することができます。"
+MTR.text.ical_export_description = "ここで、独自のカレンダーURLを作成し、「iCal」フォーマットをサポートするあらゆるアプリケーションで、あなたのLeantimeカレンダーを統合することができます。"
+MTR.text.you_ical_url = "カレンダーのURLは以下の通りです。<br /> このURLを知っている人なら誰でもカレンダーにアクセスできますので、ご注意ください。パスワードと同じように秘密にしておいてください。"
+MTR.text.no_url = "以下のボタンをクリックして、URLを生成してください。"
+MTR.buttons.generate_ical_url = "iCalのURLを生成する"
+MTR.links.remove_access = "カレンダーのアクセス権を削除する"
+
+MTR.labels.defaultaccess = "このプロジェクトにアクセスできるのは誰ですか？"
+MTR.labels.everyone_in_org = "この組織のみんな"
+MTR.labels.everyone_in_client = "このクライアントに割り当てられたすべての人"
+MTR.labels.only_chose = "チーム」で私が選択したユーザーのみ"
+
 
 label.id = "ID"
 label.due = "期日:"
-label.due_todo = "タスクの期日: "
-label.planned_edit = "計画の編集: "
+label.due_todo = "タスクの期日:"
+label.planned_edit = "計画の編集:"
 label.effort_not_clear = "労力が明確ではありません"
+MTR.label.priority_not_clear = "優先順位が明確でない"
 label.no_milestone = "マイルストーンがありません"
 label.status_new = "新規"
 label.status_blocked = "ブロック済み"
@@ -525,6 +614,7 @@ label.status_for_approval = "承認待ち"
 label.status_done = "完了"
 label.status_archived = "アーカイブ済み"
 label.story_points_unkown = "?"
+MTR.label.priority_unkown = "?"
 label.headline = "見出し"
 label.title = "タイトル"
 label.story = "ストーリー"
@@ -535,23 +625,26 @@ label.milestone = "マイルストーン"
 label.not_assigned_to_milestone = "マイルストーンに割り当てられていません"
 label.type = "タイプ"
 label.todo_type = "タイプ"
+MTR.label.todo_priority = "優先順位"
 label.status = "ステータス"
 label.todo_status = "ステータス"
 label.sprint = "スプリント"
 label.not_assigned_to_sprint = "スプリントに割り当てられていません"
 label.effort = "労力"
+MTR.label.priority = "優先順位"
 label.effort_not_defined = "労力が定義されていません"
+MTR.label.priority_not_defined = "優先順位は未定"
 label.tags = "タグ一覧"
 label.description = "説明"
 label.author = "作者"
 label.editor = "担当者"
 label.filter_by_user = "ユーザの絞り込み"
+MTR.label.assign_to_me = "アサインメント"
 label.ticket_date = "最終更新"
 label.due_date = "期日"
 label.due_icon = "<span class='fa-regular fa-calendar'></span>"
 label.title_idea_board = "アイデア掲示板のタイトルを教えてください。"
 label.topic_idea_board = "アイデア掲示板のトピックはなんですか？"
-label.title_retrospective_board = "振り返りのタイトルを教えてください。"
 label.administration = "管理"
 label.calendar = "カレンダー"
 label.general = "一般"
@@ -617,6 +710,7 @@ label.date_from_date_to = "%1$s - %2$s"
 label.user = "ユーザ"
 label.all_milestones = "すべてのマイルストーン"
 label.all_types = "すべてのタイプ"
+MTR.label.all_priorities = "すべての優先順位"
 label.no_group = "グルーピングされていません"
 label.not_done = "未完了"
 label.select_file = "ファイル選択"
@@ -633,7 +727,7 @@ label.billable_hours = "請求可能時間"
 label.plan_hours = "計画時間"
 label.difference = "差分"
 label.date_from = "Date from"
-label.date_to = " - to"
+label.date_to = "- to"
 label.filter = "絞り込み"
 label.project = "プロジェクト"
 label.select_all = "↑ すべて選択"
@@ -669,6 +763,7 @@ label.firstname = "名"
 label.lastname = "姓"
 label.no_clients = "クライアントが割り当てられていません"
 label.password = "パスワード"
+MTR.label.please_enter_password = "パスワードを入力してください。"
 label.new_password = "新しいパスワード"
 label.old_password = "現在のパスワード"
 label.password_repeat = "パスワード（確認）"
@@ -691,6 +786,12 @@ label.roles.developer = "開発者"
 label.roles.clientManager = "クライアントマネージャー"
 label.roles.manager = "マネージャー"
 label.roles.admin = "管理者"
+
+MTR.label.roles.readonly = "読み取り専用"
+MTR.label.roles.commenter = "コメンテーター"
+MTR.label.roles.editor = "編集部"
+MTR.label.roles.owner = "所有者"
+
 label.client = "クライアント"
 label.filename_fileexport = "エクスポート"
 label.progress = "進捗状況"
@@ -707,8 +808,68 @@ label.twoFA_setup = "新しい二段階認証の設定"
 label.copy_of = "Copy of"
 label.assignSameUsers = "同じユーザを割り当てる"
 label.newProjectName = "新しいプロジェクト名"
+MTR.label.client_id = "クライアントID"
+MTR.label.ticket_id = "チケットID"
+MTR.label.primary_color = "原色"
+MTR.label.secondary_color = "2次色"
+MTR.label.wiki = "ウィキ"
+MTR.label.wiki_title = "タイトル"
+MTR.label.current_wiki = "現在のWiki"
+MTR.label.ical_export = "カレンダーを統合する"
+
+MTR.links.delete_article = "記事削除"
+
+MTR.tabs.todosettings = "ToDoステータスの設定"
+MTR.label.sortindex = "ソート位置"
+MTR.label.reportType = "報告書として"
+MTR.label.showInKanban = "かんばんボードに表示する"
+MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> ポートフォリオを見る"
+
+
+
+MTR.label.send_telemetry = "レアンタイムをより良くするために、ご協力ください。"
+MTR.label.telemetry_background = "<a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>プロジェクト数、ユーザー数、チケット数などに関する匿名のデータをLeantime.ioに送信してください</a>。個人を特定できるデータは送信されませんので、個々のユーザーを追跡することは不可能です。"
+
+MTR.label.blue = "青"
+MTR.label.yellow = "黄色"
+MTR.label.green = "グリーン"
+MTR.label.red = "赤色"
+MTR.label.grey = "グレー"
+
+MTR.labels.all_projects = "すべてのプロジェクト"
+MTR.label.dates = "期限日"
+
+
+MTR.labels.createdBy_on = "作成者: %s %s on %s, 修正日: %s"
+MTR.labels.tags = "タグ"
+
+# Cron setup
+
+MTR.label.messages_frequency = "メール送信頻度"
+MTR.label.choose_option = "オプションを選択してください"
+MTR.label.5min = "5分"
+MTR.label.15min = "15分"
+MTR.label.30min = "30分"
+MTR.label.1h = "1時間"
+MTR.label.3h = "3時間"
+MTR.label.6h = "6時間"
+MTR.label.12h = "12時間"
+MTR.label.24h = "1日"
+MTR.label.48h = "2日"
+MTR.label.1w = "1週間"
+
+MTR.label.theme = "テーマ"
+MTR.label.auto = "オート"
+MTR.label.light = "光"
+MTR.label.dark = "ダーク"
+
+MTR.label.draft = "ドラフト"
+MTR.label.published = "発行済み"
+MTR.label.draft_parenth = "(案)"
+
 
 dropdown.how_big_todo = "このタスクのボリューム感"
+MTR.dropdown.select_priority = "このタスクの優先順位は？"
 dropdown.choose_milestone = "マイルストーンを選択"
 dropdown.choose_status = "ステータス"
 dropdown.choose_user = "割り当てる"
@@ -744,15 +905,11 @@ status.inreview = "レビュー"
 status.accepted = "受理済み"
 status.deferred = "遅延"
 
-status.continue = "続き - うまくいったことは？"
-status.stop_doing = "ストップ - 何をするのをやめるべきか？"
-status.start_doing = "スタート - 改善のために何を始めるべきか？"
-
-email_notifications.hi = "こんにちは、 "
+email_notifications.hi = "こんにちは、"
 email_notifications.unsubscribe = "このタイプの通知の購読を<a href='%1$s'>解除</a>するには、ログインして通知設定を編集してください。"
 
 email_notifications.new_todo_subject = "新しいタスクが追加されました"
-email_notifications.new_todo_message = "%1$s が新しいタスクを追加しました: '%2$s' "
+email_notifications.new_todo_message = "%1$s が新しいタスクを追加しました: '%2$s'"
 email_notifications.new_todo_cta = "ここをクリックして確認"
 
 email_notifications.new_file_todo_subject = "タスクに新しいファイルがあります [%1$s] - %2$s"
@@ -836,6 +993,8 @@ email_notifications.new_user_message = "%1$s があなたのために新しい�
 email_notifications.password_reset_subject = "パスワードをリセットする"
 email_notifications.password_reset_message = "パスワードの再設定メールを受け取りました。<br/><br/>パスワードを再設定したい場合は、このリンクをクリックしてください: <br/><a href='%1$s' target='_blank'>パスワードリセット</a><br/><br/>パスワードのリセットを要求していない場合は、このメッセージを無視してください。<br/><br/>よろしくお願いします"
 
+MTR.email_notifications.latest_updates_subject = "Leantime - 最新情報"
+
 tabs.ticketDetails = "詳細"
 tabs.subtasks = "サブタスク"
 tabs.files = "ファイル"
@@ -845,6 +1004,8 @@ tabs.projectdetails = "プロジェクト詳細"
 tabs.Integrations = "インテグレーション"
 tabs.files_with_count = "ファイル (%1$s)"
 tabs.discussion_with_count = "会話 (%1$s)"
+MTR.tabs.projectaccess = "ユーザーアクセス"
+MTR.tabs.team = "チーム"
 
 tooltip.how_many_hours_remaining = "このタスクの残り時間は何時間だと思いますか？"
 
@@ -856,28 +1017,28 @@ tour.once_done_go_to_kanban = "<em>スプリントにいくつかの項目を追
 tour.once_youre_done_adding_milestones_go_todos = "<em>マイルストーンの追加が完了したら、タスクにジャンプすることができます"
 tour.once_your_done_research = "<em>リサーチに慣れてきたら、次は</em> <br/><a href='/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> ロードマップ計画ページ</a>"
 
-datatables.decimal= ""
-datatables.emptyTable= "見つかりません！"
-datatables.info= " _TOTAL_ のエントリの _START_ から _END_ までの表示"
-datatables.infoEmpty= "0件中0件～0件を表示"
-datatables.infoFiltered= "(合計エントリ数 _MAX_ からフィルタリングされています。)"
-datatables.infoPostFix= ""
-datatables.thousands= ","
-datatables.lengthMenu= " _MENU_ エントリを表示"
-datatables.loadingRecords= "読込中..."
-datatables.processing= "処理中..."
-datatables.search= "検索:"
-datatables.zeroRecords= "合致するレコードが見つかりませんでした"
+datatables.decimal = ""
+datatables.emptyTable = "見つかりません！"
+datatables.info = "_TOTAL_ のエントリの _START_ から _END_ までの表示"
+datatables.infoEmpty = "0件中0件～0件を表示"
+datatables.infoFiltered = "(合計エントリ数 _MAX_ からフィルタリングされています。)"
+datatables.infoPostFix = ""
+datatables.thousands = ","
+datatables.lengthMenu = "_MENU_ エントリを表示"
+datatables.loadingRecords = "読込中..."
+datatables.processing = "処理中..."
+datatables.search = "検索:"
+datatables.zeroRecords = "合致するレコードが見つかりませんでした"
 datatables.buttons.colvis = "<i class='fa fa-eye-slash'></i> カラム"
 datatables.buttons.download = "<i class='fa fa-download'></i> エクスポート"
 
-datatables.first= "最初"
-datatables.last= "最後"
-datatables.next= "次へ"
-datatables.previous= "前へ"
+datatables.first = "最初"
+datatables.last = "最後"
+datatables.next = "次へ"
+datatables.previous = "前へ"
 
-datatables.sortAscending= ": 列の昇順ソートを有効化"
-datatables.sortDescending= ": 列の降順ソートを有効化"
+datatables.sortAscending = ": 列の昇順ソートを有効化"
+datatables.sortDescending = ": 列の降順ソートを有効化"
 
 tour.left_navigation = "左のナビゲーション"
 tour.left_nav_text = "左側のサイドバーは、プロダクト開発のライフサイクルを表しています。<br/>このメニューのすべては、上で選択されたプロジェクトに属します。"
@@ -906,94 +1067,619 @@ tour.change_views = "表示の変更"
 tour.change_views_text = "これらのボタンで、テーブル表示とカンバン表示を切り替えることができます。"
 tour.congratulations_kanban_text = "チュートリアルが終了しました!<br/>もっと多くの情報が必要な場合は、次のナレッジベースをご覧ください<a href='https://help.leantime.io' target='_blank'>https://help.leantime.io</a><br/><br/>追加のサポートが必要な場合は、サポートチームに連絡することを躊躇しないでください。<br/>あなたの生活をより快適にするために、私たちはここにいます。"
 
-#Missing options
-#===============
-#buttons.find_users
-#dropdown.select_priority
-#email_notifications.latest_updates_subject
-#headlines.add_more_users
-#headlines.import_ldap_users
-#headlines.logo
-#headlines.page_forbidden
-#headlines.team_member
-#headlines.welcome_back
-#input.placeholders.discord_url
-#input.placeholders.filter_by_priority
-#label.12h
-#label.15min
-#label.1h
-#label.1w
-#label.24h
-#label.30min
-#label.3h
-#label.48h
-#label.5min
-#label.6h
-#label.additional_settings
-#label.all_priorities
-#label.assign_to_me
-#label.auto
-#label.blue
-#label.choose_option
-#label.classic
-#label.client_id
-#label.comment_order
-#label.dark
-#label.downtoup
-#label.green
-#label.grey
-#label.light
-#label.messages_frequency
-#label.oneView
-#label.please_enter_password
-#label.primary_color
-#label.priority
-#label.priority_not_clear
-#label.priority_not_defined
-#label.priority_unkown
-#label.red
-#label.reportType
-#label.roles.commenter
-#label.roles.editor
-#label.roles.owner
-#label.roles.readonly
-#label.secondary_color
-#label.send_telemetry
-#label.showInKanban
-#label.sortindex
-#label.telemetry_background
-#label.theme
-#label.ticket_id
-#label.ticket_layout
-#label.todo_priority
-#label.uptodown
-#label.yellow
-#labels.defaultaccess
-#labels.everyone_in_client
-#labels.everyone_in_org
-#labels.only_chose
-#links.add_remove_col
-#links.add_status
-#links.priority
-#notification.at_least_one_status
-#notification.error_installing
-#notification.error_saving_status
-#notification.event_edited_successfully
-#notification.new_status_saved
-#notification.saved_discord_webhook
-#notification.username_or_password_missing
-#notifications.not_assigned_to_any_project
-#notifications.problem_resetting_password
-#notifications.user_was_added_to_project
-#short_notifications.priority_updated
-#subtitles.companydetails
-#subtitles.look_and_feel
-#subtitles.organization
-#tabs.projectaccess
-#tabs.team
-#tabs.todosettings
-#text.discord_instructions
-#text.full_name
-#text.here_are_news
-#text.no_files
-#text.who_can_access
+
+
+## Leantime DTS Branch
+
+
+# Supported menut types
+
+MTR.label.menu_type = "メニューの種類"
+MTR.label.menu_type.default = "デフォルトメニュー"
+MTR.label.menu_type.lean = "リーンメニュー"
+MTR.label.menu_type.dts = "戦略のためのデザイン思考 メニュー"
+
+# Menu subtitles
+
+MTR.menu.default.advanced = "アドバンスト"
+MTR.menu.default.various = "各種"
+MTR.menu.default.define = "共感する／定義する"
+MTR.menu.default.ideate = "アイデア／プロトタイプ"
+MTR.menu.default.test = "テスト＆バリデイト"
+MTR.menu.default.tools = "ツール"
+
+MTR.menu.dts.process = "戦略プロセス"
+MTR.menu.dts.frameworks = "戦略フレームワーク"
+MTR.menu.dts.admin = "マネジメント"
+MTR.menu.dts.observe = "観察する・学ぶ"
+MTR.menu.dts.design = "デザイン"
+MTR.menu.dts.validate = "バリデート"
+
+# Menu items
+
+MTR.menu.cpcanvas = "<span class='fas fa-fw fa-city'></span> コンペティション・キャンバス"
+MTR.menu.dbmcanvas = "<span class='fas fa-fw fa-building'></span> 詳細なビジネスモデル。"
+MTR.menu.eacanvas = "<span class='fas fa-fw fa-tree'></span> 環境分析。"
+MTR.menu.emcanvas = "<span class='fas fa-fw fa-heart'></span> エンパシーマップ。"
+MTR.menu.ideation = "<span class='far fa-fw fa-lightbulb'></span> デザイン／検証 - アイデア出し。"
+MTR.menu.insights = "<span class='far fa-fw fa-note-sticky'></span> Insights & Knowledge（インサイト＆ナレッジ"
+MTR.menu.insightscanvas = "<span class='far fa-fw fa-note-sticky'></span> 観察する／学ぶ - 洞察する。"
+MTR.menu.lbmcanvas = "<span class='fas fa-fw fa-building'></span> ライトウェイトビジネスモデル。"
+MTR.menu.leancanvas = "<span class='fas fa-fw fa-flask'></span> Lean Canvas。"
+MTR.menu.obmcanvas = "<span class='fas fa-fw fa-building'></span> 独自のビジネスモデル。"
+MTR.menu.retroscanvas = "<span class='far fa-fw fa-hand-spock'></span> レトロスペクティブ。"
+MTR.menu.riskscanvas = "<span class='fas fa-fw fa-person-falling'></span> リスク分析"
+MTR.menu.sbcanvas = "<span class='fas fa-fw fa-list-check'></span> 戦略ブリーフ"
+MTR.menu.smcanvas = "<span class='fas fa-fw fa-message'></span> 戦略メッセージ"
+MTR.menu.sqcanvas = "<span class='fas fa-fw fa-chess'></span> 戦略の質問"
+MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT分析"
+
+# Links
+
+MTR.links.icon.create = "<i class='fa fa-plus'></i> 新規作成"
+MTR.links.icon.edit = "<i class='fa fa-edit'></i> 編集</a>する。"
+MTR.links.icon.clone = "<i class='fa fa-clone'></i> コピー</a>。"
+MTR.links.icon.delete = "<i class='fa fa-trash-can'></i> 削除します。"
+MTR.links.icon.print = "<i class='fa fa-print'></i> 印刷する。"
+
+# Buttons
+
+MTR.buttons.cancel = "キャンセル"
+
+# Labels for status and relates
+
+label.status = "ステータス"
+MTR.status.all = "すべての状態"
+MTR.status.draft = "ドラフト"
+MTR.status.review = "レビューにあたって"
+MTR.status.valid = "Validated（バリデート）。有効"
+MTR.status.hold = "オンホールド"
+MTR.status.invalid = "有効です。無効"
+MTR.status.pending = "保留"
+status.accepted = "受理済み"
+MTR.status.rejected = "不採用"
+
+MTR.label.relates = "に関する事項"
+MTR.relates.all = "すべて関連"
+MTR.relates.none = "なし"
+MTR.relates.customers = "お客様"
+MTR.relates.offerings = "お布施"
+MTR.relates.capabilities = "機能"
+MTR.relates.financials = "財務情報"
+MTR.relates.markets = "市場"
+MTR.relates.environment = "環境"
+MTR.relates.firm = "しっかりした"
+MTR.relates.stakeholders = "ステークホルダー"
+MTR.dropdown.choose_relates = "その要素は何に関連しているのか？"
+
+# Board and element labels
+
+MTR.subtitle.clone_board = "コピーボード"
+MTR.label.title_element = "要素タイトル"
+MTR.input.placeholders.describe_element = "要素を記述する"
+
+MTR.text.confirm_board_deletion = "本当にこの掲示板を削除していいのでしょうか？"
+MTR.text.confirm_board_item_deletion = "本当にこの要素を削除してよいのですか？"
+MTR.notification.board_created = "ボードの作成に成功"
+MTR.notification.board_copied = "ボードのコピーに成功"
+MTR.notification.board_deleted = "ボードの削除に成功"
+MTR.notification.board_exists = "ボード名が既に存在する"
+MTR.notification.element_created = "要素の作成に成功"
+MTR.notification.element_deleted = "要素の削除に成功"
+MTR.short_notifications.relates_updated = "正常に更新された場合について"
+
+# PDF labels
+
+MTR.pdf.label.page = "ページ"
+MTR.pdf.language.longdateformat = "l, F j, Y"
+
+
+## Insights
+
+
+# Title
+
+MTR.headline.insights.board = "観察する・学ぶ - インサイトボード"
+
+# Element/Box Labels
+
+MTR.box.insights.observe = "エスノグラフィーの観察"
+MTR.box.insights.interview = "エスノグラフィック・インタビュー"
+MTR.box.insights.focus_groups = "フォーカスグループ"
+MTR.box.insights.secondary_research = "二次調査"
+MTR.box.insights.knowledge = "派生知識"
+
+# Data Field Labels and placeholders
+
+MTR.label.insights.title_new = "新しいインサイト分析のタイトルは何ですか？"
+MTR.label.insights.title_edited = "インサイト分析の新しいタイトルは何ですか？"
+MTR.label.insights.title_clone = "コピーしたインサイトアナリシスのタイトルを教えてください。"
+MTR.input.placeholders.insights.enter_title_for_board = "新しいインサイト分析のタイトルを入力してください。"
+MTR.label.insights.insight = "インサイト説明"
+MTR.label.insights.data = "裏付けとなるデータ収集"
+
+# Notifications
+
+MTR.headlines.insights.analysis = "インサイト分析について説明する"
+MTR.headlines.insights.welcome_to_board = "インサイトボードへようこそ"
+
+MTR.text.insights.helper_content = "<em>Observe / Learn - Insights</em> ボードは、4つの異なるソース（民族誌的観察、インタビュー、フォーカスグループ、二次研究）から洞察を収集し、知識へと変換するのに役立ちます。<br/>デザイン思考プロセスの観察・学習段階（時に共感・定義と呼ばれる）をサポートします。<br/> <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>の2章、8章、9章に詳細が書かれています。<br/>リスク分析、環境分析、業界トレンドの発見、新しい製品やサービスの設計など、新しい洞察を収集し分析するたびに、<em>Observe / Learn - Insights</em> ボードを使ってみてはどうかと私達は提案しています。"
+MTR.tour.insights.once_your_done = "<em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>Roadmap Planner</a> に移動して、インサイトの収集と知識の作成が快適になったら、</em><br>次のようにします。"
+
+
+## Strategy Brief
+
+
+# Title
+
+MTR.headline.sb.board = "戦略ブリーフボード"
+
+# Element/Box Labels
+
+MTR.box.sb.title = "戦略ブリーフ"
+MTR.box.sb.industry = "対象業種"
+MTR.box.sb.description = "戦略プロジェクト目標概要"
+MTR.box.sb.st_design = "デザインチーム"
+MTR.box.sb.st_decision = "意思決定者"
+MTR.box.sb.st_experts = "専門家"
+MTR.box.sb.st_support = "サポートスタッフ"
+MTR.box.sb.budget = "ハイレベル予算"
+MTR.box.sb.time = "ハイレベル・タイムライン"
+MTR.box.sb.culture = "文化"
+MTR.box.sb.change = "容量変更"
+MTR.box.sb.principles = "基本方針"
+MTR.box.sb.risks = "リスクアセスメント"
+
+# Data Field Labels and placeholders
+
+MTR.label.sb.title_new = "新しい戦略ブリーフのタイトルは何ですか？"
+MTR.label.sb.title_edited = "戦略ブリーフの新しいタイトルは何ですか？"
+MTR.label.sb.title_clone = "コピーされた戦略ブリーフのタイトルは？"
+MTR.input.placeholders.sb.enter_title_for_board = "新しい戦略ブリーフのタイトルを入力します。"
+
+# Notifications
+
+MTR.headlines.sb.analysis = "戦略プロジェクトについて説明する"
+MTR.headlines.sb.welcome_to_board = "戦略ブリーフボードへようこそ!"
+
+MTR.text.sb.helper_content = "<em>戦略ブリーフ</em>は、次の戦略プロジェクトの開始を支援します。<br /> 詳細は、書籍 <a href='https://inov.at/dts'></em>Design Thinking for Strategy</a> の第 4 章と第 5 章に記載されています。<br /> 戦略プロジェクトを開始するごとに、1 つの戦略概要を作成することをお勧めします。"
+MTR.tour.sb.once_your_done = "<em>Strategy Brief が完成したら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>Roadmap Planner</a> に進みます。"
+MTR.text.sb.risks_analysis = "リスク分析は、<a href='%s/riskscanvas/showCanvas/'>リスク分析</a>で見ることができます。"
+
+
+## Risk Analysis
+
+
+# Title
+
+MTR.headline.risks.board = "リスク分析委員会"
+
+# Element/Box Labels
+
+MTR.box.risks.imp_low_pro_low = "影響が小さい / 確率が低い"
+MTR.box.risks.imp_low_pro_high = "影響が小さい / 確率が高い"
+MTR.box.risks.imp_high_pro_low = "影響が大きい / 確率が低い"
+MTR.box.risks.imp_high_pro_high = "影響が大きい / 確率が高い"
+
+# Data Field Labels and placeholders
+
+MTR.label.risks.title_new = "新しいリスク分析のタイトルは何ですか？"
+MTR.label.risks.title_edited = "リスク分析の新しいタイトルは何ですか？"
+MTR.label.risks.title_clone = "コピーしたリスク分析のタイトルは何ですか？"
+MTR.input.placeholders.risks.enter_title_for_board = "新しいリスク分析のタイトルを入力してください。"
+MTR.label.risks.description = "リスク説明"
+MTR.label.risks.mitigation = "計画されたリスク軽減策"
+
+# Notifications
+
+MTR.headlines.risks.analysis = "リスク分析について説明する"
+MTR.headlines.risks.welcome_to_board = "リスク分析ボードへようこそ"
+
+MTR.text.risks.helper_content = "<em>リスク分析</em>は、プロジェクト中に発生しうるリスクを特定し、軽減または回避するのに役立ちます。<br/>すべてのプロジェクトの開始時にリスク分析を行い、一定の期間ごとに更新することをお勧めします。"
+MTR.tour.risks.once_your_done = "<em>リスク分析がうまくいったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+
+
+## SWOT Analysis
+
+
+# Title
+
+MTR.headline.swot.board = "SWOT分析ボード"
+
+# Element/Box Labels
+
+MTR.box.swot.strengths = "強み"
+MTR.box.swot.weaknesses = "弱点"
+MTR.box.swot.opportunities = "機会"
+MTR.box.swot.threats = "脅威"
+MTR.box.header.swot.helpful = "HELPFUL"
+MTR.box.header.swot.harmful = "HARMFUL"
+MTR.box.header.swot.internal = "内本"
+MTR.box.header.swot.external = "外来"
+
+# Data Field Labels and placeholders
+
+MTR.label.swot.title_new = "新しいSWOT分析のタイトルは何ですか？"
+MTR.label.swot.title_edited = "SWOT分析の新しいタイトルは何ですか？"
+MTR.label.swot.title_clone = "コピーしたSWOT分析のタイトルを教えてください。"
+MTR.input.placeholders.swot.enter_title_for_board = "新しいSWOT分析のタイトルを入力してください。"
+MTR.label.swot.description = "リスク説明"
+MTR.label.swot.mitigation = "計画されたリスク軽減策"
+
+# Notifications
+
+MTR.headlines.swot.analysis = "SWOT分析について説明してください。"
+MTR.headlines.swot.welcome_to_board = "SWOT分析ボードへようこそ!"
+
+MTR.text.swot.helper_content = "<em>SWOT分析</em>は、アイデア出しやプロトタイプ作成時に活用できる強み、弱み、機会、脅威を特定するのに役立ちます。<br/>プロジェクトの開始時にSWOT分析を行うことをお勧めします。"
+MTR.tour.swot.once_your_done = "<em>SWOT 分析がうまくいったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+
+
+## Empathy map
+
+
+# Title
+
+MTR.headline.em.board = "エンパシーマップボード"
+
+# Element/Box Labels
+
+MTR.box.em.header.goal = "目標"
+MTR.box.em.who = "私たちは誰に共感しているのだろう？"
+MTR.box.em.what = "何をする必要があるのか？"
+MTR.box.em.header.empathy = "エンパシー"
+MTR.box.em.see = "彼らは何を見るのか？"
+MTR.box.em.say = "彼らは何を言っているのか？"
+MTR.box.em.do = "彼らは何をするのか？"
+MTR.box.em.hear = "彼らは何を聞いているのか？"
+MTR.box.em.header.think_feel = "彼らは何を考え、何を感じているのか。"
+MTR.box.em.pains = "PAINS - 彼らの恐怖、不満、不安は何ですか？"
+MTR.box.em.gains = "GAINS - 彼らの欲求、ニーズ、希望、そして夢は何ですか？"
+MTR.box.em.motives = "その他、行動の動機となる思考や感情"
+
+# Data Field Labels and placeholders
+
+MTR.label.em.title_new = "新しいエンパシーマップのタイトルを教えてください。"
+MTR.label.em.title_edited = "エンパシーマップの新しいタイトルは何ですか？"
+MTR.label.em.title_clone = "コピーしたエンパシー・マップのタイトルを教えてください。"
+MTR.input.placeholders.em.enter_title_for_board = "新しい共感マップのタイトルを入力します"
+MTR.label.em.description = "質問に対する詳細な回答"
+
+# Notifications
+
+MTR.headlines.em.analysis = "エンパシー・マップについて説明する"
+MTR.headlines.em.welcome_to_board = "エンパシーマップボードへようこそ!"
+
+MTR.text.em.helper_content = "<em>Empathy Map</em> は、エンドユーザーとの理解の橋渡しをするのに役立ちます。その適用範囲内では、ユーザーのニーズに対する共有理解を構築し、ユーザー中心のソリューションにコンテキストを提供するために使用されます。Dave Gray 氏のブログ記事 <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Updated Empathy Map Canvas</a></em> に、さらに詳しいことが書かれています。"
+MTR.tour.em.once_your_done = "<em>エンパシー・マップに慣れたら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>へ移動してください。"
+MTR.text.em.disclaimer = "<a href='https://gamestorming.com/empathy-map/'>エンパシーマップ</a>は、デイブ・グレイの作品に基づくものである。"
+
+
+## Environmental / PESTLE Analysis
+
+
+# Title
+
+MTR.headline.ea.board = "環境分析委員会"
+
+# Element/Box Labels
+
+MTR.box.ea.title = "環境／PESTLE分析"
+MTR.box.ea.political = "政治的"
+MTR.box.ea.economic = "経済"
+MTR.box.ea.societal = "社会的"
+MTR.box.ea.technological = "技術的"
+MTR.box.ea.legal = "法的事項"
+MTR.box.ea.ecological = "エコロジー"
+
+# Status
+
+MTR.status.ea.observation = "観察"
+MTR.status.ea.threat = "脅威"
+MTR.status.ea.trend = "トレンド"
+
+# Relates
+
+
+# Data Field Labels and placeholders
+
+MTR.label.ea.title_new = "新しい環境分析のタイトルは何ですか？"
+MTR.label.ea.title_edited = "環境分析の新しいタイトルは何ですか？"
+MTR.label.ea.title_clone = "コピーした環境分析のタイトルは何ですか？"
+MTR.input.placeholders.ea.enter_title_for_board = "新しい環境分析のタイトルを入力してください"
+
+# Notifications
+
+MTR.headlines.ea.analysis = "環境分析の内容を記述する"
+MTR.headlines.ea.welcome_to_board = "環境分析ボードへようこそ"
+
+MTR.text.ea.helper_content = "<br> <br>PESTLE Analysis</em>としても知られる<em>Environmental Analysis</em>は、6つの次元に沿って、現在および/または将来の環境を評価するのに役立ちます。<br/> 少なくともアイデアの段階を開始する前に、プロジェクトの早い段階で環境分析を行い、プロジェクト全体を通じて常に最新の状態に保つことをお勧めします。"
+MTR.tour.ea.once_your_done = "<em> 環境分析がうまくいったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> にアクセスしてみてください。"
+
+
+## Lightweight Business Model
+
+
+# Title
+
+MTR.headline.lbm.board = "軽量ビジネスモデル・ボード"
+
+# Element/Box Labels
+
+MTR.box.lbm.customers = "お客様"
+MTR.box.lbm.offerings = "お布施"
+MTR.box.lbm.capabilities = "機能"
+MTR.box.lbm.financials = "財務情報"
+
+# Data Field Labels and placeholders
+
+MTR.label.lbm.title_new = "新しい軽量化ビジネスモデルのタイトルは何ですか？"
+MTR.label.lbm.title_edited = "軽量化ビジネスモデルの新タイトルは？"
+MTR.label.lbm.title_clone = "コピーした軽量化ビジネスモデルのタイトルを教えてください。"
+MTR.input.placeholders.lbm.enter_title_for_board = "新しい軽量化ビジネスモデルのタイトルを入力してください。"
+
+# Notifications
+
+MTR.headlines.lbm.analysis = "軽量化されたビジネスモデルについて説明してください。"
+MTR.headlines.lbm.welcome_to_board = "Lightweight Business Model Board へようこそ!"
+
+MTR.text.lbm.helper_content = "<em>軽量ビジネスモデル</em>は、現在の組織、競合他社、および業界を文書化するのに役立ちます。<br />詳細は、書籍<a href='https://inov.at/dts'></em>Design Thinking for Strategy</a>の第3章に記載されています。<br /> 詳細なビジネスモデルやオリジナルのオスターウォルタービジネスモデルの詳細を必要としない場合は、ビジネスモデルキャンバスの軽量版を使ってみることをお勧めします。"
+MTR.tour.lbm.once_your_done = "<em>軽量なビジネス モデルに納得できたら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+MTR.text.lbm.disclaimer = "<em>Lightweight Business Model Canvas</em> は <a href='https://inov.at/dts'>Design Thinking for Strategy</a> から引用し、<a href='https://www.strategyzer.com'>Strategyzer</a> の <em>Business Model Canvas</em> をベースにしています。これは、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で提供されています。"
+
+
+## Osterwalder's Business Model
+
+
+# Title
+
+MTR.headline.obm.board = "ビジネスモデル・ボード"
+
+# Element/Box Labels
+
+MTR.box.obm.cs = "顧客セグメント"
+MTR.box.obm.cr = "お客様とのかかわり"
+MTR.box.obm.ch = "チャンネル"
+MTR.box.obm.vp = "バリュー・プロポジション"
+MTR.box.obm.ka = "主な活動内容"
+MTR.box.obm.kr = "主要なリソース"
+MTR.box.obm.kp = "主要パートナー"
+MTR.box.obm.fr = "収益の流れ"
+MTR.box.obm.fc = "コスト構造"
+
+# Data Field Labels and placeholders
+
+MTR.label.obm.title_new = "新しいビジネスモデルのタイトルは何ですか？"
+MTR.label.obm.title_edited = "ビジネスモデルの新しい肩書きは何ですか？"
+MTR.label.obm.title_clone = "コピーしたビジネスモデルのタイトルを教えてください。"
+MTR.input.placeholders.obm.enter_title_for_board = "新しいビジネスモデルのタイトルを入力してください"
+
+# Notifications
+
+MTR.headlines.obm.analysis = "ビジネスモデルについて教えてください。"
+MTR.headlines.obm.welcome_to_board = "ビジネスモデル・ボードへようこそ"
+
+MTR.text.obm.helper_content = "<em>Original Business Model Canvas</em> は、Alex Osterwalder と Yves Pigneur によって開発されたものである。<br/><em>``A business model describes the rationale of how an organization creates, deliver, and captures value''</em> - <strong>Alex Osterwalder</trong>."
+MTR.tour.obm.once_your_done = "<em>ビジネスモデルに納得がいったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> にアクセスしてみてください。"
+MTR.text.obm.disclaimer = "<em>Business Model Canvas</em> は <a href='https://www.strategyzer.com'>Strategyzer</a> から引用され、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> license の下でライセンスされています。"
+
+
+## Detailed Business Model
+
+
+# Title
+
+MTR.headline.dbm.board = "詳細ビジネスモデル・ボード"
+
+# Element/Box Labels
+
+MTR.box.dbm.cs = "顧客セグメント"
+MTR.box.dbm.cj = "お客様のお仕事紹介"
+MTR.box.dbm.cr = "お客様とのかかわり"
+MTR.box.dbm.cd = "カスタマーデリバリー"
+MTR.box.dbm.ovp = "バリュー・プロポジション"
+MTR.box.dbm.ops = "製品・サービス"
+MTR.box.dbm.kad = "競争優位のための活動"
+MTR.box.dbm.kac = "コスト・アドバンテージ活動"
+MTR.box.dbm.kao = "アウトソーシング活動"
+MTR.box.dbm.krp = "腐りやすい資源"
+MTR.box.dbm.krc = "資本資源"
+MTR.box.dbm.krl = "労働"
+MTR.box.dbm.krs = "スキル"
+MTR.box.dbm.fr = "収益の流れ"
+MTR.box.dbm.fc = "コスト構造"
+
+# Data Field Labels and placeholders
+
+MTR.label.dbm.title_new = "新しい詳細なビジネスモデルのタイトルは何ですか？"
+MTR.label.dbm.title_edited = "詳細なビジネスモデルの新しいタイトルは何ですか？"
+MTR.label.dbm.title_clone = "コピーした詳細なビジネスモデルのタイトルは何ですか？"
+MTR.input.placeholders.dbm.enter_title_for_board = "新しい詳細なビジネスモデルのタイトルを入力してください"
+
+# Notifications
+
+MTR.headlines.dbm.analysis = "詳細なビジネスモデルについて教えてください。"
+MTR.headlines.dbm.welcome_to_board = "ビジネスモデル詳細掲示板へようこそ"
+
+MTR.text.dbm.helper_content = "詳細なビジネスモデル</em>は、現在の組織、競合他社、業界を文書化するのに役立ちます。それは，あなたの戦略が望ましく，実行可能で，実現可能であることを確認するのをサポートします。<br /> <a href='https://inov.at/dts'></em>Design Thinking for Strategy</a>の第3章に詳細が記載されています。<br /> 特定のビジネスアイデアをプロトタイプ化し、それが望ましい、実行可能、かつ実現可能なビジネスになることを確実にしたい場合、詳細ビジネスモデルを使用することをお勧めします。"
+MTR.tour.dbm.once_your_done = "<em>詳細なビジネス モデルが決まったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+MTR.text.lbm.disclaimer = "<em>Detailed Business Model Canvas</em> は <a href='https://inov.at/dts'>Design Thinking for Strategy</a> から引用し、<a href='https://www.strategyzer.com'>Strategyzer</a> の <em>Business Model Canvas</em> を基にしています。これは、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で提供されています。"
+
+
+## Competitive Positioning Canvas
+
+
+# Title
+
+MTR.headline.cp.board = "コンペティティブ・ポジショニング・ボード"
+
+# Element/Box Labels
+
+MTR.box.header.cp.cj = "お客様の業務に応じた判断材料"
+MTR.box.header.cp.ovp = "製品・サービス・価値提案は、どのように顧客の仕事を満たすのか？"
+MTR.box.label.cp.need = "顧客のJob to Be Doneから導き出されたニーズと要望。"
+MTR.box.label.cp.unique = "独自性"
+MTR.box.label.cp.superior = "優越感"
+MTR.box.label.cp.indifferent = "無差別"
+MTR.box.cp.cj_rv = "合理的価値要因"
+MTR.box.cp.cj_rc = "合理的なコスト要因"
+MTR.box.cp.cj_e = "感情的な要因"
+MTR.box.cp.ou_rv = "合理的価値要因"
+MTR.box.cp.ou_rc = "合理的なコスト要因"
+MTR.box.cp.ou_e = "感情的な要因"
+MTR.box.cp.os_rv = "合理的価値要因"
+MTR.box.cp.os_rc = "合理的なコスト要因"
+MTR.box.cp.os_e = "感情的な要因"
+MTR.box.cp.oi_rv = "合理的価値要因"
+MTR.box.cp.oi_rc = "合理的なコスト要因"
+MTR.box.cp.oi_e = "感情的な要因"
+
+# Data Field Labels and placeholders
+
+MTR.label.cp.title_new = "新しい競争力のあるポジショニングのタイトルは何ですか？"
+MTR.label.cp.title_edited = "競争力のあるポジショニングの新しいタイトルは何ですか？"
+MTR.label.cp.title_clone = "コピーした競争力のあるポジショニングのタイトルは何ですか？"
+MTR.input.placeholders.cp.enter_title_for_board = "新しい競争力のあるポジショニングのタイトルを入力します。"
+
+# Notifications
+
+MTR.headlines.cp.analysis = "競争力のあるポジショニングを記述する"
+MTR.headlines.cp.welcome_to_board = "Competitive Positioning Boardへようこそ!"
+
+MTR.text.cp.helper_content = "<em>Competitive Positioning Canvas</em> は、競合の立場ではなく、顧客の立場から競争上の位置づけを評価するのに役立つものです。<br />詳細は、<a href='https://inov.at/dts'></em>Design Thinking for Strategy</a>の12章に記載されています。<br /> 詳細なビジネスモデルを設計した後に、競合ポジショニング・キャンバスを使用することをお勧めします。"
+MTR.tour.cp.once_your_done = "<em>競争力のあるポジショニングを確信したら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+MTR.text.cp.disclaimer = "<em>Competitive Positioning Canvas</em> は <a href='https://inov.at/dts'>Design Thinking for Strategy</a> から引用されており、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で使用されています。"
+
+
+## Lean Canvas
+
+
+# Title
+
+MTR.headline.lean.board = "リーンキャンバスボード"
+
+# Element/Box Labels
+
+MTR.box.lean.problem = "問題点"
+MTR.box.lean.alternatives = "既存の代替案"
+MTR.box.lean.solution = "解決方法"
+MTR.box.lean.keymetrics = "主要指標"
+MTR.box.lean.uniquevalue = "独自のバリュー・プロポジション"
+MTR.box.lean.highlevelconcept = "ハイレベルなコンセプト"
+MTR.box.lean.unfairadvantage = "不当な優位性"
+MTR.box.lean.channels = "チャンネル"
+MTR.box.lean.customersegment = "顧客セグメント"
+MTR.box.lean.earlyadopters = "アーリーアダプター"
+MTR.box.lean.cost = "コスト構造"
+MTR.box.lean.revenue = "収益の流れ"
+
+# Data Field Labels and placeholders
+
+MTR.label.lean.title_new = "新しいリーンキャンバスのタイトルは何ですか？"
+MTR.label.lean.title_edited = "リーンキャンバスの新しいタイトルは何ですか？"
+MTR.label.lean.title_clone = "コピーしたリーンキャンバスのタイトルは何ですか？"
+MTR.input.placeholders.lean.enter_title_for_board = "新しいリーンキャンバスのタイトルを入力します。"
+
+# Notifications
+
+MTR.headlines.lean.analysis = "リーンキャンバスの説明"
+MTR.headlines.lean.welcome_to_board = "Lean Canvas Boardへようこそ!"
+
+MTR.text.lean.helper_content = "<br/> そこから、<em>独自の価値提案</em> (他の製品よりも優れている点は何か)、<em>流通経路</em> (顧客にソリューションを届ける方法は何か)、<em>収益の流れ</em> (ソリューションを収益化する方法は何か)、<em>コスト構造</em> (ソリューションの価値は何か)へと進み、新しい事業や製品のアイデアの検証を完全に行うことができるのです。これらの質問に答えることは、成功を促進し、失敗を軽減し、仮定を追跡して検証することを可能にするように設計されています。リーンであるということは、無駄を省き、顧客が必要とする製品、ビジネス、ソリューションを構築するために努力することです。"
+MTR.text.lean.disclaimer = "Lean Canvas は <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> から引用しており、<a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> ライセンスの下で使用されています。"
+MTR.tour.lean.once_your_done = "<em>リーン キャンバスが快適になったら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に移動します。"
+
+
+## Porter's Strategy Questions
+
+
+# Title
+
+MTR.headline.sq.board = "ポーターの戦略」質問掲示板"
+
+# Element/Box Labels
+
+MTR.box.sq.qa = "会社の価値提案を競合他社のそれと区別するものは何か？"
+MTR.box.sq.qb = "競合他社とは異なる、あるいは優れた方法で行っている活動は何か。"
+MTR.box.sq.qc = "競合他社とは異なる、どのようなトレードオフを行うのか？"
+MTR.box.sq.qd = "どのような戦略的適合性を持つ企業なのか？"
+MTR.box.sq.qe = "長期的な継続性をどのようにサポートするのか？"
+
+# Data Field Labels and placeholders
+
+MTR.label.sq.title_new = "ポーターの戦略の質問に対する新しい答えのタイトルは何ですか？"
+MTR.label.sq.title_edited = "ポーターの戦略の質問に対する答えの新しいタイトルは何ですか？"
+MTR.label.sq.title_clone = "ポーターの戦略の質問に対するあなたの模造解答のタイトルは何ですか？"
+MTR.input.placeholders.sq.enter_title_for_board = "ポーターの戦略の質問に対する新しい答えのタイトルを入力してください。"
+MTR.label.sq.description = "戦略的な質問に対する回答"
+
+# Notifications
+
+MTR.headlines.sq.analysis = "ポーターの戦略の質問に対するあなたの答えを記述してください。"
+MTR.headlines.sq.welcome_to_board = "ポーターの戦略質問掲示板へようこそ!"
+
+MTR.text.sq.helper_content = "<em>ポーターの戦略の質問</em>に答えることで、あなたが設計した戦略が競争力のあるものであることを確認することができるのです。ポーターの戦略の質問についての詳細は、書籍<a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>の12章に記載されています。<br/>戦略プロセスの最後に、ポーターの戦略の質問に回答することをお勧めします。"
+MTR.tour.sq.once_your_done = "<em>ポーターの戦略の質問に対する答えに納得できたら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みましょう。"
+
+
+## Strategy Message
+
+
+# Title
+
+MTR.headline.sm.board = "戦略メッセージボード"
+
+# Element/Box Labels
+
+MTR.box.sm.qa = "対象となる顧客セグメント</em>と<em>範囲外の顧客</em>は誰なのか？"
+MTR.box.sm.qb = "ターゲットとする顧客にどのような<em>バリュー・プロポジション</em>を提供するのか。"
+MTR.box.sm.qc = "なぜ、顧客は競合他社ではなく、あなたと取引することを選ぶのでしょうか？真似のできない当社の特徴とは何でしょうか？"
+MTR.box.sm.qd = "なぜ、顧客との約束に応えられるのか？あなたはどのような<em>ユニークな能力</em>を持ち、それを活用することができますか？"
+MTR.box.sm.qe = "新しい戦略や改訂された戦略によって何が<em>変わり</em>、何が<em>変わらず</em>時間が経過しても変わらないのか？範囲内に残る既存の顧客を、どのようにして失わないようにするのか？"
+MTR.box.sm.qf = "なぜ、この戦略によって、<em>時間をかけて利益を生み出す、あるいは増やすことができるのか</em>？"
+MTR.box.sm.qg = "新しい戦略や改訂された戦略で設定された目標は、<em>現実的に達成可能</em>なのか？"
+
+# Data Field Labels and placeholders
+
+MTR.label.sm.title_new = "新しい戦略メッセージのタイトルは何ですか？"
+MTR.label.sm.title_edited = "戦略メッセージの新しいタイトルは何ですか？"
+MTR.label.sm.title_clone = "コピーした戦略メッセージのタイトルを教えてください。"
+MTR.input.placeholders.sm.enter_title_for_board = "新しいストラテジーメッセージのタイトルを入力してください。"
+
+# Notifications
+
+MTR.headlines.sm.analysis = "戦略メッセージの記述"
+MTR.headlines.sm.welcome_to_board = "攻略掲示板へようこそ"
+
+MTR.text.sm.helper_content = "<em>戦略メッセージ</em>は、あなたが後期の戦略を成功させるためのメッセージを作るのに役立ちます。<br/> 戦略のコミュニケーションについての詳細は、書籍「Design Thinking fot Strategy」の第13章に記載されています。<br/>新しい/改訂された戦略の開発を完了した後に、戦略メッセージキャンバスを使用することをお勧めします。"
+MTR.tour.sm.once_your_done = "<em>戦略メッセージに納得できたら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> にアクセスしてください。"
+
+
+## Retrospectives
+
+
+# Title
+
+MTR.headline.retros.board = "レトロスペクティブ"
+
+# Element/Box Labels
+
+MTR.box.retros.continue = "続・うまくいったことは？"
+MTR.box.retros.stop_doing = "Stop - 何をやめるべきか？"
+MTR.box.retros.start_doing = "スタート - 改善のために何を始めるべきか？"
+
+# Data Field Labels and placeholders
+
+MTR.label.retros.title_new = "今回の回顧展のタイトルを教えてください。"
+MTR.label.retros.title_edited = "回顧展の新しいタイトルは何ですか？"
+MTR.label.retros.title_clone = "コピーした回顧展のタイトルを教えてください。"
+MTR.input.placeholders.retros.enter_title_for_board = "新しい回顧展のタイトルを入力してください。"
+
+# Notifications
+
+MTR.headlines.retros.analysis = "レトロスペクティブについて説明する"
+MTR.headlines.retros.welcome_to_board = "レトロスペクティブボードへようこそ"
+
+MTR.text.retros.helper_content = "<br/> <em>レトロスペクティブ</em>は、仕事、チームの機能、そしてもちろん進歩についての簡単な振り返りです。<br/>ここでチームは、何がうまくいき、何がうまくいかず、次回は何が違う方法でできるかに焦点を当てることができます。<br/>定期的に、あるいは最低でもマイルストーンごとにレビュー会議を実施することをお勧めします。"
+MTR.tour.retros.once_your_done = "<em> 回顧的分析に満足したら、</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a> に進みます。"
+

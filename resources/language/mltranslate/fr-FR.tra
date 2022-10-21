@@ -296,6 +296,7 @@ notification.article_created_successfully = "L'article a été créé avec succ�
 notifications.ical_success = "URL iCal créée avec succès"
 notifications.ical_removed_success = "L'URL iCal a été supprimée"
 
+
 short_notifications.effort_updated = "Effort mis à jour avec succès"
 short_notifications.priority_updated = "Priorité mise à jour avec succès"
 short_notifications.milestone_updated = "Jalon mis à jour avec succès"
@@ -468,6 +469,7 @@ links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Ajouter à la feu
 links.read_more = "Lire la suite"
 links.add_team_member = "Ajouter un membre de l'équipe"
 links.create_user = "Créer un nouvel utilisateur"
+
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Ma feuille de temps</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Mon calendrier</span>"
@@ -823,6 +825,8 @@ label.reportType = "Rapport en tant que"
 label.showInKanban = "Afficher sur le tableau Kanban"
 links.my_portfolio = "<span class='fa fa-briefcase'></span> Voir le portefeuille"
 
+
+
 label.send_telemetry = "Aidez-nous à améliorer Leantime !"
 label.telemetry_background = "Envoyez des données anonymes <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>sur le nombre de projets, d'utilisateurs, de tickets etc. à Leantime.io</a>. Aucune donnée personnelle identifiable ne sera envoyée et il nous sera impossible de suivre les utilisateurs individuels."
 
@@ -834,6 +838,7 @@ label.grey = "Gris"
 
 labels.all_projects = "Tous les projets"
 label.dates = "Dates d'échéance"
+
 
 labels.createdBy_on = "Créé par %s %s le %s, modifié le %s"
 labels.tags = "Tags"
@@ -1066,6 +1071,7 @@ tour.congratulations_kanban_text = "Vous avez terminé la visite!<br/>Si vous av
 
 ## Leantime DTS Branch
 
+
 # Supported menut types
 
 label.menu_type = "Type de menu"
@@ -1202,7 +1208,8 @@ tour.insights.once_your_done = "<em>Une fois que vous vous sentez à l'aise avec
 
 
 ## Strategy Brief
-### TO DO ###
+
+
 # Title
 
 headline.sb.board = "Tableau du Dossier Stratégique"
@@ -1418,7 +1425,7 @@ headlines.lbm.welcome_to_board = "Bienvenue au Modèle Commercial Simplifié !"
 
 text.lbm.helper_content = "Le <em>Modèle Commercial Simplifié</em> vous aidera à documenter votre organisation actuelle, vos concurrents et le secteur. Il soutient l'identification de l'orientation stratégique d'une entreprise et jette les bases de la conception d'un modèle d'affaires détaillé original et compétitif.<br />Vous trouverez plus de détails dans le chapitre 3 du livre <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br />Nous recommandons d'utiliser la variante légère du business model canvas chaque fois que vous n'avez pas besoin des spécificités du modèle d'affaires détaillé ou original d'Osterwalter."
 tour.lbm.once_your_done = "<em>Une fois que vous vous sentez à l'aise avec votre modèle économique simplifié, rendez-vous sur le</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
-text.lbm.disclaimer = "Le <em>Lightweight Business Model Canvas</em> est tiré de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> et est basé sur le <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. Il est placé sous la licence <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+text.lbm.disclaimer = "Le <em>Modèle Commerical Détaillé</em> est tiré de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> et est basé sur le <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. Il est placé sous la licence <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
 
 
 ## Osterwalder's Business Model
@@ -1644,7 +1651,7 @@ input.placeholders.sm.enter_title_for_board = "Saisissez le titre de votre nouve
 headlines.sm.analysis = "Décrivez votre message stratégique"
 headlines.sm.welcome_to_board = "Bienvenue sur le forum de la stratégie !"
 
-text.sm.helper_content = "Le <em>Message Stratégique</em> vous aidera à élaborer un message réussi de votre stratégie tardive. Vous trouverez plus de détails sur la communication de la stratégie au chapitre 13 du livre " Design Thinking fot Strategy ".<br/>Nous vous suggérons d'utiliser le canevas de message de stratégie après avoir conclu le développement de votre stratégie nouvelle/révisée."
+text.sm.helper_content = "Le <em>Message Stratégique</em> vous aidera à élaborer un message réussi de votre stratégie tardive. Vous trouverez plus de détails sur la communication de la stratégie au chapitre 13 du livre"
 tour.sm.once_your_done = "<em>Une fois que vous êtes à l'aise avec votre message stratégique, rendez-vous sur le</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 
 

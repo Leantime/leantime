@@ -8,7 +8,7 @@
  */
 const KEYFILE = '/var/lib/wwwrun/private/mltranslate-key.inc.php';
 
-require('../../../vendor/autoload.php');
+require('./vendor/autoload.php');
 
 // Get API key
 require(KEYFILE);
@@ -65,8 +65,8 @@ $tra_stream = fopen($tra_file, 'w');
 if($tra_stream === false) die("Error: Cannot open file '$tra_file'\n");
 
 // Translate line by line
-while(!feof($tra_stream)) {
-	$line = fgets($tra_stream);
+while(!feof($src_stream)) {
+	$line = fgets($src_stream);
 
 	// Remove comment
 	$comment_pos = strpos($line, '#');
@@ -99,7 +99,8 @@ while(!feof($tra_stream)) {
 		$src_text = trim($submatch[1]);
 
 		// Translating
-		if(!isset($tra_text_ary[$key])) {
+		echo $key.' = "'.$src_text.'"'.PHP_EOL;
+		if(!isset($dst_text_ary[$key])) {
 			try {
 				$result = $trAPI->translateText($src_text, $src_lang, $dst_lang);
 			}
@@ -107,17 +108,15 @@ while(!feof($tra_stream)) {
 				die("Error: Translation quota exceeded for this month\n");
 			}
 			$tra_text = $result->text;
+			fwrite($tra_stream, 'MTR.'.$key.' = "'.$tra_text.'"'.PHP_EOL);
+		    echo 'MTR.'.$key.' = "'.$tra_text.'"'.PHP_EOL;
 		}
 		else {
 			$tra_text = $dst_text_ary[$key];
+			fwrite($tra_stream, $key.' = "'.$tra_text.'"'.PHP_EOL);
+		    echo $key.' = "'.$tra_text.'"'.PHP_EOL;
 		}
-		
-		// Output result
-		fwrite($tra_stream, $key.' = "'.$tra_text.'"'.PHP_EOL);
 
-		// Show on screen
-		echo $key.' = "'.$tra_text.'"'.PHP_EOL;
-		echo $key.' = "'.$src_text.'"'.PHP_EOL;
 	}
 }
 

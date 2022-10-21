@@ -1,0 +1,1685 @@
+language.code = "ru"
+language.direction = "ltr"
+language.isRTL = "false"
+language.dateformat = "d.m.Y"
+language.jsdateformat = "dd.mm.yy"
+language.timeformat = "H:i"
+language.jstimeformat = "hh:mm A"
+language.momentJSDate = "DD.MM.YYYY"
+language.currency = "$"
+
+#0 is Sunday, 1 is Monday
+
+language.firstDayOfWeek = "1"
+language.isMeridian = "true"
+
+# special
+
+MTR.label.classic = "Классический вид вкладок"
+MTR.label.oneView = "Современный вид"
+MTR.label.ticket_layout = "Выберите макет билета"
+MTR.label.additional_settings = "Дополнительные настройки"
+MTR.label.comment_order = "Порядок комментирования"
+MTR.label.downtoup = "Старейший Первый"
+MTR.label.uptodown = "Самый новый первый"
+
+#Datepicker translations
+
+language.dayNames = "Воскресенье,Понедельник,Вторник,Среда,Четверг,Пятница,Суббота"
+language.dayNamesMin = "Вс,Пн,Вт,Ср,Чт,Пт,Сб"
+language.dayNamesShort = "Вс,Пн,Вт,Ср,Чт,Пт,Сб"
+language.monthNames = "Январь,Февраль,Март,Апрель,Май,Июнь,Июль,Август,Сентябрь,Октябрь,Ноябрь,Декабрь"
+language.monthNamesShort = "Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек"
+language.currentText = "Сейчас"
+language.closeText = "Закрыть"
+language.buttonText = "Выбрать"
+language.nextText = "След."
+language.prevText = "Пред."
+language.weekHeader = "Нед."
+language.columnFormatMonth = "ddd"
+language.columnFormatWeek = "ddd M/d"
+language.columnFormatday = "dddd M/d"
+
+headlines.all_times = "Все время"
+headlines.edit_time = "Изменить время"
+headlines.confirm_delete = "Подтвердить Удаление"
+headlines.delete_time = "Удалить время"
+headlines.drive_impact = "Эффект действия"
+MTR.headlines.welcome_back = "С возвращением"
+headlines.login = "Логин"
+headlines.project_with_name = "Проект:"
+headlines.no_active_sprint = "У Вас нет активного спринта!"
+headlines.sprint_starts_on = "Ваш спринт начинается <strong>%1$s</strong>"
+headlines.no_todos_this_week = "У Вас нет задач, которые надо закончить на этой неделе!"
+headlines.no_todos = "У Вас нет задач, назначенных Вам!"
+headlines.no_milestones = "У Вас нет доступных вех в проекте!"
+headlines.edit_todo = "Правка задачи"
+headlines.current_todos = "Текущие задачи"
+headlines.all_todos = "Все задачи"
+headlines.new_to_do = "Новая задача"
+headlines.idea_management = "Управление идеями"
+headlines.ideas = "Идеи"
+headlines.edit_board_name = "Введите название доски"
+headlines.start_new_idea_board = "Создать новую доску идей"
+headlines.have_an_idea = "Новая идея?"
+headlines.attached_milestone = "Прикрепленная веха"
+headlines.no_milestone_attached = "Нет прикрепленных вех!"
+headline.delete_ticket = "Удалить задачу"
+headline.project = "Проект: %1$s"
+headline.milestone = "<i class='fa fa-rocket'></i> Веха"
+headline.milestones = "Вехи"
+headline.add_time_entry = "Отслеживать время"
+headline.all_projects = "Все проекты"
+headline.new_project = "Новый проект"
+headline.project_timesheets = "Учет времени в проекте"
+headline.all_timesheets = "Общий учет времени"
+headline.my_timesheets = "Мой учет времени"
+headline.overview = "Обзор"
+headlines.todos = "Задачи"
+headlines.delete_project_x = "Удалить проект %1$s"
+MTR.headlines.duplicate_project_x = "Дублирование проекта %1$s"
+MTR.headlines.logo = "Логотип"
+MTR.headlines.team_member = "Текущие члены команды"
+MTR.headlines.add_more_users = "Добавьте больше пользователей"
+MTR.headlines.assign_users_to_project = "Назначьте дополнительных пользователей на этот проект"
+MTR.headlines.no_articles_yet = "Пока нет статей"
+MTR.headline.your_projects = "Ваши проекты"
+MTR.headlines.your_todos = "Ваши дела"
+MTR.headlines.home = "Главная"
+MTR.headlines.project_dashboard = "Приборная панель проекта"
+
+MTR.headlines.page_forbidden = "Вы не авторизованы для просмотра этой страницы"
+
+headlines.delete_project_x = "Удалить проект %1$s"
+headlines.research_next_big_product = "Проводите исследования для ваших проектов и собирайте результаты здесь."
+headline.research_board = "Доска исследований"
+headline.delete_board = "Удалить доску"
+headline.all_clients = "Все клиенты"
+headline.new_client = "Новый клиент"
+headline.delete_client = "Удалить клиента: %1$s"
+headline.calendar = "Календарь"
+headline.my_calendar = "Мой календарь"
+headline.new_event = "Новое событие"
+headline.delete_event = "Удалить событие"
+headlines.users = "Пользователи"
+headlines.new_user = "Новый пользователь"
+headlines.edit_user = "Редактировать пользователя"
+headlines.delete_user = "Удалить пользователяя"
+headlines.my_profile = "Мой профиль"
+headlines.profile_picture = "Мой аватар"
+headlines.page_not_found = "Страница не найдена"
+headlines.edit_label = "<i class='fas fa-edit'></i> Редактировать метку"
+headlines.company_settings = "Настройки компании"
+headlines.delete_sprint = "<i class='fa fa-rocket'></i> Удалить спринт"
+headlines.welcome_to_organized_idea_board = "Добро пожаловать на организованную доску идей!"
+headlines.welcome_to_backlog = "Добро пожаловать в список задач!"
+headlines.welcome_to_leantime = "Добро пожаловать в Leantime!"
+headlines.step_one_discover = "1. Узнавайте!"
+headlines.step_two_plan = "2. Планируйте!"
+headlines.step_three_track = "3. Контролируйте!"
+headlines.welcome_to_research_board = "Добро пожаловать на доску исследований!"
+headlines.welcome_to_idea_board = "Добро пожаловать на доску идей!"
+headlines.the_kanban_board = "Доска Kanban"
+headlines.the_timesheets = "Учет времени"
+headlines.welcome_to_your_project = "Добро пожаловать в Ваш проект!"
+headlines.help = "Помощь..."
+headlines.congrats_on_your_project = "Поздравляем с Вашим новым проектом!"
+headlines.welcome_to_your_roadmap = "Добро пожаловать в Дорожные карты!"
+headlines.welcome_to_clients_products = "Добро пожаловать в Клиенты/продукты!"
+headlines.welcome_to_projects = "Добро пожаловать в Проекты!"
+headlines.welcome_to_simple_research_board = "Добро пожаловать в Доску исследований!"
+headlines.update_database = "Обновить базу данных"
+headlines.installation = "Установка"
+headlines.reset_password = "Сбросить пароль"
+headlines.reports = "Отчеты"
+MTR.headlines.twoFA_login = "Введите код двухфакторной аутентификации"
+MTR.headlines.twoFA = "Двухфакторная аутентификация"
+MTR.headlines.my_portfolio = "Мое портфолио"
+MTR.headlines.import_ldap_users = "Импорт пользователей LDAP"
+MTR.headlines.documents = "Документы"
+MTR.headlines.latest_todos = "Последние дела"
+
+
+subtitles.sprint_burndown = "Прогресс спринта"
+subtitles.backlog_burndown = "Прогресс по задачам"
+subtitles.todos_this_week = "Задачи на этой неделе (<span class='thisWeekCounter'>%1$s</span>)"
+subtitles.todo = "Задача"
+subtitles.track_time = "Учет времени"
+subtitles.todos_later = "Дальнейшие задачи (<span class='laterCounter'>%1$s</span>)"
+subtitles.project_progress = "Прогресс проекта"
+subtitles.milestone_progress = "Прогресс вехи"
+subtitle.general = "Общее"
+subtitle.people = "Люди"
+subtitles.dates = "Даты"
+subtitle.time_tracking = "Учет времени"
+subtitles.subtasks = "Подзадачи"
+subtitles.discussion = "Обсуждение"
+subtitles.logged_hours_chart = "Учтенные часы"
+subtitles.delete = "<i class='fa fa-trash'></i> удалить"
+subtitles.start_collecting_ideas = "Начните собирать отличные идеи здесь."
+subtitles.delete_milestone = "<i class='fa fa-trash'></i> Удалить веху"
+subtitles.edit = "Редактирование"
+subtitles.create_new_board = "Создать новую доску"
+subtitle.edit_board = "Название доски"
+subtitles.start_retro_and_discuss_improvements = "Создайте ретроспективу и обсудите с коллегами, что сделано хорошо, а что требует улучшения.<br/>Мы рекомендуем делать это после каждого спринта или достижения очередной вехи."
+subtitle.details = "Детали"
+subtitles.users_assigned_to_this_client = "Пользователи, назначенные этому клиенту"
+subtitles.event = "Событие"
+subtitles.login_info = "Данные доступа"
+subtitles.user_info = "Данные пользователя"
+subtitles.file = "Файл"
+subtitles.summary = "Сводка"
+subtitles.cummulative_flow = "Общий поток задач"
+MTR.subtitles.organization = "Организация"
+MTR.subtitles.companydetails = "Подробная информация о компании"
+MTR.subtitles.look_and_feel = "Внешний вид и ощущения"
+MTR.subtitles.approvals = "Одобрения"
+MTR.subtitles.project_updates = "Обновления проекта"
+
+notifications.no_template = "Не могу найти шаблон"
+notifications.file_upload_success = "Файл был успешно загружен"
+notifications.file_upload_error = "Файл не может быть загружен"
+notifications.comment_create_success = "Комментарий успешно сохранен"
+notifications.comment_create_error = "Невозможно добавить комментарий"
+notifications.time_logged_success = "Время успешно учтено"
+notifications.time_logged_error = "возникла проблема при учете времени"
+notifications.time_logged_error_no_hours = "Пожалуйста, добавьте хотя бы один час"
+notifications.time_logged_error_no_date = "Пожалуйста, добавьте дату"
+notifications.time_logged_error_no_kind = "Пожалуйста, выберите тип учтенного времени"
+notifications.time_logged_error_no_ticket = "Пожалуйста, выберите задачу для учета времени"
+notifications.ticket_save_error_no_headline = "Пожалуйста, введите название для задачи"
+notifications.ticket_saved = "Задача успешно сохранена"
+notifications.comment_deleted = "Комментарий успешно удален"
+notifications.comment_deleted_error = "Ошибка при удалении комментария"
+notifications.file_deleted = "Файл успешно удален"
+notifications.ticket_save_error_no_access = "Вы не можете вносить изменения в эту задачу"
+notifications.subtask_saved = "Подзадача успешно сохранена"
+notifications.subtask_save_error = "Ошибка при создании подзадачи"
+notifications.ticket_delete_error = "Вы не можете удалить эту задачу"
+notifications.subtask_deleted = "Подзадача успешно удалена"
+notifications.subtask_delete_error = "Ошибка при удалении подзадачи"
+notification.noProjects = "Вам не назначен ни один проект. Попросите администратора назначить Вам проект"
+notification.noProjectsCreateNew = "Вам не назначен ни один проект. Создайте новый проект, чтобы продолжить"
+notification.todo_deleted = "Задача успешно удалена"
+notification.milestone_deleted = "Веха успешно удалена"
+notification.saved_mattermost_webhook = "Mattermost Webhook URL успешно сохранен"
+notification.saved_slack_webhook = "Slack Webhook URL успешно сохранен"
+MTR.notification.saved_discord_webhook = "URL веб-крючка Discord успешно сохранен"
+notification.saved_zulip_webhook = "Интеграция Zulip успешно сохранена"
+notification.error_zulip_webhook_fill_out_fields = "Интеграция Zulip не может быть сохранена. Пожалуйста, заполните все поля"
+notification.project_has_tickets = "В проекте все еще остались задачи"
+notification.project_saved = "Проект успешно сохранен"
+notification.no_project_name = "Не указано имя проекта"
+notification.no_client = "Вы не выбрали ни одного клиента"
+MTR.notification.wiki_created_successfully = "Вики успешно создана"
+MTR.notification.article_deleted = "Статья удалена"
+MTR.notification.wiki_deleted = "Вики удалена"
+
+MTR.notification.new_status_saved = "Список статусов "Дела" успешно сохранен"
+MTR.notification.error_saving_status = "Произошла ошибка при сохранении статуса."
+MTR.notification.at_least_one_status = "Необходимо создать хотя бы один статус."
+MTR.notification.error_installing = "Произошла ошибка при установке базы данных, пожалуйста, проверьте журнал ошибок для получения более подробной информации"
+
+MTR.notifications.user_was_added_to_project = "Члены команды были успешно обновлены"
+MTR.notifications.not_assigned_to_any_project = "За вами не закреплены никакие проекты. Вы можете обновить свой профиль или расслабиться и выпить чашечку кофе"
+
+
+notification.project_has_tasks = "Ошибка при удалении проекта - в нем еще остались задачи. Пожалуйста, удалите все задачи сначала."
+notification.project_deleted = "Проект успешно удален"
+notifications.milestone_detached = "Веха успешно отвязана"
+notifications.canvas_item_updates = "Объект успешно сохранен"
+notification.please_enter_hypothesis = "Введите свою гипотезу"
+notification.please_enter_title = "Введите название"
+notification.board_edited = "Доска успешно обновлена"
+notification.milestone_edited_successfully = "Веха успешно обновлена"
+notification.milestone_created_successfully = "Веха успешно создана"
+notification.saving_milestone_error = "Возникла ошибка при сохранении вехи"
+notification.idea_edited_successfully = "Идея успешно обновлена"
+notification.feedback_successfully_created = "Отзыв успешно создан"
+
+notification.research_board_deleted = "Доска исследований успешно удалена"
+notification.research_board_item_deleted = "Гипотеза успешно удалена"
+notification.hypothesis_created = "Гипотеза успешно создана"
+notifications.new_canvas_created = "Новая доска успешно создана"
+notification.idea_board_item_deleted = "Идея успешно удалена"
+notification.idea_board_deleted = "Доска идей успешно удалена"
+notification.idea_board_created = "Доска идей успешно создана"
+notification.idea_edited = "Идея успешно обновлена"
+notification.idea_created = "Идея успешно создана"
+notification.client_saved_successfully = "Клиент успешно обновлен"
+notification.client_name_not_specified = "Пожалуйста, введите имя клиента"
+notification.client_added_successfully = "Клиент успешно добавлен"
+notification.client_exists_already = "Клиент уже существует"
+notification.client_has_todos = "Клиент участвует в проектах и задачах"
+notification.client_deleted = "Клиент успешно удален"
+notification.event_created_successfully = "Событие успешно создано"
+MTR.notification.event_edited_successfully = "Событие успешно отредактировано"
+notification.event_removed_successfully = "Событие успешно удалено"
+notification.could_not_delete_event = "Невозможно удалить событие"
+notification.user_created = "Пользователь успешно создан"
+notification.user_exists = "Этот адрес email уже используется в системе"
+notification.passwords_dont_match = "Пароли не совпадают"
+MTR.notification.username_or_password_missing = "Отсутствует имя пользователя или пароль"
+MTR.notifications.problem_resetting_password = "Возникла проблема со сбросом пароля"
+notification.no_valid_email = "Неверный адрес email"
+notification.enter_email = "Пожалуйста, введите email"
+notification.enter_password = "Пожалуйста, введите пароль"
+notification.enter_firstname = "Пожалуйста, введите имя"
+notification.enter_lastname = "Пожалуйста, введите фамилию"
+notification.enter_company = "Пожалуйста, введите название компании"
+notifications.user_deleted = "Пользователь успешно удален"
+notifications.user_edited = "Пользователь успешно обновлен"
+notifications.profile_edited = "Профиль успешно сохранен"
+notifications.label_changed_successfully = "Метка успешно изменена"
+notifications.company_settings_edited_successfully = "Настройки компании успешно сохранены"
+notifications.sprint_deleted_successfully = "Спринт успешно удален"
+notifications.comment_added_successfully = "Комментарий успешно добавлен"
+notifications.problem_saving_your_comment = "Ошибка при сохранении комментария"
+notifications.project_created_successfully = "Ваш новый проект успешно создан. Перейдите в <a href='%1$s'>Исследования</a> чтобы продолжить планирование."
+notifications.installation_success = "Установка успешно завершена.<br/><br/>Вы можете теперь войте в свою панель задач: <a href='%1$s'>%1$s</a>"
+notifications.installation_error = "Что-то пошло не так<br/>%1$s<br/><br/>Удалите все таблицы из базы данных перед продолжением."
+notifications.database_exists = "База данных уже развернута. Пожалуйста, войдите в систему"
+notifications.email_was_sent_to_reset = "Вам отправлен email для сброса пароля"
+notifications.could_not_find_username = "Пользователь не найден"
+notifications.passwords_changed_successfully = "Пароль успешно обновлен"
+notifications.username_or_password_incorrect = "Имя пользователя или пароль некорректны!"
+notifications.time_deleted_successfully = "Запись времени успешно удалена!"
+MTR.notification.twoFA_enabled_success = "Включена двухфакторная аутентификация. При каждом входе в систему от вас потребуется ввести код"
+MTR.notification.incorrect_twoFA_code = "Введен неверный код. Пожалуйста, попробуйте еще раз"
+MTR.notification.form_token_incorrect = "Неверный маркер формы, пожалуйста, попробуйте еще раз"
+MTR.notifications.could_not_reset_limit_reached = "Вы достигли лимита сброса пароля для вашей учетной записи, пожалуйста, воспользуйтесь последней ссылкой для сброса пароля"
+MTR.notifications.project_copied_successfully = "Проект был успешно скопирован,<br/><a href='%1$s'>нажмите здесь, чтобы открыть его</a>."
+
+MTR.notification.article_updated_successfully = "Статья была успешно обновлена"
+MTR.notification.article_created_successfully = "Статья была создана успешно"
+
+MTR.notifications.ical_success = "URL iCal создан успешно"
+MTR.notifications.ical_removed_success = "URL iCal был удален"
+
+
+short_notifications.effort_updated = "Работа успешно обновлена"
+MTR.short_notifications.priority_updated = "Приоритет успешно обновлен"
+short_notifications.milestone_updated = "Веха успешно обновлена"
+short_notifications.status_updated = "Статус успешно обновлен"
+short_notifications.duedate_updated = "Срок исполнения обновлен"
+short_notifications.timer_started = "Таймер активирован"
+short_notifications.not_enough_time_logged = "Вы работали менее минуты. Время не будет учтено"
+short_notifications.logged_x_hours = "Учтено %1$s часов времени"
+short_notifications.user_updated = "Пользователь успешно обновлен"
+short_notifications.sprint_updated = "Спринт успешно обновлен"
+short_notifications.due_date_updated = "Срок исполнения обновлен"
+short_notifications.date_updated = "Дата обновлена"
+
+short_notifications.remaining_hours_updated = "Оставшиеся часы обновлены!"
+short_notifications.planned_hours_updated = "Запланированные часы обновлены!"
+
+MTR.short_notifications.url_copied = "Url скопирован"
+
+input.placeholders.enter_email = "Введите адрес email"
+input.placeholders.enter_password = "Введите пароль"
+input.placeholders.filter_by_sprint = "Фильтр по спринту..."
+input.placeholders.filter_by_user = "Фильтр по пользователю..."
+input.placeholders.filter_by_milestone = "Фильтр по вехе..."
+input.placeholders.filter_by_type = "Фильтр по типу..."
+MTR.input.placeholders.filter_by_priority = "Фильтр по приоритету..."
+input.placeholders.short_name = "Короткое имя"
+input.placeholders.name_for_idea_board = "Имя для Вашей доски идей"
+input.placeholders.filter_by_status = "Фильтр по статусу..."
+input.placeholders.search = "Поиск"
+input.placeholders.pick_a_color = "Выберите цвет"
+input.placeholders.what_are_you_working_on = "Над чем Вы работаете?"
+input.placeholders.search_type_hit_enter = "Введите запрос и нажмите Enter..."
+input.placeholders.zulip_url = "Например: https://company.zulipchat.com"
+MTR.input.placeholders.discord_url = "Пример: https://discord.com/api/webhooks/123/abc"
+input.placeholders.filter_by_board = "Фильтр по доске..."
+input.placeholders.enter_title_for_board = "Введите название для новой доски"
+input.placeholders.describe_hypothesis = "Коротко опишите Вашу гипотезу"
+input.placeholders.describe_assumption = "Что Вы предполагаете?"
+input.placeholders.describe_data = "Какие данные Вам нужны для проверки гипотезы?"
+input.placeholders.describe_conclusion = "К каким выводам Вы пришли по итог анализа?"
+input.placeholders.sprint_x = "Спринт X"
+input.placeholders.you_can_use_milestone_or_sprint = "Можете использовать название вехи (например, обсуждение этапа 1)"
+input.placeholders.describe_situation = "Опишите ситуацию"
+input.placeholders.list_examples = "Приведите несколько примеров"
+input.placeholders.enter_new_password = "Введите новый пароль"
+input.placeholders.confirm_password = "Подтвердите пароль"
+input.placeholders.choose_project = "Выберите проект"
+input.placeholders.choose_todo = "Выберите задачу"
+MTR.input.placeholders.wiki_title = "Введите название для вашей вики"
+MTR.input.placeholders.enter_title_of_todo = "Введите название вашего дела"
+
+buttons.reload = "Обновить"
+buttons.login = "Войти"
+buttons.save = "Сохранить"
+buttons.save_and_new = "Сохранить и Создать"
+buttons.save_and_close = "Сохранить и Закрыть"
+buttons.delete = "Удалить"
+buttons.select_file = "Выбрать файл"
+buttons.change = "Изменить"
+buttons.remove = "Удалить"
+buttons.upload = "Загрузить"
+buttons.search = "Поиск"
+buttons.add_idea = "Новая Идея"
+buttons.idea_wall = "<i class='fas fa-columns'></i> Идеи - Стена"
+buttons.idea_kanban = "<i class='fa-list'></i> Идеи - Kanban"
+buttons.back = "Назад"
+buttons.close = "Закрыть"
+buttons.start_new_idea_board = "<i class='fa fa-plus'></i> Создать новую Доску Идей"
+buttons.create_board = "Создать доску"
+buttons.yes_delete = "Да, удалить!"
+buttons.day = "День"
+buttons.week = "Неделя"
+buttons.month = "Месяц"
+buttons.today = "Сегодня"
+buttons.timeframe = "Период"
+buttons.add_event = "Новое Событие"
+buttons.add_user = "Новый Пользователь"
+buttons.take_backlog_tour = "<i class='fas fa-map-signs'></i> Просмотреть обзор задач"
+buttons.take_full_tour = "<i class='fas fa-map-signs'></i> Просмотреть полный обзор"
+buttons.take_kanban_tour = "<i class='fas fa-map-signs'></i> Просмотреть обзор Kanban"
+buttons.update_now = "Обновить сейчас!"
+buttons.install = "Установить"
+buttons.install_in_progress = "Устанавливаем..."
+buttons.reset_password = "Сбросить пароль"
+MTR.buttons.duplicate = "Дубликат"
+MTR.buttons.find_users = "Найти пользователей"
+
+links.skip_tour_dont_show_again = "Пропустить обзор и больше не показывать"
+links.skip_tour_start_project = "Пропустить обзор и создать проект"
+links.close = "<i class='fa fa-close'></i> Закрыть"
+links.close_dont_show_again = "Закрыть и больше не показывать"
+links.all_times = "Все время"
+links.book_hours = "Book Hours"
+links.forgot_password = "Забыли пароль?"
+links.dont_do_it_alone = "Не мучайтесь в одиночку! Добавьте сюда больше пользователей!"
+links.num_of_todos = "# задач"
+links.effort = "Работа"
+MTR.links.priority = "Приоритет"
+links.hourly = "В час"
+links.create_sprint = "Создать спринт"
+links.goto_backlog = "Просмотреть все задачи"
+links.goto_milestones = "<span class='fas fa-map'></span> Начните планировать дорожную карту"
+links.quick_add_todo = "Быстрое добавление задачи"
+links.cancel = "Отмена"
+links.edit_todo = "Редактирование задачи"
+links.edit_canvas_item = "<i class='fa fa-edit'></i> Редактировать"
+links.delete_canvas_item = "<i class='fa fa-trash'></i> Удалить"
+links.delete_todo = "Удалить задачу"
+links.start_work = "Начать работу"
+links.stop_work_started_at = "Остановить работу, <span>начатую в <span class='time'>%1$s</span></span>"
+links.go_back = "Вернуться"
+links.add_new_comment = "Добавить комментарий"
+MTR.links.add_new_report = "Обновление статуса"
+links.reply = "Ответить"
+links.delete = "Удалить"
+links.add_todo = "<span class='fa-pushpin'></span> Создать задачу"
+links.add_todo_no_icon = "Добавить задачу"
+links.add_milestone = "<span class='fa fa-map'></span> Создать веху"
+links.add_sprint = "<span class='fa fa-rocket'></span> Создать спринт"
+links.filter = "<i class='fas fa-filter'></i> Фильтры"
+links.edit_sprint = "Редактировать спринт"
+links.create_new_sprint = "<span class='fa fa-rocket'></span> Создать новый спринт"
+links.create_first_sprint = "<span class='fa fa-rocket'></span> Создайте свой первый спринт"
+links.kanban = "<i class='fas fa-columns'></i> В виде Kanban"
+links.list = "<i class='fa-list'></i> Список"
+links.week_view = "<i class='fas fa-columns'></i> В виде недели"
+links.list_view = "<i class='fa-list'></i> В виде списка"
+links.backlog = "Список задач"
+links.table = "<span class='fa fa-table'></span> Табличный вид"
+links.gantt_view = "<span class='fa fa-sliders'></span> Диаграммы Гантта"
+links.view = "<span class='caret'></span>"
+links.group_by = "<span class='fa fa-object-group'></span> Группировать по <span class='caret'></span>"
+links.all_todos = "Все задачи"
+links.create_idea_board = "<i class='fa fa-plus'></i> Создать новую доску"
+links.edit_idea_board = "<i class='fa fa-edit'></i> Редактировать доску"
+links.add_more = "<span class='fa fa-plus'></span> Добавить еще"
+links.create_attach_milestone = "Создать и прикрепить новую веху"
+links.attach_existing_milestone = "Прикрепить существующую веху"
+links.remove = "Удалить"
+links.edit_milestone = "Редактировать веху"
+links.view_todos = "Просмотр задач"
+link.new_project = "Новый проект"
+link.new_client = "Новый клиент"
+links.simple_canvas = "<i class='fas fa-columns'></i> Простая доска"
+links.full_canvas = "<i class='fas fa-graduation-cap'></i> Полная доска"
+links.create_plan = "<i class='fa fa-plus'></i> Создать новую доску"
+links.edit_board = "<i class='fa fa-edit'></i> Редактировать доску</a>"
+links.add_new_canvas_item = "<span class='fa fa-plus'></span> Создать"
+links.delete_board = "<i class='fa fa-trash'></i> Удалить доску"
+links.delete_sprint = "Удалить спринт"
+links.new_with_icon = "<i class='glyphicon glyphicon-th'></i> Создать"
+links.my_timesheets = "Мой учет времени"
+links.dashboard = "Обзорная панель"
+links.view_todo = "<span class='fa fa-thumb-tack'></span> Просмотр задачи"
+links.stop_timer = "<span class='fa fa-stop'></span> Остановить таймер"
+links.back_to_login = "Вернуться к логину"
+links.download = "<i class='fa fa-download'></i> Загрузить"
+MTR.links.duplicate_project = "<i class='fa fa-copy'></i> Дублирование проекта"
+MTR.links.open_project = "<i class='fa fa-open'></i> Открытый проект"
+MTR.links.add_status = "<i class='fas fa-plus-circle'></i> Добавить статус"
+MTR.links.add_remove_col = "<i class='fas fa-plus'></i> Добавление/удаление колонок"
+MTR.link.edit_wiki = "<i class='fa fa-edit'></i> Редактировать эту вики"
+MTR.link.new_wiki = "<i class='fas fa-plus'></i> Создание новой вики"
+MTR.link.create_article = "Создать статью"
+MTR.links.edit_article = "<i class='fa fa-edit'></i> Редактировать статью"
+MTR.links.copy_url = "<i class='fa fa-link'></i> Копировать Url"
+MTR.links.delete_wiki = "Удалить Вики"
+MTR.links.delete_article = "Удалить статью"
+MTR.links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Добавить в табель учета рабочего времени"
+MTR.links.read_more = "Читать далее"
+MTR.links.add_team_member = "Добавить члена команды"
+MTR.links.create_user = "Создать нового пользователя"
+
+
+menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Мой учет времени</span>"
+menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Мой календарь</span>"
+menu.sign_out_icon = "<span class='head-icon fa fa-sign-out-alt'></span>"
+menu.my_profile = "<span class='fa fa-fw fa-user'></span> Мой профиль"
+menu.all_projects = "<span class='fa fa-fw fa-suitcase'></span> Все проекты"
+menu.all_clients = "<span class='fa fa-fw fa-address-book'></span> Все клиенты"
+menu.all_users = "<span class='fa fa-fw fa-users'></span> Управление пользователями"
+menu.company_settings = "<span class='fa fa-fw fa-cogs'></span> Настройки компании"
+menu.help_support = "Помощь и поддержка"
+menu.show_me_around = "<span class='fa fa-fw fa-map-signs'></span> Быстрый обзор"
+menu.knowledge_base = "<span class='fa fa-fw fa-question'></span> База знаний"
+menu.contact_us = "<span class='fa fa-fw fa-phone'></span> Разработчики"
+menu.sign_out = "<i class='fa fa-fw fa-sign-out-alt' aria-hidden='true'></i> Выход"
+menu.current_project = "Текущий проект"
+menu.you_dont_have_projects = "У Вас нет других проектов"
+menu.create_project = "<span class='fa fa-fw fa-plus'></span> Создать новый проект"
+menu.view_all_projects = "<span class='fa fa-fw fa-suitcase'></span> Просмотр всех проектов"
+menu.view_all_clients = "<span class='fa fa-fw fa-address-book'></span> Просмотр всех клиентов"
+menu.dashboard = "<span class='fa fa-fw fa-home'></span> Панель проекта"
+menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> &nbsp;Задачи"
+menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Вехи"
+menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Учет времени"
+menu.research = "<span class='fas fa-fw fa-flask'></span> Исследования"
+menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> &nbsp;Идеи"
+menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Настройки проекта"
+menu.reports = "<span class='fa fa-fw fa-chart-bar'></span> Отчеты"
+MTR.menu.community = "<span class='fa fa-fw fa-comments'></span> Форум сообщества"
+MTR.menu.my_portfolio = "<span class='head-icon fa fa-briefcase'></span><span class='headmenu-label'>Мое портфолио</span>."
+MTR.menu.documents = "<span class='fa fa-fw fa-book'></span> Документы"
+MTR.menu.home = "<span class='head-icon fa fa-home'></span><span class='headmenu-label'>Home</span>"
+MTR.text.hi = "Привет"
+text.sprint_is_short_iteration = "Спринт - это небольшой этап проекта, который можно закончить и в конце спринта - подвести итог."
+text.update_sprint_chart_add_todos = "Тогда обновится этот график. Тем временем, начните добавлять задачи в Ваш спринт."
+text.take_the_day_off = "Возьмите выходной или начните работу над остальными задачами."
+text.anytime = "В любое время"
+text.timer_set_other_todo = "Установлен таймер для другой задачи"
+text.start_filling_backlog = "Начните наполнять свой список задач и назначьте несколько задач себе."
+text.estimated_date_of_completion = "<span>Оценочная дата завершения:</span><br/><h4>%1$s</h4>"
+text.milestones_help_organize_projects = "Вехи организуют Ваш проект в этапы с заданными датами завершения."
+text.no_date_defined = "Дата не установлена"
+text.percent_complete = "%1$s%% Завершено"
+text.what_are_subtasks = "Используйте подзадачи чтобы разбить большую задачу на меньшие порции работы. Вы сможете добавить плановые часы и оставшиеся часы здесь. <strong>Мы рекомендуем, чтобы подзадачи выполнялись не дольше 4 часов.</strong><br/>После того, как Вы добавите запланированные и оставшиеся часы для подзадачи, основная задача также обновится."
+text.no_subtasks = "У Вас нет подзадач"
+text.create_new_subtask = "Создайте новую подзадачу:"
+text.written_on_by = "Написано %1$s в %2$s - %3$s %4$s"
+text.written_on = "%1$s в %2$s"
+text.no_comments = "Пока что здесь пусто!"
+MTR.text.no_updates = "☕ Обновлений пока нет."
+text.comments = "Комментарии"
+text.num_comments = "<span class='fa-regular fa-comments'></span> %1$s комментариев"
+MTR.text.full_name = "%1$s %2$s"
+MTR.text.no_files = "Пока нет загруженных файлов"
+MTR.text.here_are_news = "Новости ваших проектов Leantime"
+MTR.text.create_new_content = "Создайте свою первую статью."
+MTR.text.create_new_wiki = "Создайте свою первую вики."
+text.last_modified = "последнее обновление: %1$s"
+text.are_you_sure_delete_idea = "Вы действительно хотите удалить эту идею?"
+text.are_you_sure_delete_idea_board = "Вы действительно хотите удалить эту доску идей?"
+text.are_you_sure_delete_sprint = "Вы действительно хотите удалить этот спринт?"
+MTR.text.are_you_sure_delete_wiki = "Вы уверены, что хотите удалить эту вики? При этом будут удалены и все статьи."
+MTR.text.are_you_sure_delete_article = "Вы уверены, что хотите удалить эту статью?"
+
+text.use_milestone_to_track_retro = "Используйте вехи для отслеживания прогресса."
+text.use_milestone_to_track_leancanvas = "Используйте вехи для отслеживания прогресса."
+text.use_milestone_to_track_idea = "Используйте вехи для отслеживания прогресса."
+text.all_milestones = "Все вехи"
+text.confirm_ticket_deletion = "Вы действительно хотите удалить эту задачу?"
+text.confirm_project_deletion = "Вы действительно хотите удалить этот проект?"
+text.confirm_client_deletion = "Вы действительно хотите удалить этого клиента?"
+text.confirm_milestone_deletion = "Вы действительно хотите удалить эту веху?"
+text.confirm_event_deletion = "Вы действительно хотите удалить это событие?"
+text.confirm_research_board_item_deletion = "Вы действительно хотите удалить эту гипотезу?"
+text.confirm_research_board_deletion = "Вы действительно хотите удалить эту доску исследований?"
+text.confirm_user_deletion = "Вы действительно хотите удалить этого пользователя?"
+text.mattermost_instructions = "Эта интеграция будет публиковать уведомления об обновлении на выбранном вами канале.<br/>Следуйте <a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>этим инструкциям</a>, чтобы получить Incoming Webhook URL от Mattermost. Затем вставьте ссылку в форму справа и нажмите кнопку Сохранить."
+text.slack_instructions = "Эта интеграция будет публиковать уведомления об обновлении на выбранном вами канале.<br/>Следуйте <a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>этим инструкциям</a>, чтобы получить Incoming Webhook URL от Slack. Затем вставьте ссылку в форму справа и нажмите кнопку Сохранить."
+text.choose_access_for_users = "Выберите пользователей, которые получат доступ к этому проекту."
+text.expected_to_finish_by = "Ожидается завершение до"
+text.zulip_instructions = "Эта интеграция будет публиковать уведомления об обновлении на выбранном вами канале.<br/>Следуйте <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>этим инструкциям</a>, чтобы создать нового бота. Затем вставьте ссылку в форму справа и нажмите кнопку Сохранить."
+MTR.text.discord_instructions = "Эта интеграция будет публиковать уведомления об обновлениях на выбранный вами канал.<br/>Следуйте инструкциям <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>здесь</a>, чтобы создать новый вебхук(ы)</a>, затем вставьте ссылку(и) в поля справа и нажмите Сохранить."
+text.no_conclusion_yet = "<i>Еще нет выводов</i>"
+text.no_lean_canvas_content = "Доска исследований проведет вас через сопоставление клиента, проблемы и решения.<br/>Мы рекомендуем создавать новую доску для каждого продукта, который Вы начинаете.<br/><br/><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> Создать новую доску</a>"
+text.lean_canvas_is_adapted_message = "Доска исследований адаптирована из <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> и распространяется под лицензией Creative Commons Attribution-Share Alike 3.0"
+text.no_users_assigned_to_this_client = "К этому клиенту не добавлены пользователи. Добавьте или назначьте пользователей <a href='/users/showAll'>здесь</a>"
+text.confirm_delete_timesheet = "Действительно удалить запись о времени?"
+text.timer_on_todo = "<span class='head-icon fa fa-stop'></span> %1$s Таймер в %2$s"
+text.these_are_system_wide_settings = "Это системные настройки, которые влияют на внешний вид и работу всей системы."
+text.company_name_helper = "Выводится в заголовке страницы и письмах"
+text.advanced_boards_helper_content = "Идеи развиваются, растут и созревают. Это самое подходящее место, чтобы следить за ними.<br/>Перемещайте карточки идей из одного столбца в другой, чтобы отразить их текущее состояние.<br/>Это хорошее место, чтобы начать исследования, разработать прототипы и проверить эти прототипы с несколькими клиентами, прежде чем начать реализацию."
+text.backlog_helper_content = "Это список всех Ваших задач: тех, над которыми Вы работаете в настоящее время и планируете работать в будущем.<br/><br/>Чтобы добиться прогресса на пути к завершению задач, мы рекомендуем работать в коротких итерациях - спринтах<br/>Спринты - это двухнедельные временные интервалы, которые позволяют вам сосредоточиться на более мелких, выполнимых кусках работы.<br/>В конце двух недель у вас должно быть что-то для 'демонстрации'. Что-то, что обеспечивает ценность для ваших пользователей или клиентов.<br/><br/>На этом экране вы сможете организовать и управлять своим списком задач, расставлять приоритеты для невыполненной работы с помощью перетаскивания и перемещать элементы невыполненной работы в текущий спринт.<br/>Хотите больше информации? Запустите Быстрый обзор или закройте, чтобы начать работу!"
+text.glad_youre_here = "Мы рады, что ты здесь. Давайте быстро познакомимся."
+text.business_research_section = "Наш раздел бизнес-исследований - это ваш новый дом для ваших идей. Этот раздел предназначен для того, чтобы познакомить вас с этапами развития клиента, исследования проблем и разработки решений."
+text.our_roadmap_design = "Наша дорожная карта предназначена для того, чтобы провести вас от небольших этапов к завершению всего проекта. Планируйте вехи длиной примерно в 3 месяца и используйте эти маркеры проекта, чтобы поддерживать темп на пути к цели."
+text.this_is_where_you_spend_most_time = "Именно здесь вы проведете большую часть своего времени - занимаясь делами. Планируйте свои 2-недельные спринты и успешно выполняйте их с помощью доски Kanban и наших инструментов работы с задачами. Используйте ретроспективы, чтобы провести анализ перед следующим спринтом."
+text.full_lean_canvas_helper_content = "Доска исследований проведет вас через весь процесс проверки идеи.<br/>На этой странице Вы сможете собрать вместе свой клиентский сегмент, проблему и решение.<br/><br/>Дальше, Вы найдете свою<br/>Предлагаемую уникальную ценность (Что делает Вашу идею лучше, чем другие предложения?),<br/>Каналы дистрибуции (Как Ваши клиенты получат это решение?)<br/>Потоки доходов (Как это решение принесет прибыль?)<br/>Структуру расходов (Во что обойдется реализация?)<br/>Ключевые показатели (Как определить успех или неудачу?)<br/>и Уникальные преимущества (Что у Вас есть, что поможет опередить конкурентов?)<br/>Ответы на эти вопросы призваны способствовать успеху, смягчать неудачи и позволяют отслеживать и проверять ваши предположения. Подход Lean - это устранение ненужного <br/>и работа над созданием продуктов, бизнеса и решений, которые нужны вашим клиентам."
+text.idea_board_helper_content = "Это место, чтобы собрать все ваши идеи. Обсудите новые идеи со своей командой и прикрепите вехи, чтобы увидеть прогресс в реализации ваших идей."
+text.kanban_helper_content = "Kanban это японское слово, обозначающее 'карту'. Доски Kanban были введены инженерами Toyota в 40-х годах.<br/>Он используется для визуального обмена информацией и быстрого выполнения работ<br/>Доски Kanban полезны для визуализации работы и состояния, чтобы помочь управлять активной или незавершенной работой, управлять рабочим потоком и быстро действовать.<br/><br/>Начните тур, чтобы увидеть, как работает наша доска Kanban, или нажмите кнопку Закрыть, чтобы начать работу!"
+text.my_timesheets_helper_content = "Учет времени - это место для отслеживания затраченного на задачи времени.<br/> Это полезно не только для выставления счетов клиентам, но и для проверки, насколько хорошо Вы планируете дальнейшие задачи."
+text.new_project_helper_content = "<p>Это место, где Вы будете описывать, определять и устанавливать параметры для Вашего проекта. Это важно, поскольку именно эта часть сообщает<br/>всей команде, каковы приоритеты проекта, ожидания и руководящие принципы.</p><p><br/><em>Будьте ясны, лаконичны, полны и достоверны.<br/><br/></em></p><p>Овладение этими вещами в описаниях ваших проектов удерживает всех на одной странице и помогает свести к минимуму риск ошибок или оплошностей.</p><br/>Время начинать!<br/><br/>"
+text.not_found_helper_content = "<p>У нас пока нет контента для этой страницы.<br/>Пожалуйста, используйте ссылку 'нужна помощь' внизу, чтобы узнать больше о том, что вы можете сделать здесь.</p>"
+text.retros_helper_content = "<p>Ретроспективы - это быстрые размышления о работе, функционировании команды и, конечно же, о прогрессе.<br/>Это то место, где ваша команда может воспользоваться моментом, чтобы отточить то, что шло хорошо, что не шло хорошо и что можно было бы сделать по-другому в следующий раз.<br/>Мы рекомендуем проводить обзорную встречу через регулярные промежутки времени или, как минимум, в конце каждого этапа.<br/></p>"
+text.roadmap_helper_content = "<p>Дорожные карты полезны для масштабирования крупных проектов в меньшие и более управляемые блоки.<br/><br/></p><p>Чтобы создать свою дорожную карту, мы рекомендуем установить вехи, которые могут быть достигнуты в течение 3-месячного периода времени.</p><p>Вехи - это контрольные точки на пути к завершению проекта.<br/> Проще говоря: если Вы путешествуете по пересеченной местности, то каждая область, через которую Вы проезжаете, может быть вехой.<br/><br/>Нажмите кнопку 'Добавить веху' в левом верхнем углу, чтобы начать работу. Установите дату на этой вкладке или в самой диаграмме дорожной карты, щелкнув и перетащив веху в календаре.</p>"
+text.show_clients_helper_content = "<p>Раздел Клиенты/Продукты организует ваши проекты по категориям и позволяют вам изолировать различные группы.<br/><br/></p><p>Как консультант, вы уже работаете с клиентами, и это хорошее место, чтобы организовать их.</p><p>Если вы являетесь командой разработчиков продукта, вы можете использовать этот раздел для организации и изоляции своих отделов (маркетинг, продажи, операции и т. д.).</p>"
+text.show_projects_helper_content = "<p>Проекты - это сердце вашего бизнеса и Leantime! Изменения, развитие, цели и все, что вы можете построить или о чем мечтаете, будет включать в себя проекты.<br/> Управление проектами - это просто процесс обеспечения того, чтобы ваши проекты были выполнены своевременно, правильно и с реальной ценностью для бизнеса.<br/><br/>Именно здесь будут жить ваши проекты. Ваша страница проектов позволит вам создать проект, быстро просмотреть задачи, часы, расходы и клиента, связанного с проектом.<br/><br/>Используйте эту страницу для быстрого обзора всех ваших проектов.<br/><br/></p>"
+text.simple_lean_canvas_helper_content = "<p>Основа любого проекта коренится здесь - в ваших исследованиях. На этой доске вы сосредоточитесь на построении для вашего клиента отличного решения с помощью шаблона исследований.<br/><br/>В шаблоне исследований Вы начнете с определения того, кто ваши клиенты. Подумайте о демографии, о том, что они делают и что им нужно.<br/>Далее Вы определите их попытки решить проблему. Наконец, Вы определите, как Вы планируете решить их проблему.<br/><br/>Создание продуктов, проектов или предложений, которые решают проблемы клиентов, помогает продвигать успех продукта и смягчать неудачи.<br/><br/>Вы можете обнаружить, что у вас есть несколько способов решить свои проблемы. Это здорово! Вы можете поместить их здесь или перейти к доске идей, чтобы отслеживать эти идеи.<br/>Как только вы начнете это делать, следующим шагом будет проверка ваших предположений о вашем клиенте, его проблемах и ваших решениях.<br/>Вы можете добавить их здесь или перейти на полную<br/>Доску исследований, чтобы начать собирать дополнительную информацию.</p>"
+text.new_db_version = "Новая версия успешно установлена. Чтобы продолжить использовать Leantime, необходимо обновить базу данных.<br/><br/><strong>Пожалуйста, сделайте копию базы данных перед обновлением!</strong><br/>Это займет несколько минут."
+text.update_was_successful = "Обновление успешно установлено и Вы можете войти в систему. <a href='%1$s'>Перейти на страницу входа</a>"
+text.this_script_will_set_up_leantime = "Сейчас мы создадим базу данных и административную учетную запись."
+text.enter_new_password = "Введите новый пароль, чтобы установить его."
+text.enter_email_address_to_reset = "Введите свой адрес email, чтобы сбросить пароль."
+MTR.text.twoFA_qr = "Сканируйте QR-код ниже в вашем любимом приложении OTP/Google Authenticator"
+MTR.text.twoFA_verify_code = "Введите код, выданный вам приложением OTP/Google Authenticator"
+MTR.text.twoFA_already_enabled = "Двухфакторная аутентификация уже включена для вашей учетной записи и требуется для входа в систему.<br/><br/>Чтобы удалить двухфакторную аутентификацию, нажмите кнопку Удалить ниже"
+MTR.text.twoFA_enabled = "В вашей учетной записи <strong>включена</strong> двухфакторная аутентификация."
+MTR.text.twoFA_disabled = "В вашей учетной записи двухфакторная аутентификация <strong>отключена</strong>."
+MTR.text.twoFA_manage = "<span class='fa fa-lock'></span> Управление двухфакторной аутентификацией"
+MTR.text.who_can_access = "Выберите, кому разрешено просматривать этот проект. По умолчанию пользователи наследуют установленные для них роли. Вы можете изменить эти роли на вкладке "Команда"."
+MTR.text.ical_export_description = "Здесь вы можете создать уникальный URL календаря, который позволит вам интегрировать календарь Leantime в любое приложение, поддерживающее формат 'iCal'."
+MTR.text.you_ical_url = "URL-адрес вашего календаря приведен ниже. <br /> Обратите внимание, что любой человек с этим URL может получить доступ к календарю. Храните его в секрете, как пароль."
+MTR.text.no_url = "Создайте URL-адрес, нажав на кнопку ниже"
+MTR.buttons.generate_ical_url = "Создать URL-адрес iCal"
+MTR.links.remove_access = "Удалить доступ к календарю"
+
+MTR.labels.defaultaccess = "Кто может получить доступ к этому проекту?"
+MTR.labels.everyone_in_org = "Все в этой организации"
+MTR.labels.everyone_in_client = "Все, назначенные этому клиенту"
+MTR.labels.only_chose = "Только те пользователи, которых я выбираю в разделе "Команда"."
+
+
+label.id = "ID"
+label.due = "Сделать до:"
+label.due_todo = "Сделать перед:"
+label.planned_edit = "Запланирована правка:"
+label.effort_not_clear = "Работа неясна"
+MTR.label.priority_not_clear = "Приоритет не ясен"
+label.no_milestone = "Нет вехи"
+label.status_new = "Создать"
+label.status_blocked = "Заблокирован"
+label.status_in_progress = "В процессе выполнения"
+label.status_for_approval = "Ожидает утверждения"
+label.status_done = "Сделан"
+label.status_archived = "В архиве"
+label.story_points_unkown = "?"
+MTR.label.priority_unkown = "?"
+label.headline = "Заголовок"
+label.title = "Название"
+label.story = "История"
+label.task = "Задачи"
+label.bug = "Ошибка"
+label.ticket_title = "Название задачи"
+label.milestone = "Веха"
+label.not_assigned_to_milestone = "Не прикреплена веха"
+label.type = "Тип"
+label.todo_type = "Тип"
+MTR.label.todo_priority = "Приоритет"
+label.status = "Статус"
+label.todo_status = "Статус"
+label.sprint = "Спринт"
+label.not_assigned_to_sprint = "Не прикреплен спринт"
+label.effort = "Effort"
+MTR.label.priority = "Приоритет"
+label.effort_not_defined = "Работа не определена"
+MTR.label.priority_not_defined = "Приоритет не определен"
+label.tags = "Теги"
+label.description = "Описание"
+label.author = "Автор"
+label.editor = "Назначена"
+label.filter_by_user = "Фильтр по пользователю"
+MTR.label.assign_to_me = "Назначить меня"
+label.ticket_date = "последнее обновление"
+label.due_date = "Срок выполнения"
+label.due_icon = "<span class='fa-regular fa-calendar'></span>"
+label.title_idea_board = "Какой заголовок у Вашей доски идей?"
+label.topic_idea_board = "Какая тема у Вашей доски идей?"
+label.administration = "Администрирование"
+label.calendar = "Календарь"
+label.general = "Общее"
+label.name = "Имя"
+label.client_product = "Клиент / Продукт"
+label.client_not_listed = "Клиента нет в списке? Создайте нового."
+label.project_state = "Статус проекта"
+label.open = "Активный"
+label.closed = "Закрыт"
+label.team_members = "Члены команды"
+label.budgets = "Бюджет"
+label.hourly_budget = "Бюджет часов"
+label.budget_cost = "Бюджет затрат"
+label.project_name = "Название проекта"
+label.num_tickets = "Количество задач"
+label.employee = "Сотрудник"
+label.all_employees = "Все сотрудники"
+label.invoiced = "Выставлен счет"
+label.invoiced_comp = "На утверждении менеджера"
+label.no_results = "Нет результатов"
+label.ticket = "Задача"
+label.kind = "Вид"
+label.invoiced_emp = "Счет выставлен"
+label.open_todos = "Открытых задач"
+label.ideal = "Идеально"
+label.project_done = "Проект завершен"
+label.progress_todos = "Задачи в процессе выполнения"
+label.done_todos = "Готовые задачи"
+label.new_todos = "Новые задачи"
+MTR.label.language = "Язык"
+
+label.all_kinds = "Все виды"
+label.all_hours = "Все часы"
+label.name_of_product = "Как называется Ваш новый продукт или услуга?"
+label.hypothesis = "Гипотеза"
+label.assumptions = "Предположения"
+label.data = "Данные"
+label.conclusion = "Вывод"
+label.sprint_name = "Название спринта"
+label.first_day = "Первый день"
+label.last_day = "Последний день"
+label.event_title = "Название события"
+label.working_date_from_to = "Работа ведется с"
+label.planned_hours = "Запланированные часы"
+label.estimate = "Оценка"
+label.estimated_hours_remaining = "Оставшиеся часы, оценка"
+label.booked_hours = "Учтенные часы"
+label.actual_hours_remaining = "Оставшиеся часы"
+label.not_assigned_to_user = "Не назначена никому"
+label.total_hours = "Всего часов:"
+label.actions = "Действия"
+label.timesheet_kind = "Тип"
+label.general_billable = "Всего, оплачиваемых"
+label.general_not_billable = "Всего, не оплачиваемых"
+label.projectmanagement = "Управление проектом"
+label.development = "Работа над проектом"
+label.bugfixing_not_billable = "Правки, не оплачиваемые"
+label.testing = "Анализ/Тестирование"
+label.date = "Дата"
+label.hours = "Часов"
+label.backlog = "Список задач"
+label.date_from_date_to = "%1$s - %2$s"
+label.user = "Пользователь"
+label.all_milestones = "Все вехи"
+label.all_types = "Все типы"
+MTR.label.all_priorities = "Все приоритеты"
+label.no_group = "Без группировки"
+label.not_done = "Не сделано"
+label.select_file = "Выберите файл"
+label.change = "Изменить"
+label.webhook_url = "Webhook URL"
+label.milestone_title = "Название вехи"
+label.dependent_on = "Зависит от"
+label.no_dependency = "Нет зависимостей"
+label.color = "Цвет"
+label.planned_start_date = "Запланированная дата начала"
+label.planned_end_date = "Запланированная дата конца"
+label.owner = "Владелец"
+label.billable_hours = "Оплачиваемые часы"
+label.plan_hours = "Запланированные часы"
+label.difference = "Разница"
+label.date_from = "Дата от"
+label.date_to = "- до"
+label.filter = "Фильтр"
+label.project = "проект"
+label.select_all = "↑ Выбрать все"
+label.week_from = "Неделя от"
+label.until = "до"
+label.total = "Всего"
+label.base_url = "Базовый URL"
+label.bot_email = "Email бота"
+label.botkey = "Ключ бота"
+label.stream = "Стрим"
+label.topic = "Тема"
+label.examples = "Примеры"
+label.client_name = "Имя клиента"
+label.client_email = "Email клиента"
+label.number_of_projects = "Количество проектов"
+label.client_details = "Детали клиента"
+label.email = "Email"
+label.url = "Сайт"
+label.street = "Улица"
+label.zip = "Индекс"
+label.city = "Город"
+label.state = "Штат"
+label.country = "Страна"
+label.phone = "Телефон"
+label.start_date = "Дата начала"
+label.start_time = "Время начала"
+label.end_date = "Дата окончания"
+label.end_time = "Время окончания"
+label.all_day = "Событие на весь день"
+label.role = "Роль"
+label.action = "Действие"
+label.firstname = "Имя"
+label.lastname = "Фамилия"
+label.no_clients = "Не назначено клиенту"
+label.password = "Пароль"
+MTR.label.please_enter_password = "Пожалуйста, введите пароль"
+label.new_password = "Новый пароль"
+label.old_password = "Старый пароль"
+label.password_repeat = "Повторите пароль"
+label.available_projects = "Доступные проекты"
+label.assigned_projects = "Назначенные проекты"
+label.project_assignment = "Назначить проекты"
+label.overview = "Обзор"
+label.active = "Активный"
+label.inactive = "Неактивный"
+label.receive_notifications = "Получать уведомления"
+label.upload = "Загрузить"
+label.ondate = "в"
+label.label = "Метка"
+label.company_name = "Название компании"
+label.theme_color = "Цвет темы"
+label.upload_new_logo = "Загрузить логотип (260px x 60px)"
+label.logo = "Логотип"
+label.roles.client = "Клиент"
+label.roles.developer = "Сотрудник"
+label.roles.clientManager = "Менеджер клиента"
+label.roles.manager = "Менеджер компании"
+label.roles.admin = "Администратор"
+
+MTR.label.roles.readonly = "Только чтение"
+MTR.label.roles.commenter = "Комментатор"
+MTR.label.roles.editor = "Редактор"
+MTR.label.roles.owner = "Владелец"
+
+label.client = "Клиент"
+label.filename_fileexport = "File-Export"
+label.progress = "Прогресс"
+label.search_term = "Поисковый запрос"
+label.show = "Показать"
+label.edit = "Правка"
+label.no = "Нет"
+MTR.label.yes = "Да"
+label.pending = "В ожидании"
+MTR.label.twoFACode = "Код двухфакторной аутентификации"
+MTR.label.twoFACode_short = "Код"
+MTR.label.twoFA = "Двухфакторная аутентификация"
+MTR.label.twoFA_setup = "Настройка новой двухфакторной аутентификации"
+MTR.label.copy_of = "Копия"
+MTR.label.assignSameUsers = "Назначение одних и тех же пользователей"
+MTR.label.newProjectName = "Новое название проекта"
+MTR.label.client_id = "Идентификатор клиента"
+MTR.label.ticket_id = "Идентификатор билета"
+MTR.label.primary_color = "Основной цвет"
+MTR.label.secondary_color = "Вторичный цвет"
+MTR.label.wiki = "Вики"
+MTR.label.wiki_title = "Название"
+MTR.label.current_wiki = "Текущая Вики"
+MTR.label.ical_export = "Интегрировать календарь"
+
+MTR.links.delete_article = "Удалить статью"
+
+MTR.tabs.todosettings = "Настройки состояния дел"
+MTR.label.sortindex = "Сортировочная позиция"
+MTR.label.reportType = "Сообщить о поступлении"
+MTR.label.showInKanban = "Показать на доске Канбан"
+MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> Посмотреть портфолио"
+
+
+
+MTR.label.send_telemetry = "Помогите сделать Leantime лучше!"
+MTR.label.telemetry_background = "Отправьте анонимные данные <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>о количестве проектов, пользователей, тикетов и т.д. на Leantime.io</a>. Никакие личные идентифицирующие данные не будут отправлены, и мы не сможем отследить отдельных пользователей."
+
+MTR.label.blue = "Голубой"
+MTR.label.yellow = "Желтый"
+MTR.label.green = "Зеленый"
+MTR.label.red = "Красный"
+MTR.label.grey = "Серый"
+
+MTR.labels.all_projects = "Все проекты"
+MTR.label.dates = "Сроки исполнения"
+
+
+MTR.labels.createdBy_on = "Создан %s %s на %s, изменен на %s"
+MTR.labels.tags = "Теги"
+
+# Cron setup
+
+MTR.label.messages_frequency = "Частота отправки электронной почты"
+MTR.label.choose_option = "Выберите свой вариант"
+MTR.label.5min = "5 минут"
+MTR.label.15min = "15 минут"
+MTR.label.30min = "Полчаса"
+MTR.label.1h = "1 час"
+MTR.label.3h = "3 часа"
+MTR.label.6h = "6 часов"
+MTR.label.12h = "12 часов"
+MTR.label.24h = "1 день"
+MTR.label.48h = "2 дня"
+MTR.label.1w = "1 неделя"
+
+MTR.label.theme = "Тема"
+MTR.label.auto = "Авто"
+MTR.label.light = "Свет"
+MTR.label.dark = "Темный"
+
+MTR.label.draft = "Проект"
+MTR.label.published = "Опубликовано"
+MTR.label.draft_parenth = "(проект)"
+
+
+dropdown.how_big_todo = "Какой размер этой задачи?"
+MTR.dropdown.select_priority = "Каков приоритет этой задачи?"
+dropdown.choose_milestone = "Выберите веху"
+dropdown.choose_status = "Какой статус?"
+dropdown.choose_user = "Назначена"
+dropdown.not_assigned = "Не назначена"
+dropdown.choose_sprint = "Выберите спринт"
+
+status.new = "Новая"
+status.blocked = "Заблокирована"
+status.in_progress = "В процессе"
+status.waiting_for_approval = "Ожидает проверки"
+status.done = "Готова"
+status.archived = "В архиве"
+status.problem = "Опишите проблему"
+status.solution = "Опишите решение"
+status.keymetrics = "Опишите ключевые показатели"
+status.uniquevalue = "Предлагаемая уникальная ценность"
+status.unfairadvantage = "Уникальные преимущества"
+status.channels = "Каналы дистрибуции"
+status.customersegment = "Кто ваши клиенты"
+status.cost = "Структура расходов"
+status.revenue = "Потоки доходов"
+status.not_validated = "Не проверена"
+status.validated_true = "Проверена - правильная"
+status.validated_false = "Проверена - неверная"
+MTR.status.alternatives = "Существующие альтернативы"
+MTR.status.earlyadopters = "Первопроходцы"
+MTR.status.highlevelconcept = "Концепция высокого уровня"
+
+status.ideation = "Новая идея"
+status.discovery = "Исследование"
+status.delivering = "Реализация"
+status.inreview = "На проверке"
+status.accepted = "Утверждена"
+status.deferred = "Отклонена"
+
+email_notifications.hi = "Здравствуйте,"
+email_notifications.unsubscribe = "Чтобы <a href='%1$s'>отписаться</a> от этого типа уведомлений, пожалуйста, войдите в систему и настройте параметры уведомлений"
+
+email_notifications.new_todo_subject = "Новая задача создана"
+email_notifications.new_todo_message = "Задача %2$s создана '%1$s'"
+email_notifications.new_todo_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_file_todo_subject = "Новый файл в задаче [%1$s] - %2$s"
+email_notifications.new_file_todo_message = "%1$s добавил/а новый файл в задачу '%2$s'"
+email_notifications.new_file_todo_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_file_general_subject = "Новый файл загружен"
+email_notifications.new_file_general_message = "%1$s добавил/а новый файл"
+email_notifications.new_file_general_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_comment_todo_subject = "Новый комментарий в задаче [%1$s] - %2$s"
+email_notifications.new_comment_todo_message = "%1$s добавил/а комментарий к задаче '%2$s'"
+email_notifications.new_comment_todo_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_comment_project_subject = "Новый комментарий в проекте [%1$s] - %2$s"
+email_notifications.new_comment_project_message = "%1$s добавил/а комментарий в проекте '%2$s'"
+email_notifications.new_comment_project_cta = "Нажмите здесь для просмотра"
+
+email_notifications.todo_update_subject = "Задача обновлена: [%1$s] - %2$s"
+email_notifications.todo_update_message = "%1$s обновил/а задачу: '%2$s'"
+email_notifications.todo_update_cta = "Нажмите здесь для просмотра"
+
+email_notifications.project_update_subject = "Проект обновлен [%1$s] - %2$s"
+email_notifications.project_update_message = "%1$s обновил/а проект '%2$s'"
+email_notifications.project_update_cta = "Нажмите здесь для просмотра"
+
+email_notifications.project_created_subject = "Вы добавлены в новый проект"
+email_notifications.project_created_message = "Вас добавили в новый проект! Название проекта <a href='%1$s'>[%2$s] - %3$s</a>, автор проекта %4$s<br/>"
+
+
+email_notifications.canvas_board_edited = "Доска исследований обновлена"
+email_notifications.canvas_item_update_message = "%1$s обновил/а объект '%2$s'"
+email_notifications.canvas_item_update_cta = "Нажмите здесь для просмотра"
+
+email_notifications.canvas_board_item_created = "Новая гипотеза на доске"
+email_notifications.canvas_item_created_message = "%1$s создал/а объект '%2$s'"
+
+email_notifications.canvas_board_comment_created = "Новый комментарий на доске"
+email_notifications.canvas_item__comment_created_message = "%1$s добавил/а комментарий"
+
+
+email_notifications.new_comment_general_subject = "Новый комментарий"
+email_notifications.new_comment_general_message = "%1$s добавил/а новый комментарий"
+email_notifications.new_comment_general_cta = "Нажмите здесь для просмотра"
+
+email_notifications.canvas_board_created = "Новая доска исследований создана"
+email_notifications.canvas_created_message = "%1$s создал/а новую доску исследований. Название доски - '%2$s'"
+email_notifications.canvas_update_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_comment_milestone_subject = "Новый комментарий к вехе"
+email_notifications.new_comment_milestone_message = "%1$s добавил/а комментарий к вехе"
+email_notifications.new_comment_milestone_cta = "Нажмите здесь для просмотра"
+
+email_notifications.milestone_update_subject = "Веха обновлена"
+email_notifications.milestone_update_message = "%1$s обновил/а веху"
+email_notifications.milestone_update_cta = "Нажмите здесь для просмотра"
+
+email_notifications.milestone_created_subject = "Новая веха в проекте"
+email_notifications.milestone_created_message = "%1$s создал/а веху"
+
+email_notifications.idea_board_created_subject = "Новая доска идей создана"
+email_notifications.idea_board_created_message = "%1$s создал/а новую доску идей. Название доски - '%2$s'"
+email_notifications.milestone_created_cta = "Нажмите здесь для просмотра"
+
+
+email_notifications.idea_edited_subject = "Идея обновлена"
+email_notifications.idea_edited_message = "%1$s обновил/а идею '%2$s'"
+email_notifications.idea_edited_cta = "Нажмите здесь для просмотра"
+
+email_notifications.idea_created_subject = "Новая идея в проекте"
+email_notifications.idea_created_message = "%1$s создал новую идею - '%2$s'"
+email_notifications.idea_created_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_comment_idea_subject = "Новый комментарий к идее"
+email_notifications.new_comment_idea_message = "%1$s добавил/а новый комментарий к идее"
+email_notifications.new_comment_idea_cta = "Нажмите здесь для просмотра"
+
+email_notifications.new_user_subject = "Учетная запись Leantime создана"
+email_notifications.new_user_message = "%1$s создал/а новую учетную запись для Вас. Вы можете войти в нее по адресу: <a href='%2$s'>%2$s</a><br/><br/>Имя учетной записи (логин): %3$s<br/>Пароль учетной записи: %4$s<br/><br/>пожалуйста, смените пароль после успешного входа в систему.<br/>Хорошего дня!<br/>"
+
+email_notifications.password_reset_subject = "Сброс пароля Leantime"
+email_notifications.password_reset_message = "Мы получили запрос на сброс Вашего пароля к Leantime.<br/><br/>Если Вы хотите сбросить свой пароль, нажмите на эту ссылку:<br/><a href='%1$s' target='_blank'>сбросить пароль</a><br/><br/>Если Вы не запрашивали смену пароля, просто проигнорируйте это письмо.<br/><br/>Хорошего дня!"
+
+MTR.email_notifications.latest_updates_subject = "Leantime - Последние обновления"
+
+tabs.ticketDetails = "Детали"
+tabs.subtasks = "Подзадачи"
+tabs.files = "Файлы"
+tabs.discussion = "Обсуждение"
+tabs.time_tracking = "Учет времени"
+tabs.projectdetails = "Детали проекта"
+tabs.Integrations = "Интеграции"
+tabs.files_with_count = "Файлы (%1$s)"
+tabs.discussion_with_count = "Обсуждение (%1$s)"
+MTR.tabs.projectaccess = "Доступ пользователей"
+MTR.tabs.team = "Команда"
+
+tooltip.how_many_hours_remaining = "Сколько часов осталось в этой задаче по Вашей оценке"
+
+tables.heading.title = "Заголовок"
+tables.heading.status = "Заголовок"
+tables.heading.effort = "Заголовок"
+
+tour.once_done_go_to_kanban = "<em>Вы добавили несколько элементов в свой спринт. Перейдите на свою доску Kanban</em>"
+tour.once_youre_done_adding_milestones_go_todos = "<em>Когда закончите добавлять вехи для проекта, Вы можете перейти к списку задач"
+tour.once_your_done_research = "<em>Есил Вы уже освоились с Исследованиями, перейдите в</em><br/><a href='/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Дорожные карты</a>"
+
+datatables.decimal = ""
+datatables.emptyTable = "Ничего не найдено!"
+datatables.info = "Показаны записи от _START_ до _END_ из _TOTAL_"
+datatables.infoEmpty = "Показаны записи от 0 до 0 из 0"
+datatables.infoFiltered = "(отфильтровано из _MAX_ записей)"
+datatables.infoPostFix = ""
+datatables.thousands = ","
+datatables.lengthMenu = "Показать _MENU_ записей"
+datatables.loadingRecords = "Загрузка..."
+datatables.processing = "Обработка..."
+datatables.search = "Поиск:"
+datatables.zeroRecords = "Подходящие записи не найдены"
+datatables.buttons.colvis = "<i class='fa fa-eye-slash'></i> Поля"
+datatables.buttons.download = "<i class='fa fa-download'></i> Экспорт"
+
+datatables.first = "Первая"
+datatables.last = "Последняя"
+datatables.next = "Следующая"
+datatables.previous = "Предыдущая"
+
+datatables.sortAscending = ": Включите для сортировки по возрастанию"
+datatables.sortDescending = ": Включите для сортировки по убыванию"
+
+tour.left_navigation = "Панель навигации"
+tour.left_nav_text = "Панель навигации показывает цикл работы над проектом.<br/>Все в этом меню относится к проекту, который выбран вверху"
+tour.next = "Дальше"
+tour.cancel = "Отмена"
+tour.back = "Назад"
+tour.close = "Закрыть"
+tour.goto_projects = "Перейти к проектам"
+tour.project_selection = "Выбор проекта"
+tour.project_selection_text = "Это главный селектор проектов. Нажмите его для перехода между проектами.<br/>Все пункты меню ниже относятся только к выбранному проекту."
+tour.top_navigation = "Верхняя навигация"
+tour.top_navigation_text = "Здесь Вы найдете свои персональные ссылки."
+tour.project_progress = "Прогресс проекта"
+tour.project_progress_text = "Используя данные вроде трудозатрат, часов, и количества задач, мы<br/>попробуем предсказать дату завершения проекта.<br/>"
+tour.milestone_progress = "Прогресс вех"
+tour.milestone_progress_text = "Этот индикатор показывает завершение Вех вместе с ожидаемыми датами завершения."
+tour.your_todos = "Ваши задачи"
+tour.your_todos_text = "Здесь собраны задачи, назначенные Вам.<br/>Задачи разделены на те, которые надо закончить на текущей рабочей неделе - и те, которые надо завершить позже."
+tour.congratulations = "Поздравляем!"
+tour.congratulations_dashboard_text = "Обзорный тур по интерфейсу завершен! Отличная работа!<br/> Самое время создать свой первый проект!"
+tour.kanban = "Kanban"
+tour.kanban_text = "Здесь сгруппированы Ваши задачи на разных этапах:<br/> Новые, заблокированные, в процессе, ожидающие проверки, завершенные."
+tour.drag_drop = "Переносите задачи"
+tour.drag_drop_text = "Вы можете переносить задачи из одной колонки в другую.<br/>Клик по заголовку задачи откроет ее подробности."
+tour.change_views = "Сменить вид"
+tour.change_views_text = "Эти кнопки служат для переключения между табличным видом и видом Kanban"
+tour.congratulations_kanban_text = "Вы завершили обзорный тур!<br/>Если Вам нужна дополнительная информация, она доступна в нашей базе знаний по адресу <a href='https://help.leantime.io' target='_blank'>https://help.leantime.io</a> (англ.)<br/><br/>Также, не стесняйтесь обращаться в нашу службу поддержки.<br/>Мы работаем, чтобы сделать Вашу жизнь легче."
+
+
+
+## Leantime DTS Branch
+
+
+# Supported menut types
+
+MTR.label.menu_type = "Тип меню"
+MTR.label.menu_type.default = "Меню по умолчанию"
+MTR.label.menu_type.lean = "Меню для худеющих"
+MTR.label.menu_type.dts = "Дизайн-мышление для стратегического меню"
+
+# Menu subtitles
+
+MTR.menu.default.advanced = "Расширенный"
+MTR.menu.default.various = "Разное"
+MTR.menu.default.define = "Сопереживать / Определять"
+MTR.menu.default.ideate = "Идеи / Протоидеи"
+MTR.menu.default.test = "Тестировать и проверять"
+MTR.menu.default.tools = "Инструменты"
+
+MTR.menu.dts.process = "Стратегический процесс"
+MTR.menu.dts.frameworks = "Основы стратегии"
+MTR.menu.dts.admin = "Управление"
+MTR.menu.dts.observe = "Наблюдайте и учитесь"
+MTR.menu.dts.design = "Дизайн"
+MTR.menu.dts.validate = "Проверить"
+
+# Menu items
+
+MTR.menu.cpcanvas = "<span class='fas fa-fw fa-city'></span> Конкурсная канва"
+MTR.menu.dbmcanvas = "<span class='fas fa-fw fa-building'></span> Подробная бизнес-модель"
+MTR.menu.eacanvas = "<span class='fas fa-fw fa-tree'></span> Анализ окружающей среды"
+MTR.menu.emcanvas = "<span class='fas fa-fw fa-heart'></span> Карта эмпатии"
+MTR.menu.ideation = "<span class='far fa-fw fa-lightbulb'></span> Дизайн / Утверждение - Идея"
+MTR.menu.insights = "<span class='far fa-fw fa-note-sticky'></span> Инсайты и знания"
+MTR.menu.insightscanvas = "<span class='far fa-fw fa-note-sticky'></span> Наблюдать / Учиться - Озарения"
+MTR.menu.lbmcanvas = "<span class='fas fa-fw fa-building'></span> Легкая бизнес-модель"
+MTR.menu.leancanvas = "<span class='fas fa-fw fa-flask'></span> Lean Canvas"
+MTR.menu.obmcanvas = "<span class='fas fa-fw fa-building'></span> Оригинальная бизнес-модель"
+MTR.menu.retroscanvas = "<span class='far fa-fw fa-hand-spock'></span> Ретроспективы"
+MTR.menu.riskscanvas = "<span class='fas fa-fw fa-person-falling'></span> Анализ рисков"
+MTR.menu.sbcanvas = "<span class='fas fa-fw fa-list-check'></span> Краткое описание стратегии"
+MTR.menu.smcanvas = "<span class='fas fa-fw fa-message'></span> Стратегическое сообщение"
+MTR.menu.sqcanvas = "<span class='fas fa-fw fa-chess'></span> Вопросы стратегии"
+MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT-анализ"
+
+# Links
+
+MTR.links.icon.create = "<i class='fa fa-plus'></i> Создать новый"
+MTR.links.icon.edit = "<i class='fa fa-edit'></i> Редактировать</a>"
+MTR.links.icon.clone = "<i class='fa fa-clone'></i> Copy</a>"
+MTR.links.icon.delete = "<i class='fa fa-trash-can'></i> Удалить"
+MTR.links.icon.print = "<i class='fa fa-print'></i> Печать"
+
+# Buttons
+
+MTR.buttons.cancel = "Отмена"
+
+# Labels for status and relates
+
+label.status = "Статус"
+MTR.status.all = "Весь статус"
+MTR.status.draft = "Проект"
+MTR.status.review = "В обзоре"
+MTR.status.valid = "Проверено: Проверено"
+MTR.status.hold = "На удержании"
+MTR.status.invalid = "Проверено: Invalid"
+MTR.status.pending = "В ожидании"
+status.accepted = "Утверждена"
+MTR.status.rejected = "Отклонено"
+
+MTR.label.relates = "Относится к"
+MTR.relates.all = "Все связанные"
+MTR.relates.none = "Нет"
+MTR.relates.customers = "Клиенты"
+MTR.relates.offerings = "Предложения"
+MTR.relates.capabilities = "Возможности"
+MTR.relates.financials = "Финансовые показатели"
+MTR.relates.markets = "Рынки"
+MTR.relates.environment = "Окружающая среда"
+MTR.relates.firm = "Фирма"
+MTR.relates.stakeholders = "Стакхолдеры"
+MTR.dropdown.choose_relates = "К чему относится данный элемент?"
+
+# Board and element labels
+
+MTR.subtitle.clone_board = "Копировальная доска"
+MTR.label.title_element = "Название элемента"
+MTR.input.placeholders.describe_element = "Опишите элемент"
+
+MTR.text.confirm_board_deletion = "Вы уверены, что хотите удалить этот форум?"
+MTR.text.confirm_board_item_deletion = "Вы уверены, что хотите удалить этот элемент?"
+MTR.notification.board_created = "Совет директоров успешно создан"
+MTR.notification.board_copied = "Плата успешно скопирована"
+MTR.notification.board_deleted = "Совет успешно удален"
+MTR.notification.board_exists = "Имя совета уже существует"
+MTR.notification.element_created = "Элемент успешно создан"
+MTR.notification.element_deleted = "Элемент успешно удален"
+MTR.short_notifications.relates_updated = "Относится к успешно обновленным"
+
+# PDF labels
+
+MTR.pdf.label.page = "Страница"
+MTR.pdf.language.longdateformat = "l, F j, Y"
+
+
+## Insights
+
+
+# Title
+
+MTR.headline.insights.board = "Наблюдать / учиться - Insights Board"
+
+# Element/Box Labels
+
+MTR.box.insights.observe = "Этнографические наблюдения"
+MTR.box.insights.interview = "Этнографические интервью"
+MTR.box.insights.focus_groups = "Фокус-группы"
+MTR.box.insights.secondary_research = "Вторичные исследования"
+MTR.box.insights.knowledge = "Производные знания"
+
+# Data Field Labels and placeholders
+
+MTR.label.insights.title_new = "Как называется ваш новый проницательный анализ?"
+MTR.label.insights.title_edited = "Как будет называться новый анализ вашей проницательности?"
+MTR.label.insights.title_clone = "Как называется ваш скопированный инсайт-анализ?"
+MTR.input.placeholders.insights.enter_title_for_board = "Введите название вашего нового анализа проницательности"
+MTR.label.insights.insight = "Описание инсайта"
+MTR.label.insights.data = "Собранные вспомогательные данные"
+
+# Notifications
+
+MTR.headlines.insights.analysis = "Опишите свой анализ проницательности"
+MTR.headlines.insights.welcome_to_board = "Добро пожаловать в Совет по инсайту!"
+
+MTR.text.insights.helper_content = "Доска <em>Observe / Learn - Insights</em> поможет вам собрать структурированные идеи из четырех различных источников (этнографические наблюдения, интервью, фокус-группы и вторичные исследования) и преобразовать их в знания.<br/> Она поддерживает этапы наблюдения и обучения, которые иногда называют сопереживанием и определением, процесса дизайн-мышления.<br/> Более подробную информацию вы можете найти в главах 2, 8 и 9 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/> Мы предлагаем вам использовать доску <em>Observe / Learn - Insights</em> каждый раз, когда вы собираете и анализируете новые идеи, будь то анализ рисков, анализ окружающей среды, выявление тенденций в отрасли или разработка новых продуктов и услуг, и это лишь некоторые из них."
+MTR.tour.insights.once_your_done = "<em>После того, как вы почувствуете себя комфортно при сборе информации и создании знаний, перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>планировщику дорожных карт</a>."
+
+
+## Strategy Brief
+
+
+# Title
+
+MTR.headline.sb.board = "Краткий совет по стратегии"
+
+# Element/Box Labels
+
+MTR.box.sb.title = "Краткое описание стратегии"
+MTR.box.sb.industry = "Целевая отрасль (отрасли)"
+MTR.box.sb.description = "Стратегия Проект Цели Расшифровка"
+MTR.box.sb.st_design = "Команда дизайнеров"
+MTR.box.sb.st_decision = "Лица, принимающие решения"
+MTR.box.sb.st_experts = "Эксперты"
+MTR.box.sb.st_support = "Вспомогательный персонал"
+MTR.box.sb.budget = "Бюджет высокого уровня"
+MTR.box.sb.time = "Временная шкала высокого уровня"
+MTR.box.sb.culture = "Культура"
+MTR.box.sb.change = "Способность к изменениям"
+MTR.box.sb.principles = "Руководящие принципы"
+MTR.box.sb.risks = "Оценка рисков"
+
+# Data Field Labels and placeholders
+
+MTR.label.sb.title_new = "Как называется ваш новый стратегический бриф?"
+MTR.label.sb.title_edited = "Как по-новому будет называться ваша стратегическая записка?"
+MTR.label.sb.title_clone = "Как называется ваш скопированный стратегический бриф?"
+MTR.input.placeholders.sb.enter_title_for_board = "Введите название вашего нового стратегического отчета"
+
+# Notifications
+
+MTR.headlines.sb.analysis = "Опишите свой стратегический проект"
+MTR.headlines.sb.welcome_to_board = "Добро пожаловать на доску краткого обзора стратегии!"
+
+MTR.text.sb.helper_content = "Краткий обзор стратегии <em>Strategy Brief</em> поможет вам начать следующий стратегический проект. Он гарантирует, что основы вашего начинания хорошо документированы и согласованы.<br /> Более подробную информацию вы можете найти в главах 4 и 5 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/> Мы советуем вам создать один стратегический бриф для каждого стратегического проекта, который вы начинаете."
+MTR.tour.sb.once_your_done = "<em>После того, как вы почувствуете себя комфортно с вашим стратегическим обзором, перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>планировщику дорожных карт</a>."
+MTR.text.sb.risks_analysis = "Анализ рисков можно найти в разделе <a href='%s/riskscanvas/showCanvas/'>Анализ рисков</a>."
+
+
+## Risk Analysis
+
+
+# Title
+
+MTR.headline.risks.board = "Совет по анализу рисков"
+
+# Element/Box Labels
+
+MTR.box.risks.imp_low_pro_low = "Низкое воздействие / Низкая вероятность"
+MTR.box.risks.imp_low_pro_high = "Низкое воздействие / Высокая вероятность"
+MTR.box.risks.imp_high_pro_low = "Высокое воздействие / Низкая вероятность"
+MTR.box.risks.imp_high_pro_high = "Высокое воздействие / Высокая вероятность"
+
+# Data Field Labels and placeholders
+
+MTR.label.risks.title_new = "Как называется ваш новый анализ рисков?"
+MTR.label.risks.title_edited = "Как по-новому будет называться ваш анализ рисков?"
+MTR.label.risks.title_clone = "Как называется ваш скопированный анализ рисков?"
+MTR.input.placeholders.risks.enter_title_for_board = "Введите название нового анализа рисков"
+MTR.label.risks.description = "Описание риска"
+MTR.label.risks.mitigation = "Запланированные меры по снижению риска"
+
+# Notifications
+
+MTR.headlines.risks.analysis = "Опишите ваш анализ рисков"
+MTR.headlines.risks.welcome_to_board = "Добро пожаловать в Совет по анализу рисков!"
+
+MTR.text.risks.helper_content = "<em>Анализ рисков</em> поможет вам определить и смягчить или избежать рисков, которые могут возникнуть в ходе проекта.<br/> Мы рекомендуем вам проводить анализ рисков в начале каждого проекта и обновлять его через регулярные промежутки времени."
+MTR.tour.risks.once_your_done = "<em>Как только вы почувствуете себя комфортно после анализа рисков, перейдите в</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+
+
+## SWOT Analysis
+
+
+# Title
+
+MTR.headline.swot.board = "Совет по SWOT-анализу"
+
+# Element/Box Labels
+
+MTR.box.swot.strengths = "Сильные стороны"
+MTR.box.swot.weaknesses = "Слабые стороны"
+MTR.box.swot.opportunities = "Возможности"
+MTR.box.swot.threats = "Угрозы"
+MTR.box.header.swot.helpful = "ПОМОЩЬ"
+MTR.box.header.swot.harmful = "HARMFUL"
+MTR.box.header.swot.internal = "ВНУТРЕННЕЕ ПРОИСХОЖДЕНИЕ"
+MTR.box.header.swot.external = "ВНЕШНЕЕ ПРОИСХОЖДЕНИЕ"
+
+# Data Field Labels and placeholders
+
+MTR.label.swot.title_new = "Как называется ваш новый SWOT-анализ?"
+MTR.label.swot.title_edited = "Как по-новому будет называться ваш SWOT-анализ?"
+MTR.label.swot.title_clone = "Как называется скопированный вами SWOT-анализ?"
+MTR.input.placeholders.swot.enter_title_for_board = "Введите название вашего нового SWOT-анализа"
+MTR.label.swot.description = "Описание риска"
+MTR.label.swot.mitigation = "Запланированные меры по снижению риска"
+
+# Notifications
+
+MTR.headlines.swot.analysis = "Опишите ваш SWOT-анализ"
+MTR.headlines.swot.welcome_to_board = "Добро пожаловать в Совет по SWOT-анализу!"
+
+MTR.text.swot.helper_content = "<em>SWOT-анализ</em> поможет вам определить сильные и слабые стороны, возможности и угрозы, которые можно использовать во время разработки идей и прототипов.<br/>Мы предлагаем вам провести SWOT-анализ в начале вашего проекта."
+MTR.tour.swot.once_your_done = "<em>После того, как вы почувствовали себя комфортно с вашим SWOT-анализом, перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+
+
+## Empathy map
+
+
+# Title
+
+MTR.headline.em.board = "Доска с картой эмпатии"
+
+# Element/Box Labels
+
+MTR.box.em.header.goal = "ЦЕЛЬ"
+MTR.box.em.who = "Кому мы сопереживаем?"
+MTR.box.em.what = "Что им нужно сделать?"
+MTR.box.em.header.empathy = "ЭМПАТИЯ"
+MTR.box.em.see = "Что они видят?"
+MTR.box.em.say = "Что они говорят?"
+MTR.box.em.do = "Что они делают?"
+MTR.box.em.hear = "Что они слышат?"
+MTR.box.em.header.think_feel = "Что они ДУМАЮТ и ЧУВСТВУЮТ?"
+MTR.box.em.pains = "ПАИНЫ - Каковы их страхи, разочарования и тревоги?"
+MTR.box.em.gains = "ГАЙНЫ - Каковы их желания, потребности, надежды и мечты?"
+MTR.box.em.motives = "Другие мысли и чувства, мотивирующие их поведение"
+
+# Data Field Labels and placeholders
+
+MTR.label.em.title_new = "Как называется ваша новая карта эмпатии?"
+MTR.label.em.title_edited = "Как по-новому будет называться ваша карта эмпатии?"
+MTR.label.em.title_clone = "Как называется скопированная вами карта эмпатии?"
+MTR.input.placeholders.em.enter_title_for_board = "Введите название вашей новой карты эмпатии"
+MTR.label.em.description = "Подробный ответ на вопрос"
+
+# Notifications
+
+MTR.headlines.em.analysis = "Опишите свою карту эмпатии"
+MTR.headlines.em.welcome_to_board = "Добро пожаловать на доску "Карта эмпатии"!"
+
+MTR.text.em.helper_content = "Карта <em>Эмпатии</em> поможет вам установить мост к пониманию конечного пользователя. В контексте своего применения она используется для построения общего понимания потребностей пользователя и обеспечения контекста для решения, ориентированного на пользователя. Более подробную информацию вы можете найти в блоге Дэйва Грея <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Обновленный холст карты эмпатии</a></em>."
+MTR.tour.em.once_your_done = "<em>Когда вы почувствуете себя комфортно с вашей картой сопереживания, перейдите на</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.text.em.disclaimer = "Карта <a href='https://gamestorming.com/empathy-map/'>Эмпатии</a> основана на работе Дэйва Грея."
+
+
+## Environmental / PESTLE Analysis
+
+
+# Title
+
+MTR.headline.ea.board = "Совет по экологическому анализу"
+
+# Element/Box Labels
+
+MTR.box.ea.title = "Анализ окружающей среды / PESTLE"
+MTR.box.ea.political = "Политический"
+MTR.box.ea.economic = "Экономика"
+MTR.box.ea.societal = "Социум"
+MTR.box.ea.technological = "Технологический"
+MTR.box.ea.legal = "Юридический"
+MTR.box.ea.ecological = "Экологический"
+
+# Status
+
+MTR.status.ea.observation = "Наблюдение"
+MTR.status.ea.threat = "Угроза"
+MTR.status.ea.trend = "Тренд"
+
+# Relates
+
+
+# Data Field Labels and placeholders
+
+MTR.label.ea.title_new = "Как называется ваш новый экологический анализ?"
+MTR.label.ea.title_edited = "Каково новое название вашего экологического анализа?"
+MTR.label.ea.title_clone = "Как называется скопированный вами экологический анализ?"
+MTR.input.placeholders.ea.enter_title_for_board = "Введите название вашего нового экологического анализа"
+
+# Notifications
+
+MTR.headlines.ea.analysis = "Опишите ваш анализ окружающей среды"
+MTR.headlines.ea.welcome_to_board = "Добро пожаловать в Совет по анализу окружающей среды!"
+
+MTR.text.ea.helper_content = "<em>Анализ окружающей среды</em>, также известный как <em>PESTLE-анализ</em>, поможет вам оценить текущую и/или будущую среду, в которой вы работаете, по шести измерениям: Политическое, Экономическое, Социальное, Технологическое, Юридическое и Эконолгическое.<br/>Мы советуем вам провести анализ окружающей среды на ранней стадии вашего проекта, по крайней мере, до начала этапа разработки идеи, и поддерживать его в актуальном состоянии на протяжении всего проекта."
+MTR.tour.ea.once_your_done = "<em>После того, как вы почувствуете себя комфортно с вашим анализом окружающей среды, перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span>планировщику дорожных карт</a>."
+
+
+## Lightweight Business Model
+
+
+# Title
+
+MTR.headline.lbm.board = "Легкая доска бизнес-моделей"
+
+# Element/Box Labels
+
+MTR.box.lbm.customers = "Клиенты"
+MTR.box.lbm.offerings = "Предложения"
+MTR.box.lbm.capabilities = "Возможности"
+MTR.box.lbm.financials = "Финансовые показатели"
+
+# Data Field Labels and placeholders
+
+MTR.label.lbm.title_new = "Как называется ваша новая легкая бизнес-модель?"
+MTR.label.lbm.title_edited = "Как по-новому называется ваша облегченная бизнес-модель?"
+MTR.label.lbm.title_clone = "Как называется скопированная вами легкая бизнес-модель?"
+MTR.input.placeholders.lbm.enter_title_for_board = "Введите название вашей новой облегченной бизнес-модели"
+
+# Notifications
+
+MTR.headlines.lbm.analysis = "Опишите вашу легкую бизнес-модель"
+MTR.headlines.lbm.welcome_to_board = "Добро пожаловать на Совет по легким бизнес-моделям!"
+
+MTR.text.lbm.helper_content = "<em>Легкая бизнес-модель</em> поможет вам документировать текущую организацию, конкурентов и отрасль. Она помогает определить стратегический фокус фирмы и закладывает основу для разработки новой и конкурентоспособной подробной бизнес-модели.<br /> Более подробную информацию вы можете найти в главе 3 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/> Мы рекомендуем использовать облегченный вариант бизнес-модели каждый раз, когда вам не нужна специфика подробной или оригинальной бизнес-модели Остервальтера."
+MTR.tour.lbm.once_your_done = "<em>Когда вы почувствуете себя комфортно с вашей легкой бизнес-моделью, перейдите на</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.text.lbm.disclaimer = "<em>Легкий холст бизнес-модели</em> взят из <a href='https://inov.at/dts'>Design Thinking for Strategy</a> и основан на <em>холсте бизнес-модели</em> из <a href='https://www.strategyzer.com'>Strategyzer</a>. Она лицензирована по лицензии <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+
+
+## Osterwalder's Business Model
+
+
+# Title
+
+MTR.headline.obm.board = "Совет по бизнес-моделям"
+
+# Element/Box Labels
+
+MTR.box.obm.cs = "Сегменты клиентов"
+MTR.box.obm.cr = "Отношения с клиентами"
+MTR.box.obm.ch = "Каналы"
+MTR.box.obm.vp = "Ценностное предложение"
+MTR.box.obm.ka = "Основные направления деятельности"
+MTR.box.obm.kr = "Ключевые ресурсы"
+MTR.box.obm.kp = "Ключевые партнеры"
+MTR.box.obm.fr = "Потоки доходов"
+MTR.box.obm.fc = "Структура затрат"
+
+# Data Field Labels and placeholders
+
+MTR.label.obm.title_new = "Как называется ваша новая бизнес-модель?"
+MTR.label.obm.title_edited = "Как по-новому называется ваша бизнес-модель?"
+MTR.label.obm.title_clone = "Как называется скопированная вами бизнес-модель?"
+MTR.input.placeholders.obm.enter_title_for_board = "Введите название вашей новой бизнес-модели"
+
+# Notifications
+
+MTR.headlines.obm.analysis = "Опишите вашу бизнес-модель"
+MTR.headlines.obm.welcome_to_board = "Добро пожаловать в Совет по бизнес-моделям!"
+
+MTR.text.obm.helper_content = "<em>Оригинальный холст бизнес-модели</em> был разработан Алексом Остервальдером и Ивом Пинье. Она поможет вам документировать вашу текущую организацию, конкурентов и отрасль.<br/><em>``Бизнес-модель описывает обоснование того, как организация создает, предоставляет и фиксирует ценность''</em> - <strong>Алекс Остервальдер</trong>."
+MTR.tour.obm.once_your_done = "<em>Когда вы почувствуете себя комфортно с вашей бизнес-моделью, перейдите на</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.text.obm.disclaimer = "<em>Канва бизнес-модели</em> взята с сайта <a href='https://www.strategyzer.com'>Strategyzer</a> и лицензирована по лицензии <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+
+
+## Detailed Business Model
+
+
+# Title
+
+MTR.headline.dbm.board = "Совет по детальной бизнес-модели"
+
+# Element/Box Labels
+
+MTR.box.dbm.cs = "Сегменты клиентов"
+MTR.box.dbm.cj = "Клиентские задания"
+MTR.box.dbm.cr = "Отношения с клиентами"
+MTR.box.dbm.cd = "Доставка клиентов"
+MTR.box.dbm.ovp = "Ценностное предложение"
+MTR.box.dbm.ops = "Продукция и услуги"
+MTR.box.dbm.kad = "Мероприятия по конкурентному преимуществу"
+MTR.box.dbm.kac = "Мероприятия по повышению рентабельности"
+MTR.box.dbm.kao = "Аутсорсинговая деятельность"
+MTR.box.dbm.krp = "Скоропортящиеся ресурсы"
+MTR.box.dbm.krc = "Капитальные ресурсы"
+MTR.box.dbm.krl = "Труд"
+MTR.box.dbm.krs = "Навыки"
+MTR.box.dbm.fr = "Потоки доходов"
+MTR.box.dbm.fc = "Структура затрат"
+
+# Data Field Labels and placeholders
+
+MTR.label.dbm.title_new = "Как называется ваша новая подробная бизнес-модель?"
+MTR.label.dbm.title_edited = "Как по-новому называется ваша подробная бизнес-модель?"
+MTR.label.dbm.title_clone = "Как называется скопированная вами подробная бизнес-модель?"
+MTR.input.placeholders.dbm.enter_title_for_board = "Введите название вашей новой подробной бизнес-модели"
+
+# Notifications
+
+MTR.headlines.dbm.analysis = "Опишите вашу подробную бизнес-модель"
+MTR.headlines.dbm.welcome_to_board = "Добро пожаловать на Совет по детальным бизнес-моделям!"
+
+MTR.text.dbm.helper_content = "<em>Подробная бизнес-модель</em> поможет вам документировать вашу нынешнюю организацию, конкурентов и отрасль. Она поможет убедиться в том, что ваша стратегия желательна, жизнеспособна и осуществима. Она обычно основывается на <em>легкой бизнес-модели</em> и расширяет ее, рассматривая дополнительные детали, имеющие значение для успеха компании.<br /> Более подробную информацию вы можете найти в главе 3 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/> Мы рекомендуем использовать детальную бизнес-модель при создании прототипов конкретных бизнес-идей и хотим убедиться, что они приведут к созданию желаемого, жизнеспособного и осуществимого бизнеса."
+MTR.tour.dbm.once_your_done = "<em>Как только вы почувствуете себя комфортно с вашей подробной бизнес-моделью, перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.text.lbm.disclaimer = "<em>Подробный холст бизнес-модели</em> взят из <a href='https://inov.at/dts'>Design Thinking for Strategy</a> и основан на <em>холсте бизнес-модели</em> из <a href='https://www.strategyzer.com'>Strategyzer</a>. Она лицензирована по лицензии <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+
+
+## Competitive Positioning Canvas
+
+
+# Title
+
+MTR.headline.cp.board = "Совет по конкурентному позиционированию"
+
+# Element/Box Labels
+
+MTR.box.header.cp.cj = "Факторы принятия решения на основе задания, которое должен выполнить клиент"
+MTR.box.header.cp.ovp = "Как продукты и услуги / ценностное предложение отвечают потребностям клиента."
+MTR.box.label.cp.need = "Потребности и желания, вытекающие из работы, которую должен выполнить клиент"
+MTR.box.label.cp.unique = "Уникальность"
+MTR.box.label.cp.superior = "Превосходство"
+MTR.box.label.cp.indifferent = "Безразличия"
+MTR.box.cp.cj_rv = "Рациональные факторы ценности"
+MTR.box.cp.cj_rc = "Рациональные факторы затрат"
+MTR.box.cp.cj_e = "Эмоциональные факторы"
+MTR.box.cp.ou_rv = "Рациональные факторы ценности"
+MTR.box.cp.ou_rc = "Рациональные факторы затрат"
+MTR.box.cp.ou_e = "Эмоциональные факторы"
+MTR.box.cp.os_rv = "Рациональные факторы стоимости"
+MTR.box.cp.os_rc = "Рациональные факторы затрат"
+MTR.box.cp.os_e = "Эмоциональные факторы"
+MTR.box.cp.oi_rv = "Рациональные факторы стоимости"
+MTR.box.cp.oi_rc = "Рациональные факторы затрат"
+MTR.box.cp.oi_e = "Эмоциональные факторы"
+
+# Data Field Labels and placeholders
+
+MTR.label.cp.title_new = "Как называется ваше новое конкурентное позиционирование?"
+MTR.label.cp.title_edited = "Как по-новому будет называться ваше конкурентное позиционирование?"
+MTR.label.cp.title_clone = "Как называется ваше скопированное конкурентное позиционирование?"
+MTR.input.placeholders.cp.enter_title_for_board = "Введите название вашего нового конкурентного позиционирования"
+
+# Notifications
+
+MTR.headlines.cp.analysis = "Опишите ваше конкурентное позиционирование"
+MTR.headlines.cp.welcome_to_board = "Добро пожаловать в Совет по конкурентному позиционированию!"
+
+MTR.text.cp.helper_content = "Холст <em>Конкурентное позиционирование</em> поможет вам оценить ваше конкурентное позиционирование с позиции клиента, а не конкурента. Она фокусируется на рациональных и эмоциональных факторах принятия решений и классифицирует их как создающие ценность или снижающие затраты.<br />Дополнительные детали вы можете найти в главе 12 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Мы рекомендуем использовать канву конкурентного позиционирования после того, как вы разработаете подробную бизнес-модель."
+MTR.tour.cp.once_your_done = "<em>После того, как вы почувствуете себя уверенно в своем конкурентном позиционировании, перейдите на сайт</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.text.cp.disclaimer = "Полотно <em>Конкурентное позиционирование</em> взято из <a href='https://inov.at/dts'>Design Thinking for Strategy</a> и лицензировано по <a href='https://creativecommons.org/licenses/by-sa/3.0/'>лицензии Creative Commons Attribution-Share Alike 3.0</a>."
+
+
+## Lean Canvas
+
+
+# Title
+
+MTR.headline.lean.board = "Доска Lean Canvas"
+
+# Element/Box Labels
+
+MTR.box.lean.problem = "Проблема"
+MTR.box.lean.alternatives = "Существующие альтернативы"
+MTR.box.lean.solution = "Решение"
+MTR.box.lean.keymetrics = "Ключевые метрики"
+MTR.box.lean.uniquevalue = "Уникальное ценностное предложение"
+MTR.box.lean.highlevelconcept = "Концепция высокого уровня"
+MTR.box.lean.unfairadvantage = "Несправедливое преимущество"
+MTR.box.lean.channels = "Каналы"
+MTR.box.lean.customersegment = "Сегменты клиентов"
+MTR.box.lean.earlyadopters = "Первопроходцы"
+MTR.box.lean.cost = "Структура затрат"
+MTR.box.lean.revenue = "Потоки доходов"
+
+# Data Field Labels and placeholders
+
+MTR.label.lean.title_new = "Как называется ваше новое полотно?"
+MTR.label.lean.title_edited = "Как будет называться новое название вашего бережливого полотна?"
+MTR.label.lean.title_clone = "Как называется скопированный вами lean canvas?"
+MTR.input.placeholders.lean.enter_title_for_board = "Введите название вашего нового полотна"
+
+# Notifications
+
+MTR.headlines.lean.analysis = "Опишите вашу концепцию бережливого производства"
+MTR.headlines.lean.welcome_to_board = "Добро пожаловать на доску Lean Canvas!"
+
+MTR.text.lean.helper_content = "Вы рассмотрите <em>сегмент клиентов</em>, <em>проблему, решение</em>. <br/> Затем вы перейдете к <em>уникальному ценностному предложению</em> (чем ваша идея лучше других предложений?), <em>каналам распространения</em> (как вы донесете свое решение до клиентов?), <em>потоки доходов</em> (как ваше решение будет приносить прибыль?), <em>структура затрат</em> (сколько стоит ваше решение?), <em>ключевые метрики</em> (как вы будете измерять успех?) и <em>нечестное преимущество</em> (что у вас есть, что поможет вам преуспеть на фоне конкурентов?)<br/> Ответы на эти вопросы способствуют успеху, смягчают неудачи и позволяют отслеживать и подтверждать ваши предположения. Быть бережливым - значит устранять отходы и работать над созданием продуктов, бизнеса и решений, которые нужны вашим клиентам."
+MTR.text.lean.disclaimer = "Lean Canvas адаптирован из <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> и лицензирован по <a href='https://creativecommons.org/licenses/by-sa/3.0/'>лицензии Creative Commons Attribution-Share Alike 3.0</a>."
+MTR.tour.lean.once_your_done = "<em>Когда вы почувствуете себя комфортно с вашим "бережливым холстом", перейдите к</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+
+
+## Porter's Strategy Questions
+
+
+# Title
+
+MTR.headline.sq.board = "Совет по вопросам стратегии Портера"
+
+# Element/Box Labels
+
+MTR.box.sq.qa = "Что отличает ценностное предложение фирмы от предложений конкурентов?"
+MTR.box.sq.qb = "Какие виды деятельности фирма выполняет иначе или лучше, чем ее конкуренты?"
+MTR.box.sq.qc = "На какие компромиссы, отличные от компромиссов конкурентов, идет фирма?"
+MTR.box.sq.qd = "Какие стратегические подходы усиливает фирма?"
+MTR.box.sq.qe = "Как стратегия поддерживает преемственность во времени?"
+
+# Data Field Labels and placeholders
+
+MTR.label.sq.title_new = "Как называются ваши новые ответы на вопросы Портера по стратегии?"
+MTR.label.sq.title_edited = "Как по-новому будут называться ваши ответы на вопросы Портера по стратегии?"
+MTR.label.sq.title_clone = "Как называются скопированные вами ответы на вопросы Портера по стратегии?"
+MTR.input.placeholders.sq.enter_title_for_board = "Введите название ваших новых ответов на вопросы Портера по стратегии"
+MTR.label.sq.description = "Ответ на вопрос о стратегии"
+
+# Notifications
+
+MTR.headlines.sq.analysis = "Опишите свои ответы на вопросы стратегии Портера"
+MTR.headlines.sq.welcome_to_board = "Добро пожаловать на доску вопросов по стратегии Портера!"
+
+MTR.text.sq.helper_content = "Ответы на <em>вопросы стратегии Портера</em> помогут вам убедиться в том, что разработанная вами стратегия конкурентоспособна. Более подробную информацию о вопросах стратегии Портера вы можете найти в главе 12 книги <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/> Мы предлагаем вам ответить на вопросы стратегии Портера в конце процесса разработки стратегии."
+MTR.tour.sq.once_your_done = "<em>После того, как вы почувствуете себя уверенно в своих ответах на вопросы стратегии Портера, перейдите на страницу</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+
+
+## Strategy Message
+
+
+# Title
+
+MTR.headline.sm.board = "Доска объявлений по стратегии"
+
+# Element/Box Labels
+
+MTR.box.sm.qa = "Кто является <em>целевыми сегментами потребителей</em>, а кто <em>очевидно находится за рамками</em>?"
+MTR.box.sm.qb = "Какое <em>ценностное предложение</em> вы предложите своим целевым клиентам?"
+MTR.box.sm.qc = "Почему клиенты предпочитают иметь дело с вами, а не с вашими конкурентами? Каковы наши <em>отличительные характеристики</em>, которые трудно скопировать?"
+MTR.box.sm.qd = "Почему вы сможете выполнить обещания, данные вашим клиентам? Какими <em>уникальными возможностями</em> вы обладаете и используете?"
+MTR.box.sm.qe = "Что <em>изменится</em> в новой или пересмотренной стратегии и что <em>останется неизменным</em> со временем? Как обеспечить, чтобы существующие клиенты, которые остаются в сфере действия стратегии, не были потеряны?"
+MTR.box.sm.qf = "Почему стратегия позволит <em>генерировать и/или увеличивать прибыль с течением времени</em>?"
+MTR.box.sm.qg = "Для кого цели, поставленные в рамках новой или пересмотренной стратегии, <em>реально достижимы</em>?"
+
+# Data Field Labels and placeholders
+
+MTR.label.sm.title_new = "Как называется ваше новое стратегическое сообщение?"
+MTR.label.sm.title_edited = "Каким будет новое название вашего стратегического сообщения?"
+MTR.label.sm.title_clone = "Как называется ваше скопированное стратегическое сообщение?"
+MTR.input.placeholders.sm.enter_title_for_board = "Введите название нового стратегического сообщения"
+
+# Notifications
+
+MTR.headlines.sm.analysis = "Опишите ваше стратегическое послание"
+MTR.headlines.sm.welcome_to_board = "Добро пожаловать на доску объявлений Стратегии!"
+
+MTR.text.sm.helper_content = "<em>Стратегическое сообщение</em> поможет вам создать успешное сообщение о вашей поздней стратегии. Более подробную информацию о коммуникации стратегии вы можете найти в главе 13 книги "Дизайн-мышление для стратегии".<br/>Мы предлагаем вам использовать "Холст стратегического сообщения" после завершения разработки новой/пересмотренной стратегии."
+MTR.tour.sm.once_your_done = "<em>После того, как вы почувствуете себя комфортно с вашим стратегическим посланием, перейдите на сайт</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+
+
+## Retrospectives
+
+
+# Title
+
+MTR.headline.retros.board = "Ретроспектива"
+
+# Element/Box Labels
+
+MTR.box.retros.continue = "Продолжайте - Что прошло хорошо?"
+MTR.box.retros.stop_doing = "Стоп - Что мы должны прекратить делать?"
+MTR.box.retros.start_doing = "Начало - Что мы должны начать делать для улучшения?"
+
+# Data Field Labels and placeholders
+
+MTR.label.retros.title_new = "Как называется ваша новая ретроспектива?"
+MTR.label.retros.title_edited = "Каково новое название вашей ретроспективы?"
+MTR.label.retros.title_clone = "Как называется ваша копируемая ретроспектива?"
+MTR.input.placeholders.retros.enter_title_for_board = "Введите название вашей новой ретроспективы"
+
+# Notifications
+
+MTR.headlines.retros.analysis = "Опишите свою ретроспективу"
+MTR.headlines.retros.welcome_to_board = "Добро пожаловать на Ретроспективный совет!"
+
+MTR.text.retros.helper_content = "<em>Ретроспективы</em> - это быстрые размышления о работе, функционировании команды и, конечно же, о прогрессе.<br/> Здесь ваша команда может уделить время тому, что прошло хорошо, что не прошло хорошо и что можно сделать по-другому в следующий раз.<br/> Мы рекомендуем проводить обзорные встречи через регулярные промежутки времени или, как минимум, в конце каждого этапа."
+MTR.tour.retros.once_your_done = "<em>Как только вы почувствуете себя комфортно после ретроспективного анализа, перейдите в</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+

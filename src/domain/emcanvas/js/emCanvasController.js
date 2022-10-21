@@ -179,7 +179,7 @@ leantime.emCanvasController = (function () {
                     ).done(
                         function () {
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
                         }
                     );
 

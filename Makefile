@@ -83,14 +83,14 @@ LANG_DIR = ./resources/language
 MLTR_DIR = ./resources/language/mltranslate
 
 GRUNT_CMD = ./node_modules/grunt/bin/grunt
-MLTR_CMD = echo ./resources/language/mltranslate/mltranslate.php
+MLTR_CMD = ./resources/language/mltranslate/mltranslate.php
 
 
 # Generic actions
 all:		composer npm minify 
 			@/usr/bin/rm -fv resources/logs/error.log
 
-translate:	mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-zh-CN
+translate:	mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-tr mltr-zh-CN
 
 clean:
 			@/usr/bin/rm -fv resources/logs/error.log
@@ -112,16 +112,16 @@ npm:
 minify:	$(JS_MINIFIED) $(CSS_MINIFIED)
 
 public/js/compiled-app.min.js public/js/jsSourceMapAppSrc.map:	$(JS_APP_FILES)
-			$GRUNT_CMD) Build-App-Src
+			$(GRUNT_CMD) Build-App-Src
 
 public/js/compiled-base-libs.min.js public/js/jsSourceMapBaseLib.map:	$(JS_BASE_LIB_FILES)
-			$GRUNT_CMD) Build-Base-Lib
+			$(GRUNT_CMD) Build-Base-Lib
 
 public/js/compiled-extended-libs.min.js public/js/jsSourceMapExtendedSrc.map:	$(JS_EXTENDED_LIB_FILES)
-			$GRUNT_CMD) Build-Extended-Src
+			$(GRUNT_CMD) Build-Extended-Src
 
 public/css/main.css: $(CSS_FILES)
-			$GRUNT_CMD) Build-Less-Dev
+			$(GRUNT_CMD) Build-Less-Dev
 
 
 # - Translate language files

@@ -17,15 +17,19 @@
 
         echo "<br /><br /><div class='center'>";
 
-        echo"<div style='width:30%' class='svgContainer'>";
+        echo "<div style='width:30%' class='svgContainer'>";
         echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
-        echo"</div>";
+        echo "</div>";
 
-        echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
         if($login::userIsAtLeast($roles::$editor)) {
+			
+			echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
 
-            echo"<br />".$this->__("text.$canvasName.helper_content");
-        }
+            echo "<br />".$this->__("text.$canvasName.helper_content");
+			echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> ".
+				"Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
+
+		}
         echo"</div>";
 
     }
