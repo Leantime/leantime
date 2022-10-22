@@ -19,6 +19,7 @@ namespace leantime\core {
          * @var    string
          */
         private $iniFolder = '../resources/language/';
+        private $customFolder = '../config/language/';
 
         /**
          * @access private
@@ -93,13 +94,13 @@ namespace leantime\core {
                 }
 
             }
-                
+            
             //Start checking if the user has a language set
             if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
 
                 $this->setLanguage($_SESSION['usersettings.language']);
 
-            //If not check for company default setting
+				//If not check for company default setting
             } else {
 
                 $this->setLanguage($_SESSION['companysettings.language']);
@@ -162,7 +163,25 @@ namespace leantime\core {
             //Default to english US
             $mainLanguageArray = parse_ini_file('' . $this->iniFolder . '/en-US.ini', false, INI_SCANNER_RAW);
 
-            if (file_exists('' . $this->iniFolder . '/' . $this->language . '.ini') === true) {
+			//First alternative: custome language file
+            if (file_exists('' . $this->customFolder . '/' . $this->language . '.ini') === true) {
+
+                $ini_overrides = parse_ini_file('' . $this->customFolder . '/' . $this->language . '.ini', false, INI_SCANNER_RAW);
+
+                if (is_array($ini_overrides) == true) {
+
+                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
+
+                        if (array_key_exists($languageKey, $ini_overrides)) {
+                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                        }
+
+                    }
+                }
+            }
+
+			// Second alternative: default foreign language file
+            elseif (file_exists('' . $this->iniFolder . '/' . $this->language . '.ini') === true && $this->language !== 'en-US') {
 
                 $ini_overrides = parse_ini_file('' . $this->iniFolder . '/' . $this->language . '.ini', false, INI_SCANNER_RAW);
 

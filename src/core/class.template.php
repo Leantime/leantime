@@ -159,7 +159,11 @@ namespace leantime\core {
 
             $module = $this->frontcontroller::getModuleName($template);
 
-            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            $strTemplate = ROOT.'/../config/domain/' . $module . '/templates/' . $action.'.tpl.php';
+
+            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
+                $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            }
 
             if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
                 throw new \Exception($this->__("notifications.no_template"));
@@ -265,7 +269,11 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $file = '../config/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+
+            if(!file_exists($file)) {
+                $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            }
 
             if (file_exists($file)) {
 

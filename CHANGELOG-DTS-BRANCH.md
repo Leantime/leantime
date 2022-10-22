@@ -29,11 +29,12 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
   code
 - Engine to translate language string using AI/machine learning from https://www.deepl.com (registration needed, 500'000
   characters per month are free)
+- Customization support for languages, templates, and class repositories
 
 
 ## Version
 
-Leantime DTS Branch 0.0.23
+Leantime DTS Branch 0.1.24
 
 
 ## Author
@@ -85,6 +86,36 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - DeeplL is preferred over Google Translate because of the translation quality
 - Use requires a (free) API key.
 - Only not yet translated text strings are translated 
+
+### Customization
+The system, up to now, allowed custoization at two layers
+- Through the user interface: `Company Setting`
+- Through editing the configuration file: `config/configuration.php`
+
+Any other change to the system is potentially overwritten when installing a new release. Sometimes, it may be sound to
+configure the level at a deeper layer. Therefore, the possibility to customize languages, templates, and classes in the
+`src` directory has been added. The system will first look under `config`, if it can find the respective files, before
+loading them from the original location. When updating the system, no files in the subdirectories of `config` will be
+overwritten, allowing to retain customizations made (subject to the disclaimer below.
+
+Although it is highly disrecommended to customize *Leantime* using this new options, there exist some scenarios where
+such a customization may b sound:
+- An organization may use different wordings, e.g., *deliverables* instead of *milestone*, *activity item* instead of
+  *to-do*, *engagement* instead of *project*, etc. By copying the original language file `xx-XX.ini` into the directory
+  `config/language` and editing it there, the system will honor any changes made.
+- An organization wants to have a specific menu structure (e.g. only showing a subset of canvas or using a different
+  ordering or adding an additional menu structure). Ths can be achieved by copying the file
+  `src/domain/menu/repositories/class.menu.php` to `config//domain/menu/repositories/` and making the appropriate changes.
+- An organization may want to use different layouts of the canvas, e.g., have *Customers* to the right in the
+  *Lightweight Business Model*, consistent with the *Original Business Model Canvas*. Copying the file
+  `src/domain/templates/showCanvas.tpl.php` into the directory `config/domain/templates/` and editing it there, allows
+  the system to honor any changes made.
+- Ad organization may want to disable some of the status/relates to items or add new ones is specific templaces. Again,
+  copying the file `src/domain/XXXcanvas/repositories/class.XXXcanvas.php` to `config/domain/XXXcanvas/repositories/`
+  and making the change there allows the system to honor any chages made.
+
+**DISCLAIMER**: *NEW RELEASES MAY (AND PROBABLY WILL) BREAK CUSTOMIZATIONS. THE USER IS THERFORE RESPONSIBLE FOR BACK-PORTING
+ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ### System related changes
 - Added `Makefile` to minify/compile `js` and `css` files on a need to do basis
@@ -216,3 +247,8 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 ## 0.0.22 2022-10-22
 - Update: Allow `pdf.php` to handle non-canvas boards (through passing its `type` when calling the URL
 - Add: Put confidential disclaimers on all PDFs by default
+
+## 0.1.23 2022-1022
+- Add: Add the option to customize/override any language file, template, or class by putting it into `config/language`,
+  `config/domain/*/template`, or `config/domain/*/*` respectively [see note on customization]
+
