@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic canvas controller / Edit Comments
+ * editCanvasComment class - Generic canvas controller / Edit Comments
  */
 namespace leantime\domain\controllers\canvas {
 
@@ -55,7 +55,7 @@ namespace leantime\domain\controllers\canvas {
         public function get($params)
         {
 
-			$canvasTypes = $this->canvasRepo->getCanvasTypes();
+            $canvasTypes = $this->canvasRepo->getCanvasTypes();
             if(isset($params['id'])) {
 
                 // Delete comment
@@ -70,10 +70,10 @@ namespace leantime\domain\controllers\canvas {
                 $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments(static::CANVAS_NAME.'canvasitem', $canvasItem['id']));
 
-            } else {
+            }else{
                 if(isset($params['type'])) {
                     $type = strip_tags($params['type']);
-                } else {
+                }else{
                     $type = array_key_first($canvasTypes);
                 }
 
@@ -110,7 +110,7 @@ namespace leantime\domain\controllers\canvas {
          */
         public function post($params)
         {
-			
+            
             if(isset($params['changeItem'])) {
 
                 if(isset($params['itemId']) && $params['itemId'] != '') {
@@ -152,12 +152,12 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->tpl->redirect(BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".$params['itemId']);
 
-                    } else {
+                    }else{
                         $this->tpl->setNotification($this->language->__("notification.please_enter_element_title"), 'error');
 
                     }
 
-                } else {
+                }else{
 
                     if(isset($_POST['description']) && !empty($_POST['description'])) {
 
@@ -177,7 +177,7 @@ namespace leantime\domain\controllers\canvas {
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
 
-						$canvasTypes = $this->canvasRepo->getCanvasTypes();
+                        $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                         $this->tpl->setNotification($canvasTypes[$params['box']].' successfully created', 'success');
 
@@ -192,7 +192,7 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->tpl->redirect(BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".$id);
 
-                    } else {
+                    }else{
 
                         $this->tpl->setNotification($this->language->__("notification.please_enter_element_title"), 'error');
 

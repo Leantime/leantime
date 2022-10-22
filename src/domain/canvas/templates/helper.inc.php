@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic helper template
+ * helper.inc - Generic helper template
  *
  * Required variables:
  * - $canvasName       Name of current canvas
@@ -28,7 +28,7 @@
              </p>
             <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('<?=$canvasName ?>Canvas')">
-				<?php echo $this->__('links.close_dont_show_again') ?></a>
+                <?php echo $this->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

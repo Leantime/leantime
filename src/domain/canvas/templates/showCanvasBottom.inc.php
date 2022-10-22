@@ -1,6 +1,6 @@
 <?php
 /**
- * Bottom part of the main canvas page
+ * showCanvasBottom.inc template - Bottom part of the main canvas page
  *
  * Required variables:
  * - $canvasName       Name of current canvas
@@ -12,8 +12,8 @@
                 <?php echo sprintf($this->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
                 </p>
         <?php } ?>
-																						
-	<?php } else {
+
+    <?php }else{
 
         echo "<br /><br /><div class='center'>";
 
@@ -22,21 +22,21 @@
         echo "</div>";
 
         if($login::userIsAtLeast($roles::$editor)) {
-			
-			echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
+            
+            echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
 
             echo "<br />".$this->__("text.$canvasName.helper_content");
-			echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> ".
-				"Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
+            echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> ".
+                "Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
 
-		}
+        }
         echo"</div>";
 
     }
     if(!empty($disclaimer)) { ?>
         <small class="align-center"><?=$disclaimer ?></small>
-	<?php
-	}
+    <?php
+    }
     require(ROOT.'/../src/domain/canvas/templates/modals.inc.php');
     ?>
     </div>
@@ -46,17 +46,17 @@
 
     jQuery(document).ready(function() {
 
-		leantime.<?=$canvasName ?>CanvasController.setRowHeights();
+        leantime.<?=$canvasName ?>CanvasController.setRowHeights();
         leantime.<?=$canvasName ?>CanvasController.initFilterBar();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.<?=$canvasName ?>CanvasController.initCanvasLinks();
-			
+            
             leantime.<?=$canvasName ?>CanvasController.initUserDropdown();
             leantime.<?=$canvasName ?>CanvasController.initStatusDropdown();
             leantime.<?=$canvasName ?>CanvasController.initRelatesDropdown();
 
-        <?php } else { ?>
+        <?php }else{ ?>
 
             leantime.generalController.makeInputReadonly(".maincontentinner");
 
@@ -77,12 +77,12 @@
 
         if($_GET['showModal'] == "") {
             $modalUrl = "&type=".array_key_first($canvasTypes);
-        } else {
+        }else{
             $modalUrl = "/".(int)$_GET['showModal'];
         }
         ?>
 
-		leantime.<?=$canvasName ?>CanvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
+        leantime.<?=$canvasName ?>CanvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
         window.history.pushState({},document.title, '<?=BASE_URL?>/<?=$canvasName ?>canvas/showCanvas/');
 
         <?php } ?>

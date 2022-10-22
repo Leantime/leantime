@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic template for comments
+ * canvasComment.inc template - Generic template for comments
  *
  * Required variables:
  * - $canvasName   Name of current canvas

@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic template for comments
+ * canvasDialog.inc template - Generic template for comments
  *
  * Required variables:
  * - $canvasName   Name of current canvas
@@ -42,64 +42,64 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-	    <label><?=$this->__("label.description") ?></label>
+        <label><?=$this->__("label.description") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
 
-	    <?php if(!empty($statusLabels)) { ?>
-	        <label><?=$this->__("label.status") ?></label>
+        <?php if(!empty($statusLabels)) { ?>
+            <label><?=$this->__("label.status") ?></label>
             <select name="status" style="min-width: 30%">
-			    <?php foreach($statusLabels as $key => $data) { ?>
+                <?php foreach($statusLabels as $key => $data) { ?>
                     <?php if($data['active']) { ?>
-		                <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
-		            <?php } ?>
-		        <?php } ?>
-			</select><br />
-		<?php } else { ?>
+                        <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
+                    <?php } ?>
+                <?php } ?>
+            </select><br />
+        <?php }else{ ?>
             <input type="hidden" name="status" value="<?=array_key_first($hiddenStatusLabels) ?>" />
-		<?php } ?>
+        <?php } ?>
 
-	    <?php if(!empty($relatesLabels)) { ?>
-	        <label><?=$this->__("label.relates") ?></label>
+        <?php if(!empty($relatesLabels)) { ?>
+            <label><?=$this->__("label.relates") ?></label>
             <select name="relates" style="min-width: 30%">
-			    <?php foreach($relatesLabels as $key => $data) { ?>
+                <?php foreach($relatesLabels as $key => $data) { ?>
                     <?php if($data['active']) { ?>
-		                <option value="<?=$key ?>" <?php echo $canvasItem['relates'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
-		            <?php } ?>
-		        <?php } ?>
-			</select><br />
-		<?php } else { ?>
+                        <option value="<?=$key ?>" <?php echo $canvasItem['relates'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
+                    <?php } ?>
+                <?php } ?>
+            </select><br />
+        <?php }else{ ?>
             <input type="hidden" name="relates" value="<?=array_key_first($hiddenRelatesLabels) ?>" />
-		<?php } ?>
-		
-	    <?php if($dataLabels[1]['active']) { ?>
+        <?php } ?>
+        
+        <?php if($dataLabels[1]['active']) { ?>
           <label><?=$this->__($dataLabels[1]['title']) ?></label>
           <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
-		<?php } else { ?>
+        <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
-		<?php } ?>
+        <?php } ?>
 
-	    <?php if($dataLabels[2]['active']) { ?>
+        <?php if($dataLabels[2]['active']) { ?>
           <label><?=$this->__($dataLabels[2]['title']) ?></label>
           <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
-		<?php } else { ?>
+        <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
-		<?php } ?>
+        <?php } ?>
 
-	    <?php if($dataLabels[3]['active']) { ?>
+        <?php if($dataLabels[3]['active']) { ?>
           <label><?=$this->__($dataLabels[3]['title']) ?></label>
           <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
-		<?php } else { ?>
+        <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
-		<?php } ?>
+        <?php } ?>
 
-		
+        
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
             <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
-								
+                                
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
             <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
@@ -111,7 +111,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <ul class="sortableTicketList" style="width: 100%">
 
-			<?php if($canvasItem['milestoneId'] == '') {?>
+            <?php if($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">
@@ -158,11 +158,11 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 </li>
                 <?php
 
-            } else {
+            }else{
 
                 if($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
                     $date = $this->__("text.no_date_defined");
-                } else {
+                }else{
                     $date = new DateTime($canvasItem['milestoneEditTo']);
                     $date= $date->format($this->__("language.dateformat"));
                 }

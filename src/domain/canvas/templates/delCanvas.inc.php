@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic template for deleting canvas
+ * delCanvas.inc template - Generic template for deleting canvas
  *
  * Required variables:
  * - $canvasName     Name of current canvas

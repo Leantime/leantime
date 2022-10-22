@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic canvas controller
+ * showCanvas class - Generic canvas controller
  */
 namespace leantime\domain\controllers\canvas {
 
@@ -88,11 +88,11 @@ namespace leantime\domain\controllers\canvas {
                         $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
                         $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
-                    } else {
+                    }else{
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
                     }
 
-                } else {
+                }else{
                     $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
                 }
 
@@ -110,11 +110,11 @@ namespace leantime\domain\controllers\canvas {
                         $tpl->setNotification($language->__("notification.board_edited"), "success");
                         $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
-                    } else {
+                    }else{
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
                     }
 
-                } else {
+                }else{
                     $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
                 }
 
@@ -136,11 +136,11 @@ namespace leantime\domain\controllers\canvas {
                         $_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"] = $currentCanvasId;
                         $tpl->redirect(BASE_URL."/".static::CANVAS_NAME."canvas/showCanvas/");
 
-                    } else {
+                    }else{
                         $tpl->setNotification($language->__("notification.board_exists"), 'error');
                     }
 
-                } else {
+                }else{
                     $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
                 }
 

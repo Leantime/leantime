@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic template for a single element
+ * element.inc template - Generic template for a single element
  *
  * Required variables:
  * - $canvasName  Name of current canvas
@@ -14,31 +14,31 @@
 </h4>
 <div class="contentInner even status_<?php echo $elementName; ?>"
     <?=(isset($canvasTypes[$elementName]['color']) ? 'style="background: '.$canvasTypes[$elementName]['color'].';"' : '') ?>>
-	  
+      
   <?php foreach($canvasItems as $row) {
-	  
-	$filterStatus = $filter['status'] ?? 'all';
-	$filterRelates = $filter['relates'] ?? 'all';
+      
+    $filterStatus = $filter['status'] ?? 'all';
+    $filterRelates = $filter['relates'] ?? 'all';
 
-	if($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates'])) {
-		$comments = new \leantime\domain\repositories\comments();
+    if($row['box'] === $elementName && ($filterStatus == 'all' || $filterStatus == $row['status']) && ($filterRelates == 'all' || $filterRelates == $row['relates'])) {
+        $comments = new \leantime\domain\repositories\comments();
         $nbcomments = $comments->countComments(moduleId: $row['id']);
       ?>
-			
+            
       <div class="ticketBox" id="item_<?php echo $row["id"];?>">
         <div class="row">
           <div class="col-md-12">
               <div class="inlineDropDownContainer" style="float:right;">
-		   
+           
                 <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                     <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                     </a>
                 <?php } ?>
-																	 
+                                                                     
                 <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>" class="<?=$canvasName ?>CanvasModal"
                      data="item_<?=$row['id'] ?>" <?php echo $nbcomments == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small> 
-									   
+                                       
                 <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                   &nbsp;&nbsp;&nbsp;
                   <ul class="dropdown-menu">
@@ -50,19 +50,19 @@
                   </ul>
                 <?php } ?>
               </div>
-																	 
+                                                                     
             <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>" class="<?=$canvasName ?>CanvasModal"
                    data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
-																							
+                                                                                            
             <?php if($row["conclusion"] != "") { echo '<small>'.$row["conclusion"].'</small>'; } ?>
 
             <div class="clearfix" style="padding-bottom: 8px;"></div>
-												   
-		    <?php if(!empty($statusLabels)) { ?>
+                                                   
+            <?php if(!empty($statusLabels)) { ?>
                 <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
                     <a class="dropdown-toggle f-left status label-<?=$statusLabels[$row['status']]['dropdown'] ?>" href="javascript:void(0);" role="button"
                       id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			          <span class="text"><?=$statusLabels[$row['status']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                      <span class="text"><?=$statusLabels[$row['status']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
@@ -70,19 +70,19 @@
                             <?php if($data['active'] || true) { ?>
                                 <li class='dropdown-item'>
                                     <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
-							          data-value="<?=$row['id']."/".$key ?>" id="ticketStatusChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
+                                      data-value="<?=$row['id']."/".$key ?>" id="ticketStatusChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
                                 </li>
                             <?php } ?>
                         <?php } ?>
                     </ul>
                 </div>
-			<?php } ?>
+            <?php } ?>
 
-			<?php if(!empty($relatesLabels)) {  ?>
+            <?php if(!empty($relatesLabels)) {  ?>
                 <div class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
                     <a class="dropdown-toggle f-left relates label-<?=$relatesLabels[$row['relates']]['dropdown'] ?>" href="javascript:void(0);" role="button"
                         id="relatesDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			            <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                        <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
                         <li class="nav-header border"><?=$this->__("dropdown.choose_relates")?></li>
@@ -90,13 +90,13 @@
                             <?php if($data['active'] || true) { ?>
                                 <li class='dropdown-item'>
                                     <a href="javascript:void(0);" class="label-<?=$data['dropdown'] ?>" data-label='<?=$data["title"] ?>'
-							          data-value="<?=$row['id']."/".$key ?>" id="ticketRelatesChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
+                                      data-value="<?=$row['id']."/".$key ?>" id="ticketRelatesChange<?=$row['id'].$key ?>"><?=$data['title'] ?></a>
                                 </li>
                             <?php } ?>
                         <?php } ?>
                     </ul>
                 </div>
-			<?php } ?>
+            <?php } ?>
 
             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
               <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>"
@@ -106,7 +106,7 @@
                     echo "<span id='userImage".$row['id']."'>".
                      "<img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' ".
                      "style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
-                   } else {
+                   }else{
                      echo "<span id='userImage".$row['id']."'><img src='".BASE_URL."/api/users?profileImage=false' width='25' ".
                        "style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                    } ?>

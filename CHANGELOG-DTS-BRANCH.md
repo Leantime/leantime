@@ -33,7 +33,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.20
+Leantime DTS Branch 0.0.22
 
 
 ## Author
@@ -204,7 +204,11 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Update: Added rules to `Makefile` to selectively minify js/css libraries
 - Update: Added rules to automatically translate files
 
-## 0.0.20 1011-10-21
+## 0.0.20 2022-10-21
 - Add: Machine learning driven translation of stored as `resources/languages/mltranstlate/*.tra` for the languages de,
   es, fr, it, ja, nl, pt-BR, pt-PT, ru, tr, and zh-CH
 - Update: Reviewed french translations and installed them as `fr-FR.ini`
+
+## 0.0.21 2022-20-22
+- Update: Made API controller of canvas classes extended/generic
+- Update: Removed tabs in files

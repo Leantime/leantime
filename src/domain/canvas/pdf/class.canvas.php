@@ -1,6 +1,6 @@
 <?php
 /**
- * Template - HTML code for PDF report
+ * canvas class - Template - HTML code for PDF report
  */
 
 namespace leantime\domain\pdf {
@@ -87,7 +87,7 @@ namespace leantime\domain\pdf {
          * @access public
          * @param  int    $id      Canvas identifier
          * @param  string $filter  Filter value
-		 * @param  string $options Options
+         * @param  string $options Options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string
@@ -109,7 +109,7 @@ namespace leantime\domain\pdf {
             return $pdf->render();
 
         }
-		
+        
         /**
          * htmlReport - Generate report in HTML format
          *
@@ -171,10 +171,10 @@ namespace leantime\domain\pdf {
         protected function htmlCanvasStatus(string $status): string
         {
             if(isset($this->statusLabels[$status]['color'])) {
-				return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
-					$this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
-			}
-			return $this->htmlIcon($this->statusLabels[$status]['icon']);
+                return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
+                    $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
+            }
+            return $this->htmlIcon($this->statusLabels[$status]['icon']);
 
         }
     
@@ -189,7 +189,7 @@ namespace leantime\domain\pdf {
         {
 
             if(isset($this->statusLabels[$status]['color'])) {
-				return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
+                return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
             }
             return $this->statusLabels[$status]['title'];
         }
@@ -205,10 +205,10 @@ namespace leantime\domain\pdf {
         {
             
             if(isset($this->relatesLabels[$relates]['color'])) {
-				return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
-					$this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
+                return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
+                    $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
             }
-			return $this->htmlIcon($this->statusLabels[$relates]['icon']);
+            return $this->htmlIcon($this->statusLabels[$relates]['icon']);
 
         }
     
@@ -223,10 +223,10 @@ namespace leantime\domain\pdf {
         {
 
             if(isset($this->relatesLabels[$relates]['color'])) {
-				return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].
-					'</span>';
-			}
-			return $this->relatesLabels[$relates]['title'];
+                return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].
+                    '</span>';
+            }
+            return $this->relatesLabels[$relates]['title'];
 
         }
 
@@ -547,7 +547,7 @@ namespace leantime\domain\pdf {
                 'fa-face-frown' => '&#xf119',
                 'fa-face-rolling-eyes' => '&#xf5a5',
                 'fa-face-smile' => '&#xf118',
-				'fa-file-circle-plus' => '&#x494',
+                'fa-file-circle-plus' => '&#x494',
                 'fa-file-invoice-dollar' => '&#xf571',
                 'fa-file-lines' => '&#xf15c',
                 'fa-file-signature' => '&#xf573',
@@ -597,7 +597,7 @@ namespace leantime\domain\pdf {
                 'fa-tree' => '&#xf1bb',
                 'fa-truck' => '&#xf0d1',
                 'fa-user-doctor' => '&#xf0f0',
-				'fa-user-graduate' => '&#xf501',
+                'fa-user-graduate' => '&#xf501',
                 'fa-users' => '&#xf0c0',
                 'fa-wand-magic-sparkles' => '&#xe2ca',
                 'fa-xmark' => '&#xf00d',

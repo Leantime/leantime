@@ -1,6 +1,6 @@
 <?php
 /**
- * Top part of the main canvas page
+ * showCanvasTop.inc template - Top part of the main canvas page
  *
  * Required variables:
  * - $canvasName       Name of current canvas
@@ -82,36 +82,36 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                 <div class="pull-right">
                     <div class="btn-group viewDropDown">
                         <?php if(count($allCanvas) > 0 && !empty($statusLabels)) {?>
-		                    <?php if($filter['status'] == 'all') { ?>
+                            <?php if($filter['status'] == 'all') { ?>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> <?=$this->__("status.all") ?> <?=$this->__("links.view") ?></button>
-							<?php } else { ?>
+                            <?php }else{ ?>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw <?=$this->__($statusLabels[$filter['status']]['icon']) ?>"></i> <?=$statusLabels[$filter['status']]['title'] ?> <?=$this->__("links.view") ?></button>
-							<?php } ?>
+                            <?php } ?>
                             <ul class="dropdown-menu">
                                 <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_status=all" <?php if($filter['status'] == 'all') { ?>class="active" <?php } ?>><i class="fas fa-globe"></i> <?=$this->__("status.all") ?></a></li>
-		    					<?php foreach($statusLabels as $key => $data) { ?>
-			    	                 <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_status=<?=$key ?>" <?php if($filter['status'] == $key) { ?>class="active" <?php } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
-				    			<?php } ?>
+                                <?php foreach($statusLabels as $key => $data) { ?>
+                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_status=<?=$key ?>" <?php if($filter['status'] == $key) { ?>class="active" <?php } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
+                                <?php } ?>
                             </ul>
-						<?php } ?>
+                        <?php } ?>
                     </div>
-					
+                    
                     <div class="btn-group viewDropDown">
                         <?php if(count($allCanvas) > 0 && !empty($relatesLabels)) {?>
-		                    <?php if($filter['relates'] == 'all') { ?>
+                            <?php if($filter['relates'] == 'all') { ?>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> <?=$this->__("relates.all") ?> <?=$this->__("links.view") ?></button>
-							<?php } else { ?>
+                            <?php }else{ ?>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw <?=$this->__($relatesLabels[$filter['relates']]['icon']) ?>"></i> <?=$relatesLabels[$filter['relates']]['title'] ?> <?=$this->__("links.view") ?></button>
-							<?php } ?>
+                            <?php } ?>
                             <ul class="dropdown-menu">
                                 <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_relates=all" <?php if($filter['relates'] == 'all') { ?>class="active" <?php } ?>><i class="fas fa-globe"></i> <?=$this->__("relates.all") ?></a></li>
-		    					<?php foreach($relatesLabels as $key => $data) { ?>
-			    	                 <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_relates=<?=$key ?>" <?php if($filter['relates'] == $key) { ?>class="active" <?php } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
-				    			<?php } ?>
+                                <?php foreach($relatesLabels as $key => $data) { ?>
+                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_relates=<?=$key ?>" <?php if($filter['relates'] == $key) { ?>class="active" <?php } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
+                                <?php } ?>
                             </ul>
-						<?php } ?>
+                        <?php } ?>
                     </div>
-					
+                    
                 </div>
             </div>
 

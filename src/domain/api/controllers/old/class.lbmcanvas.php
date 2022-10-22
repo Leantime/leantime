@@ -7,10 +7,11 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class setting
+    class lbmcanvas
     {
 
         private $tpl;
+        private $projects;
 
         /**
          * constructor - initialize private variables
@@ -22,8 +23,8 @@ namespace leantime\domain\controllers {
         {
 
             $this->tpl = new core\template();
-            $this->settingService = new services\setting();
-
+            $this->projects = new repositories\projects();
+            $this->lbmCanvasRepo = new repositories\lbmcanvas();
 
         }
 
@@ -48,18 +49,6 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            //Updatind User Image
-            if (isset($_FILES['file'])) {
-
-                $_FILES['file']['name'] = "logo.png";
-
-                $this->settingService->setLogo($_FILES);
-
-                $_SESSION['msg'] = "PICTURE_CHANGED";
-                $_SESSION['msgT'] = "success";
-
-                echo "{status:ok}";
-            }
         }
 
         /**
@@ -70,7 +59,13 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
+            $results = $this->lbmCanvasRepo->patchCanvasItem($params['id'], $params);
 
+            if($results === true) {
+                echo "{status:ok}";
+            }else{
+                echo "{status:failure}";
+            }
         }
 
         /**

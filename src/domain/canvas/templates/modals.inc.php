@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic template for create / edit / clone modals
+ * modals.inc template - Generic template for create / edit / clone modals
  */
 ?>
 <!-- Modals -->
