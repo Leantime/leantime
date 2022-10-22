@@ -28,8 +28,8 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title" colspan="2">'.$this->htmlCanvasTitle($this->canvasTypes['em_what']['title'], 
                     $this->canvasTypes['em_what']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 100px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_who').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 100px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_what').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_who').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_what').'</td>'.
 				'</tr><tr>'.
 				'  <td class="canvas-elt-title" colspan="4">'.$this->htmlCanvasTitle('box.em.header.empathy', 'fa-heart').'</td>'.
                 '</tr><tr>'.
@@ -42,10 +42,10 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title">'.$this->htmlCanvasTitle($this->canvasTypes['em_hear']['title'], 
                     $this->canvasTypes['em_hear']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 100px;">'.$this->htmlCanvasElements($recordsAry, 'em_see').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 100px;">'.$this->htmlCanvasElements($recordsAry, 'em_say').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 100px;">'.$this->htmlCanvasElements($recordsAry, 'em_do').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 100px;">'.$this->htmlCanvasElements($recordsAry, 'em_hear').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;">'.$this->htmlCanvasElements($recordsAry, 'em_see').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;">'.$this->htmlCanvasElements($recordsAry, 'em_say').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;">'.$this->htmlCanvasElements($recordsAry, 'em_do').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;">'.$this->htmlCanvasElements($recordsAry, 'em_hear').'</td>'.
 				'</tr><tr>'.
 				'  <td class="canvas-elt-title" colspan="4">'.$this->htmlCanvasTitle('box.em.header.think_feel', 'fa-7').'</td>'.
 				'</tr><tr>'.
@@ -54,13 +54,13 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title"colspan="2">'.$this->htmlCanvasTitle($this->canvasTypes['em_gains']['title'], 
                     $this->canvasTypes['em_gains']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 100px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_pains').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 100px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_gains').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_pains').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'em_gains').'</td>'.
 				'</tr><tr>'.
 				'  <td class="canvas-elt-title" colspan="4">'.$this->htmlCanvasTitle($this->canvasTypes['em_motives']['title'], 
                     $this->canvasTypes['em_motives']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 100px;" colspan="4">'.$this->htmlCanvasElements($recordsAry, 'em_motives').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 115px;" colspan="4">'.$this->htmlCanvasElements($recordsAry, 'em_motives').'</td>'.
                 '</tr>'.
 				'</tbody></table>';
 

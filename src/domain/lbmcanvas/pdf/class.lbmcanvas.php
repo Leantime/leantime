@@ -31,16 +31,16 @@ namespace leantime\domain\pdf {
                                        $this->canvasTypes['lbm_capabilities']['icon']).'</td>'.
 				'</tr>'.
 				'<tr>'.
-				'  <td class="canvas-elt-box" style="height: 360px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_customers').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 360px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_offerings').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 360px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_capabilities').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 345px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_customers').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 345px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_offerings').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 345px;">'.$this->htmlCanvasElements($recordsAry, 'lbm_capabilities').'</td>'.
 				'</tr>'.
 				'<tr>'.
 				'  <td class="canvas-elt-title" colspan="3">'.
                 $this->htmlCanvasTitle($this->canvasTypes['lbm_financials']['title'], $this->canvasTypes['lbm_financials']['icon']).'</td>'.
 				'</tr>'.
 				'<tr>'.
-				'  <td class="canvas-elt-box" style="height: 260px;" colspan="3">'.
+				'  <td class="canvas-elt-box" style="height: 245px;" colspan="3">'.
                 $this->htmlCanvasElements($recordsAry, 'lbm_financials').'</td>'.
 				'</tr>'.
 				'</tbody></table>';

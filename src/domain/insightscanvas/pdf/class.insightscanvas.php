@@ -29,7 +29,7 @@ namespace leantime\domain\pdf {
 			$html .= '</tr><tr>';
 
             foreach($this->canvasTypes as $key => $box) {
-				$html .= '<td class="canvas-elt-box" style="height: 650px;">'.$this->htmlCanvasElements($recordsAry, $key).'</td>';
+				$html .= '<td class="canvas-elt-box" style="height: 620px;">'.$this->htmlCanvasElements($recordsAry, $key).'</td>';
 			}
 
 			$html .= '</tr></tbody></table>';

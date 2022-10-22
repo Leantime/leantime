@@ -33,11 +33,11 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title">'. 
                     $this->htmlCanvasTitle($this->canvasTypes['cp_cj_e']['title'], $this->canvasTypes['cp_cj_e']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 120px; vertical-align: middle; text-align: center;"><strong>'.
+				'  <td class="canvas-elt-box" style="height: 110px; vertical-align: middle; text-align: center;"><strong>'.
                     $this->language->__('box.label.cp.need').'</strong></td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_rv').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_rc').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_e').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_rv').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_rc').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_cj_e').'</td>'.
 				'</tr><tr>'.
 				'  <td style="text-align: center; height: 40px">&nbsp;</td>'.
 				'  <td style="text-align: center; height: 40px">'.$this->htmlIcon('fa-arrows-up-down').'</td>'.
@@ -56,11 +56,11 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title">'. 
                     $this->htmlCanvasTitle($this->canvasTypes['cp_ou_e']['title'], $this->canvasTypes['cp_ou_e']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 120px; vertical-align: middle; text-align: center;"><strong>'.
+				'  <td class="canvas-elt-box" style="height: 110px; vertical-align: middle; text-align: center;"><strong>'.
                     $this->language->__('box.label.cp.unique').'</strong></td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_rv').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_rc').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_e').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_rv').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_rc').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_ou_e').'</td>'.
 				'</tr><tr>'.
 				'  <td class="canvas-elt-titleX">&nbsp;</td>'.
 				'  <td class="canvas-elt-title">'. 
@@ -70,11 +70,11 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title">'. 
                     $this->htmlCanvasTitle($this->canvasTypes['cp_os_e']['title'], $this->canvasTypes['cp_os_e']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 120px; vertical-align: middle; text-align: center;"><strong>'.
+				'  <td class="canvas-elt-box" style="height: 110px; vertical-align: middle; text-align: center;"><strong>'.
                     $this->language->__('box.label.cp.superior').'</strong></td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_rv').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_rc').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_e').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_rv').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_rc').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_os_e').'</td>'.
 				'</tr><tr>'.
 				'  <td class="canvas-elt-titleX">&nbsp;</td>'.
 				'  <td class="canvas-elt-title">'. 
@@ -84,11 +84,11 @@ namespace leantime\domain\pdf {
 				'  <td class="canvas-elt-title">'. 
                     $this->htmlCanvasTitle($this->canvasTypes['cp_oi_e']['title'], $this->canvasTypes['cp_oi_e']['icon']).'</td>'.
 				'</tr><tr>'.
-				'  <td class="canvas-elt-box" style="height: 120px; vertical-align: middle; text-align: center;"><strong>'.
+				'  <td class="canvas-elt-box" style="height: 110px; vertical-align: middle; text-align: center;"><strong>'.
                     $this->language->__('box.label.cp.indifferent').'</strong></td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_rv').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_rc').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 120px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_e').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_rv').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_rc').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 110px">'.$this->htmlCanvasElements($recordsAry, 'cp_oi_e').'</td>'.
 				'</tr></tbody></table>';
 
             return $html;

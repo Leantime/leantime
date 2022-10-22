@@ -25,16 +25,16 @@ namespace leantime\domain\pdf {
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_low_pro_high']['title'], $this->canvasTypes['risks_imp_low_pro_high']['icon']).'</td>';
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_high_pro_high']['title'], $this->canvasTypes['risks_imp_high_pro_high']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_high').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_high').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_high').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_high').'</td>';
 
 			$html .= '</tr><tr>';
 
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_low_pro_low']['title'], $this->canvasTypes['risks_imp_low_pro_low']['icon']).'</td>';
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_high_pro_low']['title'], $this->canvasTypes['risks_imp_high_pro_low']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_low').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_low').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_low').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_low').'</td>';
 
 			$html .= '</tr></tbody></table>';
 

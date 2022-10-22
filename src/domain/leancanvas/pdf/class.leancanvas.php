@@ -34,11 +34,11 @@ namespace leantime\domain\pdf {
                 $this->htmlCanvasTitle($this->canvasTypes['customersegment']['title'], $this->canvasTypes['customersegment']['icon']).'</td>'.
 				'</tr>'.
 				'<tr>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'problem').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'solution').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'uniquevalue').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'unfairadvantage').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'customersegment').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'problem').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'solution').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'uniquevalue').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'unfairadvantage').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'customersegment').'</td>'.
 				'</tr>'.
 				'<tr>'.
 				'  <td class="canvas-elt-title" style="width: 10%;" colspan="2">'.
@@ -53,11 +53,11 @@ namespace leantime\domain\pdf {
                 $this->htmlCanvasTitle($this->canvasTypes['earlyadopters']['title'], $this->canvasTypes['earlyadopters']['icon']).'</td>'.
 				'</tr>'.
 				'<tr>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'alternatives').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'keymetrics').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'highlevelconcept').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'channels').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'earlyadopters').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'alternatives').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'keymetrics').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'highlevelconcept').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'channels').'</td>'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'earlyadopters').'</td>'.
 				'</tr>'.
 				'<tr>'.
 				'  <td class="canvas-elt-title" colspan="5">'.
@@ -66,9 +66,9 @@ namespace leantime\domain\pdf {
                 $this->htmlCanvasTitle($this->canvasTypes['revenue']['title'], $this->canvasTypes['revenue']['icon']).'</td>'.
 				'</tr>'.
 				'<tr>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="5">'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="5">'.
                 $this->htmlCanvasElements($recordsAry, 'cost').'</td>'.
-				'  <td class="canvas-elt-box" style="height: 200px;" colspan="5">'.
+				'  <td class="canvas-elt-box" style="height: 190px;" colspan="5">'.
                 $this->htmlCanvasElements($recordsAry, 'revenue').'</td>'.
 				'</tr>'.
 				'</tbody></table>';

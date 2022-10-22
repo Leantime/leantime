@@ -22,6 +22,7 @@ $settings->loadSettings($config->defaultTimezone);
 $module = $_GET['module'] ?? '';
 $filter['status'] = $_GET['filter_status'] ?? 'all';
 $filter['relates'] = $_GET['filter_relates'] ?? 'all';
+$type = $_GET['type'] ?? '';
 $canvasId = (int)($_GET['id'] ?? -1);
 
 // Check system access
@@ -31,11 +32,12 @@ if ($login->logged_in()!==true) die("User is not logged in to the system");
 $projectRepo = new leantime\domain\repositories\projects();
 $userId = $_SESSION['userdata']['id'] ?? 0;
 $authProjects = $projectRepo->getProjectsUserHasAccessTo($userId);
-$canvasRepoName = "\\leantime\\domain\\repositories\\".$module;
+$canvasRepoName = "\\leantime\\domain\\repositories\\".$module.$type;
 $canvasRepo = new $canvasRepoName();
 $canvasData = $canvasRepo->getSingleCanvas($canvasId);
-!empty($canvasData) || die("Canvas does not exist");
+!empty($canvasData) || die('Canvas does not exist: '.$canvasId.' @ '.$canvasRepoName);
 $accessGranted = false;
+
 foreach($authProjects as $key => $authProject) {
 	if($authProject['id'] == $canvasData[0]['projectId']) {
 		$accessGranted = true;
@@ -44,7 +46,7 @@ foreach($authProjects as $key => $authProject) {
 $accessGranted || die("User is not authorized to access specified canvas");
 
 // Generate report
-$moduleName = "\\leantime\\domain\\pdf\\".$module;
+$moduleName = "\\leantime\\domain\\pdf\\".$module.$type;
 $reportEngine = new $moduleName();
 $reportData = $reportEngine->reportGenerate($canvasId, $filter);
 

@@ -33,7 +33,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.0.22
+Leantime DTS Branch 0.0.23
 
 
 ## Author
@@ -209,6 +209,10 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
   es, fr, it, ja, nl, pt-BR, pt-PT, ru, tr, and zh-CH
 - Update: Reviewed french translations and installed them as `fr-FR.ini`
 
-## 0.0.21 2022-20-22
+## 0.0.21 2022-10-22
 - Update: Made API controller of canvas classes extended/generic
 - Update: Removed tabs in files
+
+## 0.0.22 2022-10-22
+- Update: Allow `pdf.php` to handle non-canvas boards (through passing its `type` when calling the URL
+- Add: Put confidential disclaimers on all PDFs by default

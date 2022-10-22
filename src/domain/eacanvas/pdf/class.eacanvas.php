@@ -31,9 +31,9 @@ namespace leantime\domain\pdf {
 
 			$html .= '</tr><tr>';
 
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'ea_political').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'ea_economic').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'ea_societal').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'ea_political').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'ea_economic').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'ea_societal').'</td>';
 
 			$html .= '</tr><tr>';
 
@@ -47,9 +47,9 @@ namespace leantime\domain\pdf {
 
 			$html .= '</tr><tr>';
 
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry,'ea_technological').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'ea_legal').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'ea_ecological').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry,'ea_technological').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'ea_legal').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'ea_ecological').'</td>';
 
 			$html .= '</tr><tr>';
 

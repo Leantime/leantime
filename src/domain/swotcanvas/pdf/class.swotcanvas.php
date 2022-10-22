@@ -25,16 +25,16 @@ namespace leantime\domain\pdf {
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['swot_strengths']['title'], $this->canvasTypes['swot_strengths']['icon']).'</td>';
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['swot_weaknesses']['title'], $this->canvasTypes['swot_weaknesses']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'swot_strengths').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'swot_weaknesses').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 290px;">'.$this->htmlCanvasElements($recordsAry, 'swot_strengths').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 290px;">'.$this->htmlCanvasElements($recordsAry, 'swot_weaknesses').'</td>';
 
 			$html .= '</tr><tr>';
 
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['swot_opportunities']['title'], $this->canvasTypes['swot_opportunities']['icon']).'</td>';
 			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['swot_threats']['title'], $this->canvasTypes['swot_threats']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'swot_opportunities').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 310px;">'.$this->htmlCanvasElements($recordsAry, 'swot_threats').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 290px;">'.$this->htmlCanvasElements($recordsAry, 'swot_opportunities').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 290px;">'.$this->htmlCanvasElements($recordsAry, 'swot_threats').'</td>';
 
 			$html .= '</tr></tbody></table>';
 
