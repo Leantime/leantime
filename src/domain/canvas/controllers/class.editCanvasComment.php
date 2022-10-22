@@ -62,7 +62,7 @@ namespace leantime\domain\controllers\canvas {
                 if(isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
                 }
 
                 $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
@@ -78,16 +78,16 @@ namespace leantime\domain\controllers\canvas {
                 }
 
                 $canvasItem = array(
-                    "id"=>"",
-                    "box" => $type,
-                    "description" => "",
-                    "status" => array_key_first($this->canvasRepo->getStatusList()),
-                    "relates" => array_key_first($this->canvasRepo->GetRelatesList()),
-                    "assumptions" => "",
-                    "data" => "",
-                    "conclusion" => "",
-                    "milestoneHeadline" => "",
-                    "milestoneId" => ""
+                    'id'=>'',
+                    'box' => $type,
+                    'description' => '',
+                    'status' => array_key_first($this->canvasRepo->getStatusList()),
+                    'relates' => array_key_first($this->canvasRepo->GetRelatesList()),
+                    'assumptions' => '',
+                    'data' => '',
+                    'conclusion' => '',
+                    'milestoneHeadline' => '',
+                    'milestoneId' => ''
                 );
 
                 $comments = [];
@@ -117,21 +117,21 @@ namespace leantime\domain\controllers\canvas {
 
                     if(isset($params['description']) && !empty($params['description'])) {
 
-                        $currentCanvasId = (int)$_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"];
+                        $currentCanvasId = (int)$_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'];
 
                         $canvasItem = array(
-                            "box" => $params['box'],
-                            "author" => $_SESSION['userdata']["id"],
-                            "description" => $params['description'],
-                            "status" => $params['status'],
-                            "relates" => $params['relates'],
-                            "assumptions" => $params['assumptions'],
-                            "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
-                            "itemId" => $params['itemId'],
-                            "canvasId" => $currentCanvasId,
-                            "milestoneId" => $params['milestoneId'],
-                            "dependentMilstone" => ''
+                            'box' => $params['box'],
+                            'author' => $_SESSION['userdata']['id'],
+                            'description' => $params['description'],
+                            'status' => $params['status'],
+                            'relates' => $params['relates'],
+                            'assumptions' => $params['assumptions'],
+                            'data' => $params['data'],
+                            'conclusion' => $params['conclusion'],
+                            'itemId' => $params['itemId'],
+                            'canvasId' => $currentCanvasId,
+                            'milestoneId' => $params['milestoneId'],
+                            'dependentMilstone' => ''
                         );
 
                         $this->canvasRepo->editCanvasComment($canvasItem);
@@ -141,19 +141,19 @@ namespace leantime\domain\controllers\canvas {
                                                                                              $params['itemId']));
                         $this->tpl->assign('comments', $comments);
 
-                        $this->tpl->setNotification($this->language->__("notifications.canvas_item_updates"), 'success');
+                        $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
 
-                        $subject = $this->language->__("email_notifications.canvas_board_edited");
-                        $actual_link = BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".(int)$params['itemId'];
-                        $message = sprintf($this->language->__("email_notifications.canvas_item_update_message"),
-                                           $_SESSION["userdata"]["name"],  $canvasItem['description']);
+                        $subject = $this->language->__('email_notifications.canvas_board_edited');
+                        $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'];
+                        $message = sprintf($this->language->__('email_notifications.canvas_item_update_message'),
+                                           $_SESSION['userdata']['name'],  $canvasItem['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], 
-                            array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
+                            array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
 
-                        $this->tpl->redirect(BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".$params['itemId']);
+                        $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$params['itemId']);
 
                     }else{
-                        $this->tpl->setNotification($this->language->__("notification.please_enter_element_title"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
 
                     }
 
@@ -161,18 +161,18 @@ namespace leantime\domain\controllers\canvas {
 
                     if(isset($_POST['description']) && !empty($_POST['description'])) {
 
-                        $currentCanvasId = (int)$_SESSION["current".strtoupper(static::CANVAS_NAME)."Canvas"];
+                        $currentCanvasId = (int)$_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'];
 
                         $canvasItem = array(
-                            "box" => $params['box'],
-                            "author" => $_SESSION['userdata']["id"],
-                            "description" => $params['description'],
-                            "status" => $params['status'],
-                            "relates" => $params['relates'],
-                            "assumptions" => $params['assumptions'],
-                            "data" => $params['data'],
-                            "conclusion" => $params['conclusion'],
-                            "canvasId" => $currentCanvasId
+                            'box' => $params['box'],
+                            'author' => $_SESSION['userdata']['id'],
+                            'description' => $params['description'],
+                            'status' => $params['status'],
+                            'relates' => $params['relates'],
+                            'assumptions' => $params['assumptions'],
+                            'data' => $params['data'],
+                            'conclusion' => $params['conclusion'],
+                            'canvasId' => $currentCanvasId
                         );
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
@@ -181,20 +181,20 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->tpl->setNotification($canvasTypes[$params['box']].' successfully created', 'success');
 
-                        $subject = $this->language->__("email_notifications.canvas_board_item_created");
-                        $actual_link = BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".(int)$params['itemId'];
-                        $message = sprintf($this->language->__("email_notifications.canvas_item_created_message"),
-                                           $_SESSION["userdata"]["name"],  $canvasItem['description']);
+                        $subject = $this->language->__('email_notifications.canvas_board_item_created');
+                        $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'];
+                        $message = sprintf($this->language->__('email_notifications.canvas_item_created_message'),
+                                           $_SESSION['userdata']['name'],  $canvasItem['description']);
                         $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], 
-                            array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
+                            array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
 
-                        $this->tpl->setNotification($this->language->__("notification.element_created"), 'success');
+                        $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
-                        $this->tpl->redirect(BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".$id);
+                        $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$id);
 
                     }else{
 
-                        $this->tpl->setNotification($this->language->__("notification.please_enter_element_title"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
 
                     }
                 }
@@ -205,23 +205,23 @@ namespace leantime\domain\controllers\canvas {
 
                 $values = array(
                     'text' => $params['text'],
-                    'date' => date("Y-m-d H:i:s"),
+                    'date' => date('Y-m-d H:i:s'),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $_GET['id'],
                     'commentParent' => ($params['father'])
                 );
 
                 $message = $this->commentsRepo->addComment($values, static::CANVAS_NAME.'canvasitem');
-                $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
 
-                $subject = $this->language->__("email_notifications.canvas_board_comment_created");
-                $actual_link = BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".(int)$_GET['id'];
-                $message = sprintf($this->language->__("email_notifications.canvas_item__comment_created_message"),
-                                   $_SESSION["userdata"]["name"]);
+                $subject = $this->language->__('email_notifications.canvas_board_comment_created');
+                $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$_GET['id'];
+                $message = sprintf($this->language->__('email_notifications.canvas_item__comment_created_message'),
+                                   $_SESSION['userdata']['name']);
                 $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], 
-                    array("link"=>$actual_link, "text"=> $this->language->__("email_notifications.canvas_item_update_cta")));
+                    array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
 
-                $this->tpl->redirect(BASE_URL."/".static::CANVAS_NAME.'canvas'."/editCanvasComment/".$_GET['id']);
+                $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$_GET['id']);
 
             }
 

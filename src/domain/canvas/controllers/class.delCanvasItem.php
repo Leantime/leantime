@@ -32,15 +32,12 @@ namespace leantime\domain\controllers\canvas {
             $canvasRepo = new $canvasRepoName();
             $language = new core\language();
 
-            if(isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
-            }
-            
-            if(isset($_POST['del']) && isset($id)) {
+            if(isset($_POST['del']) && isset($_GET['id'])) {
 
+                $id = (int)($_GET['id']);
                 $canvasRepo->delCanvasItem($id);
 
-                $tpl->setNotification($language->__("notification.element_deleted"), "success");
+                $tpl->setNotification($language->__('notification.element_deleted'), 'success');
                 $tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
 
             }

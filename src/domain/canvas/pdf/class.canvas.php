@@ -72,12 +72,13 @@ namespace leantime\domain\pdf {
             $this->dataLabels = $this->canvasRepo->getDataLabels();
             
             // Set default parameters
-            $this->params = [ 'disclaimer' => '', 'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
-                              'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
-                              'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
-                              'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
-                              'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
-                              ];
+            $this->params = [
+                'disclaimer' => '', 'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
+                'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
+                'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
+                'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
+                'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
+            ];
             
         }
         
@@ -136,6 +137,7 @@ namespace leantime\domain\pdf {
             
             // Layout canvas page
             if($this->params['canvasShow']) {
+                
                 $html .= $this->htmlCanvasOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
@@ -144,16 +146,19 @@ namespace leantime\domain\pdf {
                 $html .= $this->htmlCanvas($recordsAry);
                 $html .= '</div>';
                 $html .= $this->htmlPageClose();
+                
             }
             
             // Layout list of element details
             if($this->params['listShow']) {
+                
                 $html .= $this->htmlListOpen();
                 $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
                 $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= $this->htmlList($recordsAry);
                 $html .= $this->htmlPageClose();
+                
             }
             
             $html .= $this->htmlEnd();
@@ -170,10 +175,14 @@ namespace leantime\domain\pdf {
          */
         protected function htmlCanvasStatus(string $status): string
         {
+            
             if(isset($this->statusLabels[$status]['color'])) {
+                
                 return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
                     $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
+                
             }
+            
             return $this->htmlIcon($this->statusLabels[$status]['icon']);
 
         }
@@ -189,8 +198,11 @@ namespace leantime\domain\pdf {
         {
 
             if(isset($this->statusLabels[$status]['color'])) {
+                
                 return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
+                
             }
+            
             return $this->statusLabels[$status]['title'];
         }
 
@@ -205,9 +217,12 @@ namespace leantime\domain\pdf {
         {
             
             if(isset($this->relatesLabels[$relates]['color'])) {
+                
                 return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
                     $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
+                
             }
+            
             return $this->htmlIcon($this->statusLabels[$relates]['icon']);
 
         }
@@ -223,9 +238,12 @@ namespace leantime\domain\pdf {
         {
 
             if(isset($this->relatesLabels[$relates]['color'])) {
+                
                 return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].
                     '</span>';
+                
             }
+            
             return $this->relatesLabels[$relates]['title'];
 
         }
@@ -603,9 +621,11 @@ namespace leantime\domain\pdf {
                 'fa-xmark' => '&#xf00d',
                 default => ''
             };
+            
             $fontSize = ($fontSize === 0 ? $this->fontSize : $fontSize);
             $html = '<span style="font-family: \'FontAwesome\'; font-weight: 900; font-style: normal; font-size: '.$fontSize.'px;">'.
                 $iconCode.'</span>';
+            
             return $html;
             
         }
@@ -638,17 +658,24 @@ namespace leantime\domain\pdf {
             
             $html = '<table class="table" style="width: 100%"><tbody>';
             foreach($recordsAry as $record) {
+                
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
+                
                 if($record['box'] === $box && 
                    ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) && 
                    ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
+                    
                     $html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
                         '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
                         (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
+                    
                 }
+                
             }
+            
             $html .= '</tbody></table>';
+            
             return $html;
             
         }
@@ -682,47 +709,67 @@ namespace leantime\domain\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
+                
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
                 if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
                    ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
 
                     if(isset($record['description']) && !empty($record['description'])) {
+                        
                         $html .= '<div class="list-elt-box"><strong>'.$record['description'].'</strong></div>';
+                        
                     }
                     
                     if(isset($record['relates']) && !empty($record['relates'])) {
+                        
                         $relates = $this->htmlListRelates($record['relates']);
+                        
                         if(!empty($relates)) {
+                            
                             $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementRelates']).': '.
                                 '<em>'.$relates.'</em></div>';
+                            
                         }
+                        
                     }
                     
                     if(isset($record['status']) && !empty($record['status'])) {
+                        
                         $status = $this->htmlListStatus($record['status']);
+                        
                         if(!empty($status)) {
+                            
                             $html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementStatus']).': '.
                                 '<em>'.$status.'</em></div>';
+                            
                         }
+                        
                     }
+                    
                     
                     if($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) && 
                         !empty($record[$this->dataLabels[1]['field']])) {
+                        
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[1]['title'].'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[1]['field']]).'</div>';
+                        
                     }
                             
                     if($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) && 
                         !empty($record[$this->dataLabels[2]['field']])) {
+                        
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[2]['title'].'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[2]['field']]).'</div>';
+                        
                     }
                             
                     if($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) && 
                         !empty($record[$this->dataLabels[3]['field']])) {
+                        
                         $html .= '<div class="list-elt-title">'.$this->dataLabels[3]['title'].'</div>';
                         $html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[3]['field']]).'</div>';
+                        
                     }
                     $html .= '<hr class="hr-black"/>';
                 }
@@ -744,6 +791,7 @@ namespace leantime\domain\pdf {
             
             $html = '';
             foreach($recordsAry as $record) {
+                
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
                 if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) && 
@@ -751,50 +799,76 @@ namespace leantime\domain\pdf {
 
                     $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
                     if(isset($record['description']) && !empty($record['description'])) {
+                        
                         $html .= '<strong>'.$record['description'].'</strong>';
+                        
                     }
 
                     if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) && 
                         isset($record['description']) && !empty($record['description'])) {
+                        
                         $html .= ' - ';
+                        
                     }
 
                     if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
+                        
                         $html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
+                        
                     }
                     
                     if((isset($record['status']) && !empty($record['status'])) ||
                        (isset($record['relates']) && !empty($record['relates']))) {
+                        
                         $html .= ' (';
+                        
                     }
 
                     if(isset($record['status']) && !empty($record['status'])) {
+                        
                         $status = $this->htmlListStatus($record['status']);
+                        
                         if(!empty($status)) {
+                            
                             $html .= $this->language->__($status);
+                            
                         }
+                        
                     }
                     
                     if((isset($record['status']) && !empty($record['status'])) &&
                        (isset($record['relates']) && !empty($record['relates']))) {
+                        
                         $html .= ', ';
+                        
                     }
 
                     if(isset($record['relates']) && !empty($record['relates'])) {
+                        
                         $relates = $this->htmlListRelates($record['relates']);
+                        
                         if(!empty($relates)) {
+                            
                             $html .= $this->language->__($relates);
+                            
                         }
+                        
                     }
                     
                     if((isset($record['status']) && !empty($record['status'])) ||
                        (isset($record['relates']) && !empty($record['relates']))) {
+                        
                         $html .= ')';
+                        
                     }
+                    
                     $html .= '<hr class="hr-black"/>';
                     $html .= '</div>';
+                    
                 }
+                
             }
+            
             return $html;
             
         }
@@ -809,8 +883,17 @@ namespace leantime\domain\pdf {
         protected function htmlStripTags(string $html): string
         {
 
-            if(substr($html, 0, 3) === '<p>') { $html = substr($html, 3); }
-            if(substr($html, -4) === '</p>') { $html = substr($html, 0, strlen($html) - 4); }
+            if(substr($html, 0, 3) === '<p>') {
+
+                $html = substr($html, 3);
+
+            }
+            
+            if(substr($html, -4) === '</p>') {
+
+                $html = substr($html, 0, strlen($html) - 4);
+            }
+            
             $html = str_replace('<p>', '<br>', str_replace('</p>', '', $html));
             $html = str_replace('<ul>', '<br>', $html);
             $html = str_replace('<ol>', '<br>', $html);
@@ -819,6 +902,7 @@ namespace leantime\domain\pdf {
             $html = str_replace('</li>', '<br>', $html);
             $html = str_replace('</ul>', '', $html);
             $html = str_replace('</ol>', '', $html);
+
             return $html;
 
         }

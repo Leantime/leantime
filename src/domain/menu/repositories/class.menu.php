@@ -1,4 +1,7 @@
 <?php
+/**
+ * menu class - Menu definitions
+ */
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -9,75 +12,79 @@ namespace leantime\domain\repositories {
     class menu
     {
 
+        // Default menu
         public const DEFAULT_MENU = 'default';
 
         // Menu structures
         private array $menuStructures = [ 
-            'default' => [ 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
-                           21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
-                           31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
-                           41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
-                           51 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
-                           52 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
-                           53 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
-                           54 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
-                           55 => [ 'type' => 'item', 'module' => 'ideas',          'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
-                           56 => [ 'type' => 'item', 'module' => 'leancanvas',     'title' => 'menu.leancanvas', 'href' => '/leancanvas/showCanvas' ],
-                           57 => [ 'type' => 'item', 'module' => 'lbmcanvas',      'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
-                           58 => [ 'type' => 'item', 'module' => 'obmcanvas',      'title' => 'menu.obmcanvas',  'href' => '/obmcanvas/showCanvas' ],
-                           60 => [ 'type' => 'submenu', 'id' => 'default-advanced', 'title' => 'menu.default.advanced', 'visual' => 'closed',
-                                    'submenu' => [
-                                       61 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
-                                       62 => [ 'type' => 'item', 'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas' ],
-                                       63 => [ 'type' => 'item', 'module' => 'emcanvas',    'title' => 'menu.emcanvas',    'href' => '/emcanvas/showCanvas' ],
-                                       64 => [ 'type' => 'item', 'module' => 'eacanvas',    'title' => 'menu.eacanvas',    'href' => '/eacanvas/showCanvas' ],
-                                       65 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
-                                       66 => [ 'type' => 'item', 'module' => 'dbmcanvas',   'title' => 'menu.dbmcanvas',   'href' => '/dbmcanvas/showCanvas' ],
-                                       67 => [ 'type' => 'item', 'module' => 'cpcanvas',    'title' => 'menu.cpcanvas',    'href' => '/cpcanvas/showCanvas' ],
-                                       58 => [ 'type' => 'header', 'title' => 'menu.default.test' ],
-                                       69 => [ 'type' => 'item', 'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
-                                       70 => [ 'type' => 'item', 'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
-                           71 => [ 'type' => 'header', 'title' => 'menu.default.tools' ],
-                           72 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                           73 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
-                           74 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
-            'dts' => [  11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
-                        21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
-                        31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap',    'active' => [ 'roadmap' ] ],
-                        41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
-                        50 => [ 'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'open',
-                               'submenu' => [
-                                   51 => [ 'type' => 'item',    'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas' ],
-                                   52 => [ 'type' => 'item',    'module' => 'ideas',          'title' => 'menu.ideation',       'href' => '/ideas/showBoards' ] ] ],
-                        60  => [ 'type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'open',
-                                'submenu' => [
-                                    61 => [ 'type' => 'header', 'title' => 'menu.dts.observe' ],
-                                    62 => [ 'type' => 'item',   'module' => 'sbcanvas',    'title' => 'menu.sbcanvas',    'href' => '/sbcanvas/showCanvas' ],
-                                    63 => [ 'type' => 'item',   'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas' ],
-                                    64 => [ 'type' => 'item',   'module' => 'eacanvas',    'title' => 'menu.eacanvas',    'href' => '/eacanvas/showCanvas' ],
-                                    65 => [ 'type' => 'header', 'title' => 'menu.dts.design' ],
-                                    66 => [ 'type' => 'item',   'module' => 'lbmcanvas',   'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
-                                    67 => [ 'type' => 'item',   'module' => 'dbmcanvas',   'title' => 'menu.dbmcanvas',   'href' => '/dbmcanvas/showCanvas' ],
-                                    68 => [ 'type' => 'item',   'module' => 'cpcanvas',    'title' => 'menu.cpcanvas',    'href' => '/cpcanvas/showCanvas' ],
-                                    69 => [ 'type' => 'header', 'title' => 'menu.dts.validate' ],
-                                    70 => [ 'type' => 'item',   'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
-                                    71 => [ 'type' => 'item',   'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
-                       80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open', 
-                               'submenu' => [
-                               81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                               82 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
-                               83 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ] ] ],
-            'lean' => [  11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',  'active' => [ 'show' ] ],
-                         12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                    'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
-                         13 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => [ 'roadmap' ] ],
-                         14 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
-                         15 => [ 'type' => 'item', 'module' => 'ideas',     'title' => 'menu.ideas',    'href' => '/ideas/showBoards' ],
-                         16 => [ 'type' => 'item', 'module' => 'leancanvas','title' => 'menu.research', 'href' => '/leancanvas/showCanvas' ],
-                         17 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                         18 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
-                         19 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ]
+            'default' => [
+                11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
+                21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
+                31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
+                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                51 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
+                52 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
+                53 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
+                54 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
+                55 => [ 'type' => 'item', 'module' => 'ideas',           'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
+                56 => [ 'type' => 'item', 'module' => 'leancanvas',      'title' => 'menu.leancanvas', 'href' => '/leancanvas/showCanvas' ],
+                57 => [ 'type' => 'item', 'module' => 'lbmcanvas',       'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
+                58 => [ 'type' => 'item', 'module' => 'obmcanvas',       'title' => 'menu.obmcanvas',  'href' => '/obmcanvas/showCanvas' ],
+                60 => [ 'type' => 'submenu', 'id' => 'default-advanced', 'title' => 'menu.default.advanced', 'visual' => 'closed',
+                        'submenu' => [
+                            61 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
+                            62 => [ 'type' => 'item', 'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas' ],
+                            63 => [ 'type' => 'item', 'module' => 'emcanvas',    'title' => 'menu.emcanvas',    'href' => '/emcanvas/showCanvas' ],
+                            64 => [ 'type' => 'item', 'module' => 'eacanvas',    'title' => 'menu.eacanvas',    'href' => '/eacanvas/showCanvas' ],
+                            65 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
+                            66 => [ 'type' => 'item', 'module' => 'dbmcanvas',   'title' => 'menu.dbmcanvas',   'href' => '/dbmcanvas/showCanvas' ],
+                            67 => [ 'type' => 'item', 'module' => 'cpcanvas',    'title' => 'menu.cpcanvas',    'href' => '/cpcanvas/showCanvas' ],
+                            58 => [ 'type' => 'header', 'title' => 'menu.default.test' ],
+                            69 => [ 'type' => 'item', 'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
+                            70 => [ 'type' => 'item', 'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
+                71 => [ 'type' => 'header', 'title' => 'menu.default.tools' ],
+                72 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
+                73 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
+                74 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
+            'dts' => [
+                11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
+                21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
+                31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap',    'active' => [ 'roadmap' ] ],
+                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                50 => [ 'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'open',
+                        'submenu' => [
+                            51 => [ 'type' => 'item',    'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas' ],
+                            52 => [ 'type' => 'item',    'module' => 'ideas',          'title' => 'menu.ideation',       'href' => '/ideas/showBoards' ] ] ],
+                60  => [ 'type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'open',
+                         'submenu' => [
+                             61 => [ 'type' => 'header', 'title' => 'menu.dts.observe' ],
+                             62 => [ 'type' => 'item',   'module' => 'sbcanvas',    'title' => 'menu.sbcanvas',    'href' => '/sbcanvas/showCanvas' ],
+                             63 => [ 'type' => 'item',   'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas' ],
+                             64 => [ 'type' => 'item',   'module' => 'eacanvas',    'title' => 'menu.eacanvas',    'href' => '/eacanvas/showCanvas' ],
+                             65 => [ 'type' => 'header', 'title' => 'menu.dts.design' ],
+                             66 => [ 'type' => 'item',   'module' => 'lbmcanvas',   'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
+                             67 => [ 'type' => 'item',   'module' => 'dbmcanvas',   'title' => 'menu.dbmcanvas',   'href' => '/dbmcanvas/showCanvas' ],
+                             68 => [ 'type' => 'item',   'module' => 'cpcanvas',    'title' => 'menu.cpcanvas',    'href' => '/cpcanvas/showCanvas' ],
+                             69 => [ 'type' => 'header', 'title' => 'menu.dts.validate' ],
+                             70 => [ 'type' => 'item',   'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
+                             71 => [ 'type' => 'item',   'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
+                80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open', 
+                        'submenu' => [
+                            81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
+                            82 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
+                            83 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ] ] ],
+            'lean' => [
+                11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',  'active' => [ 'show' ] ],
+                12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                    'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
+                13 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => [ 'roadmap' ] ],
+                14 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                15 => [ 'type' => 'item', 'module' => 'ideas',     'title' => 'menu.ideas',    'href' => '/ideas/showBoards' ],
+                16 => [ 'type' => 'item', 'module' => 'leancanvas','title' => 'menu.research', 'href' => '/leancanvas/showCanvas' ],
+                17 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
+                18 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
+                19 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ]
         ];
-
+        
         /**
          * getMenuTypes - Return an array of a currently supported menu types
          *
@@ -90,11 +97,13 @@ namespace leantime\domain\repositories {
             $language = new core\language();
             
             $menuTypes = [];
+            
             foreach($this->menuStructures as $key => $menu) {
                 
                 $menuTypes[$key] = $language->__("label.menu_type.$key");
                 
             }
+            
             return $menuTypes;
             
         }
@@ -209,6 +218,7 @@ namespace leantime\domain\repositories {
                                 default:
                                     die("Cannot proceed due to invalid role: '".$subelement['role']."'");
                                 }
+                                
                                 if(!$accessGranted) {
 
                                     $menuStructure[$key]['submenu'][$subkey]['type'] = 'disabled';
