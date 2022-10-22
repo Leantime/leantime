@@ -17,14 +17,14 @@ namespace leantime\domain\repositories {
                            21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
                            31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
                            41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
-						   51 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
-						   52 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
-						   53 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
-						   54 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
-						   55 => [ 'type' => 'item', 'module' => 'ideas',          'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
-						   56 => [ 'type' => 'item', 'module' => 'leancanvas',     'title' => 'menu.leancanvas', 'href' => '/leancanvas/showCanvas' ],
-						   57 => [ 'type' => 'item', 'module' => 'lbmcanvas',      'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
-						   58 => [ 'type' => 'item', 'module' => 'obmcanvas',      'title' => 'menu.obmcanvas',  'href' => '/obmcanvas/showCanvas' ],
+                           51 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
+                           52 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
+                           53 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
+                           54 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
+                           55 => [ 'type' => 'item', 'module' => 'ideas',          'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
+                           56 => [ 'type' => 'item', 'module' => 'leancanvas',     'title' => 'menu.leancanvas', 'href' => '/leancanvas/showCanvas' ],
+                           57 => [ 'type' => 'item', 'module' => 'lbmcanvas',      'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
+                           58 => [ 'type' => 'item', 'module' => 'obmcanvas',      'title' => 'menu.obmcanvas',  'href' => '/obmcanvas/showCanvas' ],
                            60 => [ 'type' => 'submenu', 'id' => 'default-advanced', 'title' => 'menu.default.advanced', 'visual' => 'closed',
                                     'submenu' => [
                                        61 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
@@ -91,7 +91,9 @@ namespace leantime\domain\repositories {
             
             $menuTypes = [];
             foreach($this->menuStructures as $key => $menu) {
+                
                 $menuTypes[$key] = $language->__("label.menu_type.$key");
+                
             }
             return $menuTypes;
             
@@ -106,7 +108,9 @@ namespace leantime\domain\repositories {
          */
         public function setSubmenuState(string $submenu, string $state): void
         {
+            
             $_SESSION['submenuToggle'][$submenu] = $state;
+
         }
 
         /**
@@ -122,11 +126,14 @@ namespace leantime\domain\repositories {
             $language = new core\language();
             
             if(!isset($this->menuStructures[$menuType])) {
+                
                 $menuType = self::DEFAULT_MENU;
+                
             }
             $menuStructure = $this->menuStructures[$menuType];
 
             foreach($menuStructure as $key => $element) {
+                
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 
                 switch($element['type']) {
@@ -146,33 +153,42 @@ namespace leantime\domain\repositories {
                         default:
                             die("Cannot proceed due to invalid role: '".$element['role']."'");
                         }
+
                         if(!$accessGranted) {
+
                             $menuStructure[$key]['type'] = 'disabled';
+
                         }
                     }
 
                     // Patch link
                     if($element['module'] == 'tickets' && !isset($element['href'])) {
+
                         $ticketService = new services\tickets();
                         $config = new core\config();
                                 
                         $menuStructure[$key]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
                     }
                     break;
 
                 case 'submenu':
                     // Update menu toggle
                     if($element['visual'] == 'always') {
+
                         $menuStructure[$key]['visual'] = 'open';
-                    }
-                    else {
+
+                    }else{
+
                         $submenuState = $_SESSION['submenuToggle'][$element['id']] ?? $element['visual'];
                         $_SESSION['submenuToggle'][$element['id']] = $submenuState;
+
                     }
                     $menuStructure[$key]['visual'] = $submenuState;
 
                     // Parse submenu
                     foreach($element['submenu'] as $subkey => $subelement) {
+
                         $menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
                     
                         switch($subelement['type']) {
@@ -182,6 +198,7 @@ namespace leantime\domain\repositories {
                         case 'item':
                             // Update security
                             if(isset($subelement['role'])) {
+
                                 switch($subelement['role']) {
                                 case 'editor':
                                     $accessGranted = services\auth::userIsAtLeast(roles::$editor);
@@ -193,16 +210,21 @@ namespace leantime\domain\repositories {
                                     die("Cannot proceed due to invalid role: '".$subelement['role']."'");
                                 }
                                 if(!$accessGranted) {
+
                                     $menuStructure[$key]['submenu'][$subkey]['type'] = 'disabled';
+
                                 }
+
                             }
                                 
                             // Patch link
                             if($subelement['module'] == 'tickets' && !isset($subelement['href'])) {
+
                                 $ticketService = new services\tickets();
                                 $config = new core\config();
                                 
                                 $menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
                             }
                             break;
                             

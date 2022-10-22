@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7b01a10e6f412d6f8ea385796f23d92",
+    "content-hash": "b4b6fdfe421cdf535a6a99b47ff8ebfa",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -379,6 +379,61 @@
                 "source": "https://github.com/DASPRiD/Enum/tree/1.0.3"
             },
             "time": "2020-10-02T16:03:48+00:00"
+        },
+        {
+            "name": "deeplcom/deepl-php",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DeepLcom/deepl-php.git",
+                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DeepLcom/deepl-php/zipball/bb6ab74e3d90a543d7effd5ee2578d450a744c12",
+                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3",
+                "phpunit/phpunit": "^9",
+                "ramsey/uuid": "^4.2",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DeepL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "DeepL SE",
+                    "email": "open-source@deepl.com"
+                }
+            ],
+            "description": "Official DeepL API Client Library",
+            "keywords": [
+                "api",
+                "deepl",
+                "translation",
+                "translator"
+            ],
+            "support": {
+                "issues": "https://github.com/DeepLcom/deepl-php/issues",
+                "source": "https://github.com/DeepLcom/deepl-php/tree/v1.1.0"
+            },
+            "time": "2022-09-28T08:44:58+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -3587,61 +3642,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "deeplcom/deepl-php",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DeepLcom/deepl-php.git",
-                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DeepLcom/deepl-php/zipball/bb6ab74e3d90a543d7effd5ee2578d450a744c12",
-                "reference": "bb6ab74e3d90a543d7effd5ee2578d450a744c12",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "php": ">=7.3.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3",
-                "phpunit/phpunit": "^9",
-                "ramsey/uuid": "^4.2",
-                "squizlabs/php_codesniffer": "^3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "DeepL\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "DeepL SE",
-                    "email": "open-source@deepl.com"
-                }
-            ],
-            "description": "Official DeepL API Client Library",
-            "keywords": [
-                "api",
-                "deepl",
-                "translation",
-                "translator"
-            ],
-            "support": {
-                "issues": "https://github.com/DeepLcom/deepl-php/issues",
-                "source": "https://github.com/DeepLcom/deepl-php/tree/v1.1.0"
-            },
-            "time": "2022-09-28T08:44:58+00:00"
-        },
         {
             "name": "phpstan/phpstan",
             "version": "1.5.4",

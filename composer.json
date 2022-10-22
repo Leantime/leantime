@@ -25,11 +25,11 @@
         "league/html-to-markdown": "5.1",
         "ramsey/uuid": "^4.3",
         "htmlawed/htmlawed": "1.2.6",
-		"yetiforce/yetiforcepdf": "0.1.40"
+		"yetiforce/yetiforcepdf": "0.1.40",
+		"deeplcom/deepl-php": ">=1.0"
     },
     "require-dev": {
-        "phpstan/phpstan":"1.5.4",
-		"deeplcom/deepl-php": ">=1.0"
+        "phpstan/phpstan":"1.5.4"
     }
 
 }
