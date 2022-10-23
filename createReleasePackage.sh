@@ -25,6 +25,10 @@ rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 rm -f vendor/deeplcom
 rm -f resources/languages/mltranslate
 
+#Remove local configuration, if any
+rm -f config/language
+rm -f config/domain
+
 #Removing unneeded items for release
 rm -f -R .git
 rm -f -R .github

@@ -248,7 +248,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Update: Allow `pdf.php` to handle non-canvas boards (through passing its `type` when calling the URL
 - Add: Put confidential disclaimers on all PDFs by default
 
-## 0.1.23 2022-1022
+## 0.1.23 2022-10-22
 - Add: Add the option to customize/override any language file, template, or class by putting it into `config/language`,
   `config/domain/*/template`, or `config/domain/*/*` respectively [see note on customization]
 
+## 0.1.24 2022-10-22
+- Update: Added telemetry data

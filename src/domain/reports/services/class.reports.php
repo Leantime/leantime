@@ -92,11 +92,26 @@ namespace leantime\domain\services {
             $this->userRepository = new repositories\users();
             $this->clientRepository = new repositories\clients();
             $this->commentsRepository = new repositories\comments();
-            $this->leancanvasRepo = new repositories\leancanvas();
-            $this->retroRepository = new repositories\retroscanvas();
             $this->timesheetRepo = new repositories\timesheets();
             $this->config = new core\config();
+			
+			// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
+            $this->cpCanvasRepo = new repositories\cpcanvas();
+            $this->dbmCanvasRepo = new repositories\dbmcanvas();
+            $this->eaCanvasRepo = new repositories\eacanvas();
+            $this->emCanvasRepo = new repositories\emcanvas();
+            $this->insightsCanvasRepo = new repositories\insightscanvas();
+            $this->lbmCanvasRepo = new repositories\lbmcanvas();
+            $this->leanCanvasRepo = new repositories\leancanvas();
+            $this->obmCanvasRepo = new repositories\obmcanvas();
+            $this->retrosCanvasRepo = new repositories\retroscanvas();
+            $this->risksCanvasRepo = new repositories\riskscanvas();
+            $this->sbCanvasRepo = new repositories\sbcanvas();
+            $this->smCanvasRepo = new repositories\smcanvas();
+            $this->sqCanvasRepo = new repositories\sqcanvas();
+            $this->swotCanvasRepo = new repositories\swotcanvas();
 
+			
             $companyLang = $this->settings->getSetting("companysettings.language");
             if($companyLang != "" && $companyLang !== false){
                 $currentLanguage = $companyLang;
@@ -116,11 +131,39 @@ namespace leantime\domain\services {
                 'numComments' => $this->commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
-                'numBoards' => $this->leancanvasRepo->getNumberOfBoards(),
                 'numIdeaItems' => $this->ideaRepository->getNumberOfIdeas(),
-                'numResearchItems' => $this->leancanvasRepo->getNumberOfResearchItems(),
-                'numRetroItems' => $this->retroRepository->getNumberOfRetros(),
                 'numHoursBooked' => $this->timesheetRepo->getHoursBooked()
+				
+				// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
+                'numResearchBoards' => $this->leanCanvasRepo->getNumberOfBoards(),
+                'numRetroBoards' => $this->retrosCanvasRepo->getNumberOfBoards(),
+                'numCPBoards' => $this->cpCanvasRepo->getNumberOfBoards(),
+                'numDBMBoards' => $this->dbmCanvasRepo->getNumberOfBoards(),
+                'numEABoards' => $this->eaCanvasRepo->getNumberOfBoards(),
+                'numEMBoards' => $this->emCanvasRepo->getNumberOfBoards(),
+                'numINSIGHTSBoards' => $this->insightsCanvasRepo->getNumberOfBoards(),
+                'numLBMBoards' => $this->lbmCanvasRepo->getNumberOfBoards(),
+                'numOBMBoards' => $this->obmCanvasRepo->getNumberOfBoards(),
+                'numRISKSBoards' => $this->risksCanvasRepo->getNumberOfBoards(),
+                'numSBBoards' => $this->sbCanvasRepo->getNumberOfBoards(),
+                'numSMBoards' => $this->smCanvasRepo->getNumberOfBoards(),
+                'numSQBoards' => $this->sqCanvasRepo->getNumberOfBoards(),
+                'numSWOTBoards' => $this->swotCanvasRepo->getNumberOfBoards(),
+				
+                'numResearchItems' => $this->leanCanvasRepo->getNumberOfCanvasItems(),
+                'numRetroItems' => $this->retrosRepository->getNumberOfCanvasItems(),
+                'numCPItems' => $this->cpCanvasRepo->getNumberOfCanvasItems(),
+                'numDBMItems' => $this->dbmCanvasRepo->getNumberOfCanvasItems(),
+                'numEAItems' => $this->eaCanvasRepo->getNumberOfCanvasItems(),
+                'numEMItems' => $this->emCanvasRepo->getNumberOfCanvasItems(),
+                'numINSIGHTSItems' => $this->insightsCanvasRepo->getNumberOfCanvasItems(),
+                'numLBMItems' => $this->lbmCanvasRepo->getNumberOfCanvasItems(),
+                'numOBMItems' => $this->obmCanvasRepo->getNumberOfCanvasItems(),
+                'numRISKSItems' => $this->risksCanvasRepo->getNumberOfCanvasItems(),
+                'numSBItems' => $this->sbCanvasRepo->getNumberOfCanvasItems(),
+                'numSMItems' => $this->smCanvasRepo->getNumberOfCanvasItems(),
+                'numSQItems' => $this->sqCanvasRepo->getNumberOfCanvasItems(),
+                'numSWOTItems' => $this->swotCanvasRepo->getNumberOfCanvasItems(),
             );
 
             return $telemetry;

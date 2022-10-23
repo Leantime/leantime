@@ -266,7 +266,7 @@ body .maincontent .priority-bg-5 {
 
 .kanbanContent {
     overflow:hidden;
-    max-height:75px;
+    height: 25px;
     position:relative;
 }
 
@@ -277,5 +277,5 @@ body .maincontent .priority-bg-5 {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
+    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
 }
