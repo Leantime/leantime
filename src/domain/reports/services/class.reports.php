@@ -132,7 +132,7 @@ namespace leantime\domain\services {
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
                 'numIdeaItems' => $this->ideaRepository->getNumberOfIdeas(),
-                'numHoursBooked' => $this->timesheetRepo->getHoursBooked()
+                'numHoursBooked' => $this->timesheetRepo->getHoursBooked(),
 				
 				// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
                 'numResearchBoards' => $this->leanCanvasRepo->getNumberOfBoards(),
@@ -151,7 +151,7 @@ namespace leantime\domain\services {
                 'numSWOTBoards' => $this->swotCanvasRepo->getNumberOfBoards(),
 				
                 'numResearchItems' => $this->leanCanvasRepo->getNumberOfCanvasItems(),
-                'numRetroItems' => $this->retrosRepository->getNumberOfCanvasItems(),
+                'numRetroItems' => $this->retrosCanvasRepo->getNumberOfCanvasItems(),
                 'numCPItems' => $this->cpCanvasRepo->getNumberOfCanvasItems(),
                 'numDBMItems' => $this->dbmCanvasRepo->getNumberOfCanvasItems(),
                 'numEAItems' => $this->eaCanvasRepo->getNumberOfCanvasItems(),
@@ -163,7 +163,7 @@ namespace leantime\domain\services {
                 'numSBItems' => $this->sbCanvasRepo->getNumberOfCanvasItems(),
                 'numSMItems' => $this->smCanvasRepo->getNumberOfCanvasItems(),
                 'numSQItems' => $this->sqCanvasRepo->getNumberOfCanvasItems(),
-                'numSWOTItems' => $this->swotCanvasRepo->getNumberOfCanvasItems(),
+                'numSWOTItems' => $this->swotCanvasRepo->getNumberOfCanvasItems()
             );
 
             return $telemetry;
