@@ -22,12 +22,12 @@ composer install --no-dev --optimize-autoloader
 rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
 #Remove DeepL.com and mltranslate engine (not needed in production)
-rm -f vendor/deeplcom
-rm -f resources/languages/mltranslate
+rm -rf vendor/deeplcom
+rm -rf resources/languages/mltranslate
 
 #Remove local configuration, if any
-rm -f config/language
-rm -f config/domain
+rm -rf config/language
+rm -rf config/domain
 
 #Removing unneeded items for release
 rm -f -R .git
