@@ -37,7 +37,7 @@ $canvasName = 'sb';
             </div>
 
 			<?php $statusLabels = $stakeholderStatusLabels; ?>
-            <div class="row" id="stakeholderRow canvas-row">
+            <div class="row canvas-row" id="stakeholderRow">
                 <div class="column" style="width:25%">
                     <?php $elementName = 'sb_st_design'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
@@ -53,7 +53,7 @@ $canvasName = 'sb';
             </div>
 			<?php $statusLabels = []; ?>
 
-            <div class="row" id="financialsRow canvas-row">
+            <div class="row canvas-row" id="financialsRow">
                 <div class="column" style="width:50%">
                     <?php $elementName = 'sb_budget'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>
@@ -62,7 +62,7 @@ $canvasName = 'sb';
                 </div>
             </div>
 
-            <div class="row" id="culturechangeRow canvas-row">
+            <div class="row canvas-row" id="culturechangeRow">
                 <div class="column" style="width:50%">
                     <?php $elementName = 'sb_culture'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
                 </div>

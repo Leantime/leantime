@@ -8,10 +8,10 @@
 ?>
     <?php if(count($this->get('allCanvas')) > 0) {
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
-                <p class="align-center"><br />
-                <?php echo sprintf($this->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
-                </p>
-        <?php } ?>
+        <p class="align-center"><br />
+            <?php echo sprintf($this->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
+        </p>
+    <?php } ?>
 
     <?php }else{
 
@@ -27,13 +27,13 @@
 
             echo "<br />".$this->__("text.$canvasName.helper_content");
             echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> ".
-                "Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
+                 "Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
 
         }
         echo"</div>";
 
     }
-    if(!empty($disclaimer)) { ?>
+    if(!empty($disclaimer) && count($this->get('allCanvas')) > 0) { ?>
         <small class="align-center"><?=$disclaimer ?></small>
     <?php
     }
