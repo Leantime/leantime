@@ -35,7 +35,7 @@ rm -f -R .github
 rm -R node_modules
 rm -R public/images/Screenshots
 rm .gitattributes .gitignore composer.json composer.lock gruntfile.js package-lock.json package.json
-rm createReleasePackage.sh
+rm createReleasePackage.sh Makefile
 
 #removing js directories
 find ./src/domain/ -maxdepth 2 -name "js" -exec rm -r {} \;

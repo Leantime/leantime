@@ -8,7 +8,7 @@ namespace leantime\domain\repositories {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models\auth\roles;
-        
+    
     class menu
     {
 
@@ -21,7 +21,7 @@ namespace leantime\domain\repositories {
                 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                 21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
                 31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
-                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ], 'role' => 'editor' ],
                 51 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
                 52 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
                 53 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
@@ -50,7 +50,7 @@ namespace leantime\domain\repositories {
                 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                 21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
                 31 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap',    'active' => [ 'roadmap' ] ],
-                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                41 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ], 'role' => 'editor' ],
                 50 => [ 'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'open',
                         'submenu' => [
                             51 => [ 'type' => 'item',    'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas' ],
@@ -77,7 +77,7 @@ namespace leantime\domain\repositories {
                 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',  'active' => [ 'show' ] ],
                 12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                    'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
                 13 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => [ 'roadmap' ] ],
-                14 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ] ],
+                14 => [ 'type' => 'item', 'module' => 'timesheets', 'title' => 'menu.timesheets', 'href' => '/timesheets/showAll', 'active' => [ 'showAll' ], 'role' => 'editor' ],
                 15 => [ 'type' => 'item', 'module' => 'ideas',     'title' => 'menu.ideas',    'href' => '/ideas/showBoards' ],
                 16 => [ 'type' => 'item', 'module' => 'leancanvas','title' => 'menu.research', 'href' => '/leancanvas/showCanvas' ],
                 17 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
@@ -153,106 +153,106 @@ namespace leantime\domain\repositories {
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 
                 switch($element['type']) {
-                case 'header':
-                    break;
+					case 'header':
+						break;
 
-                case 'item':
-                    // Update security
-                    if(isset($element['role'])) {
-                        switch($element['role']) {
-                        case 'editor':
-                            $accessGranted = services\auth::userIsAtLeast(roles::$editor);
-                            break;
-                        case 'manager':
-                            $accessGranted = services\auth::userIsAtLeast(roles::$manager);
-                            break;
-                        default:
-                            die("Cannot proceed due to invalid role: '".$element['role']."'");
-                        }
+					case 'item':
+						// Update security
+						if(isset($element['role'])) {
+							switch($element['role']) {
+								case 'editor':
+									$accessGranted = services\auth::userIsAtLeast(roles::$editor);
+									break;
+								case 'manager':
+									$accessGranted = services\auth::userIsAtLeast(roles::$manager);
+									break;
+								default:
+									die("Cannot proceed due to invalid role: '".$element['role']."'");
+							}
 
-                        if(!$accessGranted) {
+							if(!$accessGranted) {
 
-                            $menuStructure[$key]['type'] = 'disabled';
+								$menuStructure[$key]['type'] = 'disabled';
 
-                        }
-                    }
+							}
+						}
 
-                    // Patch link
-                    if($element['module'] == 'tickets' && !isset($element['href'])) {
+						// Patch link
+						if($element['module'] == 'tickets' && !isset($element['href'])) {
 
-                        $ticketService = new services\tickets();
-                        $config = new core\config();
-                                
-                        $menuStructure[$key]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
-
-                    }
-                    break;
-
-                case 'submenu':
-                    // Update menu toggle
-                    if($element['visual'] == 'always') {
-
-                        $menuStructure[$key]['visual'] = 'open';
-
-                    }else{
-
-                        $submenuState = $_SESSION['submenuToggle'][$element['id']] ?? $element['visual'];
-                        $_SESSION['submenuToggle'][$element['id']] = $submenuState;
-
-                    }
-                    $menuStructure[$key]['visual'] = $submenuState;
-
-                    // Parse submenu
-                    foreach($element['submenu'] as $subkey => $subelement) {
-
-                        $menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
-                    
-                        switch($subelement['type']) {
-                        case 'header':
-                            break;
-
-                        case 'item':
-                            // Update security
-                            if(isset($subelement['role'])) {
-
-                                switch($subelement['role']) {
-                                case 'editor':
-                                    $accessGranted = services\auth::userIsAtLeast(roles::$editor);
-                                    break;
-                                case 'manager':
-                                    $accessGranted = services\auth::userIsAtLeast(roles::$manager);
-                                    break;
-                                default:
-                                    die("Cannot proceed due to invalid role: '".$subelement['role']."'");
-                                }
-                                
-                                if(!$accessGranted) {
-
-                                    $menuStructure[$key]['submenu'][$subkey]['type'] = 'disabled';
-
-                                }
-
-                            }
-                                
-                            // Patch link
-                            if($subelement['module'] == 'tickets' && !isset($subelement['href'])) {
-
-                                $ticketService = new services\tickets();
-                                $config = new core\config();
-                                
-                                $menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
-
-                            }
-                            break;
+							$ticketService = new services\tickets();
+							$config = new core\config();
                             
-                        default:
-                            die("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
-                        }
-                    }
-                    break;
-                    
-                default:
-                    die("Cannot proceed due to invalid menu element: '".$element['type']."'");
+							$menuStructure[$key]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
+						}
+						break;
+
+					case 'submenu':
+						// Update menu toggle
+						if($element['visual'] == 'always') {
+
+							$menuStructure[$key]['visual'] = 'open';
+
+						}else{
+
+							$submenuState = $_SESSION['submenuToggle'][$element['id']] ?? $element['visual'];
+							$_SESSION['submenuToggle'][$element['id']] = $submenuState;
+
+						}
+						$menuStructure[$key]['visual'] = $submenuState;
+
+						// Parse submenu
+						foreach($element['submenu'] as $subkey => $subelement) {
+
+							$menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
+							
+							switch($subelement['type']) {
+								case 'header':
+									break;
+
+								case 'item':
+									// Update security
+									if(isset($subelement['role'])) {
+
+										switch($subelement['role']) {
+											case 'editor':
+												$accessGranted = services\auth::userIsAtLeast(roles::$editor);
+												break;
+											case 'manager':
+												$accessGranted = services\auth::userIsAtLeast(roles::$manager);
+												break;
+											default:
+												die("Cannot proceed due to invalid role: '".$subelement['role']."'");
+										}
+										
+										if(!$accessGranted) {
+
+											$menuStructure[$key]['submenu'][$subkey]['type'] = 'disabled';
+
+										}
+
+									}
+									
+									// Patch link
+									if($subelement['module'] == 'tickets' && !isset($subelement['href'])) {
+
+										$ticketService = new services\tickets();
+										$config = new core\config();
+										
+										$menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
+									}
+									break;
+									
+								default:
+									die("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
+							}
+						}
+						break;
+						
+					default:
+						die("Cannot proceed due to invalid menu element: '".$element['type']."'");
                 }
             }
 
