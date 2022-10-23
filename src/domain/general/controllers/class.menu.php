@@ -23,12 +23,18 @@ namespace leantime\domain\controllers {
 			if(isset($_SESSION['currentProject'])) {
 			    $projectRepo = new repositories\projects();
 			    $project = $projectRepo->getProject($_SESSION['currentProject']);
+
 				if($project !== false) {
-					$menuType = $project['menuType'] ?? repositories\menu::DEFAULT_MENU;
-				}
+					$menuType = $project['menuType'];
+				}else{
+					$menuType = repositories\menu::DEFAULT_MENU;
+                }
+                    
 			}
             else {
+                
                 $menuType = repositories\menu::DEFAULT_MENU;
+                
 			}
 			
             $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
