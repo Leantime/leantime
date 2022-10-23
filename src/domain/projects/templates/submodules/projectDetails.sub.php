@@ -56,7 +56,8 @@ $menuTypes = $this->get('menuTypes');
                             </div>
                         </div>
 					<?php } else { ?>
-		                <input type="hidden" name="menuType" id="menuType" value="<?php echo repositories\menu::DEFAULT_MENU; ?>">
+		                <input type="hidden" name="menuType" id="menuType"
+							   value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
 					<?php } ?>
                     <div class="form-group">
 

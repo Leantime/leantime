@@ -95,6 +95,13 @@ namespace leantime\domain\repositories {
         {
 
             $language = new core\language();
+			$config = new core\config();
+
+			if(!$config->enableMenuType) {
+                
+				return [ self::DEFAULT_MENU => $language->__('label.menu_type.'.self::DEFAULT_MENU) ];
+                
+            }
             
             $menuTypes = [];
             
@@ -134,7 +141,7 @@ namespace leantime\domain\repositories {
 
             $language = new core\language();
             
-            if(!isset($this->menuStructures[$menuType])) {
+            if(!isset($this->menuStructures[$menuType]) || empty($menuType)) {
                 
                 $menuType = self::DEFAULT_MENU;
                 

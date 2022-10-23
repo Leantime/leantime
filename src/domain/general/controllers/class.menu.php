@@ -23,7 +23,9 @@ namespace leantime\domain\controllers {
 			if(isset($_SESSION['currentProject'])) {
 			    $projectRepo = new repositories\projects();
 			    $project = $projectRepo->getProject($_SESSION['currentProject']);
-				$menuType = $project['menuType'];
+				if($project !== false) {
+					$menuType = $project['menuType'] ?? repositories\menu::DEFAULT_MENU;
+				}
 			}
             else {
                 $menuType = repositories\menu::DEFAULT_MENU;
@@ -34,8 +36,6 @@ namespace leantime\domain\controllers {
             $tpl->assign('allAvailableProjects', $allAvailableProjects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
 			$tpl->assign('menuStructure', $menuRepo->getMenuStructure($menuType));
-
-            // $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
 
             $tpl->displayPartial('general.menu');
 
