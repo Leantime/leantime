@@ -266,7 +266,7 @@ body .maincontent .priority-bg-5 {
 
 .kanbanContent {
     overflow:hidden;
-    height:75px;
+    max-height:75px;
     position:relative;
 }
 

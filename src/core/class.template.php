@@ -58,9 +58,6 @@ namespace leantime\core {
 
         public $mainContent = '';
 
-        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
-
-
         public $picture = array(
             'calendar'    => 'fa-calendar',
             'clients'     => 'fa-people-group',
@@ -123,7 +120,7 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template, $status = 200, $layout = "app")
+        public function display($template, $layout = "app")
         {
 
             //These variables are available in the template
@@ -135,8 +132,6 @@ namespace leantime\core {
             $language = $this->language;
 
             $this->template = $template;
-
-            //http_response_code($this->validStatusCodes[$status] ?? 200);
 
             //Load Layout file
             ob_start();
@@ -201,10 +196,10 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template, $statusCode = 200)
+        public function displayPartial($template)
         {
 
-            $this->display($template, $statusCode, 'blank');
+            $this->display($template, 'blank');
 
         }
 
