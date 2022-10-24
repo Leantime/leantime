@@ -347,7 +347,7 @@ namespace leantime\core {
         public function e($content): void
         {
 
-
+            $content = $this->convertRelativePaths($content);
             $escaped = $this->escape($content);
 
             echo $escaped;
@@ -358,6 +358,7 @@ namespace leantime\core {
         {
 
             if(!is_null($content)) {
+                $content = $this->convertRelativePaths($content);
                 return htmlentities($content);
             }
 
@@ -368,6 +369,7 @@ namespace leantime\core {
         public function escapeMinimal($content): string
         {
 
+            $content = $this->convertRelativePaths($content);
             $config = array(
                 'safe'=>1,
                 'style_pass'=>1,
@@ -420,7 +422,7 @@ namespace leantime\core {
             $tags = array();
             $isUtf8 = true;
             $truncate = "";
-
+            $html = $this->convertRelativePaths($html);
             // For UTF-8, we need to count multibyte sequences as one character.
             $re = $isUtf8
                 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}'
@@ -492,6 +494,34 @@ namespace leantime\core {
             }
 
             return $truncate;
+        }
+
+        public function convertRelativePaths($text)
+        {
+            if(is_null($text)){
+                return $text;
+            }
+
+            $base = BASE_URL;
+
+          // base url needs trailing /
+          if (substr($base, -1, 1) != "/")
+            $base .= "/";
+
+          // Replace links
+            $pattern = "/<a([^>]*) " .
+                "href=\"([^http|ftp|https|mailto|#][^\"]*)\"/";
+          $replace = "<a\${1} href=\"" . $base . "\${2}\"";
+          $text = preg_replace($pattern, $replace, $text);
+          // Replace images
+
+            $pattern = "/<img([^>]*) " .
+                       "src=\"([^http|ftp|https][^\"]*)\"/";
+          $replace = "<img\${1} src=\"" . $base . "\${2}\"";
+
+          $text = preg_replace($pattern, $replace, $text);
+          // Done
+          return $text;
         }
 
         public function getModulePicture()
