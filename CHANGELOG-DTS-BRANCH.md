@@ -34,7 +34,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.1.24
+Leantime DTS Branch 0.1.25
 
 
 ## Author
@@ -254,3 +254,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ## 0.1.24 2022-10-22
 - Update: Added telemetry data
+
+## 0.1.25 2022-10-24
+- Update: Changed icon from `caret-down` to `angle-down` in current project menu. Convention: Use `angle` for items that
+  toggle open/clode and use `caret` for items that pop-up. Changed direction of `caret` for current project menu pop-up
+  pointing to where it appears.
+- Bug: Corrected icon used next to New menu in To-Dos.

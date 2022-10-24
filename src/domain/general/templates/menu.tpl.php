@@ -23,7 +23,7 @@
             <div class="form-group">
                 <form action="" method="post">
                     <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown">
-                        <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-down"></i>
+                        <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
                     </a>
 
                     <ul class="dropdown-menu projectselector">
@@ -40,7 +40,7 @@
 
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
-                                    echo "<li class='nav-header border openToggle' onclick='leantime.menuController.toggleClientList(".$projectRow['clientId'].", this)'>" . $this->escape($projectRow['clientName']) . " <i class=\"fa fa-caret-down\"></i></li>";
+                                    echo "<li class='nav-header border openToggle' onclick='leantime.menuController.toggleClientList(".$projectRow['clientId'].", this)'>" . $this->escape($projectRow['clientName']) . " <i class=\"fas fa-angle-down\"></i></li>";
                                 }
                                 echo "<li class='client_".$projectRow['clientId']."";
                                     if ($this->get('currentProject') == $projectRow["id"]) { echo " active "; }
