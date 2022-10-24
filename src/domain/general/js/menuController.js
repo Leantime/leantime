@@ -109,12 +109,12 @@ leantime.menuController = (function () {
 
         jQuery(".client_"+id).toggle("fast");
 
-        if(jQuery(element).find("i").hasClass("fa-caret-down")){
-            jQuery(element).find("i").removeClass("fa-caret-down");
-            jQuery(element).find("i").addClass("fa-caret-up");
+        if(jQuery(element).find("i").hasClass("fa-angle-down")){
+            jQuery(element).find("i").removeClass("fa-angle-down");
+            jQuery(element).find("i").addClass("fa-angle-up");
         }else{
-            jQuery(element).find("i").removeClass("fa-caret-up");
-            jQuery(element).find("i").addClass("fa-caret-down");
+            jQuery(element).find("i").removeClass("fa-angle-up");
+            jQuery(element).find("i").addClass("fa-angle-down");
         }
 
     }
