@@ -69,9 +69,9 @@ if(file_exists($dst_file)) {
 	
 }else {
 
-	echo "Warning: cannot read file '$dst_file'. Ignoring\";
+	echo "Warning: cannot read file '$dst_file'. Ignoring\n";
 
- }
+}
 
 // Open file to translate
 $src_stream = fopen($src_file, 'r');
@@ -129,9 +129,9 @@ while(!feof($src_stream)) {
 
 		// Translating
 		echo $key.' = "'.$src_text.'"'.PHP_EOL;
-		if(!isset($dst_text_ary[$key])) {
-				
-			if(in_array($dst_lang, $dst_langs) && $src_lang !== $dst_lang) {
+		if(!isset($dst_text_ary[$key]) && !isset($dst_text_ary['MTR.'.$key])) {
+			
+			if(in_array($dst_lang, $langs) && $src_lang !== $dst_lang) {
 				
 				try {
 					
@@ -162,8 +162,16 @@ while(!feof($src_stream)) {
 			echo 'MTR.'.$key.' = "'.$tra_text.'"'.PHP_EOL;
 			
 		}else{
-			
-			$tra_text = $dst_text_ary[$key];
+
+            if(isset($dst_text_ary[$key])) {
+                
+                $tra_text = $dst_text_ary[$key];
+
+            }else{
+                
+                $tra_text = $dst_text_ary['MTR.'.$key];
+
+            }
 			fwrite($tra_stream, $key.' = "'.$tra_text.'"'.PHP_EOL);
 			echo $key.' = "'.$tra_text.'"'.PHP_EOL;
 			

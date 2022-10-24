@@ -92,7 +92,6 @@ headlines.page_forbidden = "Vous n'êtes pas autorisé à consulter cette page"
 
 headlines.delete_project_x = "Supprimer le Projet %1$s"
 headlines.research_next_big_product = "Recherchez votre prochain grand objectif et collectez vos réflexions ici."
-headline.research_board = "Recherche de solutions"
 headline.delete_board = "Supprimer le tableau"
 headline.all_clients = "Tous les Clients"
 headline.new_client = "Nouveau Client"
@@ -117,7 +116,6 @@ headlines.welcome_to_leantime = "Bienvenue sur sur Leantime!"
 headlines.step_one_discover = "1. Découvrir"
 headlines.step_two_plan = "2. Planifier"
 headlines.step_three_track = "3. Suivre"
-headlines.welcome_to_research_board = "Bienvenue sur le tableau de recherche complet !"
 headlines.welcome_to_idea_board = "Bienvenue sur le tableau d'idées !"
 headlines.the_kanban_board = "Tableau Kanban"
 headlines.the_timesheets = "Feuille de temps"
@@ -127,7 +125,6 @@ headlines.congrats_on_your_project = "Félicitations pour votre projet !"
 headlines.welcome_to_your_roadmap = "Bienvenue sur votre feuille de route !"
 headlines.welcome_to_clients_products = "Bienvenue sur Clients / Produits!"
 headlines.welcome_to_projects = "Bienvenue sur votre page Projets!"
-headlines.welcome_to_simple_research_board = "Bienvenue sur le tableau de recherche simple !"
 headlines.update_database = "Mettre à jour la base de données"
 headlines.installation = "Installation"
 headlines.reset_password = "Réinitialiser le mot de passe"
@@ -138,7 +135,6 @@ headlines.my_portfolio = "Mes projets"
 headlines.import_ldap_users = "Importer des utilisateurs LDAP"
 headlines.documents = "Documents"
 headlines.latest_todos = "Dernières tâches à accomplir"
-
 
 subtitles.sprint_burndown = "Sprint Burndown"
 subtitles.backlog_burndown = "Backlog Burndown"
@@ -223,7 +219,6 @@ notification.error_installing = "Une erreur s'est produite lors de l'installatio
 notifications.user_was_added_to_project = "Les membres de l'équipe ont été mis à jour avec succès"
 notifications.not_assigned_to_any_project = "Vous n'êtes affecté à aucun projet. Vous pouvez mettre à jour votre profil ou vous détendre en buvant une tasse de café."
 
-
 notification.project_has_tasks = "Il y a encore des taches actives dans ce projet. Le projet ne peut être supprimé. Veuillez supprimer toutes les tâches d'abord"
 notification.project_deleted = "Projet supprimé avec succès"
 notifications.milestone_detached = "Jalon détaché avec succès"
@@ -237,8 +232,6 @@ notification.saving_milestone_error = "Un problème est survenu lors de l'enregi
 notification.idea_edited_successfully = "Idée éditée avec succès"
 notification.feedback_successfully_created = "Feedback créé avec succès"
 
-notification.research_board_deleted = "Tableau de recherche supprimé avec succès"
-notification.research_board_item_deleted = "Hypothèse supprimée avec succès"
 notification.hypothesis_created = "Hypothèse créée avec succès"
 notifications.new_canvas_created = "Nouveau tableau créé avec succès"
 notification.idea_board_item_deleted = "Idée supprimée avec succès"
@@ -295,7 +288,6 @@ notification.article_created_successfully = "L'article a été créé avec succ�
 
 notifications.ical_success = "URL iCal créée avec succès"
 notifications.ical_removed_success = "L'URL iCal a été supprimée"
-
 
 short_notifications.effort_updated = "Effort mis à jour avec succès"
 short_notifications.priority_updated = "Priorité mise à jour avec succès"
@@ -440,8 +432,6 @@ links.edit_milestone = "Editer le jalon"
 links.view_todos = "Voir les tâches"
 link.new_project = "Nouveau projet"
 link.new_client = "Nouveau client"
-links.simple_canvas = "<i class='fas fa-columns'></i> Tableau de recherche simple"
-links.full_canvas = "<i class='fas fa-graduation-cap'></i> Lean Canvas Complet"
 links.create_plan = "<i class='fa fa-plus'></i>  Créer un nouveau tableau"
 links.edit_board = "<i class='fa fa-edit'></i> Changer le titre</a>"
 links.add_new_canvas_item = "<span class='fa fa-plus'></span> Ajouter un nouvel élément"
@@ -469,7 +459,6 @@ links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Ajouter à la feu
 links.read_more = "Lire la suite"
 links.add_team_member = "Ajouter un membre de l'équipe"
 links.create_user = "Créer un nouvel utilisateur"
-
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Ma feuille de temps</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Mon calendrier</span>"
@@ -534,7 +523,7 @@ text.are_you_sure_delete_wiki = "Êtes-vous sûr de vouloir supprimer ce wiki ? 
 text.are_you_sure_delete_article = "Êtes-vous sûr de vouloir supprimer cet article ?"
 
 text.use_milestone_to_track_retro = "Utiliser un jalon pour suivre la progression vers vos rétrospectives."
-text.use_milestone_to_track_leancanvas = "Utiliser un jalon pour suivre la progression vers vos canvas Lean."
+MTR.text.use_milestone_to_track_canvas = "Utilisez un jalon pour suivre la progression vers votre objectif."
 text.use_milestone_to_track_idea = "Utiliser un jalon pour suivre la progression vers vos idées."
 text.all_milestones = "Tous les Jalons"
 text.confirm_ticket_deletion = "Etes-vous sûr de vouloir supprimer cette tâche ?"
@@ -542,8 +531,6 @@ text.confirm_project_deletion = "Etes-vous sûr de vouloir supprimer ce project 
 text.confirm_client_deletion = "Etes-vous sûr de vouloir supprimer ce client ?"
 text.confirm_milestone_deletion = "Etes-vous sûr de vouloir supprimer ce jalon ?"
 text.confirm_event_deletion = "Etes-vous sûr de vouloir supprimer cet événement ?"
-text.confirm_research_board_item_deletion = "Etes-vous sûr de vouloir supprimer cet hypothése ?"
-text.confirm_research_board_deletion = "Etes-vous sûr de vouloir supprimer ce tableau de recherche ?"
 text.confirm_user_deletion = "Etes-vous sûr de vouloir supprimer cet utilisateur ?"
 text.mattermost_instructions = "Cette intégration postera des notification de mise à jour sur le canal de votre choix.<br/>Suivez les instructions <a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>ici pour obtenir une URL Webhook entrante URL</a> depuis Mattermost. Ensuite, collez le lien dans le formulaire à droite et cliquez sur Enregistrer."
 text.slack_instructions = "Cette intégration postera des notification de mise à jour sur le canal de votre choix.<br/>Suivez les instructions <a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>ici pour obtenir une URL Webhook entrante</a> depuis Slack. Ensuite, collez le lien dans le formulaire à droite et cliquez sur Enregistrer."
@@ -552,8 +539,6 @@ text.expected_to_finish_by = "Devrait finir le"
 text.zulip_instructions = "Cette intégration postera des notification de mise à jour sur le stream and le topic de votre choix.<br />Suivez les instructions <a href="
 text.discord_instructions = "Cette intégration postera des notifications de mise à jour sur le canal de votre choix.<br/>Suivez les instructions <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>ici pour créer un ou plusieurs nouveaux webhooks </a>, puis collez le ou les liens dans les champs à droite et cliquez sur Enregistrer."
 text.no_conclusion_yet = "<i>Pas de conclusion pour l'instant</i>"
-text.no_lean_canvas_content = "Un tableau de recherche vous aidera à réfléchir aux problèmes et aux solutions pour un client.<br/>Nous vous suggérons de créer un nouveau tableau pour chaque produit, service, objectif que vous voulez créez.<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> Créer un tableau de recherche</a>"
-text.lean_canvas_is_adapted_message = "Le Lean Canvas est adapté depuis <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> et sa licence est Creative Commons Attribution-Share Alike 3.0"
 text.no_users_assigned_to_this_client = "Pas de contact pour ce client. Ajouter et assigner des utilisateur <a href='/users/showAll'>ici</a>"
 text.confirm_delete_timesheet = "La feuille de temps sera supprimée. Etes-vous sûr ?"
 text.timer_on_todo = "<span class='head-icon fa fa-stop'></span> %1$s Timer sur %2$s"
@@ -565,7 +550,6 @@ text.glad_youre_here = "Nous sommes heureux que vous soyez ici. Prenons une minu
 text.business_research_section = "Notre section Recherche est votre nouveau foyer pour vos idées. Cette section est conçue pour vous guider à travers les étapes de développement client, de recherche de problèmes et d'idéation de solutions."
 text.our_roadmap_design = "Notre feuille de route est conçue pour vous conduire depuis des petites étapes gérables jusqu'à la réalisation d'un grand projet. Planifiez des jalons d'environ 3 mois et utilisez ces jalons de projet pour rester focalisé sur la cible."
 text.this_is_where_you_spend_most_time = "C'est là que vous passerez le plus clair de votre temps. Planifiez vos Sprints de 2 semaines et exécutez-les avec succès avec le tableau Kanban et nos outils Backlog. Utilisez Retrospectives pour apprendre de vos erreurs et améliorer votre prochain Sprint."
-text.full_lean_canvas_helper_content = "Le comité de recherche complet vous guidera tout au long du processus de validation des idées. <br/> Sur cette page, vous aborderez à nouveau votre segment de clientèle, votre problème, votre solution (mais ne vous inquiétez pas, si vous avez rempli cela sur le tableau Simple, vous le reverrez ici!). <br / > <br/> À partir de là, vous passerez à <br/> Plus-Value principale (Qu'est-ce qui rend votre idée meilleure que les autres offres?), <br/> Canaux de distribution (Comment allez-vous proposer votre solution à vos clients?) <br/> Flux de revenus (Comment votre solution va-t-elle rapporter de l'argent?) <br/> Structure des coûts (Combien vaut votre solution?) <br/> Indicateurs clés (Comment mesurerez-vous le succès?) <br/> Et injuste Avantage (Qu'est-ce qui vous aidera à réussir contre la concurrence?) <br/> Les réponses à ces questions visent à promouvoir le succès, à atténuer les échecs et à vous permettre de suivre et de valider vos hypothèses. Être Lean, c'est éliminer le gaspillage </br> et travailler à créer des produits, des activités et des solutions dont vos clients ont besoin."
 text.idea_board_helper_content = "C'est l'endroit où rassembler toutes vos idées. Discutez de nouvelles idées avec votre équipe et attachez des jalons pour voir les progrès."
 text.kanban_helper_content = "Kanban est le mot japonais pour «carte». Les tableaux Kanban ont été lancés par les ingénieurs de Toyota dans les années 40 avec la fabrication au plus juste.<br/>Ils sont utilisés pour partager visuellement des informations et l'avancement du travail rapidement.<br/>Les tableaux Kanban sont utiles pour visualiser le travail et l'état, pour aider à gérer actif ou en cours travaillez, gérez le flux de travail et agissez rapidement vers des améliorations Lean.<br/><br/>Démarrez la visite pour voir comment notre tableau Kanban fonctionne ou cliquez sur Fermer pour commencer!"
 text.my_timesheets_helper_content = "Les feuilles de temps sont l'endroit idéal pour suivre les heures réelles de travail sur une tâche.<br/>Ceci est utile à des fins de facturation, mais aussi pour valider dans quelle mesure vous planifiez vos tâches à l'avance.<br/>Les heures supplémentaires peuvent ajuster les dates d'échéance pour tenir compte des écarts de planification."
@@ -575,7 +559,6 @@ text.retros_helper_content = "<p>Les rétrospectives sont des réflexions rapide
 text.roadmap_helper_content = "<p>Les feuilles de route sont utiles pour réduire les grands projets en morceaux plus petits et plus faciles à gérer.<br/><br/></p> <p> Pour créer votre feuille de route, nous vous recommandons de définir des jalons pouvant être atteints dans un délai de 3 mois. </p> <p> Les jalons sont des points de contrôle sur le chemin de l'achèvement du projet.<br/>En termes simples: si vous faites un voyage en voiture à travers le pays, chaque état que vous traversez pourrait être un jalon.<br/><br/>Cliquez sur 'Ajouter un jalon' en haut à gauche pour commencer. Définissez la date sur cet onglet ou dans le graphique de la feuille de route lui-même en cliquant et en faisant glisser le jalon dans le calendrier.</p>"
 text.show_clients_helper_content = "<p>Les clients / produits organisent vos projets en catégories et vous permettent d'isoler différents groupes.<br/><br/></p> <p> En tant que consultant, vous travaillez déjà avec des clients et ce serait l'endroit pour les organiser. </p> <p> Si vous êtes une équipe produit, vous pouvez utiliser cette section pour organiser et isoler vos départements (marketing, ventes, opérations, etc.).</p>"
 text.show_projects_helper_content = "<p>Les projets sont au cœur de votre entreprise ! Le changement, le développement, les objectifs et tout ce que vous pouvez construire ou dont vous rêvez impliquera des projets. La gestion de projet consiste simplement à garantir que vos projets sont livrés en temps opportun, correctement et avec une réelle valeur commerciale. <br /> <br /> C'est là que vos projets vivront. Votre page projets vous permettra de créer un projet, de voir rapidement le nombre de tâches, les heures, le budget et le client associé à chaque projet. <br /> <br /> Utilisez cette page pour un aperçu rapide de tous vos projets.<br /><br /></p>"
-text.simple_lean_canvas_helper_content = "<p>Le fondement de tout projet est enraciné ici - dans votre recherche. Sur ce tableau, vous vous concentrerez sur la création pour votre client en utilisant l'ajustement de la solution de problème.<br/><br/>Dans l'ajustement de solution de problème, vous commencerez par identifier qui est votre client. Pensez aux données démographiques, à ce qu'ils font et à ce dont ils ont besoin.<br/>Ensuite, vous identifierez leurs difficultés ou leurs problèmes. Enfin, vous ajouterez comment vous prévoyez de résoudre leur problème.<br/><br/>Créer des produits, des projets ou des offres qui résolvent les problèmes des clients contribuent à promouvoir le succès des produits et à atténuer les échecs.<br/><br/>Vous pouvez constater que vous avez plusieurs façons de résoudre leurs problèmes. C'est génial! Vous pouvez les mettre ici ou passer au tableau d'idées pour suivre ces idées.<br/>Une fois que vous avez commencé, l'étape suivante consistera à valider vos hypothèses sur votre client, ses problèmes et vos solutions.<br/>Vous pouvez l'ajouter ici ou passer<br/>à votre tableau de recherche complet pour commencer à collecter plus d'informations.</p>"
 text.new_db_version = "Une nouvelle version a été installée. Pour utiliser Leantime, vous devrez mettre à jour votre base de données.<br/><br/><strong> Veuillez vous assurer de sauvegarder votre base de données avant d'effectuer cette mise à jour! </strong><br/>Cela peut prendre quelques minutes."
 text.update_was_successful = "La mise à jour est terminé avec succès, vous pouvez vous connecter. <a href='%1$s'>Se connecter</a>"
 text.this_script_will_set_up_leantime = "Ce script configurera votre base de données et créera un compte administrateur"
@@ -598,7 +581,6 @@ labels.defaultaccess = "Qui peut accéder à ce projet?"
 labels.everyone_in_org = "Tout le monde dans cette organisation"
 labels.everyone_in_client = "Toutes les personnes affectées à ce client"
 labels.only_chose = "Seulement les utilisateurs que je choisis dans la rubrique 'Équipe'."
-
 
 label.id = "ID"
 label.due = "Echéance :"
@@ -825,8 +807,6 @@ label.reportType = "Rapport en tant que"
 label.showInKanban = "Afficher sur le tableau Kanban"
 links.my_portfolio = "<span class='fa fa-briefcase'></span> Voir le portefeuille"
 
-
-
 label.send_telemetry = "Aidez-nous à améliorer Leantime !"
 label.telemetry_background = "Envoyez des données anonymes <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>sur le nombre de projets, d'utilisateurs, de tickets etc. à Leantime.io</a>. Aucune donnée personnelle identifiable ne sera envoyée et il nous sera impossible de suivre les utilisateurs individuels."
 
@@ -838,7 +818,6 @@ label.grey = "Gris"
 
 labels.all_projects = "Tous les projets"
 label.dates = "Dates d'échéance"
-
 
 labels.createdBy_on = "Créé par %s %s le %s, modifié le %s"
 labels.tags = "Tags"
@@ -866,7 +845,6 @@ label.dark = "Sombre"
 label.draft = "Draft"
 label.published = "Publié sur"
 label.draft_parenth = "(projet)"
-
 
 dropdown.how_big_todo = "Effort à fournir"
 dropdown.select_priority = "Priorité"
@@ -1068,7 +1046,6 @@ tour.change_views_text = "Ces boutons vous permettent de passer de la vue table 
 tour.congratulations_kanban_text = "Vous avez terminé la visite!<br/>Si vous avez besoin d'aide supplémentaire. Visitez notre base de connaissances à <a href='https://help.leantime.io' target='_blank'> https://help.leantime.io </a><br/><br/>Ne pas N'hésitez pas à contacter notre équipe d'assistance pour toute aide supplémentaire!<br/>Nous sommes là pour vous faciliter la vie."
 
 
-
 ## Leantime DTS Branch
 
 
@@ -1172,7 +1149,7 @@ short_notifications.relates_updated = "Concerne la mise à jour réussie"
 
 pdf.label.page = "Page"
 pdf.language.longdateformat = "l, F j, Y"
-
+MTR.pdf.disclaimer.confidential = "CE DOCUMENT EST CLASSIFIÉ *** CONFIDENTIEL ***<br>EN AUCUN CAS VOUS N'ÊTES AUTORISÉ À LE MONTRER OU À LE TRANSMETTRE À UN TIERS."
 
 ## Insights
 
@@ -1425,7 +1402,7 @@ headlines.lbm.welcome_to_board = "Bienvenue au Modèle Commercial Simplifié !"
 
 text.lbm.helper_content = "Le <em>Modèle Commercial Simplifié</em> vous aidera à documenter votre organisation actuelle, vos concurrents et le secteur. Il soutient l'identification de l'orientation stratégique d'une entreprise et jette les bases de la conception d'un modèle d'affaires détaillé original et compétitif.<br />Vous trouverez plus de détails dans le chapitre 3 du livre <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br />Nous recommandons d'utiliser la variante légère du business model canvas chaque fois que vous n'avez pas besoin des spécificités du modèle d'affaires détaillé ou original d'Osterwalter."
 tour.lbm.once_your_done = "<em>Une fois que vous vous sentez à l'aise avec votre modèle économique simplifié, rendez-vous sur le</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
-text.lbm.disclaimer = "Le <em>Modèle Commerical Détaillé</em> est tiré de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> et est basé sur le <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. Il est placé sous la licence <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+text.lbm.disclaimer = "Le <em>Lightweight Business Model Canvas</em> est tiré de <a href='https://inov.at/dts'>Design Thinking for Strategy</a> et est basé sur le <em>Business Model Canvas</em> de <a href='https://www.strategyzer.com'>Strategyzer</a>. Il est placé sous la licence <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
 
 
 ## Osterwalder's Business Model
