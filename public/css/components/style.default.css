@@ -5302,6 +5302,16 @@ input.secretInput:active {
     font-size:var(--base-font-size);
 }
 
+.commentContent.statusUpdate {
+    background:transparent;
+    border: 1px solid var(--main-border-color);
+}
+
+.commentContent.statusUpdate h3 {
+    margin-bottom:8px;
+    font-weight: bold;
+}
+
 #mainToggler {
     margin-bottom:15px;
     display:block;

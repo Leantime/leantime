@@ -135,6 +135,7 @@
                             }
                             ?>
                             <a class="anchor" id="accordion_anchor_<?=$i ?>"></a>
+
                             <h5 class="accordionTitle" id="accordion_link_<?=$i ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$i ?>" onclick="accordionToggle('<?=$i ?>');">
                                     <i class="fa fa-caret-down"></i><?=$this->__($ticketGroup["labelName"]) ?>
@@ -166,7 +167,6 @@
                                             <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                                 <div class="row">
                                                     <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                                        <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                         <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                             $clockedIn = $this->get("onTheClock");
@@ -190,6 +190,9 @@
                                                             </div>
 
                                                         <?php } ?>
+                                                        <small><?=$this->e($row['projectName']) ?></small><br />
+                                                        <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+
                                                     </div>
                                                 </div>
                                                 <div class="row">
