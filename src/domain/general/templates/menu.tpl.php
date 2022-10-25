@@ -79,7 +79,7 @@
 					<ul style="display: <?php echo $menuItem['visual'] == 'closed' ? 'none' : 'block'; ?>;" id="submenu-<?=$menuItem['id'] ?>">
 					<?php foreach($menuItem['submenu'] as $subkey => $submenuItem) { ?>
 				        <?php if($submenuItem['type'] == 'header') { ?>
-                            <li><a href="javascript:void(0);"style="font-size: small; padding-top: 5px; padding-bottom: 5px"><strong><?=$this->__($submenuItem['title']) ?></strong></a></li>
+                            <li><a href="javascript:void(0);" style="font-size: small; padding-top: 5px; padding-bottom: 5px"><strong><?=$this->__($submenuItem['title']) ?></strong></a></li>
 				        <?php } ?>
 				        <?php if($submenuItem['type'] == 'item') { ?>
 							 <li <?php if($module == $submenuItem['module'] && (!isset($submenuItem['active']) || in_array($action, $submenuItem['active']))) echo " class='active'"; ?>>

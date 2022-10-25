@@ -34,7 +34,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.1.25
+Leantime DTS Branch 0.1.26
 
 
 ## Author
@@ -260,3 +260,6 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   toggle open/clode and use `caret` for items that pop-up. Changed direction of `caret` for current project menu pop-up
   pointing to where it appears.
 - Bug: Corrected icon used next to New menu in To-Dos.
+
+## 0.1.26 2022-10-25
+- Update: Move PDF generation from standalone function `/pdf.php` into controller function.

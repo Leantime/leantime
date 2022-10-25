@@ -54,12 +54,12 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                                 $i=0;
                                 foreach($this->get('allCanvas') as $canvasRow){ 
 
-                                    echo"<option value='".$canvasRow["id"]."'";
+                                    echo "<option value='".$canvasRow["id"]."'";
                                     if($this->get('currentCanvas') == $canvasRow["id"]) {
                                         $canvasTitle= $canvasRow["title"];
-                                        echo" selected='selected' ";
+                                        echo " selected='selected' ";
                                     }
-                                    echo">".$canvasRow["title"]."</option>";
+                                    echo ">".$canvasRow["title"]."</option>";
                                 }
                                 ?>
                             </select><br />
@@ -68,7 +68,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                                 <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></small> |
                                 <small><a href="javascript:void(0)" class="cloneCanvasLink "><?=$this->__("links.icon.clone") ?></a></small> |
                             <?php } ?>
-                            <small><a href="<?=BASE_URL ?>/pdf.php?module=<?=$canvasName ?>&amp;type=canvas&amp;id=<?php echo $this->get('currentCanvas'); ?>&filter_status=<?=$filter['status'] ?>&filter_relates=<?=$filter['relates'] ?>"><?=$this->__("links.icon.print") ?></a></small>
+                            <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/pdf/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.print") ?></a></small>
                             <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                                 | <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></small>
                             <?php } ?>

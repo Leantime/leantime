@@ -2,11 +2,11 @@
 /**
  * HTML code for PDF report
  */
-namespace leantime\domain\pdf {
+namespace leantime\domain\controllers {
   
 	use leantime\domain\repositories;
 	
-    class insightscanvas extends \leantime\domain\pdf\canvas {
+    class pdf extends \leantime\domain\controllers\canvas\pdf {
 
 		protected const CANVAS_NAME = 'insights';
         

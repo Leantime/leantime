@@ -3,7 +3,7 @@
  * canvas class - Template - HTML code for PDF report
  */
 
-namespace leantime\domain\pdf {
+namespace leantime\domain\controllers\canvas {
     
     use leantime\core;
     use leantime\domain\repositories;
@@ -11,7 +11,7 @@ namespace leantime\domain\pdf {
     /**
      * Template class for generating PDF reports
      */           
-    class canvas {
+    class pdf {
         
         /**
          * Constant that must be redefined
@@ -81,6 +81,43 @@ namespace leantime\domain\pdf {
                 'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
                 'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
             ];
+            
+        }
+
+        /**
+         * run - Generate PDF report
+         */
+        public function run()
+        {
+
+            // Retrieve id of cavnas to print
+            if(isset($_GET['id']) === true) {
+                
+                $canvasId = (int)$_GET['id'];
+                
+            }
+            elseif(isset($_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'])) {
+                
+                $canvasId = $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'];
+                
+            }
+            else{
+                return;
+            }
+
+            // Retrieve filter status 
+            $filter['status'] = $_SESSION['filter_status'] ?? 'all';
+            $filter['relates'] = $_SESSION['filter_relates'] ?? 'all';
+
+            // Generate report
+            $reportData = $this->reportGenerate($canvasId, $filter);
+
+            // Service report
+            clearstatcache();
+            header("Content-type: application/pdf");
+            header('Content-Disposition: attachment; filename="report.pdf"');
+            header('Cache-Control: no-cache');
+            echo $reportData;
             
         }
         

@@ -2,13 +2,13 @@
 /**
  * HTML code for PDF report
  */
-namespace leantime\domain\pdf {
+namespace leantime\domain\controllers {
   
 	use leantime\domain\repositories;
 	
-    class retroscanvas extends \leantime\domain\pdf\canvas {
+    class pdf extends \leantime\domain\controllers\canvas\pdf {
 
-		protected const CANVAS_NAME = 'retros';
+		protected const CANVAS_NAME = 'sm';
         
         /***
          * reportGenerate - Generate report for module
