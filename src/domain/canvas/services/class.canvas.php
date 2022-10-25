@@ -22,6 +22,7 @@ namespace leantime\domain\services {
         {
 
             $dom = new \DOMDocument('1.0', 'UTF-8');
+            $users = new repositories\users();
 
             // Read file
             $canvasData = file_get_contents($filename);
@@ -63,8 +64,12 @@ namespace leantime\domain\services {
                     
                     $authorNodeList = $itemName->getElementsByTagName('author');
                     if($authorNodeList->count() !== 1) return false;
-                    if(!$authorNodeList->item(0)->hasAttribute('id')) return false;
-                    $author = $authorNodeList->item(0)->getAttribute('id');
+                    if(!$authorNodeList->item(0)->hasAttribute('firstname')) return false;
+                    $authorFirstname = $authorNodeList->item(0)->getAttribute('firstname');
+                    if(!$authorNodeList->item(0)->hasAttribute('lastname')) return false;
+                    $authorLastname = $authorNodeList->item(0)->getAttribute('lastname');
+                    $author = $users->getUserIdByName($authorFirstname, $authorLastname);
+                    if($author === false) $author = 0;
                     
                     $descriptionNodeList = $itemName->getElementsByTagName('description');
                     if($descriptionNodeList->count() !== 1) return false;
