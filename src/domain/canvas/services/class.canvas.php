@@ -97,7 +97,7 @@ namespace leantime\domain\services {
                                       'data' => $data,
                                       'conclusion' => $conclusion,
                                       'box' => $elementKey,
-                                      'author' => 0000,
+                                      'author' => $author,
                                       'status' => $status,
                                       'relates' => $relates,
                                       'milestoneId' => '' ];
