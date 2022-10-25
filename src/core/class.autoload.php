@@ -63,12 +63,17 @@ function leantimeAutoloader($class)
 	
 	// Check if a customized version of the requested class exists
 	if(!empty($path)) {
+        
 		if(file_exists('../config/'.$path)) {
+            
 			require_once('../config/'.$path);
-		}
-		elseif(file_exists('../src/'.$path)) {
+            
+		}elseif(file_exists('../src/'.$path)) {
+            
 			require_once('../src/'.$path);
+            
 		}
+        
 	}
 }
 

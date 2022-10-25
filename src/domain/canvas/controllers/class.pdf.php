@@ -1,6 +1,6 @@
 <?php
 /**
- * canvas class - Template - HTML code for PDF report
+ * pdf class - Template - HTML code for PDF report
  */
 
 namespace leantime\domain\controllers\canvas {
@@ -90,7 +90,7 @@ namespace leantime\domain\controllers\canvas {
         public function run()
         {
 
-            // Retrieve id of cavnas to print
+            // Retrieve id of canvas to print
             if(isset($_GET['id']) === true) {
                 
                 $canvasId = (int)$_GET['id'];

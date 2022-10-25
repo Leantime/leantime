@@ -60,7 +60,28 @@
           <input type="text" name="canvastitle" value="<?php $this->e($canvasTitle); ?>" style="width: 100%"/>
         </div>
         <div class="modal-footer">
-          <input type="submit"  class="btn btn-default" value="<?=$this->__('buttons.save') ?>" name="cloneCanvas" />
+          <input type="submit"  class="btn btn-default" value="<?=$this->__('buttons.clone') ?>" name="cloneCanvas" />
+          <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->__('buttons.close') ?></button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade bs-example-modal-lg" id="importCanvas">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form action="" enctype="multipart/form-data" method="post">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><i class='fa fa-file-import'></i> <?=$this->__('subtitle.import_board') ?></h4>
+        </div>
+        <div class="modal-body">
+          <label><?=$this->__("label.title_import") ?></label>
+          <input type="file" name="canvasfile" style="width: 100%"/>
+        </div>
+        <div class="modal-footer">
+          <input type="submit"  class="btn btn-default" value="<?=$this->__('buttons.import') ?>" name="importCanvas" />
           <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->__('buttons.close') ?></button>
         </div>
       </form>

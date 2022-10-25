@@ -146,6 +146,63 @@ namespace leantime\domain\controllers\canvas {
 
             }
 
+            // Import canvas
+            if(isset($_POST['importCanvas'])) {
+
+                if(isset($_FILES['canvasfile']) && $_FILES['canvasfile']['error'] === 0) {
+
+                    $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+                    
+                    $status = move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile);
+                    if($status) {
+
+                        $services = new services\canvas();
+                        $importCanvasId = $services->import($uploadfile, static::CANVAS_NAME.'canvas',
+                                                            projectId: $_SESSION['currentProject'],
+                                                            authorId: $_SESSION['userdata']['id']);
+                        unlink($uploadfile);
+                        
+                        if($importCanvasId !== false) {
+
+                            $currentCanvasId = $importCanvasId;
+                            $allCanvas = $canvasRepo->getAllCanvas($_SESSION['currentProject']);
+                            $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'] = $currentCanvasId;
+                            
+                            $mailer = new core\mailer();
+                            $projectService = new services\projects();
+                            $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
+                            $canvas = $canvasRepo->getSingleCanvas($currentCanvasId);
+                            $mailer->setSubject($language->__('notification.board_imported'));
+                        
+                            $actual_link = CURRENT_URL;
+                            $message = sprintf($language->__('email_notifications.canvas_imported_message'),
+                                               $_SESSION['userdata']['name'], "<a href='".$actual_link."'>".$canvas[0]['title'].'</a>');
+                            $mailer->setHtml($message);
+                        
+                            // New queuing messaging system
+                            $queue = new repositories\queue();
+                            $queue->queueMessageToUsers($users, $message, $language->__('notification.board_imported'),
+                                                        $_SESSION['currentProject']);
+
+                            $tpl->setNotification($language->__('notification.board_imported'), 'success');
+                            $tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas/');
+                            
+                        }else{
+
+                            $tpl->setNotification($language->__('notification.board_import_failed'), 'error');
+                            
+                        }
+                        
+                    }else{
+
+                        $tpl->setNotification($language->__('notification.board_import_failed'), 'error');
+                            
+                    }
+                    
+                }
+
+            }
+
             $tpl->assign('currentCanvas', $currentCanvasId);
             $tpl->assign('canvasIcon', $canvasRepo->getIcon());
             $tpl->assign('canvasTypes', $canvasRepo->getCanvasTypes());

@@ -30,11 +30,12 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 - Engine to translate language string using AI/machine learning from https://www.deepl.com (registration needed, 500'000
   characters per month are free)
 - Customization support for languages, templates, and class repositories
+- XML import and export of canvas
 
 
 ## Version
 
-Leantime DTS Branch 0.1.26
+Leantime DTS Branch 0.2.27
 
 
 ## Author
@@ -63,6 +64,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
 - Added selectors that allow to show sub-sets of elements/boxes in a canvas, based on drop-down values (e.g., only
   showing elements/boxes that have been validated)
 - Added icons and colour (both are optional) to elements and removed option to change titles by the user
+- Added system independent XML import and export functionality
 
 ### Ideas Kanban
 The following changes have been applied to the *Ideas* Kanban to make the user experience similar to that of canvas:
@@ -134,6 +136,8 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Documentation of step-by-step how to create a new canvas and add it to the system missing
 - New language tags have been generated for most languages, but need validation before being installed (they can be
   found in `resources/language/mltranslate`)
+- If during import of a canvas an error is detected, the import fails but not reason why it fails is shown to the user
+- The button used to select an xml canvas file for importing is not css-styled
 
 
 ## Change log
@@ -248,6 +252,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Update: Allow `pdf.php` to handle non-canvas boards (through passing its `type` when calling the URL
 - Add: Put confidential disclaimers on all PDFs by default
 
+
+# 0.1 - Customization option added
+
 ## 0.1.23 2022-10-22
 - Add: Add the option to customize/override any language file, template, or class by putting it into `config/language`,
   `config/domain/*/template`, or `config/domain/*/*` respectively [see note on customization]
@@ -263,3 +270,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ## 0.1.26 2022-10-25
 - Update: Move PDF generation from standalone function `/pdf.php` into controller function.
+
+
+# 0.2 - Import / Export functionality added
+
+## 0.2.27 2022-10-25
+- Add: Added functionality to import and export canvas as XML files

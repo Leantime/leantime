@@ -126,6 +126,12 @@ leantime.retrosCanvasController = (function () {
 
         });
 
+        jQuery(".importCanvasLink").click(function() {
+
+            jQuery('#importCanvas').modal('show');
+
+        });
+
     };
 
     var initUserDropdown = function () {
