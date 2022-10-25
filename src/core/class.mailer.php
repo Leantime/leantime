@@ -89,13 +89,22 @@ namespace leantime\core {
 
                 $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
                 $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
-                $this->mailAgent->SMTPAuth = true;                               // Enable SMTP authentication
+                $this->mailAgent->SMTPAuth = $config->smtpAuth;                               // Enable SMTP authentication
                 $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
                 $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
                 $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-                
+                if($config->smtpSSLNoverify === true) {        //If enabled, don't verify certifcates: accept self-signed or expired certs.
+                    $this->mailAgent->SMTPOptions = [
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        ]
+                    ];
+                }
+
             }else{
 
                 $this->mailAgent->isMail();
