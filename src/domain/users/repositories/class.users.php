@@ -617,12 +617,12 @@ namespace leantime\domain\repositories {
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool
         {
-            $query = "SELECT `clientId` FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname":
+            $query = "SELECT `clientId` FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
 
             $stmn = $this->db->database->prepare($query);
             
-            $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-            $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
+            $stmn->bindValue(':firstname', $firstname, PDO::PARAM_STR);
+            $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
 
             $stmn->execute();
             $userId = $this->db->database->lastInsertId();
