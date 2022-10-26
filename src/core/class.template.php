@@ -154,13 +154,17 @@ namespace leantime\core {
 
             $module = $this->frontcontroller::getModuleName($template);
 
-            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            $pluginPath = ROOT.'/../src/plugins/' . $module . '/templates/' . $action.'.tpl.php';
+            $domainPath = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
 
-            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
+            //Try plugin folder first for overrides
+            if(file_exists($pluginPath)) {
+                require_once $pluginPath;
+            }else if(file_exists($domainPath)) {
+                require_once $domainPath;
+            }else{
                 throw new \Exception($this->__("notifications.no_template"));
             }
-
-            require_once $strTemplate;
 
             $content = ob_get_clean();
 

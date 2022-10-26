@@ -144,13 +144,30 @@ namespace leantime\core {
 
             }
 
-            //TODO: refactor to be psr 4 compliant
-            require_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
+            $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+            $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+
+            $controllerNs = "domain";
+
+            //Try plugin folder first for overrides
+            if(file_exists($pluginPath)) {
+                $controllerNs = "plugins";
+                require_once $pluginPath;
+
+            }else if(file_exists($domainPath)) {
+
+                require_once $domainPath;
+
+            }else{
+                self::dispatch("general.error404", 404);
+                return;
+            }
 
             //Initialize Action
             try {
 
-                $classname = "leantime\\domain\\controllers\\".$actionName;
+                $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
+
                 $action = new $classname();
 
                 //Todo plugin controller call
