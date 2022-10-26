@@ -69,7 +69,7 @@ namespace leantime\domain\services {
                     if(!$authorNodeList->item(0)->hasAttribute('lastname')) return false;
                     $authorLastname = $authorNodeList->item(0)->getAttribute('lastname');
                     $author = $users->getUserIdByName($authorFirstname, $authorLastname);
-                    if($author === false) $author = 0;
+                    if($author === false) $author = $authorId;
                     
                     $descriptionNodeList = $itemName->getElementsByTagName('description');
                     if($descriptionNodeList->count() !== 1) return false;
