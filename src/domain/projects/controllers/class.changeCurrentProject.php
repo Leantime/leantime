@@ -41,15 +41,15 @@ namespace leantime\domain\controllers {
                         $this->tpl->redirect(BASE_URL."/dashboard/show");
 
                     }else{
-                        $this->tpl->redirect(BASE_URL."/404/");
+                        $this->tpl->redirect(BASE_URL."/errors/error404");
                     }
                 }else{
-                    $this->tpl->redirect(BASE_URL."/404/");
+                    $this->tpl->redirect(BASE_URL."/errors/error404");
                 }
 
             }else{
 
-                $this->tpl->redirect(BASE_URL."/404/");
+                $this->tpl->redirect(BASE_URL."/errors/error404");
 
             }
 

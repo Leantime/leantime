@@ -14,7 +14,7 @@ namespace leantime\domain\controllers {
 
         public function run() {
 
-            $this->tpl->display("general.error404", 404);
+            $this->tpl->display("general.error404");
 
         }
 

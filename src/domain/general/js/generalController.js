@@ -59,9 +59,11 @@ leantime.generalController = (function () {
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 branding: false,
                 statusbar: false,
-                convert_urls: false,
+                convert_urls: true,
                 paste_data_images: true,
                 menubar:false,
+                relative_urls : true,
+                document_base_url : leantime.appUrl+"/",
                 default_link_target: '_blank',
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
@@ -131,10 +133,12 @@ leantime.generalController = (function () {
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table",
                 branding: false,
                 statusbar: false,
-                convert_urls: false,
+                convert_urls: true,
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,
+                relative_urls : true,
+                document_base_url: leantime.appUrl+"/",
                 min_height: 400,
                 default_link_target: '_blank',
                 images_upload_handler: function (blobInfo, success, failure) {

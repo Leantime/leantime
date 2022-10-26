@@ -71,14 +71,17 @@ class db
             $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
             $this->database = new PDO('mysql:host=' . $this->host . ';port='. $this->port .';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->database->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
 
         }catch(PDOException $e){
 
             echo "No database connection, check your database credentials in your configuration file.<br />\n";
             echo "Checking common issues:<br />\n";
+
             if (!extension_loaded('PDO')) { 
                 echo "- php-PDO is required, but not installed<br />\n";
             }
+
             if (!extension_loaded('pdo_mysql')) { 
                 echo "- php-pdo_mysql is required, but not installed<br />\n";
             }
@@ -87,6 +90,7 @@ class db
                 echo "<br />\Debug information<br />\n";
                 var_dump($e);
             }
+
             exit();
 
         }

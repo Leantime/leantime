@@ -215,7 +215,7 @@
                     <h5 class="subtitle">
                         <?=$this->__('subtitles.project_updates') ?>
                     </h5>
-                    <br />
+
                     <form method="post" action="<?=BASE_URL ?>/dashboard/show">
                         <input type="hidden" name="comment" value="1" />
                         <?php
@@ -238,13 +238,18 @@
 
 
                                 <div id="comment0" class="commentBox" style="display:none;">
-                                    <div class="commentImage">
-                                        <img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" />
-                                    </div>
+                                    <label for="projectStatus" style="display:inline"><?=$this->__('label.project_status_is') ?></label>
+                                    <select name="status" id="projectStatus" style="margin-left: 0px; margin-bottom:10px;">
+                                        <option value="green"><?=$this->__('label.green') ?></option>
+                                        <option value="yellow"><?=$this->__('label.yellow') ?></option>
+                                        <option value="red"><?=$this->__('label.red') ?></option>
+                                    </select>
                                     <div class="commentReply">
-                                        <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+
+                                        <textarea rows="5" cols="50" class="tinymceSimple" name="text" style="width:100%;"></textarea>
                                         <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
                                         <a href="javascript:void(0)" onclick="toggleCommentBoxes(-1)" style="line-height: 50px;"><?=$this->__('links.cancel');?></a>
+
                                     </div>
                                     <input type="hidden" name="comment" value="1"/>
                                     <input type="hidden" name="father" id="father" value="0"/>
@@ -265,14 +270,13 @@
                                             <div class="readMore" style="display:none; margin-top:20px;">
                                                 <?php } ?>
                                         <div class="clearall">
-                                            <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
-                                            </div>
-                                            <div class="commentMain">
-                                                <div class="commentContent">
-                                                    <div class="right commentDate">
-                                                        <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+
+                                            <div class="">
+                                                <div class="commentContent statusUpdate commentStatus-<?=$this->escape($row['status']); ?>">
+                                                    <h3 class="">
+                                                        <?php printf( $this->__('text.report_written_on'), $this->getFormattedDateString($row['date']),
                                                             $this->getFormattedTimeString($row['date']) ); ?>
+
                                                         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                                             <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
                                                                 <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -292,13 +296,18 @@
                                                                 </ul>
                                                             </div>
                                                         <?php } ?>
-                                                    </div>
-                                                    <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
+                                                    </h3>
+
                                                     <div class="text" id="commentText-<?=$row['id']?>"><?php echo ($row['text']); ?></div>
+
 
                                                 </div>
 
                                                 <div class="commentLinks">
+                                                    <small class="right">
+                                                        <?php printf( $this->__('text.written_on_by'), $this->getFormattedDateString($row['date']),
+                                                            $this->getFormattedTimeString($row['date']), $this->escape($row['firstname']), $this->escape($row['lastname']) ); ?>
+                                                    </small>
                                                     <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
                                                         <a href="javascript:void(0);"
                                                            onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">

@@ -122,7 +122,7 @@ namespace leantime\domain\repositories {
 
             } catch (PDOException $e) {
 
-                error_log($e->getMessage());
+                error_log($e);
                 echo $e->getMessage();
 
             }
@@ -191,7 +191,7 @@ namespace leantime\domain\repositories {
                 return true;
 
             } catch (PDOException $e) {
-                error_log($e->getMessage());
+                error_log($e);
                 return false;
 
             }
@@ -277,7 +277,7 @@ namespace leantime\domain\repositories {
 
                         }catch(PDOException $e) {
 
-                            error_log($e->getMessage());
+                            error_log($e);
                             error_log($e->getTraceAsString());
                             return array("There was a problem updating the database");
                         }

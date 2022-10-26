@@ -229,7 +229,7 @@ namespace leantime\core {
                     $this->mailAgent->send();
                 }catch(Exception $e){
                     error_log($this->mailAgent->ErrorInfo);
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
                 $this->mailAgent->clearAllRecipients();
