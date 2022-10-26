@@ -38,7 +38,8 @@ namespace leantime\domain\services {
                     'date' => date("Y-m-d H:i:s"),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $entityId,
-                    'commentParent' => ($values['father'])
+                    'commentParent' => ($values['father']),
+                    'status' => $values['status'] ?? ''
                 );
 
 

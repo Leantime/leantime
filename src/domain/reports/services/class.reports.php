@@ -167,7 +167,7 @@ namespace leantime\domain\services {
 
                     }catch (\Exception $e) {
 
-                        error_log($e->getMessage());
+                        error_log($e);
 
                         $_SESSION['skipTelemetry'] = true;
                         return false;

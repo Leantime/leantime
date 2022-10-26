@@ -47,7 +47,7 @@ namespace leantime\domain\controllers {
                 core\frontcontroller::redirect(BASE_URL."/auth/login");
             }
 
-            $this->tpl->display("install.update", 200, "entry");
+            $this->tpl->display("install.update", "entry");
 
         }
 

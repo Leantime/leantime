@@ -40,7 +40,7 @@ namespace leantime\domain\controllers {
 
             header('Content-type: text/calendar; charset=utf-8');
             header('Content-disposition: attachment;filename="leantime.ics"');
-            $tpl->display("calendar.ical", "200", "blank");
+            $tpl->display("calendar.ical", "blank");
 
         }
 
