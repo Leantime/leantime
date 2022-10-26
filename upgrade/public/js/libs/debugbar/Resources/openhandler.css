@@ -1,0 +1,69 @@
+div.phpdebugbar-openhandler-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .3;
+    z-index: 20000;
+}
+
+div.phpdebugbar-openhandler {
+    position: fixed;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 70%;
+    height: 70%;
+    background: #fff;
+    border: 2px solid #888;
+    overflow: auto;
+    z-index: 20001;
+    font-family: arial;
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+    div.phpdebugbar-openhandler a {
+        color: #555;
+    }
+    div.phpdebugbar-openhandler .phpdebugbar-openhandler-header {
+        background: #efefef url(data:image/png;base64,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)  no-repeat 5px 4px;
+        padding-left: 29px;
+        min-height: 26px;
+        line-height: 25px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+        div.phpdebugbar-openhandler .phpdebugbar-openhandler-header a {
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+            float: right;
+            padding: 5px 8px;
+        }
+    div.phpdebugbar-openhandler table {
+        width: 100%;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+        div.phpdebugbar-openhandler table td {
+            padding: 6px 3px;
+            border-bottom: 1px solid #ddd;
+        }
+            div.phpdebugbar-openhandler table td a{
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions {
+        text-align: center;
+        padding: 7px 0;
+    }
+        div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions a {
+            margin: 0 10px;
+            color: #555;
+        }

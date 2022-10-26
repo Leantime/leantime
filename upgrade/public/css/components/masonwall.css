@@ -1,0 +1,29 @@
+#ideaMason .ticketBox {
+    width: 250px;
+    cursor:move;
+
+    position:absolute;
+
+}
+
+#ideaMason .ticketBox:hover {
+    background:#f9f9f9;
+}
+
+.packery-drop-placeholder {
+    background:#ddd;
+    opacity:0.2;
+    border: 2px dotted #ccc;
+    visibility:visible;
+    /* transition position changing */
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
+}
+
+#ideaMason  .sortableTicketList .ticketBox {
+    cursor: default;
+}
+
+.mainIdeaContent {
+    padding-top:10px;
+}
