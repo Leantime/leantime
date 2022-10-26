@@ -143,10 +143,22 @@ namespace leantime\core {
 
             $layout = htmlspecialchars($layout);
 
-            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
+            if(file_exists(ROOT.'/../config/layouts/'.$layout.'.php')) {
+                
+                require ROOT . '/../config/layouts/'.$layout.'.php';
+                
+            }elseif(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
+                
                 require ROOT . '/../src/layouts/'.$layout.'.php';
+                
+            }elseif(file_exists(ROOT.'/../config/layouts/app.php')) {
+                
+                require ROOT . '/../config/layouts/app.php';
+                
             }else{
+                
                 require ROOT . '/../src/layouts/app.php';
+                
             }
 
             $layoutContent = ob_get_clean();
