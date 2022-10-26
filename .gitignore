@@ -103,12 +103,12 @@ fabric.properties
 # Lock files
 composer.lock
 package-lock.json
-public/images/logo-dts.png
 .github/workflows/phpmd.yml
-resources/language/mltranslate/mltranslate-key.inc.php
 
 # Ignore all configured files
 config/langugage/*
+config/core/*
+config/layouts/*
 config/domain/*
 public/config/custom.css
 public/config/custom.js

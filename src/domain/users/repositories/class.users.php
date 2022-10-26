@@ -617,7 +617,7 @@ namespace leantime\domain\repositories {
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool
         {
-            $query = "SELECT `clientId` FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
+            $query = "SELECT profileId FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
 
             $stmn = $this->db->database->prepare($query);
             
@@ -625,11 +625,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
 
             $stmn->execute();
-            $userId = $this->db->database->lastInsertId();
-
+            $result = $stmn->fetch();
             $stmn->closeCursor();
 
-            return  $userId;
+            return  $result['profileId'] ?? false;
             
         }
         
