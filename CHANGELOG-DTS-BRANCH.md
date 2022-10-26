@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.27
+Leantime DTS Branch 0.2.28
 
 
 ## Author
@@ -276,3 +276,8 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ## 0.2.27 2022-10-25
 - Add: Added functionality to import and export canvas as XML files
+
+## 0.2.28 2022-10-26
+- Update/Add: Allow stylesheet and JavaScript configuration by including `public/config/custom.css` and
+  `public/config/custom.js` if they exist. These files will not be overwritten by a new installation
+  

@@ -110,3 +110,6 @@ resources/language/mltranslate/mltranslate-key.inc.php
 # Ignore all configured files
 config/langugage/*
 config/domain/*
+public/config/custom.css
+public/config/custom.js
+

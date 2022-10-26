@@ -31,6 +31,12 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
+<!-- custom -->
+<?php echo file_exists(ROOT.'/../public/config/custom.css') ?
+     '<link rel="stylesheet" href="'.BASE_URL.'/config/custom.css?v='.$settings->appVersion.'" />'.PHP_EOL : '' ?>
+<?php echo file_exists(ROOT.'/../public/config/custom.js') ?
+     '<script src="'.BASE_URL.'/config/custom.js?v='.$settings->appVersion.'"></script>'.PHP_EOL : '' ?>
+     
 <!-- Replace main theme colors -->
 <style>
 
