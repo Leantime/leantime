@@ -28,6 +28,10 @@
     },
     "require-dev": {
         "phpstan/phpstan":"1.5.4"
+    },
+    "extra": {
+        "installer-paths": {
+            "src/plugins/{$name}/": ["type:leantime-plugin"]
+        }
     }
-
 }

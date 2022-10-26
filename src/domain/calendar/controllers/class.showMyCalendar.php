@@ -8,6 +8,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -27,6 +28,12 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
 
+            events::dispatch_event('begin', [
+                'this' => $this,
+                'tplInstance' => $tpl,
+                'calendarRepo' => $calendarRepo,
+            ]);
+
             $tpl->assign('calendar', $calendarRepo->getCalendar($_SESSION['userdata']['id']));
             //$tpl->assign('gCalLink', $calendarRepo->getMyGoogleCalendars());
 
@@ -38,6 +45,8 @@ namespace leantime\domain\controllers {
             //$tpl->assign('dates', $calendarRepo->getAllDates($dateFrom, $dateTo));
 
             $tpl->display('calendar.showMyCalendar');
+
+            events::dispatch_event('end');
 
         }
 

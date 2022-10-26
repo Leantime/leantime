@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\services;
 
     class showAll
@@ -30,9 +31,13 @@ namespace leantime\domain\controllers {
 
         public function get($params) {
 
+            events::dispatch_event('begin', ['params' => $params]);
+
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
+
+            events::dispatch_event('assign_controller_vars', $this);
 
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
@@ -54,7 +59,13 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
+            // fields
+            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
+            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
+
             $this->tpl->display('tickets.showAll');
+
+            events::dispatch_event('end');
 
         }
 

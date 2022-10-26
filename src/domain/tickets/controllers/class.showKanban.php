@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\services;
 
     class showKanban
@@ -28,6 +29,8 @@ namespace leantime\domain\controllers {
         }
 
         public function get(array $params) {
+
+            events::dispatch_event('begin', $params);
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
@@ -58,9 +61,13 @@ namespace leantime\domain\controllers {
 
             $this->tpl->display('tickets.showKanban');
 
+            events::dispatch_event('end', $params);
+
         }
 
         public function post(array $params) {
+
+            events::dispatch_event('begin', $params);
 
             //QuickAdd
             if(isset($_POST['quickadd']) == true) {
@@ -70,7 +77,10 @@ namespace leantime\domain\controllers {
                 if(is_array($result)) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 }
+            
             }
+
+            events::dispatch_event('end', $params);
 
             $this->tpl->redirect(CURRENT_URL);
 

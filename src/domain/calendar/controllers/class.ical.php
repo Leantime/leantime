@@ -8,6 +8,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -34,6 +35,12 @@ namespace leantime\domain\controllers {
 
             $calendarRepo = new repositories\calendar();
 
+            events::dispatch_event('begin', [
+                'this' => $this,
+                'tplInstance' => $tpl,
+                'calendarRepo' => $calendarRepo,
+            ]);
+
             $calendar = $calendarRepo->getCalendarBySecretHash($idParts[1], $idParts[0]);
 
             $tpl->assign("calendar", $calendar);
@@ -41,6 +48,8 @@ namespace leantime\domain\controllers {
             header('Content-type: text/calendar; charset=utf-8');
             header('Content-disposition: attachment;filename="leantime.ics"');
             $tpl->display("calendar.ical", "200", "blank");
+
+            events::dispatch_event('end');
 
         }
 

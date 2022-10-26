@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\services;
 
     class showAllMilestones
@@ -28,7 +29,7 @@ namespace leantime\domain\controllers {
         }
 
         public function get($params) {
-
+            events::dispatch_event('begin', $params);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
@@ -52,6 +53,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showAllMilestones');
+
+            events::dispatch_event('end', $params);
 
         }
 

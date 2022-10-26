@@ -40,6 +40,11 @@ namespace leantime\core {
          */
         public $subject;
 
+        /**
+         * @access public
+         * @var    string
+         */
+        public $context;
 
         private $mailAgent;
 
@@ -57,7 +62,6 @@ namespace leantime\core {
         {
 
             $config = new config();
-
 
             if($config->email != '') {
                 $this->emailDomain = $config->email;
@@ -110,6 +114,22 @@ namespace leantime\core {
         }
 
         /**
+         * 
+         * setContext - sets the context for the mailing
+         * (used for filters & events)
+         * 
+         * @access public
+         * @param $context
+         * @return void
+         */
+        public function setContext($context)
+        {
+
+            $this->context = $context;
+
+        }
+
+        /**
          *
          * setText - sets the mailtext
          *
@@ -153,6 +173,27 @@ namespace leantime\core {
 
         }
 
+        private function registerMailerHook($type, $hookname, $payload = '', $additional_params)
+        {
+            if ($type !== 'filter' || $type !== 'event') {
+                return false;
+            }
+
+            $hooks = [$hookname];
+
+            if (!empty($this->context)) {
+                $hooks[] = "$hookname.{$this->context}";
+            }
+
+            foreach ($hooks as $hook) {
+                if ($type == 'filter') {
+                    events::dispatch_filter($hook, $payload, $additional_params, 'core.mailer.sendMail');
+                } elseif ($type == 'event') {
+                    events::dispatch_event($hook, $payload, 'core.mailer.sendMail');
+                }
+            }
+        }
+
         /**
          * sendMail - send the mail with mail()
          *
@@ -165,6 +206,7 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
+            events::dispatch_event('beforeSendMail');
 
             $this->mailAgent->isHTML(true);                                  // Set email format to HTML
 
@@ -217,8 +259,30 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
+            $this->registerMailerHook(
+                'filter',
+                'bodyTemplate',
+                $bodyTemplate,
+                [
+                    [
+                        'companyColor' => $this->companyColor,
+                        'logoUrl' => $inlineLogoContent,
+                        'languageHiText' => $this->language->__('email_notifications.hi'),
+                        'emailContentsHtml' => nl2br($this->html),
+                        'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/')
+                    ]
+                ]
+            );
+
             $this->mailAgent->Body = $bodyTemplate;
-            $this->mailAgent->AltBody = $this->text;
+
+            $this->registerMailerHook(
+                'filter',
+                'altBody',
+                $this->text
+            );
+
+            $this->mailAgent->AltBody = $altBody;
 
             $to = array_unique($to);
 
@@ -235,6 +299,7 @@ namespace leantime\core {
                 $this->mailAgent->clearAllRecipients();
             }
 
+            events::dispatch_event('afterSendMail');
 
         }
 

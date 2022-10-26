@@ -133,7 +133,9 @@ class fileupload
      */
     public function getPublicFilesPath()
     {
-        $path = realpath(__DIR__ . "/../../public/userfiles");
+        $relative_path = events::dispatch_filter('relative_path', "/../../public/userfiles");
+
+        $path = realpath(__DIR__ . $relative_path);
         if ($path === false) {
             throw new Exception("Path not valid");
         } else {

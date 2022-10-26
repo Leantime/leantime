@@ -109,7 +109,8 @@ namespace leantime\domain\services {
                 // DONE Tranlastion needed somewhere ? 
 
                 // DONE : Send the message with PHPMailer here
-		if (count($messageToSendToUser) == 1)
+                $this->mailer->setContext('latest_updates');
+		        if (count($messageToSendToUser) == 1)
                 {
                     reset($messageToSendToUser);
                     $this->mailer->setSubject(current($messageToSendToUser)['subject']);

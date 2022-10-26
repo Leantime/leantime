@@ -97,6 +97,8 @@ namespace leantime\core {
         public function assign($name, $value)
         {
 
+            $value = events::dispatch_filter("var.$name", $value);
+
             $this->vars[$name] = $value;
 
         }
@@ -134,6 +136,13 @@ namespace leantime\core {
 
             $language = $this->language;
 
+            foreach([
+                'template',
+                "template.$template"
+            ] as $filter) {
+                $template = events::dispatch_filter($filter, $template);
+            }
+
             $this->template = $template;
 
             //http_response_code($this->validStatusCodes[$status] ?? 200);
@@ -143,13 +152,34 @@ namespace leantime\core {
 
             $layout = htmlspecialchars($layout);
 
-            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
-                require ROOT . '/../src/layouts/'.$layout.'.php';
+            foreach ([
+                'layout',
+                "layout.$template"
+            ] as $filter) {
+                $layout = events::dispatch_filter($filter, $layout);
+            }
+
+            foreach ([
+                'layout_path',
+                "layout_path.$template"
+            ] as $filter) {
+                $layout_path = events::dispatch_filter($filter, '/../src/layouts/'.$layout.'.php');
+            }
+
+            if(file_exists(ROOT . $layout_path)) {
+                require ROOT . $layout_path;
             }else{
                 require ROOT . '/../src/layouts/app.php';
             }
 
             $layoutContent = ob_get_clean();
+
+            foreach ([
+                'layoutContent',
+                "layoutContent.$template"
+            ] as $filter) {
+                $layoutContent = events::dispatch_filter($filter, $layoutContent);
+            }
 
             //Load Template
             ob_start();
@@ -159,18 +189,41 @@ namespace leantime\core {
 
             $module = $this->frontcontroller::getModuleName($template);
 
-            $strTemplate = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            $template_path = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
 
-            if ((!file_exists($strTemplate)) || !is_readable($strTemplate)) {
+            foreach ([
+                'template_path',
+                "template_path.$template"
+            ] as $filter) {
+                $template_path = events::dispatch_filter($filter, $template_path);
+            }
+
+            if ((!file_exists($template_path)) || !is_readable($template_path)) {
                 throw new \Exception($this->__("notifications.no_template"));
             }
 
-            require_once $strTemplate;
+            $this->assign('hookContext', "tpl.$module.$action");
+
+            require_once $template_path;
 
             $content = ob_get_clean();
 
+            foreach ([
+                'content',
+                "content.$template"
+            ] as $filter) {
+                $content = events::dispatch_filter($filter, $content);
+            }
+
             //Load template content into layout content
             $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
+
+            foreach ([
+                'render',
+                "render.$template"
+            ] as $filter) {
+                $render = events::dispatch_filter($filter, $render);
+            }
 
             echo $render;
 
@@ -281,11 +334,22 @@ namespace leantime\core {
             $notification = '';
             $note = $this->getNotification();
             $language = $this->language;
+            
+            foreach ([
+                'message',
+                "message_{$note['msg']}"
+            ] as $filter) {
+                $message = events::dispatch_filter(
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
+                );
+            }
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
                 $notification = '<script type="text/javascript">
-                                  jQuery.jGrowl("'.$language->__($note['msg'], false).'", {theme: "'.$note['type'].'"});
+                                  jQuery.jGrowl("'.$message.'", {theme: "'.$note['type'].'"});
                                 </script>';
 
                 $_SESSION['notification'] = "";
@@ -303,12 +367,22 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
+            foreach ([
+                'message',
+                "message_{$note['msg']}"
+            ] as $filter) {
+                $message = events::dispatch_filter(
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
+                );
+            }
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
                 $notification = "<div class='inputwrapper login-alert login-".$note['type']."'>
                                     <div class='alert alert-".$note['type']."'>
-                                        ".$language->__($note['msg'], false)."
+                                        ".$message."
                                     </div>
 								</div>
 								";

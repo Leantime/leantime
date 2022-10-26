@@ -8,6 +8,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -26,6 +27,12 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $calendarRepo = new repositories\calendar();
+
+            events::dispatch_event('begin', [
+                'this' => $this,
+                'tplInstance' => $tpl,
+                'calendarRepo' => $calendarRepo,
+            ]);
 
             if (isset($_GET['id']) === true) {
 
@@ -55,6 +62,7 @@ namespace leantime\domain\controllers {
 
             }
 
+            events::dispatch_event('end');
 
         }
 

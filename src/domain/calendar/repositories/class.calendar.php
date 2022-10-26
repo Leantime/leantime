@@ -70,9 +70,10 @@ namespace leantime\domain\repositories {
             $ticketService = new \leantime\domain\services\tickets();
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($id, "");
 
-            $tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
-
-
+            $tickets = array_merge(
+                !empty($ticketArray["thisWeek"]["tickets"]) ? $ticketArray["thisWeek"]["tickets"] : [],
+                !empty($ticketArray["later"]["tickets"]) ? $ticketArray["later"]["tickets"] : []
+            );
 
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
 

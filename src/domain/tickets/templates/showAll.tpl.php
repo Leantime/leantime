@@ -1,15 +1,22 @@
 <?php
 
+    use \leantime\core\events;
+
     defined( 'RESTRICTED' ) or die( 'Restricted access' );
+    $hookContext    = $this->get('hookContext');
+
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
     $currentSprint  = $this->get("currentSprint");
+    $allTickets     = $this->get('allTickets');
 
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
     $efforts        = $this->get('efforts');
     $priorities     = $this->get('priorities');
     $statusLabels   = $this->get('allTicketStates');
+    $groupBy        = $this->get('groupBy');
+    $newField       = $this->get('newField');
 
     //All states >0 (<1 is archive)
     $numberofColumns = count($this->get('allTicketStates'))-1;
@@ -34,22 +41,33 @@
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
-                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                    <?php 
+                    events::dispatch_event('beforeLefthandButtons'); 
+                    if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) {
+                    ?>
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket" class="ticketModal"> <?=$this->__("links.add_todo") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
+                            <?php foreach($newField as $option) { ?>
+                                <li>
+                                    <a 
+                                        href="<?= !empty($option['url']) ? $option['url'] : '' ?>" 
+                                        class="<?= !empty($option['class']) ? $option['class'] : '' ?>"
+                                    > <?= !empty($option['text']) ? $this->__($option['text']) : '' ?></a>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
-                    <?php } ?>
-
+                    <?php 
+                    } 
+                    events::dispatch_event('afterLefthandButtons');
+                    ?>
                 </div>
 
                 <div class="col-md-2 center">
+                    <?php events::dispatch_event('beforeSprintFilter'); ?>
                     <span class="currentSprint">
-                        <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
+                        <?php if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
                             <option value="all" <?php if($searchCriteria['sprint'] != "all") echo"selected='selected'"; ?>><?=$this->__("links.all_todos") ?></option>
                             <option value="backlog" <?php if($searchCriteria['sprint'] == "backlog") echo"selected='selected'"; ?>><?=$this->__("links.backlog") ?></option>
@@ -83,9 +101,12 @@
                             <?php } ?>
                         <?php } ?>
                     </span>
+                    <?php events::dispatch_event('afterSprintFilter'); ?>
                 </div>
                 <div class="col-md-5">
                     <div class="pull-right">
+
+                        <?php events::dispatch_event('beforeRighthandButtons'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
@@ -93,12 +114,21 @@
 
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "status"){echo "checked='checked'";}?> value="status" id="groupByStatusLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByStatusLink"><?=$this->__("label.todo_status") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "tags"){echo "checked='checked'";}?> value="tags" id="groupByTagsLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByTagsLink"><?=$this->__("label.tags") ?></label></span></li>
+                                <?php foreach ($groupBy as $input): ?>
+                                    <li>
+                                        <span class="radio">
+                                            <input 
+                                                type="radio" 
+                                                name="groupBy" 
+                                                <?php if($searchCriteria["groupBy"] == $input['status']){echo "checked='checked'";}?>
+                                                value="<?php echo $input['status']; ?>"
+                                                id="<?php echo $input['id']; ?>"
+                                                onclick="jQuery('#ticketSearch').submit();"
+                                            />
+                                            <label for="<?php echo $input['id'] ?>"><?=$this->__("label.{$input['label']}") ?></label>
+                                        </span>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
 
                         </div>
@@ -110,16 +140,23 @@
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
+
+                        <?php events::dispatch_event('beforeRighthandButtons'); ?>
+
                     </div>
                 </div>
 
             </div>
 
             <div class="clearfix"></div>
+
+            <?php events::dispatch_event('beforeFilterBar'); ?>
+
             <div class="filterBar <?php if(!isset($_GET['search'])) { echo "hideOnLoad"; } ?>">
 
                 <div class="row-fluid">
 
+                    <?php events::dispatch_event('beforeFirstFilterField'); ?>
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
@@ -137,10 +174,9 @@
                                 <?php } 	?>
                             </select>
                         </div>
-
                     </div>
-                    <div class="filterBoxLeft">
 
+                    <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
@@ -153,14 +189,12 @@
 
                                     echo">".$this->escape($milestoneRow->headline)."</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
-
                         <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_type") ?>" title="<?=$this->__("input.placeholders.filter_by_type") ?>" name="type" id="typeSelect">
@@ -173,14 +207,12 @@
 
                                     echo">$type</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
-
                         <label class="inline"><?=$this->__("label.todo_priority") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_priority") ?>" title="<?=$this->__("input.placeholders.filter_by_priority") ?>" name="type" id="prioritySelect">
@@ -193,16 +225,14 @@
 
                                     echo">$priorityValue</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
                     </div>
 
-
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.todo_status") ?></label>
                         <div class="form-group">
-
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_status")?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
                                 <option value=""></option>
                                 <option value="not_done" <?php if($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) echo" selected='selected' ";?>><?=$this->__("label.not_done")?></option>
@@ -213,10 +243,9 @@
                                     if($searchCriteria['status'] !== false && array_search((string) $key, explode(",",$searchCriteria['status'])) !== false) echo" selected='selected' ";
                                     echo">". $this->escape($label["name"])."</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
@@ -229,7 +258,12 @@
                 </div>
 
             </div>
+
+            <?php events::dispatch_event('beforeFilterFormEnd'); ?>
+
         </form>
+
+        <?php events::dispatch_event('beforeTable'); ?>
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
@@ -246,26 +280,31 @@
                 <col class="con1">
                 <col class="con0">
             </colgroup>
+            <?php events::dispatch_event('beforeTableHead'); ?>
             <thead>
-            <tr>
-                <th><?= $this->__("label.title"); ?></th>
-                <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
-                <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
-                <th><?= $this->__("label.effort"); ?></th>
-                <th><?= $this->__("label.priority"); ?></th>
-                <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
-                <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
-                <th class="tags-col"><?= $this->__("label.tags"); ?></th>
-                <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
-                <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
-                <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
-                <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
-
-            </tr>
+                <?php events::dispatch_event('beforeTableHeadRow', ['tickets' => $allTickets], $hookContext); ?>
+                <tr>
+                    <th><?= $this->__("label.title"); ?></th>
+                    <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
+                    <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
+                    <th><?= $this->__("label.effort"); ?></th>
+                    <th><?= $this->__("label.priority"); ?></th>
+                    <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
+                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                    <th class="tags-col"><?= $this->__("label.tags"); ?></th>
+                    <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
+                    <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
+                    <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                    <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
+                </tr>
+                <?php events::dispatch_event('afterTableHeadRow', ['tickets' => $allTickets], $hookContext); ?>
             </thead>
+            <?php events::dispatch_event('afterTableHead', ['tickets' => $allTickets], $hookContext); ?>
             <tbody>
-                <?php foreach($this->get('allTickets') as $row){?>
+                <?php events::dispatch_event('beforeFirstRow', ['tickets' => $allTickets], $hookContext); ?>
+                <?php foreach($allTickets as $rowNum => $row){?>
                     <tr>
+                        <?php events::dispatch_event('afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
@@ -448,16 +487,19 @@
 
                             <?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>
                         </td>
-
+                        <?php events::dispatch_event('beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum], $hookContext); ?>
                     </tr>
-
                 <?php } ?>
+                <?php events::dispatch_event('afterLastRow', ['tickets' => $allTickets], $hookContext); ?>
             </tbody>
+            <?php events::dispatch_event('afterTableBody', ['tickets' => $allTickets], $hookContext); ?>
         </table>
 	</div>
 </div>
 
 <script type="text/javascript">
+
+    <?php events::dispatch_event('afterScriptsStart', $hookContext); ?>
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
@@ -487,5 +529,6 @@
     $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
     } ?>
 
+    <?php events::dispatch_event('afterScriptsEnd', $hookContext); ?>
 
 </script>

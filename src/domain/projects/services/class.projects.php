@@ -150,6 +150,7 @@ namespace leantime\domain\services {
 
 
             $mailer = new core\mailer();
+            $mailer->setContext('notify_project_users');
             $mailer->setSubject($subject);
 
             $emailMessage = $message;

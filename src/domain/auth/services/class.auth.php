@@ -385,6 +385,7 @@ namespace leantime\domain\services {
 
                         //Don't queue, send right away
                         $mailer = new core\mailer();
+                        $mailer->setContext('password_reset');
                         $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
                         $actual_link = "".BASE_URL."/auth/resetPw/".$resetLink;
                         $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));

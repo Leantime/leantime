@@ -73,6 +73,7 @@ namespace leantime\domain\controllers {
 										}
 
 										$mailer = new core\mailer();
+										$mailer->setContext('new_user');
 
 										$mailer->setSubject($language->__("email_notifications.new_user_subject"));
 										$actual_link = BASE_URL;

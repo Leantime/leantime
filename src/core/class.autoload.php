@@ -29,11 +29,9 @@ function leantimeAutoloader($class)
     //For Plugins
     // leantime \ plugins \ plugin \ MVC FOLDER \ CLASS
 
-
-    //core
-
     $classPartsCount = count($classArray);
 
+    // core
     if($classPartsCount == 3) {
         $class = $classArray[2];
         $srcFolder = $classArray[1];
@@ -42,7 +40,7 @@ function leantimeAutoloader($class)
 
     }
 
-    //domain
+    // domain
     if($classPartsCount == 4) {
         $class = $classArray[3];
         $srcFolder = $classArray[1];
@@ -51,7 +49,7 @@ function leantimeAutoloader($class)
         $path = "../src/{$srcFolder}/{$class}/{$mvcFolder}/class.{$class}.php";
     }
 
-
+    // other (probably plugins)
     if($classPartsCount == 5) {
         $class = $classArray[4];
         $srcFolder = $classArray[1];

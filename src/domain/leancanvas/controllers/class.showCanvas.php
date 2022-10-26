@@ -65,6 +65,7 @@ namespace leantime\domain\controllers {
                     $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
                     $mailer = new core\mailer();
+                    $mailer->setContext('canvas_board_created');
                     $projectService = new services\projects();
                     $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
 

@@ -58,6 +58,8 @@ class application
      */
     public function start()
     {
+        events::discover_listeners();
+
         //Only run telemetry when logged in
         $telemetryResponse = false;
 
@@ -66,8 +68,7 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        events::discover_listeners();
-        events::dispatch_event("application.start");
+        events::dispatch_event("beginning");
 
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
@@ -127,14 +128,22 @@ class application
             }
 
         }
-            
+
+        events::dispatch_event("end");
+
     }
 
     private function loadHeaders() {
 
-        header('X-Frame-Options: SAMEORIGIN');
-        header('X-XSS-Protection: 1; mode=block');
-        header('X-Content-Type-Options: nosniff');
+        $headers = events::dispatch_filter('headers', [
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-XSS-Protection' => '1; mode=block',
+            'X-Content-Type-Options' => 'nosniff'
+        ]);
+
+        foreach ($headers as $key => $value) {
+            header("${key}: ${value}");
+        }
 
     }
 
@@ -161,7 +170,9 @@ class application
         $timeSince = abs($nowDate - $lastCronEvent);
 
         //Run every 5 min
-        if ($timeSince >= 300)
+        $cron_exec_increment = events::dispatch_filter('increment', 300);
+
+        if ($timeSince >= $cron_exec_increment)
         {
             $_SESSION["do_cron"] = true;
             $_SESSION['last_cron_call'] = time();

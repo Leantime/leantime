@@ -8,6 +8,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -31,6 +32,11 @@ namespace leantime\domain\controllers {
             $calendarRepo = new repositories\calendar();
             $this->language = new core\language();
 
+            events::dispatch_event('begin', [
+                'this' => $this,
+                'tplInstance' => $tpl,
+                'calendarRepo' => $calendarRepo,
+            ]);
 
             $values = array(
                 'description' => '',
@@ -83,6 +89,8 @@ namespace leantime\domain\controllers {
 
             $tpl->assign('values', $values);
             $tpl->display('calendar.addEvent');
+
+            events::dispatch_event('end');
 
         }
 

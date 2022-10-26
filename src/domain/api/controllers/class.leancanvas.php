@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\events;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;

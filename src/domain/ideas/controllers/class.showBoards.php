@@ -67,6 +67,7 @@ namespace leantime\domain\controllers {
                     $tpl->setNotification($language->__('notification.idea_board_created'), 'success');
 
                     $mailer = new core\mailer();
+                    $mailer->setContext('idea_board_created');
                     $projectService = new services\projects();
                     $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
 
