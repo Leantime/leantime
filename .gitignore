@@ -112,4 +112,4 @@ config/langugage/*
 config/domain/*
 public/config/custom.css
 public/config/custom.js
-
+public/config/images/*
