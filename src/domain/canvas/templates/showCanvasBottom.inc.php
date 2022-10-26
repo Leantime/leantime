@@ -47,10 +47,10 @@
     jQuery(document).ready(function() {
 
         leantime.<?=$canvasName ?>CanvasController.setRowHeights();
-        leantime.<?=$canvasName ?>CanvasController.initFilterBar();
+        leantime.canvasController.initFilterBar();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.<?=$canvasName ?>CanvasController.initCanvasLinks();
+            leantime.canvasController.initCanvasLinks();
             
             leantime.<?=$canvasName ?>CanvasController.initUserDropdown();
             leantime.<?=$canvasName ?>CanvasController.initStatusDropdown();
