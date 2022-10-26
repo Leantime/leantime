@@ -49,7 +49,11 @@ namespace leantime\domain\services {
                 }
             }
 
+            if(isset($_SESSION['currentProject'])){
 
+                $statusLabelsByProject[$_SESSION['currentProject']] = $this->ticketRepository->getStateLabels($_SESSION['currentProject']);
+
+            }
 
             return $statusLabelsByProject;
 
@@ -231,6 +235,7 @@ namespace leantime\domain\services {
             foreach($allTickets as $row){
 
                 if($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
+
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;
@@ -331,6 +336,10 @@ namespace leantime\domain\services {
                 foreach ($userProjects as $project) {
                     $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
                 }
+            }
+
+            if(isset($_SESSION['currentProject'])){
+                $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
             }
 
             return $milestones;

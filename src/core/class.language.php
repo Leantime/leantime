@@ -80,33 +80,31 @@ namespace leantime\core {
 
             }
 
+            if(isset($_SESSION['cache.langlist'])){
+                $this->langlist = $_SESSION['cache.langlist'];
 
-            if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
+            }else {
 
-                if(isset($_SESSION['cache.langlist'])){
-                    $this->langlist = $_SESSION['cache.langlist'];
-                }else {
+                if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
                     $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
                     $_SESSION['cache.langlist'] =  $this->langlist;
-                }
-                
-                //Start checking if the user has a language set
-                if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
-
-                    $this->setLanguage($_SESSION['usersettings.language']);
-
-                //If not check for company default setting
                 } else {
-
-                    $this->setLanguage($_SESSION['companysettings.language']);
-
+                    throw new Exception("Language list missing");
                 }
 
+            }
+                
+            //Start checking if the user has a language set
+            if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
+
+                $this->setLanguage($_SESSION['usersettings.language']);
+
+            //If not check for company default setting
             } else {
 
-                throw new Exception("Language list missing");
-            }
+                $this->setLanguage($_SESSION['companysettings.language']);
 
+            }
 
         }
 
@@ -157,8 +155,8 @@ namespace leantime\core {
 
 
             if(isset($_SESSION['cache.language_resources_'.$this->language])) {
-                //$this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
-                //return $this->ini_array;
+                $this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
+                return $this->ini_array;
             }
 
             //Default to english US

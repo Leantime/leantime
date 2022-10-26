@@ -338,13 +338,38 @@ leantime.generalController = (function () {
     var copyUrl = function (event) {
 
         event.preventDefault();
-        navigator.clipboard.writeText(event.target.getAttribute('href')).then(() => {
-            /* clipboard successfully set */
-            jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
 
-        }, () => {
-            /* clipboard write failed */
+        var linkToGo = event.target.getAttribute('href');
+
+        if (typeof (navigator.clipboard) == 'undefined') {
+            console.log('navigator.clipboard');
+            var textArea = document.createElement("textarea");
+            textArea.value = linkToGo;
+            textArea.style.position = "fixed";  //avoid scrolling to bottom
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'successful' : 'unsuccessful';
+                jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
+            } catch (err) {
+                console.log('Was not possible to copy te text: ', err);
+            }
+
+            document.body.removeChild(textArea)
+            return;
+        }
+
+        navigator.clipboard.writeText(linkToGo).then(function () {
+            jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
+        }, function (err) {
+            console.log('Was not possible to copy te text: ', err);
         });
+
+
+
 
     }
 

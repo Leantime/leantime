@@ -116,32 +116,30 @@ class ldap
             }
             $passwordBind=$password;
 
-        }else{
+            $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
-            if($this->directoryType=='AD') {
-                $usernameDN = $this->bindUser;
+            if($bind) {
+
+                return true;
+
             }else{
-                $usernameDN = $this->ldapKeys->username . "=" . $this->bindUser . "," . $this->ldapDn;
+
+                error_log(ldap_error($this->ldapConnection));
+                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                if($err) {
+                    error_log($err);
+                }
+
+                return false;
             }
-            $passwordBind = $this->bindPassword;
-        }
-
-        $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
-
-        if($bind) {
-
-            return $bind;
 
         }else{
-
-            error_log(ldap_error($this->ldapConnection));
-            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            if($err) {
-                error_log($err);
-            }
 
             return false;
+
         }
+
+
 
     }
 

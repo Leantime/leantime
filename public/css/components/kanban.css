@@ -37,7 +37,12 @@
 }
 
 .ticketBox:hover {
-    background:#f3f4f5;
+    background:var(--main-menu-link-hover-bg);
+}
+
+
+.ticketBox:hover .kanbanContent:before {
+    background: linear-gradient(transparent, var(--main-menu-link-hover-bg) 70% 100%);
 }
 
 .ticketBox h4 a {
@@ -113,6 +118,7 @@
 .sortableTicketList li:hover {
     background:var(--main-menu-link-hover-bg);
 }
+
 
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
@@ -256,4 +262,20 @@ body .maincontent .priority-bg-5 {
 
 .widgettitle strong {
     line-height:normal;
+}
+
+.kanbanContent {
+    overflow:hidden;
+    height:75px;
+    position:relative;
+}
+
+.kanbanContent:before {
+    content: '';
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
 }
