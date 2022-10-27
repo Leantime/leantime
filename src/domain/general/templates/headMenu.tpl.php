@@ -62,6 +62,7 @@ if(is_array($currentLink)) {
     <li class="appsDropdown">
         <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
             <img src="<?=BASE_URL ?>/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
+                &nbsp;<i class="fas fa-caret-down"></i>
         </a>
 
         <ul class="dropdown-menu">
