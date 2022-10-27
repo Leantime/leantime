@@ -87,15 +87,18 @@ namespace leantime\domain\services {
                     
                     $assumptionsNodeList = $itemName->getElementsByTagName('assumptions');
                     if($assumptionsNodeList->count() !== 1) return false;
-                    $assumptions = $assumptionsNodeList->item(0)->nodeValue;
+                    $assumptions = empty($assumptionsNodeList->item(0)->nodeValue) ? '' :
+                        $dom->saveHTML($assumptionsNodeList->item(0)->firstChild);
                     
                     $dataNodeList = $itemName->getElementsByTagName('data');
                     if($dataNodeList->count() !== 1) return false;
-                    $data = $dataNodeList->item(0)->nodeValue;
+                    $data = empty($dataNodeList->item(0)->nodeValue) ? '' :
+                        $dom->saveHTML($dataNodeList->item(0)->firstChild);
                     
                     $conclusionNodeList = $itemName->getElementsByTagName('conclusion');
                     if($conclusionNodeList->count() !== 1) return false;
-                    $conclusion = $conclusionNodeList->item(0)->nodeValue;
+                    $conclusion = empty($conclusionNodeList->item(0)->nodeValue) ? '' :
+                        $dom->saveHTML($conclusionNodeList->item(0)->firstChild);
 
                     $recordsAry[] = [ 'description' => $description,
                                       'assumptions' => $assumptions,
