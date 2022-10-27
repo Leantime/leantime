@@ -38,7 +38,7 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
                     <form action="" method="post">
                         <?php if (count($this->get('allCanvas')) > 0) { ?>
                             <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint") ?>"
-                                    name="searchCanvas"
+                                    name="searchCanvas"  id="searchCanvas" style="max-width: 400px; margin:5px"
                                     class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
@@ -280,6 +280,8 @@ $size = floor((100 / $numberofColumns)* 100) / 100;
 <script type="text/javascript">
 
     jQuery(document).ready(function () {
+
+        new SlimSelect({ select: '#searchCanvas' });
 
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.setKanbanHeights();

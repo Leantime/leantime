@@ -46,6 +46,8 @@
 
     jQuery(document).ready(function() {
 
+        new SlimSelect({ select: '#searchCanvas' });
+
         leantime.<?=$canvasName ?>CanvasController.setRowHeights();
         leantime.canvasController.initFilterBar();
 

@@ -569,9 +569,9 @@ namespace leantime\domain\services {
 
                     $file = $this->filesRepository->getFile($user['profileId']);
 
-                    $return = '/images/default-user.png';
+                    $return = BASE_URL.'/images/default-user.png';
                     if ($file) {
-                        $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                        $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                     }
 
                     $user["profilePicture"] = $return;

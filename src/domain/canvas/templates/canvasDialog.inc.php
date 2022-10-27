@@ -47,7 +47,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php if(!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>
-            <select name="status" style="min-width: 30%">
+            <select name="status" style="width: 50%" id="statusCanvas">
                 <?php foreach($statusLabels as $key => $data) { ?>
                     <?php if($data['active']) { ?>
                         <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
@@ -60,7 +60,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php if(!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
-            <select name="relates" style="min-width: 30%">
+            <select name="relates"  style="width: 50%" id="relatesCanvas">
                 <?php foreach($relatesLabels as $key => $data) { ?>
                     <?php if($data['active']) { ?>
                         <option value="<?=$key ?>" <?php echo $canvasItem['relates'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
@@ -221,6 +221,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
+
+        <?php if(!empty($statusLabels)) { ?>new SlimSelect({ select: '#statusCanvas' });<?php } ?>
+        <?php if(!empty($relatesLabels)) { ?>new SlimSelect({ select: '#relatesCanvas' });<?php } ?>
 
         leantime.generalController.initSimpleEditor();
 

@@ -48,7 +48,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                         <input type="hidden" name="filter_status" value="<?=$filter['status'] ?>">
                         <input type="hidden" name="filter_relates" value="<?=$filter['relates'] ?>">
                         <?php if(count($allCanvas) > 0) {?>
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_board") ?>" name="searchCanvas" class="mainSprintSelector" onchange="form.submit()" style="max-width:100%; text-align: center;">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_board") ?>" name="searchCanvas" class="mainSprintSelector" onchange="form.submit()" id="searchCanvas" style="max-width: 400px; margin:5px">
                                 <?php
                                 $lastClient = "";
                                 $i=0;

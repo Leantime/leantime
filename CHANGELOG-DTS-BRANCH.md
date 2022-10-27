@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.28
+Leantime DTS Branch 0.2.29
 
 
 ## Author
@@ -281,3 +281,7 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Update/Add: Allow stylesheet and JavaScript configuration by including `public/config/custom.css` and
   `public/config/custom.js` if they exist. These files will not be overwritten by a new installation
   
+## 0.2.29 2022-10-27
+- Add: Added `slimselect` JavaScript library to style selectors and make them searchable. Replace default selector to
+  select canvas/kanban (https://github.com/brianvoe/slim-select) *MIT License*
+

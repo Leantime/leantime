@@ -32,7 +32,7 @@ $canvasLabels = $this->get('canvasLabels');
                     <form action="" method="post">
                         <?php if (count($this->get('allCanvas')) > 0) { ?>
                             <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint") ?>"
-                                    name="searchCanvas"
+                                    name="searchCanvas" id="searchCanvas" style="max-width: 400px; margin:5px"
                                     class="mainSprintSelector" onchange="form.submit()">
                             <?php
                             $lastClient = "";
@@ -271,6 +271,8 @@ $canvasLabels = $this->get('canvasLabels');
 
 
     jQuery(document).ready(function () {
+
+        new SlimSelect({ select: '#searchCanvas' });
 
         leantime.ideasController.initMasonryWall();
         leantime.ideasController.initBoardControlModal();

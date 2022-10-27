@@ -14,6 +14,7 @@ JS_BASE_LIB_FILES = node_modules/jquery/dist/jquery.js \
     public/js/libs/bootstrap.min.js \
     public/js/libs/bootstrap-timepicker.min.js \
     public/js/libs/bootstrap-fileupload.min.js \
+    public/js/libs/slimselect.min.js \
     public/js/libs/jquery.jgrowl.js \
     public/js/libs/chosen.jquery.min.js \
     public/js/libs/jquery.form.js \
