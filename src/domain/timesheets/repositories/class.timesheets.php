@@ -281,7 +281,7 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 		WHERE 
-			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStart) + 7)))
+			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStartA)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStartB) + 7)))
 			AND (zp_timesheets.userId = :userId)
 		";
 
@@ -293,13 +293,14 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':dateStart', $dateStart, PDO::PARAM_STR);
+            $stmn->bindValue(':dateStartA', $dateStart, PDO::PARAM_STR);
+            $stmn->bindValue(':dateStartB', $dateStart, PDO::PARAM_STR);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
             if($projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
-
+            
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
