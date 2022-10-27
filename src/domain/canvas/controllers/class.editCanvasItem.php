@@ -128,6 +128,7 @@ namespace leantime\domain\controllers\canvas {
          */
         public function post($params)
         {
+
             if (isset($params['changeItem'])) {
 
                 if (isset($params['itemId']) && !empty($params['itemId'])) {
@@ -189,7 +190,8 @@ namespace leantime\domain\controllers\canvas {
                         $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$params['itemId']);
 
                     }else{
-                        $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                        
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
 
                     }
 
@@ -229,7 +231,7 @@ namespace leantime\domain\controllers\canvas {
 
                     }else{
 
-                        $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
 
                     }
                 }
@@ -259,13 +261,34 @@ namespace leantime\domain\controllers\canvas {
                 $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasItem/'.$_GET['id']);
 
             }
-
+            
+            $this->tpl->assign('milestones',  $this->ticketService->getAllMilestones($_SESSION['currentProject']));
             $this->tpl->assign('canvasTypes',  $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
             $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
             $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-            $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+            if(isset($_GET['id'])) {
+                $comments = $this->commentsRepo->getComments(static::CANVAS_NAME.'canvas'.'item', $_GET['id']);
+                $this->tpl->assign('canvasItem',  $this->canvasRepo->getSingleCanvasItem($_GET['id']));
+            }else {
+                $value = array(
+                    'id'=>'',
+                    'box' => $type,
+                    'description' => '',
+                    'status' => array_key_first($this->canvasRepo->getStatusLabels()),
+                    'relates' => array_key_first($this->canvasRepo->getRelatesLabels()),
+                    'assumptions' => '',
+                    'data' => '',
+                    'conclusion' => '',
+                    'milestoneHeadline' => '',
+                    'milestoneId' => ''
+                );
+                $comments = array();
+                $this->tpl->assign('canvasItem',  $value);
+            }
+            $this->tpl->assign('comments',  $comments);
             $this->tpl->displayPartial(static::CANVAS_NAME.'canvas'.'.canvasDialog');
+            
         }
 
         /**
