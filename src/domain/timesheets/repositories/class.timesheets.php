@@ -395,7 +395,7 @@ namespace leantime\domain\repositories {
              :hours,
              :kind,
              :rate)
-			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
+			 ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -403,6 +403,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
             $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
             $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':hoursB', $values['hours'], PDO::PARAM_STR);
             $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
             $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
 
