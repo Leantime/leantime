@@ -273,7 +273,8 @@ namespace leantime\domain\controllers\canvas {
             }else {
                 $value = array(
                     'id'=>'',
-                    'box' => $type,
+                    'box' => $params['box'],
+                    'author' => $_SESSION['userdata']['id'],
                     'description' => '',
                     'status' => array_key_first($this->canvasRepo->getStatusLabels()),
                     'relates' => array_key_first($this->canvasRepo->getRelatesLabels()),
