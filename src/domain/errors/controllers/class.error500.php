@@ -4,7 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
 
-    class error403
+    class error500
     {
 
         public function run()
@@ -12,8 +12,8 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
 
-            core\frontcontroller::setResponseCode(403);
-            $tpl->display('errors.error403');
+            core\frontcontroller::setResponseCode(500);
+            $tpl->display('errors.error500');
         }
     }
 }

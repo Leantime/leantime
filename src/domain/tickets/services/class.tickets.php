@@ -55,6 +55,17 @@ namespace leantime\domain\services {
 
             }
 
+            //There is a non zero chance that a user has tickets assigned to them without a project assignment.
+            //Checking user assigned tickets to see if there are missing projects.
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            foreach($allTickets as $row) {
+                if (!isset($statusLabelsByProject[$row['projectId']])) {
+                    $statusLabelsByProject[$row['projectId']] = $this->ticketRepository->getStateLabels($row['projectId']);
+                }
+            }
+
             return $statusLabelsByProject;
 
         }
@@ -234,6 +245,12 @@ namespace leantime\domain\services {
 
             foreach($allTickets as $row){
 
+                //There is a non zero chance that a user has tasks assigned to them while not being part of the project
+                //Need to get those status labels as well
+                if(!isset($statusLabels[$row['projectId']])){
+                    $statusLabels[$row['projectId']] = $this->ticketRepository->getStateLabels($row['projectId']);
+                }
+
                 if($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
 
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
@@ -340,6 +357,17 @@ namespace leantime\domain\services {
 
             if(isset($_SESSION['currentProject'])){
                 $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
+            }
+
+            //There is a non zero chance that a user has tickets assigned to them without a project assignment.
+            //Checking user assigned tickets to see if there are missing projects.
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            foreach($allTickets as $row) {
+                if (!isset($milestones[$row['projectId']])) {
+                    $milestones[$row['projectId']] = $this->ticketRepository->getAllMilestones($row['projectId']);
+                }
             }
 
             return $milestones;

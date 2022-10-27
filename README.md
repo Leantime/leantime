@@ -116,6 +116,9 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect your to `<yourdomain.com>/update`
 
+## LICENSE Exceptions ##
+This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/src/plugins` directory which merely make function calls to the Leantime Software, and for that purpose include it by reference shall not be considered modifications of the software.
+
 ### Support ###
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Forum [https://community.leantime.io](https://community.leantime.io)

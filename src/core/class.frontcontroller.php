@@ -39,6 +39,8 @@ namespace leantime\core {
          */
         private static $fullAction;
 
+        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+
         /**
          * __construct - Set the rootpath of the server
          *
@@ -124,7 +126,7 @@ namespace leantime\core {
          * @param  $completeName
          * @return string|object
          */
-        private static function executeAction($completeName, $params=array(), $httpResponseCode=200)
+        private static function executeAction($completeName, $params=array())
         {
 
             //actionname.filename
@@ -137,25 +139,43 @@ namespace leantime\core {
             //Folder doesn't exist.
             if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("general.error404");
                 return;
 
             }
 
-            //TODO: refactor to be psr 4 compliant
-            require_once '../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php';
+            $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+            $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+
+            $controllerNs = "domain";
+
+            //Try plugin folder first for overrides
+            if(file_exists($pluginPath)) {
+                $controllerNs = "plugins";
+                require_once $pluginPath;
+
+            }else if(file_exists($domainPath)) {
+
+                require_once $domainPath;
+
+            }else{
+                self::dispatch("general.error404", 404);
+                return;
+            }
 
             //Initialize Action
             try {
 
-                $classname = "leantime\\domain\\controllers\\".$actionName;
+                $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
+
                 $action = new $classname();
 
                 //Todo plugin controller call
 
                 $method = self::getRequestMethod();
 
-                http_response_code($httpResponseCode);
+                //Setting default response code to 200, can be changed in controller
+                self::setResponseCode(200);
 
                 if(method_exists($action, $method)) {
 
@@ -171,8 +191,10 @@ namespace leantime\core {
 
             }catch(Exception $e){
 
-                self::dispatch("general.error404", 501);
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
+
+                //This will catch most errors in php including db issues
+                self::dispatch("errors.error500");
 
                 return;
             }
@@ -294,6 +316,13 @@ namespace leantime\core {
 
             header("Location:".trim($url),true, $http_response_code);
             exit();
+        }
+
+        public static function setResponseCode($responseCode) {
+
+            if(is_int($responseCode)) {
+                http_response_code($responseCode);
+            }
         }
 
     }

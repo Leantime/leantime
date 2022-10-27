@@ -37,7 +37,6 @@
 }
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector {
-    overflow: auto;
     height: 90vh;
 }
 

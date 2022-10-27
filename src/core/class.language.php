@@ -153,8 +153,9 @@ namespace leantime\core {
         public function readIni()
         {
 
+            $config = new config();
 
-            if(isset($_SESSION['cache.language_resources_'.$this->language])) {
+            if(isset($_SESSION['cache.language_resources_'.$this->language]) && $config->debug == 0) {
                 $this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
                 return $this->ini_array;
             }
