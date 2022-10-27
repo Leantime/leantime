@@ -3,7 +3,6 @@
 <div class="userinfo">
     <a href='<?=BASE_URL ?>/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
         <img src="<?php echo $this->get('profilePicture'); ?>" class="profilePicture"/>
-        <span class="username"><?php $this->e($this->get('userName')); ?></span>
         <i class="fa fa-caret-down" aria-hidden="true"></i>
     </a>
     <ul class="dropdown-menu">
