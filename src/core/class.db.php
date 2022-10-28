@@ -71,7 +71,7 @@ class db
             $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
             $this->database = new PDO('mysql:host=' . $this->host . ';port='. $this->port .';dbname='. $this->databaseName .'', $this->user, $this->password, $driver_options);
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->database->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
+            $this->database->setAttribute( PDO::ATTR_EMULATE_PREPARES, TRUE );
 
         }catch(PDOException $e){
 

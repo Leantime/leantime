@@ -713,7 +713,7 @@ a .label-default:after, a .label-primary:after {
     box-shadow: var(--large-shadow);
 }
 .row .regLeft .mainWelcome {
-    font-family:Exo;
+    font-family: var(--primary-font-family);
     font-size: 54px;
     padding-left:15px;
     font-weight:400;

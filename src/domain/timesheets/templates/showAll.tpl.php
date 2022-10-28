@@ -199,7 +199,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     #<?=$row['id']?>
                 <?php } ?>
             </td>
-            <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
+            <td data-order="<?=$this->escape($row['workDate']); ?>>">
                 <?php echo$this->getFormattedDateString($row['workDate']); ?>
             </td>
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
