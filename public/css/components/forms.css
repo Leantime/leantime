@@ -43,7 +43,7 @@ body div.tagsinput {
 
 body div.tagsinput input {
     font-size:var(--base-font-size);
-    color:var(--primary-font-color);
+    color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
 }
