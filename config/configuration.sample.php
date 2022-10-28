@@ -49,10 +49,12 @@ class config
     public $email = '';                                   //Return email address
     public $useSMTP = false;                              //Use SMTP? If set to false, the default php mail() function will be used
     public $smtpHosts = '';                               //SMTP host
+    public $smtpAuth = true;                              //SMTP use user/password authentication
     public $smtpUsername = '';                            //SMTP username
     public $smtpPassword = '';                            //SMTP password
     public $smtpAutoTLS = true;                           //SMTP Enable TLS encryption automatically if a server supports it
     public $smtpSecure = '';                              //SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
+    public $smtpSSLNoverify = false;                      //SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
     public $smtpPort = '';                                //Port (usually one of 25, 465, 587, 2526)
 
     /*ldap default settings (can be changed in company settings) */
@@ -161,11 +163,13 @@ class config
         $this->useSMTP = $this->configEnvironmentHelper("LEAN_EMAIL_USE_SMTP", $this->useSMTP, "boolean");
         if ($this->useSMTP) {
             $this->smtpHosts = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_HOSTS", $this->smtpHosts);
+            $this->smtpAuth = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTH", $this->smtpAuth, "boolean");
             $this->smtpUsername = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_USERNAME", $this->smtpUsername);
             $this->smtpPassword = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $this->smtpPassword);
             $this->smtpAutoTLS = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $this->smtpAutoTLS, "boolean");
             $this->smtpSecure = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SECURE", $this->smtpSecure);
             $this->smtpPort = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PORT", $this->smtpPort);
+            $this->smtpSSLNoverify = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SSLNOVERIFY", $this->smtpSSLNoverify, "boolean");
         }
 
     /*ldap*/
