@@ -48,11 +48,6 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if(!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>
             <select name="status" style="width: 50%" id="statusCanvas">
-                <?php foreach($statusLabels as $key => $data) { ?>
-                    <?php if($data['active']) { ?>
-                        <option value="<?=$key ?>" <?php echo $canvasItem['status'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
-                    <?php } ?>
-                <?php } ?>
             </select><br />
         <?php }else{ ?>
             <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
@@ -61,11 +56,6 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if(!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
-                <?php foreach($relatesLabels as $key => $data) { ?>
-                    <?php if($data['active']) { ?>
-                        <option value="<?=$key ?>" <?php echo $canvasItem['relates'] == $key ? ' selected="selected"' : ''; ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></option>
-                    <?php } ?>
-                <?php } ?>
             </select><br />
         <?php }else{ ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
@@ -222,9 +212,38 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        <?php if(!empty($statusLabels)) { ?>new SlimSelect({ select: '#statusCanvas' });<?php } ?>
-        <?php if(!empty($relatesLabels)) { ?>new SlimSelect({ select: '#relatesCanvas' });<?php } ?>
+        <?php if(!empty($statusLabels)) { ?>
+            new SlimSelect({
+                select: '#statusCanvas',
+				showSearch: false,
+				valuesUseText: false,
+				data: [
+					<?php foreach($statusLabels as $key => $data) { ?>
+				        <?php if($data['active']) { ?>
+							{ innerHTML: '<?php echo "<i class=\"fas fa-fw ".$data["icon"]."\"></i>&nbsp;".$data['title']; ?>',
+							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
+                        <?php } ?>
+				    <?php } ?>
+				]                    
+			});
+		<?php } ?>
 
+        <?php if(!empty($relatesLabels)) { ?>
+            new SlimSelect({
+                select: '#relatesCanvas',
+				showSearch: false,
+				valuesUseText: false,
+				data: [
+					<?php foreach($relatesLabels as $key => $data) { ?>
+				        <?php if($data['active']) { ?>
+							{ innerHTML: '<?php echo "<i class=\"fas fa-fw ".$data["icon"]."\"></i>&nbsp;".$data['title']; ?>',
+							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
+                        <?php } ?>
+				    <?php } ?>
+				]                    
+			});
+		<?php } ?>
+		
         leantime.generalController.initSimpleEditor();
 
         <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>

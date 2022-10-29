@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.29
+Leantime DTS Branch 0.2.30
 
 
 ## Author
@@ -286,3 +286,7 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Add: Added `slimselect` JavaScript library to style selectors and make them searchable. Replace default selector to
   select canvas/kanban (https://github.com/brianvoe/slim-select) *MIT License*
 
+## 0.2.30 2022-10-29
+- Update: Show status and relates icon on `canvasDialog` screen using `innerHTML` option from SlimSelect (Note: Status
+  and relates could even be colord as on the `showCanvas` page, but that does not look good).
+  
