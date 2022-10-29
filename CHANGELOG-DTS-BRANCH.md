@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.32
+Leantime DTS Branch 0.2.33
 
 
 ## Author
@@ -129,6 +129,7 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 ## Open issues
 - Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists in PDF is limited
 - Complex tables may render poorly due to *YetiForcePDF* incorrectly handing some table borders and line breaks in nested tables
+- Local images do not work because *YetiForcePDF* tries to retrieve them using `GuzzleHttp` in a non-authenticated setting.
 - If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised
 - The PDF library *YetiForcePDF* fails when loading images from web serves with self-signed certificates, as the certificate is
   validated against an official list.
@@ -141,6 +142,8 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   found in `resources/language/mltranslate`)
 - If during import of a canvas an error is detected, the import fails but not reason why it fails is shown to the user
 - The button used to select an xml canvas file for importing is not css-styled
+- As the SlimSelect selector only works in a frame (rather than on top of all frames), the merge modal requires
+  sufficient blank space to include all canvas
 
 
 ## Change log
@@ -297,3 +300,8 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ## 0.2.32 2022-10-29
 - Add: Added option to merge an selcted canvas into an existing one, allowing to consolidate work from multiple users
+
+## 0.2.33 2022-10-29
+- Bug: Applied upstream change to correctly handle URLs associates with `download.php`
+  (`template::convertRelativePaths`) in `elements.inc.php` and `class.pdf.php`
+- Bug: Return error image in `download.php`, if user is not authenticated (`/images/leantime-no-access.jpg`)

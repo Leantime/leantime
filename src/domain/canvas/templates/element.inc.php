@@ -61,7 +61,7 @@
                            class="<?=$canvasName ?>CanvasModal"
                            data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
                                                                                             
-                    <?php if($row["conclusion"] != "") { echo '<small>'.$row["conclusion"].'</small>'; } ?>
+                    <?php if($row["conclusion"] != "") { echo '<small>'.$this->convertRelativePaths($row["conclusion"]).'</small>'; } ?>
 
                     <div class="clearfix" style="padding-bottom: 8px;"></div>
                     

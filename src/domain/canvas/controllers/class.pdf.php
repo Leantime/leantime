@@ -153,6 +153,10 @@ namespace leantime\domain\controllers\canvas {
             $pdf = new \YetiForcePDF\Document();
             $pdf->init();
             $html = $this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options);
+
+            // Handle image tags
+            $html = $this->tpl->convertRelativePaths($html);
+
             try {
                 $pdf->loadHtml($html);
             }

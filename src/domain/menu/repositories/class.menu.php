@@ -154,6 +154,14 @@ namespace leantime\domain\repositories {
 						break;
 
 					case 'item':
+                        // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
+                        if(false) {
+                            
+                            $menuStructure[$key]['type'] = 'disabled';
+                            break;
+
+                        }
+                        
 						// Update security
 						if(isset($element['role'])) {
 							switch($element['role']) {
@@ -209,6 +217,14 @@ namespace leantime\domain\repositories {
 									break;
 
 								case 'item':
+                                    // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
+                                    if(false) {
+                            
+                                        $menuStructure[$key]['type'] = 'disabled';
+                                        break;
+
+                                    }
+                        
 									// Update security
 									if(isset($subelement['role'])) {
 

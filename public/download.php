@@ -17,9 +17,14 @@ $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
-
-
 if ($login->logged_in()!==true) {
+
+    header('Content-Type: image/jpeg');
+    header('Cache-Control: no-cache');
+
+    ob_end_clean();
+    clearstatcache();
+    readfile(__DIR__.'/images/leantime-no-access.jpg');
 
     exit();
 
