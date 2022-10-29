@@ -67,6 +67,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                                 <small><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create") ?></a></small> |
                                 <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></small> |
                                 <small><a href="javascript:void(0)" class="cloneCanvasLink "><?=$this->__("links.icon.clone") ?></a></small> |
+                                <small><a href="javascript:void(0)" class="mergeCanvasLink "><?=$this->__("links.icon.merge") ?></a></small> |
                                 <small><a href="javascript:void(0)" class="importCanvasLink "><?=$this->__("links.icon.import") ?></a></small> |
                             <?php } ?>
                             <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.export") ?></a></small> |

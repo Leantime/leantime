@@ -146,6 +146,33 @@ namespace leantime\domain\controllers\canvas {
 
             }
 
+            // Merge canvas
+            if(isset($_POST['mergeCanvas']) && $currentCanvasId > 0) {
+
+                if(isset($_POST['canvasid']) && $_POST['canvasid'] > 0) {
+
+                    $status = $canvasRepo->mergeCanvas($_SESSION['currentProject'], $currentCanvasId,
+                                                       $_SESSION['userdata']['id'], $_POST['canvasid']);
+
+                    if($status) {
+                        
+                        $tpl->setNotification($language->__('notification.board_merged'), 'success');
+                        $tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas/');
+
+                    }else{
+                        
+                        $tpl->setNotification($language->__('notification.merge_error'), 'error');
+                        
+                    }
+
+                }else{
+                
+                    $tpl->setNotification($language->__('notification.internal_error'), 'error');
+                    
+                }
+
+            }
+
             // Import canvas
             if(isset($_POST['importCanvas'])) {
 

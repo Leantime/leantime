@@ -735,5 +735,32 @@ namespace leantime\domain\repositories {
 
         }
 
+        /***
+         * mergeCanvas - merge canvas into existing canvas
+         *
+         * @access public
+         * @param  int  $projectId  Project identifier
+         * @param  int  $canvasId   Original canvas identifier
+         * @param  int  $authorId   Author identifier
+         * @param  int  $mergeId    Canvas to perge into existing one 
+         * @return bool Status of merge
+         */
+        public function mergeCanvas(int $projectId, int $canvasId, int $authorId, string $mergeId): bool
+        {
+
+            // Copy elements from merge canvas into current canvas
+            $sql = "INSERT INTO ".
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) ".
+              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' ".
+              "FROM zp_canvas_items WHERE canvasId = $mergeId";
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $stmn->closeCursor();
+
+            return true;
+
+        }
+        
     }
 }

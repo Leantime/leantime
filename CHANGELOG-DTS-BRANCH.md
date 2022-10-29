@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.30
+Leantime DTS Branch 0.2.32
 
 
 ## Author
@@ -61,6 +61,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
   relating a strength in a SWOT analysis to the firms' Capabilities)
 - Added separate access to comments from element/box (without the full dialogue)
 - Added option to clone/copy existing canvas
+- Added option to merge an existing canvas into the current canvas, allowing to consolidate work from multiple users
 - Added selectors that allow to show sub-sets of elements/boxes in a canvas, based on drop-down values (e.g., only
   showing elements/boxes that have been validated)
 - Added icons and colour (both are optional) to elements and removed option to change titles by the user
@@ -293,3 +294,6 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   
 ## 0.2.31 2022-10-29
 - Add: Add support for US Legal paper size (see `vendor/yetiforce/yetiforcepdf/lib/Page.php` for supported page sizes)
+
+## 0.2.32 2022-10-29
+- Add: Added option to merge an selcted canvas into an existing one, allowing to consolidate work from multiple users

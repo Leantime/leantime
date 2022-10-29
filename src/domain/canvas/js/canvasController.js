@@ -31,6 +31,12 @@ leantime.canvasController = (function () {
 
         });
 
+        jQuery(".mergeCanvasLink").click(function() {
+
+            jQuery('#mergeCanvas').modal('show');
+
+        });
+
         jQuery(".importCanvasLink").click(function() {
 
             jQuery('#importCanvas').modal('show');
