@@ -128,8 +128,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 ## Open issues
 - Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists in PDF is limited
 - Complex tables may render poorly due to *YetiForcePDF* incorrectly handing some table borders and line breaks in nested tables
-- If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised. This is
-  notably the case for images accessed through `download.php`
+- If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised
+- The PDF library *YetiForcePDF* fails when loading images from web serves with self-signed certificates, as the certificate is
+  validated against an official list.
 - If the menu structure is larger than the browser's height, some menu items will not be displayed (and thus not
   accessible) #1061
 - Print and clone functionality are not available for `ideas` Kanban
@@ -286,7 +287,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Add: Added `slimselect` JavaScript library to style selectors and make them searchable. Replace default selector to
   select canvas/kanban (https://github.com/brianvoe/slim-select) *MIT License*
 
-## 0.2.30 2022-10-29
+## 0.2.30 2022-10-28
 - Update: Show status and relates icon on `canvasDialog` screen using `innerHTML` option from SlimSelect (Note: Status
   and relates could even be colord as on the `showCanvas` page, but that does not look good).
   
+## 0.2.31 2022-10-29
+- Add: Add support for US Legal paper size (see `vendor/yetiforce/yetiforcepdf/lib/Page.php` for supported page sizes)

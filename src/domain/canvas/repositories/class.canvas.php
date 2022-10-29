@@ -408,11 +408,11 @@ namespace leantime\domain\repositories {
                 $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
-            $sql .= "id=:id WHERE id=:whereIdd LIMIT 1";
+            $sql .= "id=:id WHERE id=:whereId LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':whereIdd', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':whereId', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
                 $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);

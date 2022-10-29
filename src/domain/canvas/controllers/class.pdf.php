@@ -43,7 +43,9 @@ namespace leantime\domain\controllers\canvas {
         // Internal variables
         protected core\config $config;
         protected core\language $language;
+        protected core\template $tpl;
         protected $canvasRepo;
+        protected string $paperSize;
         protected array $canvasTypes;
         protected array $statusLabels;
         protected array $relatesLabels;
@@ -64,9 +66,13 @@ namespace leantime\domain\controllers\canvas {
             
             $this->config = new core\config();
             $this->language = new core\language();
+            $this->tpl = new core\template();
             $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();
 
+            $this->paperSize = $this->language->__('language.pagesize');
+            $this->paperSize = ($this->paperSize === 'language.pagesize' ?  self::PDF_A4 : $this->paperSize);
+            
             $this->canvasTypes = $this->canvasRepo->getCanvasTypes();
             $this->statusLabels = $this->canvasRepo->getStatusLabels();
             $this->relatesLabels = $this->canvasRepo->getRelatesLabels();
@@ -78,7 +84,7 @@ namespace leantime\domain\controllers\canvas {
                 'confidential' => true, 'disclaimer' => '',
                 'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
                 'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
-                'listShow' => true,'listSize' => self::PDF_A4, 'listOrientation' => self::PDF_PORTRAIT,
+                'listShow' => true,'listSize' => $this->paperSize, 'listOrientation' => self::PDF_PORTRAIT,
                 'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
             ];
             
@@ -111,6 +117,7 @@ namespace leantime\domain\controllers\canvas {
 
             // Generate report
             $reportData = $this->reportGenerate($canvasId, $filter);
+            if($reportData === false) return;
 
             // Service report
             clearstatcache();
@@ -128,9 +135,9 @@ namespace leantime\domain\controllers\canvas {
          * @param  int    $id      Canvas identifier
          * @param  string $filter  Filter value
          * @param  string $options Options
-         * @return string PDF filename
+         * @return string|false PDF filename or false if it failed
          */
-        public function reportGenerate(int $id, array $filter = [], array $options = []): string
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string|false
         {
 
             // Retrieve canvas data
@@ -145,7 +152,14 @@ namespace leantime\domain\controllers\canvas {
             // Generate PDF content
             $pdf = new \YetiForcePDF\Document();
             $pdf->init();
-            $pdf->loadHtml($this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options));
+            $html = $this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options);
+            try {
+                $pdf->loadHtml($html);
+            }
+            catch(Exception $exception) {
+                $this->tpl->setNotification($this->language->__('notification.pdf.failed'), 'error');
+                return false;
+            }
             return $pdf->render();
 
         }
