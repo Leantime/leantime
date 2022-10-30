@@ -7,11 +7,18 @@ language.timeformat = "h:i A"
 language.jstimeformat = "h:mm A"
 language.momentJSDate = "DD/MM/YYYY"
 language.currency = "€"
+language.pagesize = "A4"
 
 #0 is Sunday, 1 is Monday
 
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
+
+# themes
+
+theme.default.name = "Défaut (clair)"
+theme.dark.name = "Foncé"
+theme.dts.name = "Strategie supportée par Design Thinking"
 
 # special
 
@@ -22,6 +29,7 @@ label.additional_settings = "Paramètres supplémentaires"
 label.comment_order = "Ordre des commentaires"
 label.downtoup = "Du plus ancien au plus récent"
 label.uptodown = "Du plus récent au plus ancien"
+label.version = "Version"
 
 #Datepicker translations
 
@@ -41,6 +49,7 @@ language.columnFormatWeek = "ddd M/d"
 language.columnFormatday = "dddd M/d"
 
 headlines.all_times = "Tous les temps"
+headlines.all_timesheets = "Toutes les feuilles de travail"
 headlines.edit_time = "Editer le temps"
 headlines.confirm_delete = "Confirmer la suppression"
 headlines.delete_time = "Supprimer le temps"
@@ -107,6 +116,7 @@ headlines.delete_user = "Supprimer l'utilisateur"
 headlines.my_profile = "Mon compte"
 headlines.profile_picture = "Image de profil"
 headlines.page_not_found = "Page non trouvée"
+headlines.system_error = "Ce n'est pas votre faute, c'est la notre!"
 headlines.edit_label = "<i class='fas fa-edit'></i> Editer le label"
 headlines.company_settings = "Paramètres de l'entreprise"
 headlines.delete_sprint = "<i class='fa fa-rocket'></i> Supprimer le Sprint"
@@ -482,6 +492,8 @@ menu.dashboard = "<span class='fa fa-fw fa-home'></span> Tableau de bord du proj
 menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> Tâches"
 menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Jalons"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Feuille de temps"
+menu.all_timesheets = "<span class='fa-solid fa-business-time'></span> Toutes les feuilles de travail"
+
 menu.research = "<span class='fas fa-fw fa-flask'></span> Recherche"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> Idées"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Paramètres du projet"
@@ -505,6 +517,7 @@ text.what_are_subtasks = "Utiliser les sous-tâches pour scinder votre liste de 
 text.no_subtasks = "Aucune sous-tâche"
 text.create_new_subtask = "Créer une sous-tâche :"
 text.written_on_by = "Ecris le %1$s à %2$s par %3$s %4$s"
+text.report_written_on = "Mise à jour du status (%1$s)"
 text.written_on = "%1$s à %2$s"
 text.no_comments = "Rien pour le moment"
 text.no_updates = "☕ Pas encore de mises à jour."
@@ -523,7 +536,7 @@ text.are_you_sure_delete_wiki = "Êtes-vous sûr de vouloir supprimer ce wiki ? 
 text.are_you_sure_delete_article = "Êtes-vous sûr de vouloir supprimer cet article ?"
 
 text.use_milestone_to_track_retro = "Utiliser un jalon pour suivre la progression vers vos rétrospectives."
-MTR.text.use_milestone_to_track_canvas = "Utilisez un jalon pour suivre la progression vers votre objectif."
+text.use_milestone_to_track_canvas = "Utilisez un jalon pour suivre la progression vers votre objectif."
 text.use_milestone_to_track_idea = "Utiliser un jalon pour suivre la progression vers vos idées."
 text.all_milestones = "Tous les Jalons"
 text.confirm_ticket_deletion = "Etes-vous sûr de vouloir supprimer cette tâche ?"
@@ -846,6 +859,7 @@ label.draft = "Draft"
 label.published = "Publié sur"
 label.draft_parenth = "(projet)"
 
+header.management = "Gestion de l'entreprise"
 dropdown.how_big_todo = "Effort à fournir"
 dropdown.select_priority = "Priorité"
 dropdown.choose_milestone = "Jalon associé"
@@ -882,6 +896,15 @@ status.delivering = "En cours de livraison"
 status.inreview = "En revue"
 status.accepted = "Accepté"
 status.deferred = "Deferré"
+
+status.continue = "Continuez - Qu'est-ce qui s'est bien passé ?"
+status.stop_doing = "Stop - Que devrions-nous arrêter de faire ?"
+status.start_doing = "Commencer - Que devrions-nous commencer à faire pour nous améliorer ?"
+
+label.project_status_is = "L'état d'avancement du projet est"
+label.green = "Vert"
+label.yellow = "Jaune"
+label.red = "Rouge"
 
 email_notifications.hi = "Bonjour,"
 email_notifications.unsubscribe = "Pour se <a href='%1$s'>désinscrire</a> de ces notifications, connectez-vous et éditez les paramètres de notification"
@@ -1045,8 +1068,7 @@ tour.change_views = "Changer les vues"
 tour.change_views_text = "Ces boutons vous permettent de passer de la vue table à la vue Kaban"
 tour.congratulations_kanban_text = "Vous avez terminé la visite!<br/>Si vous avez besoin d'aide supplémentaire. Visitez notre base de connaissances à <a href='https://help.leantime.io' target='_blank'> https://help.leantime.io </a><br/><br/>Ne pas N'hésitez pas à contacter notre équipe d'assistance pour toute aide supplémentaire!<br/>Nous sommes là pour vous faciliter la vie."
 
-
-## Leantime DTS Branch
+## New labels introduced with version 2.3.0
 
 
 # Supported menut types
@@ -1059,11 +1081,11 @@ label.menu_type.dts = "Menu Design Thinking"
 # Menu subtitles
 
 menu.default.advanced = "Avancé"
+menu.default.tools = "Outils"
 menu.default.various = "Divers"
 menu.default.define = "Empathiser / Définir"
 menu.default.ideate = "Idéer / Prototyper"
 menu.default.test = "Test et validation"
-menu.default.tools = "Outils"
 
 menu.dts.process = "Processus stratégique"
 menu.dts.frameworks = "Cadres stratégiques"
@@ -1096,12 +1118,20 @@ menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> Analyse SWOT"
 links.icon.create = "<i class='fa fa-plus'></i> Créer nouveau"
 links.icon.edit = "<i class='fa-edit'></i> Editer</a>"
 links.icon.clone = "<i class='fa-clone'></i> Copier</a>"
-links.icon.delete = "<i class='fa-trash-can'></i> Effacer"
+links.icon.merge = "<i class='fa fa-object-group'></i> Fusionner</a>"
+links.icon.import = "<i class='fa fa-file-import'></i> Import</a>"
+links.icon.export = "<i class='fa-file-export'></i> Export</a>"
 links.icon.print = "<i class='fa fa-print'></i> Imprimer"
+links.icon.delete = "<i class='fa-trash-can'></i> Effacer"
 
 # Buttons
 
 buttons.cancel = "Annuler"
+buttons.import = "Importer"
+buttons.clone = "Copier"
+buttons.merge = "Fusionner"
+
+label.version = "Version"
 
 # Labels for status and relates
 
@@ -1132,24 +1162,40 @@ dropdown.choose_relates = "À quoi l'élément se rapporte-t-il ?"
 # Board and element labels
 
 subtitle.clone_board = "Copier le Tableau"
+subtitle.merge_board = "Fusionner avec le canvas actuel"
+subtitle.import_board = "Canvas importé"
 label.title_element = "Titre de l'élément"
+label.title_merge = "Quelle canvcas voulez-vous fusionner avec le canvas actuel ?"
+label.title_import = "Quel est le nom de fichier du canevas à importer ?"
+
 input.placeholders.describe_element = "Décrire l'élément"
 
 text.confirm_board_deletion = "Êtes-vous sûr de vouloir supprimer ce tables ?"
 text.confirm_board_item_deletion = "Êtes-vous sûr de vouloir supprimer cet élément ?"
+
 notification.board_created = "Tableau créé avec succès"
 notification.board_copied = "Tableau copié avec succès"
+notification.board_merged = "Fusion réussie du tableau"
 notification.board_deleted = "Tablea supprimé avec succès"
 notification.board_exists = "Le nom du tableau existe déjà"
 notification.element_created = "Élément créé avec succès"
 notification.element_deleted = "Élément supprimé avec succès"
+notification.board_imported = "Le canvas a été importé avec succès"
+notification.board_import_failed = "Échec de l'importation du canvas"
+notification.pdf.failed = "Échec de la génération du PDF"
+notification.merge_error = "Erreur de fusion des tableaux"
+notification.internal_internal = "Erreur interne !"
+
+email_notifications.canvas_board_imported = "Un nouveau canvas a été importé"
+email_notifications.canvas_imported_message = "Un nouveau canvcas a été importé par %1$s. Le titre du tableau est"
+
 short_notifications.relates_updated = "Concerne la mise à jour réussie"
 
 # PDF labels
 
 pdf.label.page = "Page"
 pdf.language.longdateformat = "l, F j, Y"
-MTR.pdf.disclaimer.confidential = "CE DOCUMENT EST CLASSIFIÉ *** CONFIDENTIEL ***<br>EN AUCUN CAS VOUS N'ÊTES AUTORISÉ À LE MONTRER OU À LE TRANSMETTRE À UN TIERS."
+pdf.disclaimer.confidential = "CE DOCUMENT EST CLASSIFIÉ *** CONFIDENTIEL ***<br>EN AUCUN CAS VOUS N'ÊTES AUTORISÉ À LE MONTRER OU À LE TRANSMETTRE À UN TIERS."
 
 ## Insights
 

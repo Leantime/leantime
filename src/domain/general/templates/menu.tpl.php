@@ -93,7 +93,7 @@
         </ul>
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             <ul style='display:block'>
-                <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px; background: white">
+                <li <?php if($module == 'projects' && $action == 'showProject') echo"class=' active '"; ?> style="bottom:15px; position:fixed; width:240px; background: var(--secondary-background);">
                     <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
                 </li>
             </ul>

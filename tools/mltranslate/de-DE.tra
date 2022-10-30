@@ -7,11 +7,18 @@ language.timeformat = "H:i"
 language.jstimeformat = "H:mm"
 language.momentJSDate = "DD.MM.YYYY"
 language.currency = "€"
+MTR.language.pagesize = "LEGAL"
 
 #0 is Sunday, 1 is Monday
 
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
+
+# themes
+
+MTR.theme.default.name = "Standard (hell)"
+MTR.theme.dark.name = "Dunkelheit"
+MTR.theme.dts.name = "Design Thinking für Strategie"
 
 # special
 
@@ -22,6 +29,7 @@ label.additional_settings = "Erweiterte Einstellungen"
 label.comment_order = "Kommentar Sortierung"
 label.downtoup = "Von alt nach neu"
 label.uptodown = "Von neu nach alt"
+MTR.label.version = "Version"
 
 #Datepicker translations
 
@@ -41,11 +49,12 @@ language.columnFormatWeek = "ddd d/M"
 language.columnFormatday = "dddd d/M"
 
 headlines.all_times = "Alle Zeiten"
+MTR.headlines.all_timesheets = "Alle Zeiterfassungsbögen"
 headlines.edit_time = "Zeit bearbeiten"
 headlines.confirm_delete = "Entfernen betätigen"
 headlines.delete_time = "Zeit entfernen"
 headlines.drive_impact = "Drive Impact"
-headlines.welcome_back = "Willkommen zurück"
+MTR.headlines.welcome_back = "Willkommen zurück"
 headlines.login = "Login"
 headlines.project_with_name = "Projekt:"
 headlines.no_active_sprint = "Sie haben zurzeit keinen Sprint!"
@@ -78,17 +87,17 @@ headline.overview = "Übersicht"
 headlines.todos = "Aufgaben"
 headlines.delete_project_x = "Entferne Projekt %1$s"
 headlines.duplicate_project_x = "Projekt %1$s duplizieren"
-headlines.logo = "Logo"
-headlines.team_member = "Aktuelle Teammitglieder"
-headlines.add_more_users = "Weitere Benutzer hinzufügen"
-headlines.assign_users_to_project = "Diesem Projekt weitere Benutzer zuweisen"
-headlines.no_articles_yet = "Es sind noch keine Artikel vorhanden"
-headline.your_projects = "Ihre Projekte"
-headlines.your_todos = "Ihre To-Dos"
-headlines.home = "Startseite"
-headlines.project_dashboard = "Projekt-Dashboard"
+MTR.headlines.logo = "Logo"
+MTR.headlines.team_member = "Aktuelle Teammitglieder"
+MTR.headlines.add_more_users = "Weitere Benutzer hinzufügen"
+MTR.headlines.assign_users_to_project = "Diesem Projekt weitere Benutzer zuweisen"
+MTR.headlines.no_articles_yet = "Es sind noch keine Artikel vorhanden"
+MTR.headline.your_projects = "Ihre Projekte"
+MTR.headlines.your_todos = "Ihre To-Dos"
+MTR.headlines.home = "Startseite"
+MTR.headlines.project_dashboard = "Projekt-Dashboard"
 
-headlines.page_forbidden = "Sie sind nicht berechtigt, diese Seite zu sehen"
+MTR.headlines.page_forbidden = "Sie sind nicht berechtigt, diese Seite zu sehen"
 
 headlines.delete_project_x = "Entferne Projekt %1$s"
 headlines.research_next_big_product = "Forschen Sie an Ihrem nächsten großen Produkt und sammlen Sie hier Ihre Erkenntnisse."
@@ -107,6 +116,7 @@ headlines.delete_user = "Benutzer entfernen"
 headlines.my_profile = "Mein Profil"
 headlines.profile_picture = "Profilbild"
 headlines.page_not_found = "Seite nicht gefunden"
+MTR.headlines.system_error = "Es liegt nicht an dir, es liegt an uns"
 headlines.edit_label = "<i class='fas fa-edit'></i> Label editieren"
 headlines.company_settings = "Firmen Einstellungen"
 headlines.delete_sprint = "<i class='fa fa-rocket'></i> Sprint entfernen"
@@ -132,9 +142,9 @@ headlines.reports = "Berichte"
 headlines.twoFA_login = "Zwei-Faktor-Authentifizierungscode eingeben"
 headlines.twoFA = "Zwei-Faktor-Authentifizierung"
 headlines.my_portfolio = "Mein Portfolio"
-headlines.import_ldap_users = "LDAP-Benutzer importieren"
-headlines.documents = "Dokumente"
-headlines.latest_todos = "Letzte To-Dos"
+MTR.headlines.import_ldap_users = "LDAP-Benutzer importieren"
+MTR.headlines.documents = "Dokumente"
+MTR.headlines.latest_todos = "Letzte To-Dos"
 
 subtitles.sprint_burndown = "Sprint Burndown"
 subtitles.backlog_burndown = "Backlog Burndown"
@@ -166,11 +176,11 @@ subtitles.user_info = "Benutzerinformationen"
 subtitles.file = "Datei"
 subtitles.summary = "Zusammenfassung"
 subtitles.cummulative_flow = "Kumulativer Fluss"
-subtitles.organization = "Organisation"
-subtitles.companydetails = "Details zum Unternehmen"
-subtitles.look_and_feel = "Aussehen und Gefühl"
-subtitles.approvals = "Zulassungen"
-subtitles.project_updates = "Projekt-Aktualisierungen"
+MTR.subtitles.organization = "Organisation"
+MTR.subtitles.companydetails = "Details zum Unternehmen"
+MTR.subtitles.look_and_feel = "Aussehen und Gefühl"
+MTR.subtitles.approvals = "Zulassungen"
+MTR.subtitles.project_updates = "Projekt-Aktualisierungen"
 
 notifications.no_template = "Template konnte nicht gefunden werden"
 notifications.file_upload_success = "Datei erfolgreich hochgeladen"
@@ -200,24 +210,24 @@ notification.todo_deleted = "Aufgabe erfolgreich entfernt"
 notification.milestone_deleted = "Meilenstein erfolgreich entfernt"
 notification.saved_mattermost_webhook = "Mattermost Webhook URL erfolgreich hinzugefügt"
 notification.saved_slack_webhook = "Slack Webhook URL erfolgreich hinzugefügt"
-notification.saved_discord_webhook = "Discord Webhook URL erfolgreich gespeichert"
+MTR.notification.saved_discord_webhook = "Discord Webhook URL erfolgreich gespeichert"
 notification.saved_zulip_webhook = "Zulip integration erfolgreich hinzugefügt"
 notification.error_zulip_webhook_fill_out_fields = "Zulip integration konnte nicht gespeichert werden. Bitte füllen Sie alle Felder aus."
 notification.project_has_tickets = "Das Projekt hat noch offene Aufgaben"
 notification.project_saved = "Projekt erfolgreich gespeichert"
 notification.no_project_name = "Projektname nicht angegeben"
 notification.no_client = "Es wurde kein Kunde ausgewählt"
-notification.wiki_created_successfully = "Wiki erfolgreich erstellt"
-notification.article_deleted = "Artikel gelöscht"
-notification.wiki_deleted = "Wiki gelöscht"
+MTR.notification.wiki_created_successfully = "Wiki erfolgreich erstellt"
+MTR.notification.article_deleted = "Artikel gelöscht"
+MTR.notification.wiki_deleted = "Wiki gelöscht"
 
-notification.new_status_saved = "To-Do-Statusliste erfolgreich gespeichert"
-notification.error_saving_status = "Es ist ein Fehler beim Speichern des Status aufgetreten."
-notification.at_least_one_status = "Es muss mindestens ein Status erstellt werden."
-notification.error_installing = "Bei der Installation der Datenbank ist ein Fehler aufgetreten, bitte prüfen Sie das Fehlerprotokoll für weitere Details"
+MTR.notification.new_status_saved = "To-Do-Statusliste erfolgreich gespeichert"
+MTR.notification.error_saving_status = "Es ist ein Fehler beim Speichern des Status aufgetreten."
+MTR.notification.at_least_one_status = "Es muss mindestens ein Status erstellt werden."
+MTR.notification.error_installing = "Bei der Installation der Datenbank ist ein Fehler aufgetreten, bitte prüfen Sie das Fehlerprotokoll für weitere Details"
 
-notifications.user_was_added_to_project = "Teammitglieder wurden erfolgreich aktualisiert"
-notifications.not_assigned_to_any_project = "Sie sind keinem Projekt zugewiesen. Sie können Ihr Profil aktualisieren oder sich entspannen und eine Tasse Kaffee trinken"
+MTR.notifications.user_was_added_to_project = "Teammitglieder wurden erfolgreich aktualisiert"
+MTR.notifications.not_assigned_to_any_project = "Sie sind keinem Projekt zugewiesen. Sie können Ihr Profil aktualisieren oder sich entspannen und eine Tasse Kaffee trinken"
 
 notification.project_has_tasks = "Projekt konnte nicht entfernt werden. Es sind noch offene Aufgaben vorhanden. Bitte entfernen Sie zunächst die Aufgaben"
 notification.project_deleted = "Projekt erfolgreich entfernt"
@@ -246,14 +256,14 @@ notification.client_exists_already = "Der Kunde existiert bereits"
 notification.client_has_todos = "Der Kunde hat zugewiesene Aufgaben & Projekte"
 notification.client_deleted = "Kunde erfolgreich entfernt"
 notification.event_created_successfully = "Event erfolgreich erstellt"
-notification.event_edited_successfully = "Ereignis erfolgreich bearbeitet"
+MTR.notification.event_edited_successfully = "Ereignis erfolgreich bearbeitet"
 notification.event_removed_successfully = "Event erfolgreich entfernt"
 notification.could_not_delete_event = "Event konnte nicht entfernt werden"
 notification.user_created = "Neuer Benutzer erfolgreich erstellt"
 notification.user_exists = "Diese Email Adresse wird bereits verwendet"
 notification.passwords_dont_match = "Die Passwörter sind nich identisch"
-notification.username_or_password_missing = "Benutzername oder Passwort fehlt"
-notifications.problem_resetting_password = "Es gab ein Problem beim Zurücksetzen des Passworts"
+MTR.notification.username_or_password_missing = "Benutzername oder Passwort fehlt"
+MTR.notifications.problem_resetting_password = "Es gab ein Problem beim Zurücksetzen des Passworts"
 notification.no_valid_email = "Ungültige Email Adresse"
 notification.enter_email = "Bitte geben Sie eine Email Adresse ein"
 notification.enter_password = "Bitte geben Sie ein Passwort ein"
@@ -283,11 +293,11 @@ notification.form_token_incorrect = "Form token falsch, bitte versuchen Sie es e
 notifications.could_not_reset_limit_reached = "Sie haben die maximale Anzahl an Passwort-Zurücksetzungen erreicht. Bitte benutzen Sie den letzten Passwort-Zurücksetzungs-Link um Ihr Passwort zurückzusetzen."
 notifications.project_copied_successfully = "Das Projekt wurde erfolgreich kopiert,<br/><a href='%1$s'> klicken Sie hier um es zu öffnen</a>"
 
-notification.article_updated_successfully = "Artikel wurde erfolgreich aktualisiert"
-notification.article_created_successfully = "Artikel wurde erfolgreich erstellt"
+MTR.notification.article_updated_successfully = "Artikel wurde erfolgreich aktualisiert"
+MTR.notification.article_created_successfully = "Artikel wurde erfolgreich erstellt"
 
-notifications.ical_success = "iCal-URL erfolgreich erstellt"
-notifications.ical_removed_success = "iCal-URL wurde entfernt"
+MTR.notifications.ical_success = "iCal-URL erfolgreich erstellt"
+MTR.notifications.ical_removed_success = "iCal-URL wurde entfernt"
 
 short_notifications.effort_updated = "Aufwand erfolgreich aktualisiert"
 short_notifications.priority_updated = "Priorität erfolgreich aktualisiert"
@@ -305,7 +315,7 @@ short_notifications.date_updated = "Datum wurde geändert"
 short_notifications.remaining_hours_updated = "Verbleibende Stunden aktualisiert!"
 short_notifications.planned_hours_updated = "Geplante Stunden wurden aktualisiert!"
 
-short_notifications.url_copied = "Url kopiert"
+MTR.short_notifications.url_copied = "Url kopiert"
 
 input.placeholders.enter_email = "Email Adresse eingeben"
 input.placeholders.enter_password = "Passwort eingeben"
@@ -322,7 +332,7 @@ input.placeholders.pick_a_color = "Wählen Sie eine Farbe"
 input.placeholders.what_are_you_working_on = "Woran arbeiten Sie gerade?"
 input.placeholders.search_type_hit_enter = "Geben Sie zum Suchen etwas ein und drücken Enter"
 input.placeholders.zulip_url = "Beispiel: https://company.zulipchat.com"
-input.placeholders.discord_url = "Beispiel: https://discord.com/api/webhooks/123/abc"
+MTR.input.placeholders.discord_url = "Beispiel: https://discord.com/api/webhooks/123/abc"
 input.placeholders.filter_by_board = "Nach Board filtern..."
 input.placeholders.enter_title_for_board = "Geben Sie einen Titel für Ihr neues Board an"
 input.placeholders.describe_hypothesis = "Beschreiben Sie Ihre Hypothese in wenigen Worten"
@@ -337,8 +347,8 @@ input.placeholders.enter_new_password = "Geben Sie das neue Passwort ein"
 input.placeholders.confirm_password = "Bestätigen Sie das Passwort"
 input.placeholders.choose_project = "Wählen Sie ein Projekt"
 input.placeholders.choose_todo = "Wählen Sie eine Aufgabe"
-input.placeholders.wiki_title = "Geben Sie einen Titel für Ihr Wiki ein"
-input.placeholders.enter_title_of_todo = "Geben Sie den Titel für Ihr To-Do ein"
+MTR.input.placeholders.wiki_title = "Geben Sie einen Titel für Ihr Wiki ein"
+MTR.input.placeholders.enter_title_of_todo = "Geben Sie den Titel für Ihr To-Do ein"
 
 buttons.reload = "aktualisieren"
 buttons.login = "Login"
@@ -374,7 +384,7 @@ buttons.install = "Installieren"
 buttons.install_in_progress = "Installiert…"
 buttons.reset_password = "Passwort zurücksetzen"
 buttons.duplicate = "Duplizieren"
-buttons.find_users = "Benutzer finden"
+MTR.buttons.find_users = "Benutzer finden"
 
 links.skip_tour_dont_show_again = "Tour überspringen und nicht mehr anzeigen"
 links.skip_tour_start_project = "Tour überspringen und neues Projekt starten"
@@ -401,7 +411,7 @@ links.start_work = "Arbeit beginnen"
 links.stop_work_started_at = "Arbeit beenden, <span>gestartet um <span class='time'>%1$s</span></span>"
 links.go_back = "Zurück"
 links.add_new_comment = "Neuen Kommentar verfassen"
-links.add_new_report = "Status aktualisieren"
+MTR.links.add_new_report = "Status aktualisieren"
 links.reply = "Antworten"
 links.delete = "entfernen"
 links.add_todo = "<span class='fa-pushpin'></span> Aufgabe hinzufügen"
@@ -446,19 +456,19 @@ links.back_to_login = "Zurück zum Anmeldebildschirm"
 links.download = "<i class='fa fa-download'></i> Download"
 links.duplicate_project = "<i class='fa fa-copy'></i> Projekt duplizieren"
 links.open_project = "<i class='fa fa-open'></i> Projekt öffnen"
-links.add_status = "<i class='fas fa-plus-circle'></i> Status hinzufügen"
-links.add_remove_col = "<i class='fas fa-plus'></i> Spalten hinzufügen/entfernen"
-link.edit_wiki = "<i class='fa fa-edit'></i> Dieses Wiki bearbeiten"
-link.new_wiki = "<i class='fas fa-plus'></i> Ein neues Wiki erstellen"
-link.create_article = "Artikel erstellen"
-links.edit_article = "<i class='fa fa-edit'></i> Artikel bearbeiten"
-links.copy_url = "<i class='fa fa-link'></i> Url kopieren"
-links.delete_wiki = "Wiki löschen"
-links.delete_article = "Artikel löschen"
-links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Zum Stundenzettel hinzufügen"
-links.read_more = "Mehr lesen"
-links.add_team_member = "Teammitglied hinzufügen"
-links.create_user = "Neuen Benutzer anlegen"
+MTR.links.add_status = "<i class='fas fa-plus-circle'></i> Status hinzufügen"
+MTR.links.add_remove_col = "<i class='fas fa-plus'></i> Spalten hinzufügen/entfernen"
+MTR.link.edit_wiki = "<i class='fa fa-edit'></i> Dieses Wiki bearbeiten"
+MTR.link.new_wiki = "<i class='fas fa-plus'></i> Ein neues Wiki erstellen"
+MTR.link.create_article = "Artikel erstellen"
+MTR.links.edit_article = "<i class='fa fa-edit'></i> Artikel bearbeiten"
+MTR.links.copy_url = "<i class='fa fa-link'></i> Url kopieren"
+MTR.links.delete_wiki = "Wiki löschen"
+MTR.links.delete_article = "Artikel löschen"
+MTR.links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Zum Stundenzettel hinzufügen"
+MTR.links.read_more = "Mehr lesen"
+MTR.links.add_team_member = "Teammitglied hinzufügen"
+MTR.links.create_user = "Neuen Benutzer anlegen"
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Meine Zeiten</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Mein Kalender</span>"
@@ -482,15 +492,17 @@ menu.dashboard = "<span class='fa fa-fw fa-home'></span> Projekt Überblick"
 menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> Aufgaben"
 menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Meilensteine"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Stundenzettel"
+MTR.menu.all_timesheets = "<span class='fa-solid fa-business-time'></span> Alle Zeiterfassungsbögen"
+
 menu.research = "<span class='fas fa-fw fa-flask'></span> Strategie"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> Ideen"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Projekt Einstellungen"
 menu.reports = "<span class='fa fa-fw fa-chart-bar'></span> Berichte"
 menu.community = "<span class='fa fa-fw fa-comments'></span> Community Forum"
 menu.my_portfolio = "<span class='head-icon fa fa-briefcase'></span><span class='headmenu-label'>Mein Portfolio</span>"
-menu.documents = "<span class='fa fa-fw fa-book'></span> Dokumente"
-menu.home = "<span class='head-icon fa fa-home'></span><span class='headmenu-label'>Startseite</span>"
-text.hi = "Hallo"
+MTR.menu.documents = "<span class='fa fa-fw fa-book'></span> Dokumente"
+MTR.menu.home = "<span class='head-icon fa fa-home'></span><span class='headmenu-label'>Startseite</span>"
+MTR.text.hi = "Hallo"
 text.sprint_is_short_iteration = "Ein Sprint ist eine kurze Iteration, in der Aufgaben erledigt und freigegeben werden."
 text.update_sprint_chart_add_todos = "Dieses Diagramm wird dann aktualisiert. In der Zwischenzeit können Sie Ihrem Sprint Aufgaben hinzufügen."
 text.take_the_day_off = "Nehmen Sie sich den Tag frei oder arbeiten Sie sich durch das Backlog."
@@ -505,22 +517,23 @@ text.what_are_subtasks = "Verwenden Sie Unteraufgaben, um Ihre Hauptaufgabe in k
 text.no_subtasks = "Sie haben noch keine Unteraufgaben"
 text.create_new_subtask = "Eine neue Unteraufgabe erstellen"
 text.written_on_by = "Verfasst am %1$s um %2$s durch %3$s %4$s"
+MTR.text.report_written_on = "Status-Update (%1$s)"
 text.written_on = "%1$s um %2$s"
 text.no_comments = "Noch nichts vorhanden"
-text.no_updates = "☕ Noch keine Aktualisierungen."
+MTR.text.no_updates = "☕ Noch keine Aktualisierungen."
 text.comments = "Kommentare"
 text.num_comments = "<span class='fa-regular fa-comments'></span> %1$s Kommentare"
-text.full_name = "%1$s %2$s"
-text.no_files = "Noch keine Dateien hochgeladen"
-text.here_are_news = "Neues von Ihren Leantime-Projekten"
-text.create_new_content = "Erstellen Sie Ihren ersten Artikel."
-text.create_new_wiki = "Erstellen Sie Ihr erstes Wiki."
+MTR.text.full_name = "%1$s %2$s"
+MTR.text.no_files = "Noch keine Dateien hochgeladen"
+MTR.text.here_are_news = "Neues von Ihren Leantime-Projekten"
+MTR.text.create_new_content = "Erstellen Sie Ihren ersten Artikel."
+MTR.text.create_new_wiki = "Erstellen Sie Ihr erstes Wiki."
 text.last_modified = "Zuletzt bearbeitet %1$s"
 text.are_you_sure_delete_idea = "Sind Sie sich sicher, dass Sie diese Idee entfernen möchten?"
 text.are_you_sure_delete_idea_board = "Sind Sie sich sicher, dass Sie dieses Ideen-Board entfernen möchten?"
 text.are_you_sure_delete_sprint = "Sind Sie sich sicher, dass Sie diesen Sprint entfernen möchten?"
-text.are_you_sure_delete_wiki = "Sind Sie sicher, dass Sie dieses Wiki löschen möchten? Damit werden auch alle Artikel gelöscht."
-text.are_you_sure_delete_article = "Sind Sie sicher, dass Sie diesen Artikel löschen möchten?"
+MTR.text.are_you_sure_delete_wiki = "Sind Sie sicher, dass Sie dieses Wiki löschen möchten? Damit werden auch alle Artikel gelöscht."
+MTR.text.are_you_sure_delete_article = "Sind Sie sicher, dass Sie diesen Artikel löschen möchten?"
 
 text.use_milestone_to_track_retro = "Verwenden Sie einen Meilenstein, um den Fortschritt gegenüber Ihren Retroperspektiven zu verfolgen."
 MTR.text.use_milestone_to_track_canvas = "Verwenden Sie einen Meilenstein, um den Fortschritt auf dem Weg zu Ihrem Ziel zu verfolgen."
@@ -537,7 +550,7 @@ text.slack_instructions = "Diese Integration sendet Aktualisierungsbenachrichtig
 text.choose_access_for_users = "Wählen Sie die Benutzer aus, die Zugriff auf dieses Projekt erhalten sollen <a href='/users/showAll/'>Mehr Benutzer hinzufügen</a>"
 text.expected_to_finish_by = "Vorraussichtliche Fertigstellung bis"
 text.zulip_instructions = "Diese Integration sendet Aktualisierungsbenachrichtigungen an den Stream und das Thema Ihrer Wahl.<br/>Befolgen Sie die Anweisungen <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>hier, um einen neuen Bot zu erstellen</a>. Fügen Sie dann die Informationen in das Formular rechts ein und klicken Sie auf Speichern."
-text.discord_instructions = "Befolgen Sie die Anweisungen <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>hier, um einen neuen Webhook zu erstellen</a>, fügen Sie dann den/die Link(s) in die Felder auf der rechten Seite ein und klicken Sie auf Speichern."
+MTR.text.discord_instructions = "Befolgen Sie die Anweisungen <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>hier, um einen neuen Webhook zu erstellen</a>, fügen Sie dann den/die Link(s) in die Felder auf der rechten Seite ein und klicken Sie auf Speichern."
 text.no_conclusion_yet = "<i>Noch keine Schlussfolgerung</i>"
 text.no_users_assigned_to_this_client = "Diesem Kunden wurden keine Kontakte hinzugefügt. Benutzer hinzufügen und zuweisen <a href='/users/showAll'>here</a>"
 text.confirm_delete_timesheet = "Soll dieser Stundenzettel wirklich gelöscht werden?"
@@ -570,17 +583,17 @@ text.twoFA_already_enabled = "Die Zwei-Faktor Authentifizierung ist bereits für
 text.twoFA_enabled = "Ihr Benutzerkonto hat die Zwei-Faktor Authentifizierung <strong>aktiviert</strong>."
 text.twoFA_disabled = "Ihr Benutzerkonto hat die Zwei-Faktor Authentifizierung <strong>deaktiviert</strong>."
 text.twoFA_manage = "<span class='fa fa-lock'></span> Zwei-Faktor Authentifizierung verwalten"
-text.who_can_access = "Wählen Sie aus, wer dieses Projekt sehen darf. Standardmäßig erben die Benutzer die Rollen, die ihnen zugewiesen wurden. Sie können diese Rollen unter der Registerkarte"
-text.ical_export_description = "Hier können Sie eine eindeutige Kalender-URL erstellen, mit der Sie Ihren Leantime-Kalender in jede Anwendung integrieren können, die das"
-text.you_ical_url = "Ihre Kalender-URL finden Sie unten. <br /> Bitte beachten Sie, dass jeder mit dieser URL auf den Kalender zugreifen kann. Halten Sie sie geheim wie ein Passwort."
-text.no_url = "Generieren Sie eine URL, indem Sie auf die Schaltfläche unten klicken"
-buttons.generate_ical_url = "iCal-URL generieren"
-links.remove_access = "Kalenderzugriff entfernen"
+MTR.text.who_can_access = "Wählen Sie aus, wer dieses Projekt sehen darf. Standardmäßig erben die Benutzer die Rollen, die ihnen zugewiesen wurden. Sie können diese Rollen unter der Registerkarte "Team" ändern"
+MTR.text.ical_export_description = "Hier können Sie eine eindeutige Kalender-URL erstellen, die es Ihnen ermöglicht, Ihren Leantime-Kalender in jede Anwendung zu integrieren, die das "iCal"-Format unterstützt."
+MTR.text.you_ical_url = "Ihre Kalender-URL finden Sie unten. <br /> Bitte beachten Sie, dass jeder mit dieser URL auf den Kalender zugreifen kann. Halten Sie sie geheim wie ein Passwort."
+MTR.text.no_url = "Generieren Sie eine URL, indem Sie auf die Schaltfläche unten klicken"
+MTR.buttons.generate_ical_url = "iCal-URL generieren"
+MTR.links.remove_access = "Kalenderzugriff entfernen"
 
-labels.defaultaccess = "Wer hat Zugang zu diesem Projekt?"
-labels.everyone_in_org = "Jeder in dieser Organisation"
-labels.everyone_in_client = "Jeder, der diesem Kunden zugewiesen ist"
-labels.only_chose = "Nur die Benutzer, die ich unter"
+MTR.labels.defaultaccess = "Wer hat Zugang zu diesem Projekt?"
+MTR.labels.everyone_in_org = "Jeder in dieser Organisation"
+MTR.labels.everyone_in_client = "Jeder, der diesem Kunden zugewiesen ist"
+MTR.labels.only_chose = "Nur die Benutzer, die ich unter "Team" auswähle"
 
 label.id = "ID"
 label.due = "Fällig am:"
@@ -621,7 +634,7 @@ label.description = "Beschreibung"
 label.author = "Autor"
 label.editor = "Zugewiesen an"
 label.filter_by_user = "Filter nach Benutzer"
-label.assign_to_me = "Mir zuweisen"
+MTR.label.assign_to_me = "Mir zuweisen"
 label.ticket_date = "Letzte Aktualisierung"
 label.due_date = "Fälligkeitsdatum"
 label.due_icon = "<span class='fa-regular fa-calendar'></span>"
@@ -745,7 +758,7 @@ label.firstname = "Vorname"
 label.lastname = "Nachname"
 label.no_clients = "Keinem Kunden zugewiesen"
 label.password = "Passwort"
-label.please_enter_password = "Bitte geben Sie Ihr Passwort ein"
+MTR.label.please_enter_password = "Bitte geben Sie Ihr Passwort ein"
 label.new_password = "Neues Passwort"
 label.old_password = "Altes Passwort"
 label.password_repeat = "Passwort wiederholen"
@@ -769,10 +782,10 @@ label.roles.clientManager = "Kunden-Manager"
 label.roles.manager = "Geschäftsführer"
 label.roles.admin = "Administrator"
 
-label.roles.readonly = "Nur lesen"
-label.roles.commenter = "Kommentator"
-label.roles.editor = "Herausgeber"
-label.roles.owner = "Eigentümer"
+MTR.label.roles.readonly = "Nur lesen"
+MTR.label.roles.commenter = "Kommentator"
+MTR.label.roles.editor = "Herausgeber"
+MTR.label.roles.owner = "Eigentümer"
 
 label.client = "Kunde"
 label.filename_fileexport = "Datei-Export"
@@ -792,60 +805,61 @@ label.assignSameUsers = "Den gleichen Benutzern zuweisen"
 label.newProjectName = "Neuer Projektname"
 label.client_id = "Kundennummer"
 label.ticket_id = "Ticketnummer"
-label.primary_color = "Primärfarbe"
-label.secondary_color = "Sekundärfarbe"
-label.wiki = "Wiki"
-label.wiki_title = "Titel"
-label.current_wiki = "Aktuelles Wiki"
-label.ical_export = "Kalender integrieren"
+MTR.label.primary_color = "Primärfarbe"
+MTR.label.secondary_color = "Sekundärfarbe"
+MTR.label.wiki = "Wiki"
+MTR.label.wiki_title = "Titel"
+MTR.label.current_wiki = "Aktuelles Wiki"
+MTR.label.ical_export = "Kalender integrieren"
 
-links.delete_article = "Artikel löschen"
+MTR.links.delete_article = "Artikel löschen"
 
-tabs.todosettings = "To-Do-Status-Einstellungen"
-label.sortindex = "Position sortieren"
-label.reportType = "Bericht als"
-label.showInKanban = "Auf der Kanban-Tafel anzeigen"
-links.my_portfolio = "<span class='fa fa-briefcase'></span> Portfolio ansehen"
+MTR.tabs.todosettings = "To-Do-Status-Einstellungen"
+MTR.label.sortindex = "Position sortieren"
+MTR.label.reportType = "Bericht als"
+MTR.label.showInKanban = "Auf der Kanban-Tafel anzeigen"
+MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> Portfolio ansehen"
 
-label.send_telemetry = "Helfen Sie mit, Leantime besser zu machen!"
-label.telemetry_background = "Senden Sie anonyme Daten <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>über die Anzahl der Projekte, Benutzer, Tickets etc. an Leantime.io</a>. Es werden keine persönlichen, identifizierbaren Daten gesendet und es ist für uns unmöglich, einzelne Benutzer zu verfolgen."
+MTR.label.send_telemetry = "Helfen Sie mit, Leantime besser zu machen!"
+MTR.label.telemetry_background = "Senden Sie anonyme Daten <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>über die Anzahl der Projekte, Benutzer, Tickets etc. an Leantime.io</a>. Es werden keine persönlichen, identifizierbaren Daten gesendet und es ist für uns unmöglich, einzelne Benutzer zu verfolgen."
 
-label.blue = "Blau"
-label.yellow = "Gelb"
-label.green = "Grün"
-label.red = "Rot"
-label.grey = "Grau"
+MTR.label.blue = "Blau"
+MTR.label.yellow = "Gelb"
+MTR.label.green = "Grün"
+MTR.label.red = "Rot"
+MTR.label.grey = "Grau"
 
-labels.all_projects = "Alle Projekte"
-label.dates = "Fälligkeitstermine"
+MTR.labels.all_projects = "Alle Projekte"
+MTR.label.dates = "Fälligkeitstermine"
 
-labels.createdBy_on = "Erstellt von %s %s am %s, geändert am %s"
-labels.tags = "Tags"
+MTR.labels.createdBy_on = "Erstellt von %s %s am %s, geändert am %s"
+MTR.labels.tags = "Tags"
 
 # Cron setup
 
-label.messages_frequency = "E-Mail-Häufigkeit"
-label.choose_option = "Wählen Sie Ihre Option"
-label.5min = "5 Minuten"
-label.15min = "15 Minuten"
-label.30min = "Eine halbe Stunde"
-label.1h = "1 Stunde"
-label.3h = "3 Stunden"
-label.6h = "6 Stunden"
-label.12h = "12 Stunden"
-label.24h = "1 Tag"
-label.48h = "2 Tage"
-label.1w = "1 Woche"
+MTR.label.messages_frequency = "E-Mail-Häufigkeit"
+MTR.label.choose_option = "Wählen Sie Ihre Option"
+MTR.label.5min = "5 Minuten"
+MTR.label.15min = "15 Minuten"
+MTR.label.30min = "Eine halbe Stunde"
+MTR.label.1h = "1 Stunde"
+MTR.label.3h = "3 Stunden"
+MTR.label.6h = "6 Stunden"
+MTR.label.12h = "12 Stunden"
+MTR.label.24h = "1 Tag"
+MTR.label.48h = "2 Tage"
+MTR.label.1w = "1 Woche"
 
-label.theme = "Thema"
-label.auto = "Auto"
-label.light = "Licht"
-label.dark = "Dunkelheit"
+MTR.label.theme = "Thema"
+MTR.label.auto = "Auto"
+MTR.label.light = "Licht"
+MTR.label.dark = "Dunkelheit"
 
-label.draft = "Entwurf"
-label.published = "Veröffentlicht"
-label.draft_parenth = "(Entwurf)"
+MTR.label.draft = "Entwurf"
+MTR.label.published = "Veröffentlicht"
+MTR.label.draft_parenth = "(Entwurf)"
 
+MTR.header.management = "Management des Unternehmens"
 dropdown.how_big_todo = "Wie aufwendig ist diese Aufgabe?"
 dropdown.select_priority = "Welche Priorität hat diese Aufgabe?"
 dropdown.choose_milestone = "wählen Sie einen Meilenstein aus"
@@ -882,6 +896,15 @@ status.delivering = "Ausliefern"
 status.inreview = "In Review"
 status.accepted = "Akzeptiert"
 status.deferred = "Aufgeschoben"
+
+status.continue = "Fortsetzen - Was ist gut gelaufen?"
+status.stop_doing = "Stop - Welche Aktivitäten sollten wir einstellen?"
+status.start_doing = "Start - was sollten wir verbessern?"
+
+MTR.label.project_status_is = "Projektstatus ist"
+MTR.label.green = "Grün"
+MTR.label.yellow = "Gelb"
+MTR.label.red = "Rot"
 
 email_notifications.hi = "Guten Tag,"
 email_notifications.unsubscribe = "Um sich von diesem Benachrichtigungstypen <a href='%1$s'> abzumelden </a>, melden Sie sich bitte an und bearbeiten Sie Ihre Benachrichtigungseinstellungen"
@@ -971,7 +994,7 @@ email_notifications.new_user_message = "%1$s hat ein Benutzerkonto für Sie ange
 email_notifications.password_reset_subject = "Leantime Passwort Rücksetzung"
 email_notifications.password_reset_message = "Wir haben Ihre E-Mail erhalten, in der Sie aufgefordert werden, Ihr Leantime-Passwort zurückzusetzen.<br/><br/>Wenn Sie Ihr Passwort zurücksetzen möchten, klicken Sie bitte auf diesen Link:<br/><a href='%1$s' target='_blank'>Passwort zurücksetzen</a><br/><br/>Wenn Sie kein Zurücksetzen des Passworts angefordert haben, ignorieren Sie diese Nachricht.<br/><br/>Vielen Dank."
 
-email_notifications.latest_updates_subject = "Leantime - Letzte Aktualisierungen"
+MTR.email_notifications.latest_updates_subject = "Leantime - Letzte Aktualisierungen"
 
 tabs.ticketDetails = "Details"
 tabs.subtasks = "Unteraufgaben"
@@ -982,8 +1005,8 @@ tabs.projectdetails = "Projekt-Details"
 tabs.Integrations = "Integrationen"
 tabs.files_with_count = "Dateien (%1$s)"
 tabs.discussion_with_count = "Diskussion (%1$s)"
-tabs.projectaccess = "Benutzerzugang"
-tabs.team = "Team"
+MTR.tabs.projectaccess = "Benutzerzugang"
+MTR.tabs.team = "Team"
 
 tooltip.how_many_hours_remaining = "Wie viele Stunden verbleiben dieser Aufgabe wohl noch?"
 
@@ -1045,110 +1068,133 @@ tour.change_views = "Ansicht wechseln"
 tour.change_views_text = "Mit diesen Schaltflächen können Sie zwischen Tabellen- und Kanbanansicht wechseln"
 tour.congratulations_kanban_text = "Sie haben die Tour beendet!<br/>Wenn Sie weitere Hilfe benötigen, dann besuchen Sie unsere Wissensdatenbank unter <a href='https://help.leantime.io' target='_blank'> https://help.leantime.io </a><br/><br/>Zögern Sie nicht, unser Support-Team um zusätzliche Hilfe zu bitten!<br/>Wir sind hier, um Ihnen das Leben zu erleichtern."
 
-
-## Leantime DTS Branch
+## New labels introduced with version 2.3.0
 
 
 # Supported menut types
 
-label.menu_type = "Menü-Typ"
-label.menu_type.default = "Standard-Menü"
-label.menu_type.lean = "Schlankes Menü"
-label.menu_type.dts = "Design Thinking für Strategie Menü"
+MTR.label.menu_type = "Menü-Typ"
+MTR.label.menu_type.default = "Standard-Menü"
+MTR.label.menu_type.lean = "Schlankes Menü"
+MTR.label.menu_type.dts = "Design Thinking für Strategie Menü"
 
 # Menu subtitles
 
-menu.default.advanced = "Fortgeschrittene"
-menu.default.various = "Verschiedene"
-menu.default.define = "Einfühlen / Definieren"
-menu.default.ideate = "Ideate / Protoype"
-menu.default.test = "Test &amp; Validieren"
-menu.default.tools = "Werkzeuge"
+MTR.menu.default.advanced = "Fortgeschrittene"
+MTR.menu.default.tools = "Werkzeuge"
+MTR.menu.default.various = "Verschiedene"
+MTR.menu.default.define = "Einfühlen / Definieren"
+MTR.menu.default.ideate = "Ideate / Protoype"
+MTR.menu.default.test = "Test &amp; Validieren"
 
-menu.dts.process = "Strategie Prozess"
-menu.dts.frameworks = "Strategie-Rahmenwerke"
-menu.dts.admin = "Verwaltung"
-menu.dts.observe = "Beobachten & Lernen"
-menu.dts.design = "Gestaltung"
-menu.dts.validate = "Validieren Sie"
+MTR.menu.dts.process = "Strategie Prozess"
+MTR.menu.dts.frameworks = "Strategie-Rahmenwerke"
+MTR.menu.dts.admin = "Verwaltung"
+MTR.menu.dts.observe = "Beobachten & Lernen"
+MTR.menu.dts.design = "Gestaltung"
+MTR.menu.dts.validate = "Validieren Sie"
 
 # Menu items
 
-menu.cpcanvas = "<span class='fas fa-fw fa-city'></span> Wettbewerb Leinwand"
-menu.dbmcanvas = "<span class='fas fa-fw fa-building'></span> Detailliertes Geschäftsmodell"
-menu.eacanvas = "<span class='fas fa-fw fa-tree'></span> Umweltanalyse"
-menu.emcanvas = "<span class='fas fa-fw fa-heart'></span> Karte der Empathie"
-menu.ideation = "<span class='far fa-fw fa-lightbulb'></span> Entwurf / Validierung - Ideenfindung"
-menu.insights = "<span class='far fa-fw fa-note-sticky'></span> Einblicke &amp Wissen"
-menu.insightscanvas = "<span class='far fa-fw fa-note-sticky'></span> Beobachten / Lernen - Einblicke"
-menu.lbmcanvas = "<span class='fas fa-fw fa-building'></span> Leichtes Geschäftsmodell"
-menu.leancanvas = "<span class='fas fa-fw fa-flask'></span> Lean Canvas"
-menu.obmcanvas = "<span class='fas fa-fw fa-building'></span> Ursprüngliches Geschäftsmodell"
-menu.retroscanvas = "<span class='far fa-fw fa-hand-spock'></span> Rückblicke"
-menu.riskscanvas = "<span class='fas fa-fw fa-person-falling'></span> Risikoanalyse"
-menu.sbcanvas = "<span class='fas fa-fw fa-list-check'></span> Strategiepapier"
-menu.smcanvas = "<span class='fas fa-fw fa-message'></span> Strategiemeldung"
-menu.sqcanvas = "<span class='fas fa-fw fa-chess'></span> Strategiefragen"
-menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT-Analyse"
+MTR.menu.cpcanvas = "<span class='fas fa-fw fa-city'></span> Wettbewerb Leinwand"
+MTR.menu.dbmcanvas = "<span class='fas fa-fw fa-building'></span> Detailliertes Geschäftsmodell"
+MTR.menu.eacanvas = "<span class='fas fa-fw fa-tree'></span> Umweltanalyse"
+MTR.menu.emcanvas = "<span class='fas fa-fw fa-heart'></span> Karte der Empathie"
+MTR.menu.ideation = "<span class='far fa-fw fa-lightbulb'></span> Entwurf / Validierung - Ideenfindung"
+MTR.menu.insights = "<span class='far fa-fw fa-note-sticky'></span> Einblicke &amp Wissen"
+MTR.menu.insightscanvas = "<span class='far fa-fw fa-note-sticky'></span> Beobachten / Lernen - Einblicke"
+MTR.menu.lbmcanvas = "<span class='fas fa-fw fa-building'></span> Leichtes Geschäftsmodell"
+MTR.menu.leancanvas = "<span class='fas fa-fw fa-flask'></span> Lean Canvas"
+MTR.menu.obmcanvas = "<span class='fas fa-fw fa-building'></span> Ursprüngliches Geschäftsmodell"
+MTR.menu.retroscanvas = "<span class='far fa-fw fa-hand-spock'></span> Rückblicke"
+MTR.menu.riskscanvas = "<span class='fas fa-fw fa-person-falling'></span> Risikoanalyse"
+MTR.menu.sbcanvas = "<span class='fas fa-fw fa-list-check'></span> Strategiepapier"
+MTR.menu.smcanvas = "<span class='fas fa-fw fa-message'></span> Strategie Mitteilung"
+MTR.menu.sqcanvas = "<span class='fas fa-fw fa-chess'></span> Strategiefragen"
+MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT-Analyse"
 
 # Links
 
-links.icon.create = "<i class='fa fa-plus'></i> Neu erstellen"
-links.icon.edit = "<i class='fa fa-edit'></i> Bearbeiten</a>"
-links.icon.clone = "<i class='fa fa-clone'></i> Kopie</a>"
-links.icon.delete = "<i class='fa-trash-can'></i> Löschen"
-links.icon.print = "<i class='fa fa-print'></i> Drucken"
+MTR.links.icon.create = "<i class='fa fa-plus'></i> Neu erstellen"
+MTR.links.icon.edit = "<i class='fa fa-edit'></i> Bearbeiten</a>"
+MTR.links.icon.clone = "<i class='fa fa-clone'></i> Kopie</a>"
+MTR.links.icon.merge = "<i class='fa fa-object-group'></i> Zusammenführen</a>"
+MTR.links.icon.import = "<i class='fa fa-file-import'></i> Import</a>"
+MTR.links.icon.export = "<i class='fa fa-file-export'></i> Export</a>"
+MTR.links.icon.print = "<i class='fa fa-print'></i> Drucken"
+MTR.links.icon.delete = "<i class='fa-trash-can'></i> Löschen"
 
 # Buttons
 
-buttons.cancel = "Abbrechen"
+MTR.buttons.cancel = "Abbrechen"
+MTR.buttons.import = "Importieren"
+MTR.buttons.clone = "Kopieren"
+MTR.buttons.merge = "Zusammenführen"
+
+MTR.label.version = "Version"
 
 # Labels for status and relates
 
 label.status = "Status"
-status.all = "Alle Status"
-status.draft = "Entwurf"
-status.review = "Im Rückblick"
-status.valid = "Validiert: Gültig"
-status.hold = "In der Warteschleife"
-status.invalid = "Bestätigt: Ungültig"
-status.pending = "Anhängig"
+MTR.status.all = "Alle Status"
+MTR.status.draft = "Entwurf"
+MTR.status.review = "Im Rückblick"
+MTR.status.valid = "Validiert: Gültig"
+MTR.status.hold = "In der Warteschleife"
+MTR.status.invalid = "Bestätigt: Ungültig"
+MTR.status.pending = "Anhängig"
 status.accepted = "Akzeptiert"
-status.rejected = "Abgelehnt"
+MTR.status.rejected = "Abgelehnt"
 
-label.relates = "Bezieht sich auf"
-relates.all = "Alle verwandten"
-relates.none = "Keine"
-relates.customers = "Kunden"
-relates.offerings = "Angebote"
-relates.capabilities = "Fähigkeiten"
-relates.financials = "Finanzen"
-relates.markets = "Märkte"
-relates.environment = "Umwelt"
-relates.firm = "Firma"
-relates.stakeholders = "Abstellgleishalter"
-dropdown.choose_relates = "Worauf bezieht sich das Element?"
+MTR.label.relates = "Bezieht sich auf"
+MTR.relates.all = "Alle verwandten"
+MTR.relates.none = "Keine"
+MTR.relates.customers = "Kunden"
+MTR.relates.offerings = "Angebote"
+MTR.relates.capabilities = "Fähigkeiten"
+MTR.relates.financials = "Finanzen"
+MTR.relates.markets = "Märkte"
+MTR.relates.environment = "Umwelt"
+MTR.relates.firm = "Firma"
+MTR.relates.stakeholders = "Abstellgleishalter"
+MTR.dropdown.choose_relates = "Worauf bezieht sich das Element?"
 
 # Board and element labels
 
-subtitle.clone_board = "Kopiertafel"
-label.title_element = "Titel des Elements"
-input.placeholders.describe_element = "Beschreiben Sie das Element"
+MTR.subtitle.clone_board = "Kopiertafel"
+MTR.subtitle.merge_board = "Verschmelzung mit dem aktuellen Vorstand"
+MTR.subtitle.import_board = "Importkarton"
+MTR.label.title_element = "Titel des Elements"
+MTR.label.title_merge = "Welche Leinwand möchten Sie in die aktuelle Tafel einfügen?"
+MTR.label.title_import = "Wie lautet der Dateiname der zu importierenden Leinwand?"
 
-text.confirm_board_deletion = "Sind Sie sicher, dass Sie dieses Forum löschen wollen?"
-text.confirm_board_item_deletion = "Sind Sie sicher, dass Sie dieses Element löschen wollen?"
-notification.board_created = "Vorstand erfolgreich erstellt"
-notification.board_copied = "Karte erfolgreich kopiert"
-notification.board_deleted = "Board erfolgreich gelöscht"
-notification.board_exists = "Boardname existiert bereits"
-notification.element_created = "Element erfolgreich erstellt"
-notification.element_deleted = "Element erfolgreich gelöscht"
-short_notifications.relates_updated = "Bezieht sich auf erfolgreich aktualisierte"
+MTR.input.placeholders.describe_element = "Beschreiben Sie das Element"
+
+MTR.text.confirm_board_deletion = "Sind Sie sicher, dass Sie dieses Forum löschen wollen?"
+MTR.text.confirm_board_item_deletion = "Sind Sie sicher, dass Sie dieses Element löschen wollen?"
+
+MTR.notification.board_created = "Vorstand erfolgreich erstellt"
+MTR.notification.board_copied = "Karte erfolgreich kopiert"
+MTR.notification.board_merged = "Vorstand erfolgreich fusioniert"
+MTR.notification.board_deleted = "Board erfolgreich gelöscht"
+MTR.notification.board_exists = "Boardname existiert bereits"
+MTR.notification.element_created = "Element erfolgreich erstellt"
+MTR.notification.element_deleted = "Element erfolgreich gelöscht"
+MTR.notification.board_imported = "Leinwandtafel erfolgreich importiert"
+MTR.notification.board_import_failed = "Import von Canvas-Tafeln fehlgeschlagen"
+MTR.notification.pdf.failed = "PDF-Erzeugung fehlgeschlagen"
+MTR.notification.merge_error = "Fehler beim Zusammenführen von Boards"
+MTR.notification.internal_internal = "Interner Fehler!"
+
+MTR.email_notifications.canvas_board_imported = "Eine neue Plane wurde importiert"
+MTR.email_notifications.canvas_imported_message = "Ein neues Canvas-Board wurde von %1$s importiert. Der Titel der Tafel ist '%2$s'."
+
+MTR.short_notifications.relates_updated = "Bezieht sich auf erfolgreich aktualisierte"
 
 # PDF labels
 
-pdf.label.page = "Seite"
-pdf.language.longdateformat = "l, F j, Y"
+MTR.pdf.label.page = "Seite"
+MTR.pdf.language.longdateformat = "l, F j, Y"
 MTR.pdf.disclaimer.confidential = "DIESES DOKUMENT IST GEHEIM *** VERTRAULICH ***<br>SIE DÜRFEN ES UNTER KEINEN UMSTÄNDEN EINEN DRITTEN ZEIGEN ODER WEITERLEITEN"
 
 ## Insights
@@ -1156,32 +1202,32 @@ MTR.pdf.disclaimer.confidential = "DIESES DOKUMENT IST GEHEIM *** VERTRAULICH **
 
 # Title
 
-headline.insights.board = "Beobachten / Lernen - Insights Board"
+MTR.headline.insights.board = "Beobachten / Lernen - Insights Board"
 
 # Element/Box Labels
 
-box.insights.observe = "Ethnographische Beobachtungen"
-box.insights.interview = "Ethnographische Interviews"
-box.insights.focus_groups = "Schwerpunktgruppen"
-box.insights.secondary_research = "Sekundärforschung"
-box.insights.knowledge = "Abgeleitetes Wissen"
+MTR.box.insights.observe = "Ethnographische Beobachtungen"
+MTR.box.insights.interview = "Ethnographische Interviews"
+MTR.box.insights.focus_groups = "Schwerpunktgruppen"
+MTR.box.insights.secondary_research = "Sekundärforschung"
+MTR.box.insights.knowledge = "Abgeleitetes Wissen"
 
 # Data Field Labels and placeholders
 
-label.insights.title_new = "Wie lautet der Titel Ihrer neuen Erkenntnisanalyse?"
-label.insights.title_edited = "Wie lautet der neue Titel Ihrer Insights-Analyse?"
-label.insights.title_clone = "Wie lautet der Titel Ihrer kopierten Einsichtsanayse?"
-input.placeholders.insights.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Insights-Analyse ein"
-label.insights.insight = "Beschreibung des Einblicks"
-label.insights.data = "Erfasste unterstützende Daten"
+MTR.label.insights.title_new = "Wie lautet der Titel Ihrer neuen Erkenntnisanalyse?"
+MTR.label.insights.title_edited = "Wie lautet der neue Titel Ihrer Insights-Analyse?"
+MTR.label.insights.title_clone = "Wie lautet der Titel Ihrer kopierten Einsichtsanayse?"
+MTR.input.placeholders.insights.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Insights-Analyse ein"
+MTR.label.insights.insight = "Beschreibung des Einblicks"
+MTR.label.insights.data = "Erfasste unterstützende Daten"
 
 # Notifications
 
-headlines.insights.analysis = "Beschreiben Sie die Analyse Ihrer Erkenntnisse"
-headlines.insights.welcome_to_board = "Willkommen im Insights Board!"
+MTR.headlines.insights.analysis = "Beschreiben Sie die Analyse Ihrer Erkenntnisse"
+MTR.headlines.insights.welcome_to_board = "Willkommen im Insights Board!"
 
-text.insights.helper_content = "Das <em>Beobachten / Lernen - Erkenntnisse</em>-Board hilft Ihnen, Erkenntnisse aus vier verschiedenen Quellen (ethnographische Beobachtungen, Interviews, Fokusgruppen und Sekundärforschung) zu sammeln und zu strukturieren und in Wissen umzuwandeln.<br/> Es unterstützt die Phasen des Beobachtens und Lernens, manchmal auch Einfühlen und Definieren genannt, des Design Thinking Prozesses.<br/>Weitere Details finden Sie in den Kapiteln 2, 8 und 9 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen Ihnen, das <em>Observe / Learn - Insights</em> Board jedes Mal zu verwenden, wenn Sie neue Erkenntnisse sammeln und analysieren, sei es für eine Risikoanalyse, eine Umweltanalyse, die Entdeckung von Branchentrends oder für die Gestaltung neuer Produkte und Dienstleistungen, um nur einige zu nennen."
-tour.insights.once_your_done = "<em>Wenn Sie mit der Sammlung von Erkenntnissen und der Schaffung von Wissen zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.insights.helper_content = "Das <em>Beobachten / Lernen - Erkenntnisse</em>-Board hilft Ihnen, Erkenntnisse aus vier verschiedenen Quellen (ethnographische Beobachtungen, Interviews, Fokusgruppen und Sekundärforschung) zu sammeln und zu strukturieren und in Wissen umzuwandeln.<br/> Es unterstützt die Phasen des Beobachtens und Lernens, manchmal auch Einfühlen und Definieren genannt, des Design Thinking Prozesses.<br/>Weitere Details finden Sie in den Kapiteln 2, 8 und 9 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen Ihnen, das <em>Observe / Learn - Insights</em> Board jedes Mal zu verwenden, wenn Sie neue Erkenntnisse sammeln und analysieren, sei es für eine Risikoanalyse, eine Umweltanalyse, die Entdeckung von Branchentrends oder für die Gestaltung neuer Produkte und Dienstleistungen, um nur einige zu nennen."
+MTR.tour.insights.once_your_done = "<em>Wenn Sie mit der Sammlung von Erkenntnissen und der Schaffung von Wissen zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Strategy Brief
@@ -1189,39 +1235,39 @@ tour.insights.once_your_done = "<em>Wenn Sie mit der Sammlung von Erkenntnissen 
 
 # Title
 
-headline.sb.board = "Strategie Brief Vorstand"
+MTR.headline.sb.board = "Strategie Brief Vorstand"
 
 # Element/Box Labels
 
-box.sb.title = "Strategie Brief"
-box.sb.industry = "Zielindustrie(n)"
-box.sb.description = "Strategie Projektziele Beschreibung"
-box.sb.st_design = "Entwurfsteam"
-box.sb.st_decision = "Entscheidungsträger"
-box.sb.st_experts = "Experten"
-box.sb.st_support = "Unterstützungspersonal"
-box.sb.budget = "Hochrangiger Haushalt"
-box.sb.time = "Hochrangiger Zeitplan"
-box.sb.culture = "Kultur"
-box.sb.change = "Kapazität ändern"
-box.sb.principles = "Leitende Prinzipien"
-box.sb.risks = "Bewertung der Risiken"
+MTR.box.sb.title = "Strategie Brief"
+MTR.box.sb.industry = "Zielindustrie(n)"
+MTR.box.sb.description = "Strategie Projektziele Beschreibung"
+MTR.box.sb.st_design = "Entwurfsteam"
+MTR.box.sb.st_decision = "Entscheidungsträger"
+MTR.box.sb.st_experts = "Experten"
+MTR.box.sb.st_support = "Unterstützungspersonal"
+MTR.box.sb.budget = "Hochrangiger Haushalt"
+MTR.box.sb.time = "Hochrangiger Zeitplan"
+MTR.box.sb.culture = "Kultur"
+MTR.box.sb.change = "Kapazität ändern"
+MTR.box.sb.principles = "Leitende Prinzipien"
+MTR.box.sb.risks = "Bewertung der Risiken"
 
 # Data Field Labels and placeholders
 
-label.sb.title_new = "Wie lautet der Titel Ihres neuen Strategieauftrags?"
-label.sb.title_edited = "Wie lautet der neue Titel Ihres Strategiepapiers?"
-label.sb.title_clone = "Wie lautet der Titel Ihres kopierten Strategieauftrags?"
-input.placeholders.sb.enter_title_for_board = "Geben Sie den Titel Ihres neuen Strategiepapiers ein"
+MTR.label.sb.title_new = "Wie lautet der Titel Ihres neuen Strategieauftrags?"
+MTR.label.sb.title_edited = "Wie lautet der neue Titel Ihres Strategiepapiers?"
+MTR.label.sb.title_clone = "Wie lautet der Titel Ihres kopierten Strategieauftrags?"
+MTR.input.placeholders.sb.enter_title_for_board = "Geben Sie den Titel Ihres neuen Strategiepapiers ein"
 
 # Notifications
 
-headlines.sb.analysis = "Beschreiben Sie Ihr Strategieprojekt"
-headlines.sb.welcome_to_board = "Willkommen im Strategy Brief Board!"
+MTR.headlines.sb.analysis = "Beschreiben Sie Ihr Strategieprojekt"
+MTR.headlines.sb.welcome_to_board = "Willkommen im Strategy Brief Board!"
 
-text.sb.helper_content = "Der <em>Strategy Brief</em> hilft Ihnen, Ihr nächstes Strategieprojekt zu starten. Er stellt sicher, dass die Grundlagen für Ihr Vorhaben gut dokumentiert und vereinbart sind.<br />Weitere Details finden Sie in den Kapiteln 4 und 5 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br />Wir empfehlen Ihnen, für jedes Strategieprojekt, das Sie beginnen, einen Strategiebrief zu erstellen."
-tour.sb.once_your_done = "<em>Wenn Sie mit Ihrem Strategy Brief zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.sb.risks_analysis = "Die Risikoanalyse ist zu finden unter <a href='%s/riskscanvas/showCanvas/'>Risikoanalyse</a>"
+MTR.text.sb.helper_content = "Der <em>Strategy Brief</em> hilft Ihnen, Ihr nächstes Strategieprojekt zu starten. Er stellt sicher, dass die Grundlagen für Ihr Vorhaben gut dokumentiert und vereinbart sind.<br />Weitere Details finden Sie in den Kapiteln 4 und 5 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br />Wir empfehlen Ihnen, für jedes Strategieprojekt, das Sie beginnen, einen Strategiebrief zu erstellen."
+MTR.tour.sb.once_your_done = "<em>Wenn Sie mit Ihrem Strategy Brief zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.sb.risks_analysis = "Die Risikoanalyse ist zu finden unter <a href='%s/riskscanvas/showCanvas/'>Risikoanalyse</a>"
 
 
 ## Risk Analysis
@@ -1229,31 +1275,31 @@ text.sb.risks_analysis = "Die Risikoanalyse ist zu finden unter <a href='%s/risk
 
 # Title
 
-headline.risks.board = "Ausschuss für Risikoanalyse"
+MTR.headline.risks.board = "Ausschuss für Risikoanalyse"
 
 # Element/Box Labels
 
-box.risks.imp_low_pro_low = "Geringe Auswirkung / Geringe Eintrittswahrscheinlichkeit"
-box.risks.imp_low_pro_high = "Geringe Auswirkungen / Hohe Wahrscheinlichkeit"
-box.risks.imp_high_pro_low = "Hohe Auswirkungen / Geringe Wahrscheinlichkeit"
-box.risks.imp_high_pro_high = "Hohe Auswirkungen / Hohe Wahrscheinlichkeit"
+MTR.box.risks.imp_low_pro_low = "Geringe Auswirkung / Geringe Eintrittswahrscheinlichkeit"
+MTR.box.risks.imp_low_pro_high = "Geringe Auswirkungen / Hohe Wahrscheinlichkeit"
+MTR.box.risks.imp_high_pro_low = "Hohe Auswirkungen / Geringe Wahrscheinlichkeit"
+MTR.box.risks.imp_high_pro_high = "Hohe Auswirkungen / Hohe Wahrscheinlichkeit"
 
 # Data Field Labels and placeholders
 
-label.risks.title_new = "Wie lautet der Titel Ihrer neuen Risikoanalyse?"
-label.risks.title_edited = "Wie lautet der neue Titel Ihrer Risikoanalyse?"
-label.risks.title_clone = "Wie lautet der Titel Ihrer kopierten Risikoanalyse?"
-input.placeholders.risks.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Risikoanalyse ein"
-label.risks.description = "Beschreibung des Risikos"
-label.risks.mitigation = "Geplante Maßnahmen zur Risikominderung"
+MTR.label.risks.title_new = "Wie lautet der Titel Ihrer neuen Risikoanalyse?"
+MTR.label.risks.title_edited = "Wie lautet der neue Titel Ihrer Risikoanalyse?"
+MTR.label.risks.title_clone = "Wie lautet der Titel Ihrer kopierten Risikoanalyse?"
+MTR.input.placeholders.risks.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Risikoanalyse ein"
+MTR.label.risks.description = "Beschreibung des Risikos"
+MTR.label.risks.mitigation = "Geplante Maßnahmen zur Risikominderung"
 
 # Notifications
 
-headlines.risks.analysis = "Beschreiben Sie Ihre Risikoanalyse"
-headlines.risks.welcome_to_board = "Willkommen im Risikoanalyseausschuss!"
+MTR.headlines.risks.analysis = "Beschreiben Sie Ihre Risikoanalyse"
+MTR.headlines.risks.welcome_to_board = "Willkommen beim Risikoanalyseausschuss!"
 
-text.risks.helper_content = "Die <em>Risikoanalyse</em> hilft Ihnen, Risiken, die während Ihres Projekts auftreten können, zu erkennen und abzuschwächen oder zu vermeiden.<br/> Wir empfehlen Ihnen, zu Beginn jedes Projekts eine Risikoanalyse durchzuführen und sie in regelmäßigen Abständen zu aktualisieren."
-tour.risks.once_your_done = "<em>Wenn Sie mit Ihrer Risikoanalyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.risks.helper_content = "Die <em>Risikoanalyse</em> hilft Ihnen, Risiken, die während Ihres Projekts auftreten können, zu erkennen und abzuschwächen oder zu vermeiden.<br/> Wir empfehlen Ihnen, zu Beginn jedes Projekts eine Risikoanalyse durchzuführen und sie in regelmäßigen Abständen zu aktualisieren."
+MTR.tour.risks.once_your_done = "<em>Wenn Sie mit Ihrer Risikoanalyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## SWOT Analysis
@@ -1261,35 +1307,35 @@ tour.risks.once_your_done = "<em>Wenn Sie mit Ihrer Risikoanalyse zufrieden sind
 
 # Title
 
-headline.swot.board = "SWOT-Analyse-Tafel"
+MTR.headline.swot.board = "SWOT-Analyse-Tafel"
 
 # Element/Box Labels
 
-box.swot.strengths = "Stärken"
-box.swot.weaknesses = "Schwachstellen"
-box.swot.opportunities = "Möglichkeiten"
-box.swot.threats = "Bedrohungen"
-box.header.swot.helpful = "HILFE"
-box.header.swot.harmful = "HARMFUL"
-box.header.swot.internal = "INTERNE HERKUNFT"
-box.header.swot.external = "EXTERNE HERKUNFT"
+MTR.box.swot.strengths = "Stärken"
+MTR.box.swot.weaknesses = "Schwachstellen"
+MTR.box.swot.opportunities = "Möglichkeiten"
+MTR.box.swot.threats = "Bedrohungen"
+MTR.box.header.swot.helpful = "HILFE"
+MTR.box.header.swot.harmful = "HARMFUL"
+MTR.box.header.swot.internal = "INTERNE HERKUNFT"
+MTR.box.header.swot.external = "EXTERNE HERKUNFT"
 
 # Data Field Labels and placeholders
 
-label.swot.title_new = "Wie lautet der Titel Ihrer neuen SWOT-Analyse?"
-label.swot.title_edited = "Wie lautet der neue Titel Ihrer SWOT-Analyse?"
-label.swot.title_clone = "Wie lautet der Titel Ihrer kopierten SWOT-Analyse?"
-input.placeholders.swot.enter_title_for_board = "Geben Sie den Titel Ihrer neuen SWOT-Analyse ein"
-label.swot.description = "Beschreibung des Risikos"
-label.swot.mitigation = "Geplante Maßnahmen zur Risikominderung"
+MTR.label.swot.title_new = "Wie lautet der Titel Ihrer neuen SWOT-Analyse?"
+MTR.label.swot.title_edited = "Wie lautet der neue Titel Ihrer SWOT-Analyse?"
+MTR.label.swot.title_clone = "Wie lautet der Titel Ihrer kopierten SWOT-Analyse?"
+MTR.input.placeholders.swot.enter_title_for_board = "Geben Sie den Titel Ihrer neuen SWOT-Analyse ein"
+MTR.label.swot.description = "Beschreibung des Risikos"
+MTR.label.swot.mitigation = "Geplante Maßnahmen zur Risikominderung"
 
 # Notifications
 
-headlines.swot.analysis = "Beschreiben Sie Ihre SWOT-Analyse"
-headlines.swot.welcome_to_board = "Willkommen im SWOT-Analyse Board!"
+MTR.headlines.swot.analysis = "Beschreiben Sie Ihre SWOT-Analyse"
+MTR.headlines.swot.welcome_to_board = "Willkommen im SWOT-Analyse Board!"
 
-text.swot.helper_content = "Die <em>SWOT-Analyse</em> hilft Ihnen bei der Identifizierung von Stärken, Schwächen, Chancen und Gefahren, die Sie bei der Ideenfindung und beim Prototyping nutzen können.<br/> Wir empfehlen Ihnen, zu Beginn Ihres Projekts eine SWOT-Analyse durchzuführen."
-tour.swot.once_your_done = "<em>Wenn Sie mit Ihrer SWOT-Analyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.swot.helper_content = "Die <em>SWOT-Analyse</em> hilft Ihnen dabei, Stärken, Schwächen, Chancen und Gefahren zu ermitteln, die Sie bei der Ideenfindung und beim Prototyping nutzen können.<br/> Wir empfehlen Ihnen, zu Beginn Ihres Projekts eine SWOT-Analyse durchzuführen."
+MTR.tour.swot.once_your_done = "<em>Wenn Sie mit Ihrer SWOT-Analyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Empathy map
@@ -1297,39 +1343,39 @@ tour.swot.once_your_done = "<em>Wenn Sie mit Ihrer SWOT-Analyse zufrieden sind, 
 
 # Title
 
-headline.em.board = "Empathie-Kartentafel"
+MTR.headline.em.board = "Empathie-Kartentafel"
 
 # Element/Box Labels
 
-box.em.header.goal = "ZIEL"
-box.em.who = "Wem gegenüber fühlen wir uns verantwortlich?"
-box.em.what = "Was müssen sie TUN?"
-box.em.header.empathy = "EMPATHIE"
-box.em.see = "Was sehen sie?"
-box.em.say = "Was sagen sie SAY?"
-box.em.do = "Was tun sie?"
-box.em.hear = "Was HÖREN sie?"
-box.em.header.think_feel = "Was DENKEN und FÜHLEN sie?"
-box.em.pains = "PAINS - Was sind ihre Ängste, Frustrationen und Befürchtungen?"
-box.em.gains = "GAINS - Was sind ihre Wünsche, Bedürfnisse, Hoffnungen und Träume?"
-box.em.motives = "Andere Gedanken und Gefühle, die ihr Verhalten motivieren"
+MTR.box.em.header.goal = "ZIEL"
+MTR.box.em.who = "Wem gegenüber fühlen wir uns verantwortlich?"
+MTR.box.em.what = "Was müssen sie TUN?"
+MTR.box.em.header.empathy = "EMPATHIE"
+MTR.box.em.see = "Was sehen sie?"
+MTR.box.em.say = "Was sagen sie SAY?"
+MTR.box.em.do = "Was tun sie?"
+MTR.box.em.hear = "Was HÖREN sie?"
+MTR.box.em.header.think_feel = "Was DENKEN und FÜHLEN sie?"
+MTR.box.em.pains = "PAINS - Was sind ihre Ängste, Frustrationen und Befürchtungen?"
+MTR.box.em.gains = "GAINS - Was sind ihre Wünsche, Bedürfnisse, Hoffnungen und Träume?"
+MTR.box.em.motives = "Andere Gedanken und Gefühle, die ihr Verhalten motivieren"
 
 # Data Field Labels and placeholders
 
-label.em.title_new = "Wie lautet der Titel Ihrer neuen Empathiekarte?"
-label.em.title_edited = "Wie lautet der neue Titel Ihrer Empathiekarte?"
-label.em.title_clone = "Wie lautet der Titel Ihrer kopierten Empathiekarte?"
-input.placeholders.em.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Empathiekarte ein"
-label.em.description = "Ausführliche Antwort auf die Frage"
+MTR.label.em.title_new = "Wie lautet der Titel Ihrer neuen Empathiekarte?"
+MTR.label.em.title_edited = "Wie lautet der neue Titel Ihrer Empathiekarte?"
+MTR.label.em.title_clone = "Wie lautet der Titel Ihrer kopierten Empathiekarte?"
+MTR.input.placeholders.em.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Empathiekarte ein"
+MTR.label.em.description = "Ausführliche Antwort auf die Frage"
 
 # Notifications
 
-headlines.em.analysis = "Beschreiben Sie Ihre Empathiekarte"
-headlines.em.welcome_to_board = "Willkommen beim Empathy Map Board!"
+MTR.headlines.em.analysis = "Beschreiben Sie Ihre Empathiekarte"
+MTR.headlines.em.welcome_to_board = "Willkommen beim Empathy Map Board!"
 
-text.em.helper_content = "Die <em>Empathy Map</em> hilft Ihnen, eine Brücke zum Verständnis des Endnutzers zu schlagen. Im Rahmen ihrer Anwendung wird sie verwendet, um ein gemeinsames Verständnis für die Bedürfnisse des Nutzers aufzubauen und den Kontext für eine nutzerzentrierte Lösung zu liefern. Weitere Details finden Sie im Blogbeitrag von Dave Gray <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Updated Empathy Map Canvas</a></em>."
-tour.em.once_your_done = "<em>Wenn Sie sich mit Ihrer Empathiekarte wohl fühlen, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.em.disclaimer = "Die <a href='https://gamestorming.com/empathy-map/'>Empathiekarte</a> basiert auf der Arbeit von Dave Gray"
+MTR.text.em.helper_content = "Die <em>Empathy Map</em> hilft Ihnen, eine Brücke zum Verständnis des Endnutzers zu schlagen. Im Rahmen ihrer Anwendung wird sie verwendet, um ein gemeinsames Verständnis für die Bedürfnisse des Nutzers aufzubauen und den Kontext für eine nutzerzentrierte Lösung zu liefern. Weitere Details finden Sie im Blogbeitrag von Dave Gray <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Updated Empathy Map Canvas</a></em>."
+MTR.tour.em.once_your_done = "<em>Wenn Sie sich mit Ihrer Empathiekarte wohl fühlen, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.em.disclaimer = "Die <a href='https://gamestorming.com/empathy-map/'>Empathiekarte</a> basiert auf der Arbeit von Dave Gray"
 
 
 ## Environmental / PESTLE Analysis
@@ -1337,41 +1383,41 @@ text.em.disclaimer = "Die <a href='https://gamestorming.com/empathy-map/'>Empath
 
 # Title
 
-headline.ea.board = "Ausschuss für Umweltanalyse"
+MTR.headline.ea.board = "Ausschuss für Umweltanalyse"
 
 # Element/Box Labels
 
-box.ea.title = "Umwelt- / PESTLE-Analyse"
-box.ea.political = "Politisch"
-box.ea.economic = "Wirtschaft"
-box.ea.societal = "Gesellschaftlich"
-box.ea.technological = "Technologische"
-box.ea.legal = "Rechtliches"
-box.ea.ecological = "Ökologisch"
+MTR.box.ea.title = "Umwelt- / PESTLE-Analyse"
+MTR.box.ea.political = "Politisch"
+MTR.box.ea.economic = "Wirtschaft"
+MTR.box.ea.societal = "Gesellschaftlich"
+MTR.box.ea.technological = "Technologische"
+MTR.box.ea.legal = "Rechtliches"
+MTR.box.ea.ecological = "Ökologisch"
 
 # Status
 
-status.ea.observation = "Beobachtung"
-status.ea.threat = "Bedrohung"
-status.ea.trend = "Trend"
+MTR.status.ea.observation = "Beobachtung"
+MTR.status.ea.threat = "Bedrohung"
+MTR.status.ea.trend = "Trend"
 
 # Relates
 
 
 # Data Field Labels and placeholders
 
-label.ea.title_new = "Wie lautet der Titel Ihrer neuen Umweltanalyse?"
-label.ea.title_edited = "Wie lautet der neue Titel Ihrer Umweltanalyse?"
-label.ea.title_clone = "Wie lautet der Titel Ihrer kopierten Umweltanalyse?"
-input.placeholders.ea.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Umweltanalyse ein"
+MTR.label.ea.title_new = "Wie lautet der Titel Ihrer neuen Umweltanalyse?"
+MTR.label.ea.title_edited = "Wie lautet der neue Titel Ihrer Umweltanalyse?"
+MTR.label.ea.title_clone = "Wie lautet der Titel Ihrer kopierten Umweltanalyse?"
+MTR.input.placeholders.ea.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Umweltanalyse ein"
 
 # Notifications
 
-headlines.ea.analysis = "Beschreiben Sie Ihre Umweltanalyse"
-headlines.ea.welcome_to_board = "Willkommen im Ausschuss für Umweltanalyse!"
+MTR.headlines.ea.analysis = "Beschreiben Sie Ihre Umweltanalyse"
+MTR.headlines.ea.welcome_to_board = "Willkommen beim Ausschuss für Umweltanalyse!"
 
-text.ea.helper_content = "Die <em>Umweltanalyse</em>, auch bekannt als <em>PESTLE-Analyse</em>, hilft Ihnen, das aktuelle und/oder zukünftige Umfeld, in dem Sie tätig sind, entlang der sechs Dimensionen zu bewerten: Politisch, wirtschaftlich, gesellschaftlich, technologisch, rechtlich und ökonomisch.<br/>Wir empfehlen Ihnen, eine Umweltanalyse zu einem frühen Zeitpunkt in Ihrem Projekt durchzuführen, zumindest vor Beginn der Ideenfindungsphase, und sie während des gesamten Projekts auf dem neuesten Stand zu halten."
-tour.ea.once_your_done = "<em>Wenn Sie mit Ihrer Umweltanalyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.ea.helper_content = "Die <em>Umweltanalyse</em>, auch bekannt als <em>PESTLE-Analyse</em>, hilft Ihnen, das aktuelle und/oder zukünftige Umfeld, in dem Sie tätig sind, entlang der sechs Dimensionen zu bewerten: Politisch, wirtschaftlich, gesellschaftlich, technologisch, rechtlich und ökonomisch.<br/>Wir empfehlen Ihnen, eine Umweltanalyse zu einem frühen Zeitpunkt in Ihrem Projekt durchzuführen, zumindest vor Beginn der Ideenfindungsphase, und sie während des gesamten Projekts auf dem neuesten Stand zu halten."
+MTR.tour.ea.once_your_done = "<em>Wenn Sie mit Ihrer Umweltanalyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Lightweight Business Model
@@ -1379,30 +1425,30 @@ tour.ea.once_your_done = "<em>Wenn Sie mit Ihrer Umweltanalyse zufrieden sind, b
 
 # Title
 
-headline.lbm.board = "Lightweight Business Model Board"
+MTR.headline.lbm.board = "Lightweight Business Model Board"
 
 # Element/Box Labels
 
-box.lbm.customers = "Kunden"
-box.lbm.offerings = "Angebote"
-box.lbm.capabilities = "Fähigkeiten"
-box.lbm.financials = "Finanzen"
+MTR.box.lbm.customers = "Kunden"
+MTR.box.lbm.offerings = "Angebote"
+MTR.box.lbm.capabilities = "Fähigkeiten"
+MTR.box.lbm.financials = "Finanzen"
 
 # Data Field Labels and placeholders
 
-label.lbm.title_new = "Wie lautet der Titel Ihres neuen leichtgewichtigen Geschäftsmodells?"
-label.lbm.title_edited = "Wie lautet der neue Titel Ihres leichtgewichtigen Geschäftsmodells?"
-label.lbm.title_clone = "Wie lautet der Titel Ihres kopierten leichtgewichtigen Geschäftsmodells?"
-input.placeholders.lbm.enter_title_for_board = "Geben Sie den Titel Ihres neuen leichtgewichtigen Geschäftsmodells ein"
+MTR.label.lbm.title_new = "Wie lautet der Titel Ihres neuen leichtgewichtigen Geschäftsmodells?"
+MTR.label.lbm.title_edited = "Wie lautet der neue Titel Ihres leichtgewichtigen Geschäftsmodells?"
+MTR.label.lbm.title_clone = "Wie lautet der Titel Ihres kopierten leichtgewichtigen Geschäftsmodells?"
+MTR.input.placeholders.lbm.enter_title_for_board = "Geben Sie den Titel Ihres neuen leichtgewichtigen Geschäftsmodells ein"
 
 # Notifications
 
-headlines.lbm.analysis = "Beschreiben Sie Ihr leichtgewichtiges Geschäftsmodell"
-headlines.lbm.welcome_to_board = "Willkommen im Lightweight Business Model Board!"
+MTR.headlines.lbm.analysis = "Beschreiben Sie Ihr leichtgewichtiges Geschäftsmodell"
+MTR.headlines.lbm.welcome_to_board = "Willkommen im Lightweight Business Model Board!"
 
-text.lbm.helper_content = "Das <em>Leichtgewichtige Geschäftsmodell</em> hilft Ihnen, Ihre aktuelle Organisation, Ihre Konkurrenten und die Branche zu dokumentieren. Es unterstützt die Identifizierung des strategischen Fokus eines Unternehmens und legt den Grundstein für den Entwurf eines neuartigen und wettbewerbsfähigen detaillierten Geschäftsmodells.<br />Weitere Details finden Sie in Kapitel 3 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen die Lightweight-Variante des Business Model Canvas immer dann zu verwenden, wenn Sie die Spezifika des detaillierten oder des ursprünglichen Osterwalter-Geschäftsmodells nicht benötigen."
-tour.lbm.once_your_done = "<em>Wenn Sie mit Ihrem leichtgewichtigen Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.lbm.disclaimer = "Das <em>Lightweight Business Model Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und basiert auf dem <em>Business Model Canvas</em> von <a href='https://www.strategyzer.com'>Strategyzer</a>. Es ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
+MTR.text.lbm.helper_content = "Das <em>Leichtgewichtige Geschäftsmodell</em> hilft Ihnen, Ihr aktuelles Unternehmen, Ihre Wettbewerber und die Branche zu dokumentieren. Es unterstützt die Identifizierung des strategischen Fokus eines Unternehmens und legt den Grundstein für den Entwurf eines neuartigen und wettbewerbsfähigen detaillierten Geschäftsmodells.<br />Weitere Details finden Sie in Kapitel 3 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen die Lightweight-Variante des Business Model Canvas immer dann zu verwenden, wenn Sie die Spezifika des detaillierten oder des ursprünglichen Osterwalter-Geschäftsmodells nicht benötigen."
+MTR.tour.lbm.once_your_done = "<em>Wenn Sie mit Ihrem leichtgewichtigen Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.lbm.disclaimer = "Das <em>Lightweight Business Model Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und basiert auf dem <em>Business Model Canvas</em> von <a href='https://www.strategyzer.com'>Strategyzer</a>. Es ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
 
 
 ## Osterwalder's Business Model
@@ -1410,35 +1456,35 @@ text.lbm.disclaimer = "Das <em>Lightweight Business Model Canvas</em> stammt aus
 
 # Title
 
-headline.obm.board = "Geschäftsmodell-Board"
+MTR.headline.obm.board = "Geschäftsmodell Board"
 
 # Element/Box Labels
 
-box.obm.cs = "Kunden-Segmente"
-box.obm.cr = "Kundenbeziehungen"
-box.obm.ch = "Kanäle"
-box.obm.vp = "Wert-Angebot"
-box.obm.ka = "Wichtigste Aktivitäten"
-box.obm.kr = "Wichtige Ressourcen"
-box.obm.kp = "Wichtige Partner"
-box.obm.fr = "Einnahmeströme"
-box.obm.fc = "Kostenstruktur"
+MTR.box.obm.cs = "Kunden-Segmente"
+MTR.box.obm.cr = "Kundenbeziehungen"
+MTR.box.obm.ch = "Kanäle"
+MTR.box.obm.vp = "Wert-Angebot"
+MTR.box.obm.ka = "Wichtigste Aktivitäten"
+MTR.box.obm.kr = "Wichtige Ressourcen"
+MTR.box.obm.kp = "Wichtige Partner"
+MTR.box.obm.fr = "Einnahmeströme"
+MTR.box.obm.fc = "Kostenstruktur"
 
 # Data Field Labels and placeholders
 
-label.obm.title_new = "Wie lautet der Titel Ihres neuen Geschäftsmodells?"
-label.obm.title_edited = "Wie lautet der neue Titel Ihres Geschäftsmodells?"
-label.obm.title_clone = "Wie lautet der Titel Ihres kopierten Geschäftsmodells?"
-input.placeholders.obm.enter_title_for_board = "Geben Sie den Titel Ihres neuen Geschäftsmodells ein"
+MTR.label.obm.title_new = "Wie lautet der Titel Ihres neuen Geschäftsmodells?"
+MTR.label.obm.title_edited = "Wie lautet der neue Titel Ihres Geschäftsmodells?"
+MTR.label.obm.title_clone = "Wie lautet der Titel Ihres kopierten Geschäftsmodells?"
+MTR.input.placeholders.obm.enter_title_for_board = "Geben Sie den Titel Ihres neuen Geschäftsmodells ein"
 
 # Notifications
 
-headlines.obm.analysis = "Beschreiben Sie Ihr Geschäftsmodell"
-headlines.obm.welcome_to_board = "Willkommen im Business Model Board!"
+MTR.headlines.obm.analysis = "Beschreiben Sie Ihr Geschäftsmodell"
+MTR.headlines.obm.welcome_to_board = "Willkommen im Business Model Board!"
 
-text.obm.helper_content = "Das <em>Original Business Model Canvas</em> wurde von Alex Osterwalder und Yves Pigneur entwickelt. Es hilft Ihnen, Ihr aktuelles Unternehmen, Ihre Konkurrenten und die Branche zu dokumentieren.<br/><em>`Ein Geschäftsmodell beschreibt das Grundprinzip, wie ein Unternehmen Werte schafft, liefert und erfasst''</em> - <strong>Alex Osterwalder</strong>."
-tour.obm.once_your_done = "<em>Wenn Sie mit Ihrem Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.obm.disclaimer = "Das <em>Business Model Canvas</em> stammt aus dem <a href='https://www.strategyzer.com'>Strategyzer</a>, und ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
+MTR.text.obm.helper_content = "Das <em>Original Business Model Canvas</em> wurde von Alex Osterwalder und Yves Pigneur entwickelt. Es hilft Ihnen, Ihr aktuelles Unternehmen, Ihre Konkurrenten und die Branche zu dokumentieren.<br/><em>`Ein Geschäftsmodell beschreibt das Grundprinzip, wie ein Unternehmen Werte schafft, liefert und erfasst''</em> - <strong>Alex Osterwalder</strong>."
+MTR.tour.obm.once_your_done = "<em>Wenn Sie mit Ihrem Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.obm.disclaimer = "Das <em>Business Model Canvas</em> stammt aus dem <a href='https://www.strategyzer.com'>Strategyzer</a>, und ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
 
 
 ## Detailed Business Model
@@ -1446,41 +1492,41 @@ text.obm.disclaimer = "Das <em>Business Model Canvas</em> stammt aus dem <a href
 
 # Title
 
-headline.dbm.board = "Detailliertes Geschäftsmodell Board"
+MTR.headline.dbm.board = "Detailliertes Geschäftsmodell Board"
 
 # Element/Box Labels
 
-box.dbm.cs = "Kunden-Segmente"
-box.dbm.cj = "Zu erledigende Kundenaufträge"
-box.dbm.cr = "Kundenbeziehungen"
-box.dbm.cd = "Lieferung an Kunden"
-box.dbm.ovp = "Wert-Angebot"
-box.dbm.ops = "Produkte &amp; Dienstleistung"
-box.dbm.kad = "Aktivitäten zum Wettbewerbsvorteil"
-box.dbm.kac = "Kostenvorteil-Aktivitäten"
-box.dbm.kao = "Ausgelagerte Aktivitäten"
-box.dbm.krp = "Verderbliche Ressourcen"
-box.dbm.krc = "Kapitalressourcen"
-box.dbm.krl = "Arbeit"
-box.dbm.krs = "Fertigkeiten"
-box.dbm.fr = "Einnahmeströme"
-box.dbm.fc = "Kostenstruktur"
+MTR.box.dbm.cs = "Kunden-Segmente"
+MTR.box.dbm.cj = "Zu erledigende Kundenaufträge"
+MTR.box.dbm.cr = "Kundenbeziehungen"
+MTR.box.dbm.cd = "Lieferung an Kunden"
+MTR.box.dbm.ovp = "Wert-Angebot"
+MTR.box.dbm.ops = "Produkte &amp; Dienstleistung"
+MTR.box.dbm.kad = "Aktivitäten zum Wettbewerbsvorteil"
+MTR.box.dbm.kac = "Kostenvorteil-Aktivitäten"
+MTR.box.dbm.kao = "Ausgelagerte Aktivitäten"
+MTR.box.dbm.krp = "Verderbliche Ressourcen"
+MTR.box.dbm.krc = "Kapitalressourcen"
+MTR.box.dbm.krl = "Arbeit"
+MTR.box.dbm.krs = "Fertigkeiten"
+MTR.box.dbm.fr = "Einnahmeströme"
+MTR.box.dbm.fc = "Kostenstruktur"
 
 # Data Field Labels and placeholders
 
-label.dbm.title_new = "Wie lautet der Titel Ihres neuen detaillierten Geschäftsmodells?"
-label.dbm.title_edited = "Wie lautet der neue Titel Ihres detaillierten Geschäftsmodells?"
-label.dbm.title_clone = "Wie lautet der Titel Ihres kopierten detaillierten Geschäftsmodells?"
-input.placeholders.dbm.enter_title_for_board = "Geben Sie den Titel Ihres neuen detaillierten Geschäftsmodells ein"
+MTR.label.dbm.title_new = "Wie lautet der Titel Ihres neuen detaillierten Geschäftsmodells?"
+MTR.label.dbm.title_edited = "Wie lautet der neue Titel Ihres detaillierten Geschäftsmodells?"
+MTR.label.dbm.title_clone = "Wie lautet der Titel Ihres kopierten detaillierten Geschäftsmodells?"
+MTR.input.placeholders.dbm.enter_title_for_board = "Geben Sie den Titel Ihres neuen detaillierten Geschäftsmodells ein"
 
 # Notifications
 
-headlines.dbm.analysis = "Beschreiben Sie Ihr detailliertes Geschäftsmodell"
-headlines.dbm.welcome_to_board = "Willkommen im Detailed Business Model Board!"
+MTR.headlines.dbm.analysis = "Beschreiben Sie Ihr detailliertes Geschäftsmodell"
+MTR.headlines.dbm.welcome_to_board = "Willkommen im Detailed Business Model Board!"
 
-text.dbm.helper_content = "Das <em>Detaillierte Geschäftsmodell</em> hilft Ihnen, Ihre aktuelle Organisation, Ihre Wettbewerber und die Branche zu dokumentieren. Es trägt dazu bei, sicherzustellen, dass Ihre Strategie wünschenswert, lebensfähig und durchführbar ist. Es baut typischerweise auf dem <em>Leichtgewichtigen Geschäftsmodell</em> auf und erweitert es, indem es zusätzliche Details berücksichtigt, die für den Erfolg eines Unternehmens relevant sind.<br />Weitere Details finden Sie in Kapitel 3 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen die Verwendung des detaillierten Geschäftsmodells, wenn Sie bestimmte Geschäftsideen prototypisieren und sicherstellen wollen, dass diese zu einem wünschenswerten, lebensfähigen und realisierbaren Unternehmen führen."
-tour.dbm.once_your_done = "<em>Wenn Sie mit Ihrem detaillierten Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.dbm.disclaimer = "Das <em>Detailed Business Model Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und basiert auf dem <em>Business Model Canvas</em> von <a href='https://www.strategyzer.com'>Strategyzer</a>. Es ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
+MTR.text.dbm.helper_content = "Das <em>Detaillierte Geschäftsmodell</em> hilft Ihnen, Ihre aktuelle Organisation, Ihre Wettbewerber und die Branche zu dokumentieren. Es trägt dazu bei, sicherzustellen, dass Ihre Strategie wünschenswert, lebensfähig und durchführbar ist. Es baut typischerweise auf dem <em>Leichtgewichtigen Geschäftsmodell</em> auf und erweitert es, indem es zusätzliche Details berücksichtigt, die für den Erfolg eines Unternehmens relevant sind.<br />Weitere Details finden Sie in Kapitel 3 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen die Verwendung des detaillierten Geschäftsmodells, wenn Sie bestimmte Geschäftsideen prototypisieren und sicherstellen wollen, dass diese zu einem wünschenswerten, lebensfähigen und realisierbaren Unternehmen führen."
+MTR.tour.dbm.once_your_done = "<em>Wenn Sie mit Ihrem detaillierten Geschäftsmodell zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.dbm.disclaimer = "Das <em>Detailed Business Model Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und basiert auf dem <em>Business Model Canvas</em> von <a href='https://www.strategyzer.com'>Strategyzer</a>. Es ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
 
 
 ## Competitive Positioning Canvas
@@ -1488,44 +1534,44 @@ text.dbm.disclaimer = "Das <em>Detailed Business Model Canvas</em> stammt aus <a
 
 # Title
 
-headline.cp.board = "Ausschuss für Wettbewerbspositionierung"
+MTR.headline.cp.board = "Ausschuss für Wettbewerbspositionierung"
 
 # Element/Box Labels
 
-box.header.cp.cj = "Entscheidungsfaktoren auf der Grundlage des zu erledigenden Kundenauftrags"
-box.header.cp.ovp = "Wie Produkte &amp; Dienstleistungen / Nutzenversprechen den Kundenauftrag erfüllen"
-box.label.cp.need = "Bedürfnisse und Wünsche, die sich aus den zu erledigenden Aufgaben des Kunden ergeben"
-box.label.cp.unique = "Einzigartigkeit"
-box.label.cp.superior = "Überlegenheit"
-box.label.cp.indifferent = "Indifferenzen"
-box.cp.cj_rv = "Rationale Wertfaktoren"
-box.cp.cj_rc = "Rationale Kostenfaktoren"
-box.cp.cj_e = "Emotionale Faktoren"
-box.cp.ou_rv = "Rationale Wertfaktoren"
-box.cp.ou_rc = "Rationale Kostenfaktoren"
-box.cp.ou_e = "Emotionale Faktoren"
-box.cp.os_rv = "Rationale Wertfaktoren"
-box.cp.os_rc = "Rationale Kostenfaktoren"
-box.cp.os_e = "Emotionale Faktoren"
-box.cp.oi_rv = "Rationale Wertfaktoren"
-box.cp.oi_rc = "Rationale Kostenfaktoren"
-box.cp.oi_e = "Emotionale Faktoren"
+MTR.box.header.cp.cj = "Entscheidungsfaktoren auf der Grundlage des zu erledigenden Kundenauftrags"
+MTR.box.header.cp.ovp = "Wie Produkte &amp; Dienstleistungen / Nutzenversprechen den Kundenauftrag erfüllen"
+MTR.box.label.cp.need = "Bedürfnisse und Wünsche, die sich aus den zu erledigenden Aufgaben des Kunden ergeben"
+MTR.box.label.cp.unique = "Einzigartigkeit"
+MTR.box.label.cp.superior = "Überlegenheit"
+MTR.box.label.cp.indifferent = "Indifferenzen"
+MTR.box.cp.cj_rv = "Rationale Wertfaktoren"
+MTR.box.cp.cj_rc = "Rationale Kostenfaktoren"
+MTR.box.cp.cj_e = "Emotionale Faktoren"
+MTR.box.cp.ou_rv = "Rationale Wertfaktoren"
+MTR.box.cp.ou_rc = "Rationale Kostenfaktoren"
+MTR.box.cp.ou_e = "Emotionale Faktoren"
+MTR.box.cp.os_rv = "Rationale Wertfaktoren"
+MTR.box.cp.os_rc = "Rationale Kostenfaktoren"
+MTR.box.cp.os_e = "Emotionale Faktoren"
+MTR.box.cp.oi_rv = "Rationale Wertfaktoren"
+MTR.box.cp.oi_rc = "Rationale Kostenfaktoren"
+MTR.box.cp.oi_e = "Emotionale Faktoren"
 
 # Data Field Labels and placeholders
 
-label.cp.title_new = "Wie lautet der Titel Ihrer neuen Wettbewerbspositionierung?"
-label.cp.title_edited = "Wie lautet der neue Titel Ihrer Wettbewerbspositionierung?"
-label.cp.title_clone = "Wie lautet der Titel Ihrer kopierten Wettbewerbspositionierung?"
-input.placeholders.cp.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Wettbewerbspositionierung ein"
+MTR.label.cp.title_new = "Wie lautet der Titel Ihrer neuen Wettbewerbspositionierung?"
+MTR.label.cp.title_edited = "Wie lautet der neue Titel Ihrer Wettbewerbspositionierung?"
+MTR.label.cp.title_clone = "Wie lautet der Titel Ihrer kopierten Wettbewerbspositionierung?"
+MTR.input.placeholders.cp.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Wettbewerbspositionierung ein"
 
 # Notifications
 
-headlines.cp.analysis = "Beschreiben Sie Ihre Wettbewerbsposition"
-headlines.cp.welcome_to_board = "Willkommen im Competitive Positioning Board!"
+MTR.headlines.cp.analysis = "Beschreiben Sie Ihre Wettbewerbsposition"
+MTR.headlines.cp.welcome_to_board = "Willkommen im Competitive Positioning Board!"
 
-text.cp.helper_content = "Das <em>Competitive Positioning Canvas</em> hilft Ihnen, Ihre Wettbewerbspositionierung aus der Sicht des Kunden und nicht aus der Sicht der Wettbewerber zu beurteilen. Es konzentriert sich sowohl auf rationale als auch auf emotionale Entscheidungsfaktoren und klassifiziert sie entweder als wertschöpfend oder als kostensenkend.<br />Weitere Einzelheiten finden Sie in Kapitel 12 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen, den Competitive Positioning Canvas einzusetzen, nachdem Sie Ihr detailliertes Geschäftsmodell entworfen haben."
-tour.cp.once_your_done = "<em>Wenn Sie mit Ihrer Wettbewerbsposition zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
-text.cp.disclaimer = "Das <em>Competitive Positioning Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und ist lizenziert unter einer <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
+MTR.text.cp.helper_content = "Das <em>Competitive Positioning Canvas</em> hilft Ihnen, Ihre Wettbewerbspositionierung aus der Sicht des Kunden und nicht aus der Sicht der Wettbewerber zu beurteilen. Es konzentriert sich sowohl auf rationale als auch auf emotionale Entscheidungsfaktoren und klassifiziert sie entweder als wertschöpfend oder als kostensenkend.<br />Weitere Einzelheiten finden Sie in Kapitel 12 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen, den Competitive Positioning Canvas einzusetzen, nachdem Sie Ihr detailliertes Geschäftsmodell entworfen haben."
+MTR.tour.cp.once_your_done = "<em>Wenn Sie mit Ihrer Wettbewerbsposition zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.cp.disclaimer = "Das <em>Competitive Positioning Canvas</em> stammt aus <a href='https://inov.at/dts'>Design Thinking for Strategy</a> und ist lizenziert unter einer <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
 
 
 ## Lean Canvas
@@ -1533,38 +1579,38 @@ text.cp.disclaimer = "Das <em>Competitive Positioning Canvas</em> stammt aus <a 
 
 # Title
 
-headline.lean.board = "Lean Canvas Board"
+MTR.headline.lean.board = "Lean Canvas Board"
 
 # Element/Box Labels
 
-box.lean.problem = "Problem"
-box.lean.alternatives = "Bestehende Alternativen"
-box.lean.solution = "Lösung"
-box.lean.keymetrics = "Wichtige Metriken"
-box.lean.uniquevalue = "Einzigartiges Leistungsversprechen"
-box.lean.highlevelconcept = "Übergeordnetes Konzept"
-box.lean.unfairadvantage = "Unfairer Vorteil"
-box.lean.channels = "Kanäle"
-box.lean.customersegment = "Kunden-Segmente"
-box.lean.earlyadopters = "Early Adopters"
-box.lean.cost = "Kostenstruktur"
-box.lean.revenue = "Einnahmeströme"
+MTR.box.lean.problem = "Problem"
+MTR.box.lean.alternatives = "Bestehende Alternativen"
+MTR.box.lean.solution = "Lösung"
+MTR.box.lean.keymetrics = "Wichtige Metriken"
+MTR.box.lean.uniquevalue = "Einzigartiges Leistungsversprechen"
+MTR.box.lean.highlevelconcept = "Übergeordnetes Konzept"
+MTR.box.lean.unfairadvantage = "Unfairer Vorteil"
+MTR.box.lean.channels = "Kanäle"
+MTR.box.lean.customersegment = "Kunden-Segmente"
+MTR.box.lean.earlyadopters = "Early Adopters"
+MTR.box.lean.cost = "Kostenstruktur"
+MTR.box.lean.revenue = "Einnahmeströme"
 
 # Data Field Labels and placeholders
 
-label.lean.title_new = "Wie lautet der Titel Ihrer neuen, schlanken Leinwand?"
-label.lean.title_edited = "Wie lautet der neue Titel für Ihre schlanke Leinwand?"
-label.lean.title_clone = "Wie lautet der Titel Ihrer kopierten schlanken Leinwand?"
-input.placeholders.lean.enter_title_for_board = "Geben Sie den Titel Ihres neuen Lean Canvas ein"
+MTR.label.lean.title_new = "Wie lautet der Titel Ihrer neuen, schlanken Leinwand?"
+MTR.label.lean.title_edited = "Wie lautet der neue Titel für Ihre schlanke Leinwand?"
+MTR.label.lean.title_clone = "Wie lautet der Titel Ihrer kopierten schlanken Leinwand?"
+MTR.input.placeholders.lean.enter_title_for_board = "Geben Sie den Titel Ihres neuen Lean Canvas ein"
 
 # Notifications
 
-headlines.lean.analysis = "Beschreiben Sie Ihr Lean Canvas"
-headlines.lean.welcome_to_board = "Willkommen auf dem Lean Canvas Board!"
+MTR.headlines.lean.analysis = "Beschreiben Sie Ihr Lean Canvas"
+MTR.headlines.lean.welcome_to_board = "Willkommen auf dem Lean Canvas Board!"
 
-text.lean.helper_content = "Der Lean Canvas führt Sie durch den gesamten Prozess der Ideenvalidierung Ihrer neuen Geschäfts- und/oder Produktidee.<br/>Sie befassen sich mit Ihrem <em>Kundensegment</em>, <em>Problem, Lösung</em>.<br/>Von dort aus gehen Sie zu Ihrem <em>Einzigartigen Nutzenversprechen</em> (was macht Ihre Idee besser als andere Angebote?), Ihren <em>Vertriebskanälen</em> (wie bringen Sie Ihre Lösung zu Ihren Kunden?), Ihre <em>Umsatzströme</em> (wie wird Ihre Lösung Geld verdienen?), Ihre <em>Kostenstruktur</em> (wie viel ist Ihre Lösung wert?), <em>Schlüsselkennzahlen</em> (wie werden Sie den Erfolg messen?) und Ihr <em>Unfairer Vorteil</em> (was haben Sie, um sich gegen die Konkurrenz durchzusetzen?)<br/>Die Beantwortung dieser Fragen soll den Erfolg fördern, Misserfolge abmildern und Ihnen ermöglichen, Ihre Annahmen zu verfolgen und zu überprüfen. Bei Lean geht es darum, Verschwendung zu beseitigen und Produkte, Geschäfte und Lösungen zu entwickeln, die Ihre Kunden brauchen."
-text.lean.disclaimer = "Lean Canvas ist eine Adaption von <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> und ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
-tour.lean.once_your_done = "<em>Wenn Sie mit Ihrer schlanken Leinwand zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.lean.helper_content = "Der Lean Canvas führt Sie durch den gesamten Prozess der Ideenvalidierung Ihrer neuen Geschäfts- und/oder Produktidee.<br/>Sie befassen sich mit Ihrem <em>Kundensegment</em>, <em>Problem, Lösung</em>.<br/>Von dort aus gehen Sie zu Ihrem <em>Einzigartigen Nutzenversprechen</em> (was macht Ihre Idee besser als andere Angebote?), Ihren <em>Vertriebskanälen</em> (wie bringen Sie Ihre Lösung zu Ihren Kunden?), Ihre <em>Umsatzströme</em> (wie wird Ihre Lösung Geld einbringen?), Ihre <em>Kostenstruktur</em> (wie viel ist Ihre Lösung wert?), <em>Schlüsselkennzahlen</em> (wie werden Sie den Erfolg messen?) und Ihr <em>Unfairer Vorteil</em> (was haben Sie, um sich gegenüber der Konkurrenz durchzusetzen?)<br/>Die Beantwortung dieser Fragen soll den Erfolg fördern, Misserfolge abmildern und Ihnen ermöglichen, Ihre Annahmen zu verfolgen und zu überprüfen. Bei Lean geht es darum, Verschwendung zu beseitigen und Produkte, Geschäfte und Lösungen zu entwickeln, die Ihre Kunden brauchen."
+MTR.text.lean.disclaimer = "Lean Canvas ist eine Adaption von <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> und ist lizenziert unter der <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> Lizenz"
+MTR.tour.lean.once_your_done = "<em>Wenn Sie mit Ihrer schlanken Leinwand zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Porter's Strategy Questions
@@ -1572,31 +1618,31 @@ tour.lean.once_your_done = "<em>Wenn Sie mit Ihrer schlanken Leinwand zufrieden 
 
 # Title
 
-headline.sq.board = "Porter's Strategie Fragen Board"
+MTR.headline.sq.board = "Porter's Strategie Fragen Board"
 
 # Element/Box Labels
 
-box.sq.qa = "Was unterscheidet das Wertversprechen des Unternehmens von dem der Wettbewerber?"
-box.sq.qb = "Welche Tätigkeiten führt das Unternehmen anders oder besser aus als seine Konkurrenten?"
-box.sq.qc = "Welche Kompromisse, die sich von denen der Konkurrenten unterscheiden, macht das Unternehmen?"
-box.sq.qd = "Welche strategische Ausrichtung hat das Unternehmen?"
-box.sq.qe = "Wie unterstützt die Strategie die Kontinuität im Laufe der Zeit?"
+MTR.box.sq.qa = "Was unterscheidet das Wertversprechen des Unternehmens von dem der Wettbewerber?"
+MTR.box.sq.qb = "Welche Tätigkeiten führt das Unternehmen anders oder besser aus als seine Konkurrenten?"
+MTR.box.sq.qc = "Welche Kompromisse, die sich von denen der Konkurrenten unterscheiden, macht das Unternehmen?"
+MTR.box.sq.qd = "Welche strategische Ausrichtung hat das Unternehmen?"
+MTR.box.sq.qe = "Wie unterstützt die Strategie die Kontinuität im Laufe der Zeit?"
 
 # Data Field Labels and placeholders
 
-label.sq.title_new = "Wie lautet der Titel Ihrer neuen Antworten auf die Strategiefragen von Porter?"
-label.sq.title_edited = "Wie lautet der neue Titel Ihrer Antworten auf die Strategiefragen von Porter?"
-label.sq.title_clone = "Wie lautet der Titel Ihrer kopierten Antworten auf die Strategiefragen von Porter?"
-input.placeholders.sq.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Antworten auf die Strategiefragen von Porter ein"
-label.sq.description = "Antwort auf die Frage nach der Strategie"
+MTR.label.sq.title_new = "Wie lautet der Titel Ihrer neuen Antworten auf die Strategiefragen von Porter?"
+MTR.label.sq.title_edited = "Wie lautet der neue Titel Ihrer Antworten auf die Strategiefragen von Porter?"
+MTR.label.sq.title_clone = "Wie lautet der Titel Ihrer kopierten Antworten auf die Strategiefragen von Porter?"
+MTR.input.placeholders.sq.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Antworten auf die Strategiefragen von Porter ein"
+MTR.label.sq.description = "Antwort auf die Frage nach der Strategie"
 
 # Notifications
 
-headlines.sq.analysis = "Beschreiben Sie Ihre Antworten auf die Strategiefragen von Porter"
-headlines.sq.welcome_to_board = "Willkommen beim Fragenbrett zu Porters Strategie!"
+MTR.headlines.sq.analysis = "Beschreiben Sie Ihre Antworten auf die Strategiefragen von Porter"
+MTR.headlines.sq.welcome_to_board = "Willkommen beim Fragenbrett zu Porters Strategie!"
 
-text.sq.helper_content = "Die Beantwortung der <em>Porter's Strategy Questions</em> wird Ihnen helfen sicherzustellen, dass Ihre entworfene Strategie wettbewerbsfähig ist. Weitere Einzelheiten zu Porters Strategiefragen finden Sie in Kapitel 12 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen Ihnen, Porters Strategiefragen am Ende Ihres Strategieprozesses zu beantworten."
-tour.sq.once_your_done = "<em>Wenn Sie mit Ihren Antworten auf Porters Strategiefragen zufrieden sind, gehen Sie zum</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.sq.helper_content = "Die Beantwortung der <em>Porter's Strategy Questions</em> wird Ihnen helfen sicherzustellen, dass Ihre entworfene Strategie wettbewerbsfähig ist. Weitere Einzelheiten zu Porters Strategiefragen finden Sie in Kapitel 12 des Buches <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wir empfehlen Ihnen, Porters Strategiefragen am Ende Ihres Strategieprozesses zu beantworten."
+MTR.tour.sq.once_your_done = "<em>Wenn Sie mit Ihren Antworten auf die Fragen zur Porter-Strategie zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Strategy Message
@@ -1604,32 +1650,32 @@ tour.sq.once_your_done = "<em>Wenn Sie mit Ihren Antworten auf Porters Strategie
 
 # Title
 
-headline.sm.board = "Strategie-Nachrichtentafel"
+MTR.headline.sm.board = "Strategie-Nachrichtentafel"
 
 # Element/Box Labels
 
-box.sm.qa = "Wer sind die <em>Zielkundensegmente</em> und wer ist <em>explizit außerhalb des Anwendungsbereichs</em>?"
-box.sm.qb = "Welches <em>Wertangebot</em> werden Sie Ihren Zielkunden bieten?"
-box.sm.qc = "Warum sollten Kunden mit Ihnen Geschäfte machen und nicht mit Ihren Konkurrenten? Was sind unsere <em>unterscheidenden Merkmale</em>, die schwer zu kopieren sind?"
-box.sm.qd = "Warum können Sie die Versprechen, die Sie Ihren Kunden machen, einhalten? Welche <em>einzigartigen Fähigkeiten</em> haben Sie und nutzen Sie?"
-box.sm.qe = "Was wird sich mit der neuen oder überarbeiteten Strategie <em>verändern</em> und was <em>bleibt im Laufe der Zeit gleich</em>? Wie stellen Sie sicher, dass bestehende Kunden, die im Rahmen bleiben, nicht verloren gehen?"
-box.sm.qf = "Warum wird die Strategie es ermöglichen, <em>mit der Zeit Gewinne zu erwirtschaften und/oder zu steigern</em>?"
-box.sm.qg = "Für wen sind die mit der neuen oder überarbeiteten Strategie gesetzten Ziele <em>realistisch erreichbar</em>?"
+MTR.box.sm.qa = "Wer sind die <em>Zielkundensegmente</em> und wer ist <em>explizit außerhalb des Anwendungsbereichs</em>?"
+MTR.box.sm.qb = "Welches <em>Wertangebot</em> werden Sie Ihren Zielkunden bieten?"
+MTR.box.sm.qc = "Warum sollten Kunden mit Ihnen Geschäfte machen und nicht mit Ihren Konkurrenten? Was sind unsere <em>unterscheidenden Merkmale</em>, die schwer zu kopieren sind?"
+MTR.box.sm.qd = "Warum können Sie die Versprechen, die Sie Ihren Kunden machen, einhalten? Welche <em>einzigartigen Fähigkeiten</em> haben Sie und nutzen Sie?"
+MTR.box.sm.qe = "Was wird sich mit der neuen oder überarbeiteten Strategie <em>verändern</em> und was <em>bleibt im Laufe der Zeit gleich</em>? Wie stellen Sie sicher, dass bestehende Kunden, die im Rahmen bleiben, nicht verloren gehen?"
+MTR.box.sm.qf = "Warum wird die Strategie es ermöglichen, im Laufe der Zeit <em>Gewinne zu erzielen und/oder zu steigern</em>?"
+MTR.box.sm.qg = "Für wen sind die mit der neuen oder überarbeiteten Strategie gesetzten Ziele <em>realistisch erreichbar</em>?"
 
 # Data Field Labels and placeholders
 
-label.sm.title_new = "Wie lautet der Titel Ihrer neuen strategischen Botschaft?"
-label.sm.title_edited = "Wie lautet der neue Titel Ihrer Strategiebotschaft?"
-label.sm.title_clone = "Wie lautet der Titel Ihrer kopierten Strategiebotschaft?"
-input.placeholders.sm.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Strategiemeldung ein"
+MTR.label.sm.title_new = "Wie lautet der Titel Ihrer neuen strategischen Botschaft?"
+MTR.label.sm.title_edited = "Wie lautet der neue Titel Ihrer Strategiebotschaft?"
+MTR.label.sm.title_clone = "Wie lautet der Titel Ihrer kopierten Strategiebotschaft?"
+MTR.input.placeholders.sm.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Strategiemeldung ein"
 
 # Notifications
 
-headlines.sm.analysis = "Beschreiben Sie Ihre strategische Botschaft"
-headlines.sm.welcome_to_board = "Willkommen im Strategy Message Board!"
+MTR.headlines.sm.analysis = "Beschreiben Sie Ihre strategische Botschaft"
+MTR.headlines.sm.welcome_to_board = "Willkommen im Strategy Message Board!"
 
-text.sm.helper_content = "Die <em>Strategiebotschaft</em> hilft Ihnen, eine erfolgreiche Botschaft für Ihre neue Strategie zu formulieren. Weitere Details zur Strategiekommunikation finden Sie in Kapitel 13 des Buches"
-tour.sm.once_your_done = "<em>Wenn Sie mit Ihrer Strategie zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.sm.helper_content = "Die <em>Strategy Message</em> hilft Ihnen, eine erfolgreiche Botschaft für Ihre neue Strategie zu formulieren. Weitere Details zur Strategiekommunikation finden Sie in Kapitel 13 des Buches "Design Thinking für Strategie".<br/>Wir empfehlen Ihnen, das Strategy Message Canvas zu verwenden, nachdem Sie die Entwicklung Ihrer neuen/überarbeiteten Strategie abgeschlossen haben."
+MTR.tour.sm.once_your_done = "<em>Wenn Sie mit Ihrer Strategie zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 
 
 ## Retrospectives
@@ -1637,26 +1683,26 @@ tour.sm.once_your_done = "<em>Wenn Sie mit Ihrer Strategie zufrieden sind, besuc
 
 # Title
 
-headline.retros.board = "Rückblickend"
+MTR.headline.retros.board = "Rückblickend"
 
 # Element/Box Labels
 
-box.retros.continue = "Weiter - Was ist gut gelaufen?"
-box.retros.stop_doing = "Stopp - Was sollten wir nicht mehr tun?"
-box.retros.start_doing = "Start - Was sollten wir tun, um uns zu verbessern?"
+MTR.box.retros.continue = "Weiter - Was ist gut gelaufen?"
+MTR.box.retros.stop_doing = "Stopp - Was sollten wir nicht mehr tun?"
+MTR.box.retros.start_doing = "Start - Was sollten wir tun, um uns zu verbessern?"
 
 # Data Field Labels and placeholders
 
-label.retros.title_new = "Wie lautet der Titel Ihrer neuen Retrospektive?"
-label.retros.title_edited = "Wie lautet der neue Titel Ihrer Retrospektive?"
-label.retros.title_clone = "Wie lautet der Titel Ihrer kopierten Retrospektive?"
-input.placeholders.retros.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Retrospektive ein"
+MTR.label.retros.title_new = "Wie lautet der Titel Ihrer neuen Retrospektive?"
+MTR.label.retros.title_edited = "Wie lautet der neue Titel Ihrer Retrospektive?"
+MTR.label.retros.title_clone = "Wie lautet der Titel Ihrer kopierten Retrospektive?"
+MTR.input.placeholders.retros.enter_title_for_board = "Geben Sie den Titel Ihrer neuen Retrospektive ein"
 
 # Notifications
 
-headlines.retros.analysis = "Beschreiben Sie Ihre Retrospektive"
-headlines.retros.welcome_to_board = "Willkommen im Retrospective Board!"
+MTR.headlines.retros.analysis = "Beschreiben Sie Ihre Retrospektive"
+MTR.headlines.retros.welcome_to_board = "Willkommen im Retrospective Board!"
 
-text.retros.helper_content = "Bei den <em>Retrospektiven</em> handelt es sich um kurze Reflexionen über die Arbeit, die Arbeitsweise des Teams und natürlich den Fortschritt.<br/> Hier kann sich Ihr Team einen Moment Zeit nehmen, um zu überlegen, was gut gelaufen ist, was nicht gut gelaufen ist und was beim nächsten Mal anders gemacht werden könnte.<br/> Wir empfehlen, in regelmäßigen Abständen oder zumindest am Ende jedes Meilensteins ein Review-Meeting durchzuführen."
-tour.retros.once_your_done = "<em>Wenn Sie mit Ihrer rückblickenden Analyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
+MTR.text.retros.helper_content = "Bei den <em>Retrospektiven</em> handelt es sich um kurze Reflexionen über die Arbeit, die Arbeitsweise des Teams und natürlich den Fortschritt.<br/> Hier kann sich Ihr Team einen Moment Zeit nehmen, um zu überlegen, was gut gelaufen ist, was nicht gut gelaufen ist und was beim nächsten Mal anders gemacht werden könnte.<br/> Wir empfehlen, in regelmäßigen Abständen oder zumindest am Ende jedes Meilensteins ein Review-Meeting durchzuführen."
+MTR.tour.retros.once_your_done = "<em>Wenn Sie mit Ihrer rückblickenden Analyse zufrieden sind, besuchen Sie den</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap-Planer</a>"
 

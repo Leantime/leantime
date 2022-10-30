@@ -1,4 +1,4 @@
-language.code = "tr"
+MTR.language.code = "en"
 language.direction = "ltr"
 language.isRTL = "false"
 language.dateformat = "a/g/Y"
@@ -7,11 +7,18 @@ language.timeformat = "h:i A"
 language.jstimeformat = "s:aa A"
 language.momentJSDate = "AA/GG/YYYY"
 language.currency = "₺"
+MTR.language.pagesize = "YASAL"
 
 #0 is Sunday, 1 is Monday
 
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
+
+# themes
+
+MTR.theme.default.name = "Varsayılan (ışık)"
+MTR.theme.dark.name = "Karanlık"
+MTR.theme.dts.name = "Strateji için Tasarım Odaklı Düşünme"
 
 # special
 
@@ -22,6 +29,7 @@ label.additional_settings = "Ek Ayarlar"
 label.comment_order = "Yorum Sırası"
 label.downtoup = "İlk Önce En Eski"
 label.uptodown = "İlk Önce En Yeni"
+MTR.label.version = "Versiyon"
 
 #Datepicker translations
 
@@ -41,6 +49,7 @@ language.columnFormatWeek = "ddd M/d"
 language.columnFormatday = "dddd M/d"
 
 headlines.all_times = "Tüm Zamanlar"
+MTR.headlines.all_timesheets = "Tüm Zaman Çizelgeleri"
 headlines.edit_time = "Saati Düzenle"
 headlines.confirm_delete = "Silmeyi Onayla"
 headlines.delete_time = "Zamanı Sil"
@@ -92,7 +101,6 @@ headlines.page_forbidden = "Bu sayfayı görüntüleme yetkiniz yok"
 
 headlines.delete_project_x = "Proje Sil %1$s"
 headlines.research_next_big_product = "Bir sonraki büyük ürününüzü araştırın ve deneylerinizi burada toplayın."
-headline.research_board = "Araştırma Panosu"
 headline.delete_board = "Panoyu Sil"
 headline.all_clients = "Tüm Müşteriler"
 headline.new_client = "Yeni Müşteri"
@@ -108,6 +116,7 @@ headlines.delete_user = "Kullanıcıyı Sil"
 headlines.my_profile = "Profilim"
 headlines.profile_picture = "Profil Görseli"
 headlines.page_not_found = "Sayfa Bulunamadı"
+MTR.headlines.system_error = "Sorun sende değil, bizde."
 headlines.edit_label = "<i class='fas fa-edit'></i> Etiketi Düzenle"
 headlines.company_settings = "Şirket Ayarları"
 headlines.delete_sprint = "<i class='fa fa-rocket'></i> Sprint'i Sil"
@@ -117,7 +126,6 @@ headlines.welcome_to_leantime = "Leantime'a Hoş Geldiniz!"
 headlines.step_one_discover = "1. Keşfet"
 headlines.step_two_plan = "2. Planla"
 headlines.step_three_track = "3. Rota"
-headlines.welcome_to_research_board = "Tam Araştırma Panosuna Hoş Geldiniz!"
 headlines.welcome_to_idea_board = "Fikir Panosuna Hoş Geldiniz!"
 headlines.the_kanban_board = "Kanban Panosu"
 headlines.the_timesheets = "Zaman Çizelgeleri!"
@@ -127,7 +135,6 @@ headlines.congrats_on_your_project = "Projeniz için Tebrikler!"
 headlines.welcome_to_your_roadmap = "Yol Haritanıza Hoş Geldiniz!"
 headlines.welcome_to_clients_products = "Müşterilere / Ürünlere Hoş Geldiniz!"
 headlines.welcome_to_projects = "Projelere Hoş Geldiniz!"
-headlines.welcome_to_simple_research_board = "Basit Araştırma Panosuna Hoş Geldiniz!"
 headlines.update_database = "Veri Tabanını Güncelle"
 headlines.installation = "Kurulum"
 headlines.reset_password = "Şifreyi Yenile"
@@ -138,7 +145,6 @@ headlines.my_portfolio = "Portföyüm"
 headlines.import_ldap_users = "LDAP Kullanıcılarını İçe Aktar"
 MTR.headlines.documents = "Belgeler"
 MTR.headlines.latest_todos = "Son Yapılacaklar"
-
 
 subtitles.sprint_burndown = "Sprint Burndown"
 subtitles.backlog_burndown = "Backlog Burndown"
@@ -223,7 +229,6 @@ notification.error_installing = "Veritabanını yüklerken bir hata oluştu, dah
 notifications.user_was_added_to_project = "Ekip üyeleri başarıyla güncellendi"
 notifications.not_assigned_to_any_project = "Herhangi bir projeye atanmadınız. Profilinizi güncelleyebilir veya rahatlayabilir ve bir fincan kahve içebilirsiniz."
 
-
 notification.project_has_tasks = "Bu projede hala yapılacaklar var. Her şey silinecek"
 notification.project_deleted = "Proje başarıyla silindi"
 notifications.milestone_detached = "Mesafe taşı başarıyla ayrıldı"
@@ -237,8 +242,6 @@ notification.saving_milestone_error = "Mesafe Taşınız kaydedilirken bir sorun
 notification.idea_edited_successfully = "Fikir başarıyla düzenlendi"
 notification.feedback_successfully_created = "Geri bildirim başarıyla oluşturuldu"
 
-notification.research_board_deleted = "Araştırma panosu başarıyla silindi"
-notification.research_board_item_deleted = "Hipotez başarıyla silindi"
 notification.hypothesis_created = "Hipotez başarıyla oluşturuldu"
 notifications.new_canvas_created = "Yeni pano başarıyla oluşturuldu"
 notification.idea_board_item_deleted = "Fikir başarıyla silindi"
@@ -295,7 +298,6 @@ MTR.notification.article_created_successfully = "Makale başarıyla oluşturuldu
 
 MTR.notifications.ical_success = "iCal URL'si başarıyla oluşturuldu"
 MTR.notifications.ical_removed_success = "iCal URL'si kaldırıldı"
-
 
 short_notifications.effort_updated = "Efor başarıyla güncellendi"
 short_notifications.priority_updated = "Öncelik başarıyla güncellendi"
@@ -440,8 +442,6 @@ links.edit_milestone = "Hedef Taşını Düzenle"
 links.view_todos = "Yapılacakları Görüntüle"
 link.new_project = "Yeni Proje"
 link.new_client = "Yeni Müşteri"
-links.simple_canvas = "<i class='fas fa-columns'></i> Basit Kanvas"
-links.full_canvas = "<i class='fas fa-graduation-cap'></i> Tam Yalın Kanvas"
 links.create_plan = "<i class='fa fa-plus'></i> Yeni Pano Oluştur"
 links.edit_board = "<i class='fa fa-edit'></i> Panoyu Düzenle</a>"
 links.add_new_canvas_item = "<span class='iconfa iconfa-plus'></span> Yeni Ekle"
@@ -470,7 +470,6 @@ MTR.links.read_more = "Daha fazla bilgi edinin"
 MTR.links.add_team_member = "Ekip Üyesi Ekle"
 MTR.links.create_user = "Yeni kullanıcı oluştur"
 
-
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Zaman Çizelgelerim</span>"
 menu.my_calendar = "<span class='head-icon iconfa-calendar'></span><span class='headmenu-label'>Takvimim</span>"
 menu.sign_out_icon = "<span class='head-icon fa fa-sign-out-alt'></span>"
@@ -493,6 +492,8 @@ menu.dashboard = "<span class='fa fa-fw fa-home'></span> Proje Panosu"
 menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> Yapılacaklar"
 menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Mesafe Taşı"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Zaman Çizelgeleri"
+MTR.menu.all_timesheets = "<span class='fa-solid fa-business-time'></span> Tüm Zaman Çizelgeleri"
+
 menu.research = "<span class='fas fa-fw fa-flask'></span> Araştırma"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> Fikirler"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Proje Ayarları"
@@ -516,6 +517,7 @@ text.what_are_subtasks = "Ana Yapılacaklar'ınızı daha küçük iş parçalar
 text.no_subtasks = "Alt göreviniz yok"
 text.create_new_subtask = "Yeni bir alt görev oluşturun:"
 text.written_on_by = "Üzerine yazılmış %1$s at %2$s by %3$s %4$s"
+MTR.text.report_written_on = "Durum Güncellemesi (%1$s)"
 text.written_on = "%1$s at %2$s"
 text.no_comments = "☕ Şimdiye kadar yorum yapılmadı."
 MTR.text.no_updates = "☕ Henüz güncelleme yok."
@@ -534,7 +536,7 @@ MTR.text.are_you_sure_delete_wiki = "Bu vikiyi silmek istediğinizden emin misin
 MTR.text.are_you_sure_delete_article = "Bu makaleyi silmek istediğinizden emin misiniz?"
 
 text.use_milestone_to_track_retro = "Retrospektiflerinize doğru ilerlemeyi izlemek için bir mesafe taşı kullanın."
-text.use_milestone_to_track_leancanvas = "Kanvas'a doğru ilerlemeyi izlemek için bir mesafe taşı kullanın."
+MTR.text.use_milestone_to_track_canvas = "Tuvalinize doğru ilerlemeyi izlemek için bir kilometre taşı kullanın."
 text.use_milestone_to_track_idea = "Fikirlerinize yönelik ilerlemeyi izlemek için bir mesafe taşı kullanın."
 text.all_milestones = "Tüm Mesafe Taşları"
 text.confirm_ticket_deletion = "Bu Yapılacakları silmek istediğinizden emin misiniz?"
@@ -542,8 +544,6 @@ text.confirm_project_deletion = "Bu projeyi silmek istediğinizden emin misiniz?
 text.confirm_client_deletion = "Bu istemciyi silmek istediğinizden emin misiniz?"
 text.confirm_milestone_deletion = "Bu mesafe taşını silmek istediğinizden emin misiniz?"
 text.confirm_event_deletion = "Bu etkinliği silmek istediğinizden emin misiniz?"
-text.confirm_research_board_item_deletion = "Bu hipotezi silmek istediğinizden emin misiniz?"
-text.confirm_research_board_deletion = "Bu araştırma panosunu silmek istediğinizden emin misiniz?"
 text.confirm_user_deletion = "Bu kullanıcıyı silmek istediğinizden emin misiniz?"
 text.mattermost_instructions = "Bu entegrasyon, seçtiğiniz kanala güncelleme bildirimleri gönderir.Bu entegrasyon, seçtiğiniz kanala güncelleme bildirimleri gönderir.<br/>Talimatları takip et <a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>bir Gelen Web kancası URL'si almak için buraya</a> Mattermost'tan. Ardından bağlantıyı sağdaki forma yapıştırın ve Kaydet'e tıklayın."
 text.slack_instructions = "Bu entegrasyon, seçtiğiniz kanala güncelleme bildirimleri gönderir.<br/>Talimatları takip et <a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>bir Gelen Web kancası URL'si almak için buraya</a> Slack'ten. Ardından bağlantıyı sağdaki forma yapıştırın ve Kaydet'e tıklayın."
@@ -552,8 +552,6 @@ text.expected_to_finish_by = "Tarafından tamamlanması bekleniyor"
 text.zulip_instructions = "Bu entegrasyon, seçtiğiniz akışa ve konuya güncelleme bildirimleri gönderir.<br/>Talimatları takip et <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>yeni bir bot oluşturmak için burada</a>. Ardından bilgileri sağdaki forma yapıştırın ve Kaydet'e tıklayın."
 text.discord_instructions = "Bu entegrasyon, seçtiğiniz kanala güncelleme bildirimleri gönderir.<br/>Talimatları takip et <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>yeni bir web kancası(lar) oluşturmak için buraya</a>, ardından bağlantı(lar) sağdaki alanlara yapıştırın ve Kaydet'e tıklayın."
 text.no_conclusion_yet = "<i>Henüz sonuç yok</i>"
-text.no_lean_canvas_content = "Lean Kanvas, bir müşteri, sorun ve çözüm uyumu boyunca size rehberlik edecektir.<br/>Başladığınız her ürün için yeni bir tuval oluşturmanızı öneririz.<br/><br/><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> Yeni plan oluştur</a>"
-text.lean_canvas_is_adapted_message = "Lean Kanvas uyarlanmıştır <a href='https://strategyzer.com/' target='_blank'>İş Modeli Kanvası</a> ve Creative Commons Atıf-Benzer Paylaşım 3.0 altında lisanslanmıştır"
 text.no_users_assigned_to_this_client = "Bu istemciye hiçbir kişi eklenmedi. Kullanıcı ekleme ve atama <a href='/users/showAll'>burada</a>"
 text.confirm_delete_timesheet = "Zaman çizelgesi gerçekten silinmeli mi?"
 text.timer_on_todo = "<span class='head-icon fa fa-stop'></span> %1$s Zamanlayıcı açık %2$s"
@@ -565,7 +563,6 @@ text.glad_youre_here = "Burada olmandan memnunuz. Tanışmak için bir dakikanı
 text.business_research_section = "İş Araştırması bölümümüz, fikirleriniz için yeni eviniz. Bu bölüm, sizi müşteri geliştirme, problem araştırması ve çözüm düşüncesi adımlarında yönlendirmek için tasarlanmıştır."
 text.our_roadmap_design = "Yol haritamız, sizi daha küçük yönetilebilir mesafe taşlarından büyük resmi tamamlamaya götürmek için tasarlanmıştır. Yaklaşık 3 ay boyunca mesafe taşları planlayın ve hedefte kalmak için bu proje belirteçlerini kullanın."
 text.this_is_where_you_spend_most_time = "Zamanınızın çoğunu geçireceğiniz yer burasıdır - yaparak. 2 haftalık Sprintlerinizi planlayın ve Kanban Board ve İş Listesi araçlarımızla başarılı bir şekilde yürütün. Bir sonraki Sprint için büyümek için Retrospektifleri kullanın."
-text.full_lean_canvas_helper_content = "Tam araştırma kurulu, sizi tam fikir doğrulama sürecinden geçirecektir.<br/>Bu sayfada, Müşteri Segmentinizi, Sorununuzu, Çözümünüzü tekrar ele alacaksınız (ama merak etmeyin, bunu Basit Panoda doldurduysanız, burada tekrar göreceksiniz!).<br/><br/>Oradan<br/>Benzersiz Değer Önerisine geçeceksiniz (Fikrinizi diğer tekliflerden daha iyi yapan nedir?),<br/>Dağıtım Kanalları (Çözümünüzü müşterilerinize nasıl ulaştıracaksınız?)<br/>Gelir Akışları (Çözümünüz nasıl para kazandıracak?)<br/>Maliyet Yapısı (Çözümünüzün değeri ne kadar?)<br/>Temel Metrikler (Başarıyı nasıl ölçeceksiniz?)<br/>ve Haksız Avantaj (Rekabet karşısında başarılı olmanıza yardımcı olacak neye sahipsiniz?)<br/>Bu soruları yanıtlamak, başarıyı artırmak, başarısızlığı azaltmak ve varsayımlarınızı takip edin ve doğrulayın. Yalın Olmak, atıkları ortadan kaldırmak <br/>ve müşterilerinizin ihtiyaç duyduğu ürünleri, işleri ve çözümleri oluşturmak için çalışmakla ilgilidir."
 text.idea_board_helper_content = "Tüm fikirlerinizi toplayabileceğiniz yer burası. Yenilerini ekibinizle tartışın ve fikirlerinize yönelik ilerlemeyi görmek için Mesafe Taşları ekleyin."
 text.kanban_helper_content = "Kanban, 'kart' için Japonca bir kelimedir. Kanban panoları, 40'lı yıllarda Toyota mühendisleri tarafından Yalın üretim ile başlatıldı.<br/>Bilgileri görsel olarak paylaşmak ve hızlı bir şekilde ilerlemek için kullanılır.<br/>Kanban panoları, işi ve durumu görselleştirmek, etkin veya devam eden işi yönetmeye yardımcı olmak, iş akışını yönetmek ve yalın iyileştirmeler için hızlı hareket etmek için yararlıdır.<br/><br/>Kanban panomuzun nasıl çalıştığını görmek için turu başlatın veya kapat'ı tıklayın. başlamak!"
 text.my_timesheets_helper_content = "Zaman çizelgeleri, Yapılacaklar'da çalışılan fiili saatleri takip edebileceğiniz yerdir.<br/>Bu, faturalandırma amacıyla olduğu kadar, görevlerinizi önceden ne kadar iyi planladığınızı doğrulamak için de yararlıdır.<br/>Fazla mesai, bitiş tarihlerini şu şekilde ayarlayabilir: planlama tutarsızlıklarını hesaba katın."
@@ -575,7 +572,6 @@ text.retros_helper_content = "<p>Geçmişe bakışlar, çalışma, ekip işleyi�
 text.roadmap_helper_content = "<p>Yol haritaları, büyük projeleri daha küçük ve daha yönetilebilir parçalara küçültmek için yararlıdır.<br/><br/></p><p>Yol haritanızı oluşturmak için, 3 yıl içinde elde edilebilecek Mesafe taşları belirlemenizi öneririz. aylık bir zaman aralığı.</p><p>Mesafe taşları, projenin tamamlanmasına giden yolda kontrol noktalarıdır.<br/>Basitçe söylemek gerekirse: Bir arazi yolculuğuna çıkıyorsanız, geçtiğiniz her eyalet bir dönüm noktası olabilir. <br/><br/>Başlamak için sol üst taraftaki 'Mesafe Taşı Ekle'yi tıklayın. Takvimdeki Mesafe taşını tıklayıp sürükleyerek tarihi bu sekmede veya yol haritası çizelgesinde ayarlayın.</p >"
 text.show_clients_helper_content = "<p>Müşteriler/Ürünler, Projelerinizi kategoriler halinde düzenler ve farklı grupları ayırmanıza olanak tanır.<br/><br/></p><p>Danışman olarak, zaten müşterilerle çalışıyorsunuz ve bunun yeri burası olacaktır. onları organize etmek için.</p><p>Bir Ürün Ekibi iseniz, departmanlarınızı (pazarlama, satış, operasyonlar vb.) organize etmek ve izole etmek için bu bölümü kullanabilirsiniz.</p>"
 text.show_projects_helper_content = "<p>Projeler, işinizin ve yalın zamanınızın kalbidir! Değişim, gelişim, hedefler ve inşa edebileceğiniz veya hayal edebileceğiniz her şey projeleri içerecektir.<br/>Proje yönetimi, basitçe projelerinizin zamanında teslim edilmesini sağlama sürecidir. , doğru ve gerçek iş değeri ile.<br/><br/>Projelerinizin yaşayacağı yer burasıdır.Projeler sayfanız bir proje oluşturmanıza, yapılacak iş numaralarını, saatleri, bütçe dolarlarını ve ilişkili müşteriyi hızlıca görmenizi sağlar. proje ile birlikte.<br/><br/>Tüm projelerinize hızlı bir genel bakış için bu sayfayı kullanın.<br/><br/></p>"
-text.simple_lean_canvas_helper_content = "<p>Herhangi bir projenin temeli buraya, araştırmanıza dayanır. Bu panoda, Problem Çözüm Uyumu'nu kullanarak müşteriniz için oluşturmaya odaklanacaksınız.<br/><br/>Problem Çözümüne uygun , müşterinizin kim olduğunu belirleyerek başlayacaksınız. Demografiyi, ne yaptıklarını ve neye ihtiyaçları olduğunu düşünün.<br/>Sonra, onların mücadelelerini veya sorunlarını belirleyeceksiniz. Son olarak, nasıl yapmayı planladığınızı ekleyeceksiniz. problemlerini çözün.<br/><br/>Müşteri sorunlarını çözen ürünler, projeler veya teklifler oluşturmak, ürün başarısını artırmaya ve başarısızlığı azaltmaya yardımcı olur.<br/><br/>Onları çözmek için birden fazla yolunuz olduğunu görebilirsiniz. Bu harika! Bunları buraya koyabilir veya bu fikirleri takip etmek için Fikir Panosuna gidebilirsiniz.<br/>Bunu başlattıktan sonraki adım, müşteriniz ve sorunları hakkındaki varsayımlarınızı doğrulamak olacaktır. , ve çözümleriniz.<br/>Bunu buraya ekleyebilir veya daha fazla bilgi toplamaya başlamak için<br/>Tam Araştırma Kurulunuza taşıyabilirsiniz.</p>"
 text.new_db_version = "Yeni bir sürüm yüklendi. Leantime'ı kullanmak için veritabanınızı güncellemeniz gerekecek.<br/><br/><strong>Bu güncellemeyi gerçekleştirmeden önce lütfen veritabanınızı yedeklediğinizden emin olun!</strong><br/> Bu bir kaç dakika alabilir."
 text.update_was_successful = "Güncelleme başarılı oldu, şimdi giriş yapabilirsiniz.<a href='%1$s'>Girişe Git</a>"
 text.this_script_will_set_up_leantime = "Bu komut dosyası, veritabanınızı kuracak ve bir yönetici hesabı oluşturacaktır."
@@ -598,7 +594,6 @@ labels.defaultaccess = "Bu projeye kimler erişebilir?"
 labels.everyone_in_org = "Bu kuruluştaki herkes"
 labels.everyone_in_client = "Bu müşteriye atanan herkes"
 labels.only_chose = "Sadece 'Takım' altında seçtiğim kullanıcılar"
-
 
 label.id = "ID"
 label.due = "Gönderen:"
@@ -825,8 +820,6 @@ label.reportType = "Farklı Bildir"
 label.showInKanban = "Kanban Panosunda Göster"
 MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> Portföyü Görüntüle"
 
-
-
 label.send_telemetry = "Leantime'ı daha iyi hale getirmeye yardımcı olun!"
 label.telemetry_background = "Leantime'a proje sayısı, kullanıcı sayısı, bilet vb. hakkında <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>anonim veriler gönderin. io</a>. Kişisel olarak tanımlanabilir hiçbir veri gönderilmeyecek ve bireysel kullanıcıları takip etmemiz imkansız olacaktır."
 
@@ -838,7 +831,6 @@ label.grey = "Gri"
 
 MTR.labels.all_projects = "Tüm Projeler"
 MTR.label.dates = "Son Teslim Tarihleri"
-
 
 MTR.labels.createdBy_on = "s %s tarafından %s tarihinde oluşturuldu, %s tarihinde değiştirildi"
 MTR.labels.tags = "Etiketler"
@@ -867,7 +859,7 @@ MTR.label.draft = "Taslak"
 MTR.label.published = "Yayınlandı"
 MTR.label.draft_parenth = "(taslak)"
 
-
+MTR.header.management = "Şirket Yönetimi"
 dropdown.how_big_todo = "Bu Yapılacaklar ne kadar büyük?"
 dropdown.select_priority = "Bu görevin önceliği nedir?"
 dropdown.choose_milestone = "Bir mesafe taşı seçin"
@@ -904,6 +896,15 @@ status.delivering = "Teslim"
 status.inreview = "İncelemede"
 status.accepted = "Kabul Edilmiş"
 status.deferred = "Ertelenmiş"
+
+MTR.status.continue = "Devam edin - Ne iyi gitti?"
+MTR.status.stop_doing = "Dur - Ne yapmayı bırakmalıyız?"
+status.start_doing = "Başlangıç - Geliştirmek için ne yapmaya başlamalıyız?"
+
+MTR.label.project_status_is = "Proje Durumu"
+label.green = "Yeşil"
+label.yellow = "Sarı"
+label.red = "Kırmızı"
 
 email_notifications.hi = "Merhaba,"
 email_notifications.unsubscribe = "Bu tür bildirimlerin <a href='%1$s'>aboneliğinden çıkmak</a> için lütfen giriş yapın ve bildirim ayarlarınızı düzenleyin"
@@ -1067,9 +1068,7 @@ tour.change_views = "Görünümleri Değiştir"
 tour.change_views_text = "Bu düğmeler, tablo ve kanban görünümü arasında geçiş yapmanızı sağlar"
 tour.congratulations_kanban_text = "Turu tamamladınız!<br/>Daha fazla yardıma ihtiyacınız varsa. <a href='https://help.leantime.io' target='_blank'>https://help.leantime.io</a><br/><br/>Yapma Herhangi bir ek yardım için destek ekibimize ulaşmaktan çekinmeyin!<br/>Hayatınızı kolaylaştırmak için buradayız."
 
-
-
-## Leantime DTS Branch
+## New labels introduced with version 2.3.0
 
 
 # Supported menut types
@@ -1082,11 +1081,11 @@ MTR.label.menu_type.dts = "Strateji Menüsü için Tasarım Odaklı Düşünme"
 # Menu subtitles
 
 MTR.menu.default.advanced = "Gelişmiş"
+MTR.menu.default.tools = "Araçlar"
 MTR.menu.default.various = "Çeşitli"
 MTR.menu.default.define = "Empati kurun / Tanımlayın"
 MTR.menu.default.ideate = "Ideate / Protoype"
 MTR.menu.default.test = "Test &amp; Doğrulama"
-MTR.menu.default.tools = "Araçlar"
 
 MTR.menu.dts.process = "Strateji Süreci"
 MTR.menu.dts.frameworks = "Strateji Çerçeveleri"
@@ -1119,12 +1118,20 @@ MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT Anali
 MTR.links.icon.create = "<i class='fa-plus'></i> Yeni Oluştur"
 MTR.links.icon.edit = "<i class='fa-edit'></i> Düzenle</a>"
 MTR.links.icon.clone = "<i class='fa-clone'></i> Kopyala</a>"
-MTR.links.icon.delete = "<i class='fa-trash-can'></i> Sil"
+MTR.links.icon.merge = "<i class='fa-object-group'></i> Birleştir</a>"
+MTR.links.icon.import = "<i class='fa-file-import'></i> İçe Aktar</a>"
+MTR.links.icon.export = "<i class='fa-file-export'></i> Dışa Aktar</a>"
 MTR.links.icon.print = "<i class='fa-print'></i> Yazdır"
+MTR.links.icon.delete = "<i class='fa-trash-can'></i> Sil"
 
 # Buttons
 
 MTR.buttons.cancel = "İptal"
+MTR.buttons.import = "İthalat"
+MTR.buttons.clone = "Anlaşıldı"
+MTR.buttons.merge = "Birleştirme"
+
+MTR.label.version = "Versiyon"
 
 # Labels for status and relates
 
@@ -1155,24 +1162,40 @@ MTR.dropdown.choose_relates = "Bu unsur neyle ilgilidir?"
 # Board and element labels
 
 MTR.subtitle.clone_board = "Kopya panosu"
+MTR.subtitle.merge_board = "Mevcut yönetim kurulu ile birleştirme"
+MTR.subtitle.import_board = "İthalat panosu"
 MTR.label.title_element = "Öğe başlığı"
+MTR.label.title_merge = "Mevcut panoda hangi tuvali birleştirmek istiyorsunuz?"
+MTR.label.title_import = "İçe aktarılacak tuvalin dosya adı nedir?"
+
 MTR.input.placeholders.describe_element = "Öğeyi tanımlayın"
 
 MTR.text.confirm_board_deletion = "Bu panoyu silmek istediğinizden emin misiniz?"
 MTR.text.confirm_board_item_deletion = "Bu öğeyi silmek istediğinizden emin misiniz?"
+
 MTR.notification.board_created = "Kurul başarıyla oluşturuldu"
 MTR.notification.board_copied = "Pano başarıyla kopyalandı"
+MTR.notification.board_merged = "Kurul başarıyla birleştirildi"
 MTR.notification.board_deleted = "Pano başarıyla silindi"
 MTR.notification.board_exists = "Kurul adı zaten mevcut"
 MTR.notification.element_created = "Öğe başarıyla oluşturuldu"
 MTR.notification.element_deleted = "Öğe başarıyla silindi"
+MTR.notification.board_imported = "Kanvas pano başarıyla içe aktarıldı"
+MTR.notification.board_import_failed = "Tuval panosu içe aktarma başarısız oldu"
+MTR.notification.pdf.failed = "PDF oluşturma başarısız oldu"
+MTR.notification.merge_error = "Panoları birleştirme hatası"
+MTR.notification.internal_internal = "Dahili hata!"
+
+MTR.email_notifications.canvas_board_imported = "Yeni bir kanvas pano ithal edildi"
+MTR.email_notifications.canvas_imported_message = "1$s tarafından yeni bir kanvas pano içe aktarıldı. Panonun başlığı '%2$s'"
+
 MTR.short_notifications.relates_updated = "Başarılı bir şekilde güncellenmiş"
 
 # PDF labels
 
 MTR.pdf.label.page = "Sayfa"
 MTR.pdf.language.longdateformat = "l, F j, Y"
-
+MTR.pdf.disclaimer.confidential = "BU BELGE GİZLİDİR *** GİZLİ ***<br>HİÇBİR DURUMDA ÜÇÜNCÜ BİR TARAFA GÖSTERMENİZE VEYA İLETMENİZE İZİN VERİLMEMEKTEDİR"
 
 ## Insights
 
@@ -1203,7 +1226,7 @@ MTR.label.insights.data = "Toplanan destekleyici veriler"
 MTR.headlines.insights.analysis = "İçgörü analizinizi açıklayın"
 MTR.headlines.insights.welcome_to_board = "Insights Board'a hoş geldiniz!"
 
-MTR.text.insights.helper_content = "<em>Gözlemle / Öğren - İçgörüler</em> panosu, dört farklı kaynaktan (etnografik gözlemler, görüşmeler, odak grupları ve ikincil araştırma) içgörüler toplamanıza ve bunları bilgiye dönüştürmenize yardımcı olur.<br/>Tasarım Odaklı Düşünme sürecinin bazen empati kurma ve tanımlama olarak da adlandırılan gözlemle ve öğren aşamalarını destekler.<br/>Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 2, 8 ve 9. bölümlerinde bulabilirsiniz.<br/>Risk analizi, çevre analizi, endüstri trendlerini keşfetmek veya yeni ürün ve hizmetler tasarlamak için olsun, yeni içgörüler toplayıp analiz ettiğiniz her seferde <em>Gözlemle / Öğren - İçgörüler</em> panosunu kullanmanızı öneririz."
+MTR.text.insights.helper_content = "<em>Gözlemle / Öğren - İçgörüler</em> panosu, dört farklı kaynaktan (etnografik gözlemler, görüşmeler, odak grupları ve ikincil araştırma) içgörüler toplamanıza ve bunları bilgiye dönüştürmenize yardımcı olur.<br/>Tasarım Odaklı Düşünme sürecinin bazen empati kurma ve tanımlama olarak da adlandırılan gözlemle ve öğren aşamalarını destekler.<br/>Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 2, 8 ve 9. bölümlerinde bulabilirsiniz.<br/>Risk analizi, çevre analizi, sektör trendlerini keşfetme veya yeni ürün ve hizmetler tasarlama gibi amaçlarla yeni içgörüler toplayıp analiz ettiğiniz her seferde <em>Gözlemle / Öğren - İçgörüler</em> panosunu kullanmanızı öneririz."
 MTR.tour.insights.once_your_done = "<em>İçgörü toplama ve bilgi oluşturma konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
 
 
@@ -1312,7 +1335,7 @@ MTR.headlines.swot.analysis = "SWOT analizinizi açıklayın"
 MTR.headlines.swot.welcome_to_board = "SWOT Analizi Panosuna Hoş Geldiniz!"
 
 MTR.text.swot.helper_content = "<em>SWOT analizi</em>, fikir oluşturma ve prototip oluşturma sırasında yararlanılabilecek güçlü ve zayıf yönleri, fırsatları ve tehditleri belirlemenize yardımcı olacaktır.<br/>Projenizin başında bir SWOT analizi yapmanızı öneririz."
-MTR.tour.swot.once_your_done = "<em>SWOT analiziniz konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
+MTR.tour.swot.once_your_done = "<em>SWOT analizinizle kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
 
 
 ## Empathy map
@@ -1423,7 +1446,7 @@ MTR.input.placeholders.lbm.enter_title_for_board = "Yeni hafif iş modelinizin b
 MTR.headlines.lbm.analysis = "Hafif iş modelinizi açıklayın"
 MTR.headlines.lbm.welcome_to_board = "Hafif İş Modeli Panosuna hoş geldiniz!"
 
-MTR.text.lbm.helper_content = "<em>Hafif İş Modeli</em> mevcut organizasyonunuzu, rakiplerinizi ve sektörü belgelemenize yardımcı olacaktır. Bir firmanın stratejik odağının belirlenmesini destekler ve yeni ve rekabetçi detaylı iş modelinin tasarlanması için temel oluşturur.<br />Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 3. bölümünde bulabilirsiniz.<br />Detaylı veya orijinal Osterwalter iş modelinin özelliklerine ihtiyaç duymadığınız her zaman iş modeli kanvasının hafif varyantını kullanmanızı öneririz."
+MTR.text.lbm.helper_content = "<em>Hafif İş Modeli</em> mevcut organizasyonunuzu, rakiplerinizi ve sektörü belgelemenize yardımcı olacaktır. Bir firmanın stratejik odağının belirlenmesini destekler ve yeni ve rekabetçi ayrıntılı iş modeli tasarlamak için temel oluşturur.<br />Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 3. bölümünde bulabilirsiniz.<br />Ayrıntılı veya orijinal Osterwalter iş modelinin özelliklerine ihtiyaç duymadığınız her durumda iş modeli kanvasının hafif varyantını kullanmanızı öneririz."
 MTR.tour.lbm.once_your_done = "<em>Hafif iş modeliniz konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
 MTR.text.lbm.disclaimer = "<em>Lightweight Business Model Canvas</em> <a href='https://inov.at/dts'>Design Thinking for Strategy</a>'den alınmıştır ve <a href='https://www.strategyzer.com'>Strategyzer</a>'daki <em>Business Model Canvas</em>'a dayanmaktadır. <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> lisansı altında lisanslanmıştır."
 
@@ -1501,7 +1524,7 @@ MTR.input.placeholders.dbm.enter_title_for_board = "Yeni ayrıntılı iş modeli
 MTR.headlines.dbm.analysis = "Detaylı İş Modelinizi Açıklayın"
 MTR.headlines.dbm.welcome_to_board = "Detaylı İş Modeli Panosuna hoş geldiniz!"
 
-MTR.text.dbm.helper_content = "<em>Ayrıntılı İş Modeli</em> mevcut kuruluşunuzu, rakiplerinizi ve sektörü belgelemenize yardımcı olacaktır. Stratejinizin arzu edilir, uygulanabilir ve uygulanabilir olmasını sağlamayı destekler. Genellikle bir firmanın başarısıyla ilgili ek ayrıntıları dikkate alarak bir <em>Hafif İş Modeli</em> üzerine inşa edilir ve genişletilir.<br />Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 3. bölümünde bulabilirsiniz.<br />Belirli iş fikirlerinin prototipini oluştururken ayrıntılı iş modelini kullanmanızı öneririz ve bunların arzu edilen, uygulanabilir ve uygulanabilir bir işle sonuçlanmasını sağlamak isteriz."
+MTR.text.dbm.helper_content = "<em>Ayrıntılı İş Modeli</em> mevcut organizasyonunuzu, rakiplerinizi ve sektörü belgelemenize yardımcı olacaktır. Stratejinizin arzu edilir, uygulanabilir ve uygulanabilir olmasını sağlamayı destekler. Genellikle bir firmanın başarısıyla ilgili ek ayrıntıları dikkate alarak bir <em>Hafif İş Modeli</em> üzerine inşa edilir ve genişletilir.<br />Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 3. bölümünde bulabilirsiniz.<br />Belirli iş fikirlerinin prototipini oluştururken ve bunların arzu edilen, uygulanabilir ve uygulanabilir bir işle sonuçlanmasını sağlamak istediğimizde ayrıntılı iş modelini kullanmanızı öneririz."
 MTR.tour.dbm.once_your_done = "<em>Ayrıntılı iş modeliniz konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
 MTR.text.dbm.disclaimer = "<em>Ayrıntılı İş Modeli Kanvası</em> <a href='https://inov.at/dts'>Design Thinking for Strategy</a>'den alınmıştır ve <a href='https://www.strategyzer.com'>Strategyzer</a>'daki <em>İş Modeli Kanvası</em>'na dayanmaktadır. <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> lisansı altında lisanslanmıştır."
 
@@ -1547,7 +1570,7 @@ MTR.headlines.cp.analysis = "Rekabetçi konumunuzu tanımlayın"
 MTR.headlines.cp.welcome_to_board = "Rekabetçi Konumlandırma Kuruluna hoş geldiniz!"
 
 MTR.text.cp.helper_content = "<em>Rekabetçi Konumlandırma Kanvası</em> rekabetçi konumunuzu rakipten ziyade müşteri açısından değerlendirmenize yardımcı olacaktır. Hem rasyonel hem de duygusal karar faktörlerine odaklanır ve bunları değer yaratan ya da maliyet düşüren olarak sınıflandırır.<br />Daha fazla ayrıntıyı <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a> kitabının 12. bölümünde bulabilirsiniz.<br />Rekabetçi konumlandırma kanvasını ayrıntılı iş modelinizi tasarladıktan sonra kullanmanızı öneririz."
-MTR.tour.cp.once_your_done = "<em>Rekabetçi konumunuz konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcı</a>'ya gidin."
+MTR.tour.cp.once_your_done = "<em>Rekabetçi konumunuz konusunda kendinizi rahat hissettiğinizde</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Yol Haritası Planlayıcısı</a>'na gidin."
 MTR.text.cp.disclaimer = "<em>Rekabetçi Konumlandırma Tuvali</em> <a href='https://inov.at/dts'>Design Thinking for Strategy</a> adlı kaynaktan alınmıştır ve <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a> lisansı ile lisanslanmıştır."
 
 

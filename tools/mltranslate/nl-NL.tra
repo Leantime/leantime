@@ -7,11 +7,18 @@ language.timeformat = "H:i"
 language.jstimeformat = "HH:mm"
 language.momentJSDate = "DD-MM-YYYY"
 language.currency = "€"
+MTR.language.pagesize = "JURIDISCHE"
 
 #0 is Sunday, 1 is Monday
 
 language.firstDayOfWeek = "1"
 language.isMeridian = "false"
+
+# themes
+
+MTR.theme.default.name = "Standaard (licht)"
+MTR.theme.dark.name = "Donker"
+MTR.theme.dts.name = "Designdenken voor strategie"
 
 # special
 
@@ -22,6 +29,7 @@ MTR.label.additional_settings = "Aanvullende instellingen"
 MTR.label.comment_order = "Commentaar Orde"
 MTR.label.downtoup = "Oudste eerst"
 MTR.label.uptodown = "Nieuwste eerst"
+MTR.label.version = "Versie"
 
 #Datepicker translations
 
@@ -41,6 +49,7 @@ language.columnFormatWeek = "ddd d-M"
 language.columnFormatday = "dddd d-M"
 
 headlines.all_times = "Alle tijden"
+MTR.headlines.all_timesheets = "Alle Timesheets"
 headlines.edit_time = "Bewerk tijd"
 headlines.confirm_delete = "Bevestig verwijderen"
 headlines.delete_time = "Verwijder tijd"
@@ -92,7 +101,6 @@ MTR.headlines.page_forbidden = "U bent niet gemachtigd om deze pagina te bekijke
 
 headlines.delete_project_x = "Verwijder project %1$s"
 headlines.research_next_big_product = "Onderzoek je volgende grote product en verzamel hier je ervaringen."
-headline.research_board = "Onderzoeksbord"
 headline.delete_board = "Verwijder bord"
 headline.all_clients = "Alle cliënten"
 headline.new_client = "Nieuwe cliënt"
@@ -108,6 +116,7 @@ headlines.delete_user = "Verwijder gebruiker"
 headlines.my_profile = "Mijn profiel"
 headlines.profile_picture = "Profiel afbeelding"
 headlines.page_not_found = "Pagina niet gevonden"
+MTR.headlines.system_error = "Jij bent het niet, wij zijn het."
 headlines.edit_label = "<i class='fas fa-edit'></i> Bewerk label"
 headlines.company_settings = "Bedrijfsinstellingen"
 headlines.delete_sprint = "<i class='fa fa-rocket'></i> Verwijder sprint"
@@ -117,7 +126,6 @@ headlines.welcome_to_leantime = "Welkom bij Leantime!"
 headlines.step_one_discover = "1. Ontdek!"
 headlines.step_two_plan = "2. Plan!"
 headlines.step_three_track = "3. Volg!"
-headlines.welcome_to_research_board = "Welkom bij het volledige onderzoeksbord!"
 headlines.welcome_to_idea_board = "Welkom bij het ideëenbord!"
 headlines.the_kanban_board = "Het kanbanbord"
 headlines.the_timesheets = "De urenstaten!"
@@ -127,18 +135,16 @@ headlines.congrats_on_your_project = "Gefeliciteerd met je project!"
 headlines.welcome_to_your_roadmap = "Welkom bij jouw roadmap!"
 headlines.welcome_to_clients_products = "Welkom bij cliënten / producten!"
 headlines.welcome_to_projects = "Welkom bij projecten!"
-headlines.welcome_to_simple_research_board = "Welkom bij het eenvoudige onderzoeksbord!"
 headlines.update_database = "Update database"
 headlines.installation = "Installatie"
 headlines.reset_password = "Reset wachtwoord"
 headlines.reports = "Rapporten"
-MTR.headlines.twoFA_login = "Voer de twee-factor-authenticatiecode in"
+MTR.headlines.twoFA_login = "Voer de tweefactorauthenticatiecode in"
 MTR.headlines.twoFA = "Twee-factor-authenticatie"
 MTR.headlines.my_portfolio = "Mijn portefeuille"
 MTR.headlines.import_ldap_users = "LDAP-gebruikers importeren"
 MTR.headlines.documents = "Documenten"
 MTR.headlines.latest_todos = "Laatste taken"
-
 
 subtitles.sprint_burndown = "Sprint burndown"
 subtitles.backlog_burndown = "Backlog burndown"
@@ -223,7 +229,6 @@ MTR.notification.error_installing = "Er is een fout opgetreden bij de installati
 MTR.notifications.user_was_added_to_project = "Teamleden werden met succes bijgewerkt"
 MTR.notifications.not_assigned_to_any_project = "Je bent niet toegewezen aan projecten. U kunt uw profiel bijwerken of ontspannen een kopje koffie drinken"
 
-
 notification.project_has_tasks = "Kan project niet verwijderen. Er zitten nog taken in dit project. Verwijder eerst alle taken."
 notification.project_deleted = "Project succesvol verwijderd"
 notifications.milestone_detached = "Mijlpaal succesvol ontkoppeld."
@@ -237,8 +242,6 @@ notification.saving_milestone_error = "Er is een probleem opgetreden bij het ops
 notification.idea_edited_successfully = "Idee succesvol bewerkt"
 notification.feedback_successfully_created = "Feedback succesvol gemaakt"
 
-notification.research_board_deleted = "Onderzoeksbord met succes verwijderd."
-notification.research_board_item_deleted = "Hypothese met succes verwijderd."
 notification.hypothesis_created = "Hypothese met succes aangemaakt."
 notifications.new_canvas_created = "Nieuw bord met succes aangemaakt."
 notification.idea_board_item_deleted = "Idee succesvol verwijderd"
@@ -253,7 +256,7 @@ notification.client_exists_already = "Client bestaat reeds"
 notification.client_has_todos = "Cliënt heeft taken en projecten toegewezen"
 notification.client_deleted = "Cliënt succesvol verwijderd"
 notification.event_created_successfully = "Evenement succesvol aangemaakt"
-MTR.notification.event_edited_successfully = "Gebeurtenis met succes bewerkt"
+MTR.notification.event_edited_successfully = "Gebeurtenis succesvol bewerkt"
 notification.event_removed_successfully = "Evenement succesvol verwijderd"
 notification.could_not_delete_event = "Kan evenement niet verwijderen"
 notification.user_created = "Nieuwe gebruiker succesvol aangemaakt"
@@ -295,7 +298,6 @@ MTR.notification.article_created_successfully = "Artikel is succesvol aangemaakt
 
 MTR.notifications.ical_success = "iCal URL succesvol aangemaakt"
 MTR.notifications.ical_removed_success = "iCal URL werd verwijderd"
-
 
 short_notifications.effort_updated = "Inspanning met succes bijgewerkt"
 MTR.short_notifications.priority_updated = "Prioriteit succesvol bijgewerkt"
@@ -440,8 +442,6 @@ links.edit_milestone = "Mijlpaal bewerken"
 links.view_todos = "Taken bekijken"
 link.new_project = "Nieuw project"
 link.new_client = "Nieuwe cliënt"
-links.simple_canvas = "<i class='fas fa-columns'></i> Eenvoudig canvas"
-links.full_canvas = "<i class='fas fa-graduation-cap'></i> Volledig lean canvas"
 links.create_plan = "<i class='fa fa-plus'></i>  Nieuw bord aanmaken"
 links.edit_board = "<i class='fa fa-edit'></i> Bord bewerken</a>"
 links.add_new_canvas_item = "<span class='fa fa-plus'></span> Nieuwe toevoegen"
@@ -470,7 +470,6 @@ MTR.links.read_more = "Meer lezen"
 MTR.links.add_team_member = "Teamlid toevoegen"
 MTR.links.create_user = "Nieuwe gebruiker aanmaken"
 
-
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Mijn urenstaten</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Mijn kalender</span>"
 menu.sign_out_icon = "<span class='head-icon fa fa-sign-out-alt'></span>"
@@ -493,6 +492,8 @@ menu.dashboard = "<span class='fa fa-fw fa-home'></span> Project dashboard"
 menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> Taken"
 menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Mijlpalen"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Urenstaten"
+MTR.menu.all_timesheets = "<span class='fa-solid fa-business-time'></span> Alle Timesheets"
+
 menu.research = "<span class='fas fa-fw fa-flask'></span> Onderzoek"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> Ideeën"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Projectinstellingen"
@@ -516,6 +517,7 @@ text.what_are_subtasks = "Gebruik subtaken om je hoofdtaken op te splitsen in kl
 text.no_subtasks = "Je hebt geen subtaken"
 text.create_new_subtask = "Maak een nieuwe subtaak aan:"
 text.written_on_by = "Geschreven op %1$s om %2$s door %3$s %4$s"
+MTR.text.report_written_on = "Status update (%1$s)"
 text.written_on = "%1$s op %2$s"
 text.no_comments = "Nog geen reacties"
 MTR.text.no_updates = "Nog geen updates."
@@ -534,7 +536,7 @@ MTR.text.are_you_sure_delete_wiki = "Weet u zeker dat u deze wiki wilt verwijder
 MTR.text.are_you_sure_delete_article = "Weet je zeker dat je dit artikel wilt verwijderen?"
 
 text.use_milestone_to_track_retro = "Gebruik een mijlpaal om de voortgang van jouw retrospectieven bij te houden."
-text.use_milestone_to_track_leancanvas = "Gebruik een mijlpaal om de voortgang naar jouw lean canvas bij te houden."
+MTR.text.use_milestone_to_track_canvas = "Gebruik een mijlpaal om de voortgang naar je canvas te volgen."
 text.use_milestone_to_track_idea = "Gebruik een mijlpaal om de voortgang van jouw ideeën bij te houden."
 text.all_milestones = "Alle mijlpalen"
 text.confirm_ticket_deletion = "Weet je zeker dat je deze taak wilt verwijderen?"
@@ -542,8 +544,6 @@ text.confirm_project_deletion = "Weet je zeker dat je dit project wilt verwijder
 text.confirm_client_deletion = "Weet je zeker dat u deze cliënt wilt verwijderen?"
 text.confirm_milestone_deletion = "Weet je zeker dat je deze mijlpaal wilt verwijderen?"
 text.confirm_event_deletion = "Weet je zeker dat je dit evenement wilt verwijderen?"
-text.confirm_research_board_item_deletion = "Weet je zeker dat je deze hypothese wilt verwijderen?"
-text.confirm_research_board_deletion = "Weet je zeker dat je dit onderzoeksbord wilt verwijderen?"
 text.confirm_user_deletion = "Weet je zeker dat je deze gebruiker wilt verwijderen?"
 text.mattermost_instructions = "Deze integratie zal updatemeldingen op het kanaal van jouw keuze plaatsen.<br/>Volg de instructies <a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>hier om een inkomende webhook-URL</a> van Mattermost te krijgen. Plak vervolgens de link in het formulier aan de rechterkant en klik op Opslaan."
 text.slack_instructions = "Deze integratie zal updatemeldingen op het kanaal van jouw keuze plaatsen.<br/>Volg de instructies <a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>hier om een inkomende webhook-URL</a> van Slack te krijgen. Plak vervolgens de link in het formulier aan de rechterkant en klik op Opslaan."
@@ -552,8 +552,6 @@ text.expected_to_finish_by = "Verwachte afronding door"
 text.zulip_instructions = "Deze integratie zal updatemeldingen op het kanaal van jouw keuze plaatsen.<br/>Volg de instructies <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>hier om een nieuwe bot aan te maken</a>. Plak vervolgens de informatie in het formulier aan de rechterkant en klik op Opslaan."
 MTR.text.discord_instructions = "<br/>Volg de instructies <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>hier om een nieuwe webhook aan te maken </a>, plak de link(s) in de velden rechts en klik op Opslaan."
 text.no_conclusion_yet = "<i>Nog geen conclusie</i>"
-text.no_lean_canvas_content = "Lean canvas zal je begeleiden met een cliënt, probleem en passende oplossing.<br/>We raden u aan een nieuw canvas te maken voor elk product dat u start.<br/><br/><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> Nieuw plan aanmaken</a>"
-text.lean_canvas_is_adapted_message = "Lean canvas is overgenomen van het <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> en heeft een licentie onder Creative Commons Attribution-Share Alike 3.0"
 text.no_users_assigned_to_this_client = "Er zijn geen contacten toegevoegd aan deze client. Voeg en wijs <a href='/users/showAll'>hier</a> gebruikers toe"
 text.confirm_delete_timesheet = "Moet de urenstaat echt worden verwijderd?"
 text.timer_on_todo = "<span class='head-icon fa fa-stop'></span> %1$s Timer op %2$s"
@@ -565,7 +563,6 @@ text.glad_youre_here = "We zijn blij dat je hier bent. Laten we even de tijd nem
 text.business_research_section = "Onze sectie bedrijfsonderzoek is jouw nieuwe thuis voor alle ideeën. Deze sectie is ontworpen om je door de stappen van cliëntontwikkeling, probleemonderzoek en ideevorming te leiden."
 text.our_roadmap_design = "Onze roadmap is ontworpen om jou van kleinere, beheersbare mijlpalen naar grote plaatjes te brengen. Plan mijlpalen van ongeveer 3 maanden lang en gebruik deze projectmarkeringen om op koers te blijven."
 text.this_is_where_you_spend_most_time = "Dit is waar je het grootste deel van je tijd aan zult besteden - doen. Plan je sprints van 2 weken en voer ze succesvol uit met het Kanban-bord en onze backlog-tools. Gebruik retrospectieven om te groeien voor de volgende sprint."
-text.full_lean_canvas_helper_content = "Het volledige onderzoeksbord leidt je door het volledige validatieproces van het idee.<br/>Op deze pagina ga je opnieuw in op jouw cliëntsegment, probleem en oplossing (maar maak je geen zorgen, als je dat hebt ingevuld) op het Simple-bord, je ziet het hier weer!).<br/><br/>Vanaf daar ga je naar<br/>Unique Value Proposition (wat maakt jouw idee beter dan andere aanbiedingen?) ,<br/>Distributiekanalen (Hoe krijg je jouw oplossing bij je cliënten?)<br/>Inkomstenstromen (Hoe gaat jouw oplossing geld opleveren?)<br/>Kostenstructuur (Hoeveel is jouw oplossing waard?)<br/>Key Metrics (Hoe meet je succes?)<br/>en Unfair Advantage (Wat heb je dat je zal helpen succesvol te zijn tegen de concurrentie?)<br/>Het beantwoorden van deze vragen is bedoeld om succes te bevorderen, falen te verminderen, en stelt je in staat jouw aannames te volgen en te valideren. Lean zijn gaat over het elimineren van verspilling<br/>en het werken aan het bouwen van producten, bedrijven en oplossingen die jouw cliënten nodig hebben."
 text.idea_board_helper_content = "Dit is de plek waar je al jouw ideeën kunt verzamelen. Bespreek nieuwe met je team en voeg mijlpalen toe om de voortgang van jouw ideeën te volgen."
 text.kanban_helper_content = "Kanban is het Japanse woord voor 'kaart'. In de jaren 40 zijn Toyota-ingenieurs gestart met Lean-productie d.m.v. Kanban-borden.<br/>Het wordt gebruikt om snel informatie en voortgang van het werk visueel te delen.<br/>Kanban-borden zijn handig om werk en status te visualiseren, om actief of lopend werk te helpen beheren, de werkstroom te beheren en snel te werken aan gestroomlijnde verbeteringen.<br/><br/>Start de rondleiding om te zien hoe ons Kanban-bord werkt of klik op sluiten om begonnen!"
 text.my_timesheets_helper_content = "Urenstaten zijn de plaats om de werkelijk gewerkte uren op een taak te volgen.<br/>Dit is handig voor factureringsdoeleinden, maar ook om te valideren hoe goed je jouw taken van tevoren plant.<br/>Overuren tijdens de tijd kan vervaldatums aanpassen om rekening te houden met planningsverschillen."
@@ -575,7 +572,6 @@ text.retros_helper_content = "<p>Retrospectieven zijn snelle reflecties over het
 text.roadmap_helper_content = "<p>Roadmaps zijn handig voor het verkleinen van grote projecten in kleinere en beter beheersbare brokken.<br/><br/></p><p>Om je roadmap te maken, raden we aan mijlpalen in te stellen die je bereikt binnen een periode van 3 maanden.</p><p>Mijlpalen zijn controlepunten op weg naar voltooiing van het project.<br/>Simpel gezegd: als je een rondrit door het land maakt, dan kan elke provincie die je doorkruist een mijlpaal zijn.<br/><br/>Klik op 'Voeg mijlpaal toe' in de linkerbovenhoek om te beginnen. Stel de datum in op dit tabblad of in het stappenplan zelf door op de mijlpaal te klikken en deze binnen de kalender te slepen.</p>"
 text.show_clients_helper_content = "<p>Cliënten/producten organiseren jouw projecten in categorieën en stellen je in staat verschillende groepen te isoleren.<br/><br/></p><p>Als consultant werk je al met cliënten en dit zou de plaats zijn om ze te organiseren.</p><p>Als je een productteam bent, kun je dit gedeelte gebruiken om de afdelingen (marketing, verkoop, activiteiten, enz.) te organiseren en te isoleren.</p>"
 text.show_projects_helper_content = "<p>Projecten vormen het hart van je bedrijf en in Leantime! Verandering, ontwikkeling, doelen en alles wat je kunt bouwen of waarvan je kunt dromen, zal projecten met zich meebrengen.<br/>Projectbeheer is gewoon het proces om ervoor te zorgen dat projecten tijdig, correct en met echte bedrijfswaarde worden opgeleverd.<br/><br/>Dit is waar de projecten zullen leven. Op uw projectenpagina kun je een project maken, snel zien wat je moet doen, cijfers, uren, budget dollars en de cliënt die bij het project hoort.<br/><br/>Gebruik deze pagina voor een snel overzicht van alle projecten.<br/><br/></p>"
-text.simple_lean_canvas_helper_content = "<p>De basis van elk project is hier geworteld - in jouw onderzoek. Op dit bord concentreer jij je op het bouwen voor je cliënt door gebruik te maken van de Problem Solution Fit.<br/><br/>In Problem Solution fit begin je met het identificeren van wie de cliënt is. Denk na over demografische gegevens, wat ze doen en wat ze nodig hebben.<br/>Vervolgens identificeer je hun problemen of problemen. Ten slotte voeg je toe hoe je van plan bent hun probleem op te lossen.<br/><br/>Het bouwen van producten, projecten of aanbiedingen die cliëntproblemen oplossen, helpt het productsucces te bevorderen en falen te verminderen.<br/><br/>Het kan zijn dat je meerdere manieren hebt om hun problemen op te lossen. Dat is geweldig! Je kunt ze hier plaatsen of naar het ideeënbord gaan om die ideeën bij te houden.<br/>Zodra je hiermee bent begonnen, is de volgende stap het valideren van je aannames over de cliënt, hun problemen en jouw oplossingen.<br/>Je kunt die hier toevoegen of<br/>naar het Volledig Onderzoeksbord gaan om meer informatie te verzamelen.</p>"
 text.new_db_version = "Er is een nieuwe versie geïnstalleerd. Om Leantime te gebruiken, moet je de database bijwerken.<br/><br/><strong>Maak een back-up van de database voordat je deze update uitvoert!</strong><br/>Dit kan enkele minuten duren."
 text.update_was_successful = "Update succesvol verlopen, je kunt nu inloggen. <a href='%1$s'>Ga naar inloggen</a>"
 text.this_script_will_set_up_leantime = "Dit script zal je database opzetten en een beheerdersaccount aanmaken"
@@ -598,7 +594,6 @@ MTR.labels.defaultaccess = "Wie heeft toegang tot dit project?"
 MTR.labels.everyone_in_org = "Iedereen in deze organisatie"
 MTR.labels.everyone_in_client = "Iedereen die aan deze cliënt is toegewezen"
 MTR.labels.only_chose = "Alleen de gebruikers die ik kies onder 'Team'"
-
 
 label.id = "ID"
 label.due = "Vervalt op:"
@@ -825,8 +820,6 @@ MTR.label.reportType = "Rapporteer als"
 MTR.label.showInKanban = "Tonen op Kanban-bord"
 MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> Bekijk Portfolio"
 
-
-
 MTR.label.send_telemetry = "Help Leantime beter te maken!"
 MTR.label.telemetry_background = "Stuur anonieme gegevens <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>over het aantal projecten, gebruikers, tickets etc naar Leantime.io</a>. Er worden geen persoonlijke identificeerbare gegevens verstuurd en het is onmogelijk voor ons om individuele gebruikers te traceren."
 
@@ -838,7 +831,6 @@ MTR.label.grey = "Grijs"
 
 MTR.labels.all_projects = "Alle projecten"
 MTR.label.dates = "Vervaldata"
-
 
 MTR.labels.createdBy_on = "Gemaakt door %s %s op %s, gewijzigd op %s"
 MTR.labels.tags = "Tags"
@@ -867,7 +859,7 @@ MTR.label.draft = "Ontwerp"
 MTR.label.published = "Gepubliceerd"
 MTR.label.draft_parenth = "(ontwerp)"
 
-
+MTR.header.management = "Bedrijfsleiding"
 dropdown.how_big_todo = "Hoe groot is deze taak?"
 MTR.dropdown.select_priority = "Wat is de prioriteit van deze taak?"
 dropdown.choose_milestone = "Kies een mijlpaal"
@@ -904,6 +896,15 @@ status.delivering = "Leveren"
 status.inreview = "In beoordeling"
 status.accepted = "Geaccepteerd"
 status.deferred = "Uitgesteld"
+
+status.continue = "Doorgaan - Wat is goed gegaan?"
+status.stop_doing = "Stop - Wat moeten we stoppen met doen?"
+status.start_doing = "Start - Wat moeten we beginnen te verbeteren?"
+
+MTR.label.project_status_is = "De status van het project is"
+MTR.label.green = "Groen"
+MTR.label.yellow = "Geel"
+MTR.label.red = "Rood"
 
 email_notifications.hi = "Hallo,"
 email_notifications.unsubscribe = "Om je <a href='%1$s'>af te melden</a> van dit soort meldingen, log je in en bewerkt je jouw instellingen voor meldingen"
@@ -1067,9 +1068,7 @@ MTR.tour.change_views = "Verander de standpunten"
 MTR.tour.change_views_text = "Met deze knoppen kunt u schakelen tussen tabel- en kanban-weergave"
 MTR.tour.congratulations_kanban_text = "U heeft de tour voltooid! <br/>Als u meer hulp nodig heeft. Bezoek onze kennisbank op <a href='https://help.leantime.io' target='_blank'>https://help.leantime.io</a><br/><br/>Twijfel niet om contact op te nemen met ons support team voor aanvullende hulp! <br/>Wij zijn er om uw leven gemakkelijker te maken."
 
-
-
-## Leantime DTS Branch
+## New labels introduced with version 2.3.0
 
 
 # Supported menut types
@@ -1082,11 +1081,11 @@ MTR.label.menu_type.dts = "Ontwerpend denken voor strategiemenu"
 # Menu subtitles
 
 MTR.menu.default.advanced = "Geavanceerd"
+MTR.menu.default.tools = "Gereedschap"
 MTR.menu.default.various = "Diverse"
 MTR.menu.default.define = "Inleven / Definiëren"
 MTR.menu.default.ideate = "Ideeën / Protoype"
 MTR.menu.default.test = "Testen en valideren"
-MTR.menu.default.tools = "Gereedschap"
 
 MTR.menu.dts.process = "Strategieproces"
 MTR.menu.dts.frameworks = "Strategische kaders"
@@ -1119,12 +1118,20 @@ MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> SWOT-analy
 MTR.links.icon.create = "<i class='fa-plus'></i> Nieuw aanmaken"
 MTR.links.icon.edit = "<i class='fa-edit'></i> Bewerken</a>"
 MTR.links.icon.clone = "<i class='fa-clone'></i> Kopiëren</a>"
-MTR.links.icon.delete = "<i class='fa-trash-can'></i> Wissen"
+MTR.links.icon.merge = "<i class='fa fa-object-groep'></i> Samenvoegen</a>"
+MTR.links.icon.import = "<i class='fa-file-import'></i> Importeren</a>"
+MTR.links.icon.export = "<i class='fa-file-export'></i> Exporteer</a>"
 MTR.links.icon.print = "<i class='fa-print'></i> Afdrukken"
+MTR.links.icon.delete = "<i class='fa-trash-can'></i> Wissen"
 
 # Buttons
 
 MTR.buttons.cancel = "Annuleren"
+MTR.buttons.import = "Import"
+MTR.buttons.clone = "Kopie"
+MTR.buttons.merge = "Samenvoegen"
+
+MTR.label.version = "Versie"
 
 # Labels for status and relates
 
@@ -1155,24 +1162,40 @@ MTR.dropdown.choose_relates = "Waar heeft het element betrekking op?"
 # Board and element labels
 
 MTR.subtitle.clone_board = "Kopieer bord"
+MTR.subtitle.merge_board = "Samenvoegen met huidig bestuur"
+MTR.subtitle.import_board = "Importbord"
 MTR.label.title_element = "Element titel"
+MTR.label.title_merge = "Welk canvas wil je samenvoegen in het huidige bord?"
+MTR.label.title_import = "Wat is de bestandsnaam van het te importeren canvas?"
+
 MTR.input.placeholders.describe_element = "Beschrijf het element"
 
 MTR.text.confirm_board_deletion = "Weet je zeker dat je dit bord wilt verwijderen?"
 MTR.text.confirm_board_item_deletion = "Weet u zeker dat u dit element wilt verwijderen?"
+
 MTR.notification.board_created = "Bestuur met succes opgericht"
 MTR.notification.board_copied = "Board succesvol gekopieerd"
+MTR.notification.board_merged = "Bestuur succesvol samengevoegd"
 MTR.notification.board_deleted = "Board succesvol verwijderd"
 MTR.notification.board_exists = "Board naam bestaat al"
 MTR.notification.element_created = "Element succesvol aangemaakt"
 MTR.notification.element_deleted = "Element succesvol verwijderd"
+MTR.notification.board_imported = "Canvas bord succesvol geïmporteerd"
+MTR.notification.board_import_failed = "Canvas bord import mislukt"
+MTR.notification.pdf.failed = "PDF genereren mislukt"
+MTR.notification.merge_error = "Fout bij het samenvoegen van borden"
+MTR.notification.internal_internal = "Interne fout!"
+
+MTR.email_notifications.canvas_board_imported = "Een nieuw canvasbord werd ingevoerd"
+MTR.email_notifications.canvas_imported_message = "Een nieuw canvas bord werd geïmporteerd door %1$s. De titel van het bord is '%2$s'."
+
 MTR.short_notifications.relates_updated = "Heeft betrekking op met succes bijgewerkte"
 
 # PDF labels
 
 MTR.pdf.label.page = "Pagina"
 MTR.pdf.language.longdateformat = "l, F j, Y"
-
+MTR.pdf.disclaimer.confidential = "DIT DOCUMENT IS VERTROUWELIJK *** CONFIDENTIEEL ***<br>U MAG HET ONDER GEEN ENKELE OMstandigheid VERSTREKKEN OF DOORSTUREN AAN DERDEN."
 
 ## Insights
 
@@ -1216,7 +1239,7 @@ MTR.headline.sb.board = "Strategie Briefing Raad"
 
 # Element/Box Labels
 
-MTR.box.sb.title = "Strategie kort"
+MTR.box.sb.title = "Korte strategie"
 MTR.box.sb.industry = "Doelsector(en)"
 MTR.box.sb.description = "Strategie Projectdoelen Beschrijving"
 MTR.box.sb.st_design = "Ontwerpteam"
@@ -1273,7 +1296,7 @@ MTR.label.risks.mitigation = "Geplande risicobeperkende maatregelen"
 # Notifications
 
 MTR.headlines.risks.analysis = "Beschrijf uw risicoanalyse"
-MTR.headlines.risks.welcome_to_board = "Welkom bij het risicoanalysebord!"
+MTR.headlines.risks.welcome_to_board = "Welkom bij het Risicoanalysebord!"
 
 MTR.text.risks.helper_content = "De <em>Risicoanalyse</em> zal u helpen bij het identificeren en beperken of vermijden van risico's die kunnen optreden tijdens uw project.<br/>Wij stellen voor dat u een risicoanalyse uitvoert aan het begin van elk project en deze regelmatig bijwerkt."
 MTR.tour.risks.once_your_done = "<em>Als u zich goed voelt bij uw risicoanalyse, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
@@ -1311,7 +1334,7 @@ MTR.label.swot.mitigation = "Geplande risicobeperkende maatregelen"
 MTR.headlines.swot.analysis = "Beschrijf uw SWOT-analyse"
 MTR.headlines.swot.welcome_to_board = "Welkom op het SWOT-analysebord!"
 
-MTR.text.swot.helper_content = "De <em>SWOT-analyse</em> zal u helpen sterke en zwakke punten, kansen en bedreigingen te identificeren die kunnen worden benut tijdens de ideevorming en prototyping.<br/>Wij raden u aan een SWOT-analyse uit te voeren aan het begin van uw project."
+MTR.text.swot.helper_content = "De <em>SWOT-analyse</em> zal u helpen om sterke en zwakke punten, kansen en bedreigingen te identificeren die kunnen worden benut tijdens ideevorming en prototyping.<br/>Wij stellen voor dat u een SWOT-analyse uitvoert aan het begin van uw project."
 MTR.tour.swot.once_your_done = "<em>Als u zich goed voelt bij uw SWOT-analyse, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 
 
@@ -1414,7 +1437,7 @@ MTR.box.lbm.financials = "Financiën"
 # Data Field Labels and placeholders
 
 MTR.label.lbm.title_new = "Wat is de titel van uw nieuwe lichtgewicht business model?"
-MTR.label.lbm.title_edited = "Wat is de nieuwe titel van uw lichtgewicht business model?"
+MTR.label.lbm.title_edited = "Wat is de nieuwe titel van uw lichtgewicht bedrijfsmodel?"
 MTR.label.lbm.title_clone = "Wat is de titel van uw gekopieerde lichtgewicht business model?"
 MTR.input.placeholders.lbm.enter_title_for_board = "Voer de titel van uw nieuwe lichtgewicht bedrijfsmodel in"
 
@@ -1423,7 +1446,7 @@ MTR.input.placeholders.lbm.enter_title_for_board = "Voer de titel van uw nieuwe 
 MTR.headlines.lbm.analysis = "Beschrijf uw lichtgewicht bedrijfsmodel"
 MTR.headlines.lbm.welcome_to_board = "Welkom bij het Lightweight Business Model Board!"
 
-MTR.text.lbm.helper_content = "Het <em>Lichtgewicht Business Model</em> zal u helpen uw huidige organisatie, concurrenten en de industrie te documenteren. Het ondersteunt het identificeren van de strategische focus van een bedrijf en legt de basis voor het ontwerpen van een nieuw en concurrerend gedetailleerd business model.<br />U kunt meer details vinden in hoofdstuk 3 van het boek <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wij raden u aan de lichtgewicht variant van het business model canvas te gebruiken telkens wanneer u de specifieke kenmerken van het gedetailleerde of het originele Osterwalter business model niet nodig hebt."
+MTR.text.lbm.helper_content = "Het <em>Lichtgewicht Business Model</em> zal u helpen uw huidige organisatie, concurrenten en de industrie te documenteren. Het ondersteunt het identificeren van de strategische focus van een bedrijf en legt de basis voor het ontwerpen van een nieuw en concurrerend gedetailleerd business model.<br />U kunt meer details vinden in hoofdstuk 3 van het boek <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wij raden u aan de lichtgewicht variant van het business model canvas te gebruiken telkens wanneer u de details van het gedetailleerde of het originele Osterwalter business model niet nodig hebt."
 MTR.tour.lbm.once_your_done = "<em>Als u zich comfortabel voelt met uw lichtgewicht businessmodel, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 MTR.text.lbm.disclaimer = "Het <em>Lichtgewicht Business Model Canvas</em> komt uit <a href='https://inov.at/dts'>Design Thinking for Strategy</a> en is gebaseerd op het <em>Business Model Canvas</em> uit <a href='https://www.strategyzer.com'>Strategyzer</a>. Het is gelicentieerd onder de <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Naamsvermelding-Gelijk delen 3.0</a> licentie."
 
@@ -1501,7 +1524,7 @@ MTR.input.placeholders.dbm.enter_title_for_board = "Voer de titel van uw nieuwe 
 MTR.headlines.dbm.analysis = "Beschrijf uw gedetailleerde bedrijfsmodel"
 MTR.headlines.dbm.welcome_to_board = "Welkom op het Detailed Business Model Board!"
 
-MTR.text.dbm.helper_content = "Het <em>Detailed Business Model</em> zal u helpen uw huidige organisatie, concurrenten en de industrie te documenteren. Het helpt ervoor te zorgen dat uw strategie wenselijk, levensvatbaar en haalbaar is. Het bouwt typisch voort op en breidt een <em>Lichtgewicht Business Model</em> uit door rekening te houden met extra details die relevant zijn voor het succes van een bedrijf.<br />U kunt meer details vinden in hoofdstuk 3 van het boek <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wij raden u aan het gedetailleerde business model te gebruiken wanneer u een prototype maakt van specifieke business ideeën en er zeker van wilt zijn dat deze resulteren in een wenselijk, levensvatbaar en haalbaar bedrijf."
+MTR.text.dbm.helper_content = "Het <em>Detailed Business Model</em> zal u helpen uw huidige organisatie, concurrenten en de industrie te documenteren. Het helpt ervoor te zorgen dat uw strategie wenselijk, levensvatbaar en haalbaar is. Het bouwt typisch voort op en breidt een <em>Lichtgewicht Business Model</em> uit door rekening te houden met extra details die relevant zijn voor het succes van een bedrijf.<br />U kunt meer details vinden in hoofdstuk 3 van het boek <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Wij raden u aan het gedetailleerde business model te gebruiken wanneer u specifieke bedrijfsideeën prototypt en er zeker van wilt zijn dat zij resulteren in een wenselijk, levensvatbaar en haalbaar bedrijf."
 MTR.tour.dbm.once_your_done = "<em>Als u zich comfortabel voelt met uw gedetailleerde businessmodel, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 MTR.text.dbm.disclaimer = "Het <em>Detailed Business Model Canvas</em> komt uit <a href='https://inov.at/dts'>Design Thinking for Strategy</a> en is gebaseerd op het <em>Business Model Canvas</em> uit <a href='https://www.strategyzer.com'>Strategyzer</a>. Het is gelicentieerd onder de <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Naamsvermelding-Gelijk delen 3.0</a> licentie."
 
@@ -1585,9 +1608,9 @@ MTR.input.placeholders.lean.enter_title_for_board = "Voer de titel van uw nieuwe
 MTR.headlines.lean.analysis = "Beschrijf uw lean canvas"
 MTR.headlines.lean.welcome_to_board = "Welkom op het Lean Canvas Board!"
 
-MTR.text.lean.helper_content = "Het lean canvas neemt u mee door het volledige idee-validatieproces van uw nieuwe bedrijfs- en/of productidee.<br/>U gaat in op uw <em>klantensegment</em>, <em>probleem, oplossing</em>.<br/>Van daaruit gaat u in op uw <em>Unieke waardepropositie</em> (wat maakt uw idee beter dan andere aanbiedingen?), uw <em>distributiekanalen</em> (hoe krijgt u uw oplossing bij uw klanten?), uw <em>inkomstenstromen</em> (hoe gaat uw oplossing geld opleveren?), uw <em>kostenstructuur</em> (hoeveel is uw oplossing waard?), <em>kerncijfers</em> (hoe gaat u succes meten?), en uw <em>oneerlijk voordeel</em> (wat heeft u dat u zal helpen succesvol te zijn tegenover de concurrentie?)<br/>Het beantwoorden van deze vragen is bedoeld om succes te bevorderen, falen te beperken, en u in staat te stellen uw aannames te volgen en te valideren. Lean zijn gaat over het elimineren van verspilling en het werken aan producten, zaken en oplossingen die uw klanten nodig hebben."
+MTR.text.lean.helper_content = "Het lean canvas neemt u mee door het volledige idee-validatieproces van uw nieuwe bedrijfs- en/of productidee.<br/>U behandelt uw <em>klantensegment</em>, <em>probleem, oplossing</em>.<br/>Van daaruit gaat u naar uw <em>unieke waardepropositie</em> (wat maakt uw idee beter dan andere aanbiedingen?), uw <em>distributiekanalen</em> (hoe krijgt u uw oplossing bij uw klanten?), uw <em>inkomstenstromen</em> (hoe gaat uw oplossing geld opleveren?), uw <em>kostenstructuur</em> (hoeveel is uw oplossing waard?), <em>kerncijfers</em> (hoe gaat u succes meten?), en uw <em>oneerlijk voordeel</em> (wat heeft u dat u zal helpen succesvol te zijn tegenover de concurrentie?)<br/>Het beantwoorden van deze vragen is bedoeld om succes te bevorderen, falen te beperken, en u in staat te stellen uw aannames te volgen en te valideren. Lean zijn gaat over het elimineren van verspilling en het werken aan producten, zaken en oplossingen die uw klanten nodig hebben."
 MTR.text.lean.disclaimer = "Lean Canvas is aangepast van <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> en valt onder de <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Naamsvermelding-Gelijk delen 3.0</a> licentie."
-MTR.tour.lean.once_your_done = "<em>Als u zich comfortabel voelt met uw lean canvas, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.tour.lean.once_your_done = "<em>Als je je comfortabel voelt met je lean canvas, ga je naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 
 
 ## Porter's Strategy Questions
@@ -1632,7 +1655,7 @@ MTR.headline.sm.board = "Strategie Prikbord"
 # Element/Box Labels
 
 MTR.box.sm.qa = "Wie zijn de <em>gerichte klantsegmenten</em> en wie valt <em>expliciet buiten het bereik</em>?"
-MTR.box.sm.qb = "Welke <em>waardepropositie</em> zult u uw beoogde klanten bieden?"
+MTR.box.sm.qb = "Welke <em>waardepropositie</em> biedt u uw beoogde klanten?"
 MTR.box.sm.qc = "Waarom zouden klanten ervoor kiezen zaken met u te doen in plaats van met uw concurrenten? Wat zijn onze <em>onderscheidende kenmerken</em> die moeilijk te kopiëren zijn?"
 MTR.box.sm.qd = "Waarom kunt u de beloften aan uw klanten waarmaken? Welke <em>unieke capaciteiten</em> bezit u en benut u?"
 MTR.box.sm.qe = "Wat zal <em>veranderen</em> met de nieuwe of herziene strategie en wat <em>blijft hetzelfde</em> na verloop van tijd? Hoe zorgt u ervoor dat bestaande klanten, die in scope blijven, niet verloren gaan?"
@@ -1652,7 +1675,7 @@ MTR.headlines.sm.analysis = "Beschrijf uw strategische boodschap"
 MTR.headlines.sm.welcome_to_board = "Welkom op het Strategy Message Board!"
 
 MTR.text.sm.helper_content = "Het <em>Strategy Message</em> zal u helpen een succesvolle boodschap van uw late strategie op te stellen. Meer details over het communiceren van strategie vindt u in hoofdstuk 13 van het boek 'Design Thinking for Strategy'.<br/>Wij raden u aan het Strategy Message Canvas te gebruiken nadat u de ontwikkeling van uw nieuwe/herziene strategie hebt afgerond."
-MTR.tour.sm.once_your_done = "<em>Als u zich goed voelt bij uw strategische boodschap, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.tour.sm.once_your_done = "<em>Als u zich comfortabel voelt met uw strategiebericht, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 
 
 ## Retrospectives
@@ -1670,7 +1693,7 @@ MTR.box.retros.start_doing = "Starten - Wat moeten we beginnen te doen om te ver
 
 # Data Field Labels and placeholders
 
-MTR.label.retros.title_new = "Wat is de titel van uw nieuwe retrospectief?"
+MTR.label.retros.title_new = "Wat is de titel van je nieuwe retrospectief?"
 MTR.label.retros.title_edited = "Wat is de nieuwe titel van uw retrospectief?"
 MTR.label.retros.title_clone = "Wat is de titel van uw gekopieerde retrospectief?"
 MTR.input.placeholders.retros.enter_title_for_board = "Voer de titel van uw nieuwe retrospectief in"
@@ -1680,6 +1703,6 @@ MTR.input.placeholders.retros.enter_title_for_board = "Voer de titel van uw nieu
 MTR.headlines.retros.analysis = "Beschrijf uw terugblik"
 MTR.headlines.retros.welcome_to_board = "Welkom op het Retrospective Board!"
 
-MTR.text.retros.helper_content = "De <em>Retrospectives</em> zijn snelle reflecties over het werk, het functioneren van het team, en natuurlijk de voortgang.<br/>Dit is waar uw team een moment kan nemen om in te zoomen op wat goed ging, wat niet goed ging en wat de volgende keer anders zou kunnen.<br/>Wij raden aan regelmatig een evaluatievergadering te houden, of op zijn minst aan het einde van elke Mijlpaal."
+MTR.text.retros.helper_content = "De <em>Retrospectives</em> zijn snelle reflecties over het werk, het functioneren van het team, en natuurlijk de voortgang.<br/>Daarin kan uw team even stilstaan bij wat goed ging, wat niet goed ging en wat de volgende keer anders zou kunnen.<br/>Wij raden aan regelmatig een evaluatievergadering te houden, of op zijn minst aan het eind van elke Mijlpaal."
 MTR.tour.retros.once_your_done = "<em>Als u zich comfortabel voelt met uw retrospectieve analyse, gaat u naar de</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 

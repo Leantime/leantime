@@ -7,11 +7,18 @@ language.timeformat = "h:i A"
 language.jstimeformat = "h:mm A"
 language.momentJSDate = "DD/MM/YYYY"
 language.currency = "€"
+MTR.language.pagesize = "LEGAL"
 
 #0 is Sunday, 1 is Monday
 
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
+
+# themes
+
+MTR.theme.default.name = "Por defecto (luz)"
+MTR.theme.dark.name = "Oscuro"
+MTR.theme.dts.name = "Pensamiento de diseño para la estrategia"
 
 # special
 
@@ -22,6 +29,7 @@ label.additional_settings = "Ajustes adicionales"
 MTR.label.comment_order = "Comentario Orden"
 MTR.label.downtoup = "El más antiguo primero"
 MTR.label.uptodown = "Lo más nuevo primero"
+MTR.label.version = "Versión"
 
 #Datepicker translations
 
@@ -41,6 +49,7 @@ language.columnFormatWeek = "ddd d/M"
 language.columnFormatday = "dddd d/M"
 
 headlines.all_times = "Todo el tiempo"
+MTR.headlines.all_timesheets = "Todas las hojas de tiempo"
 headlines.edit_time = "Editar hora"
 headlines.confirm_delete = "Confirmar borrar"
 headlines.delete_time = "Borrar tiempo"
@@ -92,7 +101,6 @@ MTR.headlines.page_forbidden = "No está autorizado a ver esta página"
 
 headlines.delete_project_x = "Borrar Proyecto %1$s"
 headlines.research_next_big_product = "Investiga tu siguiente gran producto y recoge tus experiencias aquí."
-headline.research_board = "Tablero de Investigación"
 headline.delete_board = "Borrar tablero"
 headline.all_clients = "Todos los grupos"
 headline.new_client = "Nuevo Grupo"
@@ -108,6 +116,7 @@ headlines.delete_user = "Eliminar Usuario"
 headlines.my_profile = "Mi perfil"
 headlines.profile_picture = "Foto de perfil"
 headlines.page_not_found = "Pagina no encontrada"
+MTR.headlines.system_error = "No eres tú, somos nosotros"
 headlines.edit_label = "<i class='fas fa-edit'></i> Editar etiqueta"
 headlines.company_settings = "Ajustes de la empresa"
 headlines.delete_sprint = "<i class='fa fa-rocket'></i> Eliminar Sprint"
@@ -117,7 +126,6 @@ headlines.welcome_to_leantime = "¡Bienvenido a Leantime!"
 headlines.step_one_discover = "1. ¡Descubre!"
 headlines.step_two_plan = "2. ¡Planea!"
 headlines.step_three_track = "3. ¡Haz el seguimiento!"
-headlines.welcome_to_research_board = "¡Bienvenido al Tablero de Investigación!"
 headlines.welcome_to_idea_board = "¡Bienvenido al tablero de Ideas!"
 headlines.the_kanban_board = "El tablero de Kanban"
 headlines.the_timesheets = "¡Registros de tiempo!"
@@ -127,7 +135,6 @@ headlines.congrats_on_your_project = "¡Enhorabuena por tu proyecto!"
 headlines.welcome_to_your_roadmap = "¡Bienvenido a tu Roadmap!"
 headlines.welcome_to_clients_products = "¡Bienvenido a Grupos / Productos!"
 headlines.welcome_to_projects = "¡Bienvenido a Proyectos!"
-headlines.welcome_to_simple_research_board = "¡Bienvenidos al tablero de Investigación simple!"
 headlines.update_database = "Actualizar Base de Datos"
 headlines.installation = "Instalación"
 headlines.reset_password = "Restablecer contraseña"
@@ -138,7 +145,6 @@ MTR.headlines.my_portfolio = "Mi cartera"
 MTR.headlines.import_ldap_users = "Importar usuarios LDAP"
 MTR.headlines.documents = "Documentos"
 MTR.headlines.latest_todos = "Últimas tareas pendientes"
-
 
 subtitles.sprint_burndown = "Sprint Burndown"
 subtitles.backlog_burndown = "Backlog Burndown"
@@ -223,7 +229,6 @@ MTR.notification.error_installing = "Se ha producido un error al instalar la bas
 MTR.notifications.user_was_added_to_project = "Los miembros del equipo se actualizaron con éxito"
 MTR.notifications.not_assigned_to_any_project = "No se le asigna ningún proyecto. Puede actualizar su perfil o relajarse y tomar una taza de café"
 
-
 notification.project_has_tasks = "No se puede eliminar el proyecto. Todavía quedan tareas en este proyecto. Por favor, elimine primero todas las tareas pendientes"
 notification.project_deleted = "Proyecto eliminado correctamente"
 notifications.milestone_detached = "Hito separado con éxito"
@@ -237,8 +242,6 @@ notification.saving_milestone_error = "Hubo un problema al guardar el hito"
 notification.idea_edited_successfully = "Idea editada correctamente"
 notification.feedback_successfully_created = "Comentarios creados con éxito"
 
-notification.research_board_deleted = "Tablón de investigación eliminado correctamente"
-notification.research_board_item_deleted = "Hipótesis eliminada con éxito"
 notification.hypothesis_created = "Hipótesis creada con éxito"
 notifications.new_canvas_created = "Nuevo tablero creado con éxito"
 notification.idea_board_item_deleted = "Idea eliminada con éxito"
@@ -295,7 +298,6 @@ MTR.notification.article_created_successfully = "El artículo se ha creado con �
 
 MTR.notifications.ical_success = "URL de iCal creada con éxito"
 MTR.notifications.ical_removed_success = "Se ha eliminado la URL de iCal"
-
 
 short_notifications.effort_updated = "El esfuerzo se ha actualizado con éxito"
 MTR.short_notifications.priority_updated = "Prioridad actualizada con éxito"
@@ -440,14 +442,12 @@ links.edit_milestone = "Editar hito"
 links.view_todos = "Ver Tareas"
 link.new_project = "Nuevo Proyecto"
 link.new_client = "Nuevo Grupo"
-links.simple_canvas = "<i class='fas fa-columns'></i> Panel simple"
-links.full_canvas = "<i class='fas fa-graduation-cap'></i> Panel Lean completo"
 links.create_plan = "<i class='fa fa-plus'></i>  Crear nuevo tablero"
 links.edit_board = "<i class='fa fa-edit'></i> Editar tablero</a>"
 links.add_new_canvas_item = "<span class='fa fa-plus'></span> Añadir nuevo"
 links.delete_board = "<i class='fa fa-trash'></i> Eliminar tablero"
 links.delete_sprint = "Borrar Sprint"
-links.new_with_icon = "<i class=''></i> Nuevo"
+links.new_with_icon = "<i class='fas fa-plus'></i> Nuevo"
 links.my_timesheets = "Mis registros de tiempo"
 links.dashboard = "Panel de control"
 links.view_todo = "<span class='fa fa-thumb-tack'></span> Ver Tarea"
@@ -469,7 +469,6 @@ MTR.links.add_to_timesheets = "<span class='fa fa-clock-o'></span> Añadir a la 
 MTR.links.read_more = "Leer más"
 MTR.links.add_team_member = "Añadir miembro del equipo"
 MTR.links.create_user = "Crear un nuevo usuario"
-
 
 menu.my_timesheets = "<span class='head-icon fa fa-clock-o'></span><span class='headmenu-label'>Mis Registros de Tiempo</span>"
 menu.my_calendar = "<span class='head-icon fa-regular fa-calendar'></span><span class='headmenu-label'>Mi calendario</span>"
@@ -493,6 +492,8 @@ menu.dashboard = "<span class='fa fa-fw fa-home'></span> Panel del Proyecto"
 menu.todos = "<span class='fa fa-fw fa-thumb-tack'></span> Tareas"
 menu.milestones = "<span class='fa fa-fw fa-sliders'></span> Hitos"
 menu.timesheets = "<span class='fa fa-fw fa-clock-o'></span> Registros de tiempo"
+MTR.menu.all_timesheets = "<span class='fa-solid fa-business-time'></span> Todas las hojas de horas"
+
 menu.research = "<span class='fas fa-fw fa-flask'></span> Investigación"
 menu.ideas = "<span class='far fa-fw fa-lightbulb'></span> Ideas"
 menu.project_settings = "<span class='fa fa-fw fa-cog'></span> Ajustes del Proyecto"
@@ -516,6 +517,7 @@ text.what_are_subtasks = "Utilice las subtareas para desglosar su tarea principa
 text.no_subtasks = "No tienes ninguna subtarea"
 text.create_new_subtask = "Crear una nueva subtarea:"
 text.written_on_by = "Escrito el %1$s a las %2$s por %3$s %4$s"
+MTR.text.report_written_on = "Actualización del estado (%1$s)"
 text.written_on = "%1$s a las %2$s"
 text.no_comments = "No hay nada hasta el momento"
 MTR.text.no_updates = "☕ No hay actualizaciones todavía."
@@ -534,7 +536,7 @@ MTR.text.are_you_sure_delete_wiki = "¿Estás seguro de que quieres eliminar est
 MTR.text.are_you_sure_delete_article = "¿Está seguro de que desea eliminar este artículo?"
 
 text.use_milestone_to_track_retro = "Usa un hito para registrar el progreso hacia tus retrospectivas."
-text.use_milestone_to_track_leancanvas = "Usa un hito para registrar el progreso hacia tu panel lean."
+MTR.text.use_milestone_to_track_canvas = "Utiliza un hito para seguir el progreso hacia tu lienzo."
 text.use_milestone_to_track_idea = "Utilice un hito para registrar el progreso hacia sus ideas."
 text.all_milestones = "Todos los hitos"
 text.confirm_ticket_deletion = "¿Está seguro de que desea borrar esta Tarea?"
@@ -542,8 +544,6 @@ text.confirm_project_deletion = "¿Está seguro de que desea borrar este proyect
 text.confirm_client_deletion = "¿Está seguro que desea borrar este cliente?"
 text.confirm_milestone_deletion = "¿Está seguro de que desea borrar este hito?"
 text.confirm_event_deletion = "¿Está seguro de que desea borrar este evento?"
-text.confirm_research_board_item_deletion = "¿Estás seguro de que deseas borrar esta hipótesis?"
-text.confirm_research_board_deletion = "¿Está seguro de que desea borrar este tablero de investigación?"
 text.confirm_user_deletion = "¿Está seguro que desea borrar este usuario?"
 text.mattermost_instructions = "Esta integración publicará notificaciones de actualización en el canal de tu elección.<br/>Sigue las instrucciones <a href='https://docs.mattermost.com/developer/webhooks-incoming.html#simple-incoming-webhook' target='_blank'>aquí para obtener una URL de Webhook entrante</a> de Mattermost. A continuación, pegue el enlace en el formulario a la derecha y haga clic en Guardar."
 text.slack_instructions = "Esta integración publicará notificaciones de actualización en el canal de tu elección.<br/>Sigue las instrucciones <a href='https://get.slack.help/hc/en-us/articles/115005265063-Incoming-WebHooks-for-Slack' target='_blank'>aquí para obtener una URL de Webhook entrante</a> de Slack. A continuación, pegue el enlace en el formulario a la derecha y haga clic en Guardar."
@@ -552,8 +552,6 @@ text.expected_to_finish_by = "Se espera que termine en"
 text.zulip_instructions = "Esta integración publicará notificaciones de actualización en el flujo y el tema de su elección.<br/>Sigue las instrucciones <a href='https://zulipchat.com/help/add-a-bot-or-integration' target='_blank'>aquí para crear un nuevo bot</a>. A continuación, pegue la información en el formulario a la derecha y haga clic en Guardar."
 MTR.text.discord_instructions = "Esta integración publicará notificaciones de actualización en el canal que elijas.<br/>Sigue las instrucciones <a href='https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks' target='_blank'>aquí para crear un nuevo webhook(s)</a>, luego pega el enlace(s) en los campos de la derecha y haz clic en Guardar."
 text.no_conclusion_yet = "<i>Aún no hay conclusión</i>"
-text.no_lean_canvas_content = "El panel lean le guiará a través de un cliente, problema y solución ajustada.<br/>Te sugerimos que crees un panel nuevo para cada producto que inicies.<br/><br/><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> Crear un nuevo panel</a>"
-text.lean_canvas_is_adapted_message = "El panel Lean está adaptado desde <a href='https://strategyzer.com/' target='_blank'>Business Model Canvas</a> y está licenciado bajo Creative Commons Attribution-Share Alike 3.0"
 text.no_users_assigned_to_this_client = "No se han añadido contactos a este grupo. Añadir y asignar usuarios <a href='/users/showAll'>aquí</a>"
 text.confirm_delete_timesheet = "¿Realmente debería borrar el registro de tiempo?"
 text.timer_on_todo = "<span class='head-icon fa fa-stop'></span> %1$s Temporizador en %2$s"
@@ -565,7 +563,6 @@ text.glad_youre_here = "Nos alegra que estés aquí. Tomemos un minuto para cono
 text.business_research_section = "Nuestra sección de Investigación de Negocios es su nuevo hogar para sus ideas. Esta sección está diseñada para guiarle a través de los pasos del desarrollo de clientes, la investigación de problemas y la ideación de soluciones."
 text.our_roadmap_design = "Nuestro roadmap está diseñado para llevarlo de pequeños hitos manejables a la realización de objetivos más grandes. Planifique para hitos alrededor de 3 meses de duración y utilice estos marcadores del proyecto para mantenerse en el objetivo."
 text.this_is_where_you_spend_most_time = "Aquí es donde pasarás la mayor parte de tu tiempo. Planifique sus Sprints y ejecute con éxito con la ayuda del tablero Kanban y nuestras herramientas de backlog. Utilice las Retrospectivas para crecer en el próximo Sprint."
-text.full_lean_canvas_helper_content = "El tablero de investigación le llevará a través del proceso completo de validación de ideas. <br/>En esta página, redirigirás tu segmentación de clientes, problema y solución (¡pero no te preocupes, si usaste el tablero simple, lo verás de nuevo aquí!).<br/><br/>A partir de ahí, pasarás a<br/>Propuesta de Valor Única (¿Qué hace que tu idea sea mejor que otras ofertas?),<br/>Canales de Distribución (¿Cómo conseguirá su solución para sus clientes?)<br/>Flujos de Ingresos (¿Cómo ganará dinero su solución?)<br/>Estructura de Costo (¿Cuánto vale su solución?)<br/>Métricas clave (¿Cómo medirá el éxito?)<br/>y Ventajas injustas (¿qué tiene que le ayudará a tener éxito contra la competencia?)<br/>Responder a estas preguntas están diseñadas para promover el éxito, mitigar la falla y permitirle rastrear y validar sus supuestos. Ser Lean trata de eliminar aquello que no causa beneficio<br/>y trabajar para construir productos, negocios y soluciones que sus clientes necesitan."
 text.idea_board_helper_content = "Este es el lugar para recoger todas tus ideas. Discuta nuevas con tu equipo y adjunta hitos para ver el progreso hacia dichas ideas."
 text.kanban_helper_content = "Kanban es la palabra japonesa de 'tarjeta'. Los ingenieros de Toyota iniciaron las juntas de Kanban en los años 40 con la fabricación de Lean.<br/>Se utiliza para compartir visualmente información y el progreso del trabajo rápidamente.<br/>Los tableros Kanban son útiles para visualizar el trabajo y el estado, para ayudar a gestionar el trabajo activo o en progreso, gestionar el flujo de trabajo y actuar rápidamente hacia pequeñas mejoras.<br/><br/>¡Empieza el tour para ver cómo funciona nuestro tablero Kanban o haz clic en Cerrar para empezar!"
 text.my_timesheets_helper_content = "Los registros de tiempo son el lugar para realizar un seguimiento de las horas reales trabajadas en un Tareas.<br/> Esto es útil para realizar la facturación, pero también para validar lo bien que estás estimando tus tareas.<br/>El tiempo restante te permite ajustar las fechas de vencimiento a la planificación realizada."
@@ -575,7 +572,6 @@ text.retros_helper_content = "<p>Las retrospectivas son reflexiones rápidas sob
 text.roadmap_helper_content = "<p>Los roadmap son útiles para reducir los grandes proyectos en trozos más pequeños y manejables.<br/><br/></p><p>Para crear su roadmap, le recomendamos establecer hitos que se pueden alcanzar dentro de un lapso de 3 meses.</p><p>Los hitos son puntos de control para completar el proyecto.<br/> Simplemente, como ejemplo: Si estás tomando un viaje por carretera a través del país, entonces cada provincia por la que pasas podría ser un hito.<br/><br/>Haga clic en 'Añadir hito' en la parte superior izquierda para empezar. Establecer la fecha en esta pestaña o en el gráfico de roadmap mismo haciendo clic y arrastrando el hito dentro del calendario.</p>"
 text.show_clients_helper_content = "<p>Grupos/Productos organizan sus proyectos en categorías y le permiten aislar diferentes grupos.<br/><br/></p><p>Como consultor, usted ya trabaja con clientes y este sería el lugar para organizarlos.</p><p>Si usted pertenece a un Equipo de Productos, puede utilizar esta sección para organizar y aislar sus departamentos (mercadotecnia, ventas, operaciones, etc.).</p>"
 text.show_projects_helper_content = "<p>¡Los proyectos son el corazón de tu negocio y de esta aplicación! Cambios, desarrollos, metas, y cualquier cosa que puedas construir o soñar involucrará proyectos.<br/> La gestión de proyectos es simplemente el proceso de asegurar que sus proyectos sean entregados oportunamente, correctamente y con valor real de negocio.<br/><br/>Aquí es donde vivirán tus Proyectos. La página de tu proyecto te permitirá crear un proyecto, ver rápidamente los números, horas, dinero presupuestado y el grupo asociado con el proyecto.<br/><br/>Utilice esta página para un resumen rápido de todos sus proyectos.<br/><br/></p>"
-text.simple_lean_canvas_helper_content = "<p>La fundación de cualquier proyecto está arraigada aquí -- en su investigación. En este tablero, usted se centrará en construir para su cliente usando el Solución de Problema.<br/><br/>En solución de problemas, comenzará con la identificación de quién es su cliente. Piensen en los gráficos, lo que hacen y lo que necesitan.<br/>A continuación, identificarás sus problemas o su problema. Finalmente, añadirás cómo planeas resolver su problema.<br/><br/>Productos de construcción, proyectos u ofertas que resuelvan problemas con los clientes ayudan a promover el éxito del producto y mitigar fallos.<br/><br/>Puede que encuentres que tienes múltiples maneras de resolver sus problemas. ¡Eso es genial! Puedes ponerlos aquí o moverlos al Consejo de Idea para seguir esas ideas.<br/>Una vez que empiece a hacer esto, el siguiente paso será validar sus supuestos sobre su cliente, sus problemas y sus soluciones.<br/>Puede añadirlo aquí o mover<br/>a su Tablero de Investigación Completa para empezar a recoger más información.</p>"
 text.new_db_version = "Se ha instalado una nueva versión. Para utilizar Leantime necesitará actualizar su base de datos.<br/><br/><strong>¡Por favor, asegúrate de hacer una copia de seguridad de tu base de datos antes de realizar esta actualización!</strong><br/><br/> Esto puede tardar unos minutos."
 text.update_was_successful = "La actualización se ha realizado con éxito ahora puedes iniciar sesión. <a href='%1$s'>Ve a iniciar sesión</a>"
 text.this_script_will_set_up_leantime = "Este script configurará su base de datos y creará una cuenta de administrador"
@@ -587,7 +583,7 @@ MTR.text.twoFA_already_enabled = "La autenticación de dos factores ya está act
 MTR.text.twoFA_enabled = "Tu cuenta tiene la autenticación de dos factores <strong>activada</strong>."
 MTR.text.twoFA_disabled = "Tu cuenta tiene la autenticación de dos factores <strong>desactivada</strong>."
 MTR.text.twoFA_manage = "<span class='fa fa-lock'></span> Gestionar la autenticación de dos factores"
-MTR.text.who_can_access = "Elija quién puede ver este proyecto. Por defecto, los usuarios heredarán los roles con los que han sido configurados. Puede cambiar estos roles en la pestaña "Equipo"."
+MTR.text.who_can_access = "Elija quién puede ver este proyecto. Por defecto, los usuarios heredarán los roles que se les hayan asignado. Puede cambiar estos roles en la pestaña "Equipo"."
 MTR.text.ical_export_description = "Aquí puedes crear una URL de calendario única que te permitirá integrar tu calendario Leantime en cualquier aplicación que soporte el formato 'iCal'."
 MTR.text.you_ical_url = "La URL de su calendario está abajo. <br /> Tenga en cuenta que cualquier persona con esta URL puede acceder al calendario. Manténgalo en secreto como lo haría con una contraseña."
 MTR.text.no_url = "Genere una URL haciendo clic en el siguiente botón"
@@ -598,7 +594,6 @@ MTR.labels.defaultaccess = "¿Quién puede acceder a este proyecto?"
 MTR.labels.everyone_in_org = "Todos en esta organización"
 MTR.labels.everyone_in_client = "Todos los asignados a este cliente"
 MTR.labels.only_chose = "Sólo los usuarios que elijo en "Equipo"
-
 
 label.id = "ID"
 label.due = "Vence por:"
@@ -668,7 +663,7 @@ label.no_results = "No hay resultados"
 label.ticket = "Ticket"
 label.kind = "Tipo"
 label.invoiced_emp = "Empleado facturado"
-MTR.label.open_todos = "Abrir tareas pendientes"
+MTR.label.open_todos = "Tareas pendientes"
 MTR.label.ideal = "Ideal"
 MTR.label.project_done = "Proyecto realizado"
 MTR.label.progress_todos = "Tareas en curso"
@@ -825,8 +820,6 @@ MTR.label.reportType = "Informar como"
 MTR.label.showInKanban = "Mostrar en el tablero Kanban"
 MTR.links.my_portfolio = "<span class='fa fa-briefcase'></span> Ver cartera"
 
-
-
 MTR.label.send_telemetry = "¡Ayude a mejorar Leantime!"
 MTR.label.telemetry_background = "Envía datos anónimos <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>sobre el número de proyectos, usuarios, tickets, etc. a Leantime.io</a>. No se enviará ningún dato personal identificable y nos será imposible rastrear a los usuarios individuales."
 
@@ -838,7 +831,6 @@ MTR.label.grey = "Gris"
 
 MTR.labels.all_projects = "Todos los proyectos"
 MTR.label.dates = "Fechas de vencimiento"
-
 
 MTR.labels.createdBy_on = "Creado por %s %s en %s, modificado en %s"
 MTR.labels.tags = "Etiquetas:"
@@ -867,7 +859,7 @@ MTR.label.draft = "Borrador"
 MTR.label.published = "Publicado"
 MTR.label.draft_parenth = "(borrador)"
 
-
+MTR.header.management = "Dirección de la empresa"
 dropdown.how_big_todo = "¿Qué tamaño tiene esta tarea?"
 MTR.dropdown.select_priority = "¿Cuál es la prioridad de esta tarea?"
 dropdown.choose_milestone = "Elija un hito"
@@ -904,6 +896,15 @@ status.delivering = "Entregando"
 status.inreview = "En Revisión"
 status.accepted = "Aceptado"
 status.deferred = "Retrasado"
+
+status.continue = "Continuar - ¿Qué salió bien?"
+status.stop_doing = "Detener - ¿Qué deberíamos dejar de hacer?"
+status.start_doing = "Empezar - ¿Qué deberíamos hacer para mejorar?"
+
+MTR.label.project_status_is = "El estado del proyecto es"
+MTR.label.green = "Verde"
+MTR.label.yellow = "Amarillo"
+MTR.label.red = "Rojo"
 
 email_notifications.hi = "Hola,"
 email_notifications.unsubscribe = "Para <a href='%1$s'>darte de baja</a> de este tipo de notificaciones, por favor inicia sesión y edita la configuración de notificaciones"
@@ -1067,9 +1068,7 @@ tour.change_views = "Cambiar vistas"
 tour.change_views_text = "Estos botones te permiten cambiar entre la vista de tabla y de kanban"
 tour.congratulations_kanban_text = "¡Has completado el tour!<br/>Si necesitas más ayuda. Visita nuestra base de conocimientos en <a href='https://help.leantime.io' target='_blank'>https://help.leantime. o</a><br/><br/>No dude en contactar con nuestro equipo de soporte para cualquier ayuda adicional!<br/>Estamos aquí para hacer tu vida más fácil."
 
-
-
-## Leantime DTS Branch
+## New labels introduced with version 2.3.0
 
 
 # Supported menut types
@@ -1082,11 +1081,11 @@ MTR.label.menu_type.dts = "Menú Design Thinking for Strategy"
 # Menu subtitles
 
 MTR.menu.default.advanced = "Avanzado"
+MTR.menu.default.tools = "Herramientas"
 MTR.menu.default.various = "Varios"
 MTR.menu.default.define = "Empatizar / Definir"
 MTR.menu.default.ideate = "Idea / Prototipo"
 MTR.menu.default.test = "Probar &amp; Validar"
-MTR.menu.default.tools = "Herramientas"
 
 MTR.menu.dts.process = "Proceso de estrategia"
 MTR.menu.dts.frameworks = "Marcos estratégicos"
@@ -1119,12 +1118,20 @@ MTR.menu.swotcanvas = "<span class='fas fa-fw fa-chess-board'></span> Análisis 
 MTR.links.icon.create = "<i class='fa-plus'></i> Crear nuevo"
 MTR.links.icon.edit = "<i class='fa-edit'></i> Editar</a>"
 MTR.links.icon.clone = "<i class='fa-clone'></i> Copia</a>"
-MTR.links.icon.delete = "<i class='fa-trash-can'></i> Borrar"
+MTR.links.icon.merge = "<i class='fa-object-group'></i> Fusión</a>"
+MTR.links.icon.import = "<i class='fa fa-file-import'></i> Importar</a>"
+MTR.links.icon.export = "<i class='fa fa-file-export'></i> Exportar</a>"
 MTR.links.icon.print = "<i class='fa-print'></i> Imprimir"
+MTR.links.icon.delete = "<i class='fa-trash-can'></i> Borrar"
 
 # Buttons
 
 MTR.buttons.cancel = "Cancelar"
+MTR.buttons.import = "Importar"
+MTR.buttons.clone = "Copiar"
+MTR.buttons.merge = "Fusionar"
+
+MTR.label.version = "Versión"
 
 # Labels for status and relates
 
@@ -1155,24 +1162,40 @@ MTR.dropdown.choose_relates = "¿Con qué se relaciona el elemento?"
 # Board and element labels
 
 MTR.subtitle.clone_board = "Tablón de anuncios"
+MTR.subtitle.merge_board = "Fusión con la junta actual"
+MTR.subtitle.import_board = "Tablero de importación"
 MTR.label.title_element = "Título del elemento"
+MTR.label.title_merge = "¿Qué lienzo quiere fusionar en el tablero actual?"
+MTR.label.title_import = "¿Cuál es el nombre del lienzo a importar?"
+
 MTR.input.placeholders.describe_element = "Describa el elemento"
 
 MTR.text.confirm_board_deletion = "¿Estás seguro de que quieres borrar este tablero?"
 MTR.text.confirm_board_item_deletion = "¿Está seguro de que quiere eliminar este elemento?"
+
 MTR.notification.board_created = "Junta creada con éxito"
 MTR.notification.board_copied = "Junta copiada con éxito"
+MTR.notification.board_merged = "La junta directiva se ha fusionado con éxito"
 MTR.notification.board_deleted = "Junta eliminada con éxito"
 MTR.notification.board_exists = "El nombre del tablero ya existe"
 MTR.notification.element_created = "Elemento creado con éxito"
 MTR.notification.element_deleted = "Elemento eliminado con éxito"
+MTR.notification.board_imported = "Tablero de lienzo importado con éxito"
+MTR.notification.board_import_failed = "Fallo en la importación del lienzo"
+MTR.notification.pdf.failed = "Fallo en la generación del PDF"
+MTR.notification.merge_error = "Error al fusionar tablas"
+MTR.notification.internal_internal = "Error interno."
+
+MTR.email_notifications.canvas_board_imported = "Se importó un nuevo tablero de lona"
+MTR.email_notifications.canvas_imported_message = "Un nuevo tablero de lona fue importado por %1$s. El título del tablero es '%2$s'"
+
 MTR.short_notifications.relates_updated = "Se relaciona con la actualización exitosa"
 
 # PDF labels
 
 MTR.pdf.label.page = "Página"
 MTR.pdf.language.longdateformat = "l, F j, Y"
-
+MTR.pdf.disclaimer.confidential = "ESTE DOCUMENTO ES CLASIFICADO *** CONFIDENCIAL ***<br>EN NINGÚN CASO SE LE PERMITE MOSTRARLO O REMITIRLO A TERCEROS"
 
 ## Insights
 
@@ -1204,7 +1227,7 @@ MTR.headlines.insights.analysis = "Describa su análisis de los conocimientos"
 MTR.headlines.insights.welcome_to_board = "¡Bienvenido a la Junta de Insights!"
 
 MTR.text.insights.helper_content = "El tablero <em>Observar / Aprender - Insights</em> le ayuda a recopilar y estructurar insights de cuatro fuentes diferentes (observaciones etnográficas, entrevistas, grupos de discusión e investigación secundaria) y a transformarlos en conocimiento.<br/>Apoya las etapas de observar y aprender, a veces llamadas empatizar y definir, del proceso de Design Thinking.<br/>Puede encontrar más detalles en los capítulos 2, 8 y 9 del libro <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Le sugerimos que utilice el tablero <em>Observar/Aprender - Insights</em> cada vez que recopile y analice nuevos insights, ya sea para un análisis de riesgos, un análisis del entorno, para descubrir las tendencias de la industria o para diseñar nuevos productos y servicios, por nombrar sólo algunos."
-MTR.tour.insights.once_your_done = "<em>Una vez que te sientas cómodo con la recopilación de información y la creación de conocimiento, ve al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.tour.insights.once_your_done = "<em>Una vez que te sientas cómodo con la recopilación de información y la creación de conocimiento, ve al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>"
 
 
 ## Strategy Brief
@@ -1312,7 +1335,7 @@ MTR.headlines.swot.analysis = "Describa su análisis DAFO"
 MTR.headlines.swot.welcome_to_board = "Bienvenido al tablero de análisis DAFO."
 
 MTR.text.swot.helper_content = "El <em>análisis DAFO</em> le ayudará a identificar los puntos fuertes, los puntos débiles, las oportunidades y las amenazas que se pueden aprovechar durante la ideación y la creación de prototipos.<br/>Le sugerimos que realice un análisis DAFO al principio de su proyecto."
-MTR.tour.swot.once_your_done = "<em>Una vez que se sienta cómodo con su análisis DAFO, vaya al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
+MTR.tour.swot.once_your_done = "<em>Una vez que se sienta cómodo con su análisis DAFO, vaya al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Planificador de hojas de ruta</a>."
 
 
 ## Empathy map
@@ -1334,7 +1357,7 @@ MTR.box.em.do = "¿Qué hacen?"
 MTR.box.em.hear = "¿Qué es lo que oyen?"
 MTR.box.em.header.think_feel = "¿Qué es lo que piensan y sienten?"
 MTR.box.em.pains = "DOLORES - ¿Cuáles son sus miedos, frustraciones y ansiedades?"
-MTR.box.em.gains = "GANANCIAS - ¿Cuáles son sus deseos, necesidades, esperanzas y sueños?"
+MTR.box.em.gains = "GANAS - ¿Cuáles son sus deseos, necesidades, esperanzas y sueños?"
 MTR.box.em.motives = "Otros pensamientos y sentimientos que motivan su comportamiento"
 
 # Data Field Labels and placeholders
@@ -1350,7 +1373,7 @@ MTR.label.em.description = "Respuesta detallada a la pregunta"
 MTR.headlines.em.analysis = "Describa su mapa de empatía"
 MTR.headlines.em.welcome_to_board = "¡Bienvenido al tablero del mapa de la empatía!"
 
-MTR.text.em.helper_content = "El <em>Mapa de Empatía</em> le ayudará a tender un puente para entender al usuario final. En el contexto de su aplicación, se utiliza para construir una comprensión compartida de las necesidades del usuario y proporcionar el contexto de una solución centrada en el usuario. Puedes encontrar más detalles en la entrada del blog de Dave Gray <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Lienzo del Mapa de Empatía actualizado</a></em>."
+MTR.text.em.helper_content = "El <em>Mapa de empatía</em> le ayudará a tender un puente para comprender al usuario final. En el contexto de su aplicación, se utiliza para construir una comprensión compartida de las necesidades del usuario y proporcionar el contexto de una solución centrada en el usuario. Puedes encontrar más detalles en la entrada del blog de Dave Gray <em><a href='https://medium.com/the-xplane-collection/updated-empathy-map-canvas-46df22df3c8a'>Lienzo del Mapa de Empatía actualizado</a></em>."
 MTR.tour.em.once_your_done = "<em>Una vez que te sientas cómodo con tu mapa de empatía, ve al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 MTR.text.em.disclaimer = "El <a href='https://gamestorming.com/empathy-map/'>Mapa de la empatía</a> se basa en el trabajo de Dave Gray"
 
@@ -1461,7 +1484,7 @@ MTR.headlines.obm.welcome_to_board = "¡Bienvenido a la Junta del Modelo de Nego
 
 MTR.text.obm.helper_content = "El <em>Lienzo original del modelo de negocio</em> fue desarrollado por Alex Osterwalder e Yves Pigneur. Le ayudará a documentar su organización actual, los competidores y el sector.<br/><em>``Un modelo de negocio describe la lógica de cómo una organización crea, entrega y capta valor''</em> - <strong>Alex Osterwalder</strong>."
 MTR.tour.obm.once_your_done = "<em>Una vez que te sientas cómodo con tu modelo de negocio, dirígete al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
-MTR.text.obm.disclaimer = "El <em>Lienzo del Modelo de Negocio</em> está tomado de <a href='https://www.strategyzer.com'>Strategyzer</a>, y tiene licencia <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
+MTR.text.obm.disclaimer = "El <em>Lienzo del Modelo de Negocio</em> está tomado de <a href='https://www.strategyzer.com'>Strategyzer</a>, y está licenciado bajo la licencia <a href='https://creativecommons.org/licenses/by-sa/3.0/'>Creative Commons Attribution-Share Alike 3.0</a>."
 
 
 ## Detailed Business Model
@@ -1618,7 +1641,7 @@ MTR.label.sq.description = "Respuesta a la pregunta sobre la estrategia"
 MTR.headlines.sq.analysis = "Describa sus respuestas a las preguntas de estrategia de Porter"
 MTR.headlines.sq.welcome_to_board = "Bienvenido al tablón de preguntas sobre la estrategia de Porter."
 
-MTR.text.sq.helper_content = "Responder a las <em>Preguntas Estratégicas de Porter</em> le ayudará a asegurarse de que la estrategia que ha diseñado es competitiva. Puede encontrar más detalles sobre las preguntas estratégicas de Porter en el capítulo 12 del libro <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Le sugerimos que responda a las preguntas estratégicas de Porter al final de su proceso de estrategia."
+MTR.text.sq.helper_content = "Responder a las <em>Preguntas Estratégicas de Porter</em> le ayudará a asegurarse de que la estrategia que ha diseñado es competitiva. Puede encontrar más detalles sobre las preguntas estratégicas de Porter en el capítulo 12 del libro <a href='https://inov.at/dts'></em>Design Thinking for Strategy</em></a>.<br/>Le sugerimos que responda a las preguntas estratégicas de Porter al final de su proceso estratégico."
 MTR.tour.sq.once_your_done = "<em>Una vez que se sienta cómodo con sus respuestas a las preguntas de estrategia de Porter, vaya al</em><br/><a href='%s/tickets/roadmap/' class='btn btn-primary'><span class='fas fa-map'></span> Roadmap Planner</a>."
 
 
