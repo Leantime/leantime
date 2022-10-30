@@ -91,7 +91,11 @@ MLTR_CMD = ./tools/mltranslate/mltranslate.php
 all:	composer npm minify 
 	    @/usr/bin/rm -fv logs/error.log
 
-translate:    mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-tr mltr-zh-CN
+translate-all:	translate notranslate
+
+translate:		mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-tr mltr-zh-CN
+
+notranslate:	mltr-he mltr-no mltr-pl mltr-zh-ZW
 
 clean:
 	    @/usr/bin/rm -fv logs/error.log
@@ -148,6 +152,15 @@ mltr-tr:    $(MLTR_DIR)/tr-TR.tra
 
 mltr-zh-CN: $(MLTR_DIR)/zh-CN.tra
 
+# - Non translatable languages
+mltr-he:	$(MLTR_DIR)/he-IL.tra
+
+mltr-no:	$(MLTR_DIR)/no-NO.tra
+
+mltr-pl:	$(MLTR_DIR)/pl-PL.tra
+
+mltr-zh-ZW:	$(MLTR_DIR)/zh-TW.tra
+
 
 $(MLTR_DIR)/de-DE.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini
 	    $(MLTR_CMD) en de $(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini $(MLTR_DIR)/de-DE.tra
@@ -181,4 +194,17 @@ $(MLTR_DIR)/tr-TR.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/tr-TR.ini
 
 $(MLTR_DIR)/zh-CN.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini
 	    $(MLTR_CMD) en zh $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini $(MLTR_DIR)/zh-CN.tra
+
+
+$(MLTR_DIR)/he-IL.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/he-IL.ini
+	    $(MLTR_CMD) en he $(LANG_DIR)/en-US.ini $(LANG_DIR)/he-IL.ini $(MLTR_DIR)/he-IL.tra
+
+$(MLTR_DIR)/no-NO.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/no-NO.ini
+	    $(MLTR_CMD) en no $(LANG_DIR)/en-US.ini $(LANG_DIR)/no-NO.ini $(MLTR_DIR)/no-NO.tra
+
+$(MLTR_DIR)/pl-PL.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/pl-PL.ini
+	    $(MLTR_CMD) en pl $(LANG_DIR)/en-US.ini $(LANG_DIR)/pl-PL.ini $(MLTR_DIR)/pl-PL.tra
+
+$(MLTR_DIR)/zh-TW.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-TW.ini
+	    $(MLTR_CMD) en zh-TW $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-TW.ini $(MLTR_DIR)/zh-TW.tra
 

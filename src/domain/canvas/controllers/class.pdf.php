@@ -111,7 +111,8 @@ namespace leantime\domain\controllers\canvas {
                 return;
             }
 
-            // Retrieve filter status 
+            // Retrieve filter status
+            $filter = [];
             $filter['status'] = $_SESSION['filter_status'] ?? 'all';
             $filter['relates'] = $_SESSION['filter_relates'] ?? 'all';
 
@@ -142,12 +143,12 @@ namespace leantime\domain\controllers\canvas {
 
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
-            !empty($canvasAry) || die("Cannot find canvas with id '$id'");
+            !empty($canvasAry) || throw new \Exception("Cannot find canvas with id '$id'");
             $projectId = $canvasAry[0]['projectId'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
             $projectsRepo = new repositories\projects();
             $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
+            !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
             
             // Generate PDF content
             $pdf = new \YetiForcePDF\Document();

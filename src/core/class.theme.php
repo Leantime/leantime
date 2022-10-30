@@ -64,8 +64,6 @@ namespace leantime\core {
 		public function setActive(string $id): void
 		{
 
-            $previousTheme = $_SESSION['usersettings.theme'] ?? '';
-            
 			if(!is_dir(ROOT.'/theme/'.$id) || !file_exists(ROOT.'/theme/'.$id.'/'.static::DEFAULT_INI.'.ini')) {
                 throw new \Exception("Selected theme '$id' does not exist");
             }
@@ -83,6 +81,7 @@ namespace leantime\core {
         public function getAll(): array
         {
             $themeRoot = ROOT.'/theme/';
+            $themeAll = [];
             $themeAll[static::DEFAULT] = 'theme.'.static::DEFAULT.'.name';
 
             $themeDirs = opendir($themeRoot);
