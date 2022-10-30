@@ -58,7 +58,7 @@ class appSettings {
 		}
 
 		ini_set("log_errors", 1);
-        ini_set('error_log', ROOT.'/../resources/logs/error.log');
+        ini_set('error_log', ROOT.'/../logs/error.log');
 
 	}
 

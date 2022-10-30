@@ -76,7 +76,7 @@ namespace leantime\core {
             $themeDirs = opendir($themeRoot);
             while(($theme = readdir($themeDirs)) !== false) {
                 
-                if(is_dir(ROOT.'/../public/theme/'.$theme) &&
+                if($theme !== 'sample' && is_dir(ROOT.'/../public/theme/'.$theme) &&
                    file_exists(ROOT.'/../public/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini')) {
 
                     $themeAll[$theme] = "theme.$theme.name";
@@ -108,7 +108,7 @@ namespace leantime\core {
          * @access public
          * @return string Root directory of default theme
          */
-        public function getDeaultDir(): string
+        public function getDefaultDir(): string
         {
 
             return ROOT.'/../public/theme/'.static::DEFAULT;

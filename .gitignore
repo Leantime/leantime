@@ -105,6 +105,9 @@ composer.lock
 package-lock.json
 .github/workflows/phpmd.yml
 
+# Ignore logging files
+logs/*
+
 # Ignore all customization files
 custom/domain/
 custom/language/
