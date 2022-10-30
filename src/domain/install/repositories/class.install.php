@@ -1254,7 +1254,7 @@ namespace leantime\domain\repositories {
 		 * @access private
 		 * @return bool    Succerss of database update
 		 */
-		private function update_sql_02111(): bool {
+		private function update_sql_20111(): bool {
 
             $errors = array();
 
