@@ -63,7 +63,6 @@
             </div>
         </li>
     <li class="dropdown">
-<<<<<<< HEAD
 		<?php $currentProjectType = $this->get('currentProjectType'); ?>
 		<ul style='display:block;'>
 			<?php foreach($menuStructure as $key => $menuItem) { ?>
@@ -91,42 +90,11 @@
 					</ul>
 				<?php } ?>
 			<?php } ?>
-=======
-        <ul style='display:block'>
-            <li <?php if($module == 'dashboard' && $action == 'show') echo" class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/dashboard/show"><?=$this->__("menu.dashboard") ?></a>
-            </li>
-            <li <?php if($module == 'tickets' && ($action == 'showKanban' || $action == 'showAll'|| $action == 'showTicket')) echo"class=' active '"; ?>>
-                <a href="<?=$this->get('ticketMenuLink');?>"><?=$this->__("menu.todos") ?></a>
-            </li>
-            <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>
-            </li>
-
-            <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
-            </li>
-            <li <?php if($module == 'ideas') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/ideas/showBoards"><?=$this->__("menu.ideas") ?></a>
-            </li>
-            <li <?php if($module == 'wiki') echo"  class='active' "; ?>>
-                <a href="<?=BASE_URL ?>/wiki/show"><?=$this->__("menu.documents") ?></a>
-            </li>
-            <li <?php if($module == 'retrospectives' && ($action == 'showBoards' || $action == 'showBoards')) echo"class=' active '"; ?>>
-                <a href="<?=BASE_URL ?>/retrospectives/showBoards"><?=$this->__("menu.retrospectives") ?></a>
-            </li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <li <?php if($module == 'reports') echo"class=' active '"; ?>>
-                <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
-            </li>
-            <?php } ?>
             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             <li <?php if($module == 'projects' && $action == 'showProject') echo"class='fixedMenuPoint active '";  else echo"class='fixedMenuPoint'";?>>
                 <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
             </li>
             <?php } ?>
-
->>>>>>> origin/master
         </ul>
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             <ul style='display:block'>

@@ -24,7 +24,15 @@ namespace leantime\domain\controllers {
             if(!isset($_SESSION["userdata"]["id"])) {
                 
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
-                $themeCore->setActive($this->config->defaultTheme);
+                if($this->config->keepTheme && isset($_COOKIE['theme'])) {
+                    
+                    $theme = $_COOKIE['theme'];
+                    
+                }else{
+                    
+                    $theme = $this->config->defaultTheme;
+                    
+                }
                 
             }
             else {
@@ -37,22 +45,37 @@ namespace leantime\domain\controllers {
                     $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
                     if($theme === false) {
                         
-                        $themeCore->setActive($this->config->defaultTheme);
-                        
-                    }else{
-                        
-                        $themeCore->setActive($theme);
+                        if($this->config->keepTheme && isset($_COOKIE['theme'])) {
+                    
+                            $theme = $_COOKIE['theme'];
+
+                        }else{
+                            
+                            $theme = $this->config->defaultTheme;
+                            
+                        }
                         
                     }
                     
                 }else{
 
-                    // User does not have a saved theme
-                    $themeCore->setActive($this->config->defaultTheme);
-                    $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"] = $themeCore->getActive();
+                    if($this->config->keepTheme && isset($_COOKIE['theme'])) {
+                        
+                        $theme = $_COOKIE['theme'];
+                        
+                    }else{
+                        
+                        $theme = $this->config->defaultTheme;
+                        
+                    }
+                    
                 }
                 
+                $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"] = $themeCore->getActive();
+                
             }
+            $themeCore->setActive($theme);
+            setcookie('theme', $themeCore->getActive(), time() + 60 * 60 * 24 * 30, '/');
             
             if (!isset($_SESSION["companysettings.logoPath"])) {
 

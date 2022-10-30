@@ -21,7 +21,7 @@ $dst_file = isset($argv[4]) ? $argv[4] : die("Usage: $argv[0] src_lang dst_lang 
 $tra_file = isset($argv[5]) ? $argv[5] : die("Usage: $argv[0] src_lang dst_lang src_file dst_file tra_file".PHP_EOL);
 
 // Check source and destination languages
-$langs = [ 'en', 'de', 'es', 'fr', 'it', 'ja', 'nl', 'pt-BR', 'pr-PT', 'ru', 'tr', 'zh' ];
+$langs = [ 'en', 'de', 'es', 'fr', 'it', 'ja', 'nl', 'pt-BR', 'pr-PT', 'ru', 'sv', 'tr', 'zh' ];
 
 in_array($src_lang, $langs) || die("Error: Source language '$src_lang' not supported".PHP_EOL);
 if(!in_array($dst_lang, $langs)) {

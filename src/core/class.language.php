@@ -76,6 +76,13 @@ namespace leantime\core {
                     
                     $_SESSION['usersettings.language'] = $languageSettings;
                     
+                }else{
+                    
+                    if($this->config->keepTheme && isset($_COOKIE['language'])) {
+
+                        $_SESSION['usersettings.language'] = $_COOKIE['language'];
+                        
+                    }
                 }
                 
             }
@@ -127,11 +134,13 @@ namespace leantime\core {
             if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
 
                 $this->setLanguage($_SESSION['usersettings.language']);
+                setcookie('language', $_SESSION['usersettings.language'], time() + 60 * 60 * 24 * 30, '/');
 
 				//If not check for company default setting
             } else {
 
                 $this->setLanguage($_SESSION['companysettings.language']);
+                setcookie('language', $_SESSION['companysettings.language'], time() + 60 * 60 * 24 * 30, '/');
 
             }
 

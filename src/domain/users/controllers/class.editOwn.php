@@ -20,6 +20,7 @@ namespace leantime\domain\controllers {
             $tpl = new core\template();
             $language = new core\language();
             $settings = new \leantime\domain\services\setting();
+            $themeCore = new core\theme();
 
             $userId = $_SESSION['userdata']['id'];
             $userRepo = new repositories\users();
@@ -111,8 +112,11 @@ namespace leantime\domain\controllers {
                                         $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                         $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
+                                        $themeCore->setActive($postTheme);
+                                        
                                         setcookie('language', $postLang, time()+60*60*24*30, '/');
-                                        setcookie('theme', $postTheme, time()+60*60*24*30, '/');
+                                        setcookie('theme', $themeCore->getActive(), time()+60*60*24*30, '/');
+
 
                                         $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
@@ -130,9 +134,11 @@ namespace leantime\domain\controllers {
                                     $settings->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                     $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
+                                    $themeCore->setActive($postTheme);
+                                    
                                     setcookie('language', $postLang, time()+60*60*24*30, '/');
-                                    setcookie('theme', $postTheme, time()+60*60*24*30, '/');
-
+                                    setcookie('theme', $themeCore->getActive(), time()+60*60*24*30, '/');
+                                    
                                     $userRepo->editOwn($values, $userId);
 
                                     // Storing option messagefrequency
