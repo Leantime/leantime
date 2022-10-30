@@ -105,11 +105,7 @@ composer.lock
 package-lock.json
 .github/workflows/phpmd.yml
 
-# Ignore all configured files
-config/langugage/*
-config/core/*
-config/layouts/*
-config/domain/*
-public/config/custom.css
-public/config/custom.js
-public/config/images/*
+# Ignore all customization files
+custom/domain/
+custom/language/
+public/theme/*/css/custom.css

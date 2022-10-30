@@ -35,7 +35,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
 
 ## Version
 
-Leantime DTS Branch 0.2.33
+Leantime DTS Branch 0.3.34
 
 
 ## Author
@@ -299,9 +299,12 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Add: Add support for US Legal paper size (see `vendor/yetiforce/yetiforcepdf/lib/Page.php` for supported page sizes)
 
 ## 0.2.32 2022-10-29
-- Add: Added option to merge an selcted canvas into an existing one, allowing to consolidate work from multiple users
+- Add: Added option to merge an selected canvas into an existing one, allowing to consolidate work from multiple users
 
 ## 0.2.33 2022-10-29
 - Bug: Applied upstream change to correctly handle URLs associates with `download.php`
   (`template::convertRelativePaths`) in `elements.inc.php` and `class.pdf.php`
 - Bug: Return error image in `download.php`, if user is not authenticated (`/images/leantime-no-access.jpg`)
+
+# 0.3.34 2022-10-20
+- Add: Added skeleton for handling themes (functionality required to implement new directory structure)
