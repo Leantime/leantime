@@ -7,6 +7,7 @@
 ## Themes
 - The current logo is independent of the theme used. This may lead to issues if the theme uses as background color, the
   color of the logo
+- Keeping the same theme/language from previous login at login screen is not working!
 
 ## Language translations
 - New language tags have been generated for most languages, but need validation before being installed (they can be
