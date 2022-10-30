@@ -50,7 +50,7 @@ namespace leantime\core {
 		 *
 		 * @access public
 		 * @param  string $id Active theme identifier
-		 * @return Return false, if theme does not exist
+		 * @return bool   Return false, if theme does not exist
 		 */
 		public function setActive(string $id): bool
 		{
@@ -93,7 +93,7 @@ namespace leantime\core {
          * getDir - Return the root directory of the currently active theme
          *
          * @access public
-         * @return Root directory of currently active theme
+         * @return string Root directory of currently active theme
          */
         public function getDir(): string
         {
@@ -103,15 +103,63 @@ namespace leantime\core {
         }
 
         /**
+         * getDir - Return the root directory of the default theme
+         *
+         * @access public
+         * @return string Root directory of default theme
+         */
+        public function getDeaultDir(): string
+        {
+
+            return ROOT.'/../public/theme/'.static::DEFAULT;
+            
+        }
+        
+        /**
+         * getLayoutDir - Return file path of a layout file in the current theme, reverting to the default theme if it does not exist
+         *
+         * @access public
+         * @param  string $filename Filename of layout to look for
+         * @return string|false Full filename of layout file or false, if it does not exist
+         */
+        public function getLayoutFilename(string $filename): string
+        {
+
+            if(file_exists($this->getDir().'/layout/'.$filename)) {
+                return $this->getDir().'/layout/'.$filename;
+            }
+            
+            if(file_exists($this->getDefaultDir().'/layout/'.$filename)) {
+                return $this->getDefaultDir().'/layout/'.$filename;
+            }
+
+            return false;
+            
+        }
+
+        /**
          * getUrl() - Return an URL pointing to the root directory of the currently active theme
          *
          * @access public
-         * @return Root URL currently active theme
+         * @return string Root URL currently active theme
          */
         public function getUrl(): string
         {
 
             return $this->config->appUrl.'/theme/'.$this->getActive();
+            
+        }
+
+        /**
+         * getDefaultUrl() - Return an URL pointing to the root directory of the default theme
+         *
+         * @access public
+         * @return string Root URL default theme
+         */
+        public function getUrl(): string
+        {
+
+            return $this->config->appUrl.'/theme/'.static::DEFAULT;
             
         }
 
@@ -124,12 +172,20 @@ namespace leantime\core {
         public function getStyleUrl(): string|false
         {
 
-            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static:DEFAULT_CSS.'.min.css')) {
-                return $this->getUrl().'/css/'.static:DEFAULT_CSS.'.min.css?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/css/'.static::DEFAULT_CSS.'.min.css')) {
+                return $this->getUrl().'/css/'.static::DEFAULT_CSS.'.min.css?v='.$this->settings->appVersion;
             }
                                       
-            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static:DEFAULT_CSS.'.css')) {
-                return $this->getUrl().'/css/'.static:DEFAULT_CSS.'.css?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/css/'.static::DEFAULT_CSS.'.css')) {
+                return $this->getUrl().'/css/'.static::DEFAULT_CSS.'.css?v='.$this->settings->appVersion;
+            }
+
+            if(file_exists($this->getDefaultDir().'/css/'.static::DEFAULT_CSS.'.min.css')) {
+                return $this->getDefaultUrl().'/css/'.static::DEFAULT_CSS.'.min.css?v='.$this->settings->appVersion;
+            }
+                                      
+            if(file_exists($this->getDefaultDir().'/css/'.static::DEFAULT_CSS.'.css')) {
+                return $this->getDefaultUrl().'/css/'.static::DEFAULT_CSS.'.css?v='.$this->settings->appVersion;
             }
 
             return false;
@@ -145,12 +201,12 @@ namespace leantime\core {
         public function getCustomStyleUrl(): string|false
         {
 
-            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static:CUSTOM_CSS.'.min.css')) {
-                return $this->getUrl().'/css/'.static:CUSTOM_CSS.'.min.css?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static::CUSTOM_CSS.'.min.css')) {
+                return $this->getUrl().'/css/'.static::CUSTOM_CSS.'.min.css?v='.$this->settings->appVersion;
             }
                                       
-            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static:CUSTOM_CSS.'.css')) {
-                return $this->getUrl().'/css/'.static:CUSTOM_CSS.'.css?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/'.$this->getActive().'/css/'.static::CUSTOM_CSS.'.css')) {
+                return $this->getUrl().'/css/'.static::CUSTOM_CSS.'.css?v='.$this->settings->appVersion;
             }
 
             return false;
@@ -166,12 +222,20 @@ namespace leantime\core {
         public function getJslibUrl(): string|false
         {
 
-            if(file_exists($this->getDir().'/'.$this->getActive().'/js/'.static:DEFAULT_JSLIB.'.min.js')) {
-                return $this->getUrl().'/js/'.static:DEFAULT_JSLIB.'.min.js?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/'.$this->getActive().'/js/'.static::DEFAULT_JSLIB.'.min.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JSLIB.'.min.js?v='.$this->settings->appVersion;
             }
                                       
-            if(file_exists($this->getDir().'/'.$this->getActive().'/js/'.static:DEFAULT_JSLIB.'.js')) {
-                return $this->getUrl().'/js/'.static:DEFAULT_JSLIB.'.js?v='.$this->settings->appVersion;
+            if(file_exists($this->getDir().'/'.$this->getActive().'/js/'.static::DEFAULT_JSLIB.'.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JSLIB.'.js?v='.$this->settings->appVersion;
+            }
+
+            if(file_exists($this->getDir().'/'.static::DEFAULT.'/js/'.static::DEFAULT_JSLIB.'.min.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JSLIB.'.min.js?v='.$this->settings->appVersion;
+            }
+                                      
+            if(file_exists($this->getDir().'/'.static::DEFAULT.'/js/'.static::DEFAULT_JSLIB.'.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JSLIB.'.js?v='.$this->settings->appVersion;
             }
 
             return false;
