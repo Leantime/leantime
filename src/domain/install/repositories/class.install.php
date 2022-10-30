@@ -77,7 +77,8 @@ namespace leantime\domain\repositories {
             20107,
             20108,
             20109,
-            20110
+            20110,
+            20111
         );
 
         /**
@@ -1253,7 +1254,7 @@ namespace leantime\domain\repositories {
 		 * @access private
 		 * @return bool    Succerss of database update
 		 */
-		private function update_sql_XXX(): bool {
+		private function update_sql_02111(): bool {
 
             $errors = array();
 
