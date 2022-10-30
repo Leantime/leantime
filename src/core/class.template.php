@@ -80,6 +80,7 @@ namespace leantime\core {
          */
         public function __construct()
         {
+            $this->theme = new theme();
             $this->language = new language();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
@@ -138,23 +139,20 @@ namespace leantime\core {
 
             $layout = htmlspecialchars($layout);
 
-            if(file_exists(ROOT.'/../config/layouts/'.$layout.'.php')) {
+            $layoutFilename = $this->theme->getLayoutFilename($layout.'.php');
+            
+            if($layoutFilename === false) {
                 
-                require ROOT . '/../config/layouts/'.$layout.'.php';
-                
-            }elseif(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
-                
-                require ROOT . '/../src/layouts/'.$layout.'.php';
-                
-            }elseif(file_exists(ROOT.'/../config/layouts/app.php')) {
-                
-                require ROOT . '/../config/layouts/app.php';
-                
-            }else{
-                
-                require ROOT . '/../src/layouts/app.php';
+                $layoutFilename = $this->theme->getLayoutFilename('app.php');
+
+            }
+
+            if($layoutFilename === false) {
+
+                throw new \Exception("Cannot find default 'app.php' layout file");
                 
             }
+            require($layoutFilename);
 
             $layoutContent = ob_get_clean();
 
@@ -163,25 +161,33 @@ namespace leantime\core {
 
             //frontcontroller splits the name (actionname.modulename)
             $action = $this->frontcontroller::getActionName($template);
-
             $module = $this->frontcontroller::getModuleName($template);
 
-            $pluginPath = ROOT.'/../src/plugins/' . $module . '/templates/' . $action.'.tpl.php';
-            
-            $domainPath= ROOT.'/../config/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            $pluginFile = '/plugin/'.$module.'/templates/'.$action.'.tpl.php';
+            $domainFile = '/domain/'.$module.'/templates/'.$action.'.tpl.php';
+            $loadFile = '';
 
-            if ((!file_exists($domainPath)) || !is_readable($domainPath)) {
-                $domainPath = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
+            if(file_exists(ROOT.'/../custom/'.$pluginFile) && is_readable(ROOT.'/../custom/'.$pluginFile)) {
+                $loadFile = ROOT.'/../custom/'.$pluginFile;
             }
-            
+            elseif(file_exists(ROOT.'/../src/'.$pluginFile) && is_readable(ROOT.'/../src/'.$pluginFile)) {
+                $loadFile = ROOT.'/../src/'.$pluginFile;
+            }            
+            elseif(file_exists(ROOT.'/../custom/'.$domainFile) && is_readable(ROOT.'/../custom/'.$domainFile)) {
+                $loadFile = ROOT.'/../custom/'.$domainFile;
+            }            
+            elseif(file_exists(ROOT.'/../src/'.$domainFile) && is_readable(ROOT.'/../src/'.$domainFile)) {
+                $loadFile = ROOT.'/../src/'.$domainFile;
+            }            
 
-            //Try plugin folder first for overrides
-            if(file_exists($pluginPath)) {
-                require_once $pluginPath;
-            }else if(file_exists($domainPath)) {
-                require_once $domainPath;
+            if(file_exists($loadFile)) {
+                
+                require_once($loadFile);
+                
             }else{
-                throw new \Exception($this->__("notifications.no_template"));
+                
+                throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$action);
+                
             }
 
             $content = ob_get_clean();
@@ -282,7 +288,7 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../config/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $file = '../custom/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
 
             if(!file_exists($file)) {
                 $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';

@@ -19,27 +19,42 @@ namespace leantime\domain\controllers {
 
             $tpl = new core\template();
             $appSettings = new core\appSettings();
+            $themeCore = new core\theme();
 
-            if(isset($_COOKIE['theme'])){
-                $_SESSION['usersettings.theme'] = htmlentities($_COOKIE['theme']);
+            if(!isset($_SESSION["userdata"]["id"])) {
+                
+                // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
+                $themeCore->setActive($this->config->defaultTheme);
+                
             }
+            else {
 
-            if( (!isset($_SESSION["usersettings.theme"]) || $_SESSION["usersettings.theme"] == '') && isset($_SESSION["userdata"]["id"])){
+                // This is not a login session
+                if(!isset($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"]) ||
+                   empty($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"])) {
 
-                $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
-
-                if($theme == "default" || $theme == "dark"){
-                    $_SESSION["usersettings.theme"] = $theme;
+                    // User has a saved theme
+                    $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
+                    if($theme === false) {
+                        
+                        $themeCore->setActive($this->config->defaultTheme);
+                        
+                    }else{
+                        
+                        $themeCore->setActive($theme);
+                        
+                    }
+                    
                 }else{
-                    //No setting at all. Go to default
-                    $_SESSION["usersettings.theme"] = "default";
+
+                    // User does not have a saved theme
+                    $themeCore->setActive($this->config->defaultTheme);
+                    $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"] = $themeCore->getActive();
                 }
-
-                setcookie('theme', $_SESSION["usersettings.theme"], time()+60*60*24*30, '/');
-
+                
             }
-
-            if (isset($_SESSION["companysettings.logoPath"]) === false) {
+            
+            if (!isset($_SESSION["companysettings.logoPath"])) {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
 
@@ -58,7 +73,7 @@ namespace leantime\domain\controllers {
                 }
             }
 
-            if (isset($_SESSION["companysettings.primarycolor"]) === false) {
+            if (!isset($_SESSION["companysettings.primarycolor"])) {
 
                 $_SESSION["companysettings.primarycolor"] = "#1b75bb";
                 $_SESSION["companysettings.secondarycolor"] = "#81B1A8";
@@ -81,23 +96,28 @@ namespace leantime\domain\controllers {
                 if ($secondaryColor !== false) {
                     $_SESSION["companysettings.secondarycolor"] = $secondaryColor;
                 }
+                
             } else {
+                
                 if (!str_starts_with($_SESSION["companysettings.primarycolor"], "#")) {
                     $_SESSION["companysettings.primarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                     $_SESSION["companysettings.secondarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                 }
+                
             }
 
-            if (isset($_SESSION["companysettings.sitename"]) === false) {
+            if (!isset($_SESSION["companysettings.sitename"])) {
+                
                 $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
                 if ($sitename !== false) {
                     $_SESSION["companysettings.sitename"] = $sitename;
                 } else {
                     $_SESSION["companysettings.sitename"] = $this->config->sitename;
                 }
+                
             }
 
-            $tpl->assign('theme', $_SESSION["usersettings.theme"] ?? null);
+            $tpl->assign('theme', $themeCore->getActive());
             $tpl->assign('appSettings', $appSettings);
             $tpl->displayPartial('general.header');
         }

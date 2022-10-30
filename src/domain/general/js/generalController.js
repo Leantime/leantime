@@ -53,7 +53,7 @@ leantime.generalController = (function () {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
+                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
@@ -127,7 +127,7 @@ leantime.generalController = (function () {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css,'+leantime.appUrl+'/css/components/wysiwyg-overrides.css,'+leantime.appUrl+'/css/libs/roboto.css',
+                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css,'+leantime.appUrl+'/css/components/wysiwyg-overrides.css,'+leantime.appUrl+'/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "embed,autoresize,shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table",
@@ -207,7 +207,7 @@ leantime.generalController = (function () {
                 fixed_toolbar_container: ".externalToolbar",
                 width: "100%",
                 skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/css/themes/leantime-'+leantime.theme+'.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",

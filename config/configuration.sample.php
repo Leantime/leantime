@@ -13,6 +13,7 @@ class config
     public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
     public $printLogoURL = '/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed
+    public $defaultTheme = 'default';                     //Default theme
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
@@ -128,6 +129,7 @@ class config
         $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
         $this->printLogoURL = $this->configEnvironmentHelper("LEAN_PRINT_LOGO_URL", $this->printLogoURL);
         $this->appUrl = $this->configEnvironmentHelper("LEAN_APP_URL", $this->appUrl);
+        $this->defaultTheme = $this->configEnvironmentHelper("LEAN_DEFAULT_THEME", $this->defaultTheme);
         $this->primarycolor = $this->configEnvironmentHelper("LEAN_PRIMARY_COLOR", $this->primarycolor);
         $this->secondarycolor = $this->configEnvironmentHelper("LEAN_SECONDARY_COLOR", $this->secondarycolor);
         $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);

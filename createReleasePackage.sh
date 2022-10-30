@@ -26,8 +26,8 @@ rm -rf vendor/deeplcom
 rm -rf resources/languages/mltranslate
 
 #Remove local configuration, if any
-rm -rf config/language
-rm -rf config/domain
+rm -rf custom/*/*
+rm -rf public/theme/*/css/custom.css
 
 #Removing unneeded items for release
 rm -f -R .git

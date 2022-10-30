@@ -19,6 +19,7 @@ function leantimeAutoloader($class)
     $classArray = explode('\\', $class);
 
     //namespace structure
+    
     //For core
     // leantime \ core \ CLASS
 
@@ -27,10 +28,8 @@ function leantimeAutoloader($class)
     // leantime \ domain \ MVC FOLDER \ MODULE \ CLASS
 
     //For Plugins
-    // leantime \ plugins \ plugin \ MVC FOLDER \ CLASS
+    // leantime \ plugin \ MVC FOLDER \ CLASS
 
-
-    //core
 
     $classPartsCount = count($classArray);
 
@@ -64,9 +63,9 @@ function leantimeAutoloader($class)
 	// Check if a customized version of the requested class exists
 	if(!empty($path)) {
         
-		if(file_exists('../config/'.$path)) {
+		if(file_exists('../custom/'.$path)) {
             
-			require_once('../config/'.$path);
+			require_once('../custom/'.$path);
             
 		}elseif(file_exists('../src/'.$path)) {
             

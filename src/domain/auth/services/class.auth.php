@@ -349,7 +349,7 @@ namespace leantime\domain\services {
                 unset($_SESSION['currentSubscription']);
                 unset($_SESSION['lastTicketView']);
                 unset($_SESSION['lastFilterdTicketTableView']);
-
+                
             }
 
         }

@@ -1,7 +1,6 @@
-# Leantime DTS branch
+# Leantime 2.3.0
 
-The `dts` branch of the **Leantime&trade;** project implements views and canvas to allow implementing the *Design
-Thinking for Strategy* process from the book with the same name [https://inov.at/dts-sn](https://inov.at/dts-sn).
+This file documents the changes made between version 2.2 and 2.3 of of the **Leantime&trade;** project.
 
 
 ## Major changes
@@ -31,16 +30,7 @@ Thinking for Strategy* process from the book with the same name [https://inov.at
   characters per month are free)
 - Customization support for languages, templates, and class repositories
 - XML import and export of canvas
-
-
-## Version
-
-Leantime DTS Branch 0.3.34
-
-
-## Author
-
-Dr. Claude Diderich (diderich@yahoo.com)
+- Re-organized the directory structure to support `themes` and `plugins`
 
 
 ## Basic principles underlying design decision
@@ -51,6 +41,7 @@ Dr. Claude Diderich (diderich@yahoo.com)
 
 
 ## Some details of changes
+*Numbering shown is used to didentify specifc commits on github (diderich/leantime, branch dts)*
 
 ### New canvas implementation
 - Refactored canvas code into a generic library of extendable classes and includable templates. Generic code is in
@@ -85,7 +76,7 @@ The following changes have been applied to the *Ideas* Kanban to make the user e
 - Support for project specific menu structures added. It can be enabled through configuration (`$config->enableMenuType`)
 
 ### Translation
-- Added script in `resources/language/mltranslate` to translate messages using DeepL.com AI algorithm
+- Added script in `tools/mltranslate` to translate messages using DeepL.com AI algorithm
 - DeeplL is preferred over Google Translate because of the translation quality
 - Use requires a (free) API key.
 - Only not yet translated text strings are translated 
@@ -97,24 +88,24 @@ The system, up to now, allowed custoization at two layers
 
 Any other change to the system is potentially overwritten when installing a new release. Sometimes, it may be sound to
 configure the level at a deeper layer. Therefore, the possibility to customize languages, templates, and classes in the
-`src` directory has been added. The system will first look under `config`, if it can find the respective files, before
-loading them from the original location. When updating the system, no files in the subdirectories of `config` will be
+`src` directory has been added. The system will first look under `custom`, if it can find the respective files, before
+loading them from the original location. When updating the system, no files in the subdirectories of `custom` will be
 overwritten, allowing to retain customizations made (subject to the disclaimer below.
 
 Although it is highly disrecommended to customize *Leantime* using this new options, there exist some scenarios where
 such a customization may b sound:
 - An organization may use different wordings, e.g., *deliverables* instead of *milestone*, *activity item* instead of
   *to-do*, *engagement* instead of *project*, etc. By copying the original language file `xx-XX.ini` into the directory
-  `config/language` and editing it there, the system will honor any changes made.
+  `custom/language` and editing it there, the system will honor any changes made.
 - An organization wants to have a specific menu structure (e.g. only showing a subset of canvas or using a different
   ordering or adding an additional menu structure). Ths can be achieved by copying the file
-  `src/domain/menu/repositories/class.menu.php` to `config//domain/menu/repositories/` and making the appropriate changes.
+  `src/domain/menu/repositories/class.menu.php` to `custom//domain/menu/repositories/` and making the appropriate changes.
 - An organization may want to use different layouts of the canvas, e.g., have *Customers* to the right in the
   *Lightweight Business Model*, consistent with the *Original Business Model Canvas*. Copying the file
-  `src/domain/templates/showCanvas.tpl.php` into the directory `config/domain/templates/` and editing it there, allows
+  `src/domain/templates/showCanvas.tpl.php` into the directory `custom/domain/templates/` and editing it there, allows
   the system to honor any changes made.
 - Ad organization may want to disable some of the status/relates to items or add new ones is specific templaces. Again,
-  copying the file `src/domain/XXXcanvas/repositories/class.XXXcanvas.php` to `config/domain/XXXcanvas/repositories/`
+  copying the file `src/domain/XXXcanvas/repositories/class.XXXcanvas.php` to `custom/domain/XXXcanvas/repositories/`
   and making the change there allows the system to honor any chages made.
 
 **DISCLAIMER**: *NEW RELEASES MAY (AND PROBABLY WILL) BREAK CUSTOMIZATIONS. THE USER IS THERFORE RESPONSIBLE FOR BACK-PORTING
@@ -122,31 +113,12 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 
 ### System related changes
 - Added `Makefile` to minify/compile `js` and `css` files on a need to do basis
-- Added this file `CHANGELOG-DTS-BRANCH.md`
+- Added this file `CHANGELOG-2.3.0H.md`
+- Added `ISSUES.md` listing major open issues
 - Adjusted `createReleasePackage.sh` to remove AI translation engine
   
 
-## Open issues
-- Due to the lack of support for lists (`<ul>`, ..) in *YetiForcePDF*, rendering lists in PDF is limited
-- Complex tables may render poorly due to *YetiForcePDF* incorrectly handing some table borders and line breaks in nested tables
-- Local images do not work because *YetiForcePDF* tries to retrieve them using `GuzzleHttp` in a non-authenticated setting.
-- If an image file/URL cannot be accessed during PDF report generating, the resulting PDF report is compromised
-- The PDF library *YetiForcePDF* fails when loading images from web serves with self-signed certificates, as the certificate is
-  validated against an official list.
-- If the menu structure is larger than the browser's height, some menu items will not be displayed (and thus not
-  accessible) #1061
-- Print and clone functionality are not available for `ideas` Kanban
-- Filtering on status is not available for `ideas` Kanban
-- Documentation of step-by-step how to create a new canvas and add it to the system missing
-- New language tags have been generated for most languages, but need validation before being installed (they can be
-  found in `resources/language/mltranslate`)
-- If during import of a canvas an error is detected, the import fails but not reason why it fails is shown to the user
-- The button used to select an xml canvas file for importing is not css-styled
-- As the SlimSelect selector only works in a frame (rather than on top of all frames), the merge modal requires
-  sufficient blank space to include all canvas
-
-
-## Change log
+## Change log (incomplete)
 
 ## 0.0.1 - 2022-10-12
 - New: Documented changes in `CHANGELOG_DTS_BRANCH.md` (commits are numbered with version)
@@ -306,5 +278,11 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   (`template::convertRelativePaths`) in `elements.inc.php` and `class.pdf.php`
 - Bug: Return error image in `download.php`, if user is not authenticated (`/images/leantime-no-access.jpg`)
 
-# 0.3.34 2022-10-20
+# 0.3.34 2022-10-30
 - Add: Added skeleton for handling themes (functionality required to implement new directory structure)
+
+# 0.3.35 2022-10-30
+- Update: Updated directory structure for handling themes
+- Updated: Changed code to always use default theme for login in either the default language or the language of the
+  browser
+- Update: Languages are now cached theme specific, as each theme can overwrite language strings

@@ -23,7 +23,6 @@ define('RESTRICTED', FALSE);
 define('ROOT', dirname(__FILE__));
 
 include_once '../config/configuration.php';
-include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 
 use leantime\domain\repositories;

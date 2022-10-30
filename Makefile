@@ -80,21 +80,21 @@ JS_MINIFIED = public/js/compiled-app.min.js public/js/jsSourceMapAppSrc.map \
     public/js/compiled-extended-libs.min.js public/js/jsSourceMapExtendedSrc.map
 CSS_MINIFIED = public/css/main.css
 
-LANG_DIR = ./resources/language
-MLTR_DIR = ./resources/language/mltranslate
+LANG_DIR = ./src/language
+MLTR_DIR = ./tools/mltranslate
 
 GRUNT_CMD = ./node_modules/grunt/bin/grunt
-MLTR_CMD = ./resources/language/mltranslate/mltranslate.php
+MLTR_CMD = ./tools/mltranslate/mltranslate.php
 
 
 # Generic actions
 all:	composer npm minify 
-	    @/usr/bin/rm -fv resources/logs/error.log
+	    @/usr/bin/rm -fv logs/error.log
 
 translate:    mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-tr mltr-zh-CN
 
 clean:
-	    @/usr/bin/rm -fv resources/logs/error.log
+	    @/usr/bin/rm -fv logs/error.log
 
 release:
 	    ./createReleasePackage.sh

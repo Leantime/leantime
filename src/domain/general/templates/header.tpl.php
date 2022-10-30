@@ -1,8 +1,11 @@
-<?php defined('RESTRICTED') or die('Restricted access'); ?>
-<?php $appSettings = $this->get('appSettings'); ?>
-<?php $debugRenderer = $this->get('debugRenderer'); ?>
-<?php $theme = $_SESSION["usersettings.theme"] ?? 'default' ?>
+<?php
+defined('RESTRICTED') or die('Restricted access');
 
+$appSettings = $this->get('appSettings');
+$debugRenderer = $this->get('debugRenderer');
+$themeCore = new \leantime\core\theme();
+$theme = $this->get('theme');
+?>
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
 
@@ -18,7 +21,9 @@
 <link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-<?=$theme?>.css?v=<?php echo $settings->appVersion; ?>"/>
+<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>                                                           
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
@@ -31,18 +36,16 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
-<!-- custom -->
-<?php echo file_exists(ROOT.'/../public/config/custom.css') ?
-     '<link rel="stylesheet" href="'.BASE_URL.'/config/custom.css?v='.$settings->appVersion.'" />'.PHP_EOL : '' ?>
-<?php echo file_exists(ROOT.'/../public/config/custom.js') ?
-     '<script src="'.BASE_URL.'/config/custom.js?v='.$settings->appVersion.'"></script>'.PHP_EOL : '' ?>
-     
 <!-- Replace main theme colors -->
 <style>
-
     :root{
         --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
         --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
     }
-
 </style>
+
+<!-- customize -->
+<?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
+<?php } ?>                                                           
+     

@@ -5,7 +5,7 @@
  *
  */
 
-namespace leantime\core;
+namespace leantime\core {
 
 class appSettings {
 
@@ -15,7 +15,7 @@ class appSettings {
 	 */
 	public $debug = 0;
 
-	public $appVersion = "2.2.10";
+	public $appVersion = "2.3.0-beta";
 
 	public $dbVersion = "2.1.10";
 
@@ -111,4 +111,5 @@ class appSettings {
 
     }
 
+}
 }
