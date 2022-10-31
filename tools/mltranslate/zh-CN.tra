@@ -14,12 +14,6 @@ MTR.language.pagesize = "合法的"
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "默认的（轻）。"
-MTR.theme.dark.name = "黑暗"
-MTR.theme.dts.name = "战略的设计思维"
-
 # special
 
 label.classic = "经典视图"

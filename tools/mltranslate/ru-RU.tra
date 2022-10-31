@@ -14,12 +14,6 @@ MTR.language.pagesize = "ЮРИДИЧЕСКИЙ"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "По умолчанию (свет)"
-MTR.theme.dark.name = "Темный"
-MTR.theme.dts.name = "Дизайн-мышление для стратегии"
-
 # special
 
 MTR.label.classic = "Классический вид вкладок"

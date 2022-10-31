@@ -80,6 +80,8 @@ namespace leantime\core {
          */
         public function getAll(): array
         {
+
+            $language = new language();
             $themeRoot = ROOT.'/theme/';
             $themeAll = [];
             $themeAll[static::DEFAULT] = 'theme.'.static::DEFAULT.'.name';
@@ -90,7 +92,20 @@ namespace leantime\core {
                 if($theme !== 'sample' && is_dir(ROOT.'/theme/'.$theme) &&
                    file_exists(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini')) {
 
-                    $themeAll[$theme] = "theme.$theme.name";
+                    $iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true);
+                    if(isset($iniData['name'][$language->getCurrentLanguage()])) {
+                            
+                        $themeAll[$theme] = $iniData['name'][$language->getCurrentLanguage()];
+                        
+                    }elseif(isset($iniData['name']['en-US'])) {
+                            
+                        $themeAll[$theme] = $iniData['name']['en-US'];
+
+                    }else{
+                            
+                        $themeAll[$theme] = $language->__("theme.$theme.name");
+
+                    }                        
 
                 }
             }

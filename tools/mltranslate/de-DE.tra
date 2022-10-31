@@ -14,12 +14,6 @@ MTR.language.pagesize = "LEGAL"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Standard (hell)"
-MTR.theme.dark.name = "Dunkelheit"
-MTR.theme.dts.name = "Design Thinking für Strategie"
-
 # special
 
 label.classic = "Klassische Tab Ansicht"

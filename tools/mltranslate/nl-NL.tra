@@ -14,12 +14,6 @@ MTR.language.pagesize = "JURIDISCHE"
 language.firstDayOfWeek = "1"
 language.isMeridian = "false"
 
-# themes
-
-MTR.theme.default.name = "Standaard (licht)"
-MTR.theme.dark.name = "Donker"
-MTR.theme.dts.name = "Designdenken voor strategie"
-
 # special
 
 MTR.label.classic = "Klassieke tabbladenweergave"

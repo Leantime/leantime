@@ -14,12 +14,6 @@ MTR.language.pagesize = "JURIDISK INFORMATION"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Standard (ljus)"
-MTR.theme.dark.name = "Mörk"
-MTR.theme.dts.name = "Designtänkande för strategi"
-
 # special
 
 label.classic = "Klassisk Tabb Visning"

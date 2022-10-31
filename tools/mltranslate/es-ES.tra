@@ -14,12 +14,6 @@ MTR.language.pagesize = "LEGAL"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Por defecto (luz)"
-MTR.theme.dark.name = "Oscuro"
-MTR.theme.dts.name = "Pensamiento de diseño para la estrategia"
-
 # special
 
 label.classic = "Vista clásicas"

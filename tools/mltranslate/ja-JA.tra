@@ -14,12 +14,6 @@ MTR.language.pagesize = "リーガル"
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "デフォルト（ライト）"
-MTR.theme.dark.name = "ダーク"
-MTR.theme.dts.name = "戦略のためのデザイン思考"
-
 # special
 
 MTR.label.classic = "クラシックタブビュー"

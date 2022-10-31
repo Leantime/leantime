@@ -14,12 +14,6 @@ MTR.language.pagesize = "LEGAL"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Default (light)"
-MTR.theme.dark.name = "Dark"
-MTR.theme.dts.name = "Design Thinking for Strategy"
-
 # special
 
 label.classic = "Klasyczny widok kart"

@@ -14,12 +14,6 @@ MTR.language.pagesize = "YASAL"
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Varsayılan (ışık)"
-MTR.theme.dark.name = "Karanlık"
-MTR.theme.dts.name = "Strateji için Tasarım Odaklı Düşünme"
-
 # special
 
 label.classic = "Klasik Sekmeler Görünümü"

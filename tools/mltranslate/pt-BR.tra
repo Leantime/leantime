@@ -14,12 +14,6 @@ MTR.language.pagesize = "LEGAL"
 language.firstDayOfWeek = "0"
 language.isMeridian = "true"
 
-# themes
-
-MTR.theme.default.name = "Padrão (leve)"
-MTR.theme.dark.name = "Escuro"
-MTR.theme.dts.name = "Pensando na estratégia do projeto"
-
 # special
 
 MTR.label.classic = "Vista das abas clássicas"

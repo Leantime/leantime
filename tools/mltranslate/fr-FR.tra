@@ -14,12 +14,6 @@ language.pagesize = "A4"
 language.firstDayOfWeek = "1"
 language.isMeridian = "true"
 
-# themes
-
-theme.default.name = "Défaut (clair)"
-theme.dark.name = "Foncé"
-theme.dts.name = "Strategie supportée par Design Thinking"
-
 # special
 
 label.classic = "Vue par onglets"
