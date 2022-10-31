@@ -156,7 +156,7 @@ namespace leantime\domain\controllers\canvas {
             $html = $this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options);
 
             // Handle image tags
-            $html = $this->tpl->convertRelativePaths($html);
+            $html = $this->tpl->patchDownloadUrlToFilenameOrAwsUrl($html);
 
             try {
                 $pdf->loadHtml($html);

@@ -613,6 +613,30 @@ namespace leantime\core {
             return $returnLink;
         }
 
+        /*** 
+         * patchDownloadUrlToFilenameOrAwsUrl- Replace all local download.php references in <img src=""> tags
+         *     by either local filenames or AWS URLs that can be accesse without being authenticated
+         * 
+         * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
+         * authenticated
+
+         *
+         * @access public
+         * @param  string  $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+         * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+         *                 local filenames or AWS URLs
+         */
+        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
+        {
+            
+            $patchedTextHtml = $this->convertRelativePaths($textHtml);
+
+            // TO DO: Replace local download.php
+            $patchedTextHtml = $patchedTextHtml;
+            
+            return $patchedTextHtml;
+            
+        }
 
     }
 
