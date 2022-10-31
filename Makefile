@@ -93,7 +93,7 @@ all:	composer npm minify
 
 translate-all:	translate notranslate
 
-translate:		mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-tr mltr-zh-CN
+translate:		mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-sv mltr-tr mltr-zh-CN
 
 notranslate:	mltr-he mltr-no mltr-pl mltr-zh-ZW
 
@@ -148,6 +148,8 @@ mltr-pt-PT: $(MLTR_DIR)/pt-PT.tra
 
 mltr-ru:    $(MLTR_DIR)/ru-RU.tra
 
+mltr-sv:    $(MLTR_DIR)/sv-SE.tra
+
 mltr-tr:    $(MLTR_DIR)/tr-TR.tra
 
 mltr-zh-CN: $(MLTR_DIR)/zh-CN.tra
@@ -191,6 +193,9 @@ $(MLTR_DIR)/ru-RU.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/ru-RU.ini
 
 $(MLTR_DIR)/tr-TR.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/tr-TR.ini
 	    $(MLTR_CMD) en tr $(LANG_DIR)/en-US.ini $(LANG_DIR)/tr-TR.ini $(MLTR_DIR)/tr-TR.tra
+
+$(MLTR_DIR)/sv-SE.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/sv-SE.ini
+	    $(MLTR_CMD) en sv $(LANG_DIR)/en-US.ini $(LANG_DIR)/sv-SE.ini $(MLTR_DIR)/sv-SE.tra
 
 $(MLTR_DIR)/zh-CN.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini
 	    $(MLTR_CMD) en zh $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-CN.ini $(MLTR_DIR)/zh-CN.tra

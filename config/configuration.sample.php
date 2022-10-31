@@ -18,6 +18,7 @@ class config
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
     public $enableMenuType = false;                       //Enable to specifiy menu on aproject by project basis
+    public $keepTheme = true;                             //Keep theme and language from previous user for login screen
     public $debug = 0;                                    //Debug flag
 
 
@@ -135,6 +136,7 @@ class config
         $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
         $this->enableMenuType = $this->configEnvironmentHelper("LEAN_ENABLE_MENU_TYPE", $this->enableMenuType);
+        $this->keepTheme = $this->configEnvironmentHelper("LEAN_KEEP_THEME", $this->keepTheme);
 
     /* Database */
         $this->dbHost = $this->configEnvironmentHelper("LEAN_DB_HOST", $this->dbHost);
