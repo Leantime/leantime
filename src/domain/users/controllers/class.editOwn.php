@@ -113,10 +113,7 @@ namespace leantime\domain\controllers {
                                         $settings->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
                                         $themeCore->setActive($postTheme);
-                                        
-                                        setcookie('language', $postLang, time()+60*60*24*30, '/');
-                                        setcookie('theme', $themeCore->getActive(), time()+60*60*24*30, '/');
-
+                                        $language->setLanguage($postLang);
 
                                         $tpl->setNotification($language->__("notifications.profile_edited"), 'success');
 
