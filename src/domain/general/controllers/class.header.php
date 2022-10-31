@@ -65,7 +65,6 @@ namespace leantime\domain\controllers {
                 
             }
             $themeCore->setActive($theme);
-            // error_log("CURRENT THEME=$theme/ACTIVE=".$themeCore->getActive()."/COOKIES=".print_r($_COOKIE,true));
             
             if (!isset($_SESSION["companysettings.logoPath"])) {
 

@@ -63,6 +63,8 @@ namespace leantime\core {
 
 		/**
 		 * setActive - Set active theme
+         *
+         * Note: After setActive, the language settings need to be reloaded/reset, because languages are theme specific
 		 *
 		 * @access public
 		 * @param  string $id Active theme identifier

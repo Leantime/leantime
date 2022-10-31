@@ -95,7 +95,7 @@ translate-all:	translate notranslate
 
 translate:		mltr-de mltr-es mltr-fr mltr-it mltr-ja mltr-nl mltr-pt-BR mltr-pt-PT mltr-ru mltr-sv mltr-tr mltr-zh-CN
 
-notranslate:	mltr-he mltr-no mltr-pl mltr-zh-ZW
+notranslate:	mltr-he mltr-no mltr-pl mltr-zh-ZW mltr-de-CH mltr-fr-CH
 
 clean:
 	    @/usr/bin/rm -fv logs/error.log
@@ -163,6 +163,10 @@ mltr-pl:	$(MLTR_DIR)/pl-PL.tra
 
 mltr-zh-ZW:	$(MLTR_DIR)/zh-TW.tra
 
+mltr-de-CH:	$(MLTR_DIR)/de-CH.tra
+
+mltr-fr-CH:	$(MLTR_DIR)/fr-CH.tra
+
 
 $(MLTR_DIR)/de-DE.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini
 	    $(MLTR_CMD) en de $(LANG_DIR)/en-US.ini $(LANG_DIR)/de-DE.ini $(MLTR_DIR)/de-DE.tra
@@ -212,4 +216,11 @@ $(MLTR_DIR)/pl-PL.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/pl-PL.ini
 
 $(MLTR_DIR)/zh-TW.tra:    $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-TW.ini
 	    $(MLTR_CMD) en zh-TW $(LANG_DIR)/en-US.ini $(LANG_DIR)/zh-TW.ini $(MLTR_DIR)/zh-TW.tra
+
+$(MLTR_DIR)/de-CH.tra:    $(LANG_DIR)/de-DE.ini $(LANG_DIR)/de-CH.ini
+	    $(MLTR_CMD) de de-CH $(LANG_DIR)/de-DE.ini $(LANG_DIR)/de-CH.ini $(MLTR_DIR)/de-CH.tra
+
+$(MLTR_DIR)/fr-CH.tra:    $(LANG_DIR)/fr-FR.ini $(LANG_DIR)/fr-CH.ini
+	    $(MLTR_CMD) fr fr-CH $(LANG_DIR)/fr-FR.ini $(LANG_DIR)/fr-CH.ini $(MLTR_DIR)/fr-CH.tra
+
 
