@@ -31,6 +31,7 @@ namespace leantime\domain\services {
             // Convert read data into XML DOM structure
             $old_error_reporting = error_reporting(error_reporting() & ~E_WARNING);
             $status = $dom->loadXML($canvasData);
+            error_reporting($old_error_reporting);
             if($status === false) return false;
 
             // Decode XMP data

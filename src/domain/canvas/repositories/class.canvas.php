@@ -739,13 +739,11 @@ namespace leantime\domain\repositories {
          * mergeCanvas - merge canvas into existing canvas
          *
          * @access public
-         * @param  int  $projectId  Project identifier
          * @param  int  $canvasId   Original canvas identifier
-         * @param  int  $authorId   Author identifier
          * @param  int  $mergeId    Canvas to perge into existing one 
          * @return bool Status of merge
          */
-        public function mergeCanvas(int $projectId, int $canvasId, int $authorId, string $mergeId): bool
+        public function mergeCanvas(int $canvasId, string $mergeId): bool
         {
 
             // Copy elements from merge canvas into current canvas

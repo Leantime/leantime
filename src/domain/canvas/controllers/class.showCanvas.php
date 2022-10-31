@@ -151,8 +151,7 @@ namespace leantime\domain\controllers\canvas {
 
                 if(isset($_POST['canvasid']) && $_POST['canvasid'] > 0) {
 
-                    $status = $canvasRepo->mergeCanvas($_SESSION['currentProject'], $currentCanvasId,
-                                                       $_SESSION['userdata']['id'], $_POST['canvasid']);
+                    $status = $canvasRepo->mergeCanvas($currentCanvasId, $_POST['canvasid']);
 
                     if($status) {
                         
