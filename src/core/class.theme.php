@@ -36,23 +36,29 @@ namespace leantime\core {
 		 */
 		public function getActive(): string
 		{
+            // Return user specific theme, if active
+            if(isset($_SESSION["userdata"]["id"])) {
 
-			if(!isset($_SESSION['usersettings.theme'])) {
+                if(isset($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"]))
+                    return $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"];
 
-                if(isset($this->config->defaultTheme) && !empty($this->config->defaultTheme)) {
+            }
+
+            //Return generic theme
+			if(isset($_SESSION['usersettings.theme']))
+                return $_SESSION['usersettings.theme'];
+
+            //Return saved
+            if($this->config->keepTheme && isset($_COOKIE['theme']))
+                return $_COOKIE['theme'];
+
+            //Return configured
+            if(isset($this->config->defaultTheme) && !empty($this->config->defaultTheme))
+                return $this->config->defaultTheme;
+
+            //Return default
+            return static::DEFAULT;
                     
-                    $_SESSION['usersettings.theme'] = $this->config->defaultTheme;
-
-                }else{
-                    
-                    $_SESSION['usersettings.theme'] = static::DEFAULT;
-
-                }
-                
-			}
-			
-			return $_SESSION['usersettings.theme'];
-			
 		}
 
 		/**
@@ -68,7 +74,14 @@ namespace leantime\core {
                 throw new \Exception("Selected theme '$id' does not exist");
             }
 
+            if(isset($_SESSION["userdata"]["id"])) {
+                
+                $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"] = $id;
+                
+            }
+            
 			$_SESSION['usersettings.theme'] = $id;
+            setcookie('theme', $id, time()+60*60*24*30, '/');
 
 		}
         

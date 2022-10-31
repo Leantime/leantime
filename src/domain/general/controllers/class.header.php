@@ -59,23 +59,13 @@ namespace leantime\domain\controllers {
                     
                 }else{
 
-                    if($this->config->keepTheme && isset($_COOKIE['theme'])) {
-                        
-                        $theme = $_COOKIE['theme'];
-                        
-                    }else{
-                        
-                        $theme = $this->config->defaultTheme;
-                        
-                    }
+                    $theme = $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"];
                     
                 }
                 
-                $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"] = $themeCore->getActive();
-                
             }
             $themeCore->setActive($theme);
-            setcookie('theme', $themeCore->getActive(), time() + 60 * 60 * 24 * 30, '/');
+            // error_log("CURRENT THEME=$theme/ACTIVE=".$themeCore->getActive()."/COOKIES=".print_r($_COOKIE,true));
             
             if (!isset($_SESSION["companysettings.logoPath"])) {
 

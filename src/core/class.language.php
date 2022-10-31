@@ -66,44 +66,7 @@ namespace leantime\core {
             $this->themeCore = new theme();
             $this->theme = $this->themeCore->getActive();
 
-            //Get user language
-            if(isset($_SESSION["userdata"]["id"])) {
-                $settingsRepo = new \leantime\domain\repositories\setting();
-                
-                $languageSettings = $settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".language");
-                
-                if($languageSettings !== false) {
-                    
-                    $_SESSION['usersettings.language'] = $languageSettings;
-                    
-                }else{
-                    
-                    if($this->config->keepTheme && isset($_COOKIE['language'])) {
-
-                        $_SESSION['usersettings.language'] = $_COOKIE['language'];
-                        
-                    }
-                }
-                
-            }
-
-            //Get default instance language
-            if(!isset($_SESSION["companysettings.language"])) {
-
-                $language = $settingsRepo->getSetting("companysettings.language");
-
-                if ($language !== false) {
-                    
-                    $_SESSION["companysettings.language"] = $language;
-                    
-                }else{
-                    
-                    $_SESSION["companysettings.language"] = $config->language ?? $this->getBrowserLanguage();
-                    
-                }
-
-            }
-
+            //Get list of available languages
             if(isset($_SESSION['cache.langlist'])){
                 
                 $this->langlist = $_SESSION['cache.langlist'];
@@ -130,17 +93,81 @@ namespace leantime\core {
 
             }
             
+            //Get company language
+            if(!isset($_SESSION["companysettings.language"])) {
+
+                $language = $settingsRepo->getSetting("companysettings.language");
+
+                if ($language === false) {
+
+                    $language = $config->language;
+                    
+                }
+                    
+                $_SESSION["companysettings.language"] = $language;
+
+            }else{
+
+                $language = $_SESSION["companysettings.language"];
+
+            }
+            
+            //Get user language
+            if(!isset($_SESSION["userdata"]["id"])) {
+                
+                // This is a login session, we need to ensure the default language (or the user's browser)
+                if($config->keepTheme) {
+                    
+                    $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
+                    
+                }
+                
+            }else{
+                
+                // This is not a login session
+                if(!isset($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"]) ||
+                   empty($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"])) {
+                    
+                    // User has a saved language
+                    $settingsRepo = new \leantime\domain\repositories\setting();
+                    $languageSettings = $settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".language");
+                    if($languageSettings === false) {
+
+                        if($config->keepTheme) {
+                            
+                            $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
+                                                                                          
+                        }
+                       
+                    }else{
+
+                        $language = $languageSettings;
+                        
+                    }
+                    
+                }else{
+                    
+                    $language = $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"];
+
+                }
+
+                $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"] = $language;
+            }
+            $_SESSION['usersettings.language'] = $language;
+
             //Start checking if the user has a language set
-            if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
+            if($this->isValidLanguage($language)) {
 
-                $this->setLanguage($_SESSION['usersettings.language']);
-                setcookie('language', $_SESSION['usersettings.language'], time() + 60 * 60 * 24 * 30, '/');
+                $this->setLanguage($language);
+                setcookie('language', $language, time() + 60 * 60 * 24 * 30, '/');
 
-				//If not check for company default setting
-            } else {
+            }elseif($this->isValidLanguage($_SESSION['companysettings.language'])){
 
                 $this->setLanguage($_SESSION['companysettings.language']);
-                setcookie('language', $_SESSION['companysettings.language'], time() + 60 * 60 * 24 * 30, '/');
+
+            }else{
+            
+                $this->setLanguage($config->language);
 
             }
 
@@ -157,6 +184,14 @@ namespace leantime\core {
         {
 
             $this->language = $lang;
+            
+            $_SESSION['usersettings.language'] = $lang;
+            if(isset($_SESSION["userdata"]["id"])) {
+                
+                $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"] = $lang;
+            }
+            
+            setcookie('language', $lang, time() + 60 * 60 * 24 * 30, '/');
 
             $this->readIni();
 
@@ -316,6 +351,8 @@ namespace leantime\core {
                 return $langCode[0];
 
             }
+
+            return $this->language;
 
         }
 
