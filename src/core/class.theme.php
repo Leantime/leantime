@@ -107,7 +107,7 @@ namespace leantime\core {
                 if($theme !== 'sample' && is_dir(ROOT.'/theme/'.$theme) &&
                    file_exists(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini')) {
 
-                    $iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true);
+                    $iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
                     if(isset($iniData['name'][$language->getCurrentLanguage()])) {
                             
                         $themeAll[$theme] = $iniData['name'][$language->getCurrentLanguage()];
