@@ -85,3 +85,8 @@
     --kanban-card-hover: var(--primary-background);
 
 }
+
+.ss-option:hover {
+	color: white;
+	background-color: var(--accent1) !important;
+}

@@ -37,7 +37,7 @@
 
 
 
-    --primary-color: #3b9ae3;
+    --primary-color: var(--accent1); // #3b9ae3;
     --secondary-color: var(--accent2);
 
     --main-bg: var(--primary-background);
@@ -329,7 +329,22 @@ body .ticketDropdown ul::after {
     border-bottom: 7px solid var(--secondary-background);
 }
 
-.ss-main {
+.ss-main .ss-single-selected, .ss-content {
     background-color: var(--secondary-background) !important;
     color:var(--primary-font-color) !important;
+}
+
+.ss-content .ss-list .ss-option.ss-disabled {
+    background-color: var(--secondary-background) !important;
+    color:darkgrey !important;
+}	
+
+.ss-content .ss-search input::placeholder, .ss-content .ss-search input {
+    background-color: var(--primary-background) !important;
+    color:var(--primary-font-color) !important;
+}
+
+.ss-option:hover {
+	color: white;
+	background-color: var(--accent1) !important;
 }

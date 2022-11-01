@@ -113,3 +113,4 @@ custom/domain/
 custom/plugin/
 custom/language/
 public/theme/*/css/custom.css
+public/theme/dts/
