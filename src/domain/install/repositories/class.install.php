@@ -1249,12 +1249,12 @@ namespace leantime\domain\repositories {
         }
 
 		/***
-		 * update_sql_XXX - Update database for new canvas
+		 * update_sql_20111 - Update database for new canvas
 		 *
 		 * @access private
-		 * @return bool    Succerss of database update
+		 * @return bool|array    Success of database update or array of errors
 		 */
-		private function update_sql_20111(): bool {
+		private function update_sql_20111(): bool|array {
 
             $errors = array();
 
