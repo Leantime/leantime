@@ -286,3 +286,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
 - Updated: Changed code to always use default theme for login in either the default language or the language of the
   browser
 - Update: Languages are now cached theme specific, as each theme can overwrite language strings
+
+# 0.3.36 2022-11-01
+- Update: Re-enabled option to use previous theme/language for login screen (can be set in configuration: $keepTheme)
+  using cookies
+- Bug: Set cookie to path in which the application is installed, rather than the root path (to avoid conflicts with
+  other applications installed on the same server)

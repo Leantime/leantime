@@ -83,7 +83,7 @@ namespace leantime\core {
             }
             
 			$_SESSION['usersettings.theme'] = $id;
-            setcookie('theme', $id, time()+60*60*24*30, '/');
+            setcookie('theme', $id, time()+60*60*24*30, $this->config->appUrlRoot.'/');
 
 		}
         

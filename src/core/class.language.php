@@ -61,7 +61,7 @@ namespace leantime\core {
         public function __construct()
         {
 
-            $config = new config();
+            $this->config = new config();
             $settingsRepo = new setting();
             $this->themeCore = new theme();
             $this->theme = $this->themeCore->getActive();
@@ -100,7 +100,7 @@ namespace leantime\core {
 
                 if ($language === false) {
 
-                    $language = $config->language;
+                    $language = $this->config->language;
                     
                 }
                     
@@ -116,7 +116,7 @@ namespace leantime\core {
             if(!isset($_SESSION["userdata"]["id"])) {
                 
                 // This is a login session, we need to ensure the default language (or the user's browser)
-                if($config->keepTheme) {
+                if($this->config->keepTheme) {
                     
                     $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                     
@@ -133,7 +133,7 @@ namespace leantime\core {
                     $languageSettings = $settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".language");
                     if($languageSettings === false) {
 
-                        if($config->keepTheme) {
+                        if($this->config->keepTheme) {
                             
                             $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                                                                                           
@@ -159,7 +159,7 @@ namespace leantime\core {
             if($this->isValidLanguage($language)) {
 
                 $this->setLanguage($language);
-                setcookie('language', $language, time() + 60 * 60 * 24 * 30, '/');
+                setcookie('language', $language, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
 
             }elseif($this->isValidLanguage($_SESSION['companysettings.language'])){
 
@@ -167,7 +167,7 @@ namespace leantime\core {
 
             }else{
             
-                $this->setLanguage($config->language);
+                $this->setLanguage($this->config->language);
 
             }
 
@@ -191,7 +191,7 @@ namespace leantime\core {
                 $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"] = $lang;
             }
             
-            setcookie('language', $lang, time() + 60 * 60 * 24 * 30, '/');
+            setcookie('language', $lang, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
 
             $this->readIni();
 
@@ -226,9 +226,7 @@ namespace leantime\core {
         public function readIni()
         {
 
-            $config = new config();
-
-            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme]) && $config->debug == 0) {
+            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme]) && $this->config->debug == 0) {
                 $this->ini_array = $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme];
                 return $this->ini_array;
             }

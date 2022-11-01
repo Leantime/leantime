@@ -198,8 +198,9 @@ namespace leantime\domain\services {
                 $searchCriteria["sprint"] =  $searchParams["sprint"];
                 $_SESSION["currentSprint"] = $searchCriteria["sprint"];
             }
-
-            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
+            
+            $config = new core\config();
+            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, $config->appUrlRoot."/tickets/");
 
             return $searchCriteria;
         }
