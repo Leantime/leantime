@@ -4,7 +4,10 @@ JS_APP_FILES = public/js/app/app.js \
     public/js/app/core/custom.js \
     public/js/app/core/tableHandling.js \
     public/js/app/core/wysiwyg.js \
-    $(wildcard src/domain/*/js/*.js)
+    $(wildcard src/domain/*/js/*.js) \
+    $(wildcard custom/domain/*/js/*.js) \
+    $(wildcard src/plugin/*/js/*.js) \
+    $(wildcard custom/plugin/*/js/*.js)
 JS_BASE_LIB_FILES = node_modules/jquery/dist/jquery.js \
     node_modules/jquery-migrate/dist/jquery-migrate.js \
     node_modules/jquery-ui-dist/jquery-ui.js \
