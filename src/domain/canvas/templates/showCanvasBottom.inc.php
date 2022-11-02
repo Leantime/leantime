@@ -49,15 +49,14 @@
         new SlimSelect({ select: '#searchCanvas' });
 
         leantime.<?=$canvasName ?>CanvasController.setRowHeights();
+        leantime.canvasController.setCanvasName('<?=$canvasName ?>');
         leantime.canvasController.initFilterBar();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.canvasController.initCanvasLinks();
-            
-            leantime.<?=$canvasName ?>CanvasController.initUserDropdown();
-            leantime.<?=$canvasName ?>CanvasController.initStatusDropdown();
-            leantime.<?=$canvasName ?>CanvasController.initRelatesDropdown();
-
+            leantime.canvasController.initUserDropdown();
+            leantime.canvasController.initStatusDropdown();
+            leantime.canvasController.initRelatesDropdown();
         <?php }else{ ?>
 
             leantime.generalController.makeInputReadonly(".maincontentinner");
@@ -83,8 +82,7 @@
             $modalUrl = "/".(int)$_GET['showModal'];
         }
         ?>
-
-        leantime.<?=$canvasName ?>CanvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
+        leantime.canvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
         window.history.pushState({},document.title, '<?=BASE_URL?>/<?=$canvasName ?>canvas/showCanvas/');
 
         <?php } ?>

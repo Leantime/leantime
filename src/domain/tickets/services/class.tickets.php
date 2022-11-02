@@ -200,7 +200,9 @@ namespace leantime\domain\services {
             }
             
             $config = new core\config();
-            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, $config->appUrlRoot."/tickets/");
+            setcookie("searchCriteria", serialize($searchCriteria), [ 'expires' => time()+3600,
+                                                                      'path' => $config->appUrlRoot."/tickets/",
+                                                                      'samesite' => 'Strict' ]);
 
             return $searchCriteria;
         }

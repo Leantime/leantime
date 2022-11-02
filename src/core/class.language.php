@@ -194,7 +194,9 @@ namespace leantime\core {
                 
                 if(!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
                     
-                    setcookie('language', $lang, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
+                    setcookie('language', $lang, [ 'expires' => time() + 60 * 60 * 24 * 30,
+                                                   'path' => $this->config->appUrlRoot.'/',
+                                                   'samesite' => 'Strict' ]);
 
                 }
                 

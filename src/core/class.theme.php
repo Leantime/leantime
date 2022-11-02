@@ -11,9 +11,10 @@ namespace leantime\core {
 		
 		public const DEFAULT_INI = 'theme';          // Theme configuration file (excluding .ini extension)
 		public const DEFAULT_CSS = 'theme';          // Theme style file  (excluding .css extension)
-		public const DEFAULT_JSLIB = 'theme';        // Theme JavasCript library (excluding .js extension)
+		public const DEFAULT_JS = 'theme';           // Theme JavasCript library (excluding .js extension)
 		
 		public const CUSTOM_CSS = 'custom';          // Theme style customination file (excluding .css)
+		public const CUSTOM_JS = 'custom';           // Theme JavaScript customination file (excluding .js)
 
         private config $config;
         private appSettings $settings;
@@ -232,7 +233,7 @@ namespace leantime\core {
         }
 
         /**
-         * getCustomStyleUrl - Return URL that allows loading the customozed part of the style file of the theme
+         * getCustomStyleUrl - Return URL that allows loading the customized part of the style file of the theme
          *
          * @access public
          * @return string|false URL to the customized part of the css style file of the current theme or false, if it does not exist
@@ -246,6 +247,47 @@ namespace leantime\core {
                                       
             if(file_exists($this->getDir().'/css/'.static::CUSTOM_CSS.'.css')) {
                 return $this->getUrl().'/css/'.static::CUSTOM_CSS.'.css?v='.$this->settings->appVersion;
+            }
+
+            return false;
+
+        }
+        
+        /**
+         * getJsUrl - Return URL that allows loading the JavaScript file of the theme
+         *
+         * @access public
+         * @return string|false URL to the JavaScript file of the current theme or false, if it does not exist
+         */
+        public function getJsUrl(): string|false
+        {
+
+            if(file_exists($this->getDir().'/js/'.static::DEFAULT_JS.'.min.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JS.'.min.js?v='.$this->settings->appVersion;
+            }
+                                      
+            if(file_exists($this->getDir().'/js/'.static::DEFAULT_JS.'.js')) {
+                return $this->getUrl().'/js/'.static::DEFAULT_JS.'.js?v='.$this->settings->appVersion;
+            }
+            return false;
+            
+        }
+
+        /**
+         * getCustomJsUrl - Return URL that allows loading the customized part of the JavaScript file of the theme
+         *
+         * @access public
+         * @return string|false URL to the customized part of the JavaScript file of the current theme or false, if it does not exist
+         */
+        public function getCustomJsUrl(): string|false
+        {
+
+            if(file_exists($this->getDir().'/js/'.static::CUSTOM_JS.'.min.js')) {
+                return $this->getUrl().'/js/'.static::CUSTOM_JS.'.min.js?v='.$this->settings->appVersion;
+            }
+                                      
+            if(file_exists($this->getDir().'/js/'.static::CUSTOM_JS.'.js')) {
+                return $this->getUrl().'/js/'.static::CUSTOM_JS.'.js?v='.$this->settings->appVersion;
             }
 
             return false;

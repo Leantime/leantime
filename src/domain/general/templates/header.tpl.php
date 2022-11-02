@@ -21,13 +21,9 @@ $theme = $this->get('theme');
 <link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
-    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
-<?php } ?>                                                           
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
-
 
 <!-- libs -->
 <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
@@ -45,6 +41,15 @@ $theme = $this->get('theme');
 </style>
 
 <!-- customize -->
+<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>     
+    <script src="<?=$jsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $customJsUrl = $themeCore->getCustomJsUrl(); if($customJsUrl !== false) { ?>     
+    <script src="<?=customJsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>                                                           
 <?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if($styleUrl !== false) { ?>     
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
 <?php } ?>                                                           

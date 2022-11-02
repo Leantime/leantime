@@ -74,7 +74,7 @@ class session
         session_id(self::$sid);
         session_start();
 
-        setcookie("sid", self::$sid, time()+$config->sessionExpiration, $config->appUrlRoot."/");
+        setcookie("sid", self::$sid,  [ 'expires' => time() + $config->sessionExpiration, 'path' => '/' ]);
 
 
     }
@@ -142,8 +142,8 @@ class session
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "", time() - 42000, $config->appUrlRoot.'/');
-
+        setcookie('sid', "",  [ 'expires' => time() - 42000, 'path' => '/' ]);
+    
     }
 
 }
