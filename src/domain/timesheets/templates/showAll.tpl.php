@@ -59,10 +59,10 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 <div class="pageheader">
 
 
-    <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
+    <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
             <div class="pagetitle">
-                <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-                <h1><?php echo $this->__("headline.project_timesheets") ?></h1>
+
+                <h1><?php echo $this->__("headlines.all_timesheets") ?></h1>
             </div>
         </div><!--pageheader-->
 
@@ -84,6 +84,16 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 	<table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
 
 		<tr>
+            <td>
+                <label for="projects"><?php echo $this->__('label.project'); ?></label>
+                <select name="project">
+                    <option value=""><?php echo strip_tags($this->__("menu.all_projects")) ?></option>
+                    <?php foreach($this->get('allProjects') as $project) {?>
+                        <option value="<?=$project['id'] ?>"
+                            <?php if($this->get('projectFilter') == $project['id']) echo "selected='selected'" ?>><?=$this->escape($project['name'])?></option>
+                    <?php } ?>
+                </select>
+            </td>
 			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
 				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
@@ -153,7 +163,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
       	  <col class="con0"/>
           <col class="con1" />
       	  <col class="con0"/>
-           <col class="con1"/>
+          <col class="con1"/>
 	</colgroup>
 	<thead>
 		<tr>
@@ -189,7 +199,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     #<?=$row['id']?>
                 <?php } ?>
             </td>
-            <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
+            <td data-order="<?=$this->escape($row['workDate']); ?>>">
                 <?php echo$this->getFormattedDateString($row['workDate']); ?>
             </td>
 			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>

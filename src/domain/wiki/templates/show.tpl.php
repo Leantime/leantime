@@ -174,7 +174,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                             </div>
                             <div class="articleBody mce-content-body">
-                                <?=$currentArticle->description; ?>
+                                <?=$this->escapeMinimal($currentArticle->description); ?>
                             </div>
 
                             <?php if ($currentArticle->milestoneHeadline != '') { ?>

@@ -187,7 +187,8 @@
 }
 
 
-body .maincontent .priority-border-1 {
+body .maincontent .priority-border-1,
+body .maincontent .commentStatus-red{
     border-left: 3px solid #B92F2FFF;
 }
 
@@ -195,11 +196,13 @@ body .maincontent .priority-border-2 {
     border-left: 3px solid #EF371DFF;
 }
 
-body .maincontent .priority-border-3 {
+body .maincontent .priority-border-3,
+body .maincontent .commentStatus-yellow{
     border-left: 3px solid #FFB325FF;
 }
 
-body .maincontent .priority-border-4 {
+body .maincontent .priority-border-4,
+body .maincontent .commentStatus-green{
     border-left: 3px solid #aae268;
 }
 
@@ -266,7 +269,7 @@ body .maincontent .priority-bg-5 {
 
 .kanbanContent {
     overflow:hidden;
-    height:75px;
+    max-height:75px;
     position:relative;
 }
 

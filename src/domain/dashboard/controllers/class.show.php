@@ -79,7 +79,7 @@ namespace leantime\domain\controllers {
             }
 
 
-            $comment = $comments->getComments('project', $_SESSION['currentProject'],"", $_SESSION["projectsettings"]['commentOrder']);
+            $comment = $comments->getComments('project', $_SESSION['currentProject'],"");
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
 
