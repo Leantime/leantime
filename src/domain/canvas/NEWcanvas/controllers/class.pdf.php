@@ -30,7 +30,7 @@ namespace leantime\domain\controllers {
          * @param  string $filter Filter value
          * @return string PDF filename
          */
-        public function reportGenerate(int $id, array $filter = []): string
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
             $options = [ ];

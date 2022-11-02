@@ -246,75 +246,72 @@ namespace leantime\core {
                 throw new Exception("Cannot find default english language file en-US.ini");
 
             }
-            $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'/en-US.ini', false, INI_SCANNER_RAW);
+            $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
-			// First alternative: default language file (if not english)
+            // Overwrite with english from theme
+            if (file_exists($this->themeCore->getDir().'/language/en-US.ini')) {
+
+                $ini_overrides = parse_ini_file($this->themeCore->getDir().'/language/en-US.ini', false, INI_SCANNER_RAW);
+                if (is_array($ini_overrides)) {
+                    foreach ($ini_overrides as $languageKey => $languageValue) {
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    }
+                }
+                
+            }
+            
+			// Complement english with english customization
+            if (file_exists(static::CUSTOM_LANG_FOLDER.'en-US.ini')) {
+
+                $ini_overrides = parse_ini_file(static::CUSTOM_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
+                if (is_array($ini_overrides)) {
+                    foreach ($ini_overrides as $languageKey => $languageValue) {
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
+                    }
+                }
+                
+            }
+            
+			// Overwrite english language by non-english language
             if (file_exists(static::DEFAULT_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
 
                 $ini_overrides = parse_ini_file(static::DEFAULT_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
-
                 if (is_array($ini_overrides)) {
-
-                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
-
-                        if (array_key_exists($languageKey, $ini_overrides)) {
-                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
-                        }
-
+                    foreach ($ini_overrides as $languageKey => $languageValue) {
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
                     }
                 }
+                
             }
 
-			// Overwrite with language from theme
-            if (file_exists($this->themeCore->getDir().'/language/'.$this->language.'.ini')) {
+            // Overwrite english ny non-english from theme
+            if (file_exists($this->themeCore->getDir().'/language/en-US.ini') && $this->language !== 'en-US') {
 
-                $ini_overrides = parse_ini_file($this->themeCore->getDir().'/language/'.$this->language.'.ini', false, INI_SCANNER_RAW);
-
-                if (is_array($ini_overrides) == true) {
-
-                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
-
-                        if (array_key_exists($languageKey, $ini_overrides)) {
-                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
-                        }
-
+                $ini_overrides = parse_ini_file($this->themeCore->getDir().'language/en-US.ini', false, INI_SCANNER_RAW);
+                if (is_array($ini_overrides)) {
+                    foreach ($ini_overrides as $languageKey => $languageValue) {
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
                     }
                 }
-            }elseif (file_exists($this->themeCore->getDir().'/language/en-US.ini') && $this->language !== 'en-US') {
-
-                $ini_overrides = parse_ini_file($this->themeCore->getDir().'/language/en-US.ini', false, INI_SCANNER_RAW);
-
-                if (is_array($ini_overrides) == true) {
-
-                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
-
-                        if (array_key_exists($languageKey, $ini_overrides)) {
-                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
-                        }
-
-                    }
-                }
+                
             }
-
-			// Override: custom language file
-            if (file_exists(static::CUSTOM_LANG_FOLDER.$this->language.'.ini')) {
+            
+			// Overwrite with non-engish customizations
+            if (file_exists(static::CUSTOM_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
 
                 $ini_overrides = parse_ini_file(static::CUSTOM_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
-
                 if (is_array($ini_overrides)) {
-
-                    foreach ($mainLanguageArray as $languageKey => $languageValue) {
-
-                        if (array_key_exists($languageKey, $ini_overrides)) {
-                            $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
-                        }
-
+                    foreach ($ini_overrides as $languageKey => $languageValue) {
+                        $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
                     }
                 }
+                
             }
-                                                
+            
             $this->ini_array = $mainLanguageArray;
             $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme] = $this->ini_array;
+
+            error_log(print_r($this->ini_array,true));
 
             return $this->ini_array;
 
