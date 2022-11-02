@@ -137,30 +137,47 @@ namespace leantime\core {
             $moduleName = self::getModuleName($completeName);
 
             //Folder doesn't exist.
-            if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
+            if((is_dir('../src/domain/'.$moduleName) === false ||
+                is_file('../src/domain/'. $moduleName.'/controllers/class.'.$actionName.'.php') === false) &&
+               (is_dir('../custom/domain/'.$moduleName) === false ||
+                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
 
                 self::dispatch("general.error404");
                 return;
 
             }
 
+            $customPluginPath = ROOT.'/../custom/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+            $customDomainPath = ROOT.'/../custom/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
             $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
             $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
 
             $controllerNs = "domain";
 
             //Try plugin folder first for overrides
-            if(file_exists($pluginPath)) {
+            if(file_exists($customPluginPath)) {
+                
+                $controllerNs = "plugins";
+                require_once $customPluginPath;
+
+            }elseif(file_exists($customDomainPath)) {
+
+                require_once $customDomainPath;
+
+            }elseif(file_exists($pluginPath)) {
+                
                 $controllerNs = "plugins";
                 require_once $pluginPath;
 
-            }else if(file_exists($domainPath)) {
+            }elseif(file_exists($domainPath)) {
 
                 require_once $domainPath;
 
             }else{
+                
                 self::dispatch("general.error404", 404);
                 return;
+                
             }
 
             //Initialize Action

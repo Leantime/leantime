@@ -585,7 +585,7 @@ namespace leantime\domain\controllers\canvas {
             
             $iconCode = match($icon) {
 			'fa-1' => '&#x0031',
-					'fa-2' => '&#x0032',
+            'fa-2' => '&#x0032',
 			'fa-3' => '&#x0033',
 			'fa-4' => '&#x0034',
 			'fa-5' => '&#x0035',

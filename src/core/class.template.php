@@ -167,17 +167,17 @@ namespace leantime\core {
             $domainFile = '/domain/'.$module.'/templates/'.$action.'.tpl.php';
             $loadFile = '';
 
-            if(file_exists(ROOT.'/../custom/'.$pluginFile) && is_readable(ROOT.'/../custom/'.$pluginFile)) {
-                $loadFile = ROOT.'/../custom/'.$pluginFile;
+            if(file_exists(ROOT.'/../custom'.$pluginFile) && is_readable(ROOT.'/../custom'.$pluginFile)) {
+                $loadFile = ROOT.'/../custom'.$pluginFile;
             }
-            elseif(file_exists(ROOT.'/../src/'.$pluginFile) && is_readable(ROOT.'/../src/'.$pluginFile)) {
-                $loadFile = ROOT.'/../src/'.$pluginFile;
+            elseif(file_exists(ROOT.'/../src'.$pluginFile) && is_readable(ROOT.'/../src'.$pluginFile)) {
+                $loadFile = ROOT.'/../src'.$pluginFile;
             }            
-            elseif(file_exists(ROOT.'/../custom/'.$domainFile) && is_readable(ROOT.'/../custom/'.$domainFile)) {
-                $loadFile = ROOT.'/../custom/'.$domainFile;
+            elseif(file_exists(ROOT.'/../custom'.$domainFile) && is_readable(ROOT.'/../custom'.$domainFile)) {
+                $loadFile = ROOT.'/../custom'.$domainFile;
             }            
-            elseif(file_exists(ROOT.'/../src/'.$domainFile) && is_readable(ROOT.'/../src/'.$domainFile)) {
-                $loadFile = ROOT.'/../src/'.$domainFile;
+            elseif(file_exists(ROOT.'/../src'.$domainFile) && is_readable(ROOT.'/../src/'.$domainFile)) {
+                $loadFile = ROOT.'/../src'.$domainFile;
             }            
 
             if(file_exists($loadFile)) {

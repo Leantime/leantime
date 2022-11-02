@@ -46,7 +46,9 @@
 
     jQuery(document).ready(function() {
 
-        new SlimSelect({ select: '#searchCanvas' });
+        if(jQuery('#searchCanvas').length > 0) {
+            new SlimSelect({ select: '#searchCanvas' });
+        }
 
         leantime.<?=$canvasName ?>CanvasController.setRowHeights();
         leantime.canvasController.setCanvasName('<?=$canvasName ?>');
