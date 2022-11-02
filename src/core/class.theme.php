@@ -300,6 +300,7 @@ namespace leantime\core {
             return $language->__("theme.$theme.name");
             
         }
+        
         /**
          * getVersion - Get version of theme
          *
@@ -311,7 +312,24 @@ namespace leantime\core {
 
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($$this->iniData['general']['version'])) return $iniData['name']['version'];
+            if(isset($$this->iniData['general']['version'])) return $iniData['general']['version'];
+
+            return '';
+            
+        }
+
+        /**
+         * getLogoUrl - Get logo associated with the theme
+         *
+         * @access public
+         * @return string Logo associated with the theme
+         */
+        public function getLogoUrl(): string
+        {
+
+            if(empty($this->iniData)) $this->readIniData();
+
+            if(isset($$this->iniData['general']['logo'])) return $iniData['general']['logo'];
 
             return '';
             

@@ -50,7 +50,6 @@ function leantimeAutoloader($class)
         $path = "{$srcFolder}/{$class}/{$mvcFolder}/class.{$class}.php";
     }
 
-
     if($classPartsCount == 5) {
         $class = $classArray[4];
         $srcFolder = $classArray[1];
@@ -59,7 +58,7 @@ function leantimeAutoloader($class)
 
         $path = "{$srcFolder}/{$module}/{$mvcFolder}/class.{$class}.php";
     }
-	
+
 	// Check if a customized version of the requested class exists
 	if(!empty($path)) {
         
