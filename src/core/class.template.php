@@ -43,6 +43,12 @@ namespace leantime\core {
         private $notifcationType = '';
 
         /**
+         * @access private
+         * @var    string
+         */
+        private $hookContext = '';
+
+        /**
          * @access public
          * @var    string
          */
@@ -202,7 +208,7 @@ namespace leantime\core {
                 throw new \Exception($this->__("notifications.no_template"));
             }
 
-            $this->assign('hookContext', "tpl.$module.$action");
+            $this->hookContext = "tpl.$module.$action";
 
             require_once $template_path;
 
@@ -630,6 +636,49 @@ namespace leantime\core {
             return $returnLink;
         }
 
+        /**
+         * @param string $hookName
+         * @param mixed $payload
+         */
+        private function dispatchTplEvent($hookName, $payload = [])
+        {
+            $this->dispatchTplHook('event', $hookName, $payload);
+        }
+
+        /**
+         * @param string $hookName
+         * @param mixed $payload
+         * @param mixed $available_params
+         * 
+         * @return mixed
+         */
+        private function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+        {
+            return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
+        }
+
+        /**
+         * @param string $type
+         * @param string $hookName
+         * @param mixed $payload
+         * @param mixed $available_params
+         * 
+         * @return null|mixed
+         */
+        private function dispatchTplHook($type, $hookName, $payload = [], $available_params = [])
+        {
+            if (!is_string($type)
+                || !in_array($type, ['event', 'filter'])
+            ) {
+                return;
+            }
+
+            if ($type == 'filter') {
+                return events::dispatch_filter($hookName, $payload, $available_params, $this->hookContext);
+            }
+
+            events::dispatch_event($hookName, $payload, $this->hookContext);
+        }
 
     }
 

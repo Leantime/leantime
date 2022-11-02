@@ -1,9 +1,6 @@
 <?php
 
-    use \leantime\core\events;
-
     defined( 'RESTRICTED' ) or die( 'Restricted access' );
-    $hookContext    = $this->get('hookContext');
 
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
@@ -38,11 +35,14 @@
         <?php echo $this->displayNotification(); ?>
 
 		<form action="" method="get" id="ticketSearch">
+
+            <?php $this->dispatchTplEvent('filters.afterFormOpen'); ?>
+
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
                     <?php 
-                    events::dispatch_event('beforeLefthandButtons'); 
+                    $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
                     if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) {
                     ?>
                     <div class="btn-group">
@@ -60,12 +60,13 @@
                     </div>
                     <?php 
                     } 
-                    events::dispatch_event('afterLefthandButtons');
+                    $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     ?>
                 </div>
 
                 <div class="col-md-2 center">
-                    <?php events::dispatch_event('beforeSprintFilter'); ?>
+                    
+                    <?php $this->dispatchTplEvent('filters.afterCenterSectionOpen'); ?>
                     <span class="currentSprint">
                         <?php if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
@@ -101,12 +102,12 @@
                             <?php } ?>
                         <?php } ?>
                     </span>
-                    <?php events::dispatch_event('afterSprintFilter'); ?>
+                    <?php $this->dispatchTplEvent('filters.beforeCenterSectionClose'); ?>
                 </div>
                 <div class="col-md-5">
                     <div class="pull-right">
 
-                        <?php events::dispatch_event('beforeRighthandButtons'); ?>
+                        <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
@@ -141,7 +142,7 @@
                             </ul>
                         </div>
 
-                        <?php events::dispatch_event('beforeRighthandButtons'); ?>
+                        <?php $this->dispatchTplEvent('filters.beforeRighthandSectionClose'); ?>
 
                     </div>
                 </div>
@@ -150,13 +151,13 @@
 
             <div class="clearfix"></div>
 
-            <?php events::dispatch_event('beforeFilterBar'); ?>
+            <?php $this->dispatchTplEvent('filters.beforeBar'); ?>
 
             <div class="filterBar <?php if(!isset($_GET['search'])) { echo "hideOnLoad"; } ?>">
 
                 <div class="row-fluid">
 
-                    <?php events::dispatch_event('beforeFirstFilterField'); ?>
+                    <?php $this->dispatchTplEvent('filters.beforeFirstBarField'); ?>
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
@@ -259,11 +260,11 @@
 
             </div>
 
-            <?php events::dispatch_event('beforeFilterFormEnd'); ?>
+            <?php $this->dispatchTplEvent('filters.beforeFormClose'); ?>
 
         </form>
 
-        <?php events::dispatch_event('beforeTable'); ?>
+        <?php $this->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTickets]); ?>
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
@@ -280,9 +281,9 @@
                 <col class="con1">
                 <col class="con0">
             </colgroup>
-            <?php events::dispatch_event('beforeTableHead'); ?>
+            <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
             <thead>
-                <?php events::dispatch_event('beforeTableHeadRow', ['tickets' => $allTickets], $hookContext); ?>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
                     <th><?= $this->__("label.title"); ?></th>
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
@@ -297,14 +298,14 @@
                     <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
                     <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
                 </tr>
-                <?php events::dispatch_event('afterTableHeadRow', ['tickets' => $allTickets], $hookContext); ?>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
             </thead>
-            <?php events::dispatch_event('afterTableHead', ['tickets' => $allTickets], $hookContext); ?>
+            <?php $this->dispatchTplEvent('allTicketsTable.afterHead', ['tickets' => $allTickets]); ?>
             <tbody>
-                <?php events::dispatch_event('beforeFirstRow', ['tickets' => $allTickets], $hookContext); ?>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
                 <?php foreach($allTickets as $rowNum => $row){?>
                     <tr>
-                        <?php events::dispatch_event('afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
+                        <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
@@ -487,19 +488,20 @@
 
                             <?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>
                         </td>
-                        <?php events::dispatch_event('beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum], $hookContext); ?>
+                        <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                     </tr>
                 <?php } ?>
-                <?php events::dispatch_event('afterLastRow', ['tickets' => $allTickets], $hookContext); ?>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
             </tbody>
-            <?php events::dispatch_event('afterTableBody', ['tickets' => $allTickets], $hookContext); ?>
+            <?php $this->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
         </table>
+        <?php $this->dispatchTplEvent('allTicketsTable.afterClose', ['tickets' => $allTickets]); ?>
 	</div>
 </div>
 
 <script type="text/javascript">
 
-    <?php events::dispatch_event('afterScriptsStart', $hookContext); ?>
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
@@ -529,6 +531,6 @@
     $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
     } ?>
 
-    <?php events::dispatch_event('afterScriptsEnd', $hookContext); ?>
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

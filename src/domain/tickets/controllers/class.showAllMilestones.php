@@ -25,10 +25,10 @@ namespace leantime\domain\controllers {
 
             $_SESSION['lastPage'] = CURRENT_URL;
 
-
         }
 
         public function get($params) {
+
             events::dispatch_event('begin', $params);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);

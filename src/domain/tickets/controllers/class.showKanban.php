@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
                 if(is_array($result)) {
                     $this->tpl->setNotification($result["message"], $result["status"]);
                 }
-            
+
             }
 
             events::dispatch_event('end', $params);

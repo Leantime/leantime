@@ -1,11 +1,15 @@
 <?php
 
-class dashboardTest {
+namespace leantime\domain\events {
 
-    public function handle($eventname, $payload) {
-
+    class DashboardTest
+    {
+        public function handle($payload)
+        {
+            // code here
+        }
     }
 
-}
+    \leantime\core\events::add_event_listener("core.application.start.beginning", new dashboardTest());
 
-\leantime\core\events::add_event_listener("application.start.beginning", new dashboardTest);
+}

@@ -10,6 +10,6 @@
         req.send(null);
     </script>
 <?php } ?>
-<?php events::dispatch_event('beforeBodyClose', [], $this->get('hookContext')); ?>
+<?php $this->dispatchTplEvent('beforeBodyClose'); ?>
 </body>
 </html>

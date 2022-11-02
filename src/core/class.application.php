@@ -53,7 +53,7 @@ class application
     /**
      * start - renders application and routes to correct template, writes content to output buffer
      *
-     * @access public static
+     * @access public
      * @return void
      */
     public function start()

@@ -2,15 +2,11 @@
 
 use \leantime\core\events;
 
-if (!defined('PLUGIN_DEBUGHOOKS_ENABLED')
-    || PLUGIN_DEBUGHOOKS_ENABLED == false
-) {
-    return false;
-}
+defined('RESTRICTED') or die('Restricted access');
 
 events::add_event_listener(
-    'tpl.general.pageBottom.beforeBodyClose', 
-    function ($eventname, $params) {
+    'tpl.general.pageBottom.beforeBodyClose',
+    function ($payload) {
         ob_start();
         ?>
             <style>
@@ -38,21 +34,17 @@ events::add_event_listener(
             </style>
             <div class="modal-background">
                 <div class="modal-body">
-                    <button 
+                    <button
                     style="color: #FFF"
                     onclick="(e=>{jQuery('.modal-background').fadeOut().find('.modal-body').slideDown()})(event);">
                         Close Modal
                     </button>
                     <hr>
                     <pre>
-<?php
-    var_dump(
-        [
-            'hooks' => events::get_registries(),
-            'core.template.display.content.general.pageBottom' => $params
-        ]
-    );
-?>
+<?php var_dump([
+    'active hooks' => events::get_registries(),
+    'available hooks' => events::get_available_hooks()
+]); ?>
                     </pre>
                 </div>
             </div>
