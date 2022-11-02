@@ -53,7 +53,7 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
-            $this->tpl->display('auth.login', 200, 'entry');
+            $this->tpl->display('auth.login', 'entry');
         }
 
         /**

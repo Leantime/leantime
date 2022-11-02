@@ -96,8 +96,6 @@ class application
 
             }
 
-
-
         }else{
 
 
@@ -123,7 +121,7 @@ class application
 
             }catch(\Exception $e){
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
 
             }
 

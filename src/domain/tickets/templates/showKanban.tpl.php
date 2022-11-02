@@ -312,7 +312,7 @@
                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
 
 										<div class="timerContainer " id="timerContainer-<?php echo $row["id"]; ?>" >
-                                            <?php if($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0){ ?>
+
                                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                     <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text"><?php
@@ -335,7 +335,7 @@
                                                         }?>
                                                     </ul>
                                                 </div>
-                                            <?php } ?>
+
 
                                             <?php if($row['storypoints'] != '' && $row['storypoints'] > 0) { ?>
                                                 <div class="dropdown ticketDropdown effortDropdown show">

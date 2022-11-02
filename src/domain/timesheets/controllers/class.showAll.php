@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             $tpl = new core\template();
             $timesheetsRepo = new repositories\timesheets();
@@ -51,7 +51,7 @@ namespace leantime\domain\controllers {
             $invEmplCheck = '0';
             $invCompCheck = '0';
 
-            $projectFilter =  $_SESSION['currentProject'];
+            $projectFilter =  "";
             $dateFromMk = mktime(0, 0, 0, date("m"), '1', date("Y"));
             $dateToMk = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
 
@@ -62,13 +62,13 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
 
-                $kind = ($_POST['kind']);
+                $kind = strip_tags($_POST['kind']);
 
             }
 
             if (isset($_POST['userId']) && $_POST['userId'] != '') {
 
-                $userId = ($_POST['userId']);
+                $userId = strip_tags($_POST['userId']);
 
             }
 
@@ -112,6 +112,12 @@ namespace leantime\domain\controllers {
                 $invCompCheck = '0';
             }
 
+            if (isset($_POST['project']) && $_POST['project'] != '') {
+
+                $projectFilter = strip_tags($_POST['project']);
+
+            }
+
             if (isset($_POST['export'])) {
                 $values = array(
                     'project' => $projectFilter,
@@ -125,8 +131,8 @@ namespace leantime\domain\controllers {
                 $timesheetsRepo->export($values);
             }
 
-            $user = new repositories\projects();
-            $employees = $user->getUsersAssignedToProject($_SESSION['currentProject']);
+            $user = new repositories\users();
+            $employees = $user->getAll();
 
             $tpl->assign('employeeFilter', $userId);
             $tpl->assign('employees', $employees);
@@ -137,6 +143,7 @@ namespace leantime\domain\controllers {
             $tpl->assign('kind', $timesheetsRepo->kind);
             $tpl->assign('invComp', $invCompCheck);
             $tpl->assign('invEmpl', $invEmplCheck);
+            $tpl->assign('allProjects', $projects->getAll());
             $tpl->assign('projectFilter', $projectFilter);
             $tpl->assign('allTimesheets', $timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
 

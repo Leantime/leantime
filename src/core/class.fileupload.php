@@ -244,7 +244,7 @@ class fileupload
 
             } catch (S3Exception $e) {
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
                 return false;
 
             }
@@ -259,7 +259,7 @@ class fileupload
 
             } catch (Exception $e) {
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
                 return false;
             }
 
@@ -285,7 +285,7 @@ class fileupload
 
         } catch (S3Exception $e) {
 
-            error_log($e->getMessage(), 0);
+            error_log($e, 0);
             return false;
 
         }
@@ -303,7 +303,7 @@ class fileupload
 
         } catch (Exception $e) {
 
-            error_log($e->getMessage(), 0);
+            error_log($e, 0);
             return false;
         }
 

@@ -713,7 +713,7 @@ a .label-default:after, a .label-primary:after {
     box-shadow: var(--large-shadow);
 }
 .row .regLeft .mainWelcome {
-    font-family:Exo;
+    font-family: var(--primary-font-family);
     font-size: 54px;
     padding-left:15px;
     font-weight:400;
@@ -1076,12 +1076,13 @@ a .label-default:after, a .label-primary:after {
     font-style: italic;
 }
 
-.userloggedinfo .dropdown-menu {
+.userloggedinfo .dropdown-menu
+ {
     right:14px;
     left:auto;
 }
 
-.userloggedinfo .dropdown-menu::after {
+.userloggedinfo .dropdown-menu::after{
     position: absolute;
     top: -6px;
     right: 45px;
@@ -1092,6 +1093,17 @@ a .label-default:after, a .label-primary:after {
     content: '';
 }
 
+.appsDropdown .dropdown-menu {
+    right:-15px;
+    left:auto;
+}
+
+.appsDropdown .dropdown-menu:after {
+    right:30px;
+    top:-6px;
+    left:auto;
+}
+
 .userloggedinfo ul {
     list-style: none;
     margin-top:-1px;
@@ -1099,36 +1111,43 @@ a .label-default:after, a .label-primary:after {
 
 
 
-.userloggedinfo ul li {
+.userloggedinfo ul li,
+.appsDropdown ul li{
     font-size: var(--base-font-size);
     line-height: normal;
     margin-bottom: 1px;
 }
 
-.userloggedinfo ul li a {
+.userloggedinfo ul li a,
+.appsDropdown ul li a{
     line-height: normal;
     padding:10px 20px;
 }
 
-.userloggedinfo ul li.border {
+.userloggedinfo ul li.border,
+.appsDropdown ul li.border{
     border-top:1px solid var(--neutral);
 }
 
-.userloggedinfo ul li.nav-header {
+.userloggedinfo ul li.nav-header,
+.appsDropdown ul li.nav-header{
     padding:10px;
 }
 
-.userloggedinfo ul li a span {
+.userloggedinfo ul li a span,
+.appsDropdown ul li a span{
     margin-right: 5px;
 }
 
-.userloggedinfo ul li a:hover {
+.userloggedinfo ul li a:hover,
+.appsDropdown ul li a:hover{
     text-decoration: none;
 
 }
 
-.userloggedinfo a {
-    color: #fff;
+.userloggedinfo a,
+.appsDropdown a{
+    color: var(--secondary-action-color);
 }
 
 
@@ -5133,7 +5152,8 @@ body .widgettitle .editHeadline:hover {
 }
 
 .leftmenu .projectselector {
-    left: 225px;
+    left: 245px;
+
     z-index: 10000000;
     top: 0px;
     border-radius: var(--box-radius);
@@ -5280,6 +5300,16 @@ input.secretInput:active {
     width:100%;
     padding:12px 15px;
     font-size:var(--base-font-size);
+}
+
+.commentContent.statusUpdate {
+    background:transparent;
+    border: 1px solid var(--main-border-color);
+}
+
+.commentContent.statusUpdate h3 {
+    margin-bottom:8px;
+    font-weight: bold;
 }
 
 #mainToggler {

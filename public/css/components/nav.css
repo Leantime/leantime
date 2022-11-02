@@ -37,7 +37,6 @@
 }
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector {
-    overflow: auto;
     height: 90vh;
 }
 
@@ -127,6 +126,17 @@
     background-color: var(--main-menu-link-hover-bg);
     color: var(--main-menu-link-hover-color);
     border-left-color: var(--main-menu-link-hover-bg);
+}
+
+.fixedMenuPoint {
+    background: var(--main-menu-link-bg);
+    position:fixed;
+    width:240px;
+    bottom: 0px;
+    position: fixed;
+    width: 240px;
+    box-shadow: 0px -10px 10px var(--main-menu-link-bg);
+    padding-bottom: 10px;
 }
 
 
