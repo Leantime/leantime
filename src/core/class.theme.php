@@ -89,7 +89,9 @@ namespace leantime\core {
             }
             
 			$_SESSION['usersettings.theme'] = $id;
-            setcookie('theme', $id, time()+60*60*24*30, $this->config->appUrlRoot.'/');
+            setcookie('theme', $id,  [ 'expires' => time() + 60 * 60 * 24 * 30,
+                                                   'path' => $this->config->appUrlRoot.'/',
+                                                   'samesite' => 'Strict' ]);
 
 		}
         
@@ -285,7 +287,7 @@ namespace leantime\core {
             
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($$this->iniData['name'][$language->getCurrentLanguage()])) {
+            if(isset($this->iniData['name'][$language->getCurrentLanguage()])) {
                             
                         return $iniData['name'][$language->getCurrentLanguage()];
                         
@@ -312,7 +314,7 @@ namespace leantime\core {
 
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($$this->iniData['general']['version'])) return $iniData['general']['version'];
+            if(isset($this->iniData['general']['version'])) return $iniData['general']['version'];
 
             return '';
             
@@ -329,7 +331,7 @@ namespace leantime\core {
 
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($$this->iniData['general']['logo'])) return $iniData['general']['logo'];
+            if(isset($this->iniData['general']['logo'])) return $iniData['general']['logo'];
 
             return '';
             
@@ -348,8 +350,7 @@ namespace leantime\core {
 
             }
             
-            
-            $$this->iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
+            $this->iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
 
         }
         
