@@ -90,3 +90,26 @@
 	color: white;
 	background-color: var(--accent1) !important;
 }
+
+input[type="file"]::file-selector-button {
+    font-family: var(--primary-font-family);
+    font-size: var(--base-font-size);
+    padding: 3px 12px;
+    line-height:21px;
+    background: var(--accent1);
+    text-shadow: none;
+    box-shadow:none;
+    color: var(--secondary-action-color);
+    display: inline-block;
+    word-spacing: 2px;
+    border:1px solid var(--accent1);
+    border-radius:var(--element-radius) !important;
+    outline:0;
+    vertical-align: top;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background:var(--secondary-action-hover-bg);
+    color:var(--secondary-action-hover-color);
+    border-color:var(--secondary-action-hover-bg);
+}
