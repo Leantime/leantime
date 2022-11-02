@@ -17,6 +17,7 @@ namespace leantime\core {
 
         private config $config;
         private appSettings $settings;
+        private array $iniData;
 
 
         /**
@@ -26,6 +27,7 @@ namespace leantime\core {
         {
             $this->config = new config();
             $this->settings = new appSettings();
+            $this->iniData = [];
         }
         
 		/**
@@ -36,6 +38,10 @@ namespace leantime\core {
 		 */
 		public function getActive(): string
 		{
+
+            // Reset .ini data
+            $this->iniData = [];
+            
             // Return user specific theme, if active
             if(isset($_SESSION["userdata"]["id"])) {
 
@@ -262,6 +268,70 @@ namespace leantime\core {
             }
 
             return false;
+
+        }
+
+        /**
+         * getName - Get localized name of theme
+         *
+         * @access public
+         * @return string Localized name of theme
+         */
+        public function getName(): string
+        {
+
+            // Make sure we get the current language
+            $language = new language();
+            
+            if(empty($this->iniData)) $this->readIniData();
+
+            if(isset($$this->iniData['name'][$language->getCurrentLanguage()])) {
+                            
+                        return $iniData['name'][$language->getCurrentLanguage()];
+                        
+            }
+
+            if(isset($iniData['name']['en-US'])) {
+                            
+                return $iniData['name']['en-US'];
+
+            }
+
+            return $language->__("theme.$theme.name");
+            
+        }
+        /**
+         * getVersion - Get version of theme
+         *
+         * @access public
+         * @return string Version of theme or empty string
+         */
+        public function getVersion(): string
+        {
+
+            if(empty($this->iniData)) $this->readIniData();
+
+            if(isset($$this->iniData['general']['version'])) return $iniData['name']['version'];
+
+            return '';
+            
+        }
+
+        /***
+         * readIniData - Read theme.ini configuration data
+         *
+         * @access private
+         */
+        private function readIniData(): void
+        {
+            if(!file_exists(ROOT.'/theme/'.$this->getActive().'/'.static::DEFAULT_INI.'.ini')) {
+
+                throw Exception("Configuration file for theme ".$this->getActive()." not found");
+
+            }
+            
+            
+            $$this->iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
 
         }
         

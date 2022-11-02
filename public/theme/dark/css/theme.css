@@ -342,8 +342,11 @@ body .ticketDropdown ul::after {
 
 .ss-content .ss-search input::placeholder, .ss-content .ss-search input {
     background-color: var(--primary-background) !important;
-    border: 1px solid var(--main-border-color) !important;
     color:var(--primary-font-color) !important;
+}
+
+.ss-content .ss-search input::placeholder, .ss-content .ss-search input {
+    border: 1px solid var(--main-border-color) !important;
 }
 
 .ss-option:hover {
