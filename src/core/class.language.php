@@ -116,7 +116,7 @@ namespace leantime\core {
             if(!isset($_SESSION["userdata"]["id"])) {
                 
                 // This is a login session, we need to ensure the default language (or the user's browser)
-                if($this->config->keepTheme) {
+                if(isset($this->config->keepTheme) && $this->config->keepTheme) {
                     
                     $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                     
@@ -133,7 +133,7 @@ namespace leantime\core {
                     $languageSettings = $settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".language");
                     if($languageSettings === false) {
 
-                        if($this->config->keepTheme) {
+                        if(isset($this->config->keepTheme) && $this->config->keepTheme) {
                             
                             $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                                                                                           
@@ -159,7 +159,6 @@ namespace leantime\core {
             if($this->isValidLanguage($language)) {
 
                 $this->setLanguage($language);
-                setcookie('language', $language, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
 
             }elseif($this->isValidLanguage($_SESSION['companysettings.language'])){
 
@@ -191,7 +190,15 @@ namespace leantime\core {
                 $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".language"] = $lang;
             }
             
-            setcookie('language', $lang, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
+            if(isset($this->config->keepTheme) && $this->config->keepTheme) {
+                
+                if(!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
+                    
+                    setcookie('language', $lang, time() + 60 * 60 * 24 * 30, $this->config->appUrlRoot.'/');
+
+                }
+                
+            }
 
             $this->readIni();
 

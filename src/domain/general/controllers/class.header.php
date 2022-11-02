@@ -24,7 +24,7 @@ namespace leantime\domain\controllers {
             if(!isset($_SESSION["userdata"]["id"])) {
                 
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
-                if($this->config->keepTheme && isset($_COOKIE['theme'])) {
+                if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
                     
                     $theme = $_COOKIE['theme'];
                     
@@ -45,7 +45,7 @@ namespace leantime\domain\controllers {
                     $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
                     if($theme === false) {
                         
-                        if($this->config->keepTheme && isset($_COOKIE['theme'])) {
+                        if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
                     
                             $theme = $_COOKIE['theme'];
 
