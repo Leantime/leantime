@@ -3,5 +3,5 @@
  * Delete Canvas
  */
 $canvasName = 'lean';
-require(ROOT.'/../src/domain/canvas/templates/delCanvas.inc.php');
+require($this->getTemplatePath('canvas' ,'delCanvas.inc.php'));
 ?>

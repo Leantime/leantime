@@ -292,3 +292,10 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   using cookies
 - Bug: Set cookie to path in which the application is installed, rather than the root path (to avoid conflicts with
   other applications installed on the same server)
+
+## 0.3.37 2022-11-03
+- Update: Removed explicit `require()` path from all canvas templates and replaced them with calles to the function
+  `template:getTemplatPath()`, preparing for a potential change in how templates are references, and adding the
+  functionality to customize include files (e.g., now it is possible to customize the element design in a canvas by
+  re-implementing `/custom/domain/canvas/template/element.inc.php`).
+  

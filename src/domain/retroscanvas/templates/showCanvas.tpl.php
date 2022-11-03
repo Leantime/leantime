@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'retros';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
 
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
@@ -17,13 +17,13 @@ $canvasName = 'retros';
 			  
 				    <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 33%">
-						    <?php $elementName = 'well'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'well'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
                         <div class="column" style="width: 33%">
-						    <?php $elementName = 'notwell'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'notwell'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
                         <div class="column" style="width: 33%">
-						    <?php $elementName = 'startdoing'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'startdoing'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				
@@ -33,4 +33,4 @@ $canvasName = 'retros';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>

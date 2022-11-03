@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'sb';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
 <?php
     $stakeholderStatusLabels = $statusLabels;
     $statusLabels = [];
@@ -26,54 +26,54 @@ $canvasName = 'sb';
 
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
-                    <?php $elementName = 'sb_industry'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_industry'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
-                    <?php $elementName = 'sb_description'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_description'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 
 			<?php $statusLabels = $stakeholderStatusLabels; ?>
             <div class="row canvas-row" id="stakeholderRow">
                 <div class="column" style="width:25%">
-                    <?php $elementName = 'sb_st_design'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_st_design'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width:25%">
-                    <?php $elementName = 'sb_st_decision'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_st_decision'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width:25%">
-                    <?php $elementName = 'sb_st_experts'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_st_experts'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width:25%">
-                    <?php $elementName = 'sb_st_support'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_st_support'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 			<?php $statusLabels = []; ?>
 
             <div class="row canvas-row" id="financialsRow">
                 <div class="column" style="width:50%">
-                    <?php $elementName = 'sb_budget'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_budget'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width:50%">
-                    <?php $elementName = 'sb_time'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_time'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 
             <div class="row canvas-row" id="culturechangeRow">
                 <div class="column" style="width:50%">
-                    <?php $elementName = 'sb_culture'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_culture'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width:50%">
-                    <?php $elementName = 'sb_change'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_change'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
-                    <?php $elementName = 'sb_principles'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'sb_principles'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
                 </div>
             </div>
 
@@ -90,4 +90,4 @@ $canvasName = 'sb';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>

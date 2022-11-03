@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'sm';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
 
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
@@ -17,37 +17,37 @@ $canvasName = 'sm';
 			  
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qa'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qa'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qb'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qb'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qc'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qc'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qd'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qd'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qe'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qe'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qf'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qf'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'sm_qg'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'sm_qg'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				
@@ -57,4 +57,4 @@ $canvasName = 'sm';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>

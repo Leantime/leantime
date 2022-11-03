@@ -4,5 +4,5 @@
  */
 $canvasName = 'sb';
 $statusLabels = [];
-require(ROOT.'/../src/domain/canvas/templates/canvasDialog.inc.php');
+require($this->getTemplatePath('canvas' ,'canvasDialog.inc.php'));
 ?>

@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'swot';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas' ,'showCanvasTop.inc.php')); ?>
 
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
@@ -29,19 +29,19 @@ $canvasName = 'swot';
 			  
             <div class="row canvas-row" id="firstRow">
                 <div class="column" style="width: 50%">
-                    <?php $elementName = 'swot_strengths'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'swot_strengths'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
                 </div>
                 <div class="column"  style="width: 50%">
-                    <?php $elementName = 'swot_weaknesses'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'swot_weaknesses'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
                 </div>
             </div>
 
             <div class="row canvas-row" id="secondRow">
                 <div class="column" style="width: 50%">
-                    <?php $elementName = 'swot_opportunities'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'swot_opportunities'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
                 </div>
                 <div class="column" style="width: 50%">
-                    <?php $elementName = 'swot_threats'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                    <?php $elementName = 'swot_threats'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
                 </div>
             </div>
 
@@ -50,4 +50,4 @@ $canvasName = 'swot';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas' ,'showCanvasBottom.inc.php')); ?>

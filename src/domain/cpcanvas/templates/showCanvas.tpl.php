@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'cp';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas' ,'showCanvasTop.inc.php')); ?>
 
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
@@ -32,13 +32,13 @@ $canvasName = 'cp';
 							    <strong><?=$this->__('box.label.cp.need') ?></strong></div>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_cj_rv'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_cj_rv'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_cj_rc'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_cj_rc'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_cj_e'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_cj_e'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                     </div>
 
@@ -66,13 +66,13 @@ $canvasName = 'cp';
 							    <strong><?=$this->__('box.label.cp.unique') ?></strong></div>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_ou_rv'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_ou_rv'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_ou_rc'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_ou_rc'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_ou_e'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_ou_e'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                     </div>
                     <div class="row canvas-row" id="thirdRow">
@@ -82,13 +82,13 @@ $canvasName = 'cp';
 							    <strong><?=$this->__('box.label.cp.superior') ?></strong></div>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_os_rv'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_os_rv'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_os_rc'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_os_rc'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_os_e'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_os_e'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                     </div>
                     <div class="row canvas-row" id="fourthRow">
@@ -98,13 +98,13 @@ $canvasName = 'cp';
 							  <strong><?=$this->__('box.label.cp.indifferent') ?></strong></div>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_oi_rv'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_oi_rv'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_oi_rc'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_oi_rc'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                         <div class="column" style="width: 28%">
-                            <?php $elementName = 'cp_oi_e'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+                            <?php $elementName = 'cp_oi_e'; require($this->getTemplatePath('canvas' ,'element.inc.php')); ?>
 			            </div>
                     </div>
                 
@@ -114,4 +114,4 @@ $canvasName = 'cp';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas' ,'showCanvasBottom.inc.php')); ?>

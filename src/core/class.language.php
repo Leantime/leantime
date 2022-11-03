@@ -311,8 +311,6 @@ namespace leantime\core {
             $this->ini_array = $mainLanguageArray;
             $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme] = $this->ini_array;
 
-            error_log(print_r($this->ini_array,true));
-
             return $this->ini_array;
 
         }

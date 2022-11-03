@@ -114,6 +114,42 @@ namespace leantime\core {
 
         }
 
+        /***
+         * getTemplatePath - Find template in custom and src directories
+         *
+         * @access public
+         * @param  string $module Module template resides in
+         * @param  string $name   Template filename name (including tpl.php extension)
+         * @return string Full template path
+         *
+         */
+        public function getTemplatePath(string $module, string $name): string|false
+        {
+            
+            $file = '/plugin/'.$module.'/templates/'.$name;
+            
+            if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                return ROOT.'/../custom'.$file;
+            }
+            
+            if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src'.$file)) {
+                return ROOT.'/../src'.$file;
+            }            
+
+            $file = '/domain/'.$module.'/templates/'.$name;
+            
+            if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                return ROOT.'/../custom'.$file;
+            }
+            
+            if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
+                return ROOT.'/../src'.$file;
+            }
+
+            throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
+            
+        }
+
         /**
          * display - display template from folder template including main layout wrapper
          *
@@ -163,32 +199,8 @@ namespace leantime\core {
             $action = $this->frontcontroller::getActionName($template);
             $module = $this->frontcontroller::getModuleName($template);
 
-            $pluginFile = '/plugin/'.$module.'/templates/'.$action.'.tpl.php';
-            $domainFile = '/domain/'.$module.'/templates/'.$action.'.tpl.php';
-            $loadFile = '';
-
-            if(file_exists(ROOT.'/../custom'.$pluginFile) && is_readable(ROOT.'/../custom'.$pluginFile)) {
-                $loadFile = ROOT.'/../custom'.$pluginFile;
-            }
-            elseif(file_exists(ROOT.'/../src'.$pluginFile) && is_readable(ROOT.'/../src'.$pluginFile)) {
-                $loadFile = ROOT.'/../src'.$pluginFile;
-            }            
-            elseif(file_exists(ROOT.'/../custom'.$domainFile) && is_readable(ROOT.'/../custom'.$domainFile)) {
-                $loadFile = ROOT.'/../custom'.$domainFile;
-            }            
-            elseif(file_exists(ROOT.'/../src'.$domainFile) && is_readable(ROOT.'/../src/'.$domainFile)) {
-                $loadFile = ROOT.'/../src'.$domainFile;
-            }            
-
-            if(file_exists($loadFile)) {
-                
-                require_once($loadFile);
-                
-            }else{
-                
-                throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$action);
-                
-            }
+            $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
+            require_once($loadFile);
 
             $content = ob_get_clean();
 

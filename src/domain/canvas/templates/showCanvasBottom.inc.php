@@ -37,7 +37,7 @@
         <small class="align-center"><?=$disclaimer ?></small>
     <?php
     }
-    require(ROOT.'/../src/domain/canvas/templates/modals.inc.php');
+    require($this->getTemplatePath('canvas', '/modals.inc.php'));
     ?>
     </div>
 </div>

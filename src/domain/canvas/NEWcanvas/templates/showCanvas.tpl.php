@@ -7,7 +7,7 @@ defined('RESTRICTED') or die('Restricted access');
 $canvasName = 'NEW';
 ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasTop.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
 
     <?php if(count($this->get('allCanvas')) > 0) { ?>
 
@@ -17,7 +17,7 @@ $canvasName = 'NEW';
 			  
 				    <div class="row canvas-row">
                         <div class="column" style="width:100%">
-						    <?php $elementName = 'NEW_XXX'; require(ROOT.'/../src/domain/canvas/templates/element.inc.php'); ?>
+						    <?php $elementName = 'NEW_XXX'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
 				
@@ -27,4 +27,4 @@ $canvasName = 'NEW';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require(ROOT.'/../src/domain/canvas/templates/showCanvasBottom.inc.php'); ?>
+<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>
