@@ -241,12 +241,12 @@ namespace leantime\core {
             }
 
             // Default to english US
-            if (!file_exists(static::DEFAULT_LANG_FOLDER.'/en-US.ini')) {
+            if (!file_exists(ROOT.'/'.static::DEFAULT_LANG_FOLDER.'/en-US.ini')) {
 
                 throw new Exception("Cannot find default english language file en-US.ini");
 
             }
-            $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
+            $mainLanguageArray = parse_ini_file(ROOT.'/'.static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
             // Overwrite with english from theme
             if (file_exists($this->themeCore->getDir().'/language/en-US.ini')) {
@@ -261,9 +261,9 @@ namespace leantime\core {
             }
             
 			// Complement english with english customization
-            if (file_exists(static::CUSTOM_LANG_FOLDER.'en-US.ini')) {
+            if (file_exists(ROOT.'/'.static::CUSTOM_LANG_FOLDER.'en-US.ini')) {
 
-                $ini_overrides = parse_ini_file(static::CUSTOM_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
+                $ini_overrides = parse_ini_file(ROOT.'/'.static::CUSTOM_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
                         $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
@@ -273,9 +273,9 @@ namespace leantime\core {
             }
             
 			// Overwrite english language by non-english language
-            if (file_exists(static::DEFAULT_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
+            if (file_exists(ROOT.'/'.static::DEFAULT_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
 
-                $ini_overrides = parse_ini_file(static::DEFAULT_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
+                $ini_overrides = parse_ini_file(ROOT.'/'.static::DEFAULT_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
                         $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
@@ -284,10 +284,10 @@ namespace leantime\core {
                 
             }
 
-            // Overwrite english ny non-english from theme
-            if (file_exists($this->themeCore->getDir().'/language/en-US.ini') && $this->language !== 'en-US') {
+            // Overwrite english by non-english from theme
+            if (file_exists($this->themeCore->getDir().'/language/'.$this->language.'.ini') && $this->language !== 'en-US') {
 
-                $ini_overrides = parse_ini_file($this->themeCore->getDir().'language/en-US.ini', false, INI_SCANNER_RAW);
+                $ini_overrides = parse_ini_file($this->themeCore->getDir().'/language/'.$this->language.'.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
                         $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];
@@ -297,9 +297,9 @@ namespace leantime\core {
             }
             
 			// Overwrite with non-engish customizations
-            if (file_exists(static::CUSTOM_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
+            if (file_exists(ROOT.'/'.static::CUSTOM_LANG_FOLDER.$this->language.'.ini') && $this->language !== 'en-US') {
 
-                $ini_overrides = parse_ini_file(static::CUSTOM_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
+                $ini_overrides = parse_ini_file(ROOT.'/'.static::CUSTOM_LANG_FOLDER.$this->language.'.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
                         $mainLanguageArray[$languageKey] = $ini_overrides[$languageKey];

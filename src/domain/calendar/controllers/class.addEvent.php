@@ -47,8 +47,6 @@ namespace leantime\domain\controllers {
                     $allDay = 'false';
                 }
 
-
-
                 $dateFrom = null;
                 if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
                     $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']." ".$_POST['timeFrom']);
