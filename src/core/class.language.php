@@ -444,6 +444,8 @@ namespace leantime\core {
 
             }
 
+            return "";
+
         }
 
         /**
