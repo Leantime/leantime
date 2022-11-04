@@ -18,7 +18,7 @@ namespace leantime\core {
 
         private config $config;
         private appSettings $settings;
-        private array $iniData;
+        private array|false $iniData;
 
 
         /**
@@ -335,9 +335,9 @@ namespace leantime\core {
                         
             }
 
-            if(isset($iniData['name']['en-US'])) {
+            if(isset($this->iniData['name']['en-US'])) {
                             
-                return $iniData['name']['en-US'];
+                return $this->iniData['name']['en-US'];
 
             }
 
@@ -356,7 +356,7 @@ namespace leantime\core {
 
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($this->iniData['general']['version'])) return $iniData['general']['version'];
+            if(isset($this->iniData['general']['version'])) return $this->iniData['general']['version'];
 
             return '';
             
@@ -368,14 +368,14 @@ namespace leantime\core {
          * @access public
          * @return string Logo associated with the theme
          */
-        public function getLogoUrl(): string
+        public function getLogoUrl(): string|false
         {
 
             if(empty($this->iniData)) $this->readIniData();
 
-            if(isset($this->iniData['general']['logo'])) return $iniData['general']['logo'];
+            if(isset($this->iniData['general']['logo'])) return $this->iniData['general']['logo'];
 
-            return '';
+            return false;
             
         }
 
@@ -392,10 +392,10 @@ namespace leantime\core {
 
             }
             
-            $this->iniData = parse_ini_file(ROOT.'/theme/'.$theme.'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
+            $this->iniData = parse_ini_file(ROOT.'/theme/'.$this->getActive().'/'.static::DEFAULT_INI.'.ini', true, INI_SCANNER_TYPED);
+            if($this->iniData === false)  $this->iniData = [];
 
         }
         
 	}
 }
-

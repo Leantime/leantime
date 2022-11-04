@@ -1,14 +1,14 @@
 :root {
 
-    /* --accent1: #81B1A8; */
+    --accent1: #81B1A8;
     --accent1-hover: #555;
     --accent1-color:#fff;
 
-    /* --accent2: #81B1A8; */
+    --accent2: #81B1A8;
     --accent2-hover: #555;
     --accent2-color:#fff;
 
-    /*--primary-background: #22272e;
+    /* --primary-background: #22272e;
     --secondary-background: #373e47;
 
 #051825 blue-dark

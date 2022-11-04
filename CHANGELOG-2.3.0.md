@@ -299,3 +299,9 @@ ANY CHANGE MADE IN THE OFFICIAL DISTRIBUTION TO THE CUSTOMIZED FILES.*
   functionality to customize include files (e.g., now it is possible to customize the element design in a canvas by
   re-implementing `/custom/domain/canvas/template/element.inc.php`).
   
+## 0.3.38 2022-11-04
+- Add: Added support for theme specific colors and logo. Settings are read from the database as
+  `companysettings.$theme.logoPath`, `companysettings.$theme.primarycolor`, and `companysettings.$theme.secondarycolor`
+  of these entries exist. In addition, if not theme specific logo is set in the database, the system looks if there is a
+  theme specific logo configures with the theme in `theme.ini` (calling `theme::getLogoUrl()`). The implementation of a
+  UI to set the theme specific settings in the database does not (yet) exist.

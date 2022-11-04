@@ -32,11 +32,21 @@ $theme = $this->get('theme');
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
+<!-- theme -->
+<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>     
+    <script src="<?=$jsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>                                                           
+
 <!-- Replace main theme colors -->
 <style>
     :root{
-        --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
-        --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
+        <?php if(isset($_SESSION["companysettings.primarycolor"])) {
+        ?> --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>; <?php } ?>
+        <?php if(isset($_SESSION["companysettings.secondarycolor"])) {
+        ?> --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>; <?php } ?>
     }
 </style>
 
@@ -46,9 +56,6 @@ $theme = $this->get('theme');
 <?php } ?>                                                           
 <?php $customJsUrl = $themeCore->getCustomJsUrl(); if($customJsUrl !== false) { ?>     
     <script src="<?=customJsUrl ?>"></script>
-<?php } ?>                                                           
-<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
-    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
 <?php } ?>                                                           
 <?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if($styleUrl !== false) { ?>     
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
