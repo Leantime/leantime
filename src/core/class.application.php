@@ -44,10 +44,6 @@ class application
         $this->settingsRepo = new repositories\setting();
         $this->reportService = new services\reports();
 
-
-
-
-
     }
 
     /**

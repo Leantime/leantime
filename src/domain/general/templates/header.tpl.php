@@ -1,8 +1,11 @@
-<?php defined('RESTRICTED') or die('Restricted access'); ?>
-<?php $appSettings = $this->get('appSettings'); ?>
-<?php $debugRenderer = $this->get('debugRenderer'); ?>
-<?php $theme = $_SESSION["usersettings.theme"] ?? 'default' ?>
+<?php
+defined('RESTRICTED') or die('Restricted access');
 
+$appSettings = $this->get('appSettings');
+$debugRenderer = $this->get('debugRenderer');
+$themeCore = new \leantime\core\theme();
+$theme = $this->get('theme');
+?>
 
 <title><?php $this->e($_SESSION["companysettings.sitename"]) ?></title>
 
@@ -18,11 +21,9 @@
 <link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-<?=$theme?>.css?v=<?php echo $settings->appVersion; ?>"/>
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
-
 
 <!-- libs -->
 <script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
@@ -31,12 +32,32 @@
 <!-- app -->
 <script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
 
+<!-- theme -->
+<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>     
+    <script src="<?=$jsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>                                                           
+
 <!-- Replace main theme colors -->
 <style>
-
     :root{
-        --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
-        --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
+        <?php if(isset($_SESSION["companysettings.primarycolor"])) {
+        ?> --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>; <?php } ?>
+        <?php if(isset($_SESSION["companysettings.secondarycolor"])) {
+        ?> --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>; <?php } ?>
     }
-
 </style>
+
+<!-- customize -->
+<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>     
+    <script src="<?=$jsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $customJsUrl = $themeCore->getCustomJsUrl(); if($customJsUrl !== false) { ?>     
+    <script src="<?=customJsUrl ?>"></script>
+<?php } ?>                                                           
+<?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if($styleUrl !== false) { ?>     
+    <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
+<?php } ?>                                                           
+     

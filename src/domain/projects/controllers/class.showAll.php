@@ -27,14 +27,17 @@ namespace leantime\domain\controllers {
             if(auth::userIsAtLeast(roles::$manager)) {
 
                 $projectRepo = new repositories\projects();
+                $menuRepo = new repositories\menu();
 
                 $tpl->assign('role', $_SESSION['userdata']['role']);
 
 
                 $tpl->assign('allProjects', $projectRepo->getAll());
+                $tpl->assign('menuTypes', $menuRepo->getMenuTypes());
 
                 $tpl->display('projects.showAll');
-            }else{
+
+            } else {
 
                 $tpl->display('general.error');
 

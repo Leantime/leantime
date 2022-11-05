@@ -21,13 +21,21 @@ composer install --no-dev --optimize-autoloader
 #Remove font for QR code generator (not needed if no label is used)
 rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
+#Remove DeepL.com and mltranslate engine (not needed in production)
+rm -rf vendor/deeplcom
+rm -rf resources/languages/mltranslate
+
+#Remove local configuration, if any
+rm -rf custom/*/*
+rm -rf public/theme/*/css/custom.css
+
 #Removing unneeded items for release
 rm -f -R .git
 rm -f -R .github
 rm -R node_modules
 rm -R public/images/Screenshots
 rm .gitattributes .gitignore composer.json composer.lock gruntfile.js package-lock.json package.json
-rm createReleasePackage.sh
+rm createReleasePackage.sh Makefile
 
 #removing js directories
 find ./src/domain/ -maxdepth 2 -name "js" -exec rm -r {} \;

@@ -16,6 +16,34 @@ leantime.menuController = (function () {
 
     //Functions
 
+	var toggleSubmenu = function (submenuName) {
+		
+		var submenuDisplay = jQuery('#submenu-'+submenuName).css('display');
+		var submenuStatee = '';
+		
+		if(submenuDisplay == 'none') {
+			jQuery('#submenu-'+submenuName).css('display', 'block');
+			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-up');
+			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-down');
+			submenuState = 'open';
+		}
+		else {
+			jQuery('#submenu-'+submenuName).css('display', 'none');
+			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-down');
+			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-up');
+			submenuState = 'closed';
+		}
+
+        jQuery.ajax( { 
+            type : 'PATCH',
+            url  : leantime.appUrl+'/api/submenu',
+            data : {
+                submenu : submenuName,
+				state   : submenuState
+            }
+		} );
+	}
+	
     var _initProjectSelector = function () {
 
         jQuery(".project-select").chosen();
@@ -81,12 +109,12 @@ leantime.menuController = (function () {
 
         jQuery(".client_"+id).toggle("fast");
 
-        if(jQuery(element).find("i").hasClass("fa-caret-down")){
-            jQuery(element).find("i").removeClass("fa-caret-down");
-            jQuery(element).find("i").addClass("fa-caret-up");
+        if(jQuery(element).find("i").hasClass("fa-angle-down")){
+            jQuery(element).find("i").removeClass("fa-angle-down");
+            jQuery(element).find("i").addClass("fa-angle-up");
         }else{
-            jQuery(element).find("i").removeClass("fa-caret-up");
-            jQuery(element).find("i").addClass("fa-caret-down");
+            jQuery(element).find("i").removeClass("fa-angle-up");
+            jQuery(element).find("i").addClass("fa-angle-down");
         }
 
     }
@@ -94,6 +122,7 @@ leantime.menuController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleClientList:toggleClientList,
+		toggleSubmenu:toggleSubmenu
     };
 
 })();

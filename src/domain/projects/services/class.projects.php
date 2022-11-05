@@ -481,15 +481,28 @@ namespace leantime\domain\services {
                     }
 
                     $_SESSION["currentSprint"] = "";
-                    $_SESSION['currentLeanCanvas'] = "";
                     $_SESSION['currentIdeaCanvas'] = "";
-                    $_SESSION['currentRetroCanvas'] = "";
                     $_SESSION['lastTicketView'] = "";
                     $_SESSION['lastFilterdTicketTableView'] = "";
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
                     $_SESSION['currentWiki'] = '';
                     $_SESSION['lastArticle'] = "";
 
+                    $_SESSION['currentSWOTCanvas'] = "";
+                    $_SESSION['currentLEANCanvas'] = "";
+                    $_SESSION['currentEMCanvas'] = "";
+                    $_SESSION['currentINSIGHTSCanvas'] = "";
+                    $_SESSION['currentSBCanvas'] = "";
+                    $_SESSION['currentRISKSCanvas'] = "";
+                    $_SESSION['currentEACanvas'] = "";
+                    $_SESSION['currentLBMCanvas'] = "";
+                    $_SESSION['currentOBMCanvas'] = "";
+                    $_SESSION['currentDBMCanvas'] = "";
+                    $_SESSION['currentSQCanvas'] = "";
+                    $_SESSION['currentCPCanvas'] = "";
+                    $_SESSION['currentSMCanvas'] = "";
+                    $_SESSION['currentRETROSCanvas'] = "";
+					
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
                     unset($_SESSION["projectsettings"]);
@@ -522,9 +535,23 @@ namespace leantime\domain\services {
             $_SESSION["currentProjectName"] = "";
 
             $_SESSION["currentSprint"] = "";
-            $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
-            $_SESSION['currentRetroCanvas'] = "";
+
+			$_SESSION['currentSWOTCanvas'] = "";
+            $_SESSION['currentLEANCanvas'] = "";
+			$_SESSION['currentEMCanvas'] = "";
+			$_SESSION['currentINSIGHTSCanvas'] = "";
+			$_SESSION['currentSBCanvas'] = "";
+			$_SESSION['currentRISKSCanvas'] = "";
+			$_SESSION['currentEACanvas'] = "";
+			$_SESSION['currentLBMCanvas'] = "";
+			$_SESSION['currentOBMCanvas'] = "";
+			$_SESSION['currentDBMCanvas'] = "";
+			$_SESSION['currentSQCanvas'] = "";
+			$_SESSION['currentCPCanvas'] = "";
+			$_SESSION['currentSMCanvas'] = "";
+            $_SESSION['currentRETROSCanvas'] = "";
+			
             unset($_SESSION["projectsettings"]);
 
             $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
@@ -542,9 +569,9 @@ namespace leantime\domain\services {
 
                     $file = $this->filesRepository->getFile($user['profileId']);
 
-                    $return = '/images/default-user.png';
+                    $return = BASE_URL.'/images/default-user.png';
                     if ($file) {
-                        $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                        $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                     }
 
                     $user["profilePicture"] = $return;
@@ -581,6 +608,7 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
+				"menuType" => $projectValues['menuType'],
                 'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
@@ -844,7 +872,7 @@ namespace leantime\domain\services {
             }
 
             //Retros
-            $retroRepo = new repositories\retrospectives();
+            $retroRepo = new repositories\retroscanvas();
             $canvasBoards = $retroRepo->getAllCanvas($projectId);
             foreach($canvasBoards as $canvas) {
 

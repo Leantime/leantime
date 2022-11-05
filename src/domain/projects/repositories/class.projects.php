@@ -21,25 +21,25 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    int
          */
-        public $id = '';
+        public $id = 0; // WAS: '';
 
         /**
          * @access public
          * @var    int
          */
-        public $clientId = '';
+        public $clientId = 0; // WAS: '';
 
         /**
          * @access private
          * @var    object
          */
-        private $db = '';
+        private $db; // WAS: = '';
 
         /**
          * @access public
          * @var    object
          */
-        public $result = '';
+        public $result; // WAS: = '';
 
         /**
          * @access public
@@ -47,17 +47,13 @@ namespace leantime\domain\repositories {
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
-        /**
-         * __construct - get database connection
-         *
-         * @access public
-         */
 
         public function __construct()
         {
+			
             $config = new core\config();
             $this->db = core\db::getInstance();
-
+			
         }
 
         /**
@@ -78,6 +74,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+                    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -140,6 +137,7 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -188,6 +186,7 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -234,6 +233,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId 
@@ -302,6 +302,7 @@ namespace leantime\domain\repositories {
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
 					zp_projects.psettings,
+				    zp_projects.menuType,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
 				FROM zp_projects 
@@ -501,14 +502,15 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `menuType`
 			) VALUES (
 				:name,
 				:details,
 				:clientId,
 				:hourBudget,
 				:dollarBudget,
-			    :psettings
+			    :psettings,
+                :menuType
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -518,7 +520,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-            $stmn->bindValue('psettings', $values['psettings']??'', PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 
@@ -559,7 +562,8 @@ namespace leantime\domain\repositories {
 				state = :state,
 				hourBudget = :hourBudget,
 				dollarBudget = :dollarBudget,
-				psettings = :psettings
+				psettings = :psettings,
+				menuType = :menuType
 				WHERE id = :id 
 				
 				LIMIT 1";
@@ -573,6 +577,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();

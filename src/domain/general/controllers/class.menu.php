@@ -7,7 +7,6 @@ namespace leantime\domain\controllers {
 
     class menu
     {
-
         public function run()
         {
 
@@ -15,17 +14,34 @@ namespace leantime\domain\controllers {
 
             $projectService = new services\projects();
             $ticketService = new services\tickets();
+			$menuRepo = new repositories\menu();
 
             $allAssignedprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
             $allAvailableProjects = $projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
 
+			if(isset($_SESSION['currentProject'])) {
+			    $projectRepo = new repositories\projects();
+			    $project = $projectRepo->getProject($_SESSION['currentProject']);
+
+				if($project !== false) {
+					$menuType = $project['menuType'];
+				}else{
+					$menuType = repositories\menu::DEFAULT_MENU;
+                }
+                    
+			}
+            else {
+                
+                $menuType = repositories\menu::DEFAULT_MENU;
+                
+			}
+			
             $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $tpl->assign('allAssignedProjects', $allAssignedprojects);
             $tpl->assign('allAvailableProjects', $allAvailableProjects);
             $tpl->assign('currentProject', $_SESSION['currentProject']);
-
-            $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
+			$tpl->assign('menuStructure', $menuRepo->getMenuStructure($menuType));
 
             $tpl->displayPartial('general.menu');
 

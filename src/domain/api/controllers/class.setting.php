@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
     {
 
         private $tpl;
-        private $usersService;
 
         /**
          * constructor - initialize private variables

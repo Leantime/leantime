@@ -27,7 +27,7 @@ namespace leantime\domain\controllers {
                     "ideas/showBoards" => "ideaBoard",
                     "ideas/advancedBoards" => "advancedBoards",
                     "tickets/roadmap" => "roadmap",
-                    "retrospectives/showBoards" => "retrospectives",
+                    "retroscanvas/showBoards" => "retroscanvas",
                     "tickets/showKanban" => "kanban",
                     "timesheets/showMy" => "mytimesheets",
                     "projects/newProject" => "newProject",

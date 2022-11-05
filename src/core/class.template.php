@@ -80,6 +80,7 @@ namespace leantime\core {
          */
         public function __construct()
         {
+            $this->theme = new theme();
             $this->language = new language();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
@@ -113,6 +114,42 @@ namespace leantime\core {
 
         }
 
+        /***
+         * getTemplatePath - Find template in custom and src directories
+         *
+         * @access public
+         * @param  string $module Module template resides in
+         * @param  string $name   Template filename name (including tpl.php extension)
+         * @return string Full template path
+         *
+         */
+        public function getTemplatePath(string $module, string $name): string|false
+        {
+            
+            $file = '/plugin/'.$module.'/templates/'.$name;
+            
+            if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                return ROOT.'/../custom'.$file;
+            }
+            
+            if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src'.$file)) {
+                return ROOT.'/../src'.$file;
+            }            
+
+            $file = '/domain/'.$module.'/templates/'.$name;
+            
+            if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                return ROOT.'/../custom'.$file;
+            }
+            
+            if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
+                return ROOT.'/../src'.$file;
+            }
+
+            throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
+            
+        }
+
         /**
          * display - display template from folder template including main layout wrapper
          *
@@ -138,11 +175,20 @@ namespace leantime\core {
 
             $layout = htmlspecialchars($layout);
 
-            if(file_exists(ROOT.'/../src/layouts/'.$layout.'.php')) {
-                require ROOT . '/../src/layouts/'.$layout.'.php';
-            }else{
-                require ROOT . '/../src/layouts/app.php';
+            $layoutFilename = $this->theme->getLayoutFilename($layout.'.php');
+            
+            if($layoutFilename === false) {
+                
+                $layoutFilename = $this->theme->getLayoutFilename('app.php');
+
             }
+
+            if($layoutFilename === false) {
+
+                throw new \Exception("Cannot find default 'app.php' layout file");
+                
+            }
+            require($layoutFilename);
 
             $layoutContent = ob_get_clean();
 
@@ -151,20 +197,10 @@ namespace leantime\core {
 
             //frontcontroller splits the name (actionname.modulename)
             $action = $this->frontcontroller::getActionName($template);
-
             $module = $this->frontcontroller::getModuleName($template);
 
-            $pluginPath = ROOT.'/../src/plugins/' . $module . '/templates/' . $action.'.tpl.php';
-            $domainPath = ROOT.'/../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
-            //Try plugin folder first for overrides
-            if(file_exists($pluginPath)) {
-                require_once $pluginPath;
-            }else if(file_exists($domainPath)) {
-                require_once $domainPath;
-            }else{
-                throw new \Exception($this->__("notifications.no_template"));
-            }
+            $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
+            require_once($loadFile);
 
             $content = ob_get_clean();
 
@@ -264,7 +300,11 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $file = '../custom/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+
+            if(!file_exists($file)) {
+                $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            }
 
             if (file_exists($file)) {
 
@@ -585,6 +625,30 @@ namespace leantime\core {
             return $returnLink;
         }
 
+        /*** 
+         * patchDownloadUrlToFilenameOrAwsUrl- Replace all local download.php references in <img src=""> tags
+         *     by either local filenames or AWS URLs that can be accesse without being authenticated
+         * 
+         * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
+         * authenticated
+
+         *
+         * @access public
+         * @param  string  $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+         * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+         *                 local filenames or AWS URLs
+         */
+        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
+        {
+            
+            $patchedTextHtml = $this->convertRelativePaths($textHtml);
+
+            // TO DO: Replace local download.php
+            $patchedTextHtml = $patchedTextHtml;
+            
+            return $patchedTextHtml;
+            
+        }
 
     }
 

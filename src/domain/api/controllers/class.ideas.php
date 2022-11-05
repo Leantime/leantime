@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
         private $tpl;
         private $projects;
-        private $sprintService;
 
         /**
          * constructor - initialize private variables

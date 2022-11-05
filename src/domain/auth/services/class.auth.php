@@ -340,6 +340,7 @@ namespace leantime\domain\services {
 
             if(isset($_SESSION)) {
 
+                unset($_SESSION['companysettings']);
                 unset($_SESSION['userdata']);
                 unset($_SESSION['template']);
                 unset($_SESSION["subdomainData"]);
@@ -349,7 +350,7 @@ namespace leantime\domain\services {
                 unset($_SESSION['currentSubscription']);
                 unset($_SESSION['lastTicketView']);
                 unset($_SESSION['lastFilterdTicketTableView']);
-
+                
             }
 
         }

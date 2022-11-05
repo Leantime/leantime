@@ -17,7 +17,10 @@ module.exports = function (grunt) {
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
                     "public/js/app/core/wysiwyg.js",
-                    "src/domain/**/*.js"
+                    "src/domain/**/*.js",
+                    "custom/domain/**/*.js",
+                    "src/plugin/**/*.js",
+                    "custom/plugin/**/*.js"
                 ]
                 , dest: "public/js/compiled-app.min.js"
             },
@@ -40,6 +43,7 @@ module.exports = function (grunt) {
                     "public/js/libs/bootstrap-timepicker.min.js",
                     "public/js/libs/bootstrap-fileupload.min.js",
                     "public/js/libs/jquery.jgrowl.js",
+                    "public/js/libs/slimselect.min.js",
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
                     "public/js/libs/jquery.tagsinput.min.js"
@@ -158,4 +162,9 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
+	
+    grunt.registerTask("Build-App-Src", ["uglify:app_src", "jshint"]);
+    grunt.registerTask("Build-Base-Lib", ["uglify:base_lib_src"]);
+    grunt.registerTask("Build-Extended-Src", ["uglify:extended_lib_src"]);
+    grunt.registerTask("Build-Less-Dev", ["less:dev"]);
 };

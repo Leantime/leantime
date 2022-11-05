@@ -44,6 +44,7 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
+				'menuType' => repositories\menu::DEFAULT_MENU,
                 'psettings' => ''
             );
 
@@ -73,7 +74,8 @@ namespace leantime\domain\controllers {
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
-                    'psettings' => $_POST['globalProjectUserAccess']
+                    'psettings' => $_POST['globalProjectUserAccess'],
+                    'menuType' => $_POST['menuType']
                 );
 
                 if ($values['name'] === '') {
@@ -107,15 +109,19 @@ namespace leantime\domain\controllers {
                     }
 
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-	            // NEW Queuing messaging system
-	            $queue = new repositories\queue();
+					// NEW Queuing messaging system
+					$queue = new repositories\queue();
                     $queue->queueMessageToUsers($to, $message, $language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					if($values['menuType'] == 'dts') {
+						$tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/lbmcanvas/showCanvas/'), 'success');
+                    } else {
+                        $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					}
 
                     $tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
@@ -126,17 +132,15 @@ namespace leantime\domain\controllers {
 
             }
 
+			$menuRepo = new repositories\menu();
+            $tpl->assign('menuTypes', $menuRepo->getMenuTypes());
 
             $tpl->assign('project', $values);
             $user = new repositories\users();
             $clients = new repositories\clients();
 
-
-
-
-           $tpl->assign('availableUsers', $user->getAll());
-           $tpl->assign('clients', $clients->getAll());
-
+			$tpl->assign('availableUsers', $user->getAll());
+			$tpl->assign('clients', $clients->getAll());
 
             $tpl->assign('info', $msgKey);
 
