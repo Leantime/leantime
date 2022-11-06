@@ -91,8 +91,8 @@ namespace leantime\core {
             
 			$_SESSION['usersettings.theme'] = $id;
             setcookie('theme', $id,  [ 'expires' => time() + 60 * 60 * 24 * 30,
-                                                   'path' => $this->config->appUrlRoot.'/',
-                                                   'samesite' => 'Strict' ]);
+                                       'path' => $this->config->appUrlRoot.'/',
+                                       'samesite' => 'Strict' ]);
 
 		}
         
@@ -331,7 +331,7 @@ namespace leantime\core {
 
             if(isset($this->iniData['name'][$language->getCurrentLanguage()])) {
                             
-                        return $iniData['name'][$language->getCurrentLanguage()];
+                        return $this->iniData['name'][$language->getCurrentLanguage()];
                         
             }
 
@@ -341,7 +341,7 @@ namespace leantime\core {
 
             }
 
-            return $language->__("theme.$theme.name");
+            return $language->__("theme."$this->getActive()."name");
             
         }
         
