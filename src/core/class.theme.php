@@ -341,7 +341,7 @@ namespace leantime\core {
 
             }
 
-            return $language->__("theme."$this->getActive()."name");
+            return $language->__("theme.".$this->getActive()."name");
             
         }
         
