@@ -13,6 +13,7 @@ namespace leantime\domain\controllers {
     {
 
         private $projectRepo;
+        private $menuRepo;
 
         /**
          * init - initialize private variables
@@ -22,6 +23,7 @@ namespace leantime\domain\controllers {
         public function init() {
 
             $this->projectRepo = new repositories\projects();
+            $this->menuRepo = new repositories\menu();
 
         }
 
@@ -39,8 +41,8 @@ namespace leantime\domain\controllers {
             if (auth::userIsAtLeast(roles::$manager)) {
 
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
-
                 $this->tpl->assign('allProjects', $this->projectRepo->getAll());
+                $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
 
                 $this->tpl->display('projects.showAll');
 

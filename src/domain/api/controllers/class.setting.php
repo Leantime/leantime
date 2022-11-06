@@ -11,10 +11,10 @@ namespace leantime\domain\controllers {
     class setting
     {
 
-        private $usersService;
+        private $settingService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request

@@ -12,10 +12,10 @@
 $fp  = '';
 
 // If semaphore can not be created, exit
-if(is_writable("../resources/logs/")) {
-    $fp = fopen("../resources/logs/cronlock.txt", "w+");
+if(is_writable("../logs/")) {
+    $fp = fopen("../logs/cronlock.txt", "w+");
 }else{
-    error_log("Can't write to logs directory. Cron won't be executed");
+    error_log("Can't write to /logs directory. Cron won't be executed");
     exit();
 }
 
@@ -23,7 +23,6 @@ define('RESTRICTED', FALSE);
 define('ROOT', dirname(__FILE__));
 
 include_once '../config/configuration.php';
-include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 
 use leantime\domain\repositories;

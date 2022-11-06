@@ -140,7 +140,7 @@
 
                             <h5 class="accordionTitle" id="accordion_link_<?=$i ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$i ?>" onclick="accordionToggle('<?=$i ?>');">
-                                    <i class="fa fa-caret-down"></i><?=$this->__($ticketGroup["labelName"]) ?>
+                                    <i class="fa fa-angle-down"></i><?=$this->__($ticketGroup["labelName"]) ?>
                                     (<?=count($ticketGroup["tickets"]) ?>)
                                 </a>
                                 <a class="titleInsertLink" href="javascript:void(0)" onclick="insertQuickAddForm(<?=$i; ?>, <?=$groupProjectId?>, '<?=$ticketCreationDueDate?>')"><i class="fa fa-plus"></i> <?=$this->__('links.add_todo_no_icon') ?></a>
@@ -378,15 +378,15 @@
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-        if(currentLink.hasClass("fa-caret-right")){
-            currentLink.removeClass("fa-caret-right");
-            currentLink.addClass("fa-caret-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
-            currentLink.removeClass("fa-caret-down");
-            currentLink.addClass("fa-caret-right");
-            jQuery('#accordion_'+id).slideUp("fast");
-        }
+            if(currentLink.hasClass("fa-angle-right")){
+                currentLink.removeClass("fa-angle-right");
+                currentLink.addClass("fa-angle-down");
+                jQuery('#accordion_'+id).slideDown("fast");
+            }else{
+                currentLink.removeClass("fa-angle-down");
+                currentLink.addClass("fa-angle-right");
+                jQuery('#accordion_'+id).slideUp("fast");
+            }
 
     }
 

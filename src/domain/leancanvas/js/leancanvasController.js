@@ -1,5 +1,42 @@
 leantime.leanCanvasController = (function () {
 
+	// To be set
+	var canvasName = 'lean';
+
+	// To be implemented
+    var setRowHeights = function () {
+
+		var nbRows = 3;
+        var rowHeight = jQuery("html").height()- 320 - 20 * nbRows;
+		
+        var firstRowHeight = rowHeight * 0.333;
+        jQuery("#firstRow div.contentInner").each(function(){
+            if(jQuery(this).height() > firstRowHeight){
+                firstRowHeight = jQuery(this).height() + 25;
+            }
+        });
+        jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
+
+        var secondRowHeight = rowHeight * 0.333;
+        jQuery("#secondRow div.contentInner").each(function(){
+            if(jQuery(this).height() > secondRowHeight){
+                secondRowHeight = jQuery(this).height() + 25;
+            }
+        });
+        jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
+
+        var thirdRowHeight = rowHeight * 0.333;
+        jQuery("#thirdRow div.contentInner").each(function(){
+            if(jQuery(this).height() > thirdRowHeight){
+                thirdRowHeight = jQuery(this).height() + 25;
+            }
+        });
+        jQuery("#thirdRow .column .contentInner").css("height", thirdRowHeight);
+
+    };
+
+	// --- Internal (not to be changed beyond this point) ---
+	
     var closeModal = false;
 
     //Variables
@@ -19,10 +56,7 @@ leantime.leanCanvasController = (function () {
                 }
             },
             afterShowCont: function () {
-
-                jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
-
-
+                jQuery("."+canvasName+"CanvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },
             beforeClose: function () {
@@ -47,7 +81,7 @@ leantime.leanCanvasController = (function () {
     //Functions
 
     var _initModals = function () {
-        jQuery(".canvasModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery("."+canvasName+"CanvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
     };
 
     var openModalManually = function (url) {
@@ -77,58 +111,6 @@ leantime.leanCanvasController = (function () {
         closeModal = true;
     };
 
-    var setCanvasHeights = function () {
-
-        var maxHeight = 0;
-
-        jQuery("#firstRow div.contentInner").each(function(){
-            if(jQuery(this).height() > maxHeight){
-                maxHeight = jQuery(this).height()+100;
-            }
-        });
-
-        jQuery("#firstRow div.contentInner").css("height", maxHeight);
-
-    };
-
-    var setSimpleCanvasHeights = function () {
-
-        var maxHeight = 0;
-
-        var height = jQuery("html").height()-320;
-        jQuery("#firstRow .column .contentInner").css("height", height);
-
-    };
-
-
-
-    var initFilterBar = function () {
-
-        jQuery(window).bind("load", function () {
-            jQuery(".loading").fadeOut();
-            jQuery(".filterBar .row-fluid").css("opacity", "1");
-
-
-        });
-
-    };
-
-    var initCanvasLinks = function () {
-
-        jQuery(".addCanvasLink").click(function() {
-
-            jQuery('#addCanvas').modal('show');
-
-        });
-
-        jQuery(".editCanvasLink").click(function() {
-
-            jQuery('#editCanvas').modal('show');
-
-        });
-
-    };
-
     var initUserDropdown = function () {
 
         jQuery("body").on(
@@ -146,7 +128,7 @@ leantime.leanCanvasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/leancanvas',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
                             data:
                                 {
                                     id : canvasId,
@@ -156,8 +138,7 @@ leantime.leanCanvasController = (function () {
                     ).done(
                         function () {
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#user"+canvasId).text(dataLabel);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
                         }
                     );
 
@@ -171,30 +152,71 @@ leantime.leanCanvasController = (function () {
         jQuery("body").on(
             "click", ".statusDropdown .dropdown-menu a", function () {
 
-                var dataValue = jQuery(this).attr("data-value").split("_");
+                var dataValue = jQuery(this).attr("data-value").split("/");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 2) {
 
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
+					var statusClass = jQuery(this).attr('class');
 
 
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/leancanvas',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
                             data:
                                 {
                                     id : canvasItemId,
-                                    status:status
+                                    status: status
                                 }
                         }
                     ).done(
                         function () {
                             jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass("label-"+status+" dropdown-toggle f-left status ");
+                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(statusClass+" dropdown-toggle f-left status ");
                             jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+
+                        }
+                    );
+
+                }
+            }
+        );
+
+    };
+	
+    var initRelatesDropdown = function () {
+
+        jQuery("body").on(
+            "click", ".relatesDropdown .dropdown-menu a", function () {
+
+                var dataValue = jQuery(this).attr("data-value").split("/");
+                var dataLabel = jQuery(this).attr('data-label');
+
+                if (dataValue.length == 2) {
+
+                    var canvasItemId = dataValue[0];
+                    var relates = dataValue[1];
+					var relatesClass = jQuery(this).attr('class');
+
+
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: leantime.appUrl+'/api/'+canvasName+'canvas',
+                            data:
+                                {
+                                    id : canvasItemId,
+                                    relates: relates
+                                }
+                        }
+                    ).done(
+                        function () {
+                            jQuery("#relatesDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
+                            jQuery("#relatesDropdownMenuLink"+canvasItemId).removeClass().addClass(relatesClass+" dropdown-toggle f-left relates ");
+                            jQuery.jGrowl(leantime.i18n.__("short_notifications.relates_updated"));
 
                         }
                     );
@@ -210,11 +232,10 @@ leantime.leanCanvasController = (function () {
         setCloseModal:setCloseModal,
         toggleMilestoneSelectors: toggleMilestoneSelectors,
         openModalManually:openModalManually,
-        setCanvasHeights:setCanvasHeights,
-        initFilterBar:initFilterBar,
-        initCanvasLinks:initCanvasLinks,
         initUserDropdown:initUserDropdown,
         initStatusDropdown:initStatusDropdown,
-        setSimpleCanvasHeights:setSimpleCanvasHeights
+        initRelatesDropdown:initRelatesDropdown,
+        setRowHeights:setRowHeights
     };
+    
 })();

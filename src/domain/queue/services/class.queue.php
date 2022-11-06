@@ -50,7 +50,7 @@ namespace leantime\domain\services {
 
             $allMessagesToSend=array();
             $n=0;
-            foreach ($messages as $message) 
+            foreach ($messages as $message)
             {
                 $n++;
                 $currentUserId=$message['userId'];
@@ -96,7 +96,7 @@ namespace leantime\domain\services {
                 // echo for DEBUG PURPOSE
                 debug_print( "The message frequency for ".$recipient." : ".$messageFrequency);
 
-                if ($timeSince < $messageFrequency ) 
+                if ($timeSince < $messageFrequency )
                 {
                     // echo for DEBUG PURPOSE
                     debug_print( "Elapsed time not enough for ".$recipient." : skipping till ".date("Y-m-d H:i:s", $lastMessageDate+$messageFrequency));
@@ -106,7 +106,7 @@ namespace leantime\domain\services {
                 // TODO here : set up a true templating system to format the messages
                 $formattedHTML=$this->doFormatMail($messageToSendToUser);
 
-                // DONE Tranlastion needed somewhere ? 
+                // DONE Tranlastion needed somewhere ?
 
                 // DONE : Send the message with PHPMailer here
                 $this->mailer->setContext('latest_updates');

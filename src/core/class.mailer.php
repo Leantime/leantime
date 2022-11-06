@@ -215,7 +215,7 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
-            events::dispatch_event('beforeSendMail');
+            $this->registerMailerHook('event', 'beforeSendMail');
 
             $to = $this->registerMailerHook('filter', 'sendMailTo', $to);
             $from = $this->registerMailerHook('filter', 'sendMailFrom', $from);
@@ -261,7 +261,6 @@ namespace leantime\core {
 						</td>
 					</tr>
 				</table>
-
 			</td>
 		</tr>
 		<tr>
@@ -311,7 +310,7 @@ namespace leantime\core {
                 $this->mailAgent->clearAllRecipients();
             }
 
-            events::dispatch_event('afterSendMail');
+            $this->registerMailerHook('event', 'afterSendMail');
 
         }
 

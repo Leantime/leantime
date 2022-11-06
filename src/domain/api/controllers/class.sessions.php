@@ -8,7 +8,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class sessions
+    class sessions extends controller
     {
 
         private $usersService;

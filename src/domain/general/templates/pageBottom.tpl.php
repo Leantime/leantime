@@ -1,7 +1,4 @@
-<?php 
-    use \leantime\core\events;
-    defined('RESTRICTED') or die('Restricted access'); 
-?>
+<?php defined('RESTRICTED') or die('Restricted access'); ?>
 
 <?php if ( isset($_SESSION['do_cron'] )) { ?>
     <script>
@@ -10,6 +7,8 @@
         req.send(null);
     </script>
 <?php } ?>
+
 <?php $this->dispatchTplEvent('beforeBodyClose'); ?>
+
 </body>
 </html>

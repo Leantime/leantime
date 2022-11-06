@@ -76,8 +76,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->displayPartial("calendar.export");
 
-            events::dispatch_event('end');
-
         }
 
     }

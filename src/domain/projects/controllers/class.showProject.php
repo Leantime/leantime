@@ -25,13 +25,15 @@ namespace leantime\domain\controllers {
         private $clientsRepo;
         private $fileRepo;
         private $commentsRepo;
+        private $menuRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init() {
+        public function init()
+        {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
@@ -48,6 +50,7 @@ namespace leantime\domain\controllers {
             $this->clientsRepo = new repositories\clients();
             $this->fileRepo = new repositories\files();
             $this->commentsRepo = new repositories\comments();
+            $this->menuRepo = new repositories\menu();
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -218,7 +221,8 @@ namespace leantime\domain\controllers {
                         'state' => $_POST['projectState'],
                         'hourBudget' => $_POST['hourBudget'],
 						'dollarBudget' => $_POST['dollarBudget'],
-                        'psettings' => $_POST['globalProjectUserAccess']
+                        'psettings' => $_POST['globalProjectUserAccess'],
+                        'menuType' => $_POST['menuType']
                     );
 
                     if ($values['name'] !== '') {
@@ -309,6 +313,7 @@ namespace leantime\domain\controllers {
 
                 $employees = $this->userRepo->getEmployees();
 
+                //Assign vars
                 $this->tpl->assign('availableUsers', $this->userRepo->getAll());
                 $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
@@ -317,7 +322,6 @@ namespace leantime\domain\controllers {
 
                 $this->tpl->assign('employees', $employees);
 
-                //Assign vars
                 $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
                 $this->tpl->assign('projectTickets', $this->projectRepo->getProjectTickets($id));
 
@@ -351,6 +355,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('comments', $comment);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 
+                $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
 
                 $this->tpl->assign('state', $this->projectRepo->state);
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);

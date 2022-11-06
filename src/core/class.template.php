@@ -86,6 +86,8 @@ namespace leantime\core {
          */
         public function __construct()
         {
+
+            $this->theme = new theme();
             $this->language = new language();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
@@ -118,6 +120,47 @@ namespace leantime\core {
 
             $_SESSION['notification'] = $msg;
             $_SESSION['notifcationType'] = $type;
+
+        }
+
+        /***
+         * getTemplatePath - Find template in custom and src directories
+         *
+         * @access public
+         * @param  string $module Module template resides in
+         * @param  string $name   Template filename name (including tpl.php extension)
+         * @return string Full template path
+         *
+         */
+        public function getTemplatePath(string $module, string $name): string|false
+        {
+
+            $plugin_path = events::dispatch_filter('relative_plugin_template_path', '', [
+                'module' => $module,
+                'name' => $name
+            ]);
+
+            if (empty($plugin_path) || !file_exists($plugin_path)) {
+                $file = '/domain/'.$module.'/templates/'.$name;
+
+                if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                    return ROOT.'/../custom'.$file;
+                }
+
+                if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
+                    return ROOT.'/../src'.$file;
+                }
+            }
+
+            if(file_exists(ROOT.'/../custom'.$plugin_path) && is_readable(ROOT.'/../custom'.$plugin_path)) {
+                return ROOT.'/../custom'.$plugin_path;
+            }
+
+            if(file_exists(ROOT.'/../src'.$plugin_path) && is_readable(ROOT.'/../src'.$plugin_path)) {
+                return ROOT.'/../src'.$plugin_path;
+            }
+
+            throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
 
         }
 
@@ -160,18 +203,21 @@ namespace leantime\core {
                 $layout = events::dispatch_filter($filter, $layout);
             }
 
-            foreach ([
-                'layout_path',
-                "layout_path.$template"
-            ] as $filter) {
-                $layout_path = events::dispatch_filter($filter, '/../src/layouts/'.$layout.'.php');
+            $layoutFilename = $this->theme->getLayoutFilename($layout.'.php', $template);
+
+            if($layoutFilename === false) {
+
+                $layoutFilename = $this->theme->getLayoutFilename('app.php');
+
             }
 
-            if(file_exists(ROOT . $layout_path)) {
-                require ROOT . $layout_path;
-            }else{
-                require ROOT . '/../src/layouts/app.php';
+            if($layoutFilename === false) {
+
+                throw new \Exception("Cannot find default 'app.php' layout file");
+
             }
+
+            require($layoutFilename);
 
             $layoutContent = ob_get_clean();
 
@@ -187,38 +233,13 @@ namespace leantime\core {
 
             //frontcontroller splits the name (actionname.modulename)
             $action = $this->frontcontroller::getActionName($template);
-
             $module = $this->frontcontroller::getModuleName($template);
 
-            //Try plugin folder first for overrides
-            $path_exists = false;
-            foreach ([
-                'plugins',
-                'domain'
-            ] as $srcPath) {
-                $template_path = ROOT."/../src/$srcPath/$module/templates/$action.tpl.php";
-
-                if (file_exists($template_path)) {
-                    $path_exists = true;
-                    $type = $srcPath;
-                    break;
-                }
-            }
-
-            if (!$path_exists) {
-                throw new \Exception($this->__("notifications.no_template"));
-            }
-
-            foreach ([
-                'template_path',
-                "template_path.$template"
-            ] as $filter) {
-                $template_path = events::dispatch_filter($filter, $template_path);
-            }
+            $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
 
             $this->hookContext = ($type == 'plugin' ? 'pluginTpl' : 'tpl') . ".$module.$action";
 
-            require_once $template_path;
+            require_once($loadFile);
 
             $content = ob_get_clean();
 
@@ -332,7 +353,20 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $relative_path = events::dispatch_filter(
+                'submodule_relative_path',
+                "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
+                [
+                    'module' => $submodule['module'],
+                    'submodule' => $submodule['submodule']
+                ]
+            );
+
+            $file = "../custom/domain/$relative_path";
+
+            if(!file_exists($file)) {
+                $file = "../src/domain/$relative_path";
+            }
 
             if (file_exists($file)) {
 
@@ -672,6 +706,31 @@ namespace leantime\core {
             $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
 
             return $returnLink;
+        }
+
+        /***
+         * patchDownloadUrlToFilenameOrAwsUrl- Replace all local download.php references in <img src=""> tags
+         *     by either local filenames or AWS URLs that can be accesse without being authenticated
+         *
+         * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
+         * authenticated
+
+         *
+         * @access public
+         * @param  string  $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+         * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+         *                 local filenames or AWS URLs
+         */
+        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
+        {
+
+            $patchedTextHtml = $this->convertRelativePaths($textHtml);
+
+            // TO DO: Replace local download.php
+            $patchedTextHtml = $patchedTextHtml;
+
+            return $patchedTextHtml;
+
         }
 
         /**

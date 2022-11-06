@@ -13,7 +13,10 @@ namespace leantime\domain\controllers {
     {
 
         private $projectRepo;
-        private $leancanvasRepo;
+        private $menuRepo;
+        private $userRepo;
+        private $clientsRepo;
+        private $queueRepo;
         private $projectService;
 
         /**
@@ -25,7 +28,10 @@ namespace leantime\domain\controllers {
         {
 
             $this->projectRepo = new repositories\projects();
-            $this->leancanvasRepo = new repositories\leancanvas();
+            $this->menuRepo = new repositories\menu();
+            $this->userRepo = new repositories\users();
+            $this->clientsRepo = new repositories\clients();
+            $this->queueRepo = new repositories\queue();
             $this->projectService = new services\projects();
 
         }
@@ -54,6 +60,7 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
+				'menuType' => repositories\menu::DEFAULT_MENU,
                 'psettings' => ''
             );
 
@@ -83,7 +90,8 @@ namespace leantime\domain\controllers {
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
-                    'psettings' => $_POST['globalProjectUserAccess']
+                    'psettings' => $_POST['globalProjectUserAccess'],
+                    'menuType' => $_POST['menuType']
                 );
 
                 if ($values['name'] === '') {
@@ -118,15 +126,18 @@ namespace leantime\domain\controllers {
                     }
 
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-	            // NEW Queuing messaging system
-	            $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
+					// NEW Queuing messaging system
+                    $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					if($values['menuType'] == 'dts') {
+						$this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/lbmcanvas/showCanvas/'), 'success');
+                    } else {
+                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					}
 
                     $this->tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
@@ -137,18 +148,10 @@ namespace leantime\domain\controllers {
 
             }
 
-
+            $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
             $this->tpl->assign('project', $values);
-            $user = new repositories\users();
-            $clients = new repositories\clients();
-
-
-
-
-           $this->tpl->assign('availableUsers', $user->getAll());
-           $this->tpl->assign('clients', $clients->getAll());
-
-
+			$this->tpl->assign('availableUsers', $this->userRepo->getAll());
+			$this->tpl->assign('clients', $this->clientsRepo->getAll());
             $this->tpl->assign('info', $msgKey);
 
             $this->tpl->display('projects.newProject');

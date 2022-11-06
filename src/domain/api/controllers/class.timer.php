@@ -9,6 +9,8 @@ namespace leantime\domain\controllers {
     class timer extends controller
     {
 
+        private $timesheetService;
+
         /**
          * init - initialize private variables
          *

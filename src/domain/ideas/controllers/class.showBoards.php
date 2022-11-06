@@ -73,7 +73,6 @@ namespace leantime\domain\controllers {
 
                     $mailer = new core\mailer();
                     $mailer->setContext('idea_board_created');
-                    $this->projectService = new services\projects();
                     $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
                     $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
