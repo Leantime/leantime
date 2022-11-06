@@ -50,7 +50,6 @@ namespace leantime\domain\repositories {
 
         public function __construct()
         {
-
             $config = new core\config();
             $this->db = core\db::getInstance();
 

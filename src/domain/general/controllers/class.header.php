@@ -103,7 +103,6 @@ namespace leantime\domain\controllers {
                     }
                 }
             }
-
             if (!isset($_SESSION["companysettings.logoPath"])) {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");

@@ -22,7 +22,6 @@
 <link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/themes/leantime-<?=$theme?>.css?v=<?php echo $settings->appVersion; ?>"/>
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
 <?php $this->dispatchTplEvent('afterLinkTags'); ?>
 
@@ -45,6 +44,14 @@
     <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
 <?php } ?>
 <?php $this->dispatchTplEvent('afterThemeScripts'); ?>
+
+<!-- theme -->
+<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>
+    <script src="<?=$jsUrl ?>"></script>
+<?php } ?>
+<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>
+    <link rel="stylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>
 
 <!-- Replace main theme colors -->
 <style>

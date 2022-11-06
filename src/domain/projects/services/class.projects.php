@@ -503,7 +503,6 @@ namespace leantime\domain\services {
                     $_SESSION['currentCPCanvas'] = "";
                     $_SESSION['currentSMCanvas'] = "";
                     $_SESSION['currentRETROSCanvas'] = "";
-
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
                     unset($_SESSION["projectsettings"]);
@@ -552,7 +551,6 @@ namespace leantime\domain\services {
 			$_SESSION['currentCPCanvas'] = "";
 			$_SESSION['currentSMCanvas'] = "";
             $_SESSION['currentRETROSCanvas'] = "";
-
             unset($_SESSION["projectsettings"]);
 
             $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);

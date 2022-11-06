@@ -121,8 +121,8 @@ namespace leantime\domain\controllers {
                                         $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                         $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
-                                        setcookie('language', $postLang, time()+60*60*24*30, '/');
-                                        setcookie('theme', $postTheme, time()+60*60*24*30, '/');
+                                        $themeCore->setActive($postTheme);
+                                        $language->setLanguage($postLang);
 
                                         $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
 
@@ -140,8 +140,8 @@ namespace leantime\domain\controllers {
                                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
-                                    setcookie('language', $postLang, time()+60*60*24*30, '/');
-                                    setcookie('theme', $postTheme, time()+60*60*24*30, '/');
+                                    $themeCore->setActive($postTheme);
+                                    $language->setLanguage($postLang);
 
                                     $this->userRepo->editOwn($values, $userId);
 

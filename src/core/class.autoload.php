@@ -28,7 +28,7 @@ function leantimeAutoloader($class)
     // leantime \ domain \ MVC FOLDER \ MODULE \ CLASS
 
     //For Plugins
-    // leantime \ plugins \ plugin \ MVC FOLDER \ CLASS
+    // leantime \ plugin \ MVC FOLDER \ CLASS
 
     $classPartsCount = count($classArray);
 

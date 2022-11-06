@@ -13,7 +13,6 @@ namespace leantime\domain\controllers {
     {
 
         private $projects;
-        private $sprintService;
 
         /**
          * init - initialize private variables

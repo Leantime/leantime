@@ -496,7 +496,6 @@
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
 
-
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initMilestoneDropdown();

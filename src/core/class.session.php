@@ -134,7 +134,6 @@ class session
         }
 
         setcookie('sid', "",  [ 'expires' => time() - 42000, 'path' => '/' ]);
-
     }
 
 }

@@ -111,7 +111,6 @@ namespace leantime\domain\services {
             $this->sqCanvasRepo = new repositories\sqcanvas();
             $this->swotCanvasRepo = new repositories\swotcanvas();
 
-
             $companyLang = $this->settings->getSetting("companysettings.language");
             if($companyLang != "" && $companyLang !== false){
                 $currentLanguage = $companyLang;
@@ -133,7 +132,6 @@ namespace leantime\domain\services {
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
                 'numIdeaItems' => $this->ideaRepository->getNumberOfIdeas(),
                 'numHoursBooked' => $this->timesheetRepo->getHoursBooked(),
-
 				// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
                 'numResearchBoards' => $this->leanCanvasRepo->getNumberOfBoards(),
                 'numRetroBoards' => $this->retrosCanvasRepo->getNumberOfBoards(),
@@ -149,7 +147,6 @@ namespace leantime\domain\services {
                 'numSMBoards' => $this->smCanvasRepo->getNumberOfBoards(),
                 'numSQBoards' => $this->sqCanvasRepo->getNumberOfBoards(),
                 'numSWOTBoards' => $this->swotCanvasRepo->getNumberOfBoards(),
-
                 'numResearchItems' => $this->leanCanvasRepo->getNumberOfCanvasItems(),
                 'numRetroItems' => $this->retrosCanvasRepo->getNumberOfCanvasItems(),
                 'numCPItems' => $this->cpCanvasRepo->getNumberOfCanvasItems(),

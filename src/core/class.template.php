@@ -86,7 +86,6 @@ namespace leantime\core {
          */
         public function __construct()
         {
-
             $this->theme = new theme();
             $this->language = new language();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
@@ -723,7 +722,6 @@ namespace leantime\core {
          */
         public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
         {
-
             $patchedTextHtml = $this->convertRelativePaths($textHtml);
 
             // TO DO: Replace local download.php
