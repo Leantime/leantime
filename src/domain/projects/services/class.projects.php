@@ -99,7 +99,7 @@ namespace leantime\domain\services {
             //Fix this
             $currentDate = new DateTime();
             $inFiveYears = intval($currentDate->format("Y")) + 5;
-            
+
             if(intval($today->format("Y")) >= $inFiveYears) {
                 $completionDate = "Past ".$inFiveYears;
             }else{
@@ -144,8 +144,8 @@ namespace leantime\domain\services {
 
             //Email
             $users = $this->getUsersToNotify($projectId);
-            $users = array_filter($users, function($user, $k) { 
-                return $user != $_SESSION['userdata']['mail']; 
+            $users = array_filter($users, function($user, $k) {
+                return $user != $_SESSION['userdata']['mail'];
             }, ARRAY_FILTER_USE_BOTH);
 
 

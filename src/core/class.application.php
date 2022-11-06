@@ -205,12 +205,11 @@ class application
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
 
                 //Don't redirect on i18n call
-                    if($this->frontController::getCurrentRoute() !== "install.update" &&
-                        $this->frontController::getCurrentRoute() !== "api.i18n"){
+                if($this->frontController::getCurrentRoute() !== "install.update" &&
+                    $this->frontController::getCurrentRoute() !== "api.i18n"){
 
-                        $this->frontController::redirect(BASE_URL . "/install/update");
-                    }
-
+                    $this->frontController::redirect(BASE_URL . "/install/update");
+                }
 
             }
         }

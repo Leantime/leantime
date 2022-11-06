@@ -3,11 +3,28 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class simpleCanvas
+    class simpleCanvas extends controller
     {
+
+        private $leancanvasRepo;
+        private $projectService;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->leancanvasRepo = new repositories\leancanvas();
+            $this->projectService = new services\projects();
+
+        }
 
         /**
          * run - display template and edit data
@@ -17,12 +34,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $leancanvasRepo = new repositories\leancanvas();
-            $projectService = new services\projects();
-            $language = new core\language();
-
-            $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
             if(isset($_SESSION['currentLeanCanvas'])) {
                 $currentCanvasId = $_SESSION['currentLeanCanvas'];
@@ -52,33 +64,32 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
-                    $currentCanvasId = $leancanvasRepo->addCanvas($values);
-                    $allCanvas = $leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
+                    $currentCanvasId = $this->leancanvasRepo->addCanvas($values);
+                    $allCanvas = $this->leancanvasRepo->getAllCanvas($_SESSION['currentProject']);
 
                     $mailer = new core\mailer();
                     $mailer->setContext('new_canvas_created');
-                    $projectService = new services\projects();
-                    $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
+                    $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
-                    $mailer->setSubject($language->__("notifications.new_canvas_created"));
+                    $mailer->setSubject($this->language->__("notifications.new_canvas_created"));
 
                     $actual_link = CURRENT_URL;
-                    $message = sprintf($language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
+                    $message = sprintf($this->language->__("email_notifications.canvas_created_message"),$_SESSION["userdata"]["name"], "<a href='" . $actual_link . "'>" . $values['title'] . "</a>");
                     $mailer->setHtml($message);
                     //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     // NEW Queuing messaging system
                     $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($users, $message, $language->__("notifications.new_canvas_created"), $_SESSION["currentProject"]);
+                    $queue->queueMessageToUsers($users, $message, $this->language->__("notifications.new_canvas_created"), $_SESSION["currentProject"]);
 
 
-                    $tpl->setNotification($language->__("notifications.new_canvas_created"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.new_canvas_created"), 'success');
 
                     $_SESSION['currentLeanCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
+                    $this->tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
                 } else {
-                    $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                 }
 
             }
@@ -89,28 +100,28 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
-                    $currentCanvasId = $leancanvasRepo->updateCanvas($values);
+                    $currentCanvasId = $this->leancanvasRepo->updateCanvas($values);
 
-                    $tpl->setNotification($language->__("notification.board_edited"), "success");
-                    $tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
+                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success");
+                    $this->tpl->redirect(BASE_URL."/leancanvas/simpleCanvas/");
 
 
                 } else {
-                    $tpl->setNotification($language->__("notification.please_enter_title"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                 }
 
             }
 
-            $tpl->assign('currentCanvas', $currentCanvasId);
-            $tpl->assign('statusLabels', $leancanvasRepo->getStatusLabels());
-            $tpl->assign('canvasLabels', $leancanvasRepo->canvasTypes);
-            $tpl->assign('allCanvas', $allCanvas);
-            $tpl->assign('canvasItems', $leancanvasRepo->getCanvasItemsById($currentCanvasId));
-            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('currentCanvas', $currentCanvasId);
+            $this->tpl->assign('statusLabels', $this->leancanvasRepo->getStatusLabels());
+            $this->tpl->assign('canvasLabels', $this->leancanvasRepo->canvasTypes);
+            $this->tpl->assign('allCanvas', $allCanvas);
+            $this->tpl->assign('canvasItems', $this->leancanvasRepo->getCanvasItemsById($currentCanvasId));
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
 
             if (isset($_GET["raw"]) === false) {
-                $tpl->display('leancanvas.simpleCanvas');
+                $this->tpl->display('leancanvas.simpleCanvas');
             }
         }
 

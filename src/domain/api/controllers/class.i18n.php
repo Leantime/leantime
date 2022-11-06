@@ -3,30 +3,13 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class i18n
+    class i18n extends controller
     {
-
-        private $tpl;
-        private $i18n;
-
-        /**
-         * constructor - initialize private variables
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function __construct()
-        {
-
-            $this->tpl = new core\template();
-            $this->i18n = new core\language();
-
-        }
-
 
         /**
          *
@@ -40,7 +23,7 @@ namespace leantime\domain\controllers {
 
             header('Content-Type: application/javascript');
 
-            $decodedString = json_encode($this->i18n->readIni());
+            $decodedString = json_encode($this->language->readIni());
 
             $result = $decodedString ? $decodedString : '{}';
 

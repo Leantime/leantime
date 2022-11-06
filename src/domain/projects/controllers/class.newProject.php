@@ -3,13 +3,32 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class newProject
+    class newProject extends controller
     {
+
+        private $projectRepo;
+        private $leancanvasRepo;
+        private $projectService;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->projectRepo = new repositories\projects();
+            $this->leancanvasRepo = new repositories\leancanvas();
+            $this->projectService = new services\projects();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,15 +43,6 @@ namespace leantime\domain\controllers {
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
             }
-
-            $tpl = new core\template();
-            $projectRepo = new repositories\projects();
-            $leancanvasRepo = new repositories\leancanvas();
-            $ideaRepo = new repositories\ideas();
-            $ticketService = new services\tickets();
-            $projectService = new services\projects();
-            $language = new core\language();
-
 
             $msgKey = '';
             $values = array(
@@ -78,24 +88,24 @@ namespace leantime\domain\controllers {
 
                 if ($values['name'] === '') {
 
-                    $tpl->setNotification($language->__("notification.no_project_name"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
 
                 } elseif ($values['clientId'] === '') {
 
-                    $tpl->setNotification($language->__("notification.no_client"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.no_client"), 'error');
 
                 } else {
 
                     $projectName = $values['name'];
-                    $id = $projectRepo->addProject($values);
-                    $projectService->changeCurrentSessionProject($id);
+                    $id = $this->projectRepo->addProject($values);
+                    $this->projectService->changeCurrentSessionProject($id);
 
-                    $users = $projectRepo->getUsersAssignedToProject($id);
+                    $users = $this->projectRepo->getUsersAssignedToProject($id);
 
                     $mailer->setContext('project_created');
-                    $mailer->setSubject($language->__('email_notifications.project_created_subject'));
+                    $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL."/projects/showProject/" . $id . "";
-                    $message = sprintf($language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
                     $mailer->setHtml($message);
 
                     $to = array();
@@ -110,38 +120,38 @@ namespace leantime\domain\controllers {
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
 	            // NEW Queuing messaging system
 	            $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($to, $message, $language->__('email_notifications.project_created_subject'), $id);
+                    $queue->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
 
-                    $tpl->redirect(BASE_URL."/projects/showProject/". $id);
+                    $this->tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
                 }
 
 
-                $tpl->assign('values', $values);
+                $this->tpl->assign('values', $values);
 
             }
 
 
-            $tpl->assign('project', $values);
+            $this->tpl->assign('project', $values);
             $user = new repositories\users();
             $clients = new repositories\clients();
 
 
 
 
-           $tpl->assign('availableUsers', $user->getAll());
-           $tpl->assign('clients', $clients->getAll());
+           $this->tpl->assign('availableUsers', $user->getAll());
+           $this->tpl->assign('clients', $clients->getAll());
 
 
-            $tpl->assign('info', $msgKey);
+            $this->tpl->assign('info', $msgKey);
 
-            $tpl->display('projects.newProject');
+            $this->tpl->display('projects.newProject');
 
 
         }

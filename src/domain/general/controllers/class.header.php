@@ -3,22 +3,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use DebugBar\StandardDebugBar;
     use leantime\core\session;
+    use leantime\base\controller;
     use leantime\domain\repositories\reports;
+    use DebugBar\StandardDebugBar;
 
-    class header
+    class header extends controller
     {
         public $settingsRepo;
         public $config;
 
-        public function run()
+        public function init()
         {
             $this->settingsRepo = new \leantime\domain\repositories\setting();
             $this->config = new core\config();
+            $this->appSettings = new core\appSettings();
+        }
 
-            $tpl = new core\template();
-            $appSettings = new core\appSettings();
+        public function run()
+        {
 
             if(isset($_COOKIE['theme'])){
                 $_SESSION['usersettings.theme'] = htmlentities($_COOKIE['theme']);
@@ -97,9 +100,10 @@ namespace leantime\domain\controllers {
                 }
             }
 
-            $tpl->assign('theme', $_SESSION["usersettings.theme"] ?? null);
-            $tpl->assign('appSettings', $appSettings);
-            $tpl->displayPartial('general.header');
+            $this->tpl->assign('theme', $_SESSION["usersettings.theme"] ?? null);
+            $this->tpl->assign('appSettings', $this->appSettings);
+            $this->tpl->displayPartial('general.header');
+
         }
     }
 }

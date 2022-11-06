@@ -2,9 +2,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class headMenu
+    class headMenu extends controller
     {
 
         private $tpl;
@@ -12,13 +13,13 @@ namespace leantime\domain\controllers {
 
         public function __construct()
         {
-            $this->tpl = new core\template();
+
             $this->timesheets = new services\timesheets();
+
         }
 
         public function run()
         {
-
 
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
@@ -27,4 +28,5 @@ namespace leantime\domain\controllers {
         }
 
     }
+
 }

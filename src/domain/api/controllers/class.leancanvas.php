@@ -3,15 +3,14 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class leancanvas
+    class leancanvas extends controller
     {
 
-        private $tpl;
         private $projects;
         private $sprintService;
 
@@ -24,7 +23,6 @@ namespace leantime\domain\controllers {
         public function __construct()
         {
 
-            $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->leanCanvasRepo = new repositories\leancanvas();
 

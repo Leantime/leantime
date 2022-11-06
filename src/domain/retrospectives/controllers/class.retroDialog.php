@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -10,30 +11,29 @@ namespace leantime\domain\controllers {
     use DateTime;
     use DateInterval;
 
-
-    class retroDialog
+    class retroDialog extends controller
     {
 
-        private $tpl;
-        private $projects;
+        private $retroRepo;
         private $sprintService;
+        private $ticketRepo;
+        private $ticketService;
+        private $commentsRepo;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
-         *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->retroRepo = new repositories\retrospectives();
             $this->sprintService = new services\sprints();
             $this->ticketRepo = new repositories\tickets();
             $this->ticketService = new services\tickets();
             $this->commentsRepo = new repositories\comments();
-            $this->language = new core\language();
+
         }
 
         /**

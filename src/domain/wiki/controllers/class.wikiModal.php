@@ -3,19 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\models\wiki;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class wikiModal {
-
+    class wikiModal extends controller
+    {
 
         public function __construct() {
 
-            $this->tpl = new core\template();
             $this->wikiService = new services\wiki();
+
         }
 
         public function get($params) {
@@ -44,8 +45,6 @@ namespace leantime\domain\controllers {
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification("notification.wiki_updated_successfully", "success");
                 $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id);
-
-
 
             }else{
             //New

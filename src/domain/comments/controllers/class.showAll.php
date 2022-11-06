@@ -4,29 +4,33 @@ namespace leantime\domain\controllers {
 
     use _PHPStan_ccec86fc8\Nette\Neon\Exception;
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class showAll
+    class showAll extends controller
     {
 
         private $projectService;
-        private $tpl;
         private $commentService;
+        private $module;
+        private $id;
+        private $entity;
 
         /**
+         * init - initialize private variables
+         *
+         * @access public
          * @throws Exception
          */
-        public function __construct($params)
+        public function init($params): void
         {
 
-            $this->tpl = new core\template();
             $this->projectService = new services\projects();
             $this->commentService = new services\comments();
 
-
-            if(!isset($params['module']) || !isset($params['entitiyId']) || !isset($params['entity'])) {
+            if(!isset($params['module'], $params['entitiyId'], $params['entity'])) {
                 throw new Exception("comments module needs to be initialized with module, entity id and entity");
             }
 
@@ -34,12 +38,9 @@ namespace leantime\domain\controllers {
             $this->id = $params['entitiyId'];
             $this->entity = $params['entity'];
 
-
-
-
         }
 
-        public function get($params) :void {
+        public function get($params): void {
 
             $comments = $this->commentService->getComments($this->module, $this->id, $_SESSION["projectsettings"]['commentOrder']);
 
@@ -63,7 +64,7 @@ namespace leantime\domain\controllers {
 
         }
 
-        public function post($params) {
+        public function post($params): void {
 
             if (isset($params['comment']) === true) {
 
@@ -75,8 +76,6 @@ namespace leantime\domain\controllers {
             }
 
         }
-
-
 
     }
 

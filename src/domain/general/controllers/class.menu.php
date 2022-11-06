@@ -2,32 +2,39 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class menu
+    class menu extends controller
     {
+
+        private $projectService;
+        private $ticketService;
+
+        public function init()
+        {
+
+            $this->projectService = new services\projects();
+            $this->ticketService = new services\tickets();
+
+        }
 
         public function run()
         {
 
-            $tpl = new core\template();
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
-            $projectService = new services\projects();
-            $ticketService = new services\tickets();
+            $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
 
-            $allAssignedprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
+            $this->tpl->assign('allAssignedProjects', $allAssignedprojects);
+            $this->tpl->assign('allAvailableProjects', $allAvailableProjects);
+            $this->tpl->assign('currentProject', $_SESSION['currentProject']);
 
-            $allAvailableProjects = $projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
+            $this->tpl->assign("ticketMenuLink", $this->ticketService->getLastTicketViewUrl());
 
-            $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
-            $tpl->assign('allAssignedProjects', $allAssignedprojects);
-            $tpl->assign('allAvailableProjects', $allAvailableProjects);
-            $tpl->assign('currentProject', $_SESSION['currentProject']);
-
-            $tpl->assign("ticketMenuLink", $ticketService->getLastTicketViewUrl());
-
-            $tpl->displayPartial('general.menu');
+            $this->tpl->displayPartial('general.menu');
 
         }
 

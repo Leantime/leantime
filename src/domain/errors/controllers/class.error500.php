@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
 
     class error500
     {
@@ -10,10 +11,11 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-
             core\frontcontroller::setResponseCode(500);
-            $tpl->display('errors.error500');
+            $this->tpl->display('errors.error500');
+
         }
+
     }
+
 }

@@ -6,6 +6,7 @@ namespace leantime\domain\services {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\core\events;
     use RobThree\Auth\TwoFactorAuth;
 
     class auth
@@ -288,17 +289,19 @@ namespace leantime\domain\services {
             $this->profileId = $user['profileId'];
 
             //Set Sessions
-            $_SESSION['userdata']['role'] = $this->role;
-            $_SESSION['userdata']['id'] = $this->userId;
-            $_SESSION['userdata']['name'] = $this->name;
-            $_SESSION['userdata']['profileId'] = $this->profileId;
-            $_SESSION['userdata']['mail'] = $this->mail;
-            $_SESSION['userdata']['clientId'] = $this->clientId;
-            $_SESSION['userdata']['settings'] = $this->settings;
-            $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
-            $_SESSION['userdata']['twoFAVerified'] = false;
-            $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
-            $_SESSION['userdata']['isLdap'] = $isLdap;
+            $_SESSION['userdata'] = events::dispatch_filter('user_session_vars', [
+                'role' => $this->role,
+                'id' => $this->userId,
+                'name' => $this->name,
+                'profileId' => $this->profileId,
+                'mail' => $this->mail,
+                'clientId' => $this->clientId,
+                'settings' => $this->settings,
+                'twoFAEnabled' => $this->twoFAEnabled,
+                'twoFAVerified' => false,
+                'twoFASecret' => $this->twoFASecret,
+                'isLdap' => $isLdap
+            ]);
 
         }
 
@@ -340,15 +343,21 @@ namespace leantime\domain\services {
 
             if(isset($_SESSION)) {
 
-                unset($_SESSION['userdata']);
-                unset($_SESSION['template']);
-                unset($_SESSION["subdomainData"]);
-                unset($_SESSION["currentProject"]);
-                unset($_SESSION["currentSprint"]);
-                unset($_SESSION["projectsettings"]);
-                unset($_SESSION['currentSubscription']);
-                unset($_SESSION['lastTicketView']);
-                unset($_SESSION['lastFilterdTicketTableView']);
+                $sessionsToDestroy = events::dispatch_filter('sessions_vars_to_destroy', [
+                    'userdata',
+                    'template',
+                    'subdomainData',
+                    'currentProject',
+                    'currentSprint',
+                    'projectsettings',
+                    'currentSubscriptions',
+                    'lastTicketView',
+                    'lastFilterdTicketTableView'
+                ]);
+
+                foreach($sessionsToDestroy as $key) {
+                    unset($_SESSION[$key]);
+                }
 
             }
 

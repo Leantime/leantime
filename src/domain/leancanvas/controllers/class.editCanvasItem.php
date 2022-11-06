@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -10,32 +11,32 @@ namespace leantime\domain\controllers {
     use DateTime;
     use DateInterval;
 
-
-    class editCanvasItem
+    class editCanvasItem extends controller
     {
 
-        private $tpl;
-        private $projects;
+        private $leanCanvasRepo;
         private $sprintService;
-        private $language;
+        private $ticketRepo;
+        private $ticketService;
+        private $commentsRepo;
+        private $projectService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->leanCanvasRepo = new repositories\leancanvas();
             $this->sprintService = new services\sprints();
             $this->ticketRepo = new repositories\tickets();
             $this->ticketService = new services\tickets();
             $this->commentsRepo = new repositories\comments();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
+
         }
 
         /**

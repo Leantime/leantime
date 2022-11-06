@@ -2,67 +2,71 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
 
-    class loginInfo
+    class loginInfo extends controller
     {
+
+        private $userRepo;
+
+        public function init()
+        {
+            $userRepo = new repositories\users();
+        }
 
         public function run()
         {
 
-                $user = new repositories\users();
+            $profilePicture = $this->userRepo->getProfilePicture($_SESSION['userdata']['id']);
 
-                $profilePicture = $user->getProfilePicture($_SESSION['userdata']['id']);
+            $user = $this->userRepo->getUser($_SESSION['userdata']['id']);
 
-                $tpl = new core\template();
+            $availableModals = array(
+                "tickets/showAll" => "backlog",
+                "dashboard/show" => "dashboard",
+                "dashboard/home" => "dashboard",
+                "leancanvas/showCanvas" => "fullLeanCanvas",
+                "leancanvas/simpleCanvas" => "simpleLeanCanvas",
+                "ideas/showBoards" => "ideaBoard",
+                "ideas/advancedBoards" => "advancedBoards",
+                "tickets/roadmap" => "roadmap",
+                "retrospectives/showBoards" => "retrospectives",
+                "tickets/showKanban" => "kanban",
+                "timesheets/showMy" => "mytimesheets",
+                "projects/newProject" => "newProject",
+                "projects/showProject" => "projectSuccess",
+                "projects/showAll" => "showProjects",
+                "clients/showAll" => "showClients",
+            );
 
-                $user = $user->getUser($_SESSION['userdata']['id']);
+            $url = CURRENT_URL;
 
-                $availableModals = array(
-                    "tickets/showAll" => "backlog",
-                    "dashboard/show" => "dashboard",
-                    "dashboard/home" => "dashboard",
-                    "leancanvas/showCanvas" => "fullLeanCanvas",
-                    "leancanvas/simpleCanvas" => "simpleLeanCanvas",
-                    "ideas/showBoards" => "ideaBoard",
-                    "ideas/advancedBoards" => "advancedBoards",
-                    "tickets/roadmap" => "roadmap",
-                    "retrospectives/showBoards" => "retrospectives",
-                    "tickets/showKanban" => "kanban",
-                    "timesheets/showMy" => "mytimesheets",
-                    "projects/newProject" => "newProject",
-                    "projects/showProject" => "projectSuccess",
-                    "projects/showAll" => "showProjects",
-                    "clients/showAll" => "showClients",
-                );
+            $requestParams = explode(BASE_URL, $url);
+            $urlParts = explode('/', $requestParams[1]);
+            $modal = "";
 
-                $url = CURRENT_URL;
+            if(count($urlParts) > 2) {
+                $urlKey =  $urlParts[1]."/".$urlParts[2];
 
-                $requestParams = explode(BASE_URL, $url);
-                $urlParts = explode('/', $requestParams[1]);
-                $modal = "";
-
-                if(count($urlParts) > 2) {
-                    $urlKey =  $urlParts[1]."/".$urlParts[2];
-
-                    if(isset($availableModals[$urlKey])) {
-                        $modal = $availableModals[$urlKey];
-                    }else{
-                        $modal = "notfound";
-                    }
+                if(isset($availableModals[$urlKey])) {
+                    $modal = $availableModals[$urlKey];
                 }else{
-                    $modal = "dashboard";
+                    $modal = "notfound";
                 }
+            }else{
+                $modal = "dashboard";
+            }
 
-                $tpl->assign("modal", $modal);
+            $this->tpl->assign("modal", $modal);
 
 
-                $tpl->assign("profilePicture", $profilePicture);
-                $tpl->assign("userName", $user["firstname"]);
-                $tpl->assign("userEmail", $user["username"]);
-                $tpl->assign("profileId", $user["profileId"]);
+            $this->tpl->assign("profilePicture", $profilePicture);
+            $this->tpl->assign("userName", $user["firstname"]);
+            $this->tpl->assign("userEmail", $user["username"]);
+            $this->tpl->assign("profileId", $user["profileId"]);
 
-                $tpl->displayPartial("general.loginInfo");
+            $this->tpl->displayPartial("general.loginInfo");
 
         }
     }

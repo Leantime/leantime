@@ -8,13 +8,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class showMyCalendar
+    class showMyCalendar extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -25,28 +37,17 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-
-            events::dispatch_event('begin', [
-                'this' => $this,
-                'tplInstance' => $tpl,
-                'calendarRepo' => $calendarRepo,
-            ]);
-
-            $tpl->assign('calendar', $calendarRepo->getCalendar($_SESSION['userdata']['id']));
-            //$tpl->assign('gCalLink', $calendarRepo->getMyGoogleCalendars());
+            $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
+            //$this->tpl->assign('gCalLink', $this->calendarRepo->getMyGoogleCalendars());
 
             $_SESSION['lastPage'] = BASE_URL."/calendar/showMyCalendar/";
 
             //ToDO: This should come from the ticket repo...
-            //$tpl->assign('ticketEditDates', $calendarRepo->getTicketEditDates());
-            //$tpl->assign('ticketWishDates', $calendarRepo->getTicketWishDates());
-            //$tpl->assign('dates', $calendarRepo->getAllDates($dateFrom, $dateTo));
+            //$this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());
+            //$this->tpl->assign('ticketWishDates', $this->calendarRepo->getTicketWishDates());
+            //$this->tpl->assign('dates', $this->calendarRepo->getAllDates($dateFrom, $dateTo));
 
-            $tpl->display('calendar.showMyCalendar');
-
-            events::dispatch_event('end');
+            $this->tpl->display('calendar.showMyCalendar');
 
         }
 

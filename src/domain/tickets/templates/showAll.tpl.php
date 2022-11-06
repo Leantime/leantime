@@ -21,13 +21,17 @@
 
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-   <div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
-   <div class="pagetitle">
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
+    <div class="pagetitle">
        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
    	    <h1><?php echo $this->__("headlines.todos"); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 	<div class="maincontentinner">
@@ -41,7 +45,7 @@
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
-                    <?php 
+                    <?php
                     $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
                     if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) {
                     ?>
@@ -50,22 +54,22 @@
                         <ul class="dropdown-menu">
                             <?php foreach($newField as $option) { ?>
                                 <li>
-                                    <a 
-                                        href="<?= !empty($option['url']) ? $option['url'] : '' ?>" 
+                                    <a
+                                        href="<?= !empty($option['url']) ? $option['url'] : '' ?>"
                                         class="<?= !empty($option['class']) ? $option['class'] : '' ?>"
                                     > <?= !empty($option['text']) ? $this->__($option['text']) : '' ?></a>
                                 </li>
                             <?php } ?>
                         </ul>
                     </div>
-                    <?php 
-                    } 
+                    <?php
+                    }
                     $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     ?>
                 </div>
 
                 <div class="col-md-2 center">
-                    
+
                     <?php $this->dispatchTplEvent('filters.afterCenterSectionOpen'); ?>
                     <span class="currentSprint">
                         <?php if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
@@ -118,9 +122,9 @@
                                 <?php foreach ($groupBy as $input): ?>
                                     <li>
                                         <span class="radio">
-                                            <input 
-                                                type="radio" 
-                                                name="groupBy" 
+                                            <input
+                                                type="radio"
+                                                name="groupBy"
                                                 <?php if($searchCriteria["groupBy"] == $input['status']){echo "checked='checked'";}?>
                                                 value="<?php echo $input['status']; ?>"
                                                 id="<?php echo $input['id']; ?>"

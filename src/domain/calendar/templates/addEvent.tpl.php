@@ -1,19 +1,20 @@
 <?php
-
-defined('RESTRICTED') or die('Restricted access');
-$values = $this->get('values');
+    defined('RESTRICTED') or die('Restricted access');
+    $values = $this->get('values');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-            
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.new_event'); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-        
-        
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -23,6 +24,8 @@ $values = $this->get('values');
         <div class="widgetcontent">
 
             <form action="" method="post" class='stdform'>
+
+                <?php $this->dispatchTplEvent('afterFormOpen'); ?>
 
                 <label for="description"><?php echo $this->__('label.title') ?></label>
                 <input type="text" id="description" name="description" value="<?php $this->e($values['description']); ?>" /><br />
@@ -55,9 +58,14 @@ $values = $this->get('values');
                 }?>
                 /><br />
 
+                <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+
                 <p class="stdformbutton">
                     <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save') ?>" class="button" />
                 </p>
+
+                <?php $this->dispatchTplEvent('beforeFormClose'); ?>
+
             </form>
 
         </div>
@@ -67,7 +75,13 @@ $values = $this->get('values');
 </div>
 
 <script type="text/javascript">
+
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     jQuery(document).ready(function() {
         leantime.calendarController.initEventDatepickers();
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
+
 </script>

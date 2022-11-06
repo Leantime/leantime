@@ -123,10 +123,10 @@ namespace leantime\core {
         }
 
         /**
-         * 
+         *
          * setContext - sets the context for the mailing
          * (used for filters & events)
-         * 
+         *
          * @access public
          * @param $context
          * @return void
@@ -217,7 +217,10 @@ namespace leantime\core {
 
             events::dispatch_event('beforeSendMail');
 
-            $this->mailAgent->isHTML(true);                                  // Set email format to HTML
+            $to = $this->registerMailerHook('filter', 'sendMailTo', $to);
+            $from = $this->registerMailerHook('filter', 'sendMailFrom', $from);
+
+            $this->mailAgent->isHTML(true); // Set email format to HTML
 
             $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
 
@@ -258,7 +261,7 @@ namespace leantime\core {
 						</td>
 					</tr>
 				</table>
-				
+
 			</td>
 		</tr>
 		<tr>

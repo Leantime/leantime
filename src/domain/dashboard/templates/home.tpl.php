@@ -13,14 +13,16 @@
     $milestones = $this->get('milestones');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
         <h1><?php echo $this->__("headlines.home"); ?></h1>
-
     </div>
-
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 
@@ -351,6 +353,8 @@
 
 <script type="text/javascript">
 
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     function insertQuickAddForm(index, projectId, duedate) {
         jQuery(".quickaddForm").remove();
 
@@ -370,20 +374,19 @@
 
     }
 
-
     function accordionToggle(id) {
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-            if(currentLink.hasClass("fa-caret-right")){
-                currentLink.removeClass("fa-caret-right");
-                currentLink.addClass("fa-caret-down");
-                jQuery('#accordion_'+id).slideDown("fast");
-            }else{
-                currentLink.removeClass("fa-caret-down");
-                currentLink.addClass("fa-caret-right");
-                jQuery('#accordion_'+id).slideUp("fast");
-            }
+        if(currentLink.hasClass("fa-caret-right")){
+            currentLink.removeClass("fa-caret-right");
+            currentLink.addClass("fa-caret-down");
+            jQuery('#accordion_'+id).slideDown("fast");
+        }else{
+            currentLink.removeClass("fa-caret-down");
+            currentLink.addClass("fa-caret-right");
+            jQuery('#accordion_'+id).slideUp("fast");
+        }
 
     }
 
@@ -399,8 +402,6 @@
        <?php }else{ ?>
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
-
-
 
        <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
 
@@ -418,8 +419,8 @@
 
        } ?>
 
-
-
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

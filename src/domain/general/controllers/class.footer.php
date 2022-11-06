@@ -3,17 +3,18 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
 
-    class footer
+    class footer extends controller
     {
 
-        private $tpl;
         private $settings;
 
         public function __construct()
         {
-            $this->tpl = new core\template();
+
             $this->settings = new core\appSettings();
+
         }
 
         public function run()
@@ -21,6 +22,9 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign("version", $this->settings->appVersion);
             $this->tpl->displayPartial('general.footer');
+
         }
+
     }
+
 }

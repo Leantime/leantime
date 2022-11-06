@@ -3,4 +3,3 @@
 # Except the following
 !.gitignore
 !debughooks
-!plugins_init.php

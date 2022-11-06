@@ -8,13 +8,25 @@ namespace leantime\domain\controllers {
      */
 
     use leantime\core;
-    use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class importGCal
+    class importGCal extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -25,17 +37,7 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-
-            events::dispatch_event('begin', [
-                'this' => $this,
-                'tplInstance' => $tpl,
-                'calendarRepo' => $calendarRepo,
-            ]);
-
             $msgKey = '';
-
 
             $values = array(
                 'url' => '',
@@ -51,19 +53,16 @@ namespace leantime\domain\controllers {
                     'colorClass' => ($_POST['color'])
                 );
 
-                $calendarRepo->addGUrl($values);
+                $this->calendarRepo->addGUrl($values);
 
                 $msgKey = 'Kalender hinzugefügt';
 
-
             }
 
-            $tpl->assign('values', $values);
-            $tpl->assign('info', $msgKey);
+            $this->tpl->assign('values', $values);
+            $this->tpl->assign('info', $msgKey);
 
-            $tpl->display('calendar.importGCal');
-
-            events::dispatch_event('end');
+            $this->tpl->display('calendar.importGCal');
 
         }
 

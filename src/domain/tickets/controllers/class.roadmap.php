@@ -4,29 +4,28 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class roadmap
+    class roadmap extends controller
     {
 
-        private $tpl;
-        private $projects;
+        private $projectsRepo;
         private $sprintService;
         private $ticketService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
-            $this->projects = new repositories\projects();
+            $this->projectsRepo = new repositories\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
 

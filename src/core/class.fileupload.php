@@ -78,7 +78,6 @@ class fileupload
      */
     public $s3Client = "";
 
-
     /**
      * fileupload constructor.
      */
@@ -233,7 +232,7 @@ class fileupload
             try {
                 // Upload data.
                 $file = fopen($this->file_tmp_name, "rb");
-                // implode all non-empty elements to allow s3FolderName to be empty. 
+                // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
                 $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
@@ -275,7 +274,7 @@ class fileupload
         try {
             // Upload data.
             $file = fopen($this->file_tmp_name, "rb");
-            // implode all non-empty elements to allow s3FolderName to be empty. 
+            // implode all non-empty elements to allow s3FolderName to be empty.
             // otherwise you will get an error as the key starts with a slash
             $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 

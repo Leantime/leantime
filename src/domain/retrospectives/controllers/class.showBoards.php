@@ -3,11 +3,28 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class showBoards
+    class showBoards extends controller
     {
+
+        private $retroRepo;
+        private $projectService;
+
+        /**
+         * init - initialze private variables
+         *
+         * @access public
+         */
+        private function init()
+        {
+
+            $this->retroRepo = new repositories\retrospectives();
+            $this->projectService = new services\projects();
+
+        }
 
         /**
          * run - display template and edit data
@@ -17,11 +34,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $retroRepo = new repositories\retrospectives();
-            $projectService = new services\projects();
-
-            $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->retroRepo->getAllCanvas($_SESSION['currentProject']);
 
             if(isset($_SESSION['currentRetroCanvas'])) {
                 $currentCanvasId = $_SESSION['currentRetroCanvas'];
@@ -51,16 +64,16 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
-                    $currentCanvasId = $retroRepo->addCanvas($values);
-                    $allCanvas = $retroRepo->getAllCanvas($_SESSION['currentProject']);
+                    $currentCanvasId = $this->retroRepo->addCanvas($values);
+                    $allCanvas = $this->retroRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $tpl->setNotification("New Board added", "success");
+                    $this->tpl->setNotification("New Board added", "success");
                     $_SESSION['currentRetroCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
+                    $this->tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
+                    $this->tpl->setNotification('ENTER_TITLE', 'error');
                 }
 
             }
@@ -71,27 +84,27 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
-                    $currentCanvasId = $retroRepo->updateCanvas($values);
+                    $currentCanvasId = $this->retroRepo->updateCanvas($values);
 
-                    $tpl->setNotification("Board edited", "success");
-                    $tpl->redirect(BASE_URL."/retrospectives/showBoards/");
+                    $this->tpl->setNotification("Board edited", "success");
+                    $this->tpl->redirect(BASE_URL."/retrospectives/showBoards/");
 
 
                 } else {
-                    $tpl->setNotification('ENTER_TITLE', 'error');
+                    $this->tpl->setNotification('ENTER_TITLE', 'error');
                 }
 
             }
 
-            $tpl->assign('currentCanvas', $currentCanvasId);
+            $this->tpl->assign('currentCanvas', $currentCanvasId);
 
-            $tpl->assign('allCanvas', $allCanvas);
-            $tpl->assign('canvasItems', $retroRepo->getCanvasItemsById($currentCanvasId));
-            $tpl->assign('canvasLabels', $retroRepo->canvasTypes);
-            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('allCanvas', $allCanvas);
+            $this->tpl->assign('canvasItems', $this->retroRepo->getCanvasItemsById($currentCanvasId));
+            $this->tpl->assign('canvasLabels', $this->retroRepo->canvasTypes);
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
             if (isset($_GET["raw"]) === false) {
-                $tpl->display('retrospectives.showBoards');
+                $this->tpl->display('retrospectives.showBoards');
             }
         }
 

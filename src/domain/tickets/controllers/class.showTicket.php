@@ -4,26 +4,22 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class showTicket
+    class showTicket extends controller
     {
 
         private $projectService;
         private $ticketService;
-        private $tpl;
         private $sprintService;
         private $fileService;
         private $commentService;
         private $timesheetService;
         private $userService;
-        private $language;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
-
-            $this->language = new core\language();
 
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
@@ -36,12 +32,11 @@ namespace leantime\domain\controllers {
             if(isset($_SESSION['lastPage']) === false){
                 $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban";
             }
+
         }
 
         public function get($params)
         {
-
-            events::dispatch_event('begin', $params);
 
             if (isset($params['id']) === true) {
 
@@ -144,14 +139,10 @@ namespace leantime\domain\controllers {
 
             }
 
-            events::dispatch_event('end', $params);
-
         }
 
         public function post($params)
         {
-
-            events::dispatch_event('begin', $params);
 
             $tab = "";
 
@@ -229,8 +220,6 @@ namespace leantime\domain\controllers {
                         $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
                     }
                 }
-
-                events::dispatch_event('end', $params);
 
                 $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."".$tab);
 

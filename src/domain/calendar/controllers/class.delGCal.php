@@ -8,13 +8,25 @@ namespace leantime\domain\controllers {
      */
 
     use leantime\core;
-    use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delGCal
+    class delGCal extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -25,26 +37,16 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-
-            events::dispatch_event('begin', [
-                'this' => $this,
-                'tplInstance' => $tpl,
-                'calendarRepo' => $calendarRepo,
-            ]);
-
             if (isset($_GET['id']) === true) {
 
                 $id = (int)($_GET['id']);
-
 
                 $msgKey = '';
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
 
-                    $calendarRepo->deleteGCal($id);
+                    $this->calendarRepo->deleteGCal($id);
 
                     $msgKey = 'Kalender gelöscht';
 
@@ -52,16 +54,14 @@ namespace leantime\domain\controllers {
 
                 //Assign variables
 
-                $tpl->assign('msg', $msgKey);
-                $tpl->display('calendar.delGCal');
+                $this->tpl->assign('msg', $msgKey);
+                $this->tpl->display('calendar.delGCal');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('general.error');
 
             }
-
-            events::dispatch_event('end');
 
         }
 

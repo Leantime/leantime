@@ -3,19 +3,19 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class timer
+    class timer extends controller
     {
 
-
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
             $this->timesheetService = new services\timesheets();

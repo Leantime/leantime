@@ -4,6 +4,7 @@ namespace leantime\core;
 
 use PDO;
 use PDOException;
+use leantime\core\plugins;
 
 class events
 {
@@ -67,15 +68,16 @@ class events
             }
         }
 
-        $enabledPlugins = require_once(ROOT."/../src/plugins/plugins_init.php");
+        $enabledPlugins = (new plugins)->getEnabledPlugins();
         $plugins = glob(ROOT."/../src/plugins" . '/*' , GLOB_ONLYDIR);
         foreach($plugins as $pluginLocation){
-            $plugin = substr($pluginLocation, strrpos($pluginLocation, '/') + 1);
-            if(file_exists($pluginLocation."/events/register.php")
+            $plugin = strtolower(substr($pluginLocation, strrpos($pluginLocation, '/') + 1));
+
+            if(file_exists($pluginLocation."/register.php")
                 && in_array($plugin, array_keys($enabledPlugins))
                 && $enabledPlugins[$plugin] == true
             ) {
-                include $pluginLocation . "/events/register.php";
+                include $pluginLocation . "/register.php";
             }
         }
 
@@ -118,12 +120,12 @@ class events
         }
 
         $contextArray = [];
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         $class = $backtrace[2]['class'];
         $function = $backtrace[2]['function'];
         preg_match('/(domain|plugins)\/(.+?)\//', $backtrace[1]['file'], $filematches);
-        $filecontext = $filematches[1];
-        $filename = $filematches[2];
+        $filecontext = isset($filematches[1]) ? $filematches[1]: '';
+        $filename = isset($filematches[2]) ? $filematches[2] : '';
 
         if (!empty($class)) {
             $contextArray[] = str_replace('\\', '.', $class);

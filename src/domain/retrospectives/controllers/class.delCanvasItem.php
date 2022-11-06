@@ -13,12 +13,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delCanvasItem
+    class delCanvasItem extends controller
     {
+
+        private $retroRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        private function init()
+        {
+
+            $this->retroRepo = new repositories\retrospectives();
+
+        }
 
         /**
          * run - display template and edit data
@@ -30,25 +43,23 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $retroRepo = new repositories\retrospectives();
-            $language = new core\language();
-
-
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
             if (isset($_POST['del']) && isset($id)) {
 
-                $retroRepo->delCanvasItem($id);
+                $this->retroRepo->delCanvasItem($id);
 
-                $tpl->setNotification($language->__("notification.retrospective_item_deleted"), "success");
-                $tpl->redirect(BASE_URL."/retrospectives/showBoards");
+                $this->tpl->setNotification($this->language->__("notification.retrospective_item_deleted"), "success");
+                $this->tpl->redirect(BASE_URL."/retrospectives/showBoards");
 
             }
 
-            $tpl->displayPartial('retrospectives.delCanvasItem');
+            $this->tpl->displayPartial('retrospectives.delCanvasItem');
+
         }
+
     }
+
 }

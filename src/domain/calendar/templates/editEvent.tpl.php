@@ -3,15 +3,17 @@ defined('RESTRICTED') or die('Restricted access');
 $values = $this->get('values');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-            
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.new_event'); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -23,6 +25,7 @@ $values = $this->get('values');
 
                 <form action="" method="post">
 
+                    <?php $this->dispatchTplEvent('afterFormOpen'); ?>
 
                     <label for="description"><?php echo $this->__('label.title') ?></label>
                     <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
@@ -53,12 +56,17 @@ $values = $this->get('values');
                         echo 'checked="checked" ';
                     }?>
                     />
+
+                    <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+
                     <div class="clear"></div>
                     <br />
                     <a href="<?=BASE_URL?>/calendar/delEvent/<?=(int)$_GET['id'] ?>" class="delete right"><i class="fa fa-trash"></i> <?=$this->__('links.delete')?></a>
                     <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save') ?>" class="button" />
 
                     <div class="clear"></div>
+
+                    <?php $this->dispatchTplEvent('beforeFormClose'); ?>
 
                 </form>
         </div>

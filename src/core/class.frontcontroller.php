@@ -136,57 +136,58 @@ namespace leantime\core {
             //moduleName is filename
             $moduleName = self::getModuleName($completeName);
 
+            $actionPath = events::dispatch_filter(
+                "requests.$actionName.$moduleName",
+                ROOT . "/../src/domain/$moduleName/controllers/class.$actionName.php",
+                [
+                    'action' => $actionName,
+                    'module' => $moduleName
+                ]
+            );
+
             //Folder doesn't exist.
-            if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
+            if(!file_exists($actionPath)) {
 
                 self::dispatch("general.error404");
                 return;
 
             }
 
-            $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-            $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-
-            $controllerNs = "domain";
-
-            //Try plugin folder first for overrides
-            if(file_exists($pluginPath)) {
-                $controllerNs = "plugins";
-                require_once $pluginPath;
-
-            }else if(file_exists($domainPath)) {
-
-                require_once $domainPath;
-
-            }else{
-                self::dispatch("general.error404", 404);
-                return;
-            }
+            require_once $actionPath;
 
             //Initialize Action
             try {
 
-                $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
-
-                $action = new $classname();
-
-                //Todo plugin controller call
-
-                $method = self::getRequestMethod();
+                $controller_base = "leantime\\base\\controller";
+                $classname = events::dispatch_filter(
+                    "action_classname",
+                    "leantime\\domain\\controllers\\".$actionName,
+                    [
+                        'module' => $moduleName,
+                        'action' => $actionName
+                    ]
+                );
 
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if(method_exists($action, $method)) {
+                $method = self::getRequestMethod();
+                $params = self::getRequestParams($method);
 
-                    $params = self::getRequestParams($method);
-                    $action->$method($params);
+                if (is_subclass_of($classname, $controller_base)) {
+                    // TODO: plugin controller call
+                    $action = new $classname($method, $params);
+                // TODO: remove else once all classes extend the controller base
+                } else {
+                    // TODO: plugin controller call
+                    $action = new $classname();
 
-                }else{
-
-                    //Use run for all other request types.
-                    $action->run();
-
+                    if(method_exists($action, $method)) {
+                        $action->$method($params);
+                    }else{
+                        //Use run for all other request types.
+                        $action->run();
+                    }
                 }
 
             }catch(Exception $e){
@@ -300,7 +301,7 @@ namespace leantime\core {
          * @access public
          * @return string
          */
-        public static function getCurrentRoute() 
+        public static function getCurrentRoute()
         {
 
             if(isset($_REQUEST['act'])) {
@@ -313,6 +314,10 @@ namespace leantime\core {
 
         public static function redirect($url, $http_response_code = 303): void
         {
+            events::dispatch_event('before_redirect', [
+                'url' => $url,
+                'http_response_code' => $http_response_code
+            ]);
 
             header("Location:".trim($url),true, $http_response_code);
             exit();

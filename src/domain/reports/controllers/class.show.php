@@ -2,16 +2,16 @@
 
 namespace leantime\domain\controllers {
 
-    use leantime\domain\models\auth\roles;
-    use leantime\domain\services;
-    use leantime\domain\repositories;
     use leantime\core;
+    use leantime\base\controller;
+    use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\domain\services\auth;
+    use leantime\domain\models\auth\roles;
 
-    class show
+    class show extends controller
     {
 
-        private $tpl;
         private $dashboardRepo;
         private $projectService;
         private $sprintService;
@@ -24,14 +24,12 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->tpl = new core\template();
             $this->dashboardRepo = new repositories\dashboard();
             $this->projectService = new services\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
-            $this->language = new core\language();
 
             $_SESSION['lastPage'] = BASE_URL . "/reports/show";
 
@@ -50,7 +48,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('projectProgress', $progress);
             $this->tpl->assign("currentProjectName",
-                $this->projectService->getProjectName($_SESSION['currentProject']));
+            $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Sprint Burndown
 

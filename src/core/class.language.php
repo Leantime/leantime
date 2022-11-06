@@ -80,20 +80,36 @@ namespace leantime\core {
 
             }
 
-            if(isset($_SESSION['cache.langlist'])){
+            if (isset($_SESSION['cache.langlist'])){
+
                 $this->langlist = $_SESSION['cache.langlist'];
 
-            }else {
+            } else {
 
-                if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
-                    $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
-                    $_SESSION['cache.langlist'] =  $this->langlist;
-                } else {
+                $parsedLangList = [];
+                $language_lists = events::dispatch_filter(
+                    'language_lists',
+                    [
+                        '' . $this->iniFolder . 'languagelist.ini'
+                    ]
+                );
+
+                if (is_array($language_lists) && !empty($language_lists)) {
+                    foreach ($language_lists as $list) {
+                        if (file_exists($list)) {
+                            $parsedLangList = array_merge($parsedLangList, parse_ini_file($list));
+                        }
+                    }
+                }
+
+                if (empty($parsedLangList)) {
                     throw new Exception("Language list missing");
                 }
 
+                $this->langlist = $_SESSION['cache.langlist'] = $parsedLangList;
+
             }
-                
+
             //Start checking if the user has a language set
             if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
 

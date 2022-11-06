@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -10,19 +11,17 @@ namespace leantime\domain\controllers {
     class sessions
     {
 
-        private $tpl;
         private $usersService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->usersService = new services\users();
 
         }

@@ -15,7 +15,9 @@
 
 <?php if(isset($_SESSION['currentProjectName'])){ ?>
 
+<?php $this->dispatchTplEvent('beforeMenu'); ?>
 <ul class="nav nav-tabs nav-stacked">
+    <?php $this->dispatchTplEvent('afterMenuOpen'); ?>
     <?php if ($this->get('allAvailableProjects') !== false || $_SESSION['currentProject'] != ""){?>
         <li class="project-selector">
 
@@ -99,7 +101,9 @@
         </ul>
     </li>
     <?php } ?>
+    <?php $this->dispatchTplEvent('beforeMenuClose'); ?>
 </ul>
+<?php $this->dispatchTplEvent('afterMenuClose'); ?>
 
 <?php } ?>
 

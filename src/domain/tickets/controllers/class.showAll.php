@@ -4,20 +4,20 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\core\events;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class showAll
+    class showAll extends controller
     {
 
         private $projectService;
-        private $tpl;
         private $ticketService;
         private $sprintService;
         private $timesheetService;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
+
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
             $this->sprintService = new services\sprints();
@@ -31,13 +31,9 @@ namespace leantime\domain\controllers {
 
         public function get($params) {
 
-            events::dispatch_event('begin', ['params' => $params]);
-
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-
-            events::dispatch_event('assign_controller_vars', $this);
 
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
@@ -65,11 +61,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->display('tickets.showAll');
 
-            events::dispatch_event('end');
-
         }
-
-
 
     }
 
