@@ -24,7 +24,7 @@ New features included in this release:
 
 | ![alt text](public/images/Screenshots/Docs.png "Document Manager")    |
 
-For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.8
+For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.10
 
 ## Features: ##
 * Task management using kanban boards, table and calendar views
