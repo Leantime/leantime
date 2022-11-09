@@ -72,6 +72,8 @@ namespace leantime\domain\services {
 
         public function saveStatusLabels($params) {
 
+
+
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
 
                 $statusArray = array();
@@ -251,7 +253,8 @@ namespace leantime\domain\services {
                     $statusLabels[$row['projectId']] = $this->ticketRepository->getStateLabels($row['projectId']);
                 }
 
-                if($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
+                //There is a chance that the status was removed after it was assigned to a ticket
+                if(isset($statusLabels[$row['projectId']][$row['status']]) && $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
 
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                         if (isset($tickets["later"]["tickets"])) {

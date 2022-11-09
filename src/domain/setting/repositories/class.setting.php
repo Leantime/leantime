@@ -68,9 +68,10 @@ namespace leantime\domain\repositories {
             $stmn->bindvalue(':value', $value, PDO::PARAM_STR);
             $stmn->bindvalue(':valueUpdate', $value, PDO::PARAM_STR);
 
-            $stmn->execute();
+            $return = $stmn->execute();
             $stmn->closeCursor();
 
+            return $return;
 
         }
 
