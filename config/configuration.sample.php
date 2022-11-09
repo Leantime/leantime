@@ -37,7 +37,7 @@ class config
     public $s3UsePathStyleEndpoint = false;               // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
     public $s3Region = '';                                //S3 region
     public $s3FolderName = '';                            //Foldername within S3 (can be emtpy)
-    public $s3EndPoint = '';                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+    public $s3EndPoint = null;                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
     public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
