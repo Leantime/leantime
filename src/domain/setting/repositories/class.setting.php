@@ -39,6 +39,7 @@ namespace leantime\domain\repositories {
                 $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
                 try {
+
                     $stmn->execute();
                     $values = $stmn->fetch();
                     $stmn->closeCursor();
@@ -100,16 +101,26 @@ namespace leantime\domain\repositories {
 
             try {
 
+
+                $stmn = $this->db->database->prepare("SHOW TABLES LIKE 'zp_user'");
+
+                $stmn->execute();
+                $values = $stmn->fetchAll();
+                $stmn->closeCursor();
+
+                if( !count( $values ))
+                    return false;
+
                 $stmn = $this->db->database->prepare("SELECT COUNT(*) FROM zp_user");
 
                 $stmn->execute();
                 $values = $stmn->fetchAll();
-
                 $stmn->closeCursor();
 
                 return true;
 
-            } catch (PDOException $e) {
+            } catch (\Exception $e) {
+                error_log($e);
 
                 return false;
 

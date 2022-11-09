@@ -20,7 +20,7 @@ class ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
-        "phonenumber" => ''
+        "phonenumber" => 'telephonenumber'
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -147,7 +147,6 @@ class ldap
         if(!is_resource($this->ldapConnection)){
             error_log("No connection, last error: ".ldap_error($this->ldapConnection));
         }
-
         $filter = "(".$this->ldapKeys->username."=" . $this->extractLdapFromUsername($username) . ")";
 
         $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname,$this->ldapKeys->email);
@@ -163,6 +162,8 @@ class ldap
         $mail = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
         return $mail;
     }
+
+
 
     public function getSingleUser($username) {
 
@@ -206,7 +207,7 @@ class ldap
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
         $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
-        
+
         if($this->config->debug) {
 
             #error_log("Testing the logging", 3, "/SM_DATA/web_projects/public_html/resources/logs/ldap.log");
@@ -224,7 +225,6 @@ class ldap
         }
 
         return array(
-            //"user" => $this->extractLdapFromUsername($username)."".$this->userDomain,
             "user" => $uname,
             "firstname" => $firstname,
             "lastname" => $lastname,
