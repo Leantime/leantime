@@ -206,21 +206,22 @@ class ldap
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
         $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
+        
+        if($this->config->debug) {
 
+            #error_log("Testing the logging", 3, "/SM_DATA/web_projects/public_html/resources/logs/ldap.log");
+            error_log("LEANTIME: Testing the logging\n", 3, "/var/log/sites-error.log");
 
-#	error_log("Testing the logging", 3, "/SM_DATA/web_projects/public_html/resources/logs/ldap.log");
-        error_log("LEANTIME: Testing the logging\n", 3, "/var/log/sites-error.log");
-
-
-        //$uname = $this->extractLdapFromUsername($username)."".$this->userDomain;
-        //$uname = str_replace("@","AT", $uname);
-        error_log("LEANTIME: >>>Attributes Begin>>>>>>\n");
-        error_log("LEANTIME: fn $firstname",0);
-        error_log("LEANTIME: sn $lastname",0);
-        error_log("LEANTIME: phone $phonenumber",0);
-        error_log("LEANTIME: role $role",0);
-        error_log("LEANTIME: username $uname ",0);
-        error_log("LEANTIME: >>>Attributes End>>>>>>\n",0);
+            //$uname = $this->extractLdapFromUsername($username)."".$this->userDomain;
+            //$uname = str_replace("@","AT", $uname);
+            error_log("LEANTIME: >>>Attributes Begin>>>>>>\n");
+            error_log("LEANTIME: fn $firstname", 0);
+            error_log("LEANTIME: sn $lastname", 0);
+            error_log("LEANTIME: phone $phonenumber", 0);
+            error_log("LEANTIME: role $role", 0);
+            error_log("LEANTIME: username $uname ", 0);
+            error_log("LEANTIME: >>>Attributes End>>>>>>\n", 0);
+        }
 
         return array(
             //"user" => $this->extractLdapFromUsername($username)."".$this->userDomain,
