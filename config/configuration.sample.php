@@ -64,7 +64,10 @@ class config
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
     public $ldapUserDomain = '';                          //Domain after ldap, example @example.com
     public $bindUser = '';                                //ldap user that can search directory. (Should be read only)
-    public $bindPassword = '';                            //Default ldap keys in your directory.
+    public $bindPassword = '';
+
+    //Default ldap keys in your directory.
+    //Works for OL
     public $ldapKeys = '{ 
         "username":"uid",
         "groups":"memberof",
@@ -73,7 +76,21 @@ class config
         "lastname":"",
         "phonenumber":""
         }';
-//Default role assignments upon first login. (Optional) Can be updated in user settings for each user
+
+    //For AD use
+    /*
+    public $ldapKeys = '{
+        "username":"cn",
+        "groups":"memberof",
+        "email":"mail",
+        "firstname":"givenname",
+        "lastname":"sn",
+        "phonenumber":"telephoneNumber"
+        }';
+    */
+
+
+    //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
           "5": {
             "ltRole":"readonly",
