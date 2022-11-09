@@ -72,6 +72,8 @@ namespace leantime\domain\services {
 
         public function saveStatusLabels($params) {
 
+
+
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
 
                 $statusArray = array();
