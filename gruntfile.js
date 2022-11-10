@@ -93,6 +93,7 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/template/plugin.js",
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
+                    "node_modules/tinymce/plugins/codesample/plugin.js",
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "node_modules/jstree/dist/jstree.js",
                     "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
@@ -108,6 +109,7 @@ module.exports = function (grunt) {
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
+                    "public/js/libs/prism/js/prism.js",
 
 
                 ]

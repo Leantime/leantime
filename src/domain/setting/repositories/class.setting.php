@@ -44,7 +44,8 @@ namespace leantime\domain\repositories {
                     $values = $stmn->fetch();
                     $stmn->closeCursor();
 
-                }catch(PDOException $e){
+                }catch(\Exception $e){
+                    error_log($e);
                     return false;
                 }
 
