@@ -21,7 +21,7 @@ namespace leantime\domain\repositories {
         {
 			$orderBy = "DESC";
 
-        	if ($orderByState == 1 || (isset($_SESSION["projectsettings"]['commentOrder']) && $_SESSION["projectsettings"]['commentOrder'] == 1))
+        	if ($orderByState == 1)
 			{
 				$orderBy = "ASC";
 			}

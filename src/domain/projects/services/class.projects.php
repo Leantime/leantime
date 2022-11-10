@@ -507,9 +507,6 @@ namespace leantime\domain\services {
 
                     unset($_SESSION["projectsettings"]);
 
-                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
-                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
                     events::dispatch_event("projects.setCurrentProject");
 
                     return true;

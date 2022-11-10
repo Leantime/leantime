@@ -199,8 +199,8 @@ namespace leantime\domain\services {
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
 
                     //Update username to include domain
-                    $usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
-
+                    //$usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
+                    $usernameWDomain = $ldap->getEmail($username);
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
@@ -316,7 +316,7 @@ namespace leantime\domain\services {
 
                 return true;
 
-            //If the session doesn't have any session data we are out of sync. Start again
+                //If the session doesn't have any session data we are out of sync. Start again
             }else{
 
                 return false;
@@ -476,19 +476,19 @@ namespace leantime\domain\services {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //If projectRole is not defined or if it is set to inherited
+                //If projectRole is not defined or if it is set to inherited
             }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //Do not overwrite admin or owner roles
+                //Do not overwrite admin or owner roles
             }elseif($_SESSION['userdata']['role'] == roles::$owner
                 || $_SESSION['userdata']['role'] == roles::$admin
-            || $_SESSION['userdata']['role'] == roles::$manager) {
+                || $_SESSION['userdata']['role'] == roles::$manager) {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //In all other cases check the project role
+                //In all other cases check the project role
             }else{
 
                 $roleToCheck = $_SESSION['userdata']['projectRole'];

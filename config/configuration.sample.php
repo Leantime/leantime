@@ -42,7 +42,7 @@ class config
     public $s3UsePathStyleEndpoint = false;               // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
     public $s3Region = '';                                //S3 region
     public $s3FolderName = '';                            //Foldername within S3 (can be emtpy)
-    public $s3EndPoint = '';                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+    public $s3EndPoint = null;                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
     public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
@@ -69,7 +69,10 @@ class config
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
     public $ldapUserDomain = '';                          //Domain after ldap, example @example.com
     public $bindUser = '';                                //ldap user that can search directory. (Should be read only)
-    public $bindPassword = '';                            //Default ldap keys in your directory.
+    public $bindPassword = '';
+
+    //Default ldap keys in your directory.
+    //Works for OL
     public $ldapKeys = '{ 
         "username":"uid",
         "groups":"memberof",
@@ -78,7 +81,21 @@ class config
         "lastname":"",
         "phonenumber":""
         }';
-//Default role assignments upon first login. (Optional) Can be updated in user settings for each user
+
+    //For AD use
+    /*
+    public $ldapKeys = '{
+        "username":"cn",
+        "groups":"memberof",
+        "email":"mail",
+        "firstname":"givenname",
+        "lastname":"sn",
+        "phonenumber":"telephoneNumber"
+        }';
+    */
+
+
+    //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
           "5": {
             "ltRole":"readonly",
