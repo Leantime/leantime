@@ -53,8 +53,7 @@
                     <div class="span12">
 
                          <div class="form-group">
-                             <br />
-                            <?php echo $this->__('text.choose_access_for_users'); ?><br />
+                             <br /><?=$this->__('text.choose_access_for_users'); ?><br />
                              <br />
 
                             <div class="row">
@@ -119,7 +118,7 @@
                 `           <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-plus"></span><?=$this->__('headlines.add_more_users'); ?>
+                                        <span class="fa fa-user-friends "></span><?=$this->__('headlines.assign_users_to_project'); ?>
                                     </h4>
                                 </div>
                             </div>
@@ -170,9 +169,28 @@
                                         </div>
 
 
+
+
                                 <?php }
+
                                 } ?>
+                                 <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                     <div class="col-md-4">
+                                         <div class="userBox">
+
+
+                                                 <a href="<?=BASE_URL?>/users/newUser" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
+
+                                             <div class="clearall"></div>
+                                         </div>
+                                     </div>
+                                 <?php } ?>
                             </div>
+                             <div class="row">
+                                 <div class="col-md-12">
+
+                                 </div>
+                             </div>
                         </div>
 
 
@@ -406,7 +424,7 @@
                                         </div>
                                         <div class="remove">
                                             <br />
-                                            <a href="javascript:void()" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
+                                            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -467,7 +485,7 @@
         </div>
         <div class="remove">
             <br />
-            <a href="javascript:void()" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
 </div>

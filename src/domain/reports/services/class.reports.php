@@ -155,7 +155,8 @@ namespace leantime\domain\services {
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
                             'form_params' => [
                                 'telemetry' => $data_string
-                            ]
+                            ],
+                            'timeout' => 5
                         ])->then(function ($response) use ($today) {
 
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
@@ -166,7 +167,7 @@ namespace leantime\domain\services {
 
                     }catch (\Exception $e) {
 
-                        error_log($e->getMessage());
+                        error_log($e);
 
                         $_SESSION['skipTelemetry'] = true;
                         return false;

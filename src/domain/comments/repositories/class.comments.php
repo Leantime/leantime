@@ -21,7 +21,7 @@ namespace leantime\domain\repositories {
         {
 			$orderBy = "DESC";
 
-        	if ($orderByState == 1 || (isset($_SESSION["projectsettings"]['commentOrder']) && $_SESSION["projectsettings"]['commentOrder'] == 1))
+        	if ($orderByState == 1)
 			{
 				$orderBy = "ASC";
 			}
@@ -34,6 +34,7 @@ namespace leantime\domain\repositories {
 					comment.moduleId, 
 					comment.userId, 
 					comment.commentParent,
+                    comment.status,
 					user.firstname, 
 					user.lastname,
 					user.profileId 
@@ -80,7 +81,7 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
 
-            if($module != null) {
+            if($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 
@@ -119,7 +120,7 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "SELECT 
-					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent,
+					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status
 					user.firstname, user.lastname  
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
@@ -136,8 +137,8 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "INSERT INTO zp_comment (
-			text, userId, date, moduleId, module, commentParent
-		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent)";
+			text, userId, date, moduleId, module, commentParent, status
+		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent, :status)";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -147,6 +148,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue(':status',  $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();

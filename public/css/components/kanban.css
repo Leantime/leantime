@@ -37,7 +37,12 @@
 }
 
 .ticketBox:hover {
-    background:#f3f4f5;
+    background:var(--main-menu-link-hover-bg);
+}
+
+
+.ticketBox:hover .kanbanContent:before {
+    background: linear-gradient(transparent, var(--main-menu-link-hover-bg) 70% 100%);
 }
 
 .ticketBox h4 a {
@@ -114,6 +119,7 @@
     background:var(--main-menu-link-hover-bg);
 }
 
+
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
     border:1px solid var(--main-border-color);
@@ -181,7 +187,8 @@
 }
 
 
-body .maincontent .priority-border-1 {
+body .maincontent .priority-border-1,
+body .maincontent .commentStatus-red{
     border-left: 3px solid #B92F2FFF;
 }
 
@@ -189,11 +196,13 @@ body .maincontent .priority-border-2 {
     border-left: 3px solid #EF371DFF;
 }
 
-body .maincontent .priority-border-3 {
+body .maincontent .priority-border-3,
+body .maincontent .commentStatus-yellow{
     border-left: 3px solid #FFB325FF;
 }
 
-body .maincontent .priority-border-4 {
+body .maincontent .priority-border-4,
+body .maincontent .commentStatus-green{
     border-left: 3px solid #aae268;
 }
 
@@ -256,4 +265,20 @@ body .maincontent .priority-bg-5 {
 
 .widgettitle strong {
     line-height:normal;
+}
+
+.kanbanContent {
+    overflow:hidden;
+    max-height:75px;
+    position:relative;
+}
+
+.kanbanContent:before {
+    content: '';
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
 }

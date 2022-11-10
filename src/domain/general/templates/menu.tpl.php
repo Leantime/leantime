@@ -72,11 +72,7 @@
             <li <?php if($module == 'tickets' && $action == 'roadmap') echo" class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/tickets/roadmap"><?=$this->__("menu.milestones") ?></a>
             </li>
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li <?php if($module == 'timesheets' && $action == 'showAll') echo" class='active' "; ?>>
-                    <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.timesheets") ?></a>
-                </li>
-            <?php } ?>
+
             <li <?php if($module == 'leancanvas') echo"  class='active' "; ?>>
                 <a href="<?=BASE_URL ?>/leancanvas/simpleCanvas"><?=$this->__("menu.research") ?></a>
             </li>
@@ -92,6 +88,11 @@
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             <li <?php if($module == 'reports') echo"class=' active '"; ?>>
                 <a href="<?=BASE_URL ?>/reports/show"><?=$this->__("menu.reports") ?></a>
+            </li>
+            <?php } ?>
+            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            <li <?php if($module == 'projects' && $action == 'showProject') echo"class='fixedMenuPoint active '";  else echo"class='fixedMenuPoint'";?>>
+                <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
             </li>
             <?php } ?>
 

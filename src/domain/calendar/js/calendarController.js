@@ -154,15 +154,6 @@ leantime.calendarController = (function () {
                     }
                     return date;
                 }
-
-
-            jQuery('#event_time_from').timepicker({
-                showMeridian:leantime.i18n.__("language.isMeridian") == "false" ? false : true
-            });
-            jQuery('#event_time_to').timepicker({
-                showMeridian:leantime.i18n.__("language.isMeridian") == "false" ? false : true
-            });
-
     }
 
     var initExportModal = function () {

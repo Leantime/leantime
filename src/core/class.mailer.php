@@ -73,26 +73,46 @@ namespace leantime\core {
             //Use SMTP or php mail().
             if($config->useSMTP === true) {
 
-                $this->mailAgent->SMTPDebug = 0;                                  // Enable verbose debug output
+                if($config->debug) {
+
+                    $this->mailAgent->SMTPDebug = 2;                                  // Enable verbose debug output
+                    $this->mailAgent->Debugoutput = function ($str, $level) {
+
+                        error_log($level.' '.$str);
+                    };
+
+                }else {
+                    $this->mailAgent->SMTPDebug = 0;
+                }
+
                 $this->mailAgent->Timeout = 20;
 
                 $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
                 $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
-                $this->mailAgent->SMTPAuth = true;                               // Enable SMTP authentication
+                $this->mailAgent->SMTPAuth = $config->smtpAuth ?? true;             // Enable SMTP user/password authentication
                 $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
                 $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
                 $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-                
+                if(isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
+                    $this->mailAgent->SMTPOptions = [
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        ]
+                    ];
+                }
+
             }else{
 
                 $this->mailAgent->isMail();
 
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"];
-            $this->companyColor = $_SESSION["companysettings.primarycolor"];
+            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
+            $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
             $this->language = new language();
 
@@ -218,7 +238,7 @@ namespace leantime\core {
                     $this->mailAgent->send();
                 }catch(Exception $e){
                     error_log($this->mailAgent->ErrorInfo);
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
                 $this->mailAgent->clearAllRecipients();

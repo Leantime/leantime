@@ -39,19 +39,17 @@
 
             <div class="col-md-8">
                 <div class="maincontentinner">
-
-                    <div class="pull-right">
-
-                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>" class="btn btn-default"><?=$this->__("menu.project_settings") ?></a>
-                        <?php } ?>
-                    </div>
                     <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
                     <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
                     <?=$this->escapeMinimal($project['details']) ?>
                     <br />
                 </div>
                 <div class="maincontentinner">
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                        <div class="pull-right">
+                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-user-plus"></i> <?=$this->__('links.add_team_member') ?></a>
+                        </div>
+                    <?php } ?>
                     <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
                     <div class="row teamBox">
                         <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
@@ -202,22 +200,216 @@
                     </ul>
                 </div>
 
-                <div class="maincontentinner">
-                    <h5 class="subtitle">
-                        <?=$this->__('subtitles.project_updates') ?>
-                    </h5>
-                    <br />
-                    <form method="post" action="<?=BASE_URL ?>/dashboard/show">
-                        <input type="hidden" name="comment" value="1" />
-                        <?php
-                        $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
-                        $this->displaySubmodule('comments-generalComment') ;
-                        ?>
-                    </form>
-                </div>
+
             </div>
 
             <div class="col-md-4">
+                <div class="maincontentinner">
+                    <div class="pull-right">
+                        <?php if($login::userIsAtLeast($roles::$editor)){ ?>
+                        <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)" id="mainToggler">
+                            <span class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_report') ?>
+                        </a>
+                        <?php } ?>
+                    </div>
+                    <h5 class="subtitle">
+                        <?=$this->__('subtitles.project_updates') ?>
+                    </h5>
+
+                    <form method="post" action="<?=BASE_URL ?>/dashboard/show">
+                        <input type="hidden" name="comment" value="1" />
+                        <?php
+
+                        $comments = new leantime\domain\repositories\comments();
+                        $formUrl = CURRENT_URL;
+
+                        //Controller may not redirect. Make sure delComment is only added once
+                        if (strpos($formUrl, '?delComment=') !== false) {
+                            $urlParts = explode('?delComment=', $formUrl);
+                            $deleteUrlBase = $urlParts[0] . "?delComment=";
+                        } else {
+                            $deleteUrlBase = $formUrl . "?delComment=";
+                        }
+                        ?>
+
+                        <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm">
+
+                            <?php if($login::userIsAtLeast($roles::$editor)){ ?>
+
+
+                                <div id="comment0" class="commentBox" style="display:none;">
+                                    <label for="projectStatus" style="display:inline"><?=$this->__('label.project_status_is') ?></label>
+                                    <select name="status" id="projectStatus" style="margin-left: 0px; margin-bottom:10px;">
+                                        <option value="green"><?=$this->__('label.green') ?></option>
+                                        <option value="yellow"><?=$this->__('label.yellow') ?></option>
+                                        <option value="red"><?=$this->__('label.red') ?></option>
+                                    </select>
+                                    <div class="commentReply">
+
+                                        <textarea rows="5" cols="50" class="tinymceSimple" name="text" style="width:100%;"></textarea>
+                                        <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+                                        <a href="javascript:void(0)" onclick="toggleCommentBoxes(-1)" style="line-height: 50px;"><?=$this->__('links.cancel');?></a>
+
+                                    </div>
+                                    <input type="hidden" name="comment" value="1"/>
+                                    <input type="hidden" name="father" id="father" value="0"/>
+                                    <br/>
+                                </div>
+                            <?php } ?>
+
+                            <div id="comments">
+                                <div>
+                                    <?php
+                                        $i = 0;
+                                        foreach ($this->get('comments') as $row): ?>
+                                        <?php $i++; ?>
+
+                                        <?php if($i==3) {?>
+                                            <a href="javascript:void(0)" onclick="jQuery('.readMore').toggle('fast');"><?=$this->__('links.read_more'); ?></a>
+
+                                            <div class="readMore" style="display:none; margin-top:20px;">
+                                                <?php } ?>
+                                        <div class="clearall">
+
+                                            <div class="">
+                                                <div class="commentContent statusUpdate commentStatus-<?=$this->escape($row['status']); ?>">
+                                                    <h3 class="">
+                                                        <?php printf( $this->__('text.report_written_on'), $this->getFormattedDateString($row['date']),
+                                                            $this->getFormattedTimeString($row['date']) ); ?>
+
+                                                        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                                            <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
+                                                                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                                </a>
+
+                                                                <ul class="dropdown-menu">
+                                                                    <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                                        <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
+                                                                                <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                                            </a></li>
+                                                                    <?php } ?>
+                                                                    <?php
+                                                                    if(isset($this->get('ticket')->id)){?>
+                                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$this->get('ticket')->id ?>);"><?=$this->__("links.add_to_timesheets"); ?></a></li>
+                                                                    <?php } ?>
+                                                                </ul>
+                                                            </div>
+                                                        <?php } ?>
+                                                    </h3>
+
+                                                    <div class="text" id="commentText-<?=$row['id']?>"><?php echo ($row['text']); ?></div>
+
+
+                                                </div>
+
+                                                <div class="commentLinks">
+                                                    <small class="right">
+                                                        <?php printf( $this->__('text.written_on_by'), $this->getFormattedDateString($row['date']),
+                                                            $this->getFormattedTimeString($row['date']), $this->escape($row['firstname']), $this->escape($row['lastname']) ); ?>
+                                                    </small>
+                                                    <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+                                                        <a href="javascript:void(0);"
+                                                           onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                                            <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                                        </a>
+                                                    <?php } ?>
+                                                </div>
+
+                                                <div class="replies">
+                                                    <?php if ($comments->getReplies($row['id'])) : ?>
+                                                        <?php foreach ($comments->getReplies($row['id']) as $comment): ?>
+                                                            <div>
+                                                                <div class="commentImage">
+                                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['profileId'] ?>"/>
+                                                                </div>
+                                                                <div class="commentMain">
+                                                                    <div class="commentContent">
+                                                                        <div class="right commentDate">
+                                                                            <?php printf( $this->__('text.written_on'), $this->getFormattedDateString($comment['date']),
+                                                                                $this->getFormattedTimeString($comment['date']) ); ?>
+                                                                        </div>
+                                                                        <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
+                                                                        <div class="text"><?php echo ($comment['text']); ?></div>
+                                                                    </div>
+
+                                                                    <div class="commentLinks">
+                                                                        <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+                                                                            <a href="javascript:void(0);"
+                                                                               onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                                                                <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                                                            </a>
+                                                                            <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                                                <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
+                                                                                   class="deleteComment">
+                                                                                    <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                                                </a>
+                                                                            <?php } ?>
+                                                                        <?php } ?>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clearall"></div>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php endif; ?>
+                                                    <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
+                                                        <div class="commentImage">
+                                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['profileId'] ?>"/>
+                                                        </div>
+                                                        <div class="commentReply">
+                                                            <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>
+                                                        </div>
+                                                        <div class="clearall"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <?php if(count($this->get('comments')) >= 3){ ?>
+                                            </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <?php if(count($this->get('comments')) == 0){ ?>
+                                <div style="padding-left:0px;">
+                                    <?php echo $this->__('text.no_updates') ?>
+                                </div>
+                            <?php } ?>
+                            <div class="clearall"></div>
+                        </form>
+
+                        <script type='text/javascript'>
+
+                            leantime.generalController.initSimpleEditor();
+
+                            function toggleCommentBoxes(id) {
+
+                                <?php if($login::userIsAtLeast($roles::$commenter)){ ?>
+
+                                if (id == 0) {
+                                    jQuery('#mainToggler').hide();
+                                } else {
+                                    jQuery('#mainToggler').show();
+                                }
+                                jQuery('.commentBox textarea').remove();
+
+                                jQuery('.commentBox').hide('fast', function () {});
+
+                                jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+                                leantime.generalController.initSimpleEditor();
+
+                                jQuery('#comment' + id + '').show('fast');
+                                jQuery('#father').val(id);
+
+                                <?php } ?>
+
+                            }
+                        </script>
+
+                    </form>
+                </div>
+
                 <div class="maincontentinner">
                     <div class="row" id="projectProgressContainer">
                         <div class="col-md-12">
@@ -301,13 +493,18 @@
    jQuery(document).ready(function() {
 
 
+
        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+
+
            leantime.dashboardController.prepareHiddenDueDate();
            leantime.ticketsController.initEffortDropdown();
            leantime.ticketsController.initMilestoneDropdown();
            leantime.ticketsController.initStatusDropdown();
            leantime.ticketsController.initDueDateTimePickers();
+
        <?php }else{ ?>
+
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
@@ -331,15 +528,6 @@
            //leantime.dashboardController.initBacklogChartButtonClick('NumChartButton', [ <?php foreach($backlogBurndown as $value)  { if($value['actualNum'] !== '') echo "'".$value['actualNum']."',"; }  ?> ]);
 
        <?php } ?>
-
-       <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
-
-           leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-       <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-       } ?>
 
     });
 

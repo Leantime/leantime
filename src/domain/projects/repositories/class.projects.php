@@ -518,7 +518,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings']??'', PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 

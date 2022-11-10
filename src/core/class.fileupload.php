@@ -230,6 +230,11 @@ class fileupload
 
             try {
                 // Upload data.
+
+                if($this->file_tmp_name == null || $this->file_tmp_name == ''){
+                    return false;
+                }
+
                 $file = fopen($this->file_tmp_name, "rb");
                 // implode all non-empty elements to allow s3FolderName to be empty. 
                 // otherwise you will get an error as the key starts with a slash
@@ -242,7 +247,7 @@ class fileupload
 
             } catch (S3Exception $e) {
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
                 return false;
 
             }
@@ -257,7 +262,7 @@ class fileupload
 
             } catch (Exception $e) {
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
                 return false;
             }
 
@@ -283,7 +288,7 @@ class fileupload
 
         } catch (S3Exception $e) {
 
-            error_log($e->getMessage(), 0);
+            error_log($e, 0);
             return false;
 
         }
@@ -301,7 +306,7 @@ class fileupload
 
         } catch (Exception $e) {
 
-            error_log($e->getMessage(), 0);
+            error_log($e, 0);
             return false;
         }
 

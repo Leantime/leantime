@@ -48,8 +48,8 @@ namespace leantime\domain\repositories {
         public function getCalendar($id)
         {
 
-
-            $userTickets = "SELECT 
+            /*
+           $userTickets = "SELECT
 					tickets.dateToFinish, 
 					tickets.headline, 
 					tickets.id,
@@ -65,6 +65,23 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $tickets = $stmn->fetchAll();
             $stmn->closeCursor();
+            */
+
+            $ticketService = new \leantime\domain\services\tickets();
+            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($id, "");
+
+            if(!empty($ticketArray)) {
+				if(isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
+					$tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
+				}elseif(isset($ticketArray["thisWeek"]["tickets"])){
+					$tickets = $ticketArray["thisWeek"]["tickets"];
+				}elseif($ticketArray["later"]["tickets"]) {
+					$tickets = $ticketArray["later"]["tickets"];
+				}
+            }else{
+                $tickets = array();
+            }
+
 
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
 

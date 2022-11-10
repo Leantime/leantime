@@ -80,33 +80,31 @@ namespace leantime\core {
 
             }
 
+            if(isset($_SESSION['cache.langlist'])){
+                $this->langlist = $_SESSION['cache.langlist'];
 
-            if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
+            }else {
 
-                if(isset($_SESSION['cache.langlist'])){
-                    $this->langlist = $_SESSION['cache.langlist'];
-                }else {
+                if (file_exists('' . $this->iniFolder . 'languagelist.ini') === true) {
                     $this->langlist = parse_ini_file('' . $this->iniFolder . 'languagelist.ini');
                     $_SESSION['cache.langlist'] =  $this->langlist;
-                }
-                
-                //Start checking if the user has a language set
-                if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
-
-                    $this->setLanguage($_SESSION['usersettings.language']);
-
-                //If not check for company default setting
                 } else {
-
-                    $this->setLanguage($_SESSION['companysettings.language']);
-
+                    throw new Exception("Language list missing");
                 }
 
+            }
+                
+            //Start checking if the user has a language set
+            if(isset($_SESSION['usersettings.language']) && $this->isValidLanguage($_SESSION["usersettings.language"])){
+
+                $this->setLanguage($_SESSION['usersettings.language']);
+
+            //If not check for company default setting
             } else {
 
-                throw new Exception("Language list missing");
-            }
+                $this->setLanguage($_SESSION['companysettings.language']);
 
+            }
 
         }
 
@@ -155,10 +153,11 @@ namespace leantime\core {
         public function readIni()
         {
 
+            $config = new config();
 
-            if(isset($_SESSION['cache.language_resources_'.$this->language])) {
-                //$this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
-                //return $this->ini_array;
+            if(isset($_SESSION['cache.language_resources_'.$this->language]) && $config->debug == 0) {
+                $this->ini_array = $_SESSION['cache.language_resources_'.$this->language];
+                return $this->ini_array;
             }
 
             //Default to english US
@@ -303,9 +302,27 @@ namespace leantime\core {
 
                 $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
+
+
                 if (is_object($timestamp)) {
                     return date($this->__("language.timeformat"), $timestamp->getTimestamp());
                 }
+
+            }
+
+        }
+
+        public function get24HourTimestring($date)
+        {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timePart = explode(" ", $date);
+
+                if(is_array($timePart) && count($timePart) == 2){
+                    return $timePart[1];
+                }
+
+                return false;
 
             }
 
@@ -342,11 +359,18 @@ namespace leantime\core {
          * @param $date string
          * @return string|bool
          */
-        public function getISODateTimeString($date)
+        public function getISODateTimeString($date, $time)
         {
+
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-                $timestamp = date_create_from_format($this->__("language.dateformat") . " " . $this->__("language.timeformat"), $date);
+                $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+
+                //Time is coming in as 24hour format with :
+                $timeparts = explode(":", $time);
+                if(is_array($timeparts) && count($timeparts) == 2){
+                    $timestamp->setTime($timeparts[0], $timeparts[1]);
+                }
 
                 if (is_object($timestamp)) {
                     return date("Y-m-d H:i:00", $timestamp->getTimestamp());

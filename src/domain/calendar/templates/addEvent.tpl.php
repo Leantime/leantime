@@ -6,7 +6,7 @@ $values = $this->get('values');
 
 <div class="pageheader">
             
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.new_event'); ?></h1>
@@ -34,7 +34,7 @@ $values = $this->get('values');
                 <div class="par">
                     <label for=""><?php echo $this->__('label.start_time') ?></label>
                     <div class="input-append bootstrap-timepicker">
-                            <input type="text" id="event_time_from" name="timeFrom" value="" />
+                            <input type="time" id="event_time_from" name="timeFrom" value="" />
                        </div>
                 </div>
                 <div class="par">
@@ -44,7 +44,7 @@ $values = $this->get('values');
                 <div class="par">
                     <label for=""><?php echo $this->__('label.end_time') ?> </label>
                     <div class="input-append bootstrap-timepicker">
-                            <input type="text" id="event_time_to" name="timeTo" value="" />
+                            <input type="time" id="event_time_to" name="timeTo" value="" />
                        </div>
                 </div>
 

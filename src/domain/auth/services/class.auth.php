@@ -199,8 +199,8 @@ namespace leantime\domain\services {
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
 
                     //Update username to include domain
-                    $usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
-
+                    //$usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
+                    $usernameWDomain = $ldap->getEmail($username);
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
@@ -231,6 +231,7 @@ namespace leantime\domain\services {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
                         $user['phone'] = $ldapUser['phonenumber'];
+                        $user['user'] = $user['username'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
@@ -279,7 +280,7 @@ namespace leantime\domain\services {
             $this->name = strip_tags($user['firstname']);
             $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
             $this->userId = $user['id'];
-            $this->settings = unserialize($user['settings']);
+            $this->settings = $user['settings'] ? unserialize($user['settings']) : array();
             $this->clientId = $user['clientId'];
             $this->twoFAEnabled = $user['twoFAEnabled'];
             $this->twoFASecret = $user['twoFASecret'];
@@ -315,7 +316,7 @@ namespace leantime\domain\services {
 
                 return true;
 
-            //If the session doesn't have any session data we are out of sync. Start again
+                //If the session doesn't have any session data we are out of sync. Start again
             }else{
 
                 return false;
@@ -408,6 +409,8 @@ namespace leantime\domain\services {
 
         public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false) {
 
+
+
             //If statement split up for readability
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
             if ($forceGlobalRoleCheck == true){
@@ -415,7 +418,7 @@ namespace leantime\domain\services {
                 $roleToCheck = $_SESSION['userdata']['role'];
 
                 //If projectRole is not defined or if it is set to inherited
-            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
@@ -443,6 +446,7 @@ namespace leantime\domain\services {
             $currentUserKey = array_search($roleToCheck, roles::getRoles());
 
             if($testKey <= $currentUserKey){
+
                 return true;
             }else{
                 return false;
@@ -471,19 +475,19 @@ namespace leantime\domain\services {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //If projectRole is not defined or if it is set to inherited
-            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited") {
+                //If projectRole is not defined or if it is set to inherited
+            }elseif(!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //Do not overwrite admin or owner roles
+                //Do not overwrite admin or owner roles
             }elseif($_SESSION['userdata']['role'] == roles::$owner
                 || $_SESSION['userdata']['role'] == roles::$admin
-            || $_SESSION['userdata']['role'] == roles::$manager) {
+                || $_SESSION['userdata']['role'] == roles::$manager) {
 
                 $roleToCheck = $_SESSION['userdata']['role'];
 
-            //In all other cases check the project role
+                //In all other cases check the project role
             }else{
 
                 $roleToCheck = $_SESSION['userdata']['projectRole'];

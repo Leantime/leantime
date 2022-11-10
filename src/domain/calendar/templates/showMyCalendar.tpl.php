@@ -4,7 +4,7 @@
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.my_calendar'); ?></h1>
@@ -18,7 +18,7 @@
 
         <?php echo $this->displayLink(
             'calendar.addEvent',
-            "<i class='fa-plus'></i> ".$this->__('buttons.add_event'),
+            "<i class='fa fa-plus'></i> ".$this->__('buttons.add_event'),
             null,
             array('class'=>'btn btn-primary btn-rounded')
         ) ?>

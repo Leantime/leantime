@@ -200,7 +200,7 @@ namespace leantime\domain\services {
                         'headers' => [ 'Content-Type' => 'application/json' ]
                     ]);
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
@@ -261,7 +261,7 @@ namespace leantime\domain\services {
                           'headers' => [ 'Content-Type' => 'application/json' ]
                       ]);
                 }catch (\Exception $e) {
-                      error_log($e->getMessage());
+                      error_log($e);
                 }
               }
             }
@@ -284,7 +284,7 @@ namespace leantime\domain\services {
                         'body' => $data_string
                     ]);
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
@@ -329,7 +329,7 @@ namespace leantime\domain\services {
                     ]);
 
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
@@ -378,11 +378,13 @@ namespace leantime\domain\services {
             $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
             if(is_array($project)) {
+
                 if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
                     return $project[0]['projectRole'];
                 }else{
                     return "";
                 }
+
             }else{
                 return "";
             }
@@ -492,9 +494,6 @@ namespace leantime\domain\services {
 
                     unset($_SESSION["projectsettings"]);
 
-                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
-                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
                     events::dispatch_event("projects.setCurrentProject");
 
                     return true;
@@ -579,6 +578,7 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
+                'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
 
@@ -674,6 +674,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -727,6 +728,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -779,7 +781,9 @@ namespace leantime\domain\services {
                             "conclusion" => $item['conclusion'],
                             "box" => $item['box'],
                             "author" => $item['author'],
-
+                            "parent" => $item['parent'],
+                            "title" => $item['title'],
+                            "tags" => $item['tags'],
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],

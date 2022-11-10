@@ -95,8 +95,6 @@ class application
 
             }
 
-
-
         }else{
 
 
@@ -122,7 +120,7 @@ class application
 
             }catch(\Exception $e){
 
-                error_log($e->getMessage(), 0);
+                error_log($e, 0);
 
             }
 
@@ -176,7 +174,10 @@ class application
     private function checkIfInstalled() {
 
         if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {
+
             if ($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false) {
+
+                $_SESSION['isInstalled'] = false;
 
                 //Don't redirect on i18n call
                 if($this->frontController::getCurrentRoute() !== "install" &&

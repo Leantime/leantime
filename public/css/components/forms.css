@@ -43,7 +43,7 @@ body div.tagsinput {
 
 body div.tagsinput input {
     font-size:var(--base-font-size);
-    color:var(--primary-font-color);
+    color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
 }
@@ -435,7 +435,7 @@ select,
 }
 
 .chzn-choices {
-    max-height:29px;
+
 }
 
 .chzn-container-multi .chzn-choices .search-choice {
@@ -446,6 +446,7 @@ select,
     position: relative;
     cursor: default;
     border-radius:12px;
+    font-size:var(--font-size-s);
 }
 
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close {
@@ -580,6 +581,12 @@ body div.tagsinput.readonly {
     width:auto;
     padding:0px;
     border:0px !important;
+    height:auto !important;
+}
+
+body .ticketBox div.tagsinput.readonly {
+    background:none !important;
+    margin-bottom:0px !important;
 }
 
 div.border {

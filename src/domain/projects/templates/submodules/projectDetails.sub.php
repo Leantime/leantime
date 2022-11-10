@@ -115,53 +115,6 @@ $project = $this->get('project');
 
     </div>
 
-	<div class="row-fluid  padding-top" style="display:none;">
-		<h4 class="widgettitle title-light">
-			<span class="fa fa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
-		</h4>
-	</div>
-
-	<div class="row-fluid  padding-top" style="display:none;">
-		<div class="span8">
-			<div class="form-group">
-
-				<label class="span4 control-label" for="ticketLayout"><?php echo $this->__('label.ticket_layout'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsTicketLayout" id="ticketLayout">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 0) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.classic'); ?></option>
-
-							<option value="1" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 1) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.oneView'); ?></option>
-
-						</select>
-
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="spsan4">
-			<div class="form-group">
-				<label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsCommentOrder" id="commentOrder">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "0") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.uptodown'); ?></option>
-
-							<option value="1" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "1") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.downtoup'); ?></option>
-
-						</select>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
     <div class="row-fluid padding-top">
         <?php if ($project['id'] != '') : ?>
             <div class="pull-right padding-top">

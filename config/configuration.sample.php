@@ -37,7 +37,7 @@ class config
     public $s3UsePathStyleEndpoint = false;               // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
     public $s3Region = '';                                //S3 region
     public $s3FolderName = '';                            //Foldername within S3 (can be emtpy)
-    public $s3EndPoint = '';                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+    public $s3EndPoint = null;                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
     public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
@@ -47,10 +47,12 @@ class config
     public $email = '';                                   //Return email address
     public $useSMTP = false;                              //Use SMTP? If set to false, the default php mail() function will be used
     public $smtpHosts = '';                               //SMTP host
+    public $smtpAuth = true;                              //SMTP use user/password authentication
     public $smtpUsername = '';                            //SMTP username
     public $smtpPassword = '';                            //SMTP password
     public $smtpAutoTLS = true;                           //SMTP Enable TLS encryption automatically if a server supports it
     public $smtpSecure = '';                              //SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
+    public $smtpSSLNoverify = false;                      //SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
     public $smtpPort = '';                                //Port (usually one of 25, 465, 587, 2526)
 
     /*ldap default settings (can be changed in company settings) */
@@ -62,7 +64,10 @@ class config
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
     public $ldapUserDomain = '';                          //Domain after ldap, example @example.com
     public $bindUser = '';                                //ldap user that can search directory. (Should be read only)
-    public $bindPassword = '';                            //Default ldap keys in your directory.
+    public $bindPassword = '';
+
+    //Default ldap keys in your directory.
+    //Works for OL
     public $ldapKeys = '{ 
         "username":"uid",
         "groups":"memberof",
@@ -71,7 +76,21 @@ class config
         "lastname":"",
         "phonenumber":""
         }';
-//Default role assignments upon first login. (Optional) Can be updated in user settings for each user
+
+    //For AD use
+    /*
+    public $ldapKeys = '{
+        "username":"cn",
+        "groups":"memberof",
+        "email":"mail",
+        "firstname":"givenname",
+        "lastname":"sn",
+        "phonenumber":"telephoneNumber"
+        }';
+    */
+
+
+    //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
           "5": {
             "ltRole":"readonly",
@@ -157,11 +176,13 @@ class config
         $this->useSMTP = $this->configEnvironmentHelper("LEAN_EMAIL_USE_SMTP", $this->useSMTP, "boolean");
         if ($this->useSMTP) {
             $this->smtpHosts = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_HOSTS", $this->smtpHosts);
+            $this->smtpAuth = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTH", $this->smtpAuth, "boolean");
             $this->smtpUsername = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_USERNAME", $this->smtpUsername);
             $this->smtpPassword = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $this->smtpPassword);
             $this->smtpAutoTLS = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $this->smtpAutoTLS, "boolean");
             $this->smtpSecure = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SECURE", $this->smtpSecure);
             $this->smtpPort = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_PORT", $this->smtpPort);
+            $this->smtpSSLNoverify = $this->configEnvironmentHelper("LEAN_EMAIL_SMTP_SSLNOVERIFY", $this->smtpSSLNoverify, "boolean");
         }
 
     /*ldap*/
