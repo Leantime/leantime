@@ -95,12 +95,12 @@ namespace leantime\domain\controllers\canvas {
 
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
-            !empty($canvasAry) || die("Cannot find canvas with id '$id'");
+            !empty($canvasAry) || throw new \Exception("Cannot find canvas with id '$id'");
             $projectId = $canvasAry[0]['projectId'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
             $projectsRepo = new repositories\projects();
             $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || die("Cannot retrieve project id '$projectId'");
+            !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
 
             // Generate XML data
             $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'.PHP_EOL.PHP_EOL;
