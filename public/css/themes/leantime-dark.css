@@ -328,3 +328,5 @@ body .userloggedinfo .dropdown-menu::after {
 body .ticketDropdown ul::after {
     border-bottom: 7px solid var(--secondary-background);
 }
+
+select,option,optgroup { -webkit-appearance:none }

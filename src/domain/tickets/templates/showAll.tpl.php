@@ -269,9 +269,13 @@
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle f-left status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
-                                        <?php echo $statusLabels[$row['status']]["name"]; ?>
+                                        <?php
+                                        if(isset($statusLabels[$row['status']])){
+                                        echo $statusLabels[$row['status']]["name"]; }
+                                        ?>
+
                                     </span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </a>

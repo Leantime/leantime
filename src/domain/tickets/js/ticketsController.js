@@ -1377,6 +1377,7 @@ leantime.ticketsController = (function () {
                         exportOptions: {
                             format: {
                                 body: function ( data, row, column, node ) {
+
                                     if( typeof jQuery(node).data('order') !== 'undefined'){
                                         data = jQuery(node).data('order');
                                     }
