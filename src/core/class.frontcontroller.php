@@ -174,8 +174,7 @@ namespace leantime\core {
                 require_once $domainPath;
 
             }else{
-                
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
                 return;
                 
             }

@@ -39,6 +39,9 @@
 
             <div class="col-md-8">
                 <div class="maincontentinner">
+                    <div class="pull-right">
+                        <a onclick="leantime.generalController.copyUrl(event);" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
+                    </div>
                     <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
                     <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
                     <?=$this->escapeMinimal($project['details']) ?>

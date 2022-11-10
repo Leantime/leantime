@@ -175,6 +175,11 @@ class application
 
                 $_SESSION['isInstalled'] = false;
 
+                //In case we have a previous session
+                if(isset($_SESSION['userdata'])){
+                    unset($_SESSION['userdata']);
+                }
+
                 //Don't redirect on i18n call
                 if($this->frontController::getCurrentRoute() !== "install" &&
                     $this->frontController::getCurrentRoute() !== "api.i18n") {
@@ -188,6 +193,17 @@ class application
 
 
         if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true) {
+
+            //Check if installed first. Depending on session state it might say installed after a user uninstalled
+            if ($this->settingsRepo->checkIfInstalled() === false){
+                $_SESSION['isInstalled'] = false;
+
+                //In case we have a previous session
+                if(isset($_SESSION['userdata'])){
+                    unset($_SESSION['userdata']);
+                }
+                $this->frontController::redirect(BASE_URL . "/install");
+            }
 
             $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {

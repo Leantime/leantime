@@ -15,7 +15,7 @@ class appSettings {
 	 */
 	public $debug = 0;
 
-	public $appVersion = "2.3.0-beta";
+	public $appVersion = "2.3.0-beta/2.2.11";
 
 	public $dbVersion = "2.1.11";
 
