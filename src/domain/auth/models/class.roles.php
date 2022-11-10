@@ -2,10 +2,13 @@
 
 namespace leantime\domain\models\auth {
 
-    use leantime\core\events;
+    use leantime\base\eventhelpers;
 
     class roles
     {
+
+        use eventhelpers;
+
         public static $readonly = 'readonly';
         public static $commenter = 'commenter';
         public static $editor = 'editor';
@@ -24,7 +27,7 @@ namespace leantime\domain\models\auth {
 
         private static function getFilteredRoles()
         {
-            return events::dispatch_filter('available_roles', self::$roleKeys);
+            return self::dispatch_filter('available_roles', self::$roleKeys);
         }
 
         public static function getRoleString($key) {

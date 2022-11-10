@@ -9,9 +9,12 @@ namespace leantime\core;
 
 use PDO;
 use PDOException;
+use leantime\base\eventhelpers;
 
 class db
 {
+
+    use eventhelpers;
 
     /**
      * @access private
@@ -78,11 +81,11 @@ class db
             echo "No database connection, check your database credentials in your configuration file.<br />\n";
             echo "Checking common issues:<br />\n";
 
-            if (!extension_loaded('PDO')) { 
+            if (!extension_loaded('PDO')) {
                 echo "- php-PDO is required, but not installed<br />\n";
             }
 
-            if (!extension_loaded('pdo_mysql')) { 
+            if (!extension_loaded('pdo_mysql')) {
                 echo "- php-pdo_mysql is required, but not installed<br />\n";
             }
 

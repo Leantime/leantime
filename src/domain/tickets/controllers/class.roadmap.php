@@ -3,7 +3,6 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\core\events;
     use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -41,14 +40,10 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            events::dispatch_event('begin', $params);
-
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
-
-            events::dispatch_event('end', $params);
 
         }
 
@@ -61,14 +56,10 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            events::dispatch_event('begin', $params);
-
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
-
-            events::dispatch_event('end', $params);
 
         }
 

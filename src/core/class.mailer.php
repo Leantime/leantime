@@ -12,9 +12,12 @@ namespace leantime\core {
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
     use phpmailerException;
+    use leantime\base\eventhelpers;
 
     class mailer
     {
+
+        use eventhelpers;
 
         /**
          * @access public
@@ -182,7 +185,7 @@ namespace leantime\core {
 
         }
 
-        private function registerMailerHook($type, $hookname, $payload = '', $additional_params)
+        private function dispatchMailerHook($type, $hookname, $payload = '', $additional_params)
         {
             if ($type !== 'filter' || $type !== 'event') {
                 return false;
@@ -194,12 +197,17 @@ namespace leantime\core {
                 $hooks[] = "$hookname.{$this->context}";
             }
 
+            $filteredValue = null;
             foreach ($hooks as $hook) {
                 if ($type == 'filter') {
-                    events::dispatch_filter($hook, $payload, $additional_params, 'core.mailer.sendMail');
+                    $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
                 } elseif ($type == 'event') {
-                    events::dispatch_event($hook, $payload, 'core.mailer.sendMail');
+                    self::dispatch_event($hook, $payload);
                 }
+            }
+
+            if ($type == 'filter') {
+                return $filteredValue;
             }
         }
 
@@ -215,10 +223,10 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
-            $this->registerMailerHook('event', 'beforeSendMail');
+            $this->dispatchMailerHook('event', 'beforeSendMail');
 
-            $to = $this->registerMailerHook('filter', 'sendMailTo', $to);
-            $from = $this->registerMailerHook('filter', 'sendMailFrom', $from);
+            $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
+            $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);
 
             $this->mailAgent->isHTML(true); // Set email format to HTML
 
@@ -270,7 +278,7 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
-            $this->registerMailerHook(
+            $this->dispatchMailerHook(
                 'filter',
                 'bodyTemplate',
                 $bodyTemplate,
@@ -287,7 +295,7 @@ namespace leantime\core {
 
             $this->mailAgent->Body = $bodyTemplate;
 
-            $this->registerMailerHook(
+            $this->dispatchMailerHook(
                 'filter',
                 'altBody',
                 $this->text
@@ -310,7 +318,7 @@ namespace leantime\core {
                 $this->mailAgent->clearAllRecipients();
             }
 
-            $this->registerMailerHook('event', 'afterSendMail');
+            $this->dispatchMailerHook('event', 'afterSendMail');
 
         }
 

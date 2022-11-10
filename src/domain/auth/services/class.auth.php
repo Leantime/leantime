@@ -6,11 +6,13 @@ namespace leantime\domain\services {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\core;
-    use leantime\core\events;
+    use leantime\base\eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
 
     class auth
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -289,7 +291,7 @@ namespace leantime\domain\services {
             $this->profileId = $user['profileId'];
 
             //Set Sessions
-            $_SESSION['userdata'] = events::dispatch_filter('user_session_vars', [
+            $_SESSION['userdata'] = self::dispatch_filter('user_session_vars', [
                 'role' => $this->role,
                 'id' => $this->userId,
                 'name' => $this->name,
@@ -343,7 +345,7 @@ namespace leantime\domain\services {
 
             if(isset($_SESSION)) {
 
-                $sessionsToDestroy = events::dispatch_filter('sessions_vars_to_destroy', [
+                $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
                     'userdata',
                     'template',
                     'subdomainData',

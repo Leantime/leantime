@@ -1,6 +1,7 @@
 <?php
 namespace leantime\core;
 
+use leantime\base\eventhelpers;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 use Aws\S3\S3Client;
@@ -12,6 +13,8 @@ use Exception;
  */
 class fileupload
 {
+
+    use eventhelpers;
 
     /**
      * @access private
@@ -132,7 +135,7 @@ class fileupload
      */
     public function getPublicFilesPath()
     {
-        $relative_path = events::dispatch_filter('relative_path', "/../../public/userfiles");
+        $relative_path = self::dispatch_filter('relative_path', "/../../public/userfiles");
 
         $path = realpath(__DIR__ . $relative_path);
         if ($path === false) {

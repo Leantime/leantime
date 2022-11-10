@@ -3,13 +3,12 @@
 namespace leantime\domain\repositories {
 
     use leantime\core;
-    use leantime\base\controller;
     use pdo;
 
-    class audit extends controller
+    class audit
     {
 
-        public function init()
+        public function __construct()
         {
 
             $this->db = core\db::getInstance();

@@ -10,9 +10,12 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\repositories\reports;
     use leantime\domain\repositories\setting;
+    use leantime\base\eventhelpers;
 
     class language
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -87,7 +90,7 @@ namespace leantime\core {
 
                 }
 
-                $parsedLangList = events::dispatch_filters('languages', $parsedLangList);
+                $parsedLangList = self::dispatch_filter('languages', $parsedLangList);
 
                 $this->langlist = $_SESSION['cache.langlist'] = $parsedLangList;
 
@@ -110,10 +113,6 @@ namespace leantime\core {
                 $language = $_SESSION["companysettings.language"];
 
                 $_SESSION["companysettings.language"] = $language;
-
-            }else{
-
-                $language = $_SESSION["companysettings.language"];
 
             }
 
@@ -369,8 +368,6 @@ namespace leantime\core {
          */
         public function getLanguageList()
         {
-
-            if (file_exists(static::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
 
             if (file_exists(static::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
 

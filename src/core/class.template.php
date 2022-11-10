@@ -11,9 +11,12 @@ namespace leantime\core {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\base\eventhelpers;
 
     class template
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -101,7 +104,7 @@ namespace leantime\core {
         public function assign($name, $value)
         {
 
-            $value = events::dispatch_filter("var.$name", $value);
+            $value = self::dispatch_filter("var.$name", $value);
 
             $this->vars[$name] = $value;
 
@@ -134,7 +137,7 @@ namespace leantime\core {
         public function getTemplatePath(string $module, string $name): string|false
         {
 
-            $plugin_path = events::dispatch_filter('relative_plugin_template_path', '', [
+            $plugin_path = self::dispatch_filter('relative_plugin_template_path', '', [
                 'module' => $module,
                 'name' => $name
             ]);
@@ -185,7 +188,7 @@ namespace leantime\core {
                 'template',
                 "template.$template"
             ] as $filter) {
-                $template = events::dispatch_filter($filter, $template);
+                $template = self::dispatch_filter($filter, $template);
             }
 
             $this->template = $template;
@@ -199,7 +202,7 @@ namespace leantime\core {
                 'layout',
                 "layout.$template"
             ] as $filter) {
-                $layout = events::dispatch_filter($filter, $layout);
+                $layout = self::dispatch_filter($filter, $layout);
             }
 
             $layoutFilename = $this->theme->getLayoutFilename($layout.'.php', $template);
@@ -224,7 +227,7 @@ namespace leantime\core {
                 'layoutContent',
                 "layoutContent.$template"
             ] as $filter) {
-                $layoutContent = events::dispatch_filter($filter, $layoutContent);
+                $layoutContent = self::dispatch_filter($filter, $layoutContent);
             }
 
             //Load Template
@@ -236,7 +239,7 @@ namespace leantime\core {
 
             $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
 
-            $this->hookContext = ($type == 'plugin' ? 'pluginTpl' : 'tpl') . ".$module.$action";
+            $this->hookContext = "tpl.$module.$action";
 
             require_once($loadFile);
 
@@ -246,7 +249,7 @@ namespace leantime\core {
                 'content',
                 "content.$template"
             ] as $filter) {
-                $content = events::dispatch_filter($filter, $content);
+                $content = self::dispatch_filter($filter, $content);
             }
 
             //Load template content into layout content
@@ -256,7 +259,7 @@ namespace leantime\core {
                 'render',
                 "render.$template"
             ] as $filter) {
-                $render = events::dispatch_filter($filter, $render);
+                $render = self::dispatch_filter($filter, $render);
             }
 
             echo $render;
@@ -352,7 +355,7 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $relative_path = events::dispatch_filter(
+            $relative_path = self::dispatch_filter(
                 'submodule_relative_path',
                 "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
                 [
@@ -386,7 +389,7 @@ namespace leantime\core {
                 'message',
                 "message_{$note['msg']}"
             ] as $filter) {
-                $message = events::dispatch_filter(
+                $message = self::dispatch_filter(
                     $filter,
                     $language->__($note['msg'], false),
                     $note
@@ -418,7 +421,7 @@ namespace leantime\core {
                 'message',
                 "message_{$note['msg']}"
             ] as $filter) {
-                $message = events::dispatch_filter(
+                $message = self::dispatch_filter(
                     $filter,
                     $language->__($note['msg'], false),
                     $note
@@ -769,10 +772,10 @@ namespace leantime\core {
             }
 
             if ($type == 'filter') {
-                return events::dispatch_filter($hookName, $payload, $available_params, $this->hookContext);
+                return self::dispatch_filter($hookName, $payload, $available_params, $this->hookContext);
             }
 
-            events::dispatch_event($hookName, $payload, $this->hookContext);
+            self::dispatch_event($hookName, $payload, $this->hookContext);
         }
 
     }

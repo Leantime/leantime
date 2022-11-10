@@ -1,43 +1,82 @@
 <?php
 
+require_once ROOT.'/../vendor/autoload.php';
+
 /**
  * __autoload - includes class
  *
  * @param  $class
- * @return
+ * @return void
  */
-
 spl_autoload_register("leantimeAutoloader", true, true);
 
+/**
+ * the leantime autoloader function
+ *
+ * Note:
+ * Possible Namespace Structures
+ *  - leantime \ base \ CLASS|TRAIT
+ *  - leantime \ core \ CLASS|TRAIT
+ *  - leantime \ domain \ MVC FOLDER \ CLASS|TRAIT
+ *  - leantime \ domain \ MVC FOLDER \ MODULE \ CLASS|TRAIT
+ *  - leantime \ plugin \ MVC FOLDER \ CLASS|TRAIT
+ *
+ * @param string $class
+ *
+ * @return void
+ */
 function leantimeAutoloader($class)
 {
 
-    $mvcFolder = "";
-    $module = "";
-    $path = "";
+    $parts = getLeantimeClassPath($class);
+    $path = $parts['path'];
+    $class = $parts['class'];
+
+    // Check if a customized version of the requested class exists
+    if(!empty($path)) {
+
+        foreach([
+            'class',
+            'trait'
+        ] as $prefix) {
+
+            if(file_exists(ROOT."/../custom/$path/$prefix.$class.php")) {
+
+                require_once(ROOT."/../custom/$path/$prefix.$class.php");
+                break;
+
+            }elseif(file_exists(ROOT."/../src/$path/$prefix.$class.php")) {
+
+                require_once(ROOT."/../src/$path/$prefix.$class.php");
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
+/**
+ * get leantime class path
+ *
+ * @param string $class
+ *
+ * @return array
+ */
+function getLeantimeClassPath($class)
+{
+    $mvcFolder = $module = $path = "";
 
     $classArray = explode('\\', $class);
-
-    //namespace structure
-
-    //For core
-    // leantime \ core \ CLASS
-
-    //For Domain
-    // leantime \ domain \ MVC FOLDER \ CLASS
-    // leantime \ domain \ MVC FOLDER \ MODULE \ CLASS
-
-    //For Plugins
-    // leantime \ plugin \ MVC FOLDER \ CLASS
-
     $classPartsCount = count($classArray);
 
     if($classPartsCount == 3) {
         $class = $classArray[2];
         $srcFolder = $classArray[1];
 
-        $path = "{$srcFolder}/class.{$class}.php";
-
+        $path = "{$srcFolder}";
     }
 
     //domain
@@ -46,7 +85,7 @@ function leantimeAutoloader($class)
         $srcFolder = $classArray[1];
         $mvcFolder = $classArray[2];
 
-        $path = "{$srcFolder}/{$class}/{$mvcFolder}/class.{$class}.php";
+        $path = "{$srcFolder}/{$class}/{$mvcFolder}";
     }
 
     if($classPartsCount == 5) {
@@ -55,23 +94,11 @@ function leantimeAutoloader($class)
         $mvcFolder = $classArray[2];
         $module = $classArray[3];
 
-        $path = "{$srcFolder}/{$module}/{$mvcFolder}/class.{$class}.php";
+        $path = "{$srcFolder}/{$module}/{$mvcFolder}";
     }
 
-	// Check if a customized version of the requested class exists
-	if(!empty($path)) {
-
-		if(file_exists('../custom/'.$path)) {
-
-			require_once('../custom/'.$path);
-
-		}elseif(file_exists('../src/'.$path)) {
-
-			require_once('../src/'.$path);
-
-		}
-
-	}
+    return [
+        'path' => $path,
+        'class' => $class
+    ];
 }
-
-require_once ROOT.'/../vendor/autoload.php';

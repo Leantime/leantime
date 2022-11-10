@@ -4,9 +4,12 @@ namespace leantime\core;
 
 use leantime\domain\services;
 use leantime\domain\repositories;
+use leantime\base\eventhelpers;
 
 class application
 {
+
+    use eventhelpers;
 
     private $config;
     private $settings;
@@ -27,7 +30,9 @@ class application
         "calendar.ical"
     );
 
-
+    /**
+     * constructor
+     */
     public function __construct()
     {
 
@@ -54,6 +59,10 @@ class application
      */
     public function start()
     {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+
         events::discover_listeners();
 
         //Only run telemetry when logged in
@@ -64,7 +73,7 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        events::dispatch_event("beginning");
+        self::dispatch_event("beginning");
 
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
@@ -123,13 +132,18 @@ class application
 
         }
 
-        events::dispatch_event("end");
+        self::dispatch_event("end");
 
     }
 
+    /**
+     * sets the headers
+     *
+     * @return void
+     */
     private function loadHeaders() {
 
-        $headers = events::dispatch_filter('headers', [
+        $headers = self::dispatch_filter('headers', [
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
             'X-Content-Type-Options' => 'nosniff'
@@ -141,6 +155,11 @@ class application
 
     }
 
+    /**
+     * executes audits on cron
+     *
+     * @return void
+     */
     private function cronExec() {
 
         $audit = new \leantime\domain\repositories\audit();
@@ -164,7 +183,7 @@ class application
         $timeSince = abs($nowDate - $lastCronEvent);
 
         //Run every 5 min
-        $cron_exec_increment = events::dispatch_filter('increment', 300);
+        $cron_exec_increment = self::dispatch_filter('increment', 300);
 
         if ($timeSince >= $cron_exec_increment)
         {
@@ -175,9 +194,13 @@ class application
             unset ($_SESSION["do_cron"]);
         }
 
-
     }
 
+    /**
+     * Checks if leantime is installed
+     *
+     * @return void
+     */
     private function checkIfInstalled() {
 
         if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {

@@ -6,8 +6,12 @@
  */
 namespace leantime\core;
 
+use leantime\base\eventhelpers;
+
 class session
 {
+
+    use eventhelpers;
 
     /**
      * @access private

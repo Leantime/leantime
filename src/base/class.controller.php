@@ -8,19 +8,22 @@ use leantime\core\language;
 
 class controller {
 
-    protected $tpl;
-    protected $language;
+    use eventhelpers;
+
+    protected template $tpl;
+    protected language $language;
 
     /**
      * constructor - initialize private variables
      *
      * @access public
+     *
      * @param $method the method to be initialized
      * @param $params parameters or body of the request
      */
     public function __construct($method, $params)
     {
-        events::dispatch_event('begin');
+        self::dispatch_event('begin');
 
         $this->tpl = new template();
         $this->language = new language();
@@ -28,11 +31,18 @@ class controller {
         // initialize
         $this->executeActions($method, $params);
 
-        events::dispatch_event('end', $this);
+        self::dispatch_event('end', $this);
     }
 
     /**
      * Allows hooking into all controllers with events
+     *
+     * @access private
+     *
+     * @param string $method
+     * @param array|object $params
+     *
+     * @return void
      */
     private function executeActions($method, $params): void
     {
@@ -42,10 +52,10 @@ class controller {
             'params' => $params
         ];
 
-        events::dispatch_event('before_init', $available_params);
+        self::dispatch_event('before_init', $available_params);
         $this->init();
 
-        events::dispatch_event('before_action', $available_params);
+        self::dispatch_event('before_action', $available_params);
         if (method_exists($this, $method)) {
             $this->$method($params);
         } else {
@@ -55,16 +65,22 @@ class controller {
 
     /**
      * Extended Controller version of __construct()
+     *
+     * @return void
      */
-    protected function init(): void
+    protected function init()
     {
 
     }
 
     /**
      * Default function for all request types unless otherwise specified
+     *
+     * @param array|object $params
+     *
+     * @return void
      */
-    protected function run(): void
+    protected function run()
     {
 
     }
