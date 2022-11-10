@@ -483,6 +483,8 @@ namespace leantime\core {
 
                 $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
+
+
                 if (is_object($timestamp)) {
                     return date($this->__("language.timeformat"), $timestamp->getTimestamp());
                 }
@@ -490,6 +492,22 @@ namespace leantime\core {
             }
 
             return "";
+
+        }
+
+        public function get24HourTimestring($date)
+        {
+            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                $timePart = explode(" ", $date);
+
+                if(is_array($timePart) && count($timePart) == 2){
+                    return $timePart[1];
+                }
+
+                return false;
+
+            }
 
         }
 
@@ -524,11 +542,18 @@ namespace leantime\core {
          * @param $date string
          * @return string|bool
          */
-        public function getISODateTimeString($date)
+        public function getISODateTimeString($date, $time)
         {
+
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
 
-                $timestamp = date_create_from_format($this->__("language.dateformat") . " " . $this->__("language.timeformat"), $date);
+                $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+
+                //Time is coming in as 24hour format with :
+                $timeparts = explode(":", $time);
+                if(is_array($timeparts) && count($timeparts) == 2){
+                    $timestamp->setTime($timeparts[0], $timeparts[1]);
+                }
 
                 if (is_object($timestamp)) {
                     return date("Y-m-d H:i:00", $timestamp->getTimestamp());

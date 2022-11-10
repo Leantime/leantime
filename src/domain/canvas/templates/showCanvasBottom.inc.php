@@ -20,12 +20,11 @@
         echo "<div style='width:30%' class='svgContainer'>";
         echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
         echo "</div>";
-
-        if($login::userIsAtLeast($roles::$editor)) {
             
-            echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
-
-            echo "<br />".$this->__("text.$canvasName.helper_content");
+        echo"<h4>".$this->__("headlines.$canvasName.analysis")."</h4>";
+        echo "<br />".$this->__("text.$canvasName.helper_content");
+        
+        if($login::userIsAtLeast($roles::$editor)) {
             echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> ".
                  "Create a new <strong>".$this->__("headline.$canvasName.board")."</strong></a>.";
 

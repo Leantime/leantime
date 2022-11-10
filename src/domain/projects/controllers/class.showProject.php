@@ -154,10 +154,6 @@ namespace leantime\domain\controllers {
                   $this->tpl->assign('discordWebhookURL' . $i, $discordWebhook);
                 }
 
-                $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
-                $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
-
-
                 $_SESSION['lastPage'] = BASE_URL."/projects/showProject/".$id;
 
                 $project = $this->projectRepo->getProject($id);
@@ -205,13 +201,6 @@ namespace leantime\domain\controllers {
 
                 //save changed project data
                 if (isset($_POST['save']) === true) {
-
-                    $this->settingsRepo->saveSetting("projectsettings." . $id . ".commentOrder", $_POST['settingsCommentOrder']);
-                    $this->settingsRepo->saveSetting("projectsettings." . $id . ".ticketLayout", $_POST['settingsTicketLayout']);
-
-                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".commentOrder");
-                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $id . ".ticketLayout");
-
 
                     //bind Post Data into one array
                     $values = array(
@@ -351,7 +340,7 @@ namespace leantime\domain\controllers {
 
                 $this->tpl->assign("bookedHoursArray", $this->projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $this->commentsRepo->getComments('project', $_GET['id'],"", $_SESSION["projectsettings"]['commentOrder']);
+                $comment = $this->commentsRepo->getComments('project', $_GET['id'], "");
                 $this->tpl->assign('comments', $comment);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 

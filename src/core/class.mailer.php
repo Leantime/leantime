@@ -118,8 +118,8 @@ namespace leantime\core {
 
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"];
-            $this->companyColor = $_SESSION["companysettings.primarycolor"];
+            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
+            $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
             $this->language = new language();
 

@@ -543,6 +543,10 @@ namespace leantime\core {
 
         }
 
+        public function get24HourTimestring($dateTime) {
+            return $this->language->get24HourTimestring($dateTime);
+        }
+
         //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
         //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
         public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {

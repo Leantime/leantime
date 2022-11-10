@@ -254,7 +254,11 @@
                                                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                                                 <a class="dropdown-toggle f-left status <?=$statusLabels[$row['projectId']][$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    echo $statusLabels[$row['projectId']][$row['status']]["name"];
+                                                                    if(isset($statusLabels[$row['projectId']][$row['status']])) {
+                                                                        echo $statusLabels[$row['projectId']][$row['status']]["name"];
+                                                                    }else{
+                                                                        echo "unknown";
+                                                                    }
                                                                     ?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

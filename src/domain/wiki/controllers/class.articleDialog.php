@@ -68,7 +68,7 @@ namespace leantime\domain\controllers {
                 $article->status = $params['status'];
                 $article->parent = $params['parent'];
                 $article->description = $params['description'];
-                $article->milestoneId = $params['milestoneId'];
+                $article->milestoneId = $params['milestoneId'] ?? '';
 
                 if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
 

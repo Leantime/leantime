@@ -42,7 +42,7 @@ namespace leantime\domain\controllers {
 
         public function get($params): void {
 
-            $comments = $this->commentService->getComments($this->module, $this->id, $_SESSION["projectsettings"]['commentOrder']);
+            $comments = $this->commentService->getComments($this->module, $this->id);
 
             $this->tpl->assign('numComments', count($comments));
             $this->tpl->assign('comments', $comments);

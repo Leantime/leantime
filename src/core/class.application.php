@@ -204,7 +204,10 @@ class application
     private function checkIfInstalled() {
 
         if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {
+
             if ($this->settingsRepo->checkIfInstalled() === false && isset($_GET['install']) === false) {
+
+                $_SESSION['isInstalled'] = false;
 
                 //Don't redirect on i18n call
                 if($this->frontController::getCurrentRoute() !== "install" &&
