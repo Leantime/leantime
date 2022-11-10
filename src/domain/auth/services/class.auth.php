@@ -349,6 +349,8 @@ namespace leantime\domain\services {
                 unset($_SESSION['currentSubscription']);
                 unset($_SESSION['lastTicketView']);
                 unset($_SESSION['lastFilterdTicketTableView']);
+                unset($_SESSION['isInstalled']);
+                unset($_SESSION['mainConfig']);
 
             }
 

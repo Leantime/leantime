@@ -44,7 +44,7 @@
 
     </div>
 	<div class="leantimeLogo">
-		<img style="height: 25px;" src="<?=BASE_URL ?>/config/images/logo-leantime.png">
+		<img style="height: 25px;" src="<?=BASE_URL ?>/images/logo-powered-by-leantime.png">
 	</div>
 </div>
 
