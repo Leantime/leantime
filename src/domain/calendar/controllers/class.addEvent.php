@@ -66,8 +66,6 @@ namespace leantime\domain\controllers {
                     'allDay' => $allDay
                 );
 
-                var_dump($values);
-
                 if ($values['description'] !== '') {
 
                     $calendarRepo->addEvent($values);
