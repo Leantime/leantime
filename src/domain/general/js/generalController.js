@@ -336,6 +336,8 @@ leantime.generalController = (function () {
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
+        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
+
 
     };
 
