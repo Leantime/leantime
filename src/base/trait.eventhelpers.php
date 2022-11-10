@@ -3,7 +3,7 @@
 namespace leantime\base;
 
 use leantime\core\events;
-use leantime\core\autoloader;
+use function leantime\core\getLeantimeClassPath;
 
 trait eventhelpers {
 
@@ -16,6 +16,8 @@ trait eventhelpers {
      *
      * @param string $hook
      * @param mixed $payload
+     *
+     * @return void
      */
     protected static function dispatch_event($hook, $payload = [])
     {

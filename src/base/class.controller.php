@@ -59,12 +59,14 @@ class controller {
         if (method_exists($this, $method)) {
             $this->$method($params);
         } else {
-            $this->run($params);
+            $this->run();
         }
     }
 
     /**
      * Extended Controller version of __construct()
+     *
+     * @access protected
      *
      * @return void
      */
@@ -76,7 +78,7 @@ class controller {
     /**
      * Default function for all request types unless otherwise specified
      *
-     * @param array|object $params
+     * @access protected
      *
      * @return void
      */

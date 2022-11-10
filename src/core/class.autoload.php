@@ -1,14 +1,17 @@
 <?php
 
+namespace leantime\core;
+
 require_once ROOT.'/../vendor/autoload.php';
 
 /**
  * __autoload - includes class
  *
- * @param  $class
+ * @param string $class
+ *
  * @return void
  */
-spl_autoload_register("leantimeAutoloader", true, true);
+spl_autoload_register(__NAMESPACE__."\\leantimeAutoloader", true, true);
 
 /**
  * the leantime autoloader function

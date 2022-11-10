@@ -30,7 +30,6 @@ namespace leantime\domain\controllers {
 
         }
 
-
         /**
          * get - handle get requests
          *

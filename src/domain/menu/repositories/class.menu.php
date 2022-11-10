@@ -8,7 +8,7 @@ namespace leantime\domain\repositories {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models\auth\roles;
-    
+
     class menu
     {
 
@@ -16,7 +16,7 @@ namespace leantime\domain\repositories {
         public const DEFAULT_MENU = 'default';
 
         // Menu structures
-        private array $menuStructures = [ 
+        private array $menuStructures = [
             'default' => [
                 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                 12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
@@ -62,13 +62,13 @@ namespace leantime\domain\repositories {
                              69 => [ 'type' => 'header', 'title' => 'menu.dts.validate' ],
                              70 => [ 'type' => 'item',   'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
                              71 => [ 'type' => 'item',   'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
-                80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open', 
+                80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open',
                         'submenu' => [
                             81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
                             82 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
                             83 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ] ] ]
         ];
-        
+
         /**
          * getMenuTypes - Return an array of a currently supported menu types
          *
@@ -82,21 +82,21 @@ namespace leantime\domain\repositories {
 			$config = new core\config();
 
 			if(!$config->enableMenuType) {
-                
+
 				return [ self::DEFAULT_MENU => $language->__('label.menu_type.'.self::DEFAULT_MENU) ];
-                
+
             }
-            
+
             $menuTypes = [];
-            
+
             foreach($this->menuStructures as $key => $menu) {
-                
+
                 $menuTypes[$key] = $language->__("label.menu_type.$key");
-                
+
             }
-            
+
             return $menuTypes;
-            
+
         }
 
         /**
@@ -108,7 +108,7 @@ namespace leantime\domain\repositories {
          */
         public function setSubmenuState(string $submenu, string $state): void
         {
-            
+
             $_SESSION['submenuToggle'][$submenu] = $state;
 
         }
@@ -124,16 +124,16 @@ namespace leantime\domain\repositories {
         {
 
             $language = new core\language();
-            
+
             if(!isset($this->menuStructures[$menuType]) || empty($menuType)) {
-                
+
                 $menuType = self::DEFAULT_MENU;
-                
+
             }
             $menuStructure = $this->menuStructures[$menuType];
 
             foreach($menuStructure as $key => $element) {
-                
+
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 
                 switch($element['type']) {
@@ -143,12 +143,12 @@ namespace leantime\domain\repositories {
 					case 'item':
                         // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
                         if(false) {
-                            
+
                             $menuStructure[$key]['type'] = 'disabled';
                             break;
 
                         }
-                        
+
 						// Update security
 						if(isset($element['role'])) {
 							switch($element['role']) {
@@ -174,8 +174,10 @@ namespace leantime\domain\repositories {
 
 							$ticketService = new services\tickets();
 							$config = new core\config();
-                            
-							$menuStructure[$key]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
+                            $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
+
+							$menuStructure[$key]['href'] = str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
 
 						}
 						break;
@@ -198,7 +200,7 @@ namespace leantime\domain\repositories {
 						foreach($element['submenu'] as $subkey => $subelement) {
 
 							$menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
-							
+
 							switch($subelement['type']) {
 								case 'header':
 									break;
@@ -206,12 +208,12 @@ namespace leantime\domain\repositories {
 								case 'item':
                                     // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
                                     if(false) {
-                            
+
                                         $menuStructure[$key]['type'] = 'disabled';
                                         break;
 
                                     }
-                        
+
 									// Update security
 									if(isset($subelement['role'])) {
 
@@ -225,7 +227,7 @@ namespace leantime\domain\repositories {
 											default:
 												die("Cannot proceed due to invalid role: '".$subelement['role']."'");
 										}
-										
+
 										if(!$accessGranted) {
 
 											$menuStructure[$key]['submenu'][$subkey]['type'] = 'disabled';
@@ -233,31 +235,33 @@ namespace leantime\domain\repositories {
 										}
 
 									}
-									
+
 									// Patch link
 									if($subelement['module'] == 'tickets' && !isset($subelement['href'])) {
 
 										$ticketService = new services\tickets();
 										$config = new core\config();
-										
-										$menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($config->appUrl, '', $ticketService->getLastTicketViewUrl());
+
+                                        $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
+
+										$menuStructure[$key]['submenu'][$subkey]['href'] = str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
 
 									}
 									break;
-									
+
 								default:
 									die("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
 							}
 						}
 						break;
-						
+
 					default:
 						die("Cannot proceed due to invalid menu element: '".$element['type']."'");
                 }
             }
 
             return $menuStructure;
-            
+
         }
 
     }

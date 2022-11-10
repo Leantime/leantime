@@ -5,7 +5,7 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\base\controller;
 
-    class error500
+    class error500 extends controller
     {
 
         public function run()

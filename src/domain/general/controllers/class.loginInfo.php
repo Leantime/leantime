@@ -12,7 +12,7 @@ namespace leantime\domain\controllers {
 
         public function init()
         {
-            $userRepo = new repositories\users();
+            $this->userRepo = new repositories\users();
         }
 
         public function run()

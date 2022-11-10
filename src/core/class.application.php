@@ -59,10 +59,6 @@ class application
      */
     public function start()
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-
         events::discover_listeners();
 
         //Only run telemetry when logged in

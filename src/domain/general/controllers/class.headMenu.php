@@ -8,10 +8,9 @@ namespace leantime\domain\controllers {
     class headMenu extends controller
     {
 
-        private $tpl;
         private $timesheets;
 
-        public function __construct()
+        public function init()
         {
 
             $this->timesheets = new services\timesheets();

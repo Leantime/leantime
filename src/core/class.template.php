@@ -187,22 +187,20 @@ namespace leantime\core {
             foreach([
                 'template',
                 "template.$template"
-            ] as $filter) {
-                $template = self::dispatch_filter($filter, $template);
+            ] as $tplfilter) {
+                $template = self::dispatch_filter($tplfilter, $template);
             }
 
             $this->template = $template;
 
             //Load Layout file
-            ob_start();
-
             $layout = htmlspecialchars($layout);
 
             foreach ([
                 'layout',
                 "layout.$template"
-            ] as $filter) {
-                $layout = self::dispatch_filter($filter, $layout);
+            ] as $tplfilter) {
+                $layout = self::dispatch_filter($tplfilter, $layout);
             }
 
             $layoutFilename = $this->theme->getLayoutFilename($layout.'.php', $template);
@@ -219,6 +217,8 @@ namespace leantime\core {
 
             }
 
+            ob_start();
+
             require($layoutFilename);
 
             $layoutContent = ob_get_clean();
@@ -226,12 +226,11 @@ namespace leantime\core {
             foreach ([
                 'layoutContent',
                 "layoutContent.$template"
-            ] as $filter) {
-                $layoutContent = self::dispatch_filter($filter, $layoutContent);
+            ] as $tplfilter) {
+                $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
             }
 
             //Load Template
-            ob_start();
 
             //frontcontroller splits the name (actionname.modulename)
             $action = $this->frontcontroller::getActionName($template);
@@ -241,6 +240,8 @@ namespace leantime\core {
 
             $this->hookContext = "tpl.$module.$action";
 
+            ob_start();
+
             require_once($loadFile);
 
             $content = ob_get_clean();
@@ -248,8 +249,8 @@ namespace leantime\core {
             foreach ([
                 'content',
                 "content.$template"
-            ] as $filter) {
-                $content = self::dispatch_filter($filter, $content);
+            ] as $tplfilter) {
+                $content = self::dispatch_filter($tplfilter, $content);
             }
 
             //Load template content into layout content
