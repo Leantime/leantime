@@ -121,6 +121,7 @@ leantime.projectsController = (function () {
 
     var initTodoStatusSortable = function (element) {
         var sortCounter=1;
+
         jQuery(element).find("input.sorter").each(function(index){
 
             jQuery(this).val(sortCounter);
@@ -129,6 +130,7 @@ leantime.projectsController = (function () {
 
         jQuery(element).sortable({
             stop: function( event, ui ) {
+
                 sortCounter=1;
                 jQuery(element).find("input.sorter").each(function(index){
                     jQuery(this).val(sortCounter);
