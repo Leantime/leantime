@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -12,12 +13,11 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-
-    class editCompanySettings
+    class editCompanySettings extends controller
     {
 
-        private $tpl;
-
+        private $config;
+        private $settingsRepo;
 
         /**
          * constructor - initialize private variables
@@ -29,12 +29,8 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
-
-            $this->tpl = new core\template();
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
-            $this->language = new core\language();
-
 
         }
 

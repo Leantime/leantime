@@ -3,26 +3,22 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class showTicket
+    class showTicket extends controller
     {
 
         private $projectService;
         private $ticketService;
-        private $tpl;
         private $sprintService;
         private $fileService;
         private $commentService;
         private $timesheetService;
         private $userService;
-        private $language;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
-
-            $this->language = new core\language();
 
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
@@ -35,6 +31,7 @@ namespace leantime\domain\controllers {
             if(isset($_SESSION['lastPage']) === false){
                 $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban";
             }
+
         }
 
         public function get($params)

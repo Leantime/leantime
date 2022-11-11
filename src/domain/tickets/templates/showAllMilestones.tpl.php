@@ -1,6 +1,7 @@
 <?php
 
     defined( 'RESTRICTED' ) or die( 'Restricted access' );
+
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
     $currentSprint  = $this->get("currentSprint");
@@ -9,6 +10,7 @@
 
     $efforts        = $this->get('efforts');
     $statusLabels   = $this->get('allTicketStates');
+    $allTickets     = $this->get('allTickets');
 
     //All states >0 (<1 is archive)
     $numberofColumns = count($this->get('allTicketStates'))-1;
@@ -30,22 +32,35 @@
         <?php echo $this->displayNotification(); ?>
 
 		<form action="" method="get" id="ticketSearch">
+
+            <?php $this->dispatchTplEvent('filters.afterFormOpen'); ?>
+
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
-                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                    <?php
+                    $this->dispatchTplEvent('filters.afterLefthandSectionOpen'); 
+                    if($login::userIsAtLeast($roles::$editor)) { 
+                    ?>
                     <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
-                    <?php } ?>
+                    <?php 
+                    }
+                    $this->dispatchTplEvent('filters.beforeLefthandSectionClose'); 
+                    ?>
                 </div>
 
                 <div class="col-md-2 center">
-
+                <?php 
+                    $this->dispatchTplEvent('filters.afterCenterSectionOpen');
+                    $this->dispatchTplEvent('filters.beforeCenterSectionClose');
+                ?>
                 </div>
                 <div class="col-md-5">
                     <div class="pull-right">
 
-                        <div id="tableButtons" style="display:inline-block"></div>
+                        <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
+                        <div id="tableButtons" style="display:inline-block"></div>
 
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
@@ -54,14 +69,22 @@
                                 <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
+
+                        <?php $this->dispatchTplEvent('filters.beforeRighthandSectionClose'); ?>
+
                     </div>
                 </div>
 
             </div>
 
+            <?php $this->dispatchTplEvent('filters.beforeFormClose'); ?>
+
             <div class="clearfix"></div>
 
         </form>
+
+        <?php $this->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTickets]); ?>
+
             <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
                 <colgroup>
                     <col class="con1" width="15%">
@@ -77,7 +100,9 @@
 
 
                 </colgroup>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
                 <thead>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
                     <th><?= $this->__("label.title"); ?></th>
 
@@ -94,10 +119,14 @@
                     <th><?= $this->__("label.progress"); ?></th>
 
                 </tr>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
                 </thead>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterHead', ['tickets' => $allTickets]); ?>
                 <tbody>
-                    <?php foreach($this->get('allTickets') as $row){?>
+                    <?php $this->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
+                    <?php foreach($allTickets as $rowNum => $row){?>
                         <tr>
+                            <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                             <td data-order="<?=$this->e($row->headline); ?>"><a href="<?=BASE_URL ?>/tickets/editMilestone/<?=$this->e($row->id); ?>" class="milestoneModal"><?=$this->e($row->headline); ?></a></td>
                             <?php
                             if($row->dependingTicketId != "" && $row->dependingTicketId != 0){
@@ -200,17 +229,21 @@
                                     </div>
                                 </div>
                             </td>
-
+                            <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>
-
                     <?php } ?>
+                    <?php $this->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
                 </tbody>
-
+                <?php $this->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
             </table>
+            <?php $this->dispatchTplEvent('allTicketsTable.afterClose', ['tickets' => $allTickets]); ?>
+
 	</div>
 </div>
 
 <script type="text/javascript">
+
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
@@ -230,8 +263,8 @@
         leantime.generalController.makeInputReadonly(".maincontentinner");
     <?php } ?>
 
-
-
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

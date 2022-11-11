@@ -8,5 +8,7 @@
     </script>
 <?php } ?>
 
+<?php $this->dispatchTplEvent('beforeBodyClose'); ?>
+
 </body>
 </html>

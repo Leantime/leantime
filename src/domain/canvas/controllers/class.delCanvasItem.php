@@ -5,17 +5,29 @@
 namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delCanvasItem
+    class delCanvasItem extends controller
     {
 
         /**
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = '??';
+
+        private $canvasRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+            $canvasRepoName = "leantime\\domain\\repositories\\".static::CANVAS_NAME.'canvas';
+            $this->canvasRepo = new $canvasRepoName();
+        }
 
         /**
          * run - display template and edit data
@@ -27,22 +39,17 @@ namespace leantime\domain\controllers\canvas {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $canvasRepoName = "leantime\\domain\\repositories\\".static::CANVAS_NAME.'canvas';
-            $canvasRepo = new $canvasRepoName();
-            $language = new core\language();
-
             if(isset($_POST['del']) && isset($_GET['id'])) {
 
                 $id = (int)($_GET['id']);
-                $canvasRepo->delCanvasItem($id);
+                $this->canvasRepo->delCanvasItem($id);
 
-                $tpl->setNotification($language->__('notification.element_deleted'), 'success');
-                $tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
+                $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success');
+                $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
 
             }
-            
-            $tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvasItem');
+
+            $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvasItem');
 
         }
 

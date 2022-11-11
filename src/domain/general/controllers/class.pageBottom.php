@@ -4,23 +4,27 @@ namespace leantime\domain\controllers {
 
     use DebugBar\StandardDebugBar;
     use leantime\core;
+    use leantime\base\controller;
 
-    class pageBottom
+    class pageBottom extends controller
     {
 
-        private $tpl;
         private $settings;
 
         public function __construct()
         {
-            $this->tpl = new core\template();
+
             $this->settings = new core\appSettings();
+
         }
 
         public function run()
         {
 
             $this->tpl->displayPartial('general.pageBottom');
+
         }
+
     }
+
 }

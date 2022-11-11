@@ -13,8 +13,9 @@ if(is_array($currentLink)) {
 
 ?>
 
+<?php $this->dispatchTplEvent('beforeHeadMenu'); ?>
 <ul class="headmenu">
-
+    <?php $this->dispatchTplEvent('afterHeadMenuOpen'); ?>
     <li>
         <a href='<?=BASE_URL ?>/dashboard/home' <?php if($module == 'dashboard' && $action=='home') echo"class='active'"; ?>>
             <?=$this->__("menu.home")?>
@@ -107,4 +108,6 @@ if(is_array($currentLink)) {
         </ul>
     </li>
     <?php } ?>
+    <?php $this->dispatchTplEvent('beforeHeadMenuClose'); ?>
 </ul>
+<?php $this->dispatchTplEvent('afterHeadMenu'); ?>

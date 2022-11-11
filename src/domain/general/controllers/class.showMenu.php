@@ -8,8 +8,9 @@ namespace leantime\domain\controllers;
  */
 
 use leantime\core;
+use leantime\base\controller;
 
-class showMenu
+class showMenu extends controller
 {
 
     /**
@@ -20,9 +21,7 @@ class showMenu
     public function run()
     {
 
-        $tpl = new core\template();
-
-        $tpl->displayPartial('general.showMenu');
+        $this->tpl->displayPartial('general.showMenu');
 
     }
 

@@ -8,12 +8,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delClient
+    class delClient extends controller
     {
+
+        private $clientRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->clientRepo = new repositories\clients();
+
+        }
 
         /**
          * run - display template and edit data
@@ -25,10 +40,6 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
-            $tpl = new core\template();
-            $clientRepo = new repositories\clients();
-            $language = new core\language();
-
             //Only admins
             if(auth::userIsAtLeast(roles::$admin)) {
 
@@ -36,35 +47,35 @@ namespace leantime\domain\controllers {
 
                     $id = (int)($_GET['id']);
 
-                    if ($clientRepo->hasTickets($id) === true) {
+                    if ($this->clientRepo->hasTickets($id) === true) {
 
-                        $tpl->setNotification($language->__('notification.client_has_todos'), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
 
                     } else {
 
                         if (isset($_POST['del']) === true) {
 
-                            $clientRepo->deleteClient($id);
+                            $this->clientRepo->deleteClient($id);
 
-                            $tpl->setNotification($language->__('notification.client_deleted'), 'success');
-                            $tpl->redirect(BASE_URL."/clients/showAll");
+                            $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
+                            $this->tpl->redirect(BASE_URL."/clients/showAll");
 
                         }
 
                     }
 
-                    $tpl->assign('client', $clientRepo->getClient($id));
-                    $tpl->display('clients.delClient');
+                    $this->tpl->assign('client', $this->clientRepo->getClient($id));
+                    $this->tpl->display('clients.delClient');
 
                 } else {
 
-                    $tpl->display('general.error');
+                    $this->tpl->display('general.error');
 
                 }
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('general.error');
 
             }
 

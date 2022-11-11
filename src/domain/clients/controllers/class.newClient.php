@@ -8,12 +8,29 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class newClient
+    class newClient extends controller
     {
+
+        private $clientRepo;
+        private $user;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->clientRepo = new repositories\clients();
+            $this->user = new repositories\users();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,11 +41,6 @@ namespace leantime\domain\controllers {
         {
 
             auth::authOrRedirect([roles::$owner, roles::$admin], true);
-
-            $tpl = new core\template();
-            $clientRepo = new repositories\clients();
-            $user = new repositories\users();
-            $language = new core\language();
 
             //Only admins
             if(auth::userIsAtLeast(roles::$admin)) {
@@ -60,29 +72,29 @@ namespace leantime\domain\controllers {
                     );
 
                     if ($values['name'] !== '') {
-                        if ($clientRepo->isClient($values) !== true) {
+                        if ($this->clientRepo->isClient($values) !== true) {
 
-                            $id = $clientRepo->addClient($values);
-                            $tpl->setNotification($language->__('notification.client_added_successfully'), 'success');
-                            $tpl->redirect(BASE_URL."/clients/showClient/".$id);
+                            $id = $this->clientRepo->addClient($values);
+                            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success');
+                            $this->tpl->redirect(BASE_URL."/clients/showClient/".$id);
 
                         } else {
 
-                            $tpl->setNotification($language->__('notification.client_exists_already'), 'error');
+                            $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
                         }
                     } else {
 
-                        $tpl->setNotification($language->__('notification.client_name_not_specified'), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
                     }
 
                 }
 
-                $tpl->assign('values', $values);
-                $tpl->display('clients.newClient');
+                $this->tpl->assign('values', $values);
+                $this->tpl->display('clients.newClient');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('general.error');
 
             }
 

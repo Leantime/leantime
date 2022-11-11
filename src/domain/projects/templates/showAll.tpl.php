@@ -65,10 +65,10 @@
 			</thead>
             <?php } ?>
 			<tbody>
-		
+
 			 <?php foreach($this->get('allProjects') as $row): ?>
 				<tr class='gradeA'>
-					
+
 					<td style="padding:6px;">
 						<?php echo $this->displayLink('projects.changeCurrentProject',$this->escape($row['name']), array('id' => $row['id'])) ?>
 					<td>
@@ -81,7 +81,7 @@
 					<td class="center"><?php $this->e($row['dollarBudget']); ?></td>
 				</tr>
 			 <?php endforeach; ?>
-		
+
 			</tbody>
 		</table>
 

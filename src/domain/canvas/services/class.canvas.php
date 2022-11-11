@@ -8,7 +8,7 @@ namespace leantime\domain\services {
     class canvas
     {
 
-        /***
+        /**
          * import - Import canvas from XML file
          *
          * @access public
@@ -37,12 +37,12 @@ namespace leantime\domain\services {
             // Decode XMP data
             $canvasAry = [ 'projectId' => $projectId, 'author' => $authorId ];
             $recordsAry = [];
-            
+
             // - Canvas
             $canvasNodeList = $dom->getElementsByTagName('canvas');
             if($canvasNodeList->count() !== 1) return false;
             $importedCanvasName = $canvasNodeList->item(0)->getAttribute('key');
-            
+
             // - Canvas / Title
             $titleNodeList = $canvasNodeList->item(0)->getElementsByTagName('title');
             if($titleNodeList->count() !== 1) return false;
@@ -54,15 +54,15 @@ namespace leantime\domain\services {
 
             // - Data / Element*
             $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
-            
+
             foreach($elementNodeList as $elementNode) {
-                
+
                 if(!$elementNode->hasAttribute('key')) return false;
                 $elementKey = $elementNode->getAttribute('key');
-                
+
                 $itemNodeList = $elementNode->getElementsByTagName('item');
                 foreach($itemNodeList as $itemName) {
-                    
+
                     $authorNodeList = $itemName->getElementsByTagName('author');
                     if($authorNodeList->count() !== 1) return false;
                     if(!$authorNodeList->item(0)->hasAttribute('firstname')) return false;
@@ -71,31 +71,31 @@ namespace leantime\domain\services {
                     $authorLastname = $authorNodeList->item(0)->getAttribute('lastname');
                     $author = $users->getUserIdByName($authorFirstname, $authorLastname);
                     if($author === false) $author = $authorId;
-                    
+
                     $descriptionNodeList = $itemName->getElementsByTagName('description');
                     if($descriptionNodeList->count() !== 1) return false;
                     $description = $descriptionNodeList->item(0)->nodeValue;
-                    
+
                     $statusNodeList = $itemName->getElementsByTagName('status');
                     if($statusNodeList->count() !== 1) return false;
                     if(!$statusNodeList->item(0)->hasAttribute('key')) return false;
                     $status = $statusNodeList->item(0)->getAttribute('key');
-                    
+
                     $relatesNodeList = $itemName->getElementsByTagName('relates');
                     if($relatesNodeList->count() !== 1) return false;
                     if(!$relatesNodeList->item(0)->hasAttribute('key')) return false;
                     $relates = $relatesNodeList->item(0)->getAttribute('key');
-                    
+
                     $assumptionsNodeList = $itemName->getElementsByTagName('assumptions');
                     if($assumptionsNodeList->count() !== 1) return false;
                     $assumptions = empty($assumptionsNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($assumptionsNodeList->item(0)->firstChild);
-                    
+
                     $dataNodeList = $itemName->getElementsByTagName('data');
                     if($dataNodeList->count() !== 1) return false;
                     $data = empty($dataNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($dataNodeList->item(0)->firstChild);
-                    
+
                     $conclusionNodeList = $itemName->getElementsByTagName('conclusion');
                     if($conclusionNodeList->count() !== 1) return false;
                     $conclusion = empty($conclusionNodeList->item(0)->nodeValue) ? '' :
@@ -111,7 +111,7 @@ namespace leantime\domain\services {
                                       'relates' => $relates,
                                       'milestoneId' => '' ];
                 }
-                    
+
             }
 
             // Check if canvas is consistently named
@@ -119,20 +119,20 @@ namespace leantime\domain\services {
 
             $canvasRepoName = "\\leantime\\domain\\repositories\\$canvasName";
             $canvasRepo = new $canvasRepoName();
-            
+
             // Check if canvas already exists?
             $canvasAry['title'] .= ' [imported]';
             if($canvasRepo->existCanvas($projectId, $canvasAry['title'])) return false;
-            
+
             // Save new canvas and return id
             $canvasId = $canvasRepo->addCanvas($canvasAry);
             if($canvasId === false) return false;
 
             foreach($recordsAry as $record) {
-                
+
                 $record['canvasId'] = $canvasId;
                 $canvasRepo->addCanvasItem($record);
-                
+
             }
 
             return $canvasId;

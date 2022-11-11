@@ -29,7 +29,12 @@
 		"deeplcom/deepl-php": ">=1.0"
     },
     "require-dev": {
-        "phpstan/phpstan":"1.5.4"
+        "phpstan/phpstan":"1.5.4",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "extra": {
+        "installer-paths": {
+            "src/plugins/{$name}/": ["type:leantime-plugin"]
+        }
     }
-
 }

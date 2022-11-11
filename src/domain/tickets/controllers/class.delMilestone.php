@@ -3,23 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class delMilestone
+    class delMilestone extends controller
     {
 
         private $ticketService;
-        private $tpl;
-        private $language;
 
-        public function __construct()
+        public function init()
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->tpl = new core\template();
-            $this->language = new core\language();
             $this->ticketService = new services\tickets();
 
         }

@@ -3,38 +3,32 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class index
+    class index extends controller
     {
 
-        private $tpl;
         private $usersService;
         private $redirectUrl;
-        private $language;
-
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
-         * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->installRepo = new repositories\install();
-            $this->language = new core\language();
 
             if ($this->installRepo->checkIfInstalled()) {
                core\frontcontroller::redirect(BASE_URL);
             }
 
         }
-
 
         /**
          * get - handle get requests

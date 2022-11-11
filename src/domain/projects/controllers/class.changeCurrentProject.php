@@ -3,17 +3,16 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class changeCurrentProject
+    class changeCurrentProject extends controller
     {
 
-
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->projectService = new services\projects();
             $this->settingService = new services\setting();
 

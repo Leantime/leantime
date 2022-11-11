@@ -3,12 +3,31 @@
 namespace leantime\domain\controllers {
 
 	use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class editUser
+    class editUser extends controller
 	{
+
+        private $projectsRepo;
+        private $userRepo;
+        private $clientsRepo;
+
+		/**
+		 * init - initialize private variables
+		 *
+		 * @access public
+		 */
+		public function init()
+		{
+
+            $this->projectsRepo = new repositories\projects();
+            $this->userRepo = new repositories\users();
+            $this->clientsRepo = new repositories\clients();
+
+        }
 
 		/**
 		 * run - display template and edit data
@@ -20,23 +39,14 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
-            $tpl = new core\template();
-
 			//Only admins
-
 
 				if (isset($_GET['id']) === true) {
 
-					$project = new repositories\projects();
-					$userRepo = new repositories\users();
-					$language = new core\language();
-
 					$id = (int)($_GET['id']);
-					$row = $userRepo->getUser($id);
+					$row = $this->userRepo->getUser($id);
 					$edit = false;
 					$infoKey = '';
-
-
 
 					//Build values array
 					$values = array(
@@ -84,15 +94,15 @@ namespace leantime\domain\controllers {
 								if ( !isset($_POST['password']) || ($_POST['password'] == $_POST['password2'])) {
 									if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 										if ($changedEmail == 1) {
-											if ($userRepo->usernameExist($row['username'], $id) === false) {
+											if ($this->userRepo->usernameExist($row['username'], $id) === false) {
 												if (password_verify($_POST['password'], $values['password']) && $_POST['password'] != '') {
 													$edit = true;
 												} else {
-													$tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
+													$this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
 												}
 											} else {
 
-												$tpl->setNotification($language->__("notification.user_exists"), 'error');
+												$this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
 											}
 										} else {
 
@@ -100,44 +110,44 @@ namespace leantime\domain\controllers {
 										}
 									} else {
 
-										$tpl->setNotification($language->__("notification.no_valid_email"), 'error');
+										$this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
 									}
 								} else {
 
-									$tpl->setNotification($language->__("notification.enter_email"), 'error');
+									$this->tpl->setNotification($this->language->__("notification.enter_email"), 'error');
 								}
 
 							} else {
 
 
-								$tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
+								$this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
 
 							}
 						} else {
-							$tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+							$this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
 						}
 					}
 
 					//Was everything okay?
 					if ($edit !== false) {
 
-						$userRepo->editUser($values, $id);
+						$this->userRepo->editUser($values, $id);
 
 						if (isset($_POST['projects'])) {
 							if ($_POST['projects'][0] !== '0') {
-								$project->editUserProjectRelations($id, $_POST['projects']);
+								$this->projectsRepo->editUserProjectRelations($id, $_POST['projects']);
 							} else {
-								$project->deleteAllProjectRelations($id);
+								$this->projectsRepo->deleteAllProjectRelations($id);
 							}
 						} else {
 							//If projects is not set, all project assignments have been removed.
-							$project->deleteAllProjectRelations($id);
+							$this->projectsRepo->deleteAllProjectRelations($id);
 						}
-						$tpl->setNotification($language->__("notifications.user_edited"), 'success');
+						$this->tpl->setNotification($this->language->__("notifications.user_edited"), 'success');
 					}
 
 					// Get relations to projects
-					$projects = $project->getUserProjectRelation($id);
+					$projects = $this->projectsRepo->getUserProjectRelation($id);
 
 					$projectrelation = array();
 
@@ -146,30 +156,26 @@ namespace leantime\domain\controllers {
 					}
 
 					//Assign vars
-					$clients = new repositories\clients();
-
-					$tpl->assign('allProjects', $project->getAll());
-					$tpl->assign('roles', roles::getRoles());
-					$tpl->assign('clients', $clients->getAll());
-
-
+					$this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+					$this->tpl->assign('roles', roles::getRoles());
+					$this->tpl->assign('clients', $this->clientsRepo->getAll());
 
 					//Sensitive Form, generate form tokens
 					$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 					$_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
 					$_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
-					$tpl->assign('values', $values);
-					$tpl->assign('relations', $projectrelation);
+					$this->tpl->assign('values', $values);
+					$this->tpl->assign('relations', $projectrelation);
 
-					$tpl->assign('status', $userRepo->status);
-					$tpl->assign('id', $id);
+					$this->tpl->assign('status', $this->userRepo->status);
+					$this->tpl->assign('id', $id);
 
 
-					$tpl->display('users.editUser');
+					$this->tpl->display('users.editUser');
 				} else {
 
-					$tpl->display('general.error');
+					$this->tpl->display('general.error');
 				}
 
 

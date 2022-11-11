@@ -3,20 +3,21 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class showMyList
+    class showMyList extends controller
     {
 
-        public function __construct() {
+        public function init() {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
-            $this->tpl = new core\template();
             $this->timesheetService = new services\timesheets();
+
             $_SESSION['lastPage'] = BASE_URL."/timesheets/showMyList";
         }
 
@@ -35,7 +36,6 @@ namespace leantime\domain\controllers {
             $dateFrom = date("Y-m-d 00:00:00", $dateFrom);
             $dateTo = date("Y-m-d 00:00:00", $dateTo);
             $kind = 'all';
-            $language = new core\language();
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
 
@@ -45,13 +45,13 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                $dateFrom =  $language->getISODateString($_POST['dateFrom']);
+                $dateFrom =  $this->language->getISODateString($_POST['dateFrom']);
 
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                $dateTo =  $language->getISODateString($_POST['dateTo']);
+                $dateTo =  $this->language->getISODateString($_POST['dateTo']);
 
             }
 

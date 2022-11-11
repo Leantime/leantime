@@ -3,33 +3,30 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class resetPw
+    class resetPw extends controller
     {
 
-        private $tpl;
+        private $fileRepo;
+        private $authService;
         private $usersService;
-        private $redirectUrl;
-
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->fileRepo = new repositories\files();
 
             $this->authService = services\auth::getInstance();
-            $this->language = new core\language();
-
             $this->usersService = new services\users();
 
         }
@@ -43,13 +40,13 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
             if((isset($_GET["id"]) === true && $this->authService->validateResetLink($_GET["id"]))) {
 
                 $this->tpl->display('auth.resetPw','entry');
             }else{
                 $this->tpl->display('auth.requestPwLink', 'entry');
             }
-
 
         }
 

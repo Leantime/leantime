@@ -3,37 +3,44 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use DebugBar\StandardDebugBar;
     use leantime\core\session;
+    use leantime\base\controller;
     use leantime\domain\repositories\reports;
+    use DebugBar\StandardDebugBar;
 
-    class header
+    class header extends controller
     {
-        public $settingsRepo;
-        public $config;
+        private $settingsRepo;
+        private $config;
+        private $appSettings;
+        private $themeCore;
+
+        public function init()
+        {
+
+            $this->settingsRepo = new \leantime\domain\repositories\setting();
+            $this->config = new core\config();
+            $this->appSettings = new core\appSettings();
+            $this->themeCore = new core\theme();
+
+        }
 
         public function run()
         {
-            $this->settingsRepo = new \leantime\domain\repositories\setting();
-            $this->config = new core\config();
-
-            $tpl = new core\template();
-            $appSettings = new core\appSettings();
-            $themeCore = new core\theme();
 
             if(!isset($_SESSION["userdata"]["id"])) {
-                
+
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
                 if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
-                    
+
                     $theme = $_COOKIE['theme'];
-                    
+
                 }else{
-                    
+
                     $theme = $this->config->defaultTheme;
-                    
+
                 }
-                
+
             }
             else {
 
@@ -44,28 +51,28 @@ namespace leantime\domain\controllers {
                     // User has a saved theme
                     $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
                     if($theme === false) {
-                        
+
                         if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
-                    
+
                             $theme = $_COOKIE['theme'];
 
                         }else{
-                            
+
                             $theme = $this->config->defaultTheme;
-                            
+
                         }
-                        
+
                     }
-                    
+
                 }else{
 
                     $theme = $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"];
-                    
+
                 }
-                
+
             }
-            $themeCore->setActive($theme);
-            
+            $this->themeCore->setActive($theme);
+
             // Set logo to use
             $themeLogoPath = $this->settingsRepo->getSetting("companysettings.$theme.logoPath");
             if (!isset($_SESSION["companysettings.logoPath"]) ||
@@ -81,8 +88,8 @@ namespace leantime\domain\controllers {
                     }
                 }
             }
-            
-            $themeLogoPath = $themeCore->getLogoUrl();
+
+            $themeLogoPath = $this->themeCore->getLogoUrl();
             if (!isset($_SESSION["companysettings.logoPath"]) ||
                 ($themeLogoPath !== false &&  $themeLogoPath !== $_SESSION["companysettings.logoPath"])) {
 
@@ -96,7 +103,6 @@ namespace leantime\domain\controllers {
                     }
                 }
             }
-            
             if (!isset($_SESSION["companysettings.logoPath"])) {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -169,32 +175,32 @@ namespace leantime\domain\controllers {
                     $_SESSION["companysettings.secondarycolor"] = $secondaryColor;
                     $_SESSION["companysettings.$theme.secondarycolor"] = $secondaryColor;
                 }
-                
+
             } else {
-                
+
                 if (!str_starts_with($_SESSION["companysettings.primarycolor"], "#")) {
                     $_SESSION["companysettings.primarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                     $_SESSION["companysettings.secondarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                     $_SESSION["companysettings.$theme.primarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                     $_SESSION["companysettings.$theme.secondarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                 }
-                
+
             }
 
             if (!isset($_SESSION["companysettings.sitename"])) {
-                
+
                 $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
                 if ($sitename !== false) {
                     $_SESSION["companysettings.sitename"] = $sitename;
                 } else {
                     $_SESSION["companysettings.sitename"] = $this->config->sitename;
                 }
-                
+
             }
 
-            $tpl->assign('theme', $themeCore->getActive());
-            $tpl->assign('appSettings', $appSettings);
-            $tpl->displayPartial('general.header');
+            $this->tpl->assign('theme', $this->themeCore->getActive());
+            $this->tpl->assign('appSettings', $this->appSettings);
+            $this->tpl->displayPartial('general.header');
         }
     }
 }
