@@ -73,7 +73,7 @@ class config
 
     //Default ldap keys in your directory.
     //Works for OL
-    public $ldapKeys = '{ 
+    public $ldapKeys = '{
         "username":"uid",
         "groups":"memberof",
         "email":"mail",
@@ -123,6 +123,17 @@ class config
           }
         }';
     public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
+
+    /**
+     * Enabled Plugins
+     * e.g. (where plugin name is the plugin folder name)
+     * {
+     *   "plugin1name": true,
+     *   "plugin2name": false
+     * }
+     */
+    /* Enabled Plugins */
+    public $plugins = '';
 
     /* cache invalidation */
     private $configurationLastModified = '';   //Last modified date of the configuration file
@@ -207,6 +218,9 @@ class config
             $this->ldapLtGroupAssignments = $this->configEnvironmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $this->ldapLtGroupAssignments);
             $this->ldapDefaultRoleKey = $this->configEnvironmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $this->ldapDefaultRoleKey);
         }
+
+    /* Plugins */
+        $this->plugins = $this->configEnvironmentHelper("LEAN_PLUGINS", $this->plugins);
     }
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")
@@ -233,5 +247,10 @@ class config
 
             return $_SESSION['mainconfig'][$envVar];
         }
+    }
+
+    public function getEnabledPlugins()
+    {
+        return json_decode($this->plugins);
     }
 }
