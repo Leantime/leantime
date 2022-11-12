@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html dir="{{ language.direction }}" lang="{{ language.code }}">
+<head>
+    {% block head %}
+        {{ includeAction('general.header') }}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="mainwrapper {{ mainwrapper.classes }}">
+
+        <div class="leftpanel {{ leftpanel.classes }}" {% if menu.state == 'closed' %} style="margin-left:-240px" {% endif %}>
+            {% block leftpanel %}
+                <a class="barmenu {{ menu.state == 'open' ? 'open' : '' }}" href="javascript:void(0);">
+                    <span class="fa fa-bars"></span>
+                </a>
+
+                <div class="logo"  {% if menu.state == 'closed' %} style="margin-left:-260px" {% endif %}>
+                    <a href="{{ site.base_url }}" style="background-image:url({{ companysettings.logoPath|e('css') }})">&nbsp;</a>
+                </div>
+
+                <div class="leftmenu">
+                    {% block leftmenu %}
+                        {{ includeAction('general.menu') }}
+                    {% endblock %}
+                </div><!--leftmenu-->
+            {% endblock %}
+        </div><!-- leftpanel -->
+
+        <div class="header" {% if menu.state == 'closed' %} style="margin-left:0px; width:100%" {% endif %}>
+            {% block header %}
+                <div class="headerinner" {% if menu.state == 'closed' %} style="margin-left:0px" {% endif %}>
+                    {% block headerInner %}
+                        <div class="userloggedinfo">
+                            {{ includeAction('general.loginInfo') }}
+                        </div>
+
+                        {{ includeAction('general.headMenu') }}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+
+        <div class="rightpanel" style="position: relative; <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
+            {% block content %}
+                <!--###MAINCONTENT###-->
+                {{ includeAction('general.footer') }}
+            {% endblock %}
+        </div><!--rightpanel-->
+
+    </div><!--mainwrapper-->
+
+{{ includeAction('general.pageBottom') }}
