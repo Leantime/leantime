@@ -13,14 +13,16 @@
     $milestones = $this->get('milestones');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
         <h1><?php echo $this->__("headlines.home"); ?></h1>
-
     </div>
-
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 
@@ -355,6 +357,8 @@
 
 <script type="text/javascript">
 
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     function insertQuickAddForm(index, projectId, duedate) {
         jQuery(".quickaddForm").remove();
 
@@ -373,7 +377,6 @@
         '</form></div></li>');
 
     }
-
 
     function accordionToggle(id) {
 
@@ -404,8 +407,6 @@
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
-
-
        <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
 
             leantime.helperController.showHelperModal("dashboard", 500, 700);
@@ -422,8 +423,8 @@
 
        } ?>
 
-
-
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

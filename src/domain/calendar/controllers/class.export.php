@@ -8,13 +8,28 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
     use Ramsey\Uuid\Uuid;
 
-    class export
+    class export extends controller
     {
+
+        private $config;
+        private $settingsRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->config = new core\config();
+            $this->settingsRepo = new repositories\setting();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,16 +39,11 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-
-            $tpl = new core\template();
-            $config = new core\config();
-            $settingsRepo = new repositories\setting();
-
             if(isset($_GET['remove'])) {
 
-                $settingsRepo->deleteSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret");
+                $this->settingsRepo->deleteSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret");
 
-                $tpl->setNotification("notifications.ical_removed_success", "success");
+                $this->tpl->setNotification("notifications.ical_removed_success", "success");
             }
 
             //Add Post handling
@@ -42,15 +52,15 @@ namespace leantime\domain\controllers {
                 $uuid = Uuid::uuid4();
                 $icalHash = $uuid->toString();
 
-                $settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret", $icalHash);
+                $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret", $icalHash);
 
-                $tpl->setNotification("notifications.ical_success", "success");
+                $this->tpl->setNotification("notifications.ical_success", "success");
 
             }
 
 
-            $icalHash = $settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret");
-            $userHash = hash('sha1', $_SESSION['userdata']['id'].$config->sessionpassword);
+            $icalHash = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".icalSecret");
+            $userHash = hash('sha1', $_SESSION['userdata']['id'].$this->config->sessionpassword);
 
             if($icalHash == false) {
                 $icalUrl = "";
@@ -62,9 +72,9 @@ namespace leantime\domain\controllers {
 
             //Add delete handling
 
-            $tpl->assign("url", $icalUrl);
+            $this->tpl->assign("url", $icalUrl);
 
-            $tpl->displayPartial("calendar.export");
+            $this->tpl->displayPartial("calendar.export");
 
         }
 

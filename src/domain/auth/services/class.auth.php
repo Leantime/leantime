@@ -6,10 +6,13 @@ namespace leantime\domain\services {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\base\eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
 
     class auth
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -288,17 +291,19 @@ namespace leantime\domain\services {
             $this->profileId = $user['profileId'];
 
             //Set Sessions
-            $_SESSION['userdata']['role'] = $this->role;
-            $_SESSION['userdata']['id'] = $this->userId;
-            $_SESSION['userdata']['name'] = $this->name;
-            $_SESSION['userdata']['profileId'] = $this->profileId;
-            $_SESSION['userdata']['mail'] = $this->mail;
-            $_SESSION['userdata']['clientId'] = $this->clientId;
-            $_SESSION['userdata']['settings'] = $this->settings;
-            $_SESSION['userdata']['twoFAEnabled'] = $this->twoFAEnabled;
-            $_SESSION['userdata']['twoFAVerified'] = false;
-            $_SESSION['userdata']['twoFASecret'] = $this->twoFASecret;
-            $_SESSION['userdata']['isLdap'] = $isLdap;
+            $_SESSION['userdata'] = self::dispatch_filter('user_session_vars', [
+                'role' => $this->role,
+                'id' => $this->userId,
+                'name' => $this->name,
+                'profileId' => $this->profileId,
+                'mail' => $this->mail,
+                'clientId' => $this->clientId,
+                'settings' => $this->settings,
+                'twoFAEnabled' => $this->twoFAEnabled,
+                'twoFAVerified' => false,
+                'twoFASecret' => $this->twoFASecret,
+                'isLdap' => $isLdap
+            ]);
 
         }
 
@@ -340,18 +345,21 @@ namespace leantime\domain\services {
 
             if(isset($_SESSION)) {
 
-                unset($_SESSION['companysettings']);
-                unset($_SESSION['userdata']);
-                unset($_SESSION['template']);
-                unset($_SESSION["subdomainData"]);
-                unset($_SESSION["currentProject"]);
-                unset($_SESSION["currentSprint"]);
-                unset($_SESSION["projectsettings"]);
-                unset($_SESSION['currentSubscription']);
-                unset($_SESSION['lastTicketView']);
-                unset($_SESSION['lastFilterdTicketTableView']);
-                unset($_SESSION['isInstalled']);
-                unset($_SESSION['mainConfig']);
+                $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
+                    'userdata',
+                    'template',
+                    'subdomainData',
+                    'currentProject',
+                    'currentSprint',
+                    'projectsettings',
+                    'currentSubscriptions',
+                    'lastTicketView',
+                    'lastFilterdTicketTableView'
+                ]);
+
+                foreach($sessionsToDestroy as $key) {
+                    unset($_SESSION[$key]);
+                }
 
             }
 
@@ -389,6 +397,7 @@ namespace leantime\domain\services {
 
                         //Don't queue, send right away
                         $mailer = new core\mailer();
+                        $mailer->setContext('password_reset');
                         $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
                         $actual_link = "".BASE_URL."/auth/resetPw/".$resetLink;
                         $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));

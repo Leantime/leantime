@@ -3,14 +3,32 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class editTime
+    class editTime extends controller
     {
 
-        public $language;
+        private $timesheetsRepo;
+        private $projects;
+        private $tickets;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->timesheetsRepo = new repositories\timesheets();
+            $this->projects = new repositories\projects();
+            $this->tickets = new repositories\tickets();
+
+        }
+
         /**
          * run - display template and edit data
          *
@@ -19,27 +37,17 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
-
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
-            $this->language = new core\language();
 
             $info = '';
             //Only admins and employees
             if(auth::userIsAtLeast(roles::$editor)) {
 
-
                 if (isset($_GET['id']) === true) {
-
-                    $projects = new repositories\projects();
-                    $tickets = new repositories\tickets();
 
                     $id = ($_GET['id']);
 
-                    $timesheet = $timesheetsRepo->getTimesheet($id);
-
+                    $timesheet = $this->timesheetsRepo->getTimesheet($id);
 
                     $values = array(
                         'id' => $id,
@@ -161,10 +169,10 @@ namespace leantime\domain\controllers {
 
                                         if ($values['hours'] != '' && $values['hours'] > 0) {
 
-                                            $timesheetsRepo->updateTime($values);
-                                            $tpl->setNotification('notifications.time_logged_success', 'success');
+                                            $this->timesheetsRepo->updateTime($values);
+                                            $this->tpl->setNotification('notifications.time_logged_success', 'success');
 
-                                            $timesheetUpdated = $timesheetsRepo->getTimesheet($id);
+                                            $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
 
                                             $values = array(
                                                 'id' => $id,
@@ -183,53 +191,53 @@ namespace leantime\domain\controllers {
 
                                         } else {
 
-                                            $tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
+                                            $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
 
 
                                         }
 
 
                                     } else {
-                                        $tpl->setNotification('notifications.time_logged_error_no_date', 'error');
+                                        $this->tpl->setNotification('notifications.time_logged_error_no_date', 'error');
 
                                     }
 
                                 } else {
 
-                                    $tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
+                                    $this->tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
 
                                 }
 
                             } else {
 
-                                $tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
+                                $this->tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
 
                             }
 
                         }
 
 
-                        $tpl->assign('values', $values);
+                        $this->tpl->assign('values', $values);
 
-                        $tpl->assign('info', $info);
-                        $tpl->assign('allProjects', $projects->getAll());
-                        $tpl->assign('allTickets', $tickets->getAll());
-                        $tpl->assign('kind', $timesheetsRepo->kind);
-                        $tpl->displayPartial('timesheets.editTime');
+                        $this->tpl->assign('info', $info);
+                        $this->tpl->assign('allProjects', $this->projects->getAll());
+                        $this->tpl->assign('allTickets', $this->tickets->getAll());
+                        $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+                        $this->tpl->displayPartial('timesheets.editTime');
 
                     } else {
 
-                        $tpl->displayPartial('general.error');
+                        $this->tpl->displayPartial('general.error');
 
                     }
                 } else {
-                    $tpl->displayPartial('general.error');
+                    $this->tpl->displayPartial('general.error');
                 }
 
 
             } else {
 
-                $tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('general.error');
 
             }
 

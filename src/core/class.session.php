@@ -6,8 +6,12 @@
  */
 namespace leantime\core;
 
+use leantime\base\eventhelpers;
+
 class session
 {
+
+    use eventhelpers;
 
     /**
      * @access private
@@ -40,7 +44,7 @@ class session
 
         ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
         ini_set('session.cookie_lifetime', ($config->sessionExpiration));
-        
+
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
@@ -61,9 +65,9 @@ class session
             if($testMD5 !== $testSession[1]) {
 
                 self::makeSID();
-                    
+
             }
-                
+
         }else{
 
             self::makeSID();
@@ -75,7 +79,6 @@ class session
         session_start();
 
         setcookie("sid", self::$sid,  [ 'expires' => time() + $config->sessionExpiration, 'path' => '/' ]);
-
 
     }
 
@@ -89,7 +92,7 @@ class session
     {
 
         if (self::$instance === null) {
-                
+
             self::$instance = new self();
 
         }
@@ -106,15 +109,7 @@ class session
     public static function getSID()
     {
 
-        if (self::$instance === null) {
-
-            self::$instance = new self();
-            return self::$instance::$sid;
-
-        }
-
-
-        return self::$sid;
+        return self::getInstance()::$sid;
 
     }
 
@@ -143,7 +138,6 @@ class session
         }
 
         setcookie('sid', "",  [ 'expires' => time() - 42000, 'path' => '/' ]);
-    
     }
 
 }

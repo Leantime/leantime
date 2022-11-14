@@ -7,109 +7,111 @@
 
 namespace leantime\core {
 
-class appSettings {
+    use leantime\base\eventhelpers;
 
-	/**
-	 * @access private
-	 * @var string - 1 debugmodus
-	 */
-	public $debug = 0;
+    class appSettings {
 
-	public $appVersion = "2.3.0-beta/2.2.11";
+        use eventhelpers;
 
-	public $dbVersion = "2.1.11";
+        /**
+         * @access private
+         * @var string - 1 debugmodus
+         */
+        public $debug = 0;
 
+        public $appVersion = "2.3.0-beta";
 
+        public $dbVersion = "2.1.11";
 
-	/**
-	 * __construct
-	 *
-	 */
-	public function __construct(){
-	}
-
-	/**
-	 * loadSettings - load all appSettings and set ini
-	 *
-	 */
-	public function loadSettings($timezone, $debug = 0){
-
-        if($timezone != '') {
-            date_default_timezone_set($timezone);
-        }else{
-            date_default_timezone_set('America/Los_Angeles');
+        /**
+         * __construct
+         *
+         */
+        public function __construct(){
         }
 
-        $this->debug = $debug;
+        /**
+         * loadSettings - load all appSettings and set ini
+         *
+         */
+        public function loadSettings($timezone, $debug = 0){
 
-		if($this->debug === 1){
-            error_reporting(E_ALL);
-			ini_set('display_errors', 1);
-		}else{
-            error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
-			ini_set('display_errors', 0);
-		}
+            if($timezone != '') {
+                date_default_timezone_set($timezone);
+            }else{
+                date_default_timezone_set('America/Los_Angeles');
+            }
 
-		if(session_status() !== PHP_SESSION_ACTIVE) {
-			ini_set('session.use_cookies',1);
-			ini_set('session.use_only_cookies',1);
-			ini_set('session.cookie_httponly',1);
-			ini_set('session.use_trans_sid',0);
-		}
+            $this->debug = $debug;
 
-		ini_set("log_errors", 1);
-        ini_set('error_log', ROOT.'/../logs/error.log');
+            if($this->debug === 1){
+                error_reporting(E_ALL);
+                ini_set('display_errors', 1);
+            }else{
+                error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+                ini_set('display_errors', 0);
+            }
 
-	}
+            if(session_status() !== PHP_SESSION_ACTIVE) {
+                ini_set('session.use_cookies',1);
+                ini_set('session.use_only_cookies',1);
+                ini_set('session.cookie_httponly',1);
+                ini_set('session.use_trans_sid',0);
+            }
 
-	public function getBaseURL () {
+            ini_set("log_errors", 1);
+            ini_set('error_log', ROOT.'/../logs/error.log');
 
-        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || $_SERVER['SERVER_PORT'] == 443
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
-
-            $protocol = "https://";
-        } else {
-            $protocol = "http://";
         }
 
-        $domainName = $_SERVER['HTTP_HOST'].'';
-        return $protocol.$domainName;
+        public function getBaseURL () {
 
-	}
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                || $_SERVER['SERVER_PORT'] == 443
+                || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
 
-    public function getFullURL () {
+                $protocol = "https://";
+            } else {
+                $protocol = "http://";
+            }
 
-        return $this->getBaseURL().rtrim($this->getRequestURI(),"/");
+            $domainName = $_SERVER['HTTP_HOST'].'';
+            return $protocol.$domainName;
 
-    }
-	
-    public function getRequestURI($baseURL  = "") {
+        }
 
-	    //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
-	    if($baseURL != "") {
+        public function getFullURL () {
 
-            $trimmedBaseURL = rtrim($baseURL,"/");
-            $baseURLParts = explode("/", $trimmedBaseURL);
+            return $this->getBaseURL().rtrim($this->getRequestURI(),"/");
 
-            //We only need to update Request URI if we have a subfolder install
-            if(is_array($baseURLParts) && count($baseURLParts) == 4) {
+        }
 
-                //0: http, 1: "", 2: domain.com 3: subfolder
-                $subfolderName = $baseURLParts[3];
+        public function getRequestURI($baseURL  = "") {
 
-                //Remove subfoldername from Request URI
-                $requestURI = preg_replace('/^\/'.$subfolderName.'/', '', $_SERVER['REQUEST_URI']);
+            //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
+            if($baseURL != "") {
 
-                return $requestURI;
+                $trimmedBaseURL = rtrim($baseURL,"/");
+                $baseURLParts = explode("/", $trimmedBaseURL);
+
+                //We only need to update Request URI if we have a subfolder install
+                if(is_array($baseURLParts) && count($baseURLParts) == 4) {
+
+                    //0: http, 1: "", 2: domain.com 3: subfolder
+                    $subfolderName = $baseURLParts[3];
+
+                    //Remove subfoldername from Request URI
+                    $requestURI = preg_replace('/^\/'.$subfolderName.'/', '', $_SERVER['REQUEST_URI']);
+
+                    return $requestURI;
+
+                }
 
             }
 
-	    }
+            return $_SERVER['REQUEST_URI'];
 
-        return $_SERVER['REQUEST_URI'];
+        }
 
     }
-
-}
 }

@@ -3,14 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
 
-    class error404
+    class error404 extends controller
     {
-        private $tpl;
-
-        public function __construct() {
-            $this->tpl = new core\template();
-        }
 
         public function run() {
 
@@ -19,5 +15,5 @@ namespace leantime\domain\controllers {
         }
 
     }
-}
 
+}

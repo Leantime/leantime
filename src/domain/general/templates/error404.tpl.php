@@ -1,5 +1,6 @@
 <?php defined('RESTRICTED') or die('Restricted access'); ?>
 
+<?php $this->dispatchTplEvent('before_error'); ?>
 <div class="errortitle">
 
     <h4 class="animate0 fadeInUp"><?php echo $this->__('headlines.page_not_found') ?></h4>
@@ -12,3 +13,4 @@
     </div><br/><br/><br/><br/>
 
 </div>
+<?php $this->dispatchTplEvent('after_error'); ?>

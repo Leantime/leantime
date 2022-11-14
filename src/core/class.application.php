@@ -4,9 +4,12 @@ namespace leantime\core;
 
 use leantime\domain\services;
 use leantime\domain\repositories;
+use leantime\base\eventhelpers;
 
 class application
 {
+
+    use eventhelpers;
 
     private $config;
     private $settings;
@@ -27,7 +30,9 @@ class application
         "calendar.ical"
     );
 
-
+    /**
+     * constructor
+     */
     public function __construct()
     {
 
@@ -49,11 +54,13 @@ class application
     /**
      * start - renders application and routes to correct template, writes content to output buffer
      *
-     * @access public static
+     * @access public
      * @return void
      */
     public function start()
     {
+        events::discover_listeners();
+
         //Only run telemetry when logged in
         $telemetryResponse = false;
 
@@ -62,8 +69,7 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        events::discover_listeners();
-        events::dispatch_event("application.start");
+        self::dispatch_event("beginning");
 
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
@@ -121,17 +127,35 @@ class application
             }
 
         }
-            
+
+        self::dispatch_event("end");
+
     }
 
+    /**
+     * sets the headers
+     *
+     * @return void
+     */
     private function loadHeaders() {
 
-        header('X-Frame-Options: SAMEORIGIN');
-        header('X-XSS-Protection: 1; mode=block');
-        header('X-Content-Type-Options: nosniff');
+        $headers = self::dispatch_filter('headers', [
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-XSS-Protection' => '1; mode=block',
+            'X-Content-Type-Options' => 'nosniff'
+        ]);
+
+        foreach ($headers as $key => $value) {
+            header("${key}: ${value}");
+        }
 
     }
 
+    /**
+     * executes audits on cron
+     *
+     * @return void
+     */
     private function cronExec() {
 
         $audit = new \leantime\domain\repositories\audit();
@@ -155,7 +179,9 @@ class application
         $timeSince = abs($nowDate - $lastCronEvent);
 
         //Run every 5 min
-        if ($timeSince >= 300)
+        $cron_exec_increment = self::dispatch_filter('increment', 300);
+
+        if ($timeSince >= $cron_exec_increment)
         {
             $_SESSION["do_cron"] = true;
             $_SESSION['last_cron_call'] = time();
@@ -164,9 +190,13 @@ class application
             unset ($_SESSION["do_cron"]);
         }
 
-
     }
 
+    /**
+     * Checks if leantime is installed
+     *
+     * @return void
+     */
     private function checkIfInstalled() {
 
         if(!isset($_SESSION['isInstalled']) || $_SESSION['isInstalled'] === false) {
@@ -209,12 +239,11 @@ class application
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
 
                 //Don't redirect on i18n call
-                    if($this->frontController::getCurrentRoute() !== "install.update" &&
-                        $this->frontController::getCurrentRoute() !== "api.i18n"){
+                if($this->frontController::getCurrentRoute() !== "install.update" &&
+                    $this->frontController::getCurrentRoute() !== "api.i18n"){
 
-                        $this->frontController::redirect(BASE_URL . "/install/update");
-                    }
-
+                    $this->frontController::redirect(BASE_URL . "/install/update");
+                }
 
             }
         }

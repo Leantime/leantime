@@ -3,33 +3,30 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class update
+    class update extends controller
     {
 
-        private $tpl;
-        private $usersService;
-        private $redirectUrl;
+        private $installRepo;
+        private $settingsRepo;
+        private $appSettings;
 
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
-         * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->installRepo = new repositories\install();
-            $this->language = new core\language();
             $this->settingsRepo = new repositories\setting();
             $this->appSettings = new core\appSettings();
-
 
         }
 
@@ -76,9 +73,11 @@ namespace leantime\domain\controllers {
                     core\frontcontroller::redirect(BASE_URL);
 
                 }
+
             }
 
         }
 
     }
+
 }

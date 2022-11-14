@@ -12,9 +12,12 @@ namespace leantime\core {
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
     use phpmailerException;
+    use leantime\base\eventhelpers;
 
     class mailer
     {
+
+        use eventhelpers;
 
         /**
          * @access public
@@ -40,6 +43,11 @@ namespace leantime\core {
          */
         public $subject;
 
+        /**
+         * @access public
+         * @var    string
+         */
+        public $context;
 
         private $mailAgent;
 
@@ -57,7 +65,6 @@ namespace leantime\core {
         {
 
             $config = new config();
-
 
             if($config->email != '') {
                 $this->emailDomain = $config->email;
@@ -120,6 +127,22 @@ namespace leantime\core {
 
         /**
          *
+         * setContext - sets the context for the mailing
+         * (used for filters & events)
+         *
+         * @access public
+         * @param $context
+         * @return void
+         */
+        public function setContext($context)
+        {
+
+            $this->context = $context;
+
+        }
+
+        /**
+         *
          * setText - sets the mailtext
          *
          * @access public
@@ -162,6 +185,32 @@ namespace leantime\core {
 
         }
 
+        private function dispatchMailerHook($type, $hookname, $payload = '', $additional_params)
+        {
+            if ($type !== 'filter' || $type !== 'event') {
+                return false;
+            }
+
+            $hooks = [$hookname];
+
+            if (!empty($this->context)) {
+                $hooks[] = "$hookname.{$this->context}";
+            }
+
+            $filteredValue = null;
+            foreach ($hooks as $hook) {
+                if ($type == 'filter') {
+                    $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
+                } elseif ($type == 'event') {
+                    self::dispatch_event($hook, $payload);
+                }
+            }
+
+            if ($type == 'filter') {
+                return $filteredValue;
+            }
+        }
+
         /**
          * sendMail - send the mail with mail()
          *
@@ -174,8 +223,12 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
+            $this->dispatchMailerHook('event', 'beforeSendMail');
 
-            $this->mailAgent->isHTML(true);                                  // Set email format to HTML
+            $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
+            $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);
+
+            $this->mailAgent->isHTML(true); // Set email format to HTML
 
             $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
 
@@ -216,7 +269,6 @@ namespace leantime\core {
 						</td>
 					</tr>
 				</table>
-				
 			</td>
 		</tr>
 		<tr>
@@ -226,8 +278,30 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
+            $this->dispatchMailerHook(
+                'filter',
+                'bodyTemplate',
+                $bodyTemplate,
+                [
+                    [
+                        'companyColor' => $this->companyColor,
+                        'logoUrl' => $inlineLogoContent,
+                        'languageHiText' => $this->language->__('email_notifications.hi'),
+                        'emailContentsHtml' => nl2br($this->html),
+                        'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/')
+                    ]
+                ]
+            );
+
             $this->mailAgent->Body = $bodyTemplate;
-            $this->mailAgent->AltBody = $this->text;
+
+            $this->dispatchMailerHook(
+                'filter',
+                'altBody',
+                $this->text
+            );
+
+            $this->mailAgent->AltBody = $altBody;
 
             $to = array_unique($to);
 
@@ -244,6 +318,7 @@ namespace leantime\core {
                 $this->mailAgent->clearAllRecipients();
             }
 
+            $this->dispatchMailerHook('event', 'afterSendMail');
 
         }
 

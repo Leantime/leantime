@@ -10,10 +10,12 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
-
+    use leantime\base\eventhelpers;
 
     class frontcontroller
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -156,7 +158,7 @@ namespace leantime\core {
 
             //Try plugin folder first for overrides
             if(file_exists($customPluginPath)) {
-                
+
                 $controllerNs = "plugins";
                 require_once $customPluginPath;
 
@@ -165,7 +167,7 @@ namespace leantime\core {
                 require_once $customDomainPath;
 
             }elseif(file_exists($pluginPath)) {
-                
+
                 $controllerNs = "plugins";
                 require_once $pluginPath;
 
@@ -174,35 +176,34 @@ namespace leantime\core {
                 require_once $domainPath;
 
             }else{
-                self::dispatch("errors.error404", 404);
+
+                self::dispatch("general.error404", 404);
                 return;
-                
+
             }
 
             //Initialize Action
             try {
 
                 $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
-
-                $action = new $classname();
-
-                //Todo plugin controller call
-
                 $method = self::getRequestMethod();
+                $params = self::getRequestParams($method);
 
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if(method_exists($action, $method)) {
+                if (is_subclass_of($classname, "leantime\\base\\controller")) {
+                    new $classname($method, $params);
+                // TODO: Remove else after all controllers utilze base class
+                } else {
+                    $action = new $classname;
 
-                    $params = self::getRequestParams($method);
-                    $action->$method($params);
-
-                }else{
-
+                    if(method_exists($action, $method)) {
+                        $action->$method($params);
                     //Use run for all other request types.
-                    $action->run();
-
+                    }else{
+                        $action->run();
+                    }
                 }
 
             }catch(Exception $e){
@@ -316,7 +317,7 @@ namespace leantime\core {
          * @access public
          * @return string
          */
-        public static function getCurrentRoute() 
+        public static function getCurrentRoute()
         {
 
             if(isset($_REQUEST['act'])) {

@@ -3,17 +3,17 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
 
-    class error403
+    class error403 extends controller
     {
 
         public function run()
         {
 
-            $tpl = new core\template();
-
             core\frontcontroller::setResponseCode(403);
-            $tpl->display('errors.error403');
+            $this->tpl->display('errors.error403');
+
         }
     }
 }

@@ -7,12 +7,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class editClient
+    class editClient extends controller
     {
+
+        private $clientRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->clientRepo = new repositories\clients();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,9 +39,6 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
-            $tpl = new core\template();
-            $clientRepo = new repositories\clients();
-
             //Only admins
             if(auth::userIsAtLeast(roles::$admin)) {
 
@@ -34,7 +46,7 @@ namespace leantime\domain\controllers {
 
                     $id = (int)($_GET['id']);
 
-                    $row = $clientRepo->getClient($id);
+                    $row = $this->clientRepo->getClient($id);
 
                     $msgKey = '';
 
@@ -66,7 +78,7 @@ namespace leantime\domain\controllers {
 
                         if ($values['name'] !== '') {
 
-                            $clientRepo->editClient($values, $id);
+                            $this->clientRepo->editClient($values, $id);
 
                             $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success');
 

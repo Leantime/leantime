@@ -3,20 +3,21 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\models\wiki;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class articleDialog {
-
+    class articleDialog extends controller
+    {
 
         public function __construct() {
 
-            $this->tpl = new core\template();
             $this->wikiService = new services\wiki();
             $this->ticketService = new services\tickets();
+
         }
 
         public function get($params) {

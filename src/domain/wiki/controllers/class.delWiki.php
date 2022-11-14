@@ -4,12 +4,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delWiki
+    class delWiki extends controller
     {
+
+        private $wikiRepo;
+
+        /**
+         * init - init
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->wikiRepo = new repositories\wiki();
+
+        }
 
         /**
          * run - display template and edit data
@@ -21,25 +36,21 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $wikiRepo = new repositories\wiki();
-            $language = new core\language();
-
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
 
             if (isset($_POST['del']) && isset($id)) {
 
-                $wikiRepo->delWiki($id);
+                $this->wikiRepo->delWiki($id);
 
                 unset($_SESSION['currentIdeaCanvas']);
-                $tpl->setNotification($language->__("notification.wiki_deleted"), "success");
-                $tpl->redirect(BASE_URL."/wiki/show");
+                $this->tpl->setNotification($this->language->__("notification.wiki_deleted"), "success");
+                $this->tpl->redirect(BASE_URL."/wiki/show");
 
             }
 
-            $tpl->displayPartial('wiki.delWiki');
+            $this->tpl->displayPartial('wiki.delWiki');
 
         }
 

@@ -3,34 +3,32 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class roadmap
+    class roadmap extends controller
     {
 
-        private $tpl;
-        private $projects;
+        private $projectsRepo;
         private $sprintService;
         private $ticketService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
-            $this->projects = new repositories\projects();
+            $this->projectsRepo = new repositories\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
 
         }
-
 
         /**
          * get - handle get requests
@@ -40,10 +38,12 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
+
         }
 
         /**
@@ -54,6 +54,7 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
+
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
 
             $this->tpl->assign('milestones', $allProjectMilestones);

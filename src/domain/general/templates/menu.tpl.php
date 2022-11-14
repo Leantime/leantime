@@ -16,7 +16,9 @@
 
 <?php if(isset($_SESSION['currentProjectName'])){ ?>
 
+<?php $this->dispatchTplEvent('beforeMenu'); ?>
 <ul class="nav nav-tabs nav-stacked">
+    <?php $this->dispatchTplEvent('afterMenuOpen'); ?>
     <?php if ($this->get('allAvailableProjects') !== false || $_SESSION['currentProject'] != ""){?>
         <li class="project-selector">
 
@@ -35,7 +37,7 @@
                         <?php
                         $lastClient = "";
 
-                        if($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
+                        if ($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
                             foreach ($this->get('allAssignedProjects') as $projectRow) {
 
                                 if ($lastClient != $projectRow['clientName']) {
@@ -105,7 +107,9 @@
        <?php } ?>
     </li>
     <?php } ?>
+    <?php $this->dispatchTplEvent('beforeMenuClose'); ?>
 </ul>
+<?php $this->dispatchTplEvent('afterMenuClose'); ?>
 
 <?php } ?>
 

@@ -3,20 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\services;
 
-    class showAll
+    class showAll extends controller
     {
 
         private $projectService;
-        private $tpl;
         private $ticketService;
         private $sprintService;
         private $timesheetService;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
+
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
             $this->sprintService = new services\sprints();
@@ -54,11 +54,13 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
+            // fields
+            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
+            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
+
             $this->tpl->display('tickets.showAll');
 
         }
-
-
 
     }
 

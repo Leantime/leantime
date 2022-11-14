@@ -3,18 +3,21 @@
 namespace leantime\domain\controllers;
 
 use leantime\core;
+use leantime\base\controller;
 use leantime\domain\repositories;
 use leantime\domain\services;
 
-class showAll extends repositories\files
+class showAll extends controller
 {
+
+    public function init()
+    {
+        $this->filesRepo = new repositories\files();
+        $this->filesService = new services\files();
+    }
 
     public function run()
     {
-
-        $tpl = new core\template();
-        $fileService = new services\files();
-        $language = new core\language();
 
         $currentModule = '';
         if (isset($_GET['id'])) {
@@ -26,35 +29,36 @@ class showAll extends repositories\files
 
             if (isset($_FILES['file'])) {
 
-                $this->upload($_FILES, 'project', $_SESSION['currentProject']);
-                $tpl->setNotification('notifications.file_upload_success', 'success');
+                $this->filesRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
+                $this->tpl->setNotification('notifications.file_upload_success', 'success');
 
             } else {
 
-                $tpl->setNotification('notifications.file_upload_error', 'error');
+                $this->tpl->setNotification('notifications.file_upload_error', 'error');
 
             }
         }
 
         if (isset($_GET['delFile']) === true) {
 
-            $result = $fileService->deleteFile($_GET['delFile']);
+            $result = $this->filesService->deleteFile($_GET['delFile']);
 
             if($result === true) {
-                $tpl->setNotification($language->__("notifications.file_deleted"), "success");
-                $tpl->redirect(BASE_URL."/files/showAll".($_GET['modalPopUp']) ? "?modalPopUp=true" : "");
+                $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
+                $this->tpl->redirect(BASE_URL."/files/showAll".($_GET['modalPopUp']) ? "?modalPopUp=true" : "");
             }else {
-                $tpl->setNotification($result["msg"], "success");
+                $this->tpl->setNotification($result["msg"], "success");
             }
 
         }
 
-        $tpl->assign('folders', $this->getFolders($currentModule));
-        $tpl->assign('currentModule', $currentModule);
-        $tpl->assign('modules', $this->getModules($_SESSION['userdata']['id']));
-        $tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-        $tpl->assign('files', $this->getFilesByModule($currentModule, null, $_SESSION['userdata']['id']));
-        $tpl->displayPartial('files.showAll');
+        $this->tpl->assign('folders', $this->filesRepo->getFolders($currentModule));
+        $this->tpl->assign('currentModule', $currentModule);
+        $this->tpl->assign('modules', $this->filesRepo->getModules($_SESSION['userdata']['id']));
+        $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
+        $this->tpl->assign('files', $this->filesRepo->getFilesByModule($currentModule, null, $_SESSION['userdata']['id']));
+        $this->tpl->displayPartial('files.showAll');
+
     }
 
 }

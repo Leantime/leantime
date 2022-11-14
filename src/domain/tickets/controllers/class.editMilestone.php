@@ -3,37 +3,38 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
     use DateTime;
     use DateInterval;
 
-    class editMilestone
+    class editMilestone extends controller
     {
 
-        private $tpl;
-        private $projects;
         private $ticketService;
+        private $ticketRepo;
+        private $projectRepo;
+        private $commentsService;
+        private $projectService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->ticketService = new services\tickets();
             $this->ticketRepo = new repositories\tickets();
             $this->projectRepo = new repositories\projects();
             $this->commentsService = new services\comments();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
-        }
 
+        }
 
         /**
          * get - handle get requests

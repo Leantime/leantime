@@ -1,19 +1,28 @@
 <?php
+$calendars = $this->get('calendar');
 $eol = "\r\n";
+
+$this->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
+
 echo "BEGIN:VCALENDAR".$eol;
 echo "CALSCALE:GREGORIAN".$eol;
 echo "METHOD:PUBLISH".$eol;
 echo "PRODID:-//Leantime Cal//EN".$eol;
 echo "VERSION:2.0".$eol;
 
-if ($this->get('calendar')) {
-    foreach ($this->get('calendar') as $calendar){
+if ($calendars) {
+    foreach ($calendars as $calendar){
 
         if(isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') {
             $url = BASE_URL."/calendar/editEvent/".$calendar['id']."";
         }else {
             $url = BASE_URL."/tickets/showTicket".$calendar['id']."?projectId=".$calendar['projectId']."";
         }
+
+        $this->dispatchTplEvent('calendarOutputBeginning', $calendar, [
+            'url' => $url,
+            'eol' => $eol
+        ]);
 
         if($calendar['dateFrom']['ical'] != '-00011130T000000Z' &&  $calendar['dateTo']['ical'] != '-00011130T000000Z') {
             echo "BEGIN:VEVENT" . $eol;
@@ -26,7 +35,14 @@ if ($this->get('calendar')) {
             echo "END:VEVENT" . $eol;
         }
 
+        $this->dispatchTplEvent('calendarOutputEnd', $calendar, [
+            'url' => $url,
+            'eol' => $eol
+        ]);
+
     }
 }
 
 echo "END:VCALENDAR".$eol;
+
+$this->dispatchTplEvent('afterOutput', $calendars, ['eol' => $eol]);

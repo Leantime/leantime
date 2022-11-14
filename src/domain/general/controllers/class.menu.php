@@ -2,48 +2,56 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\base\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class menu
+    class menu extends controller
     {
+
+        private $projectService;
+        private $ticketService;
+        private $menuRepo;
+        private $projectRepo;
+
+        public function init()
+        {
+
+            $this->projectService = new services\projects();
+            $this->ticketService = new services\tickets();
+            $this->menuRepo = new repositories\menu();
+            $this->projectRepo = new repositories\projects();
+
+        }
+
         public function run()
         {
 
-            $tpl = new core\template();
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
-            $projectService = new services\projects();
-            $ticketService = new services\tickets();
-			$menuRepo = new repositories\menu();
-
-            $allAssignedprojects = $projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
-
-            $allAvailableProjects = $projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
+            $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open', $_SESSION['userdata']['clientId']);
 
 			if(isset($_SESSION['currentProject'])) {
-			    $projectRepo = new repositories\projects();
-			    $project = $projectRepo->getProject($_SESSION['currentProject']);
+			    $project = $this->projectRepo->getProject($_SESSION['currentProject']);
 
-				if($project !== false) {
-					$menuType = $project['menuType'];
-				}else{
-					$menuType = repositories\menu::DEFAULT_MENU;
-                }
-                    
+                $menuType = ($project !== false && isset($project['menuType']))
+                    ? $project['menuType']
+                    : repositories\menu::DEFAULT_MENU;
+
 			}
             else {
-                
-                $menuType = repositories\menu::DEFAULT_MENU;
-                
-			}
-			
-            $tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
-            $tpl->assign('allAssignedProjects', $allAssignedprojects);
-            $tpl->assign('allAvailableProjects', $allAvailableProjects);
-            $tpl->assign('currentProject', $_SESSION['currentProject']);
-			$tpl->assign('menuStructure', $menuRepo->getMenuStructure($menuType));
 
-            $tpl->displayPartial('general.menu');
+                $menuType = repositories\menu::DEFAULT_MENU;
+
+			}
+
+            $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
+            $this->tpl->assign('allAssignedProjects', $allAssignedprojects);
+            $this->tpl->assign('allAvailableProjects', $allAvailableProjects);
+            $this->tpl->assign('currentProject', $_SESSION['currentProject']);
+			$this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType));
+
+            $this->tpl->displayPartial('general.menu');
 
         }
 

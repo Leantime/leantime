@@ -15,8 +15,10 @@ $dataLabels = $this->get('dataLabels');
 $disclaimer = $this->get('disclaimer');
 $canvasItems = $this->get('canvasItems');
 
-$filter['status'] = $_GET['filter_status'] ?? ($_SESSION['filter_status'] ?? 'all'); $_SESSION['filter_status'] = $filter['status'];
-$filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 'all'); $_SESSION['filter_relates'] = $filter['relates'];
+$filter['status'] = $_GET['filter_status'] ?? ($_SESSION['filter_status'] ?? 'all');
+$_SESSION['filter_status'] = $filter['status'];
+$filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 'all');
+$_SESSION['filter_relates'] = $filter['relates'];
 
 ?>
 <style>
@@ -52,7 +54,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                                 <?php
                                 $lastClient = "";
                                 $i=0;
-                                foreach($this->get('allCanvas') as $canvasRow){ 
+                                foreach($this->get('allCanvas') as $canvasRow){
 
                                     echo "<option value='".$canvasRow["id"]."'";
                                     if($this->get('currentCanvas') == $canvasRow["id"]) {
@@ -98,7 +100,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                             </ul>
                         <?php } ?>
                     </div>
-                    
+
                     <div class="btn-group viewDropDown">
                         <?php if(count($allCanvas) > 0 && !empty($relatesLabels)) {?>
                             <?php if($filter['relates'] == 'all') { ?>
@@ -114,7 +116,7 @@ $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 
                             </ul>
                         <?php } ?>
                     </div>
-                    
+
                 </div>
             </div>
 

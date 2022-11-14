@@ -6,33 +6,26 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\base\controller;
 
-    class home
+    class home extends controller
     {
 
-        private $tpl;
-        private $dashboardRepo;
-        private $projectService;
-        private $sprintService;
-        private $ticketService;
-        private $userService;
-        private $timesheetService;
+        private $projectsService;
+        private $ticketsService;
+        private $usersService;
+        private $timesheetsService;
+        private $reportsService;
 
-
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
-            $this->dashboardRepo = new repositories\dashboard();
-            $this->projectService = new services\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
-            $this->userService = new services\users();
-            $this->timesheetService = new services\timesheets();
-            $this->language = new core\language();
-            $this->reportService = new services\reports();
+            $this->projectsService = new services\projects();
+            $this->ticketsService = new services\tickets();
+            $this->usersService = new services\users();
+            $this->timesheetsService = new services\timesheets();
+            $this->reportsService = new services\reports();
 
             $_SESSION['lastPage'] = BASE_URL."/dashboard/home";
-
         }
 
         /**
@@ -52,7 +45,7 @@ namespace leantime\domain\controllers {
             }
 
             // TICKETS
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
@@ -67,13 +60,13 @@ namespace leantime\domain\controllers {
             }
 
             if($groupBy == "time") {
-                $tickets = $this->ticketService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
+                $tickets = $this->ticketsService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
             }else if($groupBy == "project") {
-                $tickets = $this->ticketService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
+                $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
             }
 
 
-            $allprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
             $clients = array();
 
             $projectResults = array();
@@ -89,11 +82,11 @@ namespace leantime\domain\controllers {
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {
                         $projectResults[$i] = $project;
-                        $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
-                        //$projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
+                        $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
+                        //$projectResults[$i]['milestones'] = $this->ticketsService->getAllMilestones($project['id']);
 
 
-                        $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+                        $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
 
                         $projectResults[$i]['report'] = $fullReport;
 
@@ -102,22 +95,20 @@ namespace leantime\domain\controllers {
                 }
             }
 
-
-            $currentUser = $this->userService->getUser($_SESSION['userdata']['id']);
+            $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
             $this->tpl->assign("allProjects", $projectResults);
 
             $this->tpl->assign('currentUser', $currentUser);
             $this->tpl->assign('tickets', $tickets);
-            $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign("types", $this->ticketService->getTicketTypes());
-            $this->tpl->assign("statusLabels", $this->ticketService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
-            $this->tpl->assign("milestones", $this->ticketService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]));
+            $this->tpl->assign("onTheClock", $this->timesheetsService->isClocked($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('efforts', $this->ticketsService->getEffortLabels());
+            $this->tpl->assign('priorities', $this->ticketsService->getPriorityLabels());
+            $this->tpl->assign("types", $this->ticketsService->getTicketTypes());
+            $this->tpl->assign("statusLabels", $this->ticketsService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
+            $this->tpl->assign("milestones", $this->ticketsService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]));
 
             $this->tpl->display('dashboard.home');
-
         }
 
         public function post($params)
@@ -126,7 +117,7 @@ namespace leantime\domain\controllers {
             if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
 
                 if (isset($params['quickadd']) == true) {
-                    $result = $this->ticketService->quickAddTicket($params);
+                    $result = $this->ticketsService->quickAddTicket($params);
 
                     if (isset($result["status"])) {
                         $this->tpl->setNotification($result["message"], $result["status"]);
@@ -139,7 +130,6 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->redirect(BASE_URL . "/dashboard/home");
-
 
         }
     }
