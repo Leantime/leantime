@@ -259,7 +259,9 @@ namespace leantime\core {
          * includeAction - possible to include action from everywhere
          *
          * @access public
+         *
          * @param  $completeName
+         *
          * @return object
          */
         public static function includeAction($completeName, $params=array())
@@ -267,12 +269,13 @@ namespace leantime\core {
             self::executeAction($completeName, $params);
         }
 
-
         /**
          * getActionName - split string to get actionName
          *
          * @access public
+         *
          * @param  $completeName
+         *
          * @return string
          */
         public static function getActionName($completeName): string
@@ -294,7 +297,9 @@ namespace leantime\core {
          * getModuleName - split string to get modulename
          *
          * @access public
+         *
          * @param  $completeName
+         *
          * @return string
          */
         public static function getModuleName($completeName)
@@ -310,11 +315,11 @@ namespace leantime\core {
 
         }
 
-
         /**
          * getCurrentRoute - gets the current main action
          *
          * @access public
+         *
          * @return string
          */
         public static function getCurrentRoute()
@@ -328,6 +333,16 @@ namespace leantime\core {
 
         }
 
+        /**
+         * Redirects to a specified url with specified response code
+         *
+         * @access public
+         *
+         * @param string $url
+         * @param int $http_response_code
+         *
+         * @return void
+         */
         public static function redirect($url, $http_response_code = 303): void
         {
 
@@ -335,11 +350,21 @@ namespace leantime\core {
             exit();
         }
 
+        /**
+         * Sets the response code for the current request
+         *
+         * @access public
+         *
+         * @param int $responseCode
+         *
+         * @return void
+         */
         public static function setResponseCode($responseCode) {
 
             if(is_int($responseCode)) {
                 http_response_code($responseCode);
             }
+
         }
 
     }

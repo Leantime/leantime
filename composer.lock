@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be42134e64cfab0886afefe98a6083e3",
+    "content-hash": "13cc41e7a452eb7337a71761ba02e173",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1639,6 +1639,61 @@
                 }
             ],
             "time": "2022-09-02T07:48:13+00:00"
+        },
+        {
+            "name": "performing/twig-components",
+            "version": "0.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giorgiopogliani/twig-components.git",
+                "reference": "be2dfdbc9cc527f10792348419ab39a6af48b12c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giorgiopogliani/twig-components/zipball/be2dfdbc9cc527f10792348419ab39a6af48b12c",
+                "reference": "be2dfdbc9cc527f10792348419ab39a6af48b12c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "twig/twig": "^2.12.5 || ^3.0.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "pestphp/pest": "^1.0",
+                "phpunit/phpunit": "^9.3",
+                "symfony/var-dumper": "^5.2",
+                "vimeo/psalm": "^3.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Performing\\TwigComponents\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Giorgio Pogliani",
+                    "email": "giorgiopogliani94@gmail.com",
+                    "homepage": "https://performingdigital.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Twig components extension",
+            "homepage": "https://github.com/giorgiopogliani/twig-components",
+            "keywords": [
+                "digital",
+                "twig-components"
+            ],
+            "support": {
+                "issues": "https://github.com/giorgiopogliani/twig-components/issues",
+                "source": "https://github.com/giorgiopogliani/twig-components/tree/0.5.2"
+            },
+            "time": "2022-06-16T20:09:01+00:00"
         },
         {
             "name": "phenx/php-font-lib",
@@ -3500,6 +3555,82 @@
                 }
             ],
             "time": "2022-06-27T16:58:25+00:00"
+        },
+        {
+            "name": "twig/twig",
+            "version": "v3.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "c38fd6b0b7f370c198db91ffd02e23b517426b58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c38fd6b0b7f370c198db91ffd02e23b517426b58",
+                "reference": "c38fd6b0b7f370c198db91ffd02e23b517426b58",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/polyfill-ctype": "^1.8",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "require-dev": {
+                "psr/container": "^1.0",
+                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Twig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Twig Team",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "support": {
+                "issues": "https://github.com/twigphp/Twig/issues",
+                "source": "https://github.com/twigphp/Twig/tree/v3.4.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-09-28T08:42:51+00:00"
         },
         {
             "name": "voku/portable-ascii",

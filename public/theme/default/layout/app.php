@@ -28,10 +28,7 @@
 
     <div class="header" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px; width:100%;'; ?>">
 
-
-
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
-
 
             <div class="userloggedinfo">
                 <?php echo $this->frontcontroller->includeAction('general.loginInfo'); ?>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html dir="{{ language.direction }}" lang="{{ language.code }}">
+<head>
+    {% block head %}
+        {{ includeRoute('general.header') }}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="mainwrapper {{ mainwrapper.classes }}">
+
+        <div class="leftpanel {{ leftpanel.classes }}" {% if menu.state == 'closed' %} style="margin-left:-240px" {% endif %}>
+            {% block leftpanel %}
+                <a class="barmenu {{ menu.state == 'open' ? 'open' : '' }}" href="javascript:void(0);">
+                    <span class="fa fa-bars"></span>
+                </a>
+
+                <div class="logo"  {% if menu.state == 'closed' %} style="margin-left:-260px" {% endif %}>
+                    <a href="{{ site.base_url }}" style="background-image:url({{ companysettings.logoPath|e('css') }})">&nbsp;</a>
+                </div>
+
+                <div class="leftmenu">
+                    {% block leftmenu %}
+                        {{ includeRoute('general.menu') }}
+                    {% endblock %}
+                </div><!--leftmenu-->
+            {% endblock %}
+        </div><!-- leftpanel -->
+
+        <div class="header" {% if menu.state == 'closed' %} style="margin-left:0px; width:100%" {% endif %}>
+            {% block header %}
+                <div class="headerinner" {% if menu.state == 'closed' %} style="margin-left:0px" {% endif %}>
+                    {% block headerInner %}
+                        <div class="userloggedinfo">
+                            {{ includeRoute('general.loginInfo') }}
+                        </div>
+
+                        {{ includeRoute('general.headMenu') }}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+
+        <div class="rightpanel" style="position: relative; {{ menu.state == 'closed' ? 'margin-left:0px;'|e('css') : '' }}">
+            {% block content %}
+
+                {% block pageheader %}{% endblock %}
+
+                <div class="maincontent">
+                    {% block maincontent %}
+                        <!--###MAINCONTENT###-->
+                    {% endblock %}
+                </div> <!-- End .maincontent -->
+
+                {{ includeRoute('general.footer') }}
+            {% endblock %}
+        </div><!--rightpanel-->
+
+    </div><!--mainwrapper-->
+
+{{ includeRoute('general.pageBottom') }}
+{% block scripts %}{% endblock %}

@@ -12,6 +12,8 @@ namespace leantime\core {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\base\eventhelpers;
+    use Twig\Loader\FilesystemLoader;
+    use Twig\Environment;
 
     class template
     {
@@ -50,6 +52,12 @@ namespace leantime\core {
          * @var    string
          */
         private $hookContext = '';
+
+        /**
+         * @access private
+         * @var    \Twig\Environment
+         */
+        private Environment $twig;
 
         /**
          * @access public
@@ -92,9 +100,12 @@ namespace leantime\core {
             $this->theme = new theme();
             $this->language = new language();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
-
+            $this->twig = (new twig(
+                $this->theme,
+                $this->language,
+                $this
+            ))->getEnv();
         }
-
         /**
          * assign - assign variables in the action for template
          *
@@ -142,28 +153,27 @@ namespace leantime\core {
                 'name' => $name
             ]);
 
-            if (empty($plugin_path) || !file_exists($plugin_path)) {
-                $file = '/domain/'.$module.'/templates/'.$name;
-
-                if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
-                    return ROOT.'/../custom'.$file;
+            if (!empty($plugin_path)) {
+                if(file_exists(ROOT.'/../custom'.$plugin_path) && is_readable(ROOT.'/../custom'.$plugin_path)) {
+                    return ROOT.'/../custom'.$plugin_path;
                 }
 
-                if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
-                    return ROOT.'/../src'.$file;
+                if(file_exists(ROOT.'/../src'.$plugin_path) && is_readable(ROOT.'/../src'.$plugin_path)) {
+                    return ROOT.'/../src'.$plugin_path;
                 }
             }
 
-            if(file_exists(ROOT.'/../custom'.$plugin_path) && is_readable(ROOT.'/../custom'.$plugin_path)) {
-                return ROOT.'/../custom'.$plugin_path;
+            $file = '/domain/'.$module.'/templates/'.$name;
+
+            if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
+                return ROOT.'/../custom'.$file;
             }
 
-            if(file_exists(ROOT.'/../src'.$plugin_path) && is_readable(ROOT.'/../src'.$plugin_path)) {
-                return ROOT.'/../src'.$plugin_path;
+            if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
+                return ROOT.'/../src'.$file;
             }
 
-            throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
-
+            return false;
         }
 
         /**
@@ -203,31 +213,38 @@ namespace leantime\core {
                 $layout = self::dispatch_filter($tplfilter, $layout);
             }
 
-            $layoutFilename = $this->theme->getLayoutFilename($layout.'.php', $template);
+            $layoutFilenames = [
+                "$layout.twig",
+                "$layout.php",
+                "app.twig",
+                "app.php"
+            ];
 
-            if($layoutFilename === false) {
+            $layoutFilename = false;
 
-                $layoutFilename = $this->theme->getLayoutFilename('app.php');
-
+            $i = 0;
+            while ($layoutFilename == false && $i < 4) {
+                $layoutFilename = $this->theme->getLayoutFilename($layoutFilenames[$i], $template);
+                $i++;
             }
 
-            if($layoutFilename === false) {
-
+            if ($layoutFilename == false) {
                 throw new \Exception("Cannot find default 'app.php' layout file");
-
             }
 
-            ob_start();
+            if (str_contains($layoutFilename, '.twig')) {
+                $templateLayout = basename($layoutFilename);
+            } else {
+                ob_start();
+                require($layoutFilename);
+                $layoutContent = ob_get_clean();
 
-            require($layoutFilename);
-
-            $layoutContent = ob_get_clean();
-
-            foreach ([
-                'layoutContent',
-                "layoutContent.$template"
-            ] as $tplfilter) {
-                $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
+                foreach ([
+                    'layoutContent',
+                    "layoutContent.$template"
+                ] as $tplfilter) {
+                    $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
+                }
             }
 
             //Load Template
@@ -235,16 +252,28 @@ namespace leantime\core {
             //frontcontroller splits the name (actionname.modulename)
             $action = $this->frontcontroller::getActionName($template);
             $module = $this->frontcontroller::getModuleName($template);
-
-            $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
-
             $this->hookContext = "tpl.$module.$action";
 
-            ob_start();
+            $loadFile = $this->getTemplatePath($module, $action.'.twig');
 
-            require_once($loadFile);
+            if ($loadFile == false) {
+                $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
+            }
 
-            $content = ob_get_clean();
+            if ($loadFile == false) {
+                throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
+            }
+
+            if (str_contains($loadFile, '.twig')) {
+                $content = $this->twig->render(
+                    basename($loadFile),
+                    array_merge($this->vars, ['layoutFile' => $templateLayout])
+                );
+            } else {
+                ob_start();
+                require_once($loadFile);
+                $content = ob_get_clean();
+            }
 
             foreach ([
                 'content',
@@ -254,7 +283,7 @@ namespace leantime\core {
             }
 
             //Load template content into layout content
-            $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
+            $render = str_contains($loadFile, '.twig') ? $content : str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
 
             foreach ([
                 'render',
@@ -347,7 +376,6 @@ namespace leantime\core {
             $login = services\auth::getInstance();
             $roles = new roles();
 
-
             $submodule = array("module"=>'', "submodule"=>'');
 
             $aliasParts = explode("-", $alias);
@@ -357,23 +385,37 @@ namespace leantime\core {
             }
 
             $relative_path = self::dispatch_filter(
-                'submodule_relative_path',
-                "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
+                'submodule_relative_path_no_extension',
+                "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub",
                 [
                     'module' => $submodule['module'],
                     'submodule' => $submodule['submodule']
                 ]
             );
 
-            $file = "../custom/domain/$relative_path";
+            foreach([
+                "twig",
+                "php"
+            ] as $extension) {
+                foreach ([
+                    "custom",
+                    "src"
+                ] as $parentdir) {
+                    $file = "../$parentdir/domain/$relative_path.$extension";
 
-            if(!file_exists($file)) {
-                $file = "../src/domain/$relative_path";
+                    if(file_exists($file)) {
+                        break;
+                    }
+                }
             }
 
             if (file_exists($file)) {
 
-                include $file;
+                if (str_contains('.twig', $file)) {
+                    echo $this->twig->render($file, $this->vars);
+                } else {
+                    include $file;
+                }
 
             }
 
@@ -743,7 +785,7 @@ namespace leantime\core {
          * @param string $hookName
          * @param mixed $payload
          */
-        private function dispatchTplEvent($hookName, $payload = [])
+        public function dispatchTplEvent($hookName, $payload = [])
         {
             $this->dispatchTplHook('event', $hookName, $payload);
         }
@@ -755,7 +797,7 @@ namespace leantime\core {
          *
          * @return mixed
          */
-        private function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+        public function dispatchTplFilter($hookName, $payload = [], $available_params = [])
         {
             return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
         }
