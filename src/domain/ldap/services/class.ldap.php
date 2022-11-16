@@ -116,7 +116,7 @@ class ldap
             }
             $passwordBind=$password;
 
-            $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+            $bind = ldap_bind($this->ldapConnection, $this->bindUser, $this->bindPassword);
 
             if($bind) {
 
