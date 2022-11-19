@@ -23,10 +23,13 @@ class controller {
      */
     public function __construct($method, $params)
     {
+
         self::dispatch_event('begin');
 
         $this->tpl = new template();
         $this->language = new language();
+
+
 
         // initialize
         $this->executeActions($method, $params);

@@ -18,29 +18,17 @@ namespace leantime\domain\repositories {
         // Menu structures
         private array $menuStructures = [
             'default' => [
-                11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
-                12 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
-                13 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
-                20 => [ 'type' => 'header', 'title' => 'menu.default.define' ],
-                21 => [ 'type' => 'item', 'module' => 'swotcanvas',     'title' => 'menu.swotcanvas', 'href' => '/swotcanvas/showCanvas' ],
-                22 => [ 'type' => 'item', 'module' => 'eacanvas',    'title' => 'menu.eacanvas',    'href' => '/eacanvas/showCanvas' ],
-                23 => [ 'type' => 'item', 'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas' ],
-                24 => [ 'type' => 'item', 'module' => 'emcanvas',    'title' => 'menu.emcanvas',    'href' => '/emcanvas/showCanvas' ],
-                25 => [ 'type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insights',   'href' => '/insightscanvas/showCanvas' ],
-                26 => [ 'type' => 'header', 'title' => 'menu.default.ideate' ],
-                30 => [ 'type' => 'item', 'module' => 'ideas',           'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
-                31 => [ 'type' => 'item', 'module' => 'leancanvas',      'title' => 'menu.leancanvas', 'href' => '/leancanvas/showCanvas' ],
-                32 => [ 'type' => 'item', 'module' => 'lbmcanvas',       'title' => 'menu.lbmcanvas',   'href' => '/lbmcanvas/showCanvas' ],
-                33 => [ 'type' => 'item', 'module' => 'obmcanvas',       'title' => 'menu.obmcanvas',  'href' => '/obmcanvas/showCanvas' ],
-                34 => [ 'type' => 'item', 'module' => 'dbmcanvas',   'title' => 'menu.dbmcanvas',   'href' => '/dbmcanvas/showCanvas' ],
-                35 => [ 'type' => 'item', 'module' => 'cpcanvas',    'title' => 'menu.cpcanvas',    'href' => '/cpcanvas/showCanvas' ],
-                40 => [ 'type' => 'header', 'title' => 'menu.default.test' ],
-                41 => [ 'type' => 'item', 'module' => 'sqcanvas',    'title' => 'menu.sqcanvas',    'href' => '/sqcanvas/showCanvas' ],
-                42 => [ 'type' => 'item', 'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ],
-                50 => [ 'type' => 'header', 'title' => 'menu.default.tools' ],
-                51 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
-                52 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
-                53 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
+                10 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
+                15 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                      'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
+                20 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', '   active' => [ 'roadmap' ] ],
+                30 => [ 'type' => 'item', 'module' => 'ideas',      'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
+                51 => [ 'type' => 'item', 'module' => 'wiki',       'title' => 'menu.documents', 'href' => '/wiki/show' ],
+                53 => [ 'type' => 'item', 'module' => 'reports',    'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
+
+
+
+
+
             'dts' => [
                 11 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                 21 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',                                       'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],

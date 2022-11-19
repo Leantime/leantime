@@ -23,7 +23,7 @@ class plugins {
     public function __construct()
     {
         $this->enabledPlugins = $this->standardize_plugin_keys(
-            (array) (new config)->getEnabledPlugins()
+            (array) $this->getEnabledPlugins()
         );
     }
 

@@ -1259,12 +1259,10 @@ namespace leantime\domain\repositories {
             $errors = array();
 
 			$sql = [
-                // BLOG, TEXT, GEOMETRY or JSON column 'menuType' can't have a default value
                 "ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null",
-				"UPDATE zp_projects SET = menuType = '".repositories\menu::DEFAULT_MENU."' ".
-                // BLOG, TEXT, GEOMETRY or JSON column 'relates' can't have a default value
+				"UPDATE zp_projects SET menuType = '".repositories\menu::DEFAULT_MENU."'",
 				"ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
-				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_item.id ".
+				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
 				"SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
 				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
 				"SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",

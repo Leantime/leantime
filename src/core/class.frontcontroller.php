@@ -144,7 +144,7 @@ namespace leantime\core {
                (is_dir('../custom/domain/'.$moduleName) === false ||
                 is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
 
-                self::dispatch("general.error404");
+                self::dispatch("errors.error404");
                 return;
 
             }
@@ -177,7 +177,7 @@ namespace leantime\core {
 
             }else{
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
                 return;
 
             }
@@ -193,9 +193,12 @@ namespace leantime\core {
                 self::setResponseCode(200);
 
                 if (is_subclass_of($classname, "leantime\\base\\controller")) {
+
+
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
+
                     $action = new $classname;
 
                     if(method_exists($action, $method)) {

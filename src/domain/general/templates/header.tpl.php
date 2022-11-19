@@ -56,9 +56,9 @@
 <!-- Replace main theme colors -->
 <style>
     :root{
-        <?php if(isset($_SESSION["companysettings.primarycolor"])) {
+        <?php if(isset($_SESSION["companysettings.primarycolor"]) && $theme == 'default') {
         ?> --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>; <?php } ?>
-        <?php if(isset($_SESSION["companysettings.secondarycolor"])) {
+        <?php if(isset($_SESSION["companysettings.secondarycolor"]) && $theme == 'default') {
         ?> --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>; <?php } ?>
     }
 </style>

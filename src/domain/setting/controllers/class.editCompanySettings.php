@@ -25,12 +25,17 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
+
+
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
+
+
+
 
         }
 
@@ -42,6 +47,8 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+
             if(auth::userIsAtLeast(roles::$owner)) {
 
                 $companySettings = array(
@@ -96,11 +103,12 @@ namespace leantime\domain\controllers {
 
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
+
                 $this->tpl->display('setting.editCompanySettings');
 
             }else{
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('error.error403');
 
             }
         }
