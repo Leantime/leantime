@@ -336,8 +336,9 @@ leantime.generalController = (function () {
         jQuery(".commentBox").hide();
         jQuery(".deleteComment, .replyButton").hide();
 
-		jQuery(container).find(".statusDropdown i").removeClass();
-		jQuery(container).find(".relatesDropdown i").removeClass();
+        jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
+
+
     };
 
     var enableCommenterForms = function () {
