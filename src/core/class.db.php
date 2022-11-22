@@ -9,7 +9,7 @@ namespace leantime\core;
 
 use PDO;
 use PDOException;
-use leantime\base\eventhelpers;
+use leantime\core\eventhelpers;
 
 class db
 {

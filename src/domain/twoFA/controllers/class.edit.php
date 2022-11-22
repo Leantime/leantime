@@ -5,7 +5,7 @@ namespace leantime\domain\controllers {
     use Endroid\QrCode\QrCode;
     use leantime\domain\repositories;
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use RobThree\Auth\Providers\Qr\IQRCodeProvider;
     use RobThree\Auth\TwoFactorAuth;
 

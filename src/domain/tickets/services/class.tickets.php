@@ -23,7 +23,7 @@ namespace leantime\domain\services {
             $this->tpl = new core\template();
             $this->projectRepository = new repositories\projects();
             $this->ticketRepository = new repositories\tickets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
             $this->settingsRepo = new repositories\setting();

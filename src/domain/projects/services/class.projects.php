@@ -4,7 +4,7 @@ namespace leantime\domain\services {
 
     use GuzzleHttp\Exception\RequestException;
     use leantime\core;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
@@ -32,7 +32,7 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
         }
 
         public function getProject($id) {

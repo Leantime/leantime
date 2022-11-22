@@ -329,6 +329,10 @@
 
 }
 
+.leftmenu .nav-tabs.nav-stacked {
+    background-color:var(--left-panel-bg);
+}
+
 .leftmenu .nav-tabs.nav-stacked a span {
     margin-right: 5px;
 }

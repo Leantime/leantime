@@ -4,7 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\services\auth;
 
     class editOwn extends controller
@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->settingsService = new \leantime\domain\services\setting();
             $this->userRepo = new repositories\users();
             $this->settingsRepo = new \leantime\domain\repositories\setting();

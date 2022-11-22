@@ -10,7 +10,7 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\repositories\reports;
     use leantime\domain\repositories\setting;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class language
     {
@@ -55,13 +55,19 @@ namespace leantime\core {
          */
         private $alert = false;
 
+        /**
+         * @access private
+         * @var    static object
+         */
+        private static $instance = null;
+
 
         /**
          * __construct - Check standard language otherwise get language from browser
          *
          * @return array
          */
-        public function __construct()
+        private function __construct()
         {
 
             $this->config = new config();
@@ -78,11 +84,11 @@ namespace leantime\core {
 
                 if (file_exists(static::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
 
-                    $parsedLangList = parse_ini_file(static::CUSTOM_LANG_FOLDER.'/languagelist.ini');
+                    $parsedLangList = parse_ini_file(static::CUSTOM_LANG_FOLDER.'/languagelist.ini', false, INI_SCANNER_RAW);
 
                 }elseif (file_exists(static::DEFAULT_LANG_FOLDER.'languagelist.ini')) {
 
-                    $parsedLangList = parse_ini_file(static::DEFAULT_LANG_FOLDER.'/languagelist.ini');
+                    $parsedLangList = parse_ini_file(static::DEFAULT_LANG_FOLDER.'/languagelist.ini', false, INI_SCANNER_RAW);
 
                 }else{
 
@@ -176,6 +182,23 @@ namespace leantime\core {
         }
 
         /**
+         * getInstance - singleton, get same instance of language class
+         *
+         * @access public
+         * @return object
+         */
+        public static function getInstance() {
+
+            if (self::$instance === null) {
+
+                        self::$instance = new self();
+
+                    }
+
+            return self::$instance;
+        }
+
+        /**
          * setLanguage - set the language (format: de-DE, languageCode-CountryCode)
          *
          * @access public
@@ -184,6 +207,7 @@ namespace leantime\core {
          */
         public function setLanguage($lang)
         {
+
 
             $this->language = $lang;
 
@@ -256,7 +280,7 @@ namespace leantime\core {
         public function readIni()
         {
 
-            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme]) && $this->config->debug == 0) {
+            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme])) {
                 $this->ini_array = $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme];
                 return $this->ini_array;
             }
@@ -267,6 +291,8 @@ namespace leantime\core {
                 throw new Exception("Cannot find default english language file en-US.ini");
 
             }
+
+
             $mainLanguageArray = parse_ini_file(ROOT.'/'.static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
             // Overwrite with english from theme
@@ -371,14 +397,14 @@ namespace leantime\core {
 
             if (file_exists(static::CUSTOM_LANG_FOLDER.'/languagelist.ini')) {
 
-                $this->langlist = parse_ini_file(static::CUSTOM_LANG_FOLDER.'/languagelist.ini');
+                $this->langlist = parse_ini_file(static::CUSTOM_LANG_FOLDER.'/languagelist.ini', false, INI_SCANNER_RAW);
                 return $this->langlist;
 
             }
 
             if (file_exists(static::DEFAULT_LANG_FOLDER.'/languagelist.ini')) {
 
-                $this->langlist = parse_ini_file(static::DEFAULT_LANG_FOLDER.'/languagelist.ini');
+                $this->langlist = parse_ini_file(static::DEFAULT_LANG_FOLDER.'/languagelist.ini', false, INI_SCANNER_RAW);
                 return $this->langlist;
 
             }

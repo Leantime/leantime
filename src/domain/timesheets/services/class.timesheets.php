@@ -18,7 +18,7 @@ namespace leantime\domain\services {
         {
 
             $this->timesheetsRepo = new repositories\timesheets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 

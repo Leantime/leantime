@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\services;
 
     class showTicket extends controller
@@ -43,7 +43,7 @@ namespace leantime\domain\controllers {
                 $ticket = $this->ticketService->getTicket($id);
 
                 if($ticket === false) {
-                    $this->tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
                     return;
                 }
 
@@ -134,7 +134,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('errors.error403');
 
             }
 
@@ -151,7 +151,7 @@ namespace leantime\domain\controllers {
                 $ticket = $this->ticketService->getTicket($id);
 
                 if($ticket === false) {
-                    $this->tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
                     return;
                 }
 
@@ -224,7 +224,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

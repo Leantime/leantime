@@ -10,7 +10,7 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class frontcontroller
     {
@@ -116,7 +116,7 @@ namespace leantime\core {
 
             } else {
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
 
             }
         }
@@ -192,7 +192,7 @@ namespace leantime\core {
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if (is_subclass_of($classname, "leantime\\base\\controller")) {
+                if (is_subclass_of($classname, "leantime\\core\\controller")) {
 
 
                     new $classname($method, $params);

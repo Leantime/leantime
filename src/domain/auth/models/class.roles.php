@@ -2,7 +2,7 @@
 
 namespace leantime\domain\models\auth {
 
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class roles
     {

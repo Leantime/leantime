@@ -249,8 +249,4 @@ class config
         }
     }
 
-    public function getEnabledPlugins()
-    {
-        return json_decode($this->plugins);
-    }
 }

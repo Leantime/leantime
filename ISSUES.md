@@ -10,7 +10,7 @@
 - Keeping the same theme/language from previous login at login screen is not working!
 
 ## Language translations
-- New language tags have been generated for most languages, but need validation before being installed (they can be
+- language::getInstance tags have been generated for most languages, but need validation before being installed (they can be
   found in `/tools/mltranslate` and ar market with MTL., prefix which must be removed before installing the language file)
   
 ## PDF generation

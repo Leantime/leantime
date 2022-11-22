@@ -5202,18 +5202,32 @@ input.secretInput:active {
     border-radius: var(--box-radius);
     text-align:center;
     margin-bottom: 20px;
+    padding:10px;
+    margin-top:20px;
 }
 
 .profileBox .commentImage {
     float:none;
     margin:0px;
-    margin-top:-10px;
+    margin-top:-35px;
+    margin-bottom:10px;
 }
 
 .profileBox .commentImage img {
     width:50px;
     height:50px;
     border-radius:50px;
+}
+
+.profileBox .commentImage i {
+    display:inline-block;
+    border:1px solid var(--main-border-color);
+    border-radius:50px;
+    width:50px;
+    line-height:50px;
+    font-size:28px;
+    background:var(--secondary-background);
+    color:var(--primary-color);
 }
 
 .profileBox .userName {

@@ -11,7 +11,7 @@ namespace leantime\core {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class template
     {
@@ -90,7 +90,7 @@ namespace leantime\core {
         public function __construct()
         {
             $this->theme = new theme();
-            $this->language = new language();
+            $this->language = language::getInstance();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
         }
