@@ -4,7 +4,7 @@ namespace leantime\core;
 
 use leantime\domain\services;
 use leantime\domain\repositories;
-use leantime\base\eventhelpers;
+use leantime\core\eventhelpers;
 
 class application
 {
@@ -25,7 +25,7 @@ class application
         "auth.resetPw",
         "install",
         "install.update",
-        "general.error404",
+        "errors.error404",
         "api.i18n",
         "calendar.ical"
     );
@@ -44,7 +44,7 @@ class application
         $this->settings = new appSettings();
 
         $this->frontController = frontcontroller::getInstance(ROOT);
-        $this->language = new language();
+        $this->language = language::getInstance();
         $this->projectService = new services\projects();
         $this->settingsRepo = new repositories\setting();
         $this->reportService = new services\reports();

@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\services;
 
     class showKanban extends controller

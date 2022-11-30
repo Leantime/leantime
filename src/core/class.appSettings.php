@@ -7,7 +7,7 @@
 
 namespace leantime\core {
 
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class appSettings {
 

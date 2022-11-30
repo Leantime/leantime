@@ -7,7 +7,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -95,13 +95,13 @@ namespace leantime\domain\controllers {
 
                 } else {
 
-                    $tpl->display('general.error');
+                    $tpl->display('errors.error403');
 
                 }
 
             } else {
 
-                $tpl->display('general.error');
+                $tpl->display('errors.error403');
 
             }
 

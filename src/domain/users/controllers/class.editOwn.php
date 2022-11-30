@@ -4,7 +4,7 @@ namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\services\auth;
 
     class editOwn extends controller
@@ -18,10 +18,11 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->settingsService = new \leantime\domain\services\setting();
             $this->userRepo = new repositories\users();
             $this->settingsRepo = new \leantime\domain\repositories\setting();
+            $this->themeCore = new \leantime\core\theme();
 
         }
 
@@ -121,8 +122,8 @@ namespace leantime\domain\controllers {
                                         $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                         $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
-                                        $themeCore->setActive($postTheme);
-                                        $language->setLanguage($postLang);
+                                        $this->themeCore->setActive($postTheme);
+                                        $this->language->setLanguage($postLang);
 
                                         $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
 
@@ -140,8 +141,8 @@ namespace leantime\domain\controllers {
                                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
                                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
 
-                                    $themeCore->setActive($postTheme);
-                                    $language->setLanguage($postLang);
+                                    $this->themeCore->setActive($postTheme);
+                                    $this->language->setLanguage($postLang);
 
                                     $this->userRepo->editOwn($values, $userId);
 

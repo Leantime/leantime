@@ -14,7 +14,7 @@ $canvasName = 'lean';
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
             <div class="row-fluid">
 			    <div class="column" style="width: 100%; min-width: calc(5 * 250px);">
-			  
+
 				    <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 20%">
                             <?php $elementName = 'problem'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
@@ -32,7 +32,7 @@ $canvasName = 'lean';
 			                <?php $elementName = 'customersegment'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
-				
+
 				    <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 20%">
                             <?php $elementName = 'alternatives'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
@@ -50,7 +50,7 @@ $canvasName = 'lean';
 			                <?php $elementName = 'earlyadopters'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
-							  
+
 				    <div class="row canvas-row" id="thirdRow">
                         <div class="column" style="width: 50%">
 						    <?php $elementName = 'cost'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
@@ -59,7 +59,7 @@ $canvasName = 'lean';
 						    <?php $elementName = 'revenue'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
 					    </div>
 				    </div>
-							  
+
 			    </div>
 			</div>
 	    </div>

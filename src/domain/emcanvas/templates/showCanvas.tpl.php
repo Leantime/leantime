@@ -1,4 +1,4 @@
-!<?php
+<?php
 /**
  * Template
  */
@@ -13,7 +13,7 @@ $canvasName = 'em';
 
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
           <div class="row-fluid"><div class="column" style="width: 100%; min-width: calc(4 * 250px);">
-			  
+
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
 			      <h4 class="widgettitle title-primary center canvas-title-only">
@@ -21,7 +21,7 @@ $canvasName = 'em';
                   </h4>
                 </div>
             </div>
-					  
+
 			<div class="row canvas-row" id="firstRow">
 			  <div class="column" style="width: 50%">
 			    <?php $elementName = 'em_who'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
@@ -61,7 +61,7 @@ $canvasName = 'em';
                   </h4>
                 </div>
             </div>
-			  
+
 			<div class="row canvas-row" id="thirdRow">
 			  <div class="column" style="width: 50%">
 			    <?php $elementName = 'em_pains'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
@@ -70,7 +70,7 @@ $canvasName = 'em';
 			    <?php $elementName = 'em_gains'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
               </div>
             </div>
-					
+
 			<div class="row canvas-row" id="fourthRow">
 			  <div class="column" style="width: 100%">
 			    <?php $elementName = 'em_motives'; require($this->getTemplatePath('canvas', 'element.inc.php')); ?>

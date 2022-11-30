@@ -5,7 +5,7 @@
 namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 

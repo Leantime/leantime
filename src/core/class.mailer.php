@@ -12,7 +12,7 @@ namespace leantime\core {
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
     use phpmailerException;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class mailer
     {
@@ -121,7 +121,7 @@ namespace leantime\core {
             $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
             $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
-            $this->language = new language();
+            $this->language = language::getInstance();
 
         }
 

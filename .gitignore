@@ -109,8 +109,8 @@ package-lock.json
 logs/*
 
 # Ignore all customization files
-custom/domain/
-custom/plugin/
-custom/language/
+src/custom/domain/
+src/custom/plugin/
+src/custom/language/
 public/theme/*/css/custom.css
 public/theme/dts/

@@ -45,7 +45,7 @@ function leantimeAutoloader($class)
 
             if(file_exists(ROOT."/../custom/$path/$prefix.$class.php")) {
 
-                require_once(ROOT."/../custom/$path/$prefix.$class.php");
+                require_once(ROOT . "/../custom/$path/$prefix.$class.php");
                 break;
 
             }elseif(file_exists(ROOT."/../src/$path/$prefix.$class.php")) {
