@@ -351,8 +351,6 @@ leantime.dashboardController = (function () {
                         jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"));
                     });
 
-
-
                 }
             }
         );
@@ -368,6 +366,5 @@ leantime.dashboardController = (function () {
         initProgressChart:initProgressChart,
         prepareHiddenDueDate:prepareHiddenDueDate,
         _initDueDateTimePickers:_initDueDateTimePickers
-
     };
 })();

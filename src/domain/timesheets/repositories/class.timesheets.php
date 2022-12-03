@@ -52,8 +52,8 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-                        zp_timesheets.id, 
-                        zp_timesheets.userId, 
+                        zp_timesheets.id,
+                        zp_timesheets.userId,
                         zp_timesheets.ticketId,
                         zp_timesheets.workDate,
                         zp_timesheets.hours,
@@ -75,7 +75,7 @@ namespace leantime\domain\repositories {
                     LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
                     LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                    WHERE 
+                    WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
             if($projectId > 0) {
@@ -109,8 +109,8 @@ namespace leantime\domain\repositories {
             }
 
             $query.= " GROUP BY
-		                zp_timesheets.id, 
-                        zp_timesheets.userId, 
+		                zp_timesheets.id,
+                        zp_timesheets.userId,
                         zp_timesheets.ticketId,
                         zp_timesheets.workDate,
                         zp_timesheets.hours,
@@ -183,7 +183,7 @@ namespace leantime\domain\repositories {
             header('Content-type: application/ms-excel');
             header('Content-Disposition: attachment; filename='.$filename);
 
-            $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date) 
+            $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date)
 					VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
 
             $stmn = $this->db->database->prepare($sql);
@@ -252,8 +252,8 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-			zp_timesheets.id, 
-			zp_timesheets.userId, 
+			zp_timesheets.id,
+			zp_timesheets.userId,
 			zp_timesheets.ticketId,
 			DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') as workDate,
 			zp_timesheets.hours,
@@ -280,7 +280,7 @@ namespace leantime\domain\repositories {
 			zp_timesheets
 		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-		WHERE 
+		WHERE
 			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart1)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStart2) + 7)))
 			AND (zp_timesheets.userId = :userId)
 		";
@@ -343,18 +343,18 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO zp_timesheets
-			  (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate) 
+			  (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate)
 			VALUES
                 (:userId,
                 :ticket,
                 :date,
                 :hours,
                 :kind,
-                :description, 
+                :description,
                 :invoicedEmpl,
-                :invoicedComp, 
+                :invoicedComp,
                 :invoicedEmplDate,
-                :invoicedCompDate, 
+                :invoicedCompDate,
                 :rate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
@@ -382,12 +382,12 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO zp_timesheets
-			(userId, 
-			ticketId, 
-			workDate, 
-			hours, 
-			kind, 
-			rate) 
+			(userId,
+			ticketId,
+			workDate,
+			hours,
+			kind,
+			rate)
 			VALUES
 			(:userId,
              :ticket,
@@ -395,7 +395,7 @@ namespace leantime\domain\repositories {
              :hours,
              :kind,
              :rate)
-			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
+			 ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -403,6 +403,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
             $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
             $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':hoursB', $values['hours'], PDO::PARAM_STR);
             $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
             $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
 
@@ -420,9 +421,9 @@ namespace leantime\domain\repositories {
         public function getTimesheet($id)
         {
 
-            $query = "SELECT 
-			zp_timesheets.id, 
-			zp_timesheets.userId, 
+            $query = "SELECT
+			zp_timesheets.id,
+			zp_timesheets.userId,
 			zp_timesheets.ticketId,
 			zp_timesheets.workDate,
 			zp_timesheets.hours,
@@ -433,7 +434,7 @@ namespace leantime\domain\repositories {
 			zp_timesheets.invoicedComp,
 			zp_timesheets.invoicedEmplDate,
 			zp_timesheets.invoicedCompDate
-		FROM zp_timesheets 
+		FROM zp_timesheets
 		LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 		WHERE zp_timesheets.id = :id";
@@ -460,18 +461,18 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE
-					zp_timesheets 
+					zp_timesheets
 				SET
 			ticketId = :ticket,
 			workDate = :date,
-			hours = :hours, 
+			hours = :hours,
 			kind = :kind,
 			description =:description,
 			invoicedEmpl =:invoicedEmpl,
 			invoicedComp =:invoicedComp,
 			invoicedEmplDate =:invoicedEmplDate,
 			invoicedCompDate =:invoicedCompDate
-			WHERE 
+			WHERE
 				id = :id";
 
             $stmn = $this->db->database->prepare($query);
@@ -501,11 +502,11 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE
-					zp_timesheets 
+					zp_timesheets
 				SET
 			hours = :hours
-			
-			WHERE 
+
+			WHERE
 				userId = :userId
 				AND ticketId = :ticketId
 				AND kind = :kind
@@ -537,9 +538,9 @@ namespace leantime\domain\repositories {
             $query = "SELECT
 				MONTH(zp_timesheets.workDate) AS month,
 				SUM(zp_timesheets.hours) AS summe
-			FROM 
+			FROM
 				zp_timesheets LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-			WHERE 
+			WHERE
 				zp_tickets.projectId = :projectId
 			GROUP BY
 				MONTH(zp_timesheets.workDate)
@@ -572,9 +573,9 @@ namespace leantime\domain\repositories {
 				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
 				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
 				SUM(ROUND(zp_timesheets.hours, 2)) AS summe
-			FROM 
-				zp_timesheets 
-			WHERE 
+			FROM
+				zp_timesheets
+			WHERE
 				zp_timesheets.ticketId = :ticketId
 			GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
 			ORDER BY utc
@@ -763,10 +764,10 @@ namespace leantime\domain\repositories {
 
                     $date = date("Y-m-d", $inTimestamp)." 00:00:00";
 
-                    $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) 
+                    $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind)
                     VALUES
                     (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
-                    
+
                      ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
                     $stmn = $this->db->database->prepare($query);
@@ -802,14 +803,14 @@ namespace leantime\domain\repositories {
         public function isClocked($id)
         {
 
-            $query = "SELECT 
+            $query = "SELECT
                      zp_punch_clock.id,
                      zp_punch_clock.userId,
                      zp_punch_clock.minutes,
                      zp_punch_clock.hours,
                      zp_punch_clock.punchIn,
                      zp_tickets.headline
-                  FROM `zp_punch_clock` 
+                  FROM `zp_punch_clock`
                   LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
 
             $onTheClock = false;
@@ -854,10 +855,10 @@ namespace leantime\domain\repositories {
 				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
 				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
 				(zp_timesheets.hours) AS summe
-			
-			FROM 
-				zp_timesheets 
-			WHERE 
+
+			FROM
+				zp_timesheets
+			WHERE
 				zp_timesheets.ticketId = :ticketId
 			ORDER BY utc
 			";

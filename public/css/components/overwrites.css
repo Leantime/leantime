@@ -36,8 +36,7 @@ body.loginpage,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
 .fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice,
-div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
-.label-primary, .leftmenu .nav-tabs.nav-stacked
+div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
 { background-color: var(--primary-color) }
 
 
@@ -68,7 +67,7 @@ a,a:hover,a:link,a:active,a:focus,
 .wizard .tabbedmenu li a.done,
 .tabbable > .nav-tabs > li.active > a,
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
 .btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover,
@@ -96,11 +95,11 @@ button,
 .paginate_button.current
 { background-color:  var(--main-action-bg);  }
 
-input[type='submit']:hover, 
+input[type='submit']:hover,
 button:hover {
 	background-color:  var(--main-action-hover-bg);
 	color:#fff;
-} 	
+}
 
 .chzn-container-multi .chzn-choices .search-choice {
 	color:#fff;
@@ -114,7 +113,7 @@ span.btn-white:hover{
 	background:#fff;
 }
 
-	
+
 /* border color */
 .widgetcontent,
 .messagemenu ul li.active,
@@ -132,7 +131,7 @@ span.btn-white:hover{
 .tabbable > .tab-content,
 .nav-tabs.nav-stacked > li > a:focus,
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
 .btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .nav-tabs,
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus,
@@ -172,9 +171,9 @@ div.tagsinput span.tag
 
 
 @media screen and (max-width: 480px) {
- 
+
  .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
- 
+
   .userloggedinfo .userinfo,
   .wizard .hormenu li,
   .messageright { border-color: var(--main-border-color); }
@@ -182,7 +181,7 @@ div.tagsinput span.tag
 }
 
 .timesheetTable {
-	
+
 }
 
 .timesheetTable input {
@@ -218,7 +217,7 @@ div.tagsinput span.tag
 }
 
 .filterBar {
-	
+
 	border:1px solid var(--main-border-color);
 	padding:10px;
 	margin-bottom:5px;
@@ -248,7 +247,7 @@ div.tagsinput span.tag
 label.inline {
 	float:left;
 	margin-right:5px;
-	padding-top:6px;	
+	padding-top:6px;
 }
 
 .loading {

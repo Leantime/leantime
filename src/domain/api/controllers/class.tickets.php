@@ -3,28 +3,26 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
     use leantime\domain\models\auth\roles;
 
-    class tickets
+    class tickets extends controller
     {
 
-        private $tpl;
         private $projects;
-        private $sprintService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->ticketsApiService = new services\tickets();
 

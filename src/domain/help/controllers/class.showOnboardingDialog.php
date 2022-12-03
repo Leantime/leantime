@@ -3,29 +3,10 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
 
-
-
-
-    class showOnboardingDialog
+    class showOnboardingDialog extends controller
     {
-
-        private $tpl;
-
-
-        /**
-         * constructor - initialize private variables
-         *
-         * @access public
-         *
-         */
-        public function __construct()
-        {
-
-            $this->tpl = new core\template();
-
-
-        }
 
         /**
          * get - handle get requests
@@ -35,11 +16,11 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
             if(isset($params['module']) && $params['module'] != "") {
                 $filteredInput = htmlspecialchars($params['module']);
                 $this->tpl->displayPartial('help.'.$filteredInput);
             }
-
 
         }
 

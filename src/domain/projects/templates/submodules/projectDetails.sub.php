@@ -2,6 +2,7 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
+$menuTypes = $this->get('menuTypes');
 
 ?>
 
@@ -42,7 +43,22 @@ $project = $this->get('project');
                             <?php } ?>
                         </div>
                     </div>
+					<?php if($config->enableMenuType) {?>
+                        <div class="form-group">
 
+                            <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
+                            <div class="span6">
+                                <select name="menuType" id="menuType">
+						    		<?php foreach($menuTypes as $key => $menu) { ?>
+                                       <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
+							      <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+					<?php } else { ?>
+		                <input type="hidden" name="menuType" id="menuType"
+							   value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
+					<?php } ?>
                     <div class="form-group">
 
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>

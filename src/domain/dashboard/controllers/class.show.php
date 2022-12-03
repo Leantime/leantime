@@ -6,35 +6,33 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\core\controller;
 
-    class show
+    class show extends controller
     {
 
-        private $tpl;
         private $dashboardRepo;
         private $projectService;
         private $sprintService;
         private $ticketService;
         private $userService;
         private $timesheetService;
+        private $commentService;
 
-
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
+
             $this->dashboardRepo = new repositories\dashboard();
             $this->projectService = new services\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
-            $this->language = new core\language();
             $this->commentService = new services\comments();
 
             $_SESSION['lastPage'] = BASE_URL."/dashboard/show";
 
-            $reportService = new services\reports();
-            $reportService->dailyIngestion();
+            (new services\reports())->dailyIngestion();
 
         }
 
@@ -78,12 +76,9 @@ namespace leantime\domain\controllers {
 
             }
 
-
             $comment = $comments->getComments('project', $_SESSION['currentProject'],"");
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
-
-
 
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($_SESSION['currentProject']));

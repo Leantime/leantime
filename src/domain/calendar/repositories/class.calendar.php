@@ -25,14 +25,14 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
         public function getAllDates($dateFrom, $dateTo)
         {
 
-            $query = "SELECT * FROM zp_calendar WHERE 
+            $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
 
             $stmn = $this->db->database->prepare($query);
@@ -50,8 +50,8 @@ namespace leantime\domain\repositories {
 
             /*
            $userTickets = "SELECT
-					tickets.dateToFinish, 
-					tickets.headline, 
+					tickets.dateToFinish,
+					tickets.headline,
 					tickets.id,
 					tickets.projectId,
 					tickets.editFrom,
@@ -68,7 +68,7 @@ namespace leantime\domain\repositories {
             */
 
             $ticketService = new \leantime\domain\services\tickets();
-            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($id, "");
+            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater('', "");
 
             if(!empty($ticketArray)) {
 				if(isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
@@ -195,16 +195,16 @@ namespace leantime\domain\repositories {
         {
 
 
-            $userTickets = "SELECT 
-					tickets.dateToFinish, 
-					tickets.headline, 
+            $userTickets = "SELECT
+					tickets.dateToFinish,
+					tickets.headline,
 					tickets.id,
 					tickets.editFrom,
 					tickets.editTo
 				FROM zp_tickets AS tickets
-				WHERE 
+				WHERE
 					(tickets.userId = :userId OR tickets.editorId = :userId)
-					AND 
+					AND
 					(
 						TO_DAYS(tickets.dateToFinish) = TO_DAYS(CURDATE()) OR
 						(TO_DAYS(tickets.editFrom) <= TO_DAYS(CURDATE()) AND TO_DAYS(tickets.editTo) >= TO_DAYS(CURDATE()) )
@@ -337,7 +337,7 @@ namespace leantime\domain\repositories {
         public function addEvent($values)
         {
 
-            $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay) 
+            $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay)
 		VALUES (:userId, :dateFrom, :dateTo, :description, :allDay)";
 
             $stmn = $this->db->database->prepare($query);
@@ -371,9 +371,9 @@ namespace leantime\domain\repositories {
         public function editEvent($values, $id)
         {
 
-            $query = "UPDATE zp_calendar SET 
+            $query = "UPDATE zp_calendar SET
 			dateFrom = :dateFrom,
-			dateTo = :dateTo, 
+			dateTo = :dateTo,
 			description = :description,
 			allDay = :allDay
 			WHERE id = :id AND userId = :userId LIMIT 1";
@@ -444,10 +444,10 @@ namespace leantime\domain\repositories {
         public function editGUrl($values, $id)
         {
 
-            $query = "UPDATE zp_gcallinks SET 
+            $query = "UPDATE zp_gcallinks SET
 			url = :url,
 			name = :name,
-			colorClass = :colorClass 
+			colorClass = :colorClass
 		WHERE userId = :userId AND id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -480,8 +480,8 @@ namespace leantime\domain\repositories {
         public function addGUrl($values)
         {
 
-            $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass) 
-					VALUES 
+            $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass)
+					VALUES
 				(:userId, :name, :url, :colorClass)";
 
             $stmn = $this->db->database->prepare($query);

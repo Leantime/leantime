@@ -3,16 +3,16 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class showMy
+    class showMy extends controller
     {
 
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
             $this->reportService = new services\reports();

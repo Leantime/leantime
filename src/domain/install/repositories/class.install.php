@@ -77,7 +77,9 @@ namespace leantime\domain\repositories {
             20107,
             20108,
             20109,
-            20110
+            20110,
+            20111,
+            20112
         );
 
         /**
@@ -204,7 +206,7 @@ namespace leantime\domain\repositories {
          * updateDB main entry point to update the db based on version number. Executes all missing db update scripts
          *
          * @access public
-         * @return bool | array
+         * @return bool|array
          */
         public function updateDB()
         {
@@ -303,7 +305,7 @@ namespace leantime\domain\repositories {
         private function sqlPrep()
         {
 
-            $sql = "			
+            $sql = "
                 CREATE TABLE `zp_account` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                   `projectId` int(11) DEFAULT NULL,
@@ -360,6 +362,7 @@ namespace leantime\domain\repositories {
                   `canvasId` int(11) DEFAULT NULL,
                   `sortindex` int(11) DEFAULT NULL,
                   `status` varchar(255) DEFAULT NULL,
+                  `relates` varchar(255) DEFAULT NULL,
                   `milestoneId` VARCHAR(255) NULL,
                   `title` varchar(255) NULL,
                   `parent` int NULL,
@@ -367,7 +370,7 @@ namespace leantime\domain\repositories {
                   `tags` text NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
+
                 CREATE TABLE `zp_approvals`
                 (
                     `id` int auto_increment,
@@ -380,7 +383,7 @@ namespace leantime\domain\repositories {
                     `lastStatusChange` datetime NULL,
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-                
+
                 CREATE TABLE `zp_clients` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `name` varchar(200) DEFAULT NULL,
@@ -493,6 +496,7 @@ namespace leantime\domain\repositories {
                   `hourBudget` varchar(255) NOT NULL,
                   `dollarBudget` int(11) DEFAULT NULL,
                   `active` int(11) DEFAULT NULL,
+				  `menuType` MEDIUMTEXT DEFAULT '".repositories\menu::DEFAULT_MENU."',
                   `psettings` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -592,18 +596,18 @@ namespace leantime\domain\repositories {
                   `sortindex` bigint(20) DEFAULT NULL,
                   `kanbanSortIndex` bigint(20) DEFAULT NULL,
                   `tags` varchar(255) DEFAULT NULL,
-                  `milestoneid` INT NULL, 
-                  `leancanvasitemid` INT NULL, 
-                  `retrospectiveid` INT NULL, 
-                  `ideaid` INT NULL, 
-                  `zp_ticketscol` VARCHAR(45) NULL, 
+                  `milestoneid` INT NULL,
+                  `leancanvasitemid` INT NULL,
+                  `retrospectiveid` INT NULL,
+                  `ideaid` INT NULL,
+                  `zp_ticketscol` VARCHAR(45) NULL,
                   PRIMARY KEY (`id`),
                   KEY `ProjectUserId` (`projectId`,`userId`),
                   KEY `StatusSprint` (`status`,`sprint`),
                   KEY `Sorting` (`sortindex`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`dependingTicketId`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values 
+                insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`dependingTicketId`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
                 (9,3,'Getting Started with Leantime','Look around and make yourself familiar with the system. ','','2015-11-30 00:00:00','1969-12-31 00:00:00',NULL,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
@@ -647,16 +651,16 @@ namespace leantime\domain\repositories {
                   `pwResetCount` INT(5) DEFAULT NULL,
                   `forcePwReset` TINYINT DEFAULT NULL,
                   `lastpwd_change` DATETIME DEFAULT NULL,
-                  `settings` TEXT NULL,               
+                  `settings` TEXT NULL,
                   `twoFAEnabled` tinyint(1) DEFAULT '0',
                   `twoFASecret` varchar(200) DEFAULT NULL,
                   `createdOn` DATETIME DEFAULT NULL,
                   `source` varchar(200) DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;               
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`) 
+                insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`)
                 values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
 
                 CREATE TABLE `zp_wiki` (
@@ -698,11 +702,11 @@ namespace leantime\domain\repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_sprints` (
-                    `id` INT NOT NULL AUTO_INCREMENT, 
-                    `projectId` INT NULL, 
-                    `name` VARCHAR(45) NULL, 
-                    `startDate` DATETIME NULL, 
-                    `endDate` DATETIME NULL, 
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `projectId` INT NULL,
+                    `name` VARCHAR(45) NULL,
+                    `startDate` DATETIME NULL,
+                    `endDate` DATETIME NULL,
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -775,6 +779,19 @@ namespace leantime\domain\repositories {
                     KEY `projectId` (`projectId`),
                     KEY `userId` (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                CREATE TABLE `zp_plugins` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `name` VARCHAR(45) NULL,
+                  `enabled` TINYINT NULL,
+                  `description` VARCHAR(255) NULL,
+                  `version` VARCHAR(45) NULL,
+                  `installdate` DATETIME NULL,
+                  `foldername` VARCHAR(45),
+                  `homepage` VARCHAR(255) NULL AFTER,
+                  `authors` VARCHAR(255) NULL AFTER
+                  PRIMARY KEY (`id`)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
             return $sql;
@@ -788,7 +805,7 @@ namespace leantime\domain\repositories {
          * - converts 255 index to be smaller
          *
          * @access public
-         * @return bool | array
+         * @return bool|array
          */
         private function update_sql_20004()
         {
@@ -1245,6 +1262,97 @@ namespace leantime\domain\repositories {
 
         }
 
+		/***
+		 * update_sql_20111 - Update database for new canvas
+		 *
+		 * @access private
+		 * @return bool|array    Success of database update or array of errors
+		 */
+		private function update_sql_20111(): bool|array {
+
+            $errors = array();
+
+			$sql = [
+                "ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null",
+				"UPDATE zp_projects SET menuType = '".repositories\menu::DEFAULT_MENU."'",
+				"ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
+				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
+				"SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
+				"SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
+				"SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+				"UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'"
+            ];
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
+
+        /***
+         * update_sql_20111 - Update database for new canvas
+         *
+         * @access private
+         * @return bool|array    Success of database update or array of errors
+         */
+        private function update_sql_20112(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "CREATE TABLE `zp_plugins` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `name` VARCHAR(45) NULL,
+                  `enabled` TINYINT NULL,
+                  `description` VARCHAR(255) NULL,
+                  `version` VARCHAR(45) NULL,
+                  `installdate` DATETIME NULL,
+                  `foldername` VARCHAR(45) NULL,
+                  `homepage` VARCHAR(255) NULL AFTER,
+                  `authors` VARCHAR(255) NULL AFTER
+                  PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"];
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
 
 
     }

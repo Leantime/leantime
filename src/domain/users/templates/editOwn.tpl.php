@@ -96,7 +96,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="messagesfrequency"><?php echo $this->__('label.messages_frequency') ?></label>
                                 <span class='field'>
-                                    <select name="messagesfrequency" class="input" id="messagesfrequency" >
+                                    <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                         <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
                                         <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
 					<option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
@@ -115,7 +115,7 @@ $user = $this->get('user');
                             <p>
                                 <label for="language"><?php echo $this->__('label.language') ?></label>
                                 <span class='field'>
-                                    <select name="language" id="language">
+                                    <select name="language" id="language" style="width: 220px">
                                         <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
                                             <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
                                         <?php } ?>
@@ -126,9 +126,14 @@ $user = $this->get('user');
                             <p>
                                 <label for="theme"><?php echo $this->__('label.theme') ?></label>
                                 <span class='field'>
-                                    <select name="theme" id="theme">
-                                        <option value="default" <?php if($this->get('userTheme') == "default") echo "selected='selected'" ?>><?php echo $this->__('label.light') ?></option>
-                                        <option value="dark" <?php if($this->get('userTheme') == "dark") echo "selected='selected'" ?>><?php echo $this->__('label.dark') ?></option>
+                                    <select name="theme" id="theme" style="width: 220px">
+                                        <?php
+                                        $themeCore = new \leantime\core\theme();
+                                        $themeAll = $themeCore->getAll();
+                                        foreach($themeAll as $key => $name) {
+                                        ?>
+                                           <option value="<?=$key ?>" <?php if($this->get('userTheme') == $key) echo "selected='selected'" ?>><?=$this->__($name) ?></option>
+                                        <?php } ?>
                                     </select>
                                 </span>
                             </p>
@@ -208,7 +213,10 @@ $user = $this->get('user');
     </div>
 </div>
 
-
-
-
-
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        new SlimSelect({ select:  '#messagesfrequency' });
+        new SlimSelect({ select:  '#language' });
+        new SlimSelect({ select:  '#theme' });
+    });
+</script>

@@ -21,25 +21,25 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    int
          */
-        public $id = '';
+        public $id = 0; // WAS: '';
 
         /**
          * @access public
          * @var    int
          */
-        public $clientId = '';
+        public $clientId = 0; // WAS: '';
 
         /**
          * @access private
          * @var    object
          */
-        private $db = '';
+        private $db; // WAS: = '';
 
         /**
          * @access public
          * @var    object
          */
-        public $result = '';
+        public $result; // WAS: = '';
 
         /**
          * @access public
@@ -47,11 +47,6 @@ namespace leantime\domain\repositories {
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
-        /**
-         * __construct - get database connection
-         *
-         * @access public
-         */
 
         public function __construct()
         {
@@ -78,14 +73,15 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+                    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId 
+					client.id AS clientId
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				WHERE project.active > '-1' OR project.active IS NULL
-				GROUP BY 
+				GROUP BY
 					project.id,
 					project.name,
 					project.clientId
@@ -140,13 +136,14 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId 
+					client.id AS clientId
 				FROM zp_relationuserproject AS relation
 				LEFT JOIN zp_projects as project ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				WHERE relation.userId = :id AND (project.active > '-1' OR project.active IS NULL)";
 
             if ($status == "open") {
@@ -159,7 +156,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            $query .= " GROUP BY 
+            $query .= " GROUP BY
 					project.id
 				ORDER BY clientName, project.name";
 
@@ -188,19 +185,20 @@ namespace leantime\domain\repositories {
 					project.state,
 					project.hourBudget,
 					project.dollarBudget,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId 
+					client.id AS clientId
 				FROM zp_projects AS project
 				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
-				WHERE 
-				    (   relation.userId = :id 
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				WHERE
+				    (   relation.userId = :id
 				        OR project.psettings = 'all'
 				        OR (project.psettings = 'client' AND project.clientId = :clientId)
 				    )
-				  
+
 				  AND (project.active > '-1' OR project.active IS NULL)";
 
             if ($status == "open") {
@@ -209,7 +207,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND (project.state = -1)";
             }
 
-            $query .= " GROUP BY 
+            $query .= " GROUP BY
 					project.id
 				ORDER BY clientName, project.name";
 
@@ -234,16 +232,17 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 					project.state,
+				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId 
+					client.id AS clientId
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId  
-				WHERE 
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				WHERE
 				  (project.active > '-1' OR project.active IS NULL)
 				  AND clientId = :clientId
-				GROUP BY 
+				GROUP BY
 					project.id,
 					project.name,
 					project.clientId
@@ -269,7 +268,7 @@ namespace leantime\domain\repositories {
 		zp_tickets.editTo,
 		zp_user.firstname,
 		zp_user.lastname
-		 FROM zp_tickets 
+		 FROM zp_tickets
 		LEFT JOIN zp_user ON zp_tickets.editorId = zp_user.id
 		WHERE projectId=:projectId ORDER BY zp_tickets.editFrom";
 
@@ -294,24 +293,25 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-					zp_projects.id, 
-					zp_projects.name, 
-					zp_projects.clientId, 
+					zp_projects.id,
+					zp_projects.name,
+					zp_projects.clientId,
 					zp_projects.details,
 					zp_projects.state,
 					zp_projects.hourBudget,
 					zp_projects.dollarBudget,
 					zp_projects.psettings,
+				    zp_projects.menuType,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
-				FROM zp_projects 
-				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId 
+				FROM zp_projects
+				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId
 				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 				WHERE zp_projects.id = :projectId
-				GROUP BY 
-					zp_projects.id, 
-					zp_projects.name, 
-					zp_projects.clientId, 
+				GROUP BY
+					zp_projects.id,
+					zp_projects.name,
+					zp_projects.clientId,
 					zp_projects.details
 				LIMIT 1";
 
@@ -343,7 +343,7 @@ namespace leantime\domain\repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId
-				FROM zp_relationuserproject 
+				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
@@ -393,12 +393,12 @@ namespace leantime\domain\repositories {
         public function getProjectBookedHoursArray($id)
         {
 
-            $query = "SELECT 	zp_tickets.projectId, 
+            $query = "SELECT 	zp_tickets.projectId,
 			SUM(zp_timesheets.hours) AS totalHours,
 			 DATE_FORMAT(zp_timesheets.workDate,'%Y-%m-%d') AS workDate
 				FROM zp_tickets
 				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				WHERE projectId =  :id GROUP BY zp_timesheets.workDate	
+				WHERE projectId =  :id GROUP BY zp_timesheets.workDate
 				ORDER BY workDate";
 
             $stmn = $this->db->database->prepare($query);
@@ -501,14 +501,15 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `menuType`
 			) VALUES (
 				:name,
 				:details,
 				:clientId,
 				:hourBudget,
 				:dollarBudget,
-			    :psettings
+			    :psettings,
+                :menuType
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -518,7 +519,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-            $stmn->bindValue('psettings', $values['psettings']??'', PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
 
             $stuff = $stmn->execute();
 
@@ -553,15 +555,16 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE zp_projects SET
-				name = :name, 
-				details = :details, 
+				name = :name,
+				details = :details,
 				clientId = :clientId,
 				state = :state,
 				hourBudget = :hourBudget,
 				dollarBudget = :dollarBudget,
-				psettings = :psettings
-				WHERE id = :id 
-				
+				psettings = :psettings,
+				menuType = :menuType
+				WHERE id = :id
+
 				LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -573,6 +576,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -641,7 +645,7 @@ namespace leantime\domain\repositories {
         public function hasTickets($id)
         {
 
-            $query = "SELECT id FROM zp_tickets WHERE projectId = :id 
+            $query = "SELECT id FROM zp_tickets WHERE projectId = :id
                       AND zp_tickets.type <> 'subtask' AND
                        zp_tickets.type <> 'milestone' LIMIT 1";
 
@@ -675,11 +679,11 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-				zp_relationuserproject.userId, 
+				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name,
 				zp_relationuserproject.projectRole
-			FROM zp_relationuserproject JOIN zp_projects 
+			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :id";
 
@@ -730,10 +734,10 @@ namespace leantime\domain\repositories {
 
             //Select users are allowed to see project
             $query = "SELECT
-				zp_relationuserproject.userId, 
+				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
-				zp_projects.name 
-			FROM zp_relationuserproject JOIN zp_projects 
+				zp_projects.name
+			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
 
@@ -756,7 +760,7 @@ namespace leantime\domain\repositories {
         {
 
             $query = "SELECT
-				zp_relationuserproject.userId, 
+				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
@@ -764,7 +768,7 @@ namespace leantime\domain\repositories {
 				zp_user.lastname,
 				zp_user.profileId,
 				zp_user.role
-			FROM zp_relationuserproject 
+			FROM zp_relationuserproject
 			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
 			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 			WHERE projectId = :id AND zp_user.id IS NOT NULL";
@@ -879,7 +883,7 @@ namespace leantime\domain\repositories {
             $sql = "INSERT INTO zp_relationuserproject (
 					userId,
 					projectId,
-                    projectRole                
+                    projectRole
 				) VALUES (
 					:userId,
 					:projectId,

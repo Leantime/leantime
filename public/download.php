@@ -6,7 +6,6 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
-include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
@@ -17,9 +16,14 @@ $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
-
-
 if ($login->logged_in()!==true) {
+
+    header('Content-Type: image/jpeg');
+    header('Cache-Control: no-cache');
+
+    ob_end_clean();
+    clearstatcache();
+    readfile(__DIR__.'/images/leantime-no-access.jpg');
 
     exit();
 
