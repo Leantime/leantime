@@ -21,7 +21,7 @@ namespace leantime\core {
 
         public $appVersion = "2.3.0-beta";
 
-        public $dbVersion = "2.1.11";
+        public $dbVersion = "2.1.12";
 
         /**
          * __construct

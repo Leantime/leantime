@@ -78,7 +78,8 @@ namespace leantime\domain\repositories {
             20108,
             20109,
             20110,
-            20111
+            20111,
+            20112
         );
 
         /**
@@ -778,6 +779,19 @@ namespace leantime\domain\repositories {
                     KEY `projectId` (`projectId`),
                     KEY `userId` (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                CREATE TABLE `zp_plugins` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `name` VARCHAR(45) NULL,
+                  `enabled` TINYINT NULL,
+                  `description` VARCHAR(255) NULL,
+                  `version` VARCHAR(45) NULL,
+                  `installdate` DATETIME NULL,
+                  `foldername` VARCHAR(45),
+                  `homepage` VARCHAR(255) NULL AFTER,
+                  `authors` VARCHAR(255) NULL AFTER
+                  PRIMARY KEY (`id`)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
             return $sql;
@@ -1294,6 +1308,51 @@ namespace leantime\domain\repositories {
 
         }
 
+        /***
+         * update_sql_20111 - Update database for new canvas
+         *
+         * @access private
+         * @return bool|array    Success of database update or array of errors
+         */
+        private function update_sql_20112(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "CREATE TABLE `zp_plugins` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `name` VARCHAR(45) NULL,
+                  `enabled` TINYINT NULL,
+                  `description` VARCHAR(255) NULL,
+                  `version` VARCHAR(45) NULL,
+                  `installdate` DATETIME NULL,
+                  `foldername` VARCHAR(45) NULL,
+                  `homepage` VARCHAR(255) NULL AFTER,
+                  `authors` VARCHAR(255) NULL AFTER
+                  PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"];
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+
+                }
+
+            }
+
+            if(count($errors) > 0) {
+                return $errors;
+            }else{
+                return true;
+            }
+
+        }
 
 
     }

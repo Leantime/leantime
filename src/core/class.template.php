@@ -142,25 +142,41 @@ namespace leantime\core {
                 'name' => $name
             ]);
 
+            $pluginService = new services\plugins();
+
             if (empty($plugin_path) || !file_exists($plugin_path)) {
-                $file = '/domain/'.$module.'/templates/'.$name;
+                $file = '/'.$module.'/templates/'.$name;
 
-                if(file_exists(ROOT.'/../custom'.$file) && is_readable(ROOT.'/../custom'.$file)) {
-                    return ROOT.'/../custom'.$file;
+                if(file_exists(ROOT.'/../src/custom'.$file) && is_readable(ROOT.'/../src/custom'.$file)) {
+                    return ROOT.'/../src/custom'.$file;
                 }
 
-                if(file_exists(ROOT.'/../src'.$file) && is_readable(ROOT.'/../src/'.$file)) {
-                    return ROOT.'/../src'.$file;
+                if(file_exists(ROOT.'/../src/plugins'.$file) && is_readable(ROOT.'/../src/plugins'.$file)) {
+                    if($pluginService->isPluginEnabled($module)) {
+                        return ROOT . '/../src/plugins' . $file;
+                    }
+                }
+
+                if(file_exists(ROOT.'/../src/domain'.$file) && is_readable(ROOT.'/../src/domain/'.$file)) {
+                    return ROOT.'/../src/domain/'.$file;
                 }
             }
 
-            if(file_exists(ROOT.'/../custom'.$plugin_path) && is_readable(ROOT.'/../custom'.$plugin_path)) {
-                return ROOT.'/../custom'.$plugin_path;
+            if(file_exists(ROOT.'/../src/custom'.$plugin_path) && is_readable(ROOT.'/../src/custom'.$plugin_path)) {
+                return ROOT.'/../src/custom'.$plugin_path;
             }
 
-            if(file_exists(ROOT.'/../src'.$plugin_path) && is_readable(ROOT.'/../src'.$plugin_path)) {
-                return ROOT.'/../src'.$plugin_path;
+            if(file_exists(ROOT.'/../src/plugins'.$plugin_path) && is_readable(ROOT.'/../src/plugins'.$plugin_path)) {
+                if($pluginService->isPluginEnabled($module)) {
+                    return ROOT.'/../src/plugins'.$plugin_path;
+                }
             }
+
+            if(file_exists(ROOT.'/../src/domain'.$plugin_path) && is_readable(ROOT.'/../src/domain/'.$plugin_path)) {
+                return ROOT.'/../src/domain/'.$plugin_path;
+            }
+
+
 
             throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
 

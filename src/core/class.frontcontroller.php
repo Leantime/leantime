@@ -142,7 +142,9 @@ namespace leantime\core {
             if((is_dir('../src/domain/'.$moduleName) === false ||
                 is_file('../src/domain/'. $moduleName.'/controllers/class.'.$actionName.'.php') === false) &&
                (is_dir('../custom/domain/'.$moduleName) === false ||
-                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
+                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false) &&
+                (is_dir('../src/plugins/'.$moduleName) === false ||
+                    is_file('../src/plugins/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
 
                 self::dispatch("errors.error404");
                 return;
@@ -156,11 +158,19 @@ namespace leantime\core {
 
             $controllerNs = "domain";
 
+            $pluginService = new \leantime\domain\services\plugins();
+
+
             //Try plugin folder first for overrides
             if(file_exists($customPluginPath)) {
 
-                $controllerNs = "plugins";
-                require_once $customPluginPath;
+                if($pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $customPluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
 
             }elseif(file_exists($customDomainPath)) {
 
@@ -168,8 +178,13 @@ namespace leantime\core {
 
             }elseif(file_exists($pluginPath)) {
 
-                $controllerNs = "plugins";
-                require_once $pluginPath;
+                if($pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $pluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
 
             }elseif(file_exists($domainPath)) {
 

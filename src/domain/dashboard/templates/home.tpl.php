@@ -35,6 +35,7 @@
                         <div class="col-md-12">
                             <h3 class="todaysDate" style="padding-bottom:5px;"></h3>
                             <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?=$currentUser['firstname'] ?></h1>
+                            <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
                         </div>
                     </div>
                 </div>
@@ -145,7 +146,7 @@
                                 </a>
                                 <a class="titleInsertLink" href="javascript:void(0)" onclick="insertQuickAddForm(<?=$i; ?>, <?=$groupProjectId?>, '<?=$ticketCreationDueDate?>')"><i class="fa fa-plus"></i> <?=$this->__('links.add_todo_no_icon') ?></a>
                             </h5>
-                            <div id="accordion_<?=$i ?>" class="simpleAccordionContainer">
+                            <div id="accordion_<?=$i ?> yourToDoContainer" class="simpleAccordionContainer">
                                 <ul class="sortableTicketList" >
 
                                 <?php if(count($ticketGroup['tickets']) == 0){?>
