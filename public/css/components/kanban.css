@@ -161,7 +161,7 @@
 
 .sortableTicketList li .ticketBox h3,
 .sortableTicketList li .ticketBox h3 a{
-    font-size:18px;
+    font-size:var(--font-size-l);
 }
 
 .sortableTicketList li .ticketBox .label-important,
@@ -280,5 +280,5 @@ body .maincontent .priority-bg-5 {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
+    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
 }

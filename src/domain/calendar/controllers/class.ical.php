@@ -8,12 +8,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class ical
+    class ical extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -26,21 +39,18 @@ namespace leantime\domain\controllers {
             $calId = $_GET['id'];
 
             $idParts = explode("_", $calId);
-            $tpl = new core\template();
 
             if(count($idParts) != 2) {
-                $tpl->redirect(BASE_URL."/errors/404");
+                $this->tpl->redirect(BASE_URL."/errors/404");
             }
 
-            $calendarRepo = new repositories\calendar();
+            $calendar = $this->calendarRepo->getCalendarBySecretHash($idParts[1], $idParts[0]);
 
-            $calendar = $calendarRepo->getCalendarBySecretHash($idParts[1], $idParts[0]);
-
-            $tpl->assign("calendar", $calendar);
+            $this->tpl->assign("calendar", $calendar);
 
             header('Content-type: text/calendar; charset=utf-8');
             header('Content-disposition: attachment;filename="leantime.ics"');
-            $tpl->display("calendar.ical", "blank");
+            $this->tpl->display("calendar.ical", "blank");
 
         }
 

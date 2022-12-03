@@ -11,10 +11,15 @@ class config
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
     public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
+    public $printLogoURL = '/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed
+    public $appUrlRoot = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
+    public $defaultTheme = 'default';                     //Default theme
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
+    public $enableMenuType = false;                       //Enable to specifiy menu on aproject by project basis
+    public $keepTheme = true;                             //Keep theme and language from previous user for login screen
     public $debug = 0;                                    //Debug flag
 
 
@@ -68,7 +73,7 @@ class config
 
     //Default ldap keys in your directory.
     //Works for OL
-    public $ldapKeys = '{ 
+    public $ldapKeys = '{
         "username":"uid",
         "groups":"memberof",
         "email":"mail",
@@ -141,11 +146,15 @@ class config
         $this->sitename = $this->configEnvironmentHelper("LEAN_SITENAME", $this->sitename);
         $this->language = $this->configEnvironmentHelper("LEAN_LANGUAGE", $this->language);
         $this->logoPath = $this->configEnvironmentHelper("LEAN_LOGO_PATH", $this->logoPath);
+        $this->printLogoURL = $this->configEnvironmentHelper("LEAN_PRINT_LOGO_URL", $this->printLogoURL);
         $this->appUrl = $this->configEnvironmentHelper("LEAN_APP_URL", $this->appUrl);
+        $this->defaultTheme = $this->configEnvironmentHelper("LEAN_DEFAULT_THEME", $this->defaultTheme);
         $this->primarycolor = $this->configEnvironmentHelper("LEAN_PRIMARY_COLOR", $this->primarycolor);
         $this->secondarycolor = $this->configEnvironmentHelper("LEAN_SECONDARY_COLOR", $this->secondarycolor);
         $this->debug = $this->configEnvironmentHelper("LEAN_DEBUG", $this->debug);
         $this->defaultTimezone = $this->configEnvironmentHelper("LEAN_DEFAULT_TIMEZONE", $this->defaultTimezone);
+        $this->enableMenuType = $this->configEnvironmentHelper("LEAN_ENABLE_MENU_TYPE", $this->enableMenuType);
+        $this->keepTheme = $this->configEnvironmentHelper("LEAN_KEEP_THEME", $this->keepTheme);
 
     /* Database */
         $this->dbHost = $this->configEnvironmentHelper("LEAN_DB_HOST", $this->dbHost);
@@ -198,6 +207,9 @@ class config
             $this->ldapLtGroupAssignments = $this->configEnvironmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $this->ldapLtGroupAssignments);
             $this->ldapDefaultRoleKey = $this->configEnvironmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $this->ldapDefaultRoleKey);
         }
+
+    /* Plugins */
+        $this->plugins = $this->configEnvironmentHelper("LEAN_PLUGINS", $this->plugins);
     }
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")
@@ -225,4 +237,5 @@ class config
             return $_SESSION['mainconfig'][$envVar];
         }
     }
+
 }

@@ -608,6 +608,32 @@ namespace leantime\domain\repositories {
             return $return;
         }
 
+        /**
+         * getUserIdByName - Get Author/User Id by first- and lastname
+         *
+         * @access public
+         * @param  string $firstnam Firstname
+         * @param  string $lastname Lastname
+         * @return int|bool Identifier of user or false, if not found
+         */
+        public function getUserIdByName(string $firstname, string $lastname): int|bool
+        {
+            $query = "SELECT profileId FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
+
+            $stmn = $this->db->database->prepare($query);
+            
+            $stmn->bindValue(':firstname', $firstname, PDO::PARAM_STR);
+            $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $result = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return  $result['profileId'] ?? false;
+            
+        }
+        
+
     }
 
 }

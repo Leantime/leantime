@@ -13,6 +13,8 @@ echo $this->displayNotification();
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/calendar/export">
 
+    <?php $this->dispatchTplEvent('afterFormOpen'); ?>
+
     <?php
     echo $this->__('text.ical_export_description');
     echo "<br />";
@@ -29,6 +31,9 @@ echo $this->displayNotification();
     <div class="row">
         <div class="col-md-6">
             <input type="hidden" value="1" name="generateUrl" />
+
+            <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+
             <br /><input type="submit" value="<?=$this->__('buttons.generate_ical_url') ?>"/>
 
         </div>
@@ -38,6 +43,8 @@ echo $this->displayNotification();
             <?php } ?>
         </div>
     </div>
+
+    <?php $this->dispatchTplEvent('beforeFormClose'); ?>
 
 </form>
 

@@ -1,18 +1,20 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
-$values = $this->get('values');
+    defined('RESTRICTED') or die('Restricted access');
+    $values = $this->get('values');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-
-
-<div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
         <h1><?php echo $this->__('headline.new_client'); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-        
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -23,6 +25,8 @@ $values = $this->get('values');
            <div class="widgetcontent">
 
                 <form action="" method="post" class="stdform">
+
+                    <?php $this->dispatchTplEvent('afterFormOpen'); ?>
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
@@ -101,6 +105,8 @@ $values = $this->get('values');
                                 </div>
                             </div>
 
+                            <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+
                             <div class="form-group">
                                 <div class="span4 control-label">
                                     <input type="submit" name="save" id="save"
@@ -112,6 +118,8 @@ $values = $this->get('values');
                             </div>
                         </div>
                     </div>
+
+                    <?php $this->dispatchTplEvent('beforeFormClose'); ?>
 
                 </form>
             </div>

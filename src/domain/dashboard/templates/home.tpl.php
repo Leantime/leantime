@@ -13,14 +13,16 @@
     $milestones = $this->get('milestones');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
         <h1><?php echo $this->__("headlines.home"); ?></h1>
-
     </div>
-
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 
@@ -33,6 +35,7 @@
                         <div class="col-md-12">
                             <h3 class="todaysDate" style="padding-bottom:5px;"></h3>
                             <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?=$currentUser['firstname'] ?></h1>
+                            <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
                         </div>
                     </div>
                 </div>
@@ -138,12 +141,12 @@
 
                             <h5 class="accordionTitle" id="accordion_link_<?=$i ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$i ?>" onclick="accordionToggle('<?=$i ?>');">
-                                    <i class="fa fa-caret-down"></i><?=$this->__($ticketGroup["labelName"]) ?>
+                                    <i class="fa fa-angle-down"></i><?=$this->__($ticketGroup["labelName"]) ?>
                                     (<?=count($ticketGroup["tickets"]) ?>)
                                 </a>
                                 <a class="titleInsertLink" href="javascript:void(0)" onclick="insertQuickAddForm(<?=$i; ?>, <?=$groupProjectId?>, '<?=$ticketCreationDueDate?>')"><i class="fa fa-plus"></i> <?=$this->__('links.add_todo_no_icon') ?></a>
                             </h5>
-                            <div id="accordion_<?=$i ?>" class="simpleAccordionContainer">
+                            <div id="accordion_<?=$i ?> yourToDoContainer" class="simpleAccordionContainer">
                                 <ul class="sortableTicketList" >
 
                                 <?php if(count($ticketGroup['tickets']) == 0){?>
@@ -355,6 +358,8 @@
 
 <script type="text/javascript">
 
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     function insertQuickAddForm(index, projectId, duedate) {
         jQuery(".quickaddForm").remove();
 
@@ -374,18 +379,17 @@
 
     }
 
-
     function accordionToggle(id) {
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-            if(currentLink.hasClass("fa-caret-right")){
-                currentLink.removeClass("fa-caret-right");
-                currentLink.addClass("fa-caret-down");
+            if(currentLink.hasClass("fa-angle-right")){
+                currentLink.removeClass("fa-angle-right");
+                currentLink.addClass("fa-angle-down");
                 jQuery('#accordion_'+id).slideDown("fast");
             }else{
-                currentLink.removeClass("fa-caret-down");
-                currentLink.addClass("fa-caret-right");
+                currentLink.removeClass("fa-angle-down");
+                currentLink.addClass("fa-angle-right");
                 jQuery('#accordion_'+id).slideUp("fast");
             }
 
@@ -404,8 +408,6 @@
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
-
-
        <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
 
             leantime.helperController.showHelperModal("dashboard", 500, 700);
@@ -422,8 +424,8 @@
 
        } ?>
 
-
-
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

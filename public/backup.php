@@ -10,7 +10,6 @@ define('ROOT', dirname(__FILE__));
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 
-include_once '../config/appSettings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 

@@ -3,26 +3,22 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\services;
 
-    class showTicket
+    class showTicket extends controller
     {
 
         private $projectService;
         private $ticketService;
-        private $tpl;
         private $sprintService;
         private $fileService;
         private $commentService;
         private $timesheetService;
         private $userService;
-        private $language;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
-
-            $this->language = new core\language();
 
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
@@ -35,6 +31,7 @@ namespace leantime\domain\controllers {
             if(isset($_SESSION['lastPage']) === false){
                 $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban";
             }
+
         }
 
         public function get($params)
@@ -46,7 +43,7 @@ namespace leantime\domain\controllers {
                 $ticket = $this->ticketService->getTicket($id);
 
                 if($ticket === false) {
-                    $this->tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
                     return;
                 }
 
@@ -137,7 +134,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('errors.error403');
 
             }
 
@@ -154,7 +151,7 @@ namespace leantime\domain\controllers {
                 $ticket = $this->ticketService->getTicket($id);
 
                 if($ticket === false) {
-                    $this->tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
                     return;
                 }
 
@@ -227,7 +224,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

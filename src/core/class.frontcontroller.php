@@ -10,10 +10,12 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
-
+    use leantime\core\eventhelpers;
 
     class frontcontroller
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -114,7 +116,7 @@ namespace leantime\core {
 
             } else {
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
 
             }
         }
@@ -137,56 +139,89 @@ namespace leantime\core {
             $moduleName = self::getModuleName($completeName);
 
             //Folder doesn't exist.
-            if(is_dir('../src/domain/' . $moduleName) === false || is_file('../src/domain/' . $moduleName . '/controllers/class.' . $actionName . '.php') === false) {
+            if((is_dir('../src/domain/'.$moduleName) === false ||
+                is_file('../src/domain/'. $moduleName.'/controllers/class.'.$actionName.'.php') === false) &&
+               (is_dir('../custom/domain/'.$moduleName) === false ||
+                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false) &&
+                (is_dir('../src/plugins/'.$moduleName) === false ||
+                    is_file('../src/plugins/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
 
-                self::dispatch("general.error404");
+                self::dispatch("errors.error404");
                 return;
 
             }
 
+            $customPluginPath = ROOT.'/../custom/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
+            $customDomainPath = ROOT.'/../custom/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
             $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
             $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
 
             $controllerNs = "domain";
 
-            //Try plugin folder first for overrides
-            if(file_exists($pluginPath)) {
-                $controllerNs = "plugins";
-                require_once $pluginPath;
+            $pluginService = new \leantime\domain\services\plugins();
 
-            }else if(file_exists($domainPath)) {
+
+            //Try plugin folder first for overrides
+            if(file_exists($customPluginPath)) {
+
+                if($pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $customPluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
+
+            }elseif(file_exists($customDomainPath)) {
+
+                require_once $customDomainPath;
+
+            }elseif(file_exists($pluginPath)) {
+
+                if($pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $pluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
+
+            }elseif(file_exists($domainPath)) {
 
                 require_once $domainPath;
 
             }else{
+
                 self::dispatch("errors.error404", 404);
                 return;
+
             }
 
             //Initialize Action
             try {
 
                 $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
-
-                $action = new $classname();
-
-                //Todo plugin controller call
-
                 $method = self::getRequestMethod();
+                $params = self::getRequestParams($method);
 
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if(method_exists($action, $method)) {
+                if (is_subclass_of($classname, "leantime\\core\\controller")) {
 
-                    $params = self::getRequestParams($method);
-                    $action->$method($params);
 
-                }else{
+                    new $classname($method, $params);
+                // TODO: Remove else after all controllers utilze base class
+                } else {
 
+                    $action = new $classname;
+
+                    if(method_exists($action, $method)) {
+                        $action->$method($params);
                     //Use run for all other request types.
-                    $action->run();
-
+                    }else{
+                        $action->run();
+                    }
                 }
 
             }catch(Exception $e){
@@ -300,7 +335,7 @@ namespace leantime\core {
          * @access public
          * @return string
          */
-        public static function getCurrentRoute() 
+        public static function getCurrentRoute()
         {
 
             if(isset($_REQUEST['act'])) {

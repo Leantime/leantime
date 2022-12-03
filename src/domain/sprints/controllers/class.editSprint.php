@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -12,12 +13,9 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-
-    class editSprint
+    class editSprint extends controller
     {
 
-        private $tpl;
-        private $projects;
         private $sprintService;
 
         /**
@@ -26,14 +24,11 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->tpl = new core\template();
-            $this->projects = new repositories\projects();
             $this->sprintService = new services\sprints();
-            $this->language = new core\language();
 
         }
 
@@ -45,9 +40,9 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(isset($params['id'])) {
+            if (isset($params['id'])) {
                 $sprint = $this->sprintService->getSprint($params['id']);
-            }else{
+            } else {
                 $sprint = new models\sprints();
                 $startDate = new DateTime();
                 $endDate = new DateTime();
