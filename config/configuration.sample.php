@@ -124,17 +124,6 @@ class config
         }';
     public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
 
-    /**
-     * Enabled Plugins
-     * e.g. (where plugin name is the plugin folder name)
-     * {
-     *   "plugin1name": true,
-     *   "plugin2name": false
-     * }
-     */
-    /* Enabled Plugins */
-    public $plugins = '';
-
     /* cache invalidation */
     private $configurationLastModified = '';   //Last modified date of the configuration file
 

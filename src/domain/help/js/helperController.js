@@ -168,6 +168,14 @@ leantime.helperController = (function () {
                 {
                     text:leantime.i18n.__("tour.close"),
                     action:tour.cancel
+                },
+                {
+                    text: leantime.i18n.__("tour.goto_projects"),
+                    events: {
+                        'click': function () {
+                            window.location.href = leantime.appUrl + "/projects/newProject/";
+                        }
+                    }
                 }
                 ],
                 advanceOn: '.headmenu click'

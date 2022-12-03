@@ -29,6 +29,12 @@ if(is_array($currentLink)) {
         </li>
 
         <li>
+            <a href='<?=BASE_URL ?>/projects/showMy' <?php if($module == 'projects' && $action=='showMy') echo"class='active'"; ?>>
+                <?=$this->__("menu.my_portfolio")?>
+            </a>
+        </li>
+
+        <li>
             <a href='<?=BASE_URL ?>/calendar/showMyCalendar' <?php if($module == 'calendar' && $action=='showMyCalendar') echo"class='active'"; ?>>
                 <?=$this->__("menu.my_calendar")?>
             </a>
@@ -96,6 +102,12 @@ if(is_array($currentLink)) {
                 <?php if ($login::userIsAtLeast($roles::$owner)) { ?>
 
                     <li class="nav-header border"><?=$this->__("label.administration")?></li>
+
+                    <li <?php if($module == 'plugins') echo" class='active' "; ?>>
+                        <a href='<?=BASE_URL ?>/plugins/show/'>
+                            <?=$this->__("menu.plugins")?>
+                        </a>
+                    </li>
 
                     <li <?php if($module == 'setting') echo" class='active' "; ?>>
                         <a href='<?=BASE_URL ?>/setting/editCompanySettings/'>

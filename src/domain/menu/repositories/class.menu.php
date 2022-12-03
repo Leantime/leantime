@@ -23,7 +23,7 @@ namespace leantime\domain\repositories {
                 20 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => [ 'roadmap' ] ],
                 30 => [ 'type' => 'item', 'module' => 'strategy',   'title' => 'menu.project_path',   'href' => '/strategy/showBoards', 'active' => [ 'strategy' ]],
                 40 => [ 'type' => 'item', 'module' => 'ideas',      'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
-                50 => [ 'type' => 'item', 'module' => 'wiki',       'title' => 'menu.documents',  'href' => '/wiki/show' ],
+                50 => [ 'type' => 'item', 'module' => 'wiki',       'title' => 'menu.wiki',  'href' => '/wiki/show' ],
                 60 => [ 'type' => 'item', 'module' => 'retroscanvas',       'title' => 'menu.retroscanvas',  'href' => '/retroscanvas/showCanvas' ],
                 70 => [ 'type' => 'item', 'module' => 'reports',    'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ],
             //Display all menu items
@@ -50,7 +50,7 @@ namespace leantime\domain\repositories {
                              71 => [ 'type' => 'item',   'module' => 'smcanvas',    'title' => 'menu.smcanvas',    'href' => '/smcanvas/showCanvas' ] ] ],
                 80 => [ 'type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open',
                         'submenu' => [
-                            81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.documents', 'href' => '/wiki/show' ],
+                            81 => [ 'type' => 'item', 'module' => 'wiki','title' => 'menu.wiki', 'href' => '/wiki/show' ],
                             82 => [ 'type' => 'item', 'module' => 'retroscanvas','title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas' ],
                             83 => [ 'type' => 'item', 'module' => 'reports','title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor' ] ] ] ]
         ];
