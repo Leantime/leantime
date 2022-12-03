@@ -51,6 +51,13 @@ namespace leantime\domain\controllers {
                 $redirectUrl = $_SESSION['redirectOrigin'];
             }
 
+            $config = new core\config();
+
+            if($config->useLdap) {
+                $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email_or_username");
+            }else{
+                $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email");
+            }
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
             $this->tpl->display('auth.login', 'entry');
         }
