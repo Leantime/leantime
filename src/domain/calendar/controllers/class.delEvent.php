@@ -8,12 +8,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class delEvent
+    class delEvent extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,9 +37,6 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-
             if (isset($_GET['id']) === true) {
 
                 $id = (int)($_GET['id']);
@@ -35,26 +45,25 @@ namespace leantime\domain\controllers {
 
                 if (isset($_POST['del']) === true) {
 
-                    if($calendarRepo->delPersonalEvent($id) == true) {
+                    if($this->calendarRepo->delPersonalEvent($id) == true) {
 
-                        $tpl->setNotification('notification.event_removed_successfully', 'success');
+                        $this->tpl->setNotification('notification.event_removed_successfully', 'success');
 
                     }else{
 
-                        $tpl->setNotification('notification.could_not_delete_event', 'success');
+                        $this->tpl->setNotification('notification.could_not_delete_event', 'success');
 
                     }
 
                 }
 
-                $tpl->display('calendar.delEvent');
+                $this->tpl->display('calendar.delEvent');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
-
 
         }
 

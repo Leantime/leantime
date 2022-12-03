@@ -8,12 +8,25 @@ namespace leantime\domain\controllers {
      */
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
-    class editGCal
+    class editGCal extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -24,17 +37,13 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-
             $msgKey = '';
-
 
             if (isset($_GET['id']) === true) {
 
                 $id = ($_GET['id']);
 
-                $row = $calendarRepo->getGCal($id);
+                $row = $this->calendarRepo->getGCal($id);
 
                 $values = array(
                     'url' => $row['url'],
@@ -50,24 +59,23 @@ namespace leantime\domain\controllers {
                         'colorClass' => ($_POST['color'])
                     );
 
-                    $calendarRepo->editGUrl($values, $id);
+                    $this->calendarRepo->editGUrl($values, $id);
 
                     $msgKey = 'Kalender bearbeitet';
 
 
                 }
 
-                $tpl->assign('values', $values);
-                $tpl->assign('info', $msgKey);
+                $this->tpl->assign('values', $values);
+                $this->tpl->assign('info', $msgKey);
 
-                $tpl->display('calendar.editGCal');
+                $this->tpl->display('calendar.editGCal');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
-
 
         }
 

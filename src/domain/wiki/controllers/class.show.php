@@ -3,20 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class show {
+    class show extends controller
+    {
 
+        public function init() {
 
-        public function __construct() {
-
-            $this->tpl = new core\template();
             $this->wikiService = new services\wiki();
             $this->commentService = new services\comments();
-            $this->language = new core\language();
+
         }
 
         public function get($params)
@@ -113,7 +113,7 @@ namespace leantime\domain\controllers {
                 }
 
             }
-            
+
             if(isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] != ''){
                 $currentWiki = $this->wikiService->getWiki($_SESSION['currentWiki']);
             }else{

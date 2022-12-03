@@ -23,7 +23,7 @@ namespace leantime\domain\services {
             $this->tpl = new core\template();
             $this->projectRepository = new repositories\projects();
             $this->ticketRepository = new repositories\tickets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
             $this->settingsRepo = new repositories\setting();
@@ -201,7 +201,16 @@ namespace leantime\domain\services {
                 $_SESSION["currentSprint"] = $searchCriteria["sprint"];
             }
 
-            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
+            $config = new core\config();
+            setcookie(
+                "searchCriteria",
+                serialize($searchCriteria),
+                [
+                    'expires' => time()+3600,
+                    'path' => $config->appUrlRoot."/tickets/",
+                    'samesite' => 'Strict'
+                ]
+            );
 
             return $searchCriteria;
         }
@@ -815,9 +824,70 @@ namespace leantime\domain\services {
                 return $url;
             }
 
-
         }
 
+        public function getGroupByFieldOptions()
+        {
+            return [
+                [
+                    'id' => 'groupByNothingLink',
+                    'status' => '',
+                    'label' => 'no_group'
+                ],
+                [
+                    'id' => 'groupByStatusLink',
+                    'status' => 'status',
+                    'label' => 'todo_status'
+                ],
+                [
+                    'id' => 'groupByMilestoneLink',
+                    'status' => 'milestone',
+                    'label' => 'milestone'
+                ],
+                [
+                    'id' => 'groupByUserLink',
+                    'status' => 'user',
+                    'label' => 'user'
+                ],
+                [
+                    'id' => 'groupBySprintLink',
+                    'status' => 'sprint',
+                    'label' => 'sprint'
+                ],
+                [
+                    'id' => 'groupByTagsLink',
+                    'status' => 'tags',
+                    'label' => 'tags'
+                ]
+            ];
+        }
+
+        public function getNewFieldOptions()
+        {
+            if (!defined('BASE_URL')) {
+                return [];
+            }
+
+            $baseUrl = BASE_URL . '/tickets';
+
+            return [
+                [
+                    'url' => "$baseUrl/newTicket",
+                    'text' => 'links.add_todo',
+                    'class' => 'ticketModal'
+                ],
+                [
+                    'url' => "$baseUrl/editMilestone",
+                    'text' => 'links.add_milestone',
+                    'class' => 'milestoneModal'
+                ],
+                [
+                    'url' => "$baseUrl/editSprit",
+                    'text' => 'links.add_sprint',
+                    'class' => 'sprintModal'
+                ]
+            ];
+        }
 
     }
 

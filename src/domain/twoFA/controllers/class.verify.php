@@ -3,28 +3,26 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class verify
+    class verify extends controller
     {
 
-        private $tpl;
-        private $usersService;
-        private $redirectUrl;
+        private $authService;
 
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->authService = services\auth::getInstance();
 
         }

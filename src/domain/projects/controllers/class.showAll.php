@@ -3,13 +3,29 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class showAll
+    class showAll extends controller
     {
+
+        private $projectRepo;
+        private $menuRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init() {
+
+            $this->projectRepo = new repositories\projects();
+            $this->menuRepo = new repositories\menu();
+
+        }
 
         /**
          * run - display template and edit data
@@ -22,21 +38,17 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
-            $tpl = new core\template();
+            if (auth::userIsAtLeast(roles::$manager)) {
 
-            if(auth::userIsAtLeast(roles::$manager)) {
+                $this->tpl->assign('role', $_SESSION['userdata']['role']);
+                $this->tpl->assign('allProjects', $this->projectRepo->getAll());
+                $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
 
-                $projectRepo = new repositories\projects();
+                $this->tpl->display('projects.showAll');
 
-                $tpl->assign('role', $_SESSION['userdata']['role']);
+            } else {
 
-
-                $tpl->assign('allProjects', $projectRepo->getAll());
-
-                $tpl->display('projects.showAll');
-            }else{
-
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

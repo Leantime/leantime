@@ -19,7 +19,7 @@ namespace leantime\domain\services {
 
             $this->fileRepository = new repositories\files();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 

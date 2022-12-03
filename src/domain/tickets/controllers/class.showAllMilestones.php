@@ -3,20 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\services;
 
-    class showAllMilestones
+    class showAllMilestones extends controller
     {
 
         private $projectService;
-        private $tpl;
         private $ticketService;
         private $sprintService;
         private $timesheetService;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
+
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
             $this->sprintService = new services\sprints();
@@ -24,11 +24,9 @@ namespace leantime\domain\controllers {
 
             $_SESSION['lastPage'] = CURRENT_URL;
 
-
         }
 
         public function get($params) {
-
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
@@ -54,8 +52,6 @@ namespace leantime\domain\controllers {
             $this->tpl->display('tickets.showAllMilestones');
 
         }
-
-
 
     }
 

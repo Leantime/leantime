@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -12,12 +13,11 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-
-    class editCompanySettings
+    class editCompanySettings extends controller
     {
 
-        private $tpl;
-
+        private $config;
+        private $settingsRepo;
 
         /**
          * constructor - initialize private variables
@@ -25,15 +25,16 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
+
+
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
-
-            $this->tpl = new core\template();
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
-            $this->language = new core\language();
+
+
 
 
         }
@@ -46,6 +47,8 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+
             if(auth::userIsAtLeast(roles::$owner)) {
 
                 $companySettings = array(
@@ -100,11 +103,12 @@ namespace leantime\domain\controllers {
 
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
+
                 $this->tpl->display('setting.editCompanySettings');
 
             }else{
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('error.error403');
 
             }
         }

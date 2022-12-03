@@ -2,14 +2,17 @@
     defined('RESTRICTED') or die('Restricted access');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.my_calendar'); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -23,8 +26,6 @@
             array('class'=>'btn btn-primary btn-rounded')
         ) ?>
 
-
-
         <div id="calendar"></div>
 
     </div>
@@ -33,8 +34,9 @@
 
 <script type='text/javascript'>
 
-    jQuery(document).ready(function() {
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
+    jQuery(document).ready(function() {
 
         var events=[<?php foreach($this->get('calendar') as $calendar): ?>
             {
@@ -72,5 +74,7 @@
         leantime.calendarController.initExportModal();
 
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

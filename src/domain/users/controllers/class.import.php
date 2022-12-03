@@ -6,45 +6,47 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
     use leantime\domain\models\auth\roles;
 
-    class import
+    class import extends controller
     {
 
-        private $language;
+        private $userRepo;
+        private $ldapService;
 
-        public function __construct() {
-            $this->language = new core\language();
+        public function init() {
+
+            $this->userRepo =  new repositories\users();
+            $this->ldapService = new services\ldap();
+
             if(!isset($_SESSION['tmp'])) $_SESSION['tmp'] = [];
+
         }
 
         public function get()
         {
 
-            $tpl = new core\template();
-            $userRepo =  new repositories\users();
-            $ldapService = new services\ldap();
-
             //Only Admins
             if(auth::userIsAtLeast(roles::$admin)) {
 
-                $tpl->assign('allUsers', $userRepo->getAll());
-                $tpl->assign('admin', true);
-                $tpl->assign('roles', roles::getRoles());
+                $this->tpl->assign('allUsers', $this->userRepo->getAll());
+                $this->tpl->assign('admin', true);
+                $this->tpl->assign('roles', roles::getRoles());
 
                 if(isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
-                    $tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
-                    $tpl->assign('confirmUsers', true);
+                    $this->tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
+                    $this->tpl->assign('confirmUsers', true);
                 }
 
-                $tpl->displayPartial('users.importLdapDialog');
+                $this->tpl->displayPartial('users.importLdapDialog');
 
             }else{
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 
@@ -52,26 +54,26 @@ namespace leantime\domain\controllers {
 
         public function post($params) {
 
-            $tpl = new core\template();
-            $userRepo =  new repositories\users();
-            $ldapService = new services\ldap();
+            $this->tpl = new core\template();
+            $this->userRepo =  new repositories\users();
+            $this->ldapService = new services\ldap();
 
             //Password Submit to connect to ldap and retrieve users. Sets tmp session var
             if(isset($params['pwSubmit'])) {
 
-                $username = $ldapService->extractLdapFromUsername($_SESSION["userdata"]["mail"]);
+                $username = $this->ldapService->extractLdapFromUsername($_SESSION["userdata"]["mail"]);
 
-                $ldapService->connect();
+                $this->ldapService->connect();
 
-                if($ldapService->bind($username, $params['password'])) {
+                if($this->ldapService->bind($username, $params['password'])) {
 
-                    $_SESSION['tmp']["ldapUsers"] = $ldapService->getAllMembers();
-                    $tpl->assign('allLdapUsers',  $_SESSION['tmp']["ldapUsers"]);
-                    $tpl->assign('confirmUsers', true);
+                    $_SESSION['tmp']["ldapUsers"] = $this->ldapService->getAllMembers();
+                    $this->tpl->assign('allLdapUsers',  $_SESSION['tmp']["ldapUsers"]);
+                    $this->tpl->assign('confirmUsers', true);
 
                 }else{
 
-                    $tpl->setNotification($this->language->__("notifications.username_or_password_incorrect"), "error");
+                    $this->tpl->setNotification($this->language->__("notifications.username_or_password_incorrect"), "error");
 
                 }
 
@@ -89,12 +91,12 @@ namespace leantime\domain\controllers {
                         }
                     }
 
-                    $ldapService->upsertUsers($users);
+                    $this->ldapService->upsertUsers($users);
                 }
 
             }
 
-            $tpl->displayPartial('users.importLdapDialog');
+            $this->tpl->displayPartial('users.importLdapDialog');
 
         }
 

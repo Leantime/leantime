@@ -3,13 +3,38 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
 
-    class newProject
+    class newProject extends controller
     {
+
+        private $projectRepo;
+        private $menuRepo;
+        private $userRepo;
+        private $clientsRepo;
+        private $queueRepo;
+        private $projectService;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->projectRepo = new repositories\projects();
+            $this->menuRepo = new repositories\menu();
+            $this->userRepo = new repositories\users();
+            $this->clientsRepo = new repositories\clients();
+            $this->queueRepo = new repositories\queue();
+            $this->projectService = new services\projects();
+
+        }
 
         /**
          * run - display template and edit data
@@ -25,15 +50,6 @@ namespace leantime\domain\controllers {
                 $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
             }
 
-            $tpl = new core\template();
-            $projectRepo = new repositories\projects();
-            $leancanvasRepo = new repositories\leancanvas();
-            $ideaRepo = new repositories\ideas();
-            $ticketService = new services\tickets();
-            $projectService = new services\projects();
-            $language = new core\language();
-
-
             $msgKey = '';
             $values = array(
                 'id' => '',
@@ -44,6 +60,7 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
+				'menuType' => repositories\menu::DEFAULT_MENU,
                 'psettings' => ''
             );
 
@@ -73,28 +90,30 @@ namespace leantime\domain\controllers {
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'],
                     'state' => $_POST['projectState'],
-                    'psettings' => $_POST['globalProjectUserAccess']
+                    'psettings' => $_POST['globalProjectUserAccess'],
+                    'menuType' => $_POST['menuType']
                 );
 
                 if ($values['name'] === '') {
 
-                    $tpl->setNotification($language->__("notification.no_project_name"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
 
                 } elseif ($values['clientId'] === '') {
 
-                    $tpl->setNotification($language->__("notification.no_client"), 'error');
+                    $this->tpl->setNotification($this->language->__("notification.no_client"), 'error');
 
                 } else {
 
                     $projectName = $values['name'];
-                    $id = $projectRepo->addProject($values);
-                    $projectService->changeCurrentSessionProject($id);
+                    $id = $this->projectRepo->addProject($values);
+                    $this->projectService->changeCurrentSessionProject($id);
 
-                    $users = $projectRepo->getUsersAssignedToProject($id);
+                    $users = $this->projectRepo->getUsersAssignedToProject($id);
 
-                    $mailer->setSubject($language->__('email_notifications.project_created_subject'));
+                    $mailer->setContext('project_created');
+                    $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL."/projects/showProject/" . $id . "";
-                    $message = sprintf($language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
                     $mailer->setHtml($message);
 
                     $to = array();
@@ -107,40 +126,35 @@ namespace leantime\domain\controllers {
                     }
 
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-	            // NEW Queuing messaging system
-	            $queue = new repositories\queue();
-                    $queue->queueMessageToUsers($to, $message, $language->__('email_notifications.project_created_subject'), $id);
+					// NEW Queuing messaging system
+                    $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    $tpl->setNotification(sprintf($language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					if($values['menuType'] == 'dts') {
+						$this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/lbmcanvas/showCanvas/'), 'success');
+                    } else {
+                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
+					}
 
-                    $tpl->redirect(BASE_URL."/projects/showProject/". $id);
+                    $this->tpl->redirect(BASE_URL."/projects/showProject/". $id);
 
                 }
 
 
-                $tpl->assign('values', $values);
+                $this->tpl->assign('values', $values);
 
             }
 
+            $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+            $this->tpl->assign('project', $values);
+			$this->tpl->assign('availableUsers', $this->userRepo->getAll());
+			$this->tpl->assign('clients', $this->clientsRepo->getAll());
+            $this->tpl->assign('info', $msgKey);
 
-            $tpl->assign('project', $values);
-            $user = new repositories\users();
-            $clients = new repositories\clients();
-
-
-
-
-           $tpl->assign('availableUsers', $user->getAll());
-           $tpl->assign('clients', $clients->getAll());
-
-
-            $tpl->assign('info', $msgKey);
-
-            $tpl->display('projects.newProject');
+            $this->tpl->display('projects.newProject');
 
 
         }
