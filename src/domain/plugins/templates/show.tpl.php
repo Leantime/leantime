@@ -22,7 +22,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h5 class="subtitle">
-                        New Plugins found
+
+                        <?=$this->__("text.new_plugins")?>
                     </h5>
                     <ul class="sortableTicketList" >
                     <?php foreach($this->get("newPlugins") as $newplugin){?>
@@ -35,11 +36,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <?=$newplugin->description ?><br />
-                                        Version <?=$newplugin->version ?>
+                                        <?=$this->__("text.version")?> <?=$newplugin->version ?>
                                         <?php if(is_array($newplugin->authors) && count($newplugin->authors) >0){?>
-                                            | By <a href="mailto:<?=$newplugin->authors[0]["email"] ?>"><?=$newplugin->authors[0]["name"] ?></a>
+                                            | <?=$this->__("text.by")?> <a href="mailto:<?=$newplugin->authors[0]["email"] ?>"><?=$newplugin->authors[0]["name"] ?></a>
                                         <?php } ?>
-                                       | <a href="<?=$newplugin->homepage ?>">Visit Site </a>
+                                       | <a href="<?=$newplugin->homepage ?>"> <?=$this->__("text.visit_site")?> </a>
                                     </div>
                                     <div class="col-md-4" style="padding-top:5px;">
                                         <a href="<?=BASE_URL ?>/plugins/show?install=<?=$newplugin->foldername ?>" class="btn btn-default pull-right"><?=$this->__('buttons.install') ?></a>
@@ -57,7 +58,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h5 class="subtitle">
-                    Installed Plugins
+                    <?=$this->__("text.installed_plugins")?>
                 </h5>
                 <ul class="sortableTicketList">
                     <?php foreach($this->get("installedPlugins") as $installedPlugins){?>
@@ -76,11 +77,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <?=$installedPlugins->description ?><br />
-                                        Version <?=$installedPlugins->version ?>
+                                        <?=$this->__("text.version")?> <?=$installedPlugins->version ?>
                                         <?php if(is_array($installedPlugins->authors) && count($installedPlugins->authors) >0){?>
-                                            | By <a href="mailto:<?=$installedPlugins->authors[0]->email ?>"><?=$installedPlugins->authors[0]->name ?></a>
+                                            |  <?=$this->__("text.by")?> <a href="mailto:<?=$installedPlugins->authors[0]->email ?>"><?=$installedPlugins->authors[0]->name ?></a>
                                         <?php } ?>
-                                        | <a href="<?=$installedPlugins->homepage ?>">Visit Site </a>
+                                        | <a href="<?=$installedPlugins->homepage ?>"> <?=$this->__("text.visit_site")?> </a>
                                     </div>
                                     <div class="col-md-4" style="padding-top:5px;">
 
