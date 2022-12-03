@@ -2,6 +2,7 @@
 	defined( 'RESTRICTED' ) or die( 'Restricted access' );
 	$project = $this->get('project');
 	$menuTypes = $this->get('menuTypes');
+    $showClosedProjects= $this->get('showClosedProjects');
 
 ?>
 
@@ -20,8 +21,15 @@
 
         <?php echo $this->displayNotification(); ?>
 
-		<?php echo $this->displayLink('projects.newProject',"<i class='fa fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+        <div class="pull-right">
+            <form action="" method="post">
+                <input type="hidden" name="hideClosedProjects" value="1" />
+                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" <?php if($showClosedProjects) echo"checked='checked'" ?> />&nbsp;<label for="showClosed" class="pull-right">Show Closed Projects</label>
+            </form>
+        </div>
 
+		<?php echo $this->displayLink('projects.newProject',"<i class='fa fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+        <div class="clearall"></div>
 		<table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 			<?php if($config->enableMenuType) { ?>
 			<colgroup>

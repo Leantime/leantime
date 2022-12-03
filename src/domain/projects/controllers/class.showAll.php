@@ -40,9 +40,23 @@ namespace leantime\domain\controllers {
 
             if (auth::userIsAtLeast(roles::$manager)) {
 
+                if(!isset($_SESSION['showClosedProjects'])){
+                    $_SESSION['showClosedProjects'] = false;
+                }
+
+                if(isset($_POST['hideClosedProjects'])) {
+                    $_SESSION['showClosedProjects'] = false;
+                }
+
+                if(isset($_POST['showClosedProjects'])) {
+                    $_SESSION['showClosedProjects'] = true;
+                }
+
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
-                $this->tpl->assign('allProjects', $this->projectRepo->getAll());
+                $this->tpl->assign('allProjects', $this->projectRepo->getAll($_SESSION['showClosedProjects']));
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+
+                $this->tpl->assign('showClosedProjects', $_SESSION['showClosedProjects']);
 
                 $this->tpl->display('projects.showAll');
 
