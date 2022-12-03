@@ -64,7 +64,9 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     <?php } ?>
                             </div>
                             <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
-                            <div class="text" id="commentText-<?=$row['id']?>"><?php echo ($row['text']); ?></div>
+                            <div class="text" id="commentText-<?=$row['id']?>">
+                                <?php echo $this->escapeMinimal($row['text']); ?>
+                            </div>
 
 
                         </div>
@@ -92,7 +94,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                                         $this->getFormattedTimeString($comment['date']) ); ?>
                                                 </div>
                                                 <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
-                                                <div class="text"><?php echo ($comment['text']); ?></div>
+                                                <div class="text"><?php echo $this->escapeMinimal($comment['text']); ?></div>
                                             </div>
 
                                             <div class="commentLinks">
