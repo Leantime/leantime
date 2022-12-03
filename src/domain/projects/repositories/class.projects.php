@@ -62,7 +62,7 @@ namespace leantime\domain\repositories {
          * @param  $onlyOpen
          * @return array
          */
-        public function getAll()
+        public function getAll($showClosedProjects = false)
         {
 
 
@@ -79,8 +79,13 @@ namespace leantime\domain\repositories {
 					client.id AS clientId
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
-				WHERE project.active > '-1' OR project.active IS NULL
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId";
+
+                if($showClosedProjects === false) {
+                    $query .= " WHERE project.state IS NULL OR project.state <> -1 ";
+                }
+
+                $query .= "
 				GROUP BY
 					project.id,
 					project.name,
