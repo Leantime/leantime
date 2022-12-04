@@ -48,7 +48,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1')
+        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1')
         {
 
             $query = "SELECT
@@ -65,6 +65,8 @@ namespace leantime\domain\repositories {
                         zp_timesheets.invoicedComp,
                         zp_timesheets.invoicedEmplDate,
                         zp_timesheets.invoicedCompDate,
+                        zp_timesheets.paid,
+                        zp_timesheets.paidDate,
                         zp_user.firstname,
                         zp_user.lastname,
                         zp_tickets.id as ticketId,
@@ -94,17 +96,21 @@ namespace leantime\domain\repositories {
                 $query.= " AND (zp_timesheets.userId= :userId)";
             }
 
-            if($invComp == '1' && $invEmpl == '1') {
+            if($invComp == '1') {
 
-                $query.= " AND (zp_timesheets.invoicedComp = 1 AND zp_timesheets.invoicedEmpl = 1)";
+                $query.= " AND (zp_timesheets.invoicedComp = 1)";
 
-            }elseif($invComp == '1' && $invEmpl != '1') {
+            }
 
-                $query.= " AND (zp_timesheets.invoicedComp = 1 AND (zp_timesheets.invoicedEmpl <> 1 OR zp_timesheets.invoicedEmpl IS NULL) )";
+            if($invEmpl == '1') {
 
-            }elseif($invComp != '1' && $invEmpl == '1') {
+                $query.= " AND (zp_timesheets.invoicedEmpl = 1)";
 
-                $query.= " AND ((zp_timesheets.invoicedComp <> 1 OR zp_timesheets.invoicedComp IS NULL)  AND zp_timesheets.invoicedEmpl = 1)";
+            }
+
+            if($paid == '1') {
+
+                $query.= " AND (zp_timesheets.paid = 1)";
 
             }
 
@@ -143,7 +149,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
-
 
             return $values;
 
@@ -263,6 +268,8 @@ namespace leantime\domain\repositories {
 			zp_timesheets.invoicedComp,
 			zp_timesheets.invoicedEmplDate,
 			zp_timesheets.invoicedCompDate,
+			zp_timesheets.paid,
+            zp_timesheets.paidDate,
 			zp_timesheets.kind,
 			zp_tickets.headline,
 			zp_tickets.planHours,
@@ -343,7 +350,7 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO zp_timesheets
-			  (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate)
+			  (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate, paid, paidDate)
 			VALUES
                 (:userId,
                 :ticket,
@@ -355,7 +362,9 @@ namespace leantime\domain\repositories {
                 :invoicedComp,
                 :invoicedEmplDate,
                 :invoicedCompDate,
-                :rate)
+                :rate,
+                :paid
+                :paidDate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
             $stmn = $this->db->database->prepare($query);
@@ -372,6 +381,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
             $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
             $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
+            $stmn->bindValue(':paid', $values['paid'], PDO::PARAM_STR);
+            $stmn->bindValue(':paidDate', $values['paidDate'], PDO::PARAM_STR);
 
             $stmn->execute();
 
@@ -433,7 +444,10 @@ namespace leantime\domain\repositories {
 			zp_timesheets.invoicedEmpl,
 			zp_timesheets.invoicedComp,
 			zp_timesheets.invoicedEmplDate,
-			zp_timesheets.invoicedCompDate
+			zp_timesheets.invoicedCompDate,
+			zp_timesheets.paid,
+			zp_timesheets.paidDate
+
 		FROM zp_timesheets
 		LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
@@ -471,7 +485,9 @@ namespace leantime\domain\repositories {
 			invoicedEmpl =:invoicedEmpl,
 			invoicedComp =:invoicedComp,
 			invoicedEmplDate =:invoicedEmplDate,
-			invoicedCompDate =:invoicedCompDate
+			invoicedCompDate =:invoicedCompDate,
+			paid =:paid,
+			paidDate =:paidDate
 			WHERE
 				id = :id";
 
@@ -486,6 +502,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':invoicedComp', $values['invoicedComp'], PDO::PARAM_STR);
             $stmn->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'], PDO::PARAM_STR);
             $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
+            $stmn->bindValue(':paid', $values['paid'], PDO::PARAM_STR);
+            $stmn->bindValue(':paidDate', $values['paidDate'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $values['id'], PDO::PARAM_STR);
 
 
@@ -660,7 +678,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function updateInvoices($invEmpl, $invComp = '')
+        public function updateInvoices($invEmpl, $invComp = '', $paid ='')
         {
 
             if($invEmpl != '' && is_array($invEmpl) === true) {
@@ -686,6 +704,22 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->db->database->prepare($query2);
                     $stmn->bindValue(':id',  $row2, PDO::PARAM_STR);
+                    $stmn->execute();
+
+
+                }
+
+            }
+
+            if($paid != '' && is_array($paid) === true) {
+
+                foreach($paid as $row3){
+
+                    $query3 = "UPDATE zp_timesheets SET paid = 1, paidDate = DATE(NOW())
+				    WHERE id = :id ";
+
+                    $stmn = $this->db->database->prepare($query3);
+                    $stmn->bindValue(':id',  $row3, PDO::PARAM_STR);
                     $stmn->execute();
 
 

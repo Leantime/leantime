@@ -306,25 +306,6 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "
-                CREATE TABLE `zp_account` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `projectId` int(11) DEFAULT NULL,
-                  `name` varchar(255) DEFAULT NULL,
-                  `username` varchar(255) DEFAULT NULL,
-                  `password` varchar(255) DEFAULT NULL,
-                  `host` varchar(255) DEFAULT NULL,
-                  `kind` varchar(255) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_action_tabs` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `action` text,
-                  `tab` varchar(255) DEFAULT NULL,
-                  `tabRights` varchar(255) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
                 CREATE TABLE `zp_calendar` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `userId` int(11) DEFAULT NULL,
@@ -414,13 +395,6 @@ namespace leantime\domain\repositories {
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                CREATE TABLE `zp_dashboard_widgets` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `value` text CHARACTER SET latin1,
-                  `user_id` int(11) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-               ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
                 CREATE TABLE `zp_file` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                   `module` enum('project','ticket','client','user','lead','export','private') DEFAULT NULL,
@@ -441,43 +415,6 @@ namespace leantime\domain\repositories {
                   `colorClass` varchar(100) DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_lead` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `name` varchar(255) DEFAULT NULL,
-                  `status` enum('lead','opportunity','client') DEFAULT NULL,
-                  `refSource` varchar(100) DEFAULT NULL,
-                  `refValue` varchar(255) DEFAULT NULL,
-                  `potentialMoney` int(11) DEFAULT NULL,
-                  `actualMoney` int(11) DEFAULT NULL,
-                  `clientId` int(11) DEFAULT NULL,
-                  `proposal` text,
-                  `creatorId` int(11) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_message` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `to_id` varchar(50) DEFAULT NULL,
-                  `from_id` int(11) DEFAULT NULL,
-                  `parent_id` int(11) DEFAULT NULL,
-                  `subject` varchar(255) DEFAULT NULL,
-                  `content` text,
-                  `date_sent` datetime DEFAULT NULL,
-                  `last_message` int(1) DEFAULT '0',
-                  `read` int(1) DEFAULT '0',
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_modulerights` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `module` text,
-                  `roleIds` text,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB AUTO_INCREMENT=49739 DEFAULT CHARSET=latin1;
-
-                insert  into `zp_modulerights`(`id`,`module`,`roleIds`) values (49660,'calendar/class.addEvent.php','2,4,5,3'),(49661,'calendar/class.delEvent.php','2,4,5,3'),(49662,'calendar/class.delGCal.php','2,4,5,3'),(49663,'calendar/class.editEvent.php','2,4,5,3'),(49664,'calendar/class.editGCal.php','2,4,5,3'),(49665,'calendar/class.importGCal.php','2,4,5,3'),(49666,'calendar/class.showAllGCals.php','2,4,5,3'),(49667,'calendar/class.showMyCalendar.php','2,4,5,3'),(49668,'clients/class.delClient.php','2'),(49669,'clients/class.editClient.php','2'),(49670,'clients/class.newClient.php','2'),(49671,'clients/class.showAll.php','2'),(49672,'clients/class.showClient.php','2'),(49673,'comments/class.showAll.php','2,4,5,3'),(49674,'dashboard/class.addWidget.php','2,4,5'),(49675,'dashboard/class.show.php','2,4,5,3'),(49676,'dashboard/class.widgets.php','2,4,5,3'),(49677,'files/class.showAll.php','2,4,5,3'),(49678,'general/class.footer.php','2'),(49679,'general/class.header.php','2'),(49680,'general/class.main.php','2'),(49681,'general/class.menu.php','2'),(49682,'general/class.showMenu.php','2'),(49683,'leads/class.addLead.php','2,5'),(49684,'leads/class.addLeadContact.php','2,5'),(49685,'leads/class.addReferralSource.php','2,5'),(49686,'leads/class.convertToUser.php','2,5'),(49687,'leads/class.deleteLead.php','2,5'),(49688,'leads/class.editLead.php','2,5'),(49689,'leads/class.showAll.php','2,5'),(49690,'leads/class.showLead.php','2,5'),(49691,'leads/class.statistics.php','2,5'),(49692,'leancanvas/class.delCanvas.php','2,4,5'),(49693,'leancanvas/class.delCanvasItem.php','2,4,5'),(49694,'leancanvas/class.showCanvas.php','2,4,5'),(49695,'messages/class.compose.php','2,4,5,3'),(49696,'messages/class.showAll.php','2,4,5,3'),(49697,'projects/class.delProject.php','2,4,5,3'),(49698,'projects/class.editAccount.php','2,4,5,3'),(49699,'projects/class.editProject.php','2,4,5'),(49700,'projects/class.newProject.php','2,4,5'),(49701,'projects/class.showAll.php','2,4,5,3'),(49702,'projects/class.showProject.php','2,4,5,3'),(49703,'setting/class.addMenu.php','2'),(49704,'setting/class.delMenu.php','2'),(49705,'setting/class.delRole.php','2'),(49706,'setting/class.delSystemOrg.php','2'),(49707,'setting/class.editMenu.php','2'),(49708,'setting/class.editRole.php','2'),(49709,'setting/class.editSettings.php','2'),(49710,'setting/class.editSystemOrg.php','2'),(49711,'setting/class.editTabRights.php','2'),(49712,'setting/class.menuUser.php','2'),(49713,'setting/class.newRole.php','2'),(49714,'setting/class.newSystemOrg.php','2'),(49715,'setting/class.setModuleRights.php','2'),(49716,'setting/class.showAllMenu.php','2'),(49717,'setting/class.showAllRoles.php','2'),(49718,'setting/class.showAllSubmodules.php','2'),(49719,'setting/class.showAllSystemOrg.php','2'),(49720,'setting/class.userMenu.php','2'),(49721,'tickets/class.delTicket.php','2,5'),(49722,'tickets/class.editTicket.php','2,4,5,3'),(49723,'tickets/class.newTicket.php','2,4,5,3'),(49724,'tickets/class.showAll.php','2,4,5,3'),(49725,'tickets/class.showKanban.php','2,4,5,3'),(49726,'tickets/class.showMy.php','2,4,5,3'),(49727,'tickets/class.showTicket.php','2,4,5,3'),(49728,'timesheets/class.addTime.php','2,4,5'),(49729,'timesheets/class.delTime.php','2,4,5'),(49730,'timesheets/class.editTime.php','2,4,5'),(49731,'timesheets/class.showAll.php','2,5'),(49732,'timesheets/class.showMy.php','2,4,5'),(49733,'users/class.delUser.php','2'),(49734,'users/class.editOwn.php','2,4,5,3'),(49735,'users/class.editUser.php','2'),(49736,'users/class.newUser.php','2'),(49737,'users/class.showAll.php','2'),(49738,'users/class.showUser.php','2,3');
 
                 CREATE TABLE `zp_note` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -532,28 +469,6 @@ namespace leantime\domain\repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 insert  into `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) values (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
-
-                CREATE TABLE `zp_roles` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `roleName` varchar(255) NOT NULL,
-                  `roleDescription` varchar(255) DEFAULT NULL,
-                  `sysOrg` int(11) DEFAULT NULL,
-                  `template` varchar(100) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_submodulerights` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `alias` varchar(155) DEFAULT NULL,
-                  `title` varchar(155) DEFAULT NULL,
-                  `module` varchar(100) DEFAULT NULL,
-                  `submodule` varchar(150) DEFAULT NULL,
-                  `roleIds` varchar(50) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                INSERT INTO `zp_submodulerights`(`id`,`alias`,`title`,`module`,`submodule`,`roleIds`) values (1,'comments-generalComment','COMMENTS','comments','generalComment.sub.php','2,4,5,3'),(2,'dashboard-calendar','CALENDAR','dashboard','calendar.sub.php','2,4,5,3'),(3,'dashboard-escalatingTickets','ESCALATING_TICKETS','dashboard','escalatingTickets.sub.php','2,4,5'),(4,'dashboard-hotLeads','HOT_LEADS','dashboard','hotLeads.sub.php','2,4,5'),(5,'dashboard-myHours','MY_HOURS','dashboard','myHours.sub.php','2,4,5'),(6,'dashboard-myProjects','MY_PROJECTS','dashboard','myProjects.sub.php','2,4,5'),(7,'dashboard-myTickets','MY_TICKETS','dashboard','myTickets.sub.php','2,4,5,3'),(8,'dashboard-notes','NOTES','dashboard','notes.sub.php','2,4,5,3'),(9,'dashboard-projectsProgress','PROJECT_PROGRESS','dashboard','projectsProgress.sub.php','2,4,5,3'),(10,'dashboard-statistics','STATISTICS','dashboard','statistics.sub.php','2,4,5'),(11,'dashboard-supportInfo','SUPPORT_INFO','dashboard','supportInfo.sub.php','2,4,5,3'),(12,'dashboard-timeTracker','','dashboard','timeTracker.sub.php','2,4,5'),(13,'projects-budgeting','BUDGETING','projects','budgeting.sub.php','2,5'),(14,'projects-tickets','TICKETS','projects','tickets.sub.php','2,4,5,3'),(15,'projects-timeline','TIMELINE','projects','timeline.sub.php','2,4,5,3'),(16,'projects-timesheet','TIMESHEET','projects','timesheet.sub.php','2,4,5'),(17,'tickets-assignUsers','ASSIGN_USERS','tickets','assignUsers.sub.php',NULL),(18,'tickets-attachments','FILES','tickets','attachments.sub.php','2,4,5,3'),(19,'tickets-comments','COMMENTS','tickets','comments.sub.php','2,4,5,3'),(20,'tickets-technicalDetails','TECHNICAL_DETAILS','tickets','technicalDetails.sub.php','2,4,5,3'),(21,'tickets-ticketDetails','TICKET_DETAILS','tickets','ticketDetails.sub.php','2,4,5,3'),(22,'tickets-ticketHistory','TICKET_HISTORY','tickets','ticketHistory.sub.php','2,4,5'),(23,'tickets-timesheet','TIMESHEET','tickets','timesheet.sub.php','2,4,5');
-                INSERT INTO `zp_submodulerights` (alias, title, module, submodule, roleIds) VALUES ('tickets-subTasks', 'SUBTASKS', 'tickets', 'subTasks.sub.php', '2,4,5,3');
 
                 CREATE TABLE `zp_tickethistory` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -623,6 +538,8 @@ namespace leantime\domain\repositories {
                   `invoicedEmplDate` datetime DEFAULT NULL,
                   `invoicedCompDate` datetime DEFAULT NULL,
                   `rate` varchar(255) DEFAULT NULL,
+                  `paid` int(2) DEFAULT NULL,
+                  `paidDate` DATETIME DEFAULT NULL
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -662,44 +579,6 @@ namespace leantime\domain\repositories {
 
                 insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`)
                 values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
-
-                CREATE TABLE `zp_wiki` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `name` text,
-                  `projectId` int(11) DEFAULT NULL,
-                  `authorId` int(11) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_wiki_articles` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `headline` text,
-                  `text` text,
-                  `tags` text,
-                  `authorId` int(255) DEFAULT NULL,
-                  `category` varchar(255) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_wiki_categories` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `name` varchar(255) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                CREATE TABLE `zp_wiki_comments` (
-                  `id` int(255) NOT NULL AUTO_INCREMENT,
-                  `text` text,
-                  `userId` int(255) DEFAULT NULL,
-                  `articleId` int(255) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  `commentParent` int(100) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_sprints` (
                     `id` INT NOT NULL AUTO_INCREMENT,
@@ -1329,7 +1208,12 @@ namespace leantime\domain\repositories {
                   `foldername` VARCHAR(45) NULL,
                   `homepage` VARCHAR(255) NULL AFTER,
                   `authors` VARCHAR(255) NULL AFTER
-                  PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"];
+                  PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+                "ALTER TABLE `zp_timesheets` ADD COLUMN `paid` SMALLINT NULL AFTER `rate`, ADD COLUMN `paidDate` DATETIME NULL AFTER `paid`;",
+                "DROP TABLE IF EXISTS zp_account, zp_action_tabs, zp_dashboard_widgets, zp_lead, zp_message, zp_modulerights, zp_roles, zp_submodulerights, zp_wiki, zp_wiki_articles, zp_wiki_categories, zp_wiki_comments;"
+                ];
+
+
 
             foreach ($sql as $statement) {
 
