@@ -363,7 +363,7 @@ namespace leantime\domain\repositories {
                 :invoicedEmplDate,
                 :invoicedCompDate,
                 :rate,
-                :paid
+                :paid,
                 :paidDate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
