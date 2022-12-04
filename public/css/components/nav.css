@@ -305,6 +305,7 @@
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector {
     height: 90vh;
+    overflow:auto;
 }
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector li.active a {
