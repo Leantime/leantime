@@ -60,6 +60,11 @@ namespace leantime\domain\controllers {
                 'messagesfrequency' => $this->settingsRepo->getSetting("usersettings.".$row['id'].".messageFrequency"),
             );
 
+            if($values['messagesfrequency'] == false)
+            {
+                $values['messagesfrequency'] = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+            }
+
             //Save form
             if (isset($_POST['save'])) {
 

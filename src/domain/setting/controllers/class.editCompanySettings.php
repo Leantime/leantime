@@ -57,7 +57,8 @@ namespace leantime\domain\controllers {
                     "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
                     "name" => $_SESSION["companysettings.sitename"],
                     "language" => $_SESSION["companysettings.language"],
-                    "telemetryActive" => false
+                    "telemetryActive" => false,
+                    "messageFrequency" => ''
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -101,6 +102,12 @@ namespace leantime\domain\controllers {
                     $companySettings["telemetryActive"] = $telemetryActive;
                 }
 
+                $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+                if($messageFrequency !== false){
+                    $companySettings["messageFrequency"] = $messageFrequency;
+                }
+
+
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
 
@@ -131,6 +138,8 @@ namespace leantime\domain\controllers {
 
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
                 $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
+
+                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int)$params['messageFrequency']);
 
 
                 //Check if main color is still in the system
