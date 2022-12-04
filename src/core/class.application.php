@@ -86,7 +86,13 @@ class application
                 if($this->frontController::getCurrentRoute() !== "twoFA.verify"
                     && $this->frontController::getCurrentRoute() !== "auth.logout"
                     && $this->frontController::getCurrentRoute() !== "api.i18n") {
-                    $this->frontController::redirect(BASE_URL."/twoFA/verify");
+
+                    $redirectURL = "";
+                    if(isset($_GET['redirect'])) {
+                        $redirectURL = "?redirect=".$_GET['redirect'];
+                    }
+
+                    $this->frontController::redirect(BASE_URL."/twoFA/verify".$redirectURL);
                 }
 
             }else{
@@ -102,8 +108,13 @@ class application
 
             if(!in_array(frontController::getCurrentRoute(), $this->publicActions)) {
 
+                $redirectURL = '';
+                if(strlen($this->settings->getRequestURI()) > 1){
+                    $redirectURL = "?redirect=".urlencode($this->settings->getRequestURI());
+                }
+
                 if ($this->frontController::getCurrentRoute() !== "auth.login") {
-                    $this->frontController::redirect(BASE_URL . "/auth/login");
+                    $this->frontController::redirect(BASE_URL . "/auth/login".$redirectURL);
                 }
 
             }

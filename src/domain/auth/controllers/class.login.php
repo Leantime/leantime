@@ -47,8 +47,8 @@ namespace leantime\domain\controllers {
         {
             $redirectUrl = BASE_URL."/dashboard/home";
 
-            if(isset($_SESSION['redirectOrigin'])){
-                $redirectUrl = $_SESSION['redirectOrigin'];
+            if(isset($_GET['redirect'])){
+                $redirectUrl = BASE_URL.urldecode($_GET['redirect']);
             }
 
             $config = new core\config();
