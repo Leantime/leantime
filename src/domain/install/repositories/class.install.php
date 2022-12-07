@@ -671,6 +671,23 @@ namespace leantime\domain\repositories {
                   `authors` VARCHAR(255) NULL AFTER
                   PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                CREATE TABLE `zp_notifications` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `userId` INT NOT NULL,
+                  `read` INT NULL,
+                  `type` VARCHAR(45) NULL,
+                  `module` VARCHAR(45) NULL,
+                  `moduleId` INT NULL,
+                  `datetime` DATETIME NULL,
+                  `url` VARCHAR(255) NULL,
+                  `authorId` INT NULL,
+                  `message` TEXT NULL,
+                  PRIMARY KEY (`id`),
+                  INDEX `userId` (`userId` ASC),
+                  INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
+                  INDEX `userId,read` (`userId` ASC, `read` DESC)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
             return $sql;
@@ -1210,7 +1227,23 @@ namespace leantime\domain\repositories {
                   `authors` VARCHAR(255) NULL AFTER
                   PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_timesheets` ADD COLUMN `paid` SMALLINT NULL AFTER `rate`, ADD COLUMN `paidDate` DATETIME NULL AFTER `paid`;",
-                "DROP TABLE IF EXISTS zp_account, zp_action_tabs, zp_dashboard_widgets, zp_lead, zp_message, zp_modulerights, zp_roles, zp_submodulerights, zp_wiki, zp_wiki_articles, zp_wiki_categories, zp_wiki_comments;"
+                "DROP TABLE IF EXISTS zp_account, zp_action_tabs, zp_dashboard_widgets, zp_lead, zp_message, zp_modulerights, zp_roles, zp_submodulerights, zp_wiki, zp_wiki_articles, zp_wiki_categories, zp_wiki_comments;",
+                "CREATE TABLE `zp_notifications` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `userId` INT NOT NULL,
+                  `read` INT NULL,
+                  `type` VARCHAR(45) NULL,
+                  `module` VARCHAR(45) NULL,
+                  `moduleId` INT NULL,
+                  `datetime` DATETIME NULL,
+                  `url` VARCHAR(255) NULL,
+                  `authorId` INT NULL,
+                  `message` TEXT NULL,
+                  PRIMARY KEY (`id`),
+                  INDEX `userId` (`userId` ASC),
+                  INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
+                  INDEX `userId,read` (`userId` ASC, `read` DESC)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
                 ];
 
 

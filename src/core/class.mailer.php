@@ -223,7 +223,7 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
-            $this->dispatchMailerHook('event', 'beforeSendMail');
+            $this->dispatchMailerHook('event', 'beforeSendMail', []);
 
             $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
             $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);

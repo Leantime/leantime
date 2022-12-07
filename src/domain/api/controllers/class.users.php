@@ -56,6 +56,14 @@ namespace leantime\domain\controllers {
 
             }
 
+            if(isset($params["profileImageByUserId"])) {
+
+
+                $return = $this->usersService->getProfilePicture($params["profileImageByUserId"]);
+                $this->tpl->redirect($return);
+
+            }
+
         }
 
         /**
