@@ -89,10 +89,7 @@ class db
                 echo "- php-pdo_mysql is required, but not installed<br />\n";
             }
 
-            if($config->debug == '1') {
-                echo "<br />\Debug information<br />\n";
-                var_dump($e);
-            }
+            error_log($e);
 
             exit();
 

@@ -142,7 +142,9 @@ namespace leantime\core {
                 'name' => $name
             ]);
 
-            $pluginService = new services\plugins();
+            if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+                $pluginService = new services\plugins();
+            }
 
             if (empty($plugin_path) || !file_exists($plugin_path)) {
                 $file = '/'.$module.'/templates/'.$name;
@@ -152,7 +154,7 @@ namespace leantime\core {
                 }
 
                 if(file_exists(ROOT.'/../src/plugins'.$file) && is_readable(ROOT.'/../src/plugins'.$file)) {
-                    if($pluginService->isPluginEnabled($module)) {
+                    if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
                         return ROOT . '/../src/plugins' . $file;
                     }
                 }
@@ -167,7 +169,7 @@ namespace leantime\core {
             }
 
             if(file_exists(ROOT.'/../src/plugins'.$plugin_path) && is_readable(ROOT.'/../src/plugins'.$plugin_path)) {
-                if($pluginService->isPluginEnabled($module)) {
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
                     return ROOT.'/../src/plugins'.$plugin_path;
                 }
             }

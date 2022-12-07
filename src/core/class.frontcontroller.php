@@ -158,13 +158,14 @@ namespace leantime\core {
 
             $controllerNs = "domain";
 
-            $pluginService = new \leantime\domain\services\plugins();
-
+            if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+                $pluginService = new \leantime\domain\services\plugins();
+            }
 
             //Try plugin folder first for overrides
             if(file_exists($customPluginPath)) {
 
-                if($pluginService->isPluginEnabled($moduleName)) {
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
                     $controllerNs = "plugins";
                     require_once $customPluginPath;
                 }else{
@@ -178,7 +179,7 @@ namespace leantime\core {
 
             }elseif(file_exists($pluginPath)) {
 
-                if($pluginService->isPluginEnabled($moduleName)) {
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
                     $controllerNs = "plugins";
                     require_once $pluginPath;
                 }else{

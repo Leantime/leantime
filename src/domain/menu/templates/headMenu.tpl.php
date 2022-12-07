@@ -154,7 +154,6 @@ if(is_array($currentLink)) {
 <script>
     jQuery(document).ready(function(){
 
-
         jQuery("#notificationsDropdown li").click(function(){
 
            var url = jQuery(this).attr("data-url");

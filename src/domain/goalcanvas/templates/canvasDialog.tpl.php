@@ -1,5 +1,11 @@
 <?php
 /**
+ * Dialog
+ */
+$canvasName = 'goal';
+
+
+/**
  * canvasDialog.inc template - Generic template for comments
  *
  * Required variables:
@@ -42,7 +48,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-        <label><?=$this->__("label.description") ?></label>
+        <label><?=$this->__("label.what_is_your_goal") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
 
         <?php if(!empty($statusLabels)) { ?>
@@ -276,3 +282,4 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     })
 </script>
+
