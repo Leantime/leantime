@@ -280,8 +280,15 @@ namespace leantime\core {
         public function readIni()
         {
 
-            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme])) {
-                $this->ini_array = $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme];
+            if(isset($_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme]) && $this->config->debug == 0) {
+                $this->ini_array = $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme] = self::dispatch_filter(
+                    'language_resources',
+                    $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme],
+                    [
+                        'language' => $this->language,
+                        'theme' => $this->theme
+                    ]
+                );
                 return $this->ini_array;
             }
 
@@ -380,6 +387,16 @@ namespace leantime\core {
             }
 
             $this->ini_array = $mainLanguageArray;
+
+            $this->ini_array = self::dispatch_filter(
+                'language_resources',
+                $this->ini_array,
+                [
+                    'language' => $this->language,
+                    'theme' => $this->theme
+                ]
+            );
+
             $_SESSION['cache.language_resources_'.$this->language.'_'.$this->theme] = $this->ini_array;
 
             return $this->ini_array;

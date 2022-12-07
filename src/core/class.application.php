@@ -69,7 +69,7 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        self::dispatch_event("beginning");
+        self::dispatch_event("beginning", ['application' => $this]);
 
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
@@ -139,7 +139,7 @@ class application
 
         }
 
-        self::dispatch_event("end");
+        self::dispatch_event("end", ['application' => $this]);
 
     }
 

@@ -26,7 +26,7 @@ jQuery(document).ready(function(){
             }
             startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - dayAdjustment);
             endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - dayAdjustment + 6);
-    
+
             var inst = $input.data('datepicker');
             var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
             jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
@@ -76,7 +76,7 @@ jQuery(document).ready(function(){
         weekHeader: leantime.i18n.__("language.weekHeader"),
         firstDay: leantime.i18n.__("language.firstDayOfWeek"),
     });
-    
+
     setDates('.week-picker');
 
     var $calendarTR = jQuery('.ui-weekpicker .ui-datepicker-calendar tr');
@@ -89,12 +89,12 @@ jQuery(document).ready(function(){
 
 	jQuery("#startDate").datepicker("setDate", new Date(<?php echo $this->get("dateFrom")->format('Y, m-1, d'); ?>));
 	jQuery("#endDate").datepicker("setDate", new Date(<?php echo $this->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
-	
+
 	<?php $this->get("dateFrom")->sub(new DateInterval('P6D')); ?>
-	
+
     jQuery(".project-select").chosen();
     jQuery(".ticket-select").chosen();
-    
+
     jQuery(".project-select").change(function(){
 
             jQuery(".ticket-select").removeAttr("selected");
@@ -144,9 +144,9 @@ jQuery(document).ready(function(){
         jQuery("#timesheetList").submit();
 
     });
-    
+
     jQuery(".timesheetTable input").change(function(){
-    	
+
     	//Row Sum
     	colSumMo = 0;
     	colSumTu = 0;
@@ -155,8 +155,8 @@ jQuery(document).ready(function(){
     	colSumFr = 0;
     	colSumSa = 0;
     	colSumSu = 0;
-    	
-    	
+
+
     	jQuery(".timesheetRow").each(function(i){
 
     		var rowSum = 0;
@@ -164,7 +164,7 @@ jQuery(document).ready(function(){
     		jQuery(this).find("input.hourCell").each(function(){
     			var currentValue = parseFloat(jQuery(this).val());
     			rowSum = rowSum + currentValue;
-    			
+
     			var currentClass = jQuery(this).parent().attr('class');
 
     			if(currentClass.indexOf("rowMo") > -1){ colSumMo = colSumMo + currentValue; }
@@ -175,7 +175,7 @@ jQuery(document).ready(function(){
                 if(currentClass.indexOf("rowSa") > -1){ colSumSa = colSumSa + currentValue;  }
                 if(currentClass.indexOf("rowSu") > -1){ colSumSu = colSumSu + currentValue;  }
 
-    			
+
     		});
 
     		jQuery(this).find(".rowSum strong").text(rowSum);
@@ -188,11 +188,11 @@ jQuery(document).ready(function(){
     	jQuery("#sumFr").text(colSumFr.toFixed(2));
     	jQuery("#sumSa").text(colSumSa.toFixed(2));
     	jQuery("#sumSu").text(colSumSu.toFixed(2));
-    	
+
     	var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
-    	
+
     	jQuery("#finalSum").text(finalSum);
-    	
+
     });
 
     <?php if(isset($_SESSION['userdata']['settings']["modals"]["mytimesheets"]) === false || $_SESSION['userdata']['settings']["modals"]["mytimesheets"] == 0){     ?>
@@ -202,7 +202,7 @@ jQuery(document).ready(function(){
     $_SESSION['userdata']['settings']["modals"]["mytimesheets"] = 1;
     } ?>
  });
-    
+
 </script>
 
 
@@ -214,7 +214,7 @@ jQuery(document).ready(function(){
         <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
         <?php
@@ -278,14 +278,14 @@ jQuery(document).ready(function(){
                     <th><?php echo $this->__('label.client_product')?></th>
                     <th><?php echo $this->__('subtitles.todo')?></th>
                     <th><?php echo $this->__('label.type')?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[1]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[2]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[3]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[4]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[5]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[6]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $days[0]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
-                    <th class="<?php if($today == $currentDate)echo"active"; ?>"><?php echo $this->__('label.total')?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[1]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[2]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[3]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[4]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[5]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[6]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $days[0]?><br /><?php echo $currentDate; $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    <th class="<?php if ($today == $currentDate) echo "active"; ?>"><?php echo $this->__('label.total')?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -352,8 +352,14 @@ jQuery(document).ready(function(){
                                     <select data-placeholder="<?php echo $this->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                                         <option value=""></option>
                                         <?php foreach($this->get('allProjects') as $projectRow){ ?>
-                                            <?php echo"<option value=".$projectRow["id"].">".$this->escape($projectRow["clientName"])." / ".$this->escape($projectRow["name"])."</option>"; ?>
-                                        <?php }?>
+                                            <?php echo sprintf(
+                                                '<option value="%1$s">%2$s %3$s/ %4$s (%1$s)</option>',
+                                                $projectRow["id"],
+                                                $this->escape($projectRow["clientName"]),
+                                                !empty($projectRow['clientId']) ? "({$this->escape($projectRow['clientId'])}) " : '',
+                                                $this->escape($projectRow["name"])
+                                            ); ?>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </td>
@@ -362,7 +368,13 @@ jQuery(document).ready(function(){
                                     <select data-placeholder="<?php echo $this->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
                                         <?php foreach($this->get('allTickets') as $ticketRow){ ?>
-                                            <?php echo"<option value=".$ticketRow["id"]." data-value='".$ticketRow["projectId"]."' class='project_".$ticketRow["projectId"]."'>".$ticketRow["id"]." ".$this->escape($ticketRow["headline"])."</option>"; ?>
+                                            <?php echo sprintf(
+                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%3$s (%4$s_%2$s_%1$s)</option>',
+                                                $ticketRow["id"] ?? '',
+                                                $ticketRow["projectId"] ?? '',
+                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["headline"]) : '',
+                                                $this->escape($ticketRow["clientId"])
+                                            ); ?>
                                         <?php }?>
                                     </select>
                                 </div>

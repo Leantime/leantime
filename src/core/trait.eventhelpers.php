@@ -91,7 +91,7 @@ namespace leantime\core {
 
             // Position 0 would be the line
             // that called this function
-            $function = $trace[2]['function'];
+            $function = $trace[3]['function'];
 
             return $function;
         }

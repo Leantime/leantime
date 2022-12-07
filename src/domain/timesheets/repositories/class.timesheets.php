@@ -19,9 +19,6 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-
-
-
         public $kind = array(
             'GENERAL_BILLABLE' => 'label.general_billable',
             'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
@@ -50,7 +47,6 @@ namespace leantime\domain\repositories {
          */
         public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1')
         {
-
             $query = "SELECT
                         zp_timesheets.id,
                         zp_timesheets.userId,
@@ -80,20 +76,20 @@ namespace leantime\domain\repositories {
                     WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
-            if($projectId > 0) {
-                $query.=" AND (zp_tickets.projectId = :projectId)";
+            if ($projectId > 0) {
+                $query.= " AND (zp_tickets.projectId = :projectId)";
             }
 
-            if($ticketFilter > 0) {
-                $query.=" AND (zp_tickets.id = :ticketFilter)";
+            if ($ticketFilter > 0) {
+                $query.= " AND (zp_tickets.id = :ticketFilter)";
             }
 
-            if($kind != 'all') {
+            if ($kind != 'all') {
                 $query.= " AND (zp_timesheets.kind = :kind)";
             }
 
-            if($userId != 'all') {
-                $query.= " AND (zp_timesheets.userId= :userId)";
+            if ($userId != 'all') {
+                $query.= " AND (zp_timesheets.userId = :userId)";
             }
 
             if($invComp == '1') {
@@ -115,44 +111,38 @@ namespace leantime\domain\repositories {
             }
 
             $query.= " GROUP BY
-		                zp_timesheets.id,
-                        zp_timesheets.userId,
-                        zp_timesheets.ticketId,
-                        zp_timesheets.workDate,
-                        zp_timesheets.hours,
-                        zp_timesheets.description,
-                        zp_timesheets.kind";
+                zp_timesheets.id,
+                zp_timesheets.userId,
+                zp_timesheets.ticketId,
+                zp_timesheets.workDate,
+                zp_timesheets.hours,
+                zp_timesheets.description,
+                zp_timesheets.kind";
 
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
+            $call->prepare($query);
 
-            $stmn = $this->db->database->prepare($query);
+            $call->bindValue(':dateFrom', $dateFrom);
+            $call->bindValue(':dateTo', $dateTo);
 
-            $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
-            $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
-
-            if($projectId > 0) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            if ($projectId > 0) {
+                $call->bindValue(':projectId', $projectId);
             }
 
-            if($ticketFilter > 0) {
-                $stmn->bindValue(':ticketFilter', $ticketFilter, PDO::PARAM_STR);
+            if ($ticketFilter > 0) {
+                $call->bindValue(':ticketFilter', $ticketFilter);
             }
 
-            if($kind != 'all') {
-                $stmn->bindValue(':kind', $kind, PDO::PARAM_STR);
+            if ($kind != 'all') {
+                $call->bindValue(':kind', $kind);
             }
 
-            if($userId != 'all') {
-                $stmn->bindValue(':userId', $userId, PDO::PARAM_STR);
+            if ($userId != 'all') {
+                $call->bindValue(':userId', $userId);
             }
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-
-
+            return $call->execute('fetchAll');
         }
 
         public function export($values)
@@ -191,16 +181,17 @@ namespace leantime\domain\repositories {
             $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date)
 					VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
 
-            $stmn = $this->db->database->prepare($sql);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->bindValue(':module', 'export', PDO::PARAM_STR);
-            $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-            $stmn->bindValue(':extension', $ext, PDO::PARAM_STR);
-            $stmn->bindValue(':encName', $hash, PDO::PARAM_STR);
-            $stmn->bindValue(':realName', $filename, PDO::PARAM_STR);
+            $call->prepare($sql, ['values' => $values]);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+            $call->bindValue(':module', 'export');
+            $call->bindValue(':userId', $_SESSION['userdata']['id']);
+            $call->bindValue(':extension', $ext);
+            $call->bindValue(':encName', $hash);
+            $call->bindValue(':realName', $filename);
+
+            $call->execute();
 
             $content = 'ID: \t NAME: \t HEADLINE: \t HOURS: \t DESCRIPTION: \t KIND: \t NAME: \t \n';
 
@@ -216,14 +207,12 @@ namespace leantime\domain\repositories {
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $call->prepare($sql);
+            $call->bindValue(':userId', $id, PDO::PARAM_INT);
 
-            return $values;
+            return $call->execute('fetchAll');
         }
 
         public function getHoursBooked()
@@ -231,27 +220,20 @@ namespace leantime\domain\repositories {
             $sql = "SELECT SUM(hours) AS hoursBooked
                     FROM zp_timesheets;";
 
-            $stmn = $this->db->database->prepare($sql);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
+            $call->prepare($sql);
 
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
+            $values = $call->execute('fetch');
 
-            if(isset($values['hoursBooked']) === true) {
+            if (isset($values['hoursBooked']) === true) {
                 return $values['hoursBooked'];
-            }else{
+            } else {
                 return 0;
             }
 
             return $values;
         }
-
-
-
-
-
-
 
         public function getWeeklyTimesheets($projectId=-1, $dateStart='0000-01-01 00:00:00', $userId=0)
         {
@@ -292,29 +274,26 @@ namespace leantime\domain\repositories {
 			AND (zp_timesheets.userId = :userId)
 		";
 
-            if($projectId > 0) {
+            if ($projectId > 0) {
                 $query.=" AND zp_tickets.projectId = :projectId";
             }
 
             $query.="GROUP BY ticketId, kind";
 
-            $stmn = $this->db->database->prepare($query);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->bindValue(':dateStart1', $dateStart, PDO::PARAM_STR);
-            $stmn->bindValue(':dateStart2', $dateStart, PDO::PARAM_STR);
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $call->prepare($query);
 
-            if($projectId > 0) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            $call->bindValue(':dateStart1', $dateStart);
+            $call->bindValue(':dateStart2', $dateStart);
+            $call->bindValue(':userId', $userId, PDO::PARAM_INT);
+
+            if ($projectId > 0) {
+                $call->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
+            return $call->execute('fetchAll');
         }
-
 
         /**
          * getUsersTicketHours - get the total hours
@@ -326,17 +305,17 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $call->prepare($sql);
+            $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
-            if(count($values) > 0) {
+            $values = $call->execute('fetchAll');
+
+            if (count($values) > 0) {
                 return $values[0]['sumHours'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -367,26 +346,28 @@ namespace leantime\domain\repositories {
                 :paidDate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
 
-            $stmn = $this->db->database->prepare($query);
+            $query = self::dispatch_filter('sql', $query);
 
-            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
-            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedEmpl', $values['invoicedEmpl'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedComp', $values['invoicedComp'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
-            $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':paid', $values['paid'], PDO::PARAM_STR);
-            $stmn->bindValue(':paidDate', $values['paidDate'], PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
+            $call->prepare($query);
 
-            $stmn->closeCursor();
+            $call->bindValue(':userId', $values['userId']);
+            $call->bindValue(':ticket', $values['ticket']);
+            $call->bindValue(':date', $values['date']);
+            $call->bindValue(':hours', $values['hours']);
+            $call->bindValue(':kind', $values['kind']);
+            $call->bindValue(':description', $values['description']);
+            $call->bindValue(':invoicedEmpl', $values['invoicedEmpl']);
+            $call->bindValue(':invoicedComp', $values['invoicedComp']);
+            $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate']);
+            $call->bindValue(':invoicedCompDate', $values['invoicedCompDate']);
+            $call->bindValue(':rate', $values['rate']);
+            $call->bindValue(':hours', $values['hours']);
+            $call->bindValue(':paid', $values['paid']);
+            $call->bindValue(':paidDate', $values['paidDate']);
+
+            $call->execute();
         }
 
         public function simpleInsert($values)
@@ -408,19 +389,19 @@ namespace leantime\domain\repositories {
              :rate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
 
-            $stmn = $this->db->database->prepare($query);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
-            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':hoursB', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
-            $stmn->bindValue(':rate', $values['rate'], PDO::PARAM_STR);
+            $call->prepare($query);
 
-            $stmn->execute();
+            $call->bindValue(':userId', $values['userId']);
+            $call->bindValue(':ticket', $values['ticket']);
+            $call->bindValue(':date', $values['date']);
+            $call->bindValue(':hours', $values['hours']);
+            $call->bindValue(':hoursB', $values['hours']);
+            $call->bindValue(':kind', $values['kind']);
+            $call->bindValue(':rate', $values['rate']);
 
-            $stmn->closeCursor();
+            $call->execute();
         }
 
 
@@ -453,16 +434,13 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 		WHERE zp_timesheets.id = :id";
 
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn = $this->db->database->prepare($query);
+            $call->prepare($query);
 
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $call->bindValue(':id', $id);
 
-            $stmn->execute();
-            $value = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $value;
+            return $call->execute('fetch');
 
         }
 
@@ -491,24 +469,24 @@ namespace leantime\domain\repositories {
 			WHERE
 				id = :id";
 
-            $stmn = $this->db->database->prepare($query);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->bindValue(':ticket', $values['ticket'], PDO::PARAM_STR);
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedEmpl', $values['invoicedEmpl'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedComp', $values['invoicedComp'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'], PDO::PARAM_STR);
-            $stmn->bindValue(':invoicedCompDate', $values['invoicedCompDate'], PDO::PARAM_STR);
-            $stmn->bindValue(':paid', $values['paid'], PDO::PARAM_STR);
-            $stmn->bindValue(':paidDate', $values['paidDate'], PDO::PARAM_STR);
-            $stmn->bindValue(':id', $values['id'], PDO::PARAM_STR);
+            $call->prepare($query);
 
+            $call->bindValue(':ticket', $values['ticket']);
+            $call->bindValue(':date', $values['date']);
+            $call->bindValue(':hours', $values['hours']);
+            $call->bindValue(':kind', $values['kind']);
+            $call->bindValue(':description', $values['description']);
+            $call->bindValue(':invoicedEmpl', $values['invoicedEmpl']);
+            $call->bindValue(':invoicedComp', $values['invoicedComp']);
+            $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate']);
+            $call->bindValue(':invoicedCompDate', $values['invoicedCompDate']);
+            $call->bindValue(':paid', $values['paid']);
+            $call->bindValue(':paidDate', $values['paidDate']);
+            $call->bindValue(':id', $values['id']);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+            $call->execute();
         }
 
         /**
@@ -520,10 +498,9 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE
-					zp_timesheets
-				SET
-			hours = :hours
-
+                zp_timesheets
+            SET
+			    hours = :hours
 			WHERE
 				userId = :userId
 				AND ticketId = :ticketId
@@ -531,17 +508,19 @@ namespace leantime\domain\repositories {
 				AND TO_DAYS(workDate) = TO_DAYS(:date)
 				LIMIT 1";
 
-            $stmn = $this->db->database->prepare($query);
+            $query = self::dispatch_filter('sql', $query);
 
-            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_STR);
-            $stmn->bindValue(':ticketId', $values['ticket'], PDO::PARAM_STR);
-            $stmn->bindValue(':kind', $values['kind'], PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
+            $call->prepare($query);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+            $call->bindValue(':date', $values['date']);
+            $call->bindValue(':hours', $values['hours']);
+            $call->bindValue(':userId', $values['userId']);
+            $call->bindValue(':ticketId', $values['ticket']);
+            $call->bindValue(':kind', $values['kind']);
+
+            $call->execute();
 
         }
 
@@ -565,14 +544,13 @@ namespace leantime\domain\repositories {
 				WITH ROLLUP
 			LIMIT 12";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $call->prepare($query);
 
-            return $values;
+            $call->bindValue(':projectId', $projectId);
+
+            return $call->execute('fetchAll');
         }
 
         /**
@@ -599,16 +577,17 @@ namespace leantime\domain\repositories {
 			ORDER BY utc
 			";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $call->prepare($query);
+
+            $call->bindValue(':ticketId', $ticketId);
+
+            $values = $call->execute('fetchAll');
 
             $returnValues = array();
 
-            if(count($values) >0) {
+            if (count($values) >0) {
 
                 $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
                 $endDate = "".$values[(count($values)-1)]['utc']."";
@@ -621,7 +600,7 @@ namespace leantime\domain\repositories {
 
                 }
 
-            }else{
+            } else {
 
                 $returnValues[date("Y-m-d")]["utc"] = date("Y-m-d");
                 $returnValues[date("Y-m-d")]["summe"] = 0;
@@ -663,12 +642,13 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
+            $call->prepare($query);
 
-            $stmn->closeCursor();
+            $call->bindValue(':id', $id);
+
+            $call->execute();
 
         }
 
@@ -681,31 +661,42 @@ namespace leantime\domain\repositories {
         public function updateInvoices($invEmpl, $invComp = '', $paid ='')
         {
 
-            if($invEmpl != '' && is_array($invEmpl) === true) {
+            if ($invEmpl != '' && is_array($invEmpl) === true) {
 
-                foreach($invEmpl as $row1){
+                foreach ($invEmpl as $row1){
 
                     $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
 					WHERE id = :id ";
 
-                    $stmn = $this->db->database->prepare($query);
-                    $stmn->bindValue(':id',  $row1, PDO::PARAM_STR);
-                    $stmn->execute();
+                    $invEmplCall = new core\dbcall(__FUNCTION__ . ".invEmpl", func_get_args());
+
+                    $invEmplCall->prepare($query);
+
+                    $invEmplCall->bindValue(':id',  $row1);
+
+                    $invEmplCall->execute();
+
+                    unset($invEmplCall);
 
                 }
             }
 
-            if($invComp != '' && is_array($invComp) === true) {
+            if ($invComp != '' && is_array($invComp) === true) {
 
-                foreach($invComp as $row2){
+                foreach ($invComp as $row2){
 
                     $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
 				    WHERE id = :id ";
 
-                    $stmn = $this->db->database->prepare($query2);
-                    $stmn->bindValue(':id',  $row2, PDO::PARAM_STR);
-                    $stmn->execute();
+                    $invCompCall = new core\dbcall(__FUNCTION__ . ".invComp", func_get_args());
 
+                    $invCompCall->prepare($query2);
+
+                    $invCompCall->bindValue(':id',  $row2);
+
+                    $invCompCall->execute();
+
+                    unset($invCompCall);
 
                 }
 
@@ -741,13 +732,15 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
-            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-            $stmn->bindValue(':time', time(), PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $value = $stmn->execute();
-            $stmn->closeCursor();
+            $call->prepare($query);
+
+            $call->bindValue(':ticketId', $ticketId);
+            $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+            $call->bindValue(':time', time());
+
+            $value = $call->execute();
 
             return $value;
 
@@ -763,68 +756,70 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            $call = new core\dbcall(__FUNCTION__ . ".get", func_get_args());
 
-            $stmn->execute();
+            $call->prepare($query);
 
-            $result = $stmn->fetch();
+            $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $call->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
-            $stmn->closeCursor();
+            $result = $call->execute('fetch');
 
-            if($result) {
+            unset($call);
 
-                $inTimestamp = $result['punchIn'];
-                $outTimestamp = time();
-
-                $seconds =  ( $outTimestamp - $inTimestamp );
-
-                $totalMinutesWorked = $seconds / 60;
-
-                $hoursWorked = round(($totalMinutesWorked / 60), 2);
-
-                $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
-
-                $stmn = $this->db->database->prepare($query);
-                $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
-                $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-
-                $stmn->execute();
-                $stmn->closeCursor();
-
-                //At least 1 minutes
-                if($hoursWorked >= 0.016) {
-
-                    $date = date("Y-m-d", $inTimestamp)." 00:00:00";
-
-                    $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind)
-                    VALUES
-                    (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
-
-                     ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
-
-                    $stmn = $this->db->database->prepare($query);
-                    $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
-                    $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-                    $stmn->bindValue(':hoursWorked', $hoursWorked, PDO::PARAM_STR);
-                    $stmn->bindValue(':workDate', date("Y-m-d", $inTimestamp)." 00:00:00", PDO::PARAM_STR);
-
-                    $stmn->execute();
-                    $stmn->closeCursor();
-
-                }else{
-                    $hoursWorked = 0;
-                }
-
-                return $hoursWorked;
-
-            }else{
+            if (!$result) {
                 return false;
             }
 
+            $inTimestamp = $result['punchIn'];
+            $outTimestamp = time();
 
+            $seconds =  ( $outTimestamp - $inTimestamp );
 
+            $totalMinutesWorked = $seconds / 60;
+
+            $hoursWorked = round(($totalMinutesWorked / 60), 2);
+
+            $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
+
+            $query = self::dispatch_filter('sql_del', $query);
+
+            $call = new core\dbcall(__FUNCTION__ . ".del", func_get_args());
+
+            $call->prepare($query);
+
+            $call->bindValue(':ticketId', $ticketId);
+            $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+
+            $call->execute();
+
+            unset($call);
+
+            //At least 1 minutes
+            if ($hoursWorked < 0.016) {
+                return 0;
+            }
+
+            $date = date("Y-m-d", $inTimestamp)." 00:00:00";
+
+            $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind)
+            VALUES
+            (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
+
+                ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
+
+            $call = new core\dbcall(__FUNCTION__ . ".ins", func_get_args());
+
+            $call->prepare($query);
+
+            $call->bindValue(':ticketId', $ticketId);
+            $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+            $call->bindValue(':hoursWorked', $hoursWorked);
+            $call->bindValue(':workDate', date("Y-m-d", $inTimestamp)." 00:00:00");
+
+            $call->execute();
+
+            return $hoursWorked;
 
         }
 
@@ -849,14 +844,13 @@ namespace leantime\domain\repositories {
 
             $onTheClock = false;
 
-            $stmn = $this->db->database->prepare($query);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-            $stmn->execute();
+            $call->prepare($query);
 
-            $results = $stmn->fetchAll();
+            $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
 
-            $stmn->closeCursor();
+            $results = $call->execute('fetchAll');
 
             if (count($results) > 0) {
                 $onTheClock = array();
@@ -889,7 +883,6 @@ namespace leantime\domain\repositories {
 				DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
 				DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
 				(zp_timesheets.hours) AS summe
-
 			FROM
 				zp_timesheets
 			WHERE
@@ -897,17 +890,17 @@ namespace leantime\domain\repositories {
 			ORDER BY utc
 			";
 
-            $stmn = $this->db->{'database'}->prepare($query);
-            $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_STR);
+            $call = new core\dbcall(__FUNCTION__, func_get_args());
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+            $call->prepare($query);
 
+            $call->bindValue(':ticketId', $ticketId);
+
+            $values = $call->execute('fetchAll');
 
             $returnValues = array();
 
-            if(count($values) >0) {
+            if (count($values) > 0) {
                 $startDate = "".$values[0]['year']."-".$values[0]['month']."-01";
                 $endDate = "".$values[(count($values)-1)]['utc']."";
 
@@ -919,7 +912,7 @@ namespace leantime\domain\repositories {
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
 
                 }
-            }else{
+            } else {
                 $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
                 $returnValues[date("%Y-%m-%d")]["summe"] = 0;
             }

@@ -118,9 +118,9 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                         <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
                             <?php echo $this->getFormattedDateString($row['workDate']); ?>
                         </td>
-                        <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
-                        <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
-                        <?php $diff = $row['planHours']-$row['hours']; ?>
+                        <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours'] ?: 0); ?></td>
+                        <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours'] ?: 0); ?></td>
+                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                         <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
