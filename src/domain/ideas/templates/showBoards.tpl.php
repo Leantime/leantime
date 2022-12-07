@@ -95,8 +95,8 @@ $canvasLabels = $this->get('canvasLabels');
                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                         </a>
                                 <?php } ?>
-																	 
-                                    <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small> 
+
+                                    <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
                                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                                         &nbsp;&nbsp;&nbsp;
                                         <ul class="dropdown-menu">
@@ -272,7 +272,7 @@ $canvasLabels = $this->get('canvasLabels');
 
     jQuery(document).ready(function () {
 
-        new SlimSelect({ select: '#searchCanvas' });
+        //new SlimSelect({ select: '#searchCanvas' });
 
         leantime.ideasController.initMasonryWall();
         leantime.ideasController.initBoardControlModal();
