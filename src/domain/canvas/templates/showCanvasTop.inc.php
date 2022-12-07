@@ -20,6 +20,14 @@ $_SESSION['filter_status'] = $filter['status'];
 $filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 'all');
 $_SESSION['filter_relates'] = $filter['relates'];
 
+//get canvas title
+foreach($this->get('allCanvas') as $canvasRow){
+    if($canvasRow["id"] == $_GET['id']) {
+        $canvasTitle = $canvasRow["title"];
+        break;
+    }
+}
+
 ?>
 <style>
   .canvas-row { margin-left: 0px; margin-right: 0px;}
@@ -32,7 +40,26 @@ $_SESSION['filter_relates'] = $filter['relates'];
     <div class="pageicon"><span class='fa <?=$canvasIcon ?>'></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.$canvasName.board") ?></h1>
+        <h1><?=$this->__("headline.$canvasName.board") ?></h1> //
+        <a href="javascript:void(0)" class="dropdown-toggle full-width-select" data-toggle="dropdown" style="max-width:200px;">
+            <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
+        </a>
+
+        <ul class="dropdown-menu canvasSelector">
+            <li class="intro">
+                <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
+            </li>
+
+            <?php
+            $lastClient = "";
+            $i=0;
+            foreach($this->get('allCanvas') as $canvasRow){
+
+                echo "<li><a href='".BASE_URL."/".$canvasName."canvas/showCanvas/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
+
+            }
+            ?>
+        </ul>
     </div>
 </div><!--pageheader-->
 
@@ -50,26 +77,7 @@ $_SESSION['filter_relates'] = $filter['relates'];
                         <input type="hidden" name="filter_status" value="<?=$filter['status'] ?>">
                         <input type="hidden" name="filter_relates" value="<?=$filter['relates'] ?>">
 
-                          <a href="javascript:void(0)" class="dropdown-toggle full-width-select" data-toggle="dropdown" style="max-width:200px;">
-                                <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
-                            </a>
 
-                            <ul class="dropdown-menu projectselector">
-                                <li class="intro">
-                                    <span class="sub"><?=$this->__("menu.current_board") ?></span><br />
-                                    <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
-                                </li>
-
-                                <?php
-                                $lastClient = "";
-                                $i=0;
-                                foreach($this->get('allCanvas') as $canvasRow){
-
-                                    echo "<li><a href='".BASE_URL."/".$canvasName."canvas/showCanvas/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
-
-                                }
-                                ?>
-                            </ul>
 
 
 

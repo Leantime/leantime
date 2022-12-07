@@ -66,7 +66,7 @@ namespace leantime\domain\services {
 
                 if(is_dir($this->pluginDirectory."/".$directory) && array_search($directory, $installedPluginNames) === false){
 
-                    $pluginJsonFile = $this->pluginDirectory."/".$directory."/plugin.json";
+                    $pluginJsonFile = $this->pluginDirectory."/".$directory."/composer.json";
 
                     if(is_file($pluginJsonFile)) {
 
@@ -95,7 +95,7 @@ namespace leantime\domain\services {
         public function installPlugin($pluginFolder) {
 
             $pluginFolder = strip_tags(stripslashes($pluginFolder));
-            $pluginJsonFile = $this->pluginDirectory."/".$pluginFolder."/plugin.json";
+            $pluginJsonFile = $this->pluginDirectory."/".$pluginFolder."/composer.json";
 
             if(is_file($pluginJsonFile)) {
 
