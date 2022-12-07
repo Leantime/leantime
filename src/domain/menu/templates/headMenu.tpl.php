@@ -117,9 +117,63 @@ if(is_array($currentLink)) {
                 <?php } ?>
 
             <?php } ?>
+
+
+
         </ul>
     </li>
     <?php } ?>
+    <li class="notificationDropdown">
+        <?php
+            $notifications = $this->get('notifications');
+            $notificationCount = $this->get('newNotificationCount');
+            ?>
+        <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
+            <?=$this->__("menu.notifications")?>
+            <?php if($notificationCount > 0) echo "<span class='notificationCounter'>".$notificationCount."</span>"; ?>
+        </a>
+        <ul class="dropdown-menu" id="notificationsDropdown">
+            <?php foreach($notifications as $notif) { ?>
+
+                <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
+                    <span class="notificationProfileImage">
+                        <img src="<?= BASE_URL ?>/api/users?profileImageByUserId=<?=$notif['authorId'] ?>" />
+                    </span>
+                    <span class="notificationTitle"><?=$notif['message'] ?></span>
+                    <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
+                </li>
+
+            <?php } ?>
+        </ul>
+    </li>
     <?php $this->dispatchTplEvent('beforeHeadMenuClose'); ?>
 </ul>
 <?php $this->dispatchTplEvent('afterHeadMenu'); ?>
+
+
+<script>
+    jQuery(document).ready(function(){
+
+        jQuery("#notificationsDropdown li").click(function(){
+
+           var url = jQuery(this).attr("data-url");
+           var id = jQuery(this).attr("data-id");
+
+            jQuery.ajax(
+                {
+                    type: 'PATCH',
+                    url: leantime.appUrl+'/api/notifications',
+                    data:
+                        {
+                            id : id,
+                            action: "read"
+                        }
+                }
+            ).done(
+                function () {
+                   window.location.href = url;
+                }
+            );
+        });
+    });
+</script>

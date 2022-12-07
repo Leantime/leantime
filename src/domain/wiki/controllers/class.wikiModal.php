@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
     class wikiModal extends controller
     {
 
-        public function __construct() {
+        public function init() {
 
             $this->wikiService = new services\wiki();
 

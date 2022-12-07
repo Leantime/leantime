@@ -39,12 +39,8 @@ class application
         //Set Session
         $session = session::getInstance();
         $this->auth = services\auth::getInstance($session->getSID());
-
-        $this->config = new config();
         $this->settings = new appSettings();
-
         $this->frontController = frontcontroller::getInstance(ROOT);
-        $this->language = language::getInstance();
         $this->projectService = new services\projects();
         $this->settingsRepo = new repositories\setting();
         $this->reportService = new services\reports();
@@ -59,8 +55,6 @@ class application
      */
     public function start()
     {
-        events::discover_listeners();
-
         //Only run telemetry when logged in
         $telemetryResponse = false;
 
@@ -68,6 +62,8 @@ class application
 
         //Check if Leantime is installed
         $this->checkIfInstalled();
+
+        events::discover_listeners();
 
         self::dispatch_event("beginning", ['application' => $this]);
 
@@ -247,6 +243,13 @@ class application
             }
 
             $dbVersion = $this->settingsRepo->getSetting("db-version");
+
+            if ($this->settings->dbVersion != $dbVersion){
+                $_SESSION['isUpdated'] = false;
+            }else{
+                $_SESSION['isUpdated'] = true;
+            }
+
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
 
                 //Don't redirect on i18n call

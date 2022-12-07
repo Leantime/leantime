@@ -49,6 +49,32 @@ $_SESSION['filter_relates'] = $filter['relates'];
                     <form action="" method="post">
                         <input type="hidden" name="filter_status" value="<?=$filter['status'] ?>">
                         <input type="hidden" name="filter_relates" value="<?=$filter['relates'] ?>">
+
+                          <a href="javascript:void(0)" class="dropdown-toggle full-width-select" data-toggle="dropdown" style="max-width:200px;">
+                                <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
+                            </a>
+
+                            <ul class="dropdown-menu projectselector">
+                                <li class="intro">
+                                    <span class="sub"><?=$this->__("menu.current_board") ?></span><br />
+                                    <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
+                                </li>
+
+                                <?php
+                                $lastClient = "";
+                                $i=0;
+                                foreach($this->get('allCanvas') as $canvasRow){
+
+                                    echo "<li><a href='".BASE_URL."/".$canvasName."canvas/showCanvas/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
+
+                                }
+                                ?>
+                            </ul>
+
+
+
+
+
                         <?php if(count($allCanvas) > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_board") ?>" name="searchCanvas" class="mainSprintSelector" onchange="form.submit()" id="searchCanvas" style="max-width: 400px; margin:5px">
                                 <?php
@@ -88,7 +114,7 @@ $_SESSION['filter_relates'] = $filter['relates'];
                     <div class="btn-group viewDropDown">
                         <?php if(count($allCanvas) > 0 && !empty($statusLabels)) {?>
                             <?php if($filter['status'] == 'all') { ?>
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw fa-globe"></i> <?=$this->__("status.all") ?> <?=$this->__("links.view") ?></button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i> <?=$this->__("status.all") ?> <?=$this->__("links.view") ?></button>
                             <?php }else{ ?>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw <?=$this->__($statusLabels[$filter['status']]['icon']) ?>"></i> <?=$statusLabels[$filter['status']]['title'] ?> <?=$this->__("links.view") ?></button>
                             <?php } ?>

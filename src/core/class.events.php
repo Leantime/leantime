@@ -118,8 +118,11 @@ class events
 
         $pluginPath = ROOT."/../src/plugins/";
 
-        $pluginService = new \leantime\domain\services\plugins();
-        $enabledPlugins = $pluginService->getEnabledPlugins();
+        $enabledPlugins = [];
+        if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+            $pluginService = new \leantime\domain\services\plugins();
+            $enabledPlugins = $pluginService->getEnabledPlugins();
+        }
 
         foreach($enabledPlugins as $plugin){
 
