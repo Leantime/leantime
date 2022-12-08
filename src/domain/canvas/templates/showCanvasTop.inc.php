@@ -67,7 +67,7 @@ foreach($this->get('allCanvas') as $canvasRow){
 
                 <ul class="dropdown-menu canvasSelector">
                      <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create") ?></a></li>
+                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create_new_board") ?></a></li>
 
                    <?php } ?>
                     <li class="border"></li>

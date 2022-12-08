@@ -21,7 +21,7 @@ namespace leantime\domain\repositories {
                 10 => [ 'type' => 'item', 'module' => 'dashboard',  'title' => 'menu.dashboard',  'href' => '/dashboard/show',     'active' => [ 'show' ] ],
                 15 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.todos',      'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => [ 'showKanban', 'showAll', 'showTicket' ] ],
                 20 => [ 'type' => 'item', 'module' => 'tickets',    'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => [ 'roadmap' ] ],
-                30 => [ 'type' => 'item', 'module' => 'canvas',    'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas', 'active' => [ 'goalcanvas' ] ],
+                30 => [ 'type' => 'item', 'module' => 'goalcanvas',    'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas'],
                 40 => [ 'type' => 'item', 'module' => 'ideas',      'title' => 'menu.ideas',      'href' => '/ideas/showBoards' ],
                 50 => [ 'type' => 'item', 'module' => 'wiki',       'title' => 'menu.wiki',  'href' => '/wiki/show' ],
                 60 => [ 'type' => 'item', 'module' => 'retroscanvas',       'title' => 'menu.retroscanvas',  'href' => '/retroscanvas/showCanvas' ],
