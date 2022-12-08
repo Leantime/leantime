@@ -10,7 +10,7 @@ namespace leantime\domain\controllers {
 
         private $settings;
 
-        public function __construct()
+        public function init()
         {
 
             $this->settings = new core\appSettings();

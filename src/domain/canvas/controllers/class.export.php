@@ -35,7 +35,7 @@ namespace leantime\domain\controllers\canvas {
         /***
          * Constructor
          */
-        public function __construct()
+        public function init()
         {
 
             $this->config = new core\config();

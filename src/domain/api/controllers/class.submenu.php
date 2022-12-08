@@ -5,8 +5,9 @@
 namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
+    use leantime\core\controller;
 
-    class submenu
+    class submenu extends controller
     {
 
         private $menu;
@@ -17,7 +18,7 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
             $this->menu = new repositories\menu();
@@ -60,7 +61,7 @@ namespace leantime\domain\controllers {
 
 			$this->menu->setSubmenuState($params['submenu'] , $params['state']);
 			echo "{status:ok}";
-			
+
         }
 
         /**

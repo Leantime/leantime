@@ -10,9 +10,17 @@ namespace leantime\domain\events {
 
     class motivationalQuotes
     {
-        //Events must have handle method
+        /**
+         * Events must have a handler.
+         *
+         * Please see the executeHandlers method in
+         * src/core/class.events.php to see all the different
+         * ways this can be formatted.
+         */
         public function handle($payload)
         {
+            var_dump('exit'); exit;
+
             // code here
             $motivationalQuotesSvc = new \leantime\plugins\services\motivationalQuotes();
             $randomQuote = $motivationalQuotesSvc->getRandomQuote();
@@ -23,7 +31,7 @@ namespace leantime\domain\events {
         }
     }
 
-    \leantime\core\events::add_event_listener("core.template.dispatch_event.afterWelcomeMessage", new motivationalQuotes());
+    \leantime\core\events::add_event_listener("core.template.dispatchTplEvent.afterWelcomeMessage", new motivationalQuotes());
 
 }
 

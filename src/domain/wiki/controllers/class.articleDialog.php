@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
     class articleDialog extends controller
     {
 
-        public function __construct() {
+        public function init() {
 
             $this->wikiService = new services\wiki();
             $this->ticketService = new services\tickets();
