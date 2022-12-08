@@ -19,6 +19,8 @@ namespace leantime\domain\events {
          */
         public function handle($payload)
         {
+            var_dump('exit'); exit;
+
             // code here
             $motivationalQuotesSvc = new \leantime\plugins\services\motivationalQuotes();
             $randomQuote = $motivationalQuotesSvc->getRandomQuote();

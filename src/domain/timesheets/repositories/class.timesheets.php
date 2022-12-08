@@ -4,9 +4,10 @@ namespace leantime\domain\repositories {
 
     use DateTime;
     use leantime\core;
+    use leantime\core\repository;
     use pdo;
 
-    class timesheets
+    class timesheets extends repository
     {
 
         /**
@@ -119,7 +120,7 @@ namespace leantime\domain\repositories {
                 zp_timesheets.description,
                 zp_timesheets.kind";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -142,7 +143,7 @@ namespace leantime\domain\repositories {
                 $call->bindValue(':userId', $userId);
             }
 
-            return $call->execute('fetchAll');
+            return $call->fetchAll();
         }
 
         public function export($values)
@@ -181,7 +182,7 @@ namespace leantime\domain\repositories {
             $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date)
 					VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($sql, ['values' => $values]);
 
@@ -207,12 +208,12 @@ namespace leantime\domain\repositories {
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($sql);
             $call->bindValue(':userId', $id, PDO::PARAM_INT);
 
-            return $call->execute('fetchAll');
+            return $call->fetchAll();
         }
 
         public function getHoursBooked()
@@ -220,11 +221,11 @@ namespace leantime\domain\repositories {
             $sql = "SELECT SUM(hours) AS hoursBooked
                     FROM zp_timesheets;";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($sql);
 
-            $values = $call->execute('fetch');
+            $values = $call->fetchAll();
 
             if (isset($values['hoursBooked']) === true) {
                 return $values['hoursBooked'];
@@ -280,7 +281,7 @@ namespace leantime\domain\repositories {
 
             $query.="GROUP BY ticketId, kind";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -292,7 +293,7 @@ namespace leantime\domain\repositories {
                 $call->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            return $call->execute('fetchAll');
+            return $call->fetchAll();
         }
 
         /**
@@ -305,13 +306,13 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($sql);
             $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
             $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
-            $values = $call->execute('fetchAll');
+            $values = $call->fetchAll();
 
             if (count($values) > 0) {
                 return $values[0]['sumHours'];
@@ -348,7 +349,7 @@ namespace leantime\domain\repositories {
 
             $query = self::dispatch_filter('sql', $query);
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -389,7 +390,7 @@ namespace leantime\domain\repositories {
              :rate)
 			 ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -434,13 +435,13 @@ namespace leantime\domain\repositories {
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 		WHERE zp_timesheets.id = :id";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':id', $id);
 
-            return $call->execute('fetch');
+            return $call->fetch();
 
         }
 
@@ -469,7 +470,7 @@ namespace leantime\domain\repositories {
 			WHERE
 				id = :id";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -510,7 +511,7 @@ namespace leantime\domain\repositories {
 
             $query = self::dispatch_filter('sql', $query);
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -544,13 +545,13 @@ namespace leantime\domain\repositories {
 				WITH ROLLUP
 			LIMIT 12";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':projectId', $projectId);
 
-            return $call->execute('fetchAll');
+            return $call->fetchAll();
         }
 
         /**
@@ -577,13 +578,13 @@ namespace leantime\domain\repositories {
 			ORDER BY utc
 			";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':ticketId', $ticketId);
 
-            $values = $call->execute('fetchAll');
+            $values = $call->fetchAll();
 
             $returnValues = array();
 
@@ -642,7 +643,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -668,7 +669,7 @@ namespace leantime\domain\repositories {
                     $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
 					WHERE id = :id ";
 
-                    $invEmplCall = new core\dbcall(__FUNCTION__ . ".invEmpl", func_get_args());
+                    $invEmplCall = $this->dbcall(__FUNCTION__ . ".invEmpl", func_get_args());
 
                     $invEmplCall->prepare($query);
 
@@ -688,7 +689,7 @@ namespace leantime\domain\repositories {
                     $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
 				    WHERE id = :id ";
 
-                    $invCompCall = new core\dbcall(__FUNCTION__ . ".invComp", func_get_args());
+                    $invCompCall = $this->dbcall(__FUNCTION__ . ".invComp", func_get_args());
 
                     $invCompCall->prepare($query2);
 
@@ -732,7 +733,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
@@ -756,14 +757,14 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
 
-            $call = new core\dbcall(__FUNCTION__ . ".get", func_get_args());
+            $call = $this->dbcall(__FUNCTION__ . ".get", func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
             $call->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
-            $result = $call->execute('fetch');
+            $result = $call->fetch();
 
             unset($call);
 
@@ -784,7 +785,7 @@ namespace leantime\domain\repositories {
 
             $query = self::dispatch_filter('sql_del', $query);
 
-            $call = new core\dbcall(__FUNCTION__ . ".del", func_get_args());
+            $call = $this->dbcall(__FUNCTION__ . ".del", func_get_args());
 
             $call->prepare($query);
 
@@ -808,7 +809,7 @@ namespace leantime\domain\repositories {
 
                 ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
-            $call = new core\dbcall(__FUNCTION__ . ".ins", func_get_args());
+            $call = $this->dbcall(__FUNCTION__ . ".ins", func_get_args());
 
             $call->prepare($query);
 
@@ -844,13 +845,13 @@ namespace leantime\domain\repositories {
 
             $onTheClock = false;
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
 
-            $results = $call->execute('fetchAll');
+            $results = $call->fetchAll();
 
             if (count($results) > 0) {
                 $onTheClock = array();
@@ -890,13 +891,13 @@ namespace leantime\domain\repositories {
 			ORDER BY utc
 			";
 
-            $call = new core\dbcall(__FUNCTION__, func_get_args());
+            $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
 
             $call->bindValue(':ticketId', $ticketId);
 
-            $values = $call->execute('fetchAll');
+            $values = $call->fetchAll();
 
             $returnValues = array();
 

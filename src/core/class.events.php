@@ -124,6 +124,8 @@ class events
             $enabledPlugins = $pluginService->getEnabledPlugins();
         }
 
+        //var_dump($enabledPlugins); exit;
+
         foreach($enabledPlugins as $plugin){
 
             if(file_exists($pluginPath.$plugin->foldername."/register.php")) {
