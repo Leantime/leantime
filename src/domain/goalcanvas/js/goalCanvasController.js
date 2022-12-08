@@ -1,6 +1,6 @@
 leantime.goalCanvasController = (function () {
 
-	var canvasName = 'swot';
+	var canvasName = 'goal';
 
     var setRowHeights = function () {
 

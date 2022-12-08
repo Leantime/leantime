@@ -303,19 +303,22 @@ namespace leantime\core {
 
             $this->mailAgent->AltBody = $altBody;
 
-            $to = array_unique($to);
+            if(is_array($to)) {
 
-            foreach ($to as $recip) {
+                $to = array_unique($to);
 
-                try {
-                    $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
-                }catch(Exception $e){
-                    error_log($this->mailAgent->ErrorInfo);
-                    error_log($e);
+                foreach ($to as $recip) {
+                    try {
+                        $this->mailAgent->addAddress($recip);
+                        $this->mailAgent->send();
+                    } catch (Exception $e) {
+                        error_log($this->mailAgent->ErrorInfo);
+                        error_log($e);
+                    }
+
+                    $this->mailAgent->clearAllRecipients();
                 }
 
-                $this->mailAgent->clearAllRecipients();
             }
 
             $this->dispatchMailerHook('event', 'afterSendMail');
