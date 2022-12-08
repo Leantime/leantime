@@ -669,7 +669,7 @@ namespace leantime\domain\repositories {
                     $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
 					WHERE id = :id ";
 
-                    $invEmplCall = $this->dbcall(__FUNCTION__ . ".invEmpl", func_get_args());
+                    $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
 
                     $invEmplCall->prepare($query);
 
@@ -689,7 +689,7 @@ namespace leantime\domain\repositories {
                     $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
 				    WHERE id = :id ";
 
-                    $invCompCall = $this->dbcall(__FUNCTION__ . ".invComp", func_get_args());
+                    $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
 
                     $invCompCall->prepare($query2);
 
@@ -703,17 +703,22 @@ namespace leantime\domain\repositories {
 
             }
 
-            if($paid != '' && is_array($paid) === true) {
+            if ($paid != '' && is_array($paid) === true) {
 
                 foreach($paid as $row3){
 
                     $query3 = "UPDATE zp_timesheets SET paid = 1, paidDate = DATE(NOW())
 				    WHERE id = :id ";
 
-                    $stmn = $this->db->database->prepare($query3);
-                    $stmn->bindValue(':id',  $row3, PDO::PARAM_STR);
-                    $stmn->execute();
+                    $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
 
+                    $paidCol->prepare($query3);
+
+                    $paidCol->bindValue(':id', $row3);
+
+                    $paidCol->execute();
+
+                    unset($paidCol);
 
                 }
 
@@ -757,7 +762,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
 
-            $call = $this->dbcall(__FUNCTION__ . ".get", func_get_args());
+            $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'select']);
 
             $call->prepare($query);
 
@@ -783,9 +788,7 @@ namespace leantime\domain\repositories {
 
             $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
 
-            $query = self::dispatch_filter('sql_del', $query);
-
-            $call = $this->dbcall(__FUNCTION__ . ".del", func_get_args());
+            $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'delete']);
 
             $call->prepare($query);
 
@@ -809,7 +812,7 @@ namespace leantime\domain\repositories {
 
                 ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
-            $call = $this->dbcall(__FUNCTION__ . ".ins", func_get_args());
+            $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
 
             $call->prepare($query);
 
