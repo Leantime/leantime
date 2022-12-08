@@ -278,7 +278,7 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
-            $this->dispatchMailerHook(
+            $bodyTemplate = $this->dispatchMailerHook(
                 'filter',
                 'bodyTemplate',
                 $bodyTemplate,
@@ -295,7 +295,7 @@ namespace leantime\core {
 
             $this->mailAgent->Body = $bodyTemplate;
 
-            $this->dispatchMailerHook(
+            $altBody = $this->dispatchMailerHook(
                 'filter',
                 'altBody',
                 $this->text
