@@ -362,3 +362,11 @@ body .ticketDropdown ul::after {
 .iconpicker .iconpicker-item:hover:not(.iconpicker-selected) {
     background:var(--dropdown-link-hover-bg);
 }
+
+.articleBody table {
+
+}
+
+.articleBody table td {
+    border:1px solid var(--neutral);
+}
