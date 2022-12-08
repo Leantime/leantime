@@ -119,7 +119,7 @@ abstract class repository {
                 $this->caller_class::dispatch_event("beforeExecute", $this->getArgs(), 4);
 
                 $this->stmn = $this->caller_class::dispatch_filter("stmn", $this->stmn, $this->getArgs(), 4);
-                $this->fetchtype = $this->caller_class::dispatch_filter("fetchtype", $fetchtype, $this->getArgs(), 4);
+                $method = $this->caller_class::dispatch_filter("method", $method, $this->getArgs(), 4);
 
                 $values = $this->stmn->execute();
 

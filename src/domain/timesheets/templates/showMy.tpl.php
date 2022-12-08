@@ -373,7 +373,7 @@ jQuery(document).ready(function(){
                                                 $ticketRow["id"] ?? '',
                                                 $ticketRow["projectId"] ?? '',
                                                 !empty($ticketRow["headline"]) ? $this->escape($ticketRow["headline"]) : '',
-                                                $this->escape($ticketRow["clientId"])
+                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["clientId"]) : ''
                                             ); ?>
                                         <?php }?>
                                     </select>
