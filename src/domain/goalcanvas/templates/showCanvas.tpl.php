@@ -39,10 +39,6 @@ $elementName = 'goal';
                                                 </a>
                                             <?php } ?>
 
-                                            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                                               class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
-                                                <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
-                                                ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
 
                                             <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                                                 &nbsp;&nbsp;&nbsp;
@@ -66,7 +62,7 @@ $elementName = 'goal';
                                         <br />
 
                                         <?php
-                                            if($row["conclusion"] != 0) {
+                                            if($row["conclusion"] != 0 && is_numeric($row["data"]) && is_numeric($row["conclusion"])) {
                                                 $percentDone = $row["data"] / $row["conclusion"] * 100;
                                             }else{
                                                 $percentDone = 0;
@@ -92,9 +88,6 @@ $elementName = 'goal';
                                                 <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percentDone)?></span>
                                             </div>
                                         </div>
-
-
-
 
                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
 
@@ -146,6 +139,7 @@ $elementName = 'goal';
                                             </div>
                                         <?php } ?>
 
+
                                         <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                             <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>"
                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -177,6 +171,14 @@ $elementName = 'goal';
                                                 }?>
                                             </ul>
                                         </div>
+
+                                        <div class="right">
+                                            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                                               class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
+                                                <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
+                                                ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -210,32 +212,16 @@ $elementName = 'goal';
 
                     </div>
                     <br />
-                    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-                        <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
-                           class="<?=$canvasName ?>CanvasModal" id="<?php echo $elementName; ?>"
-                           style="padding-bottom: 10px;"><?=$this->__('links.add_new_canvas_item') ?></a>
-                    <?php } ?>
+
 
 
                 </div>
             </div>
         </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <!-- Old -->
+        <?php if(count($canvasItems) == 0){ ?>
+            <?=$this->__('text.no_goals_yet') ?>
+        <?php } ?>
 
 
         <div class="clearfix"></div>

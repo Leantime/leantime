@@ -42,17 +42,19 @@ namespace leantime\domain\repositories {
                       zp_user.firstname,
                       zp_user.lastname
                 FROM zp_notifications
-                LEFT JOIN zp_user ON zp_notifications.authorId = zp_user.id";
+                LEFT JOIN zp_user ON zp_notifications.authorId = zp_user.id
+                WHERE userId = :userId";
 
 
             if($showNewOnly === true) {
-                $query .= " WHERE `read` = '0' ";
+                $query .= " AND `read` = '0' ";
             }
 
             $query.=" ORDER BY datetime DESC
                 LIMIT ".$limitStart.", ".$limitEnd."";
 
             $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
             $stmn->execute();
 

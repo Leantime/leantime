@@ -22,7 +22,7 @@ $_SESSION['filter_relates'] = $filter['relates'];
 
 //get canvas title
 foreach($this->get('allCanvas') as $canvasRow){
-    if($canvasRow["id"] == $_GET['id']) {
+    if($canvasRow["id"] == $this->get('currentCanvas')) {
         $canvasTitle = $canvasRow["title"];
         break;
     }
@@ -40,26 +40,50 @@ foreach($this->get('allCanvas') as $canvasRow){
     <div class="pageicon"><span class='fa <?=$canvasIcon ?>'></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.$canvasName.board") ?></h1> //
-        <a href="javascript:void(0)" class="dropdown-toggle full-width-select" data-toggle="dropdown" style="max-width:200px;">
-            <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
-        </a>
-
-        <ul class="dropdown-menu canvasSelector">
-            <li class="intro">
-                <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
-            </li>
-
-            <?php
-            $lastClient = "";
-            $i=0;
-            foreach($this->get('allCanvas') as $canvasRow){
-
-                echo "<li><a href='".BASE_URL."/".$canvasName."canvas/showCanvas/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
-
-            }
-            ?>
+        <?php if(count($allCanvas) > 0) {?>
+        <span class="dropdown dropdownWrapper headerEditDropdown">
+        <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+        <ul class="dropdown-menu editCanvasDropdown">
+            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                <li><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></li>
+                <li><a href="javascript:void(0)" class="cloneCanvasLink "><?=$this->__("links.icon.clone") ?></a></li>
+                <li><a href="javascript:void(0)" class="mergeCanvasLink "><?=$this->__("links.icon.merge") ?></a></li>
+                <li><a href="javascript:void(0)" class="importCanvasLink "><?=$this->__("links.icon.import") ?></a></li>
+            <?php } ?>
+            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.export") ?></a></li>
+            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/pdf/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.print") ?></a></li>
+            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
+            <?php } ?>
         </ul>
+        </span>
+        <?php } ?>
+        <h1><?=$this->__("headline.$canvasName.board") ?> //
+            <?php if(count($allCanvas) > 0) {?>
+            <span class="dropdown dropdownWrapper">
+                <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" style="max-width:200px;">
+                    <?php $this->e($canvasTitle); ?>&nbsp;<i class="fa fa-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu canvasSelector">
+                     <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create") ?></a></li>
+
+                   <?php } ?>
+                    <li class="border"></li>
+                    <?php
+                    $lastClient = "";
+                    $i=0;
+                    foreach($this->get('allCanvas') as $canvasRow){
+
+                        echo "<li><a href='".BASE_URL."/".$canvasName."canvas/showCanvas/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
+
+                    }
+                    ?>
+                </ul>
+            </span>
+            <?php } ?>
+        </h1>
     </div>
 </div><!--pageheader-->
 
@@ -69,52 +93,17 @@ foreach($this->get('allCanvas') as $canvasRow){
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
-            <div class="col-md-3"></div>
+            <div class="col-md-3">
+
+                <?php if($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1) { ?>
+                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+                       class="<?=$canvasName ?>CanvasModal btn btn-primary" id="<?php echo $elementName; ?>"><?=$this->__('links.add_new_canvas_item'.$canvasName) ?></a>
+                <?php } ?>
+
+            </div>
 
             <div class="col-md-6 center">
-                <span class="currentSprint">
-                    <form action="" method="post">
-                        <input type="hidden" name="filter_status" value="<?=$filter['status'] ?>">
-                        <input type="hidden" name="filter_relates" value="<?=$filter['relates'] ?>">
 
-
-
-
-
-
-
-                        <?php if(count($allCanvas) > 0) {?>
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_board") ?>" name="searchCanvas" class="mainSprintSelector" onchange="form.submit()" id="searchCanvas" style="max-width: 400px; margin:5px">
-                                <?php
-                                $lastClient = "";
-                                $i=0;
-                                foreach($this->get('allCanvas') as $canvasRow){
-
-                                    echo "<option value='".$canvasRow["id"]."'";
-                                    if($this->get('currentCanvas') == $canvasRow["id"]) {
-                                        $canvasTitle= $canvasRow["title"];
-                                        echo " selected='selected' ";
-                                    }
-                                    echo ">".$canvasRow["title"]."</option>";
-                                }
-                                ?>
-                            </select><br />
-                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-                                <small><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create") ?></a></small> |
-                                <small><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></small> |
-                                <small><a href="javascript:void(0)" class="cloneCanvasLink "><?=$this->__("links.icon.clone") ?></a></small> |
-                                <small><a href="javascript:void(0)" class="mergeCanvasLink "><?=$this->__("links.icon.merge") ?></a></small> |
-                                <small><a href="javascript:void(0)" class="importCanvasLink "><?=$this->__("links.icon.import") ?></a></small> |
-                            <?php } ?>
-                            <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.export") ?></a></small> |
-                            <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/pdf/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.print") ?></a></small>
-                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-                                | <small><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></small>
-                            <?php } ?>
-                        <?php } ?>
-                    </form>
-
-                </span>
             </div>
 
             <div class="col-md-3">

@@ -147,7 +147,7 @@ namespace leantime\domain\services {
             //Only users that actually want to be notified
             foreach ($users as $user) {
 
-                if ($user["notifications"] != 0 && $user['id'] != $_SESSION['userdata']['id']) {
+                if ($user["notifications"] != 0 && ($user['username'] != $_SESSION['userdata']['mail'])) {
                     $to[] = $user;
                 }
             }
