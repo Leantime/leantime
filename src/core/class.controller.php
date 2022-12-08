@@ -6,7 +6,7 @@ use leantime\core\template;
 use leantime\core\events;
 use leantime\core\language;
 
-class controller {
+abstract class controller {
 
     use eventhelpers;
 

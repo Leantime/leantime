@@ -5,11 +5,12 @@
 namespace leantime\domain\controllers\api {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class canvas
+    class canvas extends controller
     {
 
         /**
@@ -17,7 +18,6 @@ namespace leantime\domain\controllers\api {
          */
         protected const CANVAS_NAME = '??';
 
-        private $tpl;
         private $projects;
 
         /**
@@ -26,10 +26,9 @@ namespace leantime\domain\controllers\api {
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $canvasRepoName = "leantime\\domain\\repositories\\".static::CANVAS_NAME.'canvas';
             $this->canvasRepo = new $canvasRepoName();
