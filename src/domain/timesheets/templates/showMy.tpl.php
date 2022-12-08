@@ -353,11 +353,18 @@ jQuery(document).ready(function(){
                                         <option value=""></option>
                                         <?php foreach($this->get('allProjects') as $projectRow){ ?>
                                             <?php echo sprintf(
-                                                '<option value="%1$s">%2$s %3$s/ %4$s (%1$s)</option>',
-                                                $projectRow["id"],
-                                                $this->escape($projectRow["clientName"]),
-                                                !empty($projectRow['clientId']) ? "({$this->escape($projectRow['clientId'])}) " : '',
-                                                $this->escape($projectRow["name"])
+                                                $this->dispatchTplFilter(
+                                                    'client_product_format',
+                                                    '<option value="%s">%s / %s</option>'
+                                                ),
+                                                ...$this->dispatchTplFilter(
+                                                    'client_product_values',
+                                                    [
+                                                        $projectRow['id'],
+                                                        $this->escape($projectRow['clientName']),
+                                                        $this->escape($projectRow['name'])
+                                                    ]
+                                                )
                                             ); ?>
                                         <?php } ?>
                                     </select>
@@ -369,11 +376,18 @@ jQuery(document).ready(function(){
                                         <option value=""></option>
                                         <?php foreach($this->get('allTickets') as $ticketRow){ ?>
                                             <?php echo sprintf(
-                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%3$s (%4$s_%2$s_%1$s)</option>',
-                                                $ticketRow["id"] ?? '',
-                                                $ticketRow["projectId"] ?? '',
-                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["headline"]) : '',
-                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["clientId"]) : ''
+                                                $this->dispatchTplFilter(
+                                                    'todo_format',
+                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
+                                                ),
+                                                ...$this->dispatchTplFilter(
+                                                    'todo_values',
+                                                    [
+                                                        $ticketRow['id'],
+                                                        $ticketRow['projectId'],
+                                                        $this->escape($ticketRow['headline'])
+                                                    ]
+                                                )
                                             ); ?>
                                         <?php }?>
                                     </select>
