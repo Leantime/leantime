@@ -389,13 +389,6 @@ jQuery(document).ready(function(){
                                                     ]
                                                 )
                                             ); ?>
-                                            <?php echo sprintf(
-                                                '<option value="%1$s" data-value="%2$s" class="project_%2$s">%3$s (%4$s_%2$s_%1$s)</option>',
-                                                $ticketRow["id"] ?? '',
-                                                $ticketRow["projectId"] ?? '',
-                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["headline"]) : '',
-                                                !empty($ticketRow["headline"]) ? $this->escape($ticketRow["clientId"]) : ''
-                                            ); ?>
                                         <?php }?>
                                     </select>
                                 </div>
