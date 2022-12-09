@@ -57,8 +57,6 @@ namespace leantime\domain\controllers {
 
                 if(is_array($success) === true) {
 
-                    var_dump($success);
-
                     foreach($success as $errorMessage) {
 
                         $this->tpl->setNotification($errorMessage, "error");

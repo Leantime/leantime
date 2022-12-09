@@ -128,7 +128,7 @@ namespace leantime\domain\services {
                 // TODO here : only delete these if the send was successful
                 // echo for DEBUG PURPOSE
                 debug_print( "Messages send (about to delete) :");
-                print_r($allMessagesToDelete[$currentUserId]);
+                
                 $this->queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 
                 // Store the last time a mail was sent to $recipient email

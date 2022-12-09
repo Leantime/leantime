@@ -129,7 +129,7 @@ if(is_array($currentLink)) {
             $notificationCount = $this->get('newNotificationCount');
             ?>
         <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
-            <?=$this->__("menu.notifications")?>
+            <span class="fa-solid fa-bell"></span>
             <?php if($notificationCount > 0) echo "<span class='notificationCounter'>".$notificationCount."</span>"; ?>
         </a>
         <ul class="dropdown-menu" id="notificationsDropdown">

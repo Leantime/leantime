@@ -10,7 +10,7 @@ namespace leantime\domain\repositories {
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = 'goals';
+        protected const CANVAS_NAME = 'goal';
 
 		/***
 		 * icon - Icon associated with canvas (must be extended)

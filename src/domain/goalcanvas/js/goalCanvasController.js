@@ -2,6 +2,7 @@ leantime.goalCanvasController = (function () {
 
 	var canvasName = 'goal';
 
+
     var setRowHeights = function () {
 
 		var nbRows = 2;
@@ -62,6 +63,10 @@ leantime.goalCanvasController = (function () {
     };
 
 
+    var _initModals = function () {
+        jQuery("."+canvasName+"CanvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+    };
+
     //Constructor
     (function () {
         jQuery(document).ready(
@@ -74,9 +79,7 @@ leantime.goalCanvasController = (function () {
 
     //Functions
 
-    var _initModals = function () {
-        jQuery("."+canvasName+"CanvasModal, #commentForm, #commentForm .deleteComment, ."+canvasName+"CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
-    };
+
 
     var openModalManually = function (url) {
         jQuery.nmManual(url, canvasoptions);

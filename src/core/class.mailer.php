@@ -321,7 +321,7 @@ namespace leantime\core {
 
             }
 
-            $this->dispatchMailerHook('event', 'afterSendMail');
+            $this->dispatchMailerHook('event', 'afterSendMail', $to);
 
         }
 
