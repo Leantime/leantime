@@ -15,27 +15,21 @@ Leantime is a lean open source project management system for startups and innova
 
 ## Updates ##
 
-Just released! Leantime is now on 2.2.10. 
-
-New features included in this release: 
-*  Document Manager & Wiki Option (with Google Docs import) 
-*  * Updated Dashboard for project updates and team overview 
-*  * iCal calendar export (Thank you @calawhkbu). 
-
-| ![alt text](public/images/Screenshots/Docs.png "Document Manager")    |
+Just released! Leantime is now on 2.3.0 beta 
 
 For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.10
 
 ## Features: ##
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
-* Research boards using the Lean Canvas
+* Various research and strategy boards
 * Milestone management using Gantt charts
 * Timesheet management
+* Manage goals
 * Retrospectives
 * Project dashboards
 * Project reports
-* Multiple user roles (client, team member, client manager, manager, administrator)
+* Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
 * Integrations with Mattermost, Slack, Zulip, Discord

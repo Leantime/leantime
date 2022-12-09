@@ -21,15 +21,16 @@
         "phpmailer/phpmailer": "6.6.0",
         "robthree/twofactorauth": "1.8.2",
         "endroid/qr-code": "3.9.7",
-        "ext-ldap":  "*",
+        "ext-ldap": "*",
         "league/html-to-markdown": "5.1",
+        "symfony/console": "^5.4",
         "ramsey/uuid": "^4.3",
         "htmlawed/htmlawed": "1.2.6",
-		"yetiforce/yetiforcepdf": "0.1.40",
-		"deeplcom/deepl-php": ">=1.0"
+        "yetiforce/yetiforcepdf": "0.1.40",
+        "deeplcom/deepl-php": ">=1.0"
     },
     "require-dev": {
-        "phpstan/phpstan":"1.5.4",
+        "phpstan/phpstan": "1.5.4",
         "squizlabs/php_codesniffer": "^3.7"
     },
     "extra": {
