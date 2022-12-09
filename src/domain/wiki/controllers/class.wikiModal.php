@@ -54,11 +54,11 @@ namespace leantime\domain\controllers {
 
                 $id = $this->wikiService->createWiki($wiki);
 
-                $_SESSION['currentWiki'] = $id;
+                //$_SESSION['currentWiki'] = $id;
 
                 if($id){
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success");
-                    $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id);
+                    $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id."?closeModal=1");
                 }
 
 

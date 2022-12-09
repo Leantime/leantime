@@ -14,13 +14,13 @@ if(isset($currentWiki->id)) {$id = $currentWiki->id;
 <form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/wikiModal/<?php echo $id;?>">
 
     <label><?=$this->__('label.wiki_title') ?></label>
-    <input type="text" name="title" value="<?php echo $currentWiki->title?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>"/><br />
+    <input type="text" name="title" id="wikiTitle" value="<?php echo $currentWiki->title?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>"/><br />
 
     <br />
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$this->__('buttons.save') ?>"/>
+            <input type="submit" value="<?=$this->__('buttons.save') ?>" id="saveBtn"/>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
@@ -30,4 +30,28 @@ if(isset($currentWiki->id)) {$id = $currentWiki->id;
     </div>
 
 </form>
+
+<script>
+    jQuery(document).ready(function(){
+
+        <?php if(isset($_GET['closeModal'])){ ?>
+            jQuery.nmTop().close();
+        <?php } ?>
+
+       if(jQuery("#wikiTitle").val().length >= 2) {
+           jQuery("#saveBtn").removeAttr("disabled");
+       }else{
+           jQuery("#saveBtn").attr("disabled", "disabled");
+       }
+
+        jQuery("#wikiTitle").keypress(function(){
+
+            if(jQuery("#wikiTitle").val().length >= 2) {
+                jQuery("#saveBtn").removeAttr("disabled");
+            }else{
+                jQuery("#saveBtn").attr("disabled", "disabled");
+            }
+        })
+    });
+</script>
 
