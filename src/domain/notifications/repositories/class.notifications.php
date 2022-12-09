@@ -66,6 +66,10 @@ namespace leantime\domain\repositories {
 
         public function addNotifications(array $notifications){
 
+            if(count($notifications) == 0){
+                return;
+            }
+
             $sql = "INSERT INTO zp_notifications (
                     `userId`,
                     `read`,

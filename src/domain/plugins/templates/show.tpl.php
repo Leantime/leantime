@@ -92,6 +92,10 @@
                         </li>
                     <?php } ?>
 
+                    <?php if($this->get("installedPlugins") === false || count($this->get("installedPlugins")) == 0){?>
+                        <?=$this->__("text.no_plugins_installed") ?>
+                    <?php } ?>
+
                 </ul>
 
 

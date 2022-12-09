@@ -214,9 +214,12 @@ $user = $this->get('user');
 </div>
 
 <script type="text/javascript">
+
     jQuery(document).ready(function() {
+
         new SlimSelect({ select:  '#messagesfrequency' });
         new SlimSelect({ select:  '#language' });
         new SlimSelect({ select:  '#theme' });
+
     });
 </script>

@@ -95,7 +95,7 @@ foreach($this->get('allCanvas') as $canvasRow){
         <div class="row">
             <div class="col-md-3">
 
-                <?php if($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1) { ?>
+                <?php if($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
                     <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
                        class="<?=$canvasName ?>CanvasModal btn btn-primary" id="<?php echo $elementName; ?>"><?=$this->__('links.add_new_canvas_item'.$canvasName) ?></a>
                 <?php } ?>

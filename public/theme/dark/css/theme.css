@@ -338,7 +338,7 @@ body .ticketDropdown ul::after {
 .ss-content .ss-list .ss-option.ss-disabled {
     background-color: var(--secondary-background) !important;
     color:darkgrey !important;
-}	
+}
 
 .ss-content .ss-search input::placeholder, .ss-content .ss-search input {
     background-color: var(--primary-background) !important;
@@ -352,4 +352,21 @@ body .ticketDropdown ul::after {
 .ss-option:hover {
 	color: white;
 	background-color: var(--accent1) !important;
+}
+.popover-content,
+.iconpicker-popover.popover,
+.iconpicker .iconpicker-items{
+    background:var(--dropdown-link-bg);
+}
+
+.iconpicker .iconpicker-item:hover:not(.iconpicker-selected) {
+    background:var(--dropdown-link-hover-bg);
+}
+
+.articleBody table {
+
+}
+
+.articleBody table td {
+    border:1px solid var(--neutral);
 }

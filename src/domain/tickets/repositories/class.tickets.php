@@ -752,9 +752,9 @@ namespace leantime\domain\repositories {
 					WHERE
 						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
 
-            if($includeArchived === false) {
-                $query .= " AND zp_tickets.status > -1 ";
-            }
+                    if($includeArchived === false) {
+                        $query .= " AND zp_tickets.status > -1 ";
+                    }
 
 				$query .= "	GROUP BY
 						zp_tickets.id, progressTickets.dependingTicketId";
