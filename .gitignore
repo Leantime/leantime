@@ -101,8 +101,6 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Lock files
-composer.lock
-package-lock.json
 .github/workflows/phpmd.yml
 
 # Ignore logging files
