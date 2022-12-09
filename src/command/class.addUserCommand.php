@@ -14,18 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class addUserCommand extends Command {
 
-    /**
-     * The name of the command (the part after "bin/demo").
-     *
-     * @var string
-     */
     protected static $defaultName = 'user:add';
-
-    /**
-     * The command description shown when running "php bin/demo list".
-     *
-     * @var string
-     */
     protected static $defaultDescription = 'Add a new User';
 
     protected function configure() {

@@ -14,18 +14,7 @@ use array_values;
 
 class migrateCommand extends Command {
 
-    /**
-     * The name of the command (the part after "bin/demo").
-     *
-     * @var string
-     */
     protected static $defaultName = 'db:migrate';
-
-    /**
-     * The command description shown when running "php bin/demo list".
-     *
-     * @var string
-     */
     protected static $defaultDescription = 'Runs any Pending Database Migrations';
 
     protected function configure() {
