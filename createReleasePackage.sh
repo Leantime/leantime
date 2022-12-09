@@ -23,7 +23,8 @@ rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
 #Remove DeepL.com and mltranslate engine (not needed in production)
 rm -rf vendor/deeplcom
-rm -rf resources/languages/mltranslate
+rm -rf src/languages/mltranslate
+rm -rf vendor/yetiforce/yetiforcepdf/examples
 
 #Remove local configuration, if any
 rm -rf custom/*/*

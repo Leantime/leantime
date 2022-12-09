@@ -4,10 +4,10 @@
  */
 namespace leantime\domain\controllers {
 
-    class smcanvas extends api\canvas
+    class goalcanvas extends api\canvas
     {
 
-	    protected const CANVAS_NAME = 'sm';
+	    protected const CANVAS_NAME = 'goal';
 
     }
 }

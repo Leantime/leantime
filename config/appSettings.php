@@ -23,11 +23,14 @@ namespace leantime\core {
 
         public $dbVersion = "2.1.12";
 
+
+
         /**
          * __construct
          *
          */
         public function __construct(){
+
         }
 
         /**
@@ -112,6 +115,8 @@ namespace leantime\core {
             return $_SERVER['REQUEST_URI'];
 
         }
+
+
 
     }
 }
