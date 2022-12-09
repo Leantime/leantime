@@ -105,6 +105,7 @@ namespace leantime\core {
             //Get company language
             if(!isset($_SESSION["companysettings.language"])) {
 
+
                 $language = $settingsRepo->getSetting("companysettings.language");
 
                 if ($language === false) {

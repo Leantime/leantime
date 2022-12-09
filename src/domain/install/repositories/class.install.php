@@ -432,12 +432,12 @@ namespace leantime\domain\repositories {
                   `hourBudget` varchar(255) NOT NULL,
                   `dollarBudget` int(11) DEFAULT NULL,
                   `active` int(11) DEFAULT NULL,
-				  `menuType` MEDIUMTEXT DEFAULT '".repositories\menu::DEFAULT_MENU."',
+				  `menuType` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`,`psettings`) values (3,'Leantime Onboarding',1,'<p>This is you first project to get you started</p>',0,'0',0,NULL,NULL);
+                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is you first project to get you started</p>',0,'0',0,NULL, '".repositories\menu::DEFAULT_MENU."',NULL);
 
                 CREATE TABLE `zp_punch_clock` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -538,7 +538,7 @@ namespace leantime\domain\repositories {
                   `invoicedCompDate` datetime DEFAULT NULL,
                   `rate` varchar(255) DEFAULT NULL,
                   `paid` int(2) DEFAULT NULL,
-                  `paidDate` DATETIME DEFAULT NULL
+                  `paidDate` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -666,8 +666,8 @@ namespace leantime\domain\repositories {
                   `version` VARCHAR(45) NULL,
                   `installdate` DATETIME NULL,
                   `foldername` VARCHAR(45),
-                  `homepage` VARCHAR(255) NULL AFTER,
-                  `authors` VARCHAR(255) NULL AFTER
+                  `homepage` VARCHAR(255) NULL,
+                  `authors` VARCHAR(255) NULL,
                   PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
