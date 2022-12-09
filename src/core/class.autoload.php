@@ -29,12 +29,7 @@ function leantimeAutoloader($class) {
 
     // Check if a customized version of the requested class exists
     if (!empty($path)) {
-
-        foreach ([
-    'class',
-    'trait'
-        ] as $prefix) {
-
+        foreach (['class', 'trait'] as $prefix) {
             if ($class == "config") {
                 require_once( ROOT . "/../config/configuration.php");
             } elseif (file_exists(ROOT . "/../custom/$path/$prefix.$class.php")) {
