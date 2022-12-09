@@ -4,15 +4,19 @@ namespace leantime\domain\services {
 
     use GuzzleHttp\Exception\RequestException;
     use leantime\core;
+    use leantime\core\eventhelpers;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
     use League\HTMLToMarkdown\HtmlConverter;
     use GuzzleHttp\Client;
     use Psr\Http\Message\ResponseInterface;
+    use leantime\domain\models\auth\roles;
 
     class projects
     {
+
+        use eventhelpers;
 
         private $tpl;
         private $projectRepository;
@@ -28,7 +32,7 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
         }
 
         public function getProject($id) {
@@ -97,7 +101,7 @@ namespace leantime\domain\services {
             //Fix this
             $currentDate = new DateTime();
             $inFiveYears = intval($currentDate->format("Y")) + 5;
-            
+
             if(intval($today->format("Y")) >= $inFiveYears) {
                 $completionDate = "Past ".$inFiveYears;
             }else{
@@ -131,7 +135,24 @@ namespace leantime\domain\services {
             }
 
             return $to;
+        }
 
+        public function getAllUserInfoToNotify($projectId)
+        {
+
+            $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            $to = array();
+
+            //Only users that actually want to be notified
+            foreach ($users as $user) {
+
+                if ($user["notifications"] != 0 && ($user['username'] != $_SESSION['userdata']['mail'])) {
+                    $to[] = $user;
+                }
+            }
+
+            return $to;
         }
 
         public function notifyProjectUsers($message, $subject, $projectId, $url = false){
@@ -142,11 +163,12 @@ namespace leantime\domain\services {
 
             //Email
             $users = $this->getUsersToNotify($projectId);
-            $users = array_filter($users, function($user, $k) { 
-                return $user != $_SESSION['userdata']['mail']; 
+            $users = array_filter($users, function($user, $k) {
+                return $user != $_SESSION['userdata']['mail'];
             }, ARRAY_FILTER_USE_BOTH);
 
             $mailer = new core\mailer();
+            $mailer->setContext('notify_project_users');
             $mailer->setSubject($subject);
 
             $emailMessage = $message;
@@ -154,7 +176,11 @@ namespace leantime\domain\services {
                 $emailMessage .= " <a href='".$url['link']."'>".$url['text']."</a>";
             }
             $mailer->setHtml($emailMessage);
-            $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+            //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+	        // NEW Queuing messaging system
+	        $queue = new repositories\queue();
+            $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
 
 
             //Prepare message for chat applications (Slack, Mattermost)
@@ -189,10 +215,11 @@ namespace leantime\domain\services {
 
                 try {
                     $httpClient->post($slackWebhookURL, [
-                        'body' => $data_string
+                        'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ]
                     ]);
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
@@ -232,7 +259,7 @@ namespace leantime\domain\services {
                       'description' => $converter->convert($message),
                       'url' => $url_link,
                       'timestamp' => $timestamp,
-                      'color' => hexdec('3366ff'),
+                      'color' => hexdec('1b75bb'),
                       'footer' => [
                         'text' => 'Leantime',
                         'icon_url' => $url_link,
@@ -249,10 +276,11 @@ namespace leantime\domain\services {
 
                 try {
                       $httpClient->post($discordWebhookURL, [
-                          'body' => $data_string
+                          'body' => $data_string,
+                          'headers' => [ 'Content-Type' => 'application/json' ]
                       ]);
                 }catch (\Exception $e) {
-                      error_log($e->getMessage());
+                      error_log($e);
                 }
               }
             }
@@ -275,7 +303,7 @@ namespace leantime\domain\services {
                         'body' => $data_string
                     ]);
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
@@ -312,6 +340,7 @@ namespace leantime\domain\services {
 
                     $httpClient->post($curlUrl, [
                         'body' => $data_string,
+                        'headers' => [ 'Content-Type' => 'application/json' ],
                         'auth' => [
                             $botEmail,
                             $botKey
@@ -319,10 +348,12 @@ namespace leantime\domain\services {
                     ]);
 
                 }catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
 
             }
+
+            core\events::dispatch_event("notifyProjectUsers", array("type"=> "projectUpdate", "module" => "projects", "moduleId"=> $projectId, "message"=>$message, "subject"=>$subject, "users"=>$this->getAllUserInfoToNotify($projectId), "url"=>$url['link']), "domain.services.projects");
 
         }
 
@@ -349,9 +380,40 @@ namespace leantime\domain\services {
 
         }
 
+
+
         public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+            if($projects) {
+                return $projects;
+            }else{
+                return false;
+            }
+
+        }
+
+        public function getProjectRole($userId, $projectId) {
+
+            $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
+
+            if(is_array($project)) {
+
+                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+                    return $project[0]['projectRole'];
+                }else{
+                    return "";
+                }
+
+            }else{
+                return "";
+            }
+        }
+
+        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
             if($projects) {
                 return $projects;
@@ -405,32 +467,6 @@ namespace leantime\domain\services {
 
                     }
 
-                    $route = core\FrontController::getCurrentRoute();
-
-                    if($route != "api.i18n") {
-
-                        if (core\login::userIsAtLeast("clientManager")) {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please create a new one",
-                                "info");
-                            if ($route != "projects.newProject") {
-                                $this->tpl->redirect(BASE_URL . "/projects/newProject");
-                            }
-
-                        } else {
-
-                            $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
-                                "info");
-
-
-
-                            if ($route != "users.editOwn") {
-                                $this->tpl->redirect(BASE_URL . "/users/editOwn");
-                            }
-
-                        }
-                    }
-
                 }
 
             }
@@ -441,9 +477,14 @@ namespace leantime\domain\services {
 
             if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
 
+                //Get user project role
+
                 $project = $this->getProject($projectId);
 
                 if ($project) {
+
+                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+
 
                     $_SESSION["currentProject"] = $projectId;
 
@@ -455,21 +496,38 @@ namespace leantime\domain\services {
 
                     $_SESSION["currentProjectClient"] = $project['clientName'];
 
+                    $_SESSION['userdata']['projectRole'] = '';
+                    if($projectRole != '') {
+                        $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
+                    }
+
                     $_SESSION["currentSprint"] = "";
-                    $_SESSION['currentLeanCanvas'] = "";
                     $_SESSION['currentIdeaCanvas'] = "";
-                    $_SESSION['currentRetroCanvas'] = "";
                     $_SESSION['lastTicketView'] = "";
                     $_SESSION['lastFilterdTicketTableView'] = "";
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
+                    $_SESSION['currentWiki'] = '';
+                    $_SESSION['lastArticle'] = "";
 
+                    $_SESSION['currentSWOTCanvas'] = "";
+                    $_SESSION['currentLEANCanvas'] = "";
+                    $_SESSION['currentEMCanvas'] = "";
+                    $_SESSION['currentINSIGHTSCanvas'] = "";
+                    $_SESSION['currentSBCanvas'] = "";
+                    $_SESSION['currentRISKSCanvas'] = "";
+                    $_SESSION['currentEACanvas'] = "";
+                    $_SESSION['currentLBMCanvas'] = "";
+                    $_SESSION['currentOBMCanvas'] = "";
+                    $_SESSION['currentDBMCanvas'] = "";
+                    $_SESSION['currentSQCanvas'] = "";
+                    $_SESSION['currentCPCanvas'] = "";
+                    $_SESSION['currentSMCanvas'] = "";
+                    $_SESSION['currentRETROSCanvas'] = "";
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
 
                     unset($_SESSION["projectsettings"]);
 
-                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
-                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
-
+                    self::dispatch_event("projects.setCurrentProject");
 
                     return true;
 
@@ -494,9 +552,22 @@ namespace leantime\domain\services {
             $_SESSION["currentProjectName"] = "";
 
             $_SESSION["currentSprint"] = "";
-            $_SESSION['currentLeanCanvas'] = "";
             $_SESSION['currentIdeaCanvas'] = "";
-            $_SESSION['currentRetroCanvas'] = "";
+
+			$_SESSION['currentSWOTCanvas'] = "";
+            $_SESSION['currentLEANCanvas'] = "";
+			$_SESSION['currentEMCanvas'] = "";
+			$_SESSION['currentINSIGHTSCanvas'] = "";
+			$_SESSION['currentSBCanvas'] = "";
+			$_SESSION['currentRISKSCanvas'] = "";
+			$_SESSION['currentEACanvas'] = "";
+			$_SESSION['currentLBMCanvas'] = "";
+			$_SESSION['currentOBMCanvas'] = "";
+			$_SESSION['currentDBMCanvas'] = "";
+			$_SESSION['currentSQCanvas'] = "";
+			$_SESSION['currentCPCanvas'] = "";
+			$_SESSION['currentSMCanvas'] = "";
+            $_SESSION['currentRETROSCanvas'] = "";
             unset($_SESSION["projectsettings"]);
 
             $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
@@ -504,7 +575,7 @@ namespace leantime\domain\services {
             $this->setCurrentProject();
         }
 
-        public function getUsersAssignedToProject($projectId)
+        public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
@@ -514,9 +585,9 @@ namespace leantime\domain\services {
 
                     $file = $this->filesRepository->getFile($user['profileId']);
 
-                    $return = '/images/default-user.png';
+                    $return = BASE_URL.'/images/default-user.png';
                     if ($file) {
-                        $return = "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                        $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                     }
 
                     $user["profilePicture"] = $return;
@@ -527,7 +598,7 @@ namespace leantime\domain\services {
 
             }
 
-            return false;
+            return array();
 
         }
 
@@ -553,6 +624,8 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
+				"menuType" => $projectValues['menuType'],
+                'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
 
@@ -648,6 +721,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -701,6 +775,7 @@ namespace leantime\domain\services {
                         'storypoints' => $ticket->storypoints,
                         'hourRemaining' => $ticket->hourRemaining,
                         'planHours' => $ticket->planHours,
+                        'priority' => $ticket->priority,
                         'sprint' => "",
                         'acceptanceCriteria' => $ticket->acceptanceCriteria,
                         'tags' => $ticket->tags,
@@ -753,7 +828,9 @@ namespace leantime\domain\services {
                             "conclusion" => $item['conclusion'],
                             "box" => $item['box'],
                             "author" => $item['author'],
-
+                            "parent" => $item['parent'],
+                            "title" => $item['title'],
+                            "tags" => $item['tags'],
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
@@ -811,7 +888,7 @@ namespace leantime\domain\services {
             }
 
             //Retros
-            $retroRepo = new repositories\retrospectives();
+            $retroRepo = new repositories\retroscanvas();
             $canvasBoards = $retroRepo->getAllCanvas($projectId);
             foreach($canvasBoards as $canvas) {
 
@@ -858,6 +935,10 @@ namespace leantime\domain\services {
 
         }
 
+        public function getProjectUserRelation($id)
+        {
+            return $this->projectRepository->getProjectUserRelation($id);
+        }
     }
 
 }

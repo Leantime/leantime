@@ -92,6 +92,53 @@ $user = $this->get('user');
                                            id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
                                 </span>
                             </p>
+                            <br />
+                            <p>
+                                <label for="messagesfrequency"><?php echo $this->__('label.messages_frequency') ?></label>
+                                <span class='field'>
+                                    <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
+                                        <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
+                                        <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
+                                        <option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
+                                        <option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>><?php echo $this->__('label.30min') ?></option>
+                                        <option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>><?php echo $this->__('label.1h') ?></option>
+                                        <option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>><?php echo $this->__('label.3h') ?></option>
+                                        <option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>><?php echo $this->__('label.6h') ?></option>
+                                        <option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>><?php echo $this->__('label.12h') ?></option>
+                                        <option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>><?php echo $this->__('label.24h') ?></option>
+                                        <option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>><?php echo $this->__('label.48h') ?></option>
+                                        <option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
+                                    </select> <br/>
+                                </span>
+                            </p>
+
+                            <p>
+                                <label for="language"><?php echo $this->__('label.language') ?></label>
+                                <span class='field'>
+                                    <select name="language" id="language" style="width: 220px">
+                                        <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
+                                            <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                        <?php } ?>
+                                    </select>
+                                </span>
+                            </p>
+
+                            <p>
+                                <label for="theme"><?php echo $this->__('label.theme') ?></label>
+                                <span class='field'>
+                                    <select name="theme" id="theme" style="width: 220px">
+                                        <?php
+                                        $themeCore = new \leantime\core\theme();
+                                        $themeAll = $themeCore->getAll();
+                                        foreach($themeAll as $key => $name) {
+                                        ?>
+                                           <option value="<?=$key ?>" <?php if($this->get('userTheme') == $key) echo "selected='selected'" ?>><?=$this->__($name) ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </span>
+                            </p>
+
+
 
                             <p class='stdformbutton'>
                                 <input type="submit" name="save" id="save"
@@ -121,7 +168,7 @@ $user = $this->get('user');
                                 <input type="hidden"/>
                                 <div class="input-append">
                                     <div class="uneditable-input span3">
-                                        <i class="iconfa-file fileupload-exists"></i>
+                                        <i class="fa-file fileupload-exists"></i>
                                         <span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
@@ -163,7 +210,16 @@ $user = $this->get('user');
             </div>
         </div>
 
+    </div>
+</div>
 
+<script type="text/javascript">
 
+    jQuery(document).ready(function() {
 
+        new SlimSelect({ select:  '#messagesfrequency' });
+        new SlimSelect({ select:  '#language' });
+        new SlimSelect({ select:  '#theme' });
 
+    });
+</script>

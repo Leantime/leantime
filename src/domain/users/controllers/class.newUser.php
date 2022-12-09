@@ -3,11 +3,30 @@
 namespace leantime\domain\controllers {
 
 	use leantime\core;
-	use leantime\domain\repositories;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
+    use leantime\domain\repositories;
 	use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-	class newUser
+    class newUser extends controller
 	{
+
+        private $userRepo;
+        private $projectsRepo;
+
+		/**
+		 * init - initialize private variables
+		 *
+		 * @access public
+		 */
+		public function init()
+		{
+
+			$this->userRepo = new repositories\users();
+			$this->projectsRepo = new repositories\projects();
+
+        }
 
 		/**
 		 * run - display template and edit data
@@ -17,10 +36,7 @@ namespace leantime\domain\controllers {
 		public function run()
 		{
 
-			$tpl = new core\template();
-			$userRepo = new repositories\users();
-			$project = new repositories\projects();
-			$language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
 			$values = array(
 				'firstname' => "",
@@ -33,7 +49,7 @@ namespace leantime\domain\controllers {
 			);
 
 			//only Admins
-			if (core\login::userIsAtLeast("clientManager")) {
+			if (auth::userIsAtLeast(roles::$admin)) {
 
 				$projectrelation = array();
 
@@ -50,91 +66,83 @@ namespace leantime\domain\controllers {
 						'clientId' => ($_POST['client'])
 					);
 
-					//Choice is an illusion for client managers
-					if (core\login::userHasRole("clientManager")) {
-						$values['clientId'] = core\login::getUserClientId();
-					}
 
 					if ($values['user'] !== '') {
 						if ($_POST['password'] == $_POST['password2']) {
 							if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 								if (password_verify($_POST['password'], $values['password']) && $_POST['password'] != '') {
-									if ($userRepo->usernameExist($values['user']) === false) {
+									if ($this->userRepo->usernameExist($values['user']) === false) {
 
-										$userId = $userRepo->addUser($values);
+										$userId = $this->userRepo->addUser($values);
 
 										//Update Project Relationships
 										if (isset($_POST['projects'])) {
 											if ($_POST['projects'][0] !== '0') {
-												$project->editUserProjectRelations($userId, $_POST['projects']);
+												$this->projectsRepo->editUserProjectRelations($userId, $_POST['projects']);
 											} else {
-												$project->deleteAllProjectRelations($userId);
+												$this->projectsRepo->deleteAllProjectRelations($userId);
 											}
 										}
 
 										$mailer = new core\mailer();
+										$mailer->setContext('new_user');
 
-										$mailer->setSubject($language->__("email_notifications.new_user_subject"));
+										$mailer->setSubject($this->language->__("email_notifications.new_user_subject"));
 										$actual_link = BASE_URL;
 
-										$message = sprintf($language->__("email_notifications.new_user_message"), $_SESSION["userdata"]["name"], $actual_link, $values["user"], $tempPasswordVar);
+										$message = sprintf($this->language->__("email_notifications.new_user_message"), $_SESSION["userdata"]["name"], $actual_link, $values["user"], $tempPasswordVar);
 										$mailer->setHtml($message);
 
 										$to = array($values["user"]);
 
 										$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
 
-										$tpl->setNotification($language->__("notification.user_created"), 'success');
+										$this->tpl->setNotification($this->language->__("notification.user_created"), 'success');
 
-										$tpl->redirect(BASE_URL . "/users/showAll");
+										$this->tpl->redirect(BASE_URL . "/users/showAll");
 
 									} else {
 
-										$tpl->setNotification($language->__("notification.user_exists"), 'error');
+										$this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
 
 									}
 								} else {
 
-									$tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
+									$this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
 								}
 							} else {
 
-								$tpl->setNotification($language->__("notification.no_valid_email"), 'error');
+								$this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
 							}
 						} else {
 
 
-							$tpl->setNotification($language->__("notification.passwords_dont_match"), 'error');
+							$this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
 
 						}
 					} else {
 
-						$tpl->setNotification($language->__("notification.enter_email"), 'error');
+						$this->tpl->setNotification($this->language->__("notification.enter_email"), 'error');
 					}
 				}
 				//exit();
 
-				$tpl->assign('values', $values);
+				$this->tpl->assign('values', $values);
 				$clients = new repositories\clients();
 
-				if (core\login::userIsAtLeast("manager")) {
-					$tpl->assign('clients', $clients->getAll());
-					$tpl->assign('allProjects', $project->getAll());
-					$tpl->assign('roles', core\login::$userRoles);
-				} else {
 
-					$tpl->assign('clients', array($clients->getClient(core\login::getUserClientId())));
-					$tpl->assign('allProjects', $project->getClientProjects(core\login::getUserClientId()));
-					$tpl->assign('roles', core\login::$clientManagerRoles);
-				}
-				$tpl->assign('relations', $projectrelation);
+				$this->tpl->assign('clients', $clients->getAll());
+				$this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+				$this->tpl->assign('roles', roles::getRoles());
+
+				$this->tpl->assign('relations', $projectrelation);
 
 
-				$tpl->display('users.newUser');
+				$this->tpl->display('users.newUser');
 
 			} else {
 
-				$tpl->display('general.error');
+				$this->tpl->display('errors.error403');
 
 			}
 

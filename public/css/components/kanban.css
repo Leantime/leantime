@@ -1,0 +1,284 @@
+.tilt.right {
+    transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -webkit-transform: rotate(3deg);
+}
+.tilt.left {
+    transform: rotate(-3deg);
+    -moz-transform: rotate(-3deg);
+    -webkit-transform: rotate(-3deg);
+}
+
+.column {
+    box-sizing: border-box;
+    height:auto;
+    padding:5px;
+    flex:0 0 auto;
+    min-width:250px;
+}
+
+.column:first-child {
+    padding-left:0px;
+}
+.column:last-child {
+    padding-right:0px;
+}
+
+.column .contentInner {
+    background:var(--kanban-col-bg);
+    border:1px solid var(--neutral);
+    padding:7px;
+    min-height:45px;
+    /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
+}
+
+.kanbanCardContent {
+    overflow:hidden;
+}
+
+.ticketBox:hover {
+    background:var(--main-menu-link-hover-bg);
+}
+
+
+.ticketBox:hover .kanbanContent:before {
+    background: linear-gradient(transparent, var(--main-menu-link-hover-bg) 70% 100%);
+}
+
+.ticketBox h4 a {
+    font-weight:bold;
+}
+
+.column .contentInner .ui-state-highlight {
+    background:#ddd;
+    border: 2px dotted var(--neutral);
+    visibility:visible;
+    display:block;
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
+}
+
+.portlet {
+    margin: 0 1em 1em 0;
+    padding: 0.3em;
+}
+.portlet-header {
+    padding: 0.2em 0.3em;
+    margin-bottom: 0.5em;
+    position: relative;
+}
+.portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+}
+.portlet-content {
+    padding: 0.4em;
+}
+.portlet-placeholder {
+    border: 1px dotted black;
+    margin: 0 1em 1em 0;
+    height: 50px;
+}
+
+.titleBorderColor1,
+.title-border-label-important {
+    border-bottom:5px solid #b94a48;
+}
+
+.titleBorderColor3,
+.title-border-label-info{
+    border-bottom:5px solid #2d6987;
+}
+
+.titleBorderColor4,
+.title-border-label-warning{
+    border-bottom:5px solid #f89406;
+}
+
+.titleBorderColor2{
+    border-bottom:5px solid #f89406;
+}
+
+.titleBorderColor0,
+.title-border-label-success{
+    border-bottom:5px solid #468847;
+}
+
+.titleBorderColor-1,
+.title-border-label-default{
+    border-bottom:5px solid #999999;
+}
+
+.sortableTicketList li{
+    list-style:none;
+}
+
+.sortableTicketList li:hover {
+    background:var(--main-menu-link-hover-bg);
+}
+
+
+.sortableTicketList .ticketBox {
+    background: var(--kanban-card-bg);
+    border:1px solid var(--main-border-color);
+    padding:10px 15px;
+    padding-bottom:10px;
+    margin-bottom:5px;
+    cursor:move;
+    border-radius:var(--box-radius);
+}
+
+.sortableTicketList.disabled .ticketBox {
+    cursor:auto;
+}
+
+.sortableTicketList .ticketBox textarea {
+    max-width:100%;
+}
+.sortableTicketList .ticketBox.fixed {
+    cursor:default;
+}
+
+.sortableTicketList li:hover .ticketBox {
+    background:var(--main-menu-link-hover-bg);
+}
+
+.sortableTicketList li:hover .ticketBox.fixed {
+    background:var(--main-menu-link-hover-bg);
+}
+
+.sortableTicketList .ticketBox p.description {
+    padding-bottom:10px;
+    overflow:hidden;
+}
+
+.sortableTicketList li .ticketBox h6,
+.sortableTicketList li .ticketBox h6 a {
+    line-height:16px;
+}
+
+.sortableTicketList li .ticketBox h3,
+.sortableTicketList li .ticketBox h3 a{
+    font-size:var(--font-size-l);
+}
+
+.sortableTicketList li .ticketBox .label-important,
+.sortableTicketList li .ticketBox .label-warning,
+.sortableTicketList li .ticketBox .label-success,
+.sortableTicketList li .ticketBox .label-info,
+.sortableTicketList li .ticketBox .label-inverse,
+.sortableTicketList li .ticketBox .label-default,
+.sortableTicketList li .ticketBox .label-primary{
+    padding-top:0px;
+    padding-bottom:0px;
+}
+
+.sortableTicketList li .ticketBox .timerContainer .btn{
+    padding-top:1px;
+    padding-bottom:1px;
+}
+
+.sortableTicketList .empty {
+    text-align:center;
+    color:#999;
+    padding:20px 0px;
+}
+
+
+body .maincontent .priority-border-1,
+body .maincontent .commentStatus-red{
+    border-left: 3px solid #B92F2FFF;
+}
+
+body .maincontent .priority-border-2 {
+    border-left: 3px solid #EF371DFF;
+}
+
+body .maincontent .priority-border-3,
+body .maincontent .commentStatus-yellow{
+    border-left: 3px solid #FFB325FF;
+}
+
+body .maincontent .priority-border-4,
+body .maincontent .commentStatus-green{
+    border-left: 3px solid #aae268;
+}
+
+body .maincontent .priority-border-5 {
+    bborder-left: 3px solid #707070;
+}
+
+body .maincontent .priority-bg-1 {
+    background:#B92F2FFF;
+    color:#fff;
+}
+
+body .maincontent .priority-bg-2 {
+    background: #EF371DFF;
+    color:#fff;
+}
+
+body .maincontent .priority-bg-3 {
+    background: #FFB325FF;
+    color:#fff;
+}
+
+body .maincontent .priority-bg-4 {
+    background:#aae268;
+    color:#fff;
+}
+
+body .maincontent .priority-bg-5 {
+    background:#707070;
+    color:#fff;
+}
+
+
+.widgettitle {
+    background: var(--kanban-col-title-bg) !important;
+    color: var( --kanban-col-title-color);
+    padding: 10px 10px;
+    font-size: var(--base-font-size);
+    line-height:17px;
+    font-weight: bold;
+    border-left: 1px solid var(--main-border-color) !important;
+    border-top: 1px solid var(--main-border-color) !important;
+    border-right: 1px solid var(--main-border-color) !important;
+    border-bottom:0px solid var(--kanban-col-title-bg) !important;
+    border-top-left-radius: var(--box-radius-small);
+    border-top-right-radius: var(--box-radius-small);
+}
+
+.widgettitle span {
+    vertical-align: top;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.sortableTicketList .row-fluid {
+    width:100%;
+    display:flex;
+    overflow-x:auto;
+}
+
+.widgettitle strong {
+    line-height:normal;
+}
+
+.kanbanContent {
+    overflow:hidden;
+    max-height:75px;
+    position:relative;
+}
+
+.kanbanContent:before {
+    content: '';
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
+}

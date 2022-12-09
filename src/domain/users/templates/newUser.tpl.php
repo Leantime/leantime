@@ -67,7 +67,7 @@ $projects = $this->get('relations');
 
 <div class="pageheader">
                        
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
         <h1><h1><?php echo $this->__('headlines.new_user'); ?></h1></h1>
@@ -102,7 +102,6 @@ $projects = $this->get('relations');
 
                         <label for="role"><?php echo $this->__('label.role'); ?></label>
                         <select name="role" id="role">
-
 
                                 <?php foreach($this->get('roles') as $key => $role){ ?>
                                     <option value="<?php  echo $key; ?>"
@@ -160,8 +159,8 @@ $projects = $this->get('relations');
                                      </div>
                                       <div class="col-2" class="align-center">
                                            <span class="ds_arrow">
-                                                        <button class="btn ds_prev"><i class="iconfa-chevron-left"></i></button><br />
-                                                        <button class="btn ds_next"><i class="iconfa-chevron-right"></i></button>
+                                                        <button class="btn ds_prev"><i class="fa fa-chevron-left"></i></button><br />
+                                                        <button class="btn ds_next"><i class="fa fa-chevron-right"></i></button>
                                                     </span>
 
                                      </div>

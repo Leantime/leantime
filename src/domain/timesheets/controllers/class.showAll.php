@@ -3,10 +3,29 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class showAll
+    class showAll extends controller
     {
+
+        private $projects;
+        private $timesheetsRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->projects = new repositories\projects();
+            $this->timesheetsRepo = new repositories\timesheets();
+
+        }
 
         /**
          * run - display template and edit data
@@ -16,19 +35,18 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
+
             $_SESSION['lastPage'] = BASE_URL."/timesheets/showAll";
-            $language = new core\language();
 
             //Only admins and employees
 
-            $projects = new repositories\projects();
 
             if (isset($_POST['saveInvoice']) === true) {
 
                 $invEmpl = '';
                 $invComp = '';
+                $paid = '';
 
                 if (isset($_POST['invoicedEmpl']) === true) {
                     $invEmpl = $_POST['invoicedEmpl'];
@@ -38,16 +56,21 @@ namespace leantime\domain\controllers {
                     $invComp = $_POST['invoicedComp'];
                 }
 
-                $timesheetsRepo->updateInvoices($invEmpl, $invComp);
+                if (isset($_POST['paid']) === true) {
+                    $paid = $_POST['paid'];
+                }
+
+                $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
 
 
             }
 
 
+
             $invEmplCheck = '0';
             $invCompCheck = '0';
 
-            $projectFilter =  $_SESSION['currentProject'];
+            $projectFilter =  "";
             $dateFromMk = mktime(0, 0, 0, date("m"), '1', date("Y"));
             $dateToMk = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
 
@@ -58,25 +81,25 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
 
-                $kind = ($_POST['kind']);
+                $kind = strip_tags($_POST['kind']);
 
             }
 
             if (isset($_POST['userId']) && $_POST['userId'] != '') {
 
-                $userId = ($_POST['userId']);
+                $userId = strip_tags($_POST['userId']);
 
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
 
-                $dateFrom = $language->getISODateString($_POST['dateFrom']);
+                $dateFrom = $this->language->getISODateString($_POST['dateFrom']);
 
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
 
-                $dateTo = $language->getISODateString($_POST['dateTo']);
+                $dateTo = $this->language->getISODateString($_POST['dateTo']);
 
             }
 
@@ -108,6 +131,27 @@ namespace leantime\domain\controllers {
                 $invCompCheck = '0';
             }
 
+            if (isset($_POST['paid']) === true) {
+
+                $paidCheck = ($_POST['paid']);
+
+                if ($paidCheck == 'on') {
+                    $paidCheck = '1';
+                } else {
+                    $paidCheck = '0';
+                }
+
+            } else {
+                $paidCheck = '0';
+            }
+
+            $projectFilter = $_SESSION['currentProject'];
+            if (isset($_POST['project']) && $_POST['project'] != '') {
+
+                $projectFilter = strip_tags($_POST['project']);
+
+            }
+
             if (isset($_POST['export'])) {
                 $values = array(
                     'project' => $projectFilter,
@@ -118,25 +162,27 @@ namespace leantime\domain\controllers {
                     'invEmplCheck' => $invEmplCheck,
                     'invCompCheck' => $invCompCheck
                 );
-                $timesheetsRepo->export($values);
+                $this->timesheetsRepo->export($values);
             }
 
-            $user = new repositories\projects();
-            $employees = $user->getUsersAssignedToProject($_SESSION['currentProject']);
+            $user = new repositories\users();
+            $employees = $user->getAll();
 
-            $tpl->assign('employeeFilter', $userId);
-            $tpl->assign('employees', $employees);
-            $tpl->assign('dateFrom', $dateFrom);
-            $tpl->assign('dateTo', $dateTo);
+            $this->tpl->assign('employeeFilter', $userId);
+            $this->tpl->assign('employees', $employees);
+            $this->tpl->assign('dateFrom', $dateFrom);
+            $this->tpl->assign('dateTo', $dateTo);
 
-            $tpl->assign('actKind', $kind);
-            $tpl->assign('kind', $timesheetsRepo->kind);
-            $tpl->assign('invComp', $invCompCheck);
-            $tpl->assign('invEmpl', $invEmplCheck);
-            $tpl->assign('projectFilter', $projectFilter);
-            $tpl->assign('allTimesheets', $timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck));
+            $this->tpl->assign('actKind', $kind);
+            $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+            $this->tpl->assign('invComp', $invCompCheck);
+            $this->tpl->assign('invEmpl', $invEmplCheck);
+            $this->tpl->assign('paid', $paidCheck);
+            $this->tpl->assign('allProjects', $this->projects->getAll());
+            $this->tpl->assign('projectFilter', $projectFilter);
+            $this->tpl->assign('allTimesheets', $this->timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck));
 
-            $tpl->display('timesheets.showAll');
+            $this->tpl->display('timesheets.showAll');
 
 
         }

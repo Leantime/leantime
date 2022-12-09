@@ -6,10 +6,6 @@
 ?>
 
 <div class="pageheader">
-    <div class="pull-right padding-top">
-        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $this->__('links.go_back') ?></a>
-    </div>
-
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
@@ -35,15 +31,176 @@
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><?php echo $this->__('tabs.projectdetails'); ?></a></li>
-                <li><a href="#integrations"><?php echo $this->__('tabs.Integrations'); ?></a></li>
-                <li><a href="#files"><?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
-                <li><a href="#comment"><?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
-                <li><a href="#todosettings"><?php echo $this->__('tabs.todosettings'); ?></a></li>
+                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> <?php echo $this->__('tabs.projectdetails'); ?></a></li>
+                <li><a href="#team"><span class="fa fa-group"></span> <?php echo $this->__('tabs.team'); ?></a></li>
+
+                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $this->__('tabs.Integrations'); ?></a></li>
+                <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
+                <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
+                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.todosettings'); ?></a></li>
             </ul>
 
             <div id="projectdetails">
                 <?php echo $this->displaySubmodule('projects-projectDetails'); ?>
+            </div>
+
+            <div id="team">
+                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#team">
+                    <input type="hidden" name="saveUsers" value="1" />
+
+
+                    <div class="row-fluid">
+                    <div class="span12">
+
+                         <div class="form-group">
+                             <br /><?=$this->__('text.choose_access_for_users'); ?><br />
+                             <br />
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-users"></span><?=$this->__('headlines.team_member'); ?>
+                                    </h4>
+                                </div>
+                            </div>
+
+                             <div class="row">
+                                <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
+
+
+                                    <div class="col-md-4">
+                                        <div class="userBox">
+                                            <input type='checkbox' name='editorId[]' id="user-<?php echo $userId ?>" value='<?php echo $userId ?>'
+                                                checked="checked"
+                                                />
+                                            <div class="commentImage">
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
+                                            </div>
+                                            <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></label>
+                                            <?php
+                                            if(($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
+                                                <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>" />
+                                            <?php }else{ ?>
+
+                                                <select name="userProjectRole-<?php echo $userId ?>">
+                                                    <option value="inherit">Inherit</option>
+                                                    <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+
+                                                    <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                    <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                    <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
+                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                    ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                </select>
+                                            <?php } ?>
+                                            <div class="clearall"></div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
+                             </div>
+
+
+                `           <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="widgettitle title-light">
+                                        <span class="fa fa-user-friends "></span><?=$this->__('headlines.assign_users_to_project'); ?>
+                                    </h4>
+                                </div>
+                            </div>
+
+                             <div class="row">
+                                <?php foreach($this->get('availableUsers') as $row){ ?>
+                                    <?php if(!isset($project['assignedUsers'][$row['id']])) { ?>
+
+                                        <div class="col-md-4">
+                                            <div class="userBox">
+                                                <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
+
+                                                <div class="commentImage">
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
+                                                </div>
+                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
+                                                <?php if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
+                                                    <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$row['role']]) ?>" />
+                                                <?php }else{ ?>
+
+                                                    <select name="userProjectRole-<?php echo $row['id'] ?>">
+                                                        <option value="inherit">Inherit</option>
+                                                        <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
+                                                        <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                            echo" selected='selected' ";
+                                                        }?>
+                                                            ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+
+                                                        <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                        <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                        <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
+                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
+                                                                echo" selected='selected' ";
+                                                            }?>
+                                                        ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                    </select>
+                                                <?php } ?>
+                                                <div class="clearall"></div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                <?php }
+
+                                } ?>
+                                 <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                     <div class="col-md-4">
+                                         <div class="userBox">
+
+
+                                                 <a href="<?=BASE_URL?>/users/newUser" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
+
+                                             <div class="clearall"></div>
+                                         </div>
+                                     </div>
+                                 <?php } ?>
+                            </div>
+                             <div class="row">
+                                 <div class="col-md-12">
+
+                                 </div>
+                             </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                    <br/>
+                    <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
+
+                </form>
+
             </div>
 
             <div id="files">
@@ -57,7 +214,7 @@
                                         <input type="hidden" />
                                     <div class="input-append">
                                         <div class="uneditable-input span3">
-                                            <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                            <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                         </div>
                                         <span class="btn btn-file">
                                             <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>
@@ -89,7 +246,7 @@
                                                         <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
                                                         <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
 
-                                                        <?php  if ($login::userIsAtLeast("developer")) { ?>
+                                                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                                             <li><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                                                         <?php  } ?>
 
@@ -117,7 +274,7 @@
 
             <div id="comment">
 
-                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment" class="ticketModal">
+                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
                     $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
@@ -129,7 +286,7 @@
 
             <div id="integrations">
 
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Mattermost</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?=BASE_URL ?>/images/mattermost-logoHorizontal.png" width="200" />
@@ -147,10 +304,10 @@
                     </div>
                 </div>
                 <br />
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Slack</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-5guop3/Slack_RGB.png " width="200"/>
+                        <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200"/>
                     </div>
 
                     <div class="col-md-5">
@@ -166,7 +323,7 @@
                     </div>
                 </div>
 
-                <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span>Zulip</h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?=BASE_URL ?>/images/zulip-org-logo.png" width="200"/>
@@ -199,7 +356,7 @@
                 </div>
 
                 <?php // Slack webhook ?>
-                <h4 class='widgettitle title-light'><span class='iconfa iconfa-leaf'></span>Discord</h4>
+                <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
                 <div class='row'>
                     <div class='col-md-3'>
                         <img src='<?= BASE_URL ?>/images/discord-logo.png' width='200'/>
@@ -253,7 +410,7 @@
                                                 <option value="label-default" class="label-default" <?=$ticketStatus['class']=='label-default'?'selected="selected"':""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <label><?=$this->__("label.reportType") ?></label>
                                             <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
                                                 <option value="NEW" <?=($ticketStatus['statusType']=='NEW')?'selected="selected"':""; ?>><?=$this->__('status.new'); ?></option>
@@ -267,7 +424,7 @@
                                         </div>
                                         <div class="remove">
                                             <br />
-                                            <a href="javascript:void()" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
+                                            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -314,7 +471,7 @@
                 <option value="label-default" class="label-default"><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
             </select>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2">
             <label><?=$this->__("label.reportType") ?></label>
             <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
                 <option value="NEW"><?=$this->__('status.new'); ?></option>
@@ -328,7 +485,7 @@
         </div>
         <div class="remove">
             <br />
-            <a href="javascript:void()" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
 </div>
@@ -342,7 +499,6 @@
         <?php } ?>
 
         leantime.projectsController.initProjectTabs();
-        leantime.projectsController.initProjectsEditor();
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.projectsController.initSelectFields();

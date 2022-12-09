@@ -2,7 +2,6 @@
 
 namespace leantime\command;
 
-use leantime\core\login;
 use leantime\domain\repositories\clients;
 use leantime\domain\repositories\users;
 use Symfony\Component\Console\Command\Command;
@@ -10,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Completion\CompletionInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use leantime\domain\models\auth\roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class addUserCommand extends Command {
@@ -34,7 +34,7 @@ class addUserCommand extends Command {
                 ->addOption('password', null, InputOption::VALUE_REQUIRED, "User's Password")
                 ->addOption('role', null, InputOption::VALUE_REQUIRED, "User's Role",
                         function (CompletionInput $input) {
-                            return array_values(login::$userRoles);
+                            return array_values(roles::getRoles());
                         })
                 ->addOption('client-id', null, InputOption::VALUE_OPTIONAL, "Id of The Client to Assign the User To", null)
                 ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", "")
@@ -64,7 +64,7 @@ class addUserCommand extends Command {
             $io->error("Email is Invalid");
             return Command::INVALID;
         }
-        if (!in_array($role, array_values(login::$userRoles))) {
+        if (!in_array($role, array_values(roles::getRoles()))) {
             $io->error("Role is Invalid");
             return Command::INVALID;
         }
@@ -80,7 +80,7 @@ class addUserCommand extends Command {
         $user = array(
             "user" => $email,
             "password" => password_hash($password, PASSWORD_BCRYPT),
-            "role" => array_search($role, login::$userRoles),
+            "role" => array_search($role, roles::getRoles()),
             "clientId" => $clientId,
             "firstname" => $firstName,
             "lastname" => $lastName,

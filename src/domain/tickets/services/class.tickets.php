@@ -23,7 +23,7 @@ namespace leantime\domain\services {
             $this->tpl = new core\template();
             $this->projectRepository = new repositories\projects();
             $this->ticketRepository = new repositories\tickets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->projectService = new services\projects();
             $this->timesheetsRepo = new repositories\timesheets();
             $this->settingsRepo = new repositories\setting();
@@ -37,7 +37,42 @@ namespace leantime\domain\services {
 
         }
 
+        public function getAllStatusLabelsByUserId($userId) {
+
+            $statusLabelsByProject = array();
+
+            $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+
+            if($userProjects){
+                foreach($userProjects as $project) {
+                    $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+                }
+            }
+
+            if(isset($_SESSION['currentProject'])){
+
+                $statusLabelsByProject[$_SESSION['currentProject']] = $this->ticketRepository->getStateLabels($_SESSION['currentProject']);
+
+            }
+
+            //There is a non zero chance that a user has tickets assigned to them without a project assignment.
+            //Checking user assigned tickets to see if there are missing projects.
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            foreach($allTickets as $row) {
+                if (!isset($statusLabelsByProject[$row['projectId']])) {
+                    $statusLabelsByProject[$row['projectId']] = $this->ticketRepository->getStateLabels($row['projectId']);
+                }
+            }
+
+            return $statusLabelsByProject;
+
+        }
+
         public function saveStatusLabels($params) {
+
+
 
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
 
@@ -113,17 +148,25 @@ namespace leantime\domain\services {
         {
 
             $searchCriteria = array(
-                "currentProject"=> $_SESSION["currentProject"],
+                "currentProject"=> "",
                 "users"=>"",
                 "status"=>"",
                 "term"=> "",
                 "type"=> "",
-                "sprint"=> $_SESSION['currentSprint'],
+                "sprint"=> $_SESSION['currentSprint'] ?? '',
                 "milestone"=>"",
                 "orderBy" => "sortIndex",
                 "groupBy" => "",
                 "priority" => ""
             );
+
+            if(isset($_SESSION["currentProject"]) === true) {
+                $searchCriteria["currentProject"] = $_SESSION["currentProject"];
+            }
+
+            if(isset($searchParams["currentProject"]) === true) {
+                $searchCriteria["currentProject"] = $searchParams["currentProject"];
+            }
 
             if(isset($searchParams["users"]) === true) {
                 $searchCriteria["users"] = $searchParams["users"];
@@ -158,7 +201,16 @@ namespace leantime\domain\services {
                 $_SESSION["currentSprint"] = $searchCriteria["sprint"];
             }
 
-            setcookie("searchCriteria", serialize($searchCriteria), time()+3600, "/tickets/");
+            $config = new core\config();
+            setcookie(
+                "searchCriteria",
+                serialize($searchCriteria),
+                [
+                    'expires' => time()+3600,
+                    'path' => $config->appUrlRoot."/tickets/",
+                    'samesite' => 'Strict'
+                ]
+            );
 
             return $searchCriteria;
         }
@@ -180,6 +232,7 @@ namespace leantime\domain\services {
                 //Fix date conversion
                 //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
+                $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
@@ -196,36 +249,103 @@ namespace leantime\domain\services {
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
+            $statusLabels = $this->getAllStatusLabelsByUserId($userId);
+
             $tickets = array(
-                "thisWeek" => array(),
-                "later" => array()
             );
 
             foreach($allTickets as $row){
 
-                if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                    $tickets["later"][] = $row;
-                }else {
-                    $date = new DateTime($row['dateToFinish']);
-
-                    $nextFriday = strtotime('friday this week');
-                    $nextFridayDateTime = new DateTime();
-                    $nextFridayDateTime->setTimestamp($nextFriday);
-                    if($date <= $nextFridayDateTime){
-                        $tickets["thisWeek"][] = $row;
-                    }else{
-                        $tickets["later"][] = $row;
-                    }
+                //There is a non zero chance that a user has tasks assigned to them while not being part of the project
+                //Need to get those status labels as well
+                if(!isset($statusLabels[$row['projectId']])){
+                    $statusLabels[$row['projectId']] = $this->ticketRepository->getStateLabels($row['projectId']);
                 }
 
+                //There is a chance that the status was removed after it was assigned to a ticket
+                if(isset($statusLabels[$row['projectId']][$row['status']]) && $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
 
+                    if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
+                        if (isset($tickets["later"]["tickets"])) {
+                            $tickets["later"]["tickets"][] = $row;
+                        } else {
+                            $tickets['later'] = array(
+                                "labelName" => "subtitles.todos_later",
+                                "tickets" => array($row)
+                            );
+                        }
+                    } else {
+                        $date = new DateTime($row['dateToFinish']);
+
+                        $nextFriday = strtotime('friday this week');
+                        $nextFridayDateTime = new DateTime();
+                        $nextFridayDateTime->setTimestamp($nextFriday);
+                        if ($date <= $nextFridayDateTime) {
+                            if (isset($tickets["thisWeek"]["tickets"])) {
+                                $tickets["thisWeek"]["tickets"][] = $row;
+                            } else {
+                                $tickets['thisWeek'] = array(
+                                    "labelName" => "subtitles.todos_this_week",
+                                    "tickets" => array($row)
+                                );
+                            }
+                        } else {
+                            if (isset($tickets["later"]["tickets"])) {
+                                $tickets["later"]["tickets"][] = $row;
+                            } else {
+                                $tickets['later'] = array(
+                                    "labelName" => "subtitles.todos_later",
+                                    "tickets" => array($row)
+                                );
+                            }
+                        }
+                    }
+                }
             }
 
             return $tickets;
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="headline")
+        public function getLastTickets($projectId, $limit=5){
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => "", "status" => "not_done", "sprint"=>"", "limit"=>$limit));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "date", $limit);
+
+            return $allTickets;
+
+        }
+
+        public function getOpenUserTicketsByProject ($userId, $projectId) {
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            $statusLabels = $this->getAllStatusLabelsByUserId($userId);
+
+            $tickets = array();
+
+            foreach($allTickets as $row){
+
+                //Only include todos that are not done
+                if($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" ) {
+                    if(isset($tickets[$row['projectId']])) {
+                        $tickets[$row['projectId']]['tickets'][] = $row;
+                    }else{
+                        $tickets[$row['projectId']] = array(
+                            "labelName" => $row['clientName']."//". $row['projectName'],
+                            "tickets" => array($row)
+                        );
+                    }
+                }
+            }
+
+            return $tickets;
+
+        }
+
+
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy="duedate")
         {
 
             if($projectId > 0) {
@@ -236,9 +356,42 @@ namespace leantime\domain\services {
 
         }
 
+        public function getAllMilestonesByUserProjects($userId) {
+
+            $milestones = array();
+
+            $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+            if($userProjects) {
+                foreach ($userProjects as $project) {
+                    $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
+                }
+            }
+
+            if(isset($_SESSION['currentProject'])){
+                $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
+            }
+
+            //There is a non zero chance that a user has tickets assigned to them without a project assignment.
+            //Checking user assigned tickets to see if there are missing projects.
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint"=>""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            foreach($allTickets as $row) {
+                if (!isset($milestones[$row['projectId']])) {
+                    $milestones[$row['projectId']] = $this->ticketRepository->getAllMilestones($row['projectId']);
+                }
+            }
+
+            return $milestones;
+
+        }
+
         public function getAllSubtasks($ticketId)
         {
-           return $this->ticketRepository->getAllSubtasks($ticketId);
+            $values = $this->ticketRepository->getAllSubtasks($ticketId);
+
+
+            return $values;
         }
 
         //Add
@@ -249,7 +402,7 @@ namespace leantime\domain\services {
                 'headline' => $params['headline'],
                 'type' => 'Task',
                 'description' => isset($params['description']) ? $params['description'] : '',
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
@@ -340,6 +493,7 @@ namespace leantime\domain\services {
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -367,7 +521,13 @@ namespace leantime\domain\services {
 
                 //Prepare dates for db
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
+
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
+
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
@@ -409,6 +569,7 @@ namespace leantime\domain\services {
                 'editorId' => $values['editorId'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
+                'timeToFinish' => $values['timeToFinish'],
                 'status' => $values['status'],
                 'planHours' => $values['planHours'],
                 'tags' => $values['tags'],
@@ -438,6 +599,10 @@ namespace leantime\domain\services {
                 if($values['dateToFinish'] != "" && $values['dateToFinish'] != NULL) {
                     $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
 
+                    if(isset($values['timeToFinish']) && $values['timeToFinish'] != NULL) {
+                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'].":00", $values['dateToFinish']);
+
+                    }
                 }
 
                 if($values['editFrom'] != "" && $values['editFrom'] != NULL) {
@@ -516,17 +681,17 @@ namespace leantime\domain\services {
             $values = array(
                 'headline' => $values['headline'],
                 'type' => 'subtask',
-                'description' => $values['description'],
+                'description' => $values['description'] ?? '',
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date("Y-m-d H:i:s"),
                 'dateToFinish' => "",
-                'priority' => '',
+                'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
                 'storypoints' => "",
-                'hourRemaining' => $values['hourRemaining'],
-                'planHours' => $values['planHours'],
+                'hourRemaining' => $values['hourRemaining'] ?? 0,
+                'planHours' => $values['planHours'] ?? 0,
                 'sprint' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",
@@ -659,9 +824,70 @@ namespace leantime\domain\services {
                 return $url;
             }
 
-
         }
 
+        public function getGroupByFieldOptions()
+        {
+            return [
+                [
+                    'id' => 'groupByNothingLink',
+                    'status' => '',
+                    'label' => 'no_group'
+                ],
+                [
+                    'id' => 'groupByStatusLink',
+                    'status' => 'status',
+                    'label' => 'todo_status'
+                ],
+                [
+                    'id' => 'groupByMilestoneLink',
+                    'status' => 'milestone',
+                    'label' => 'milestone'
+                ],
+                [
+                    'id' => 'groupByUserLink',
+                    'status' => 'user',
+                    'label' => 'user'
+                ],
+                [
+                    'id' => 'groupBySprintLink',
+                    'status' => 'sprint',
+                    'label' => 'sprint'
+                ],
+                [
+                    'id' => 'groupByTagsLink',
+                    'status' => 'tags',
+                    'label' => 'tags'
+                ]
+            ];
+        }
+
+        public function getNewFieldOptions()
+        {
+            if (!defined('BASE_URL')) {
+                return [];
+            }
+
+            $baseUrl = BASE_URL . '/tickets';
+
+            return [
+                [
+                    'url' => "$baseUrl/newTicket",
+                    'text' => 'links.add_todo',
+                    'class' => 'ticketModal'
+                ],
+                [
+                    'url' => "$baseUrl/editMilestone",
+                    'text' => 'links.add_milestone',
+                    'class' => 'milestoneModal'
+                ],
+                [
+                    'url' => "$baseUrl/editSprit",
+                    'text' => 'links.add_sprint',
+                    'class' => 'sprintModal'
+                ]
+            ];
+        }
 
     }
 

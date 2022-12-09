@@ -9,27 +9,35 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-    class showClient
+    class showClient extends controller
     {
 
+        private $clientRepo;
+
         /**
-         * run - display template and edit data
+         * init - initialize private variables
          *
          * @access public
          */
-        public function __construct () {
+        public function init()
+        {
+
+            $this->clientRepo = new repositories\clients();
             $this->settingsRepo = new repositories\setting();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
             $this->commentService = new services\comments();
             $this->fileService = new services\files();
 
             if(!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL."/clients/showAll";
             }
+
         }
 
         /**
@@ -40,8 +48,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $clientRepo = new repositories\clients();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             $id = '';
 
@@ -49,7 +56,7 @@ namespace leantime\domain\controllers {
                 $id = (int)($_GET['id']);
             }
 
-            $row = $clientRepo->getClient($id);
+            $row = $this->clientRepo->getClient($id);
 
             $clientValues = array(
                 'id' => $row['id'],
@@ -64,29 +71,23 @@ namespace leantime\domain\controllers {
                 'email' => $row['email']
             );
 
-            if (empty($row) === false && core\login::userIsAtLeast("clientManager")) {
-
-                if(core\login::userHasRole("clientManager") && $id != core\login::getUserClientId()) {
-                    $tpl->display('general.error');
-                    exit();
-                }
-
+            if (empty($row) === false && auth::userIsAtLeast(roles::$admin)) {
 
                 $file = new repositories\files();
                 $project = new repositories\projects();
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
-                    $tpl->assign('admin', true);
+                    $this->tpl->assign('admin', true);
                 }
 
                 if (isset($_POST['upload'])) {
 
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
                         $return = $file->upload($_FILES, 'client', $id);
-                        $tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
+                        $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
 
                     }else{
-                        $tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
+                        $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
                 }
 
@@ -96,10 +97,10 @@ namespace leantime\domain\controllers {
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
                     if($result === true) {
-                        $tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $tpl->redirect(BASE_URL."/clients/showClient/".$id."#files");
+                        $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
+                        $this->tpl->redirect(BASE_URL."/clients/showClient/".$id."#files");
                     }else {
-                        $tpl->setNotification($result["msg"], "success");
+                        $this->tpl->setNotification($result["msg"], "success");
                     }
 
                 }
@@ -110,15 +111,16 @@ namespace leantime\domain\controllers {
 
                     if($this->commentService->addComment($_POST, "client", $id, $row)) {
 
-                        $tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
                     }else {
-                        $tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                        $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                     }
                 }
 
                 if (isset($_POST['save']) === true) {
 
                     $clientValues = array(
+                        'id' => $row['id'],
                         'name' => $_POST['name'],
                         'street' => $_POST['street'],
                         'zip' => $_POST['zip'],
@@ -132,30 +134,30 @@ namespace leantime\domain\controllers {
 
                     if ($clientValues['name'] !== '') {
 
-                        $clientRepo->editClient($clientValues, $id);
+                        $this->clientRepo->editClient($clientValues, $id);
 
-                        $tpl->setNotification($this->language->__("notification.client_saved_successfully"), 'success');
+                        $this->tpl->setNotification($this->language->__("notification.client_saved_successfully"), 'success');
 
                     } else {
 
-                        $tpl->setNotification($this->language->__("notification.client_name_not_specified"), 'error');
+                        $this->tpl->setNotification($this->language->__("notification.client_name_not_specified"), 'error');
                     }
                 }
 
-                $tpl->assign('userClients', $clientRepo->getClientsUsers($id));
-                $tpl->assign('comments', $this->commentService->getComments('client', $id));
-                $tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-                $tpl->assign('client', $clientValues);
-                $tpl->assign('users', new repositories\users());
-                $tpl->assign('clientProjects', $project->getClientProjects($id));
-                $tpl->assign('files', $file->getFilesByModule('client', $id));
+                $this->tpl->assign('userClients', $this->clientRepo->getClientsUsers($id));
+                $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
+                $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
+                $this->tpl->assign('client', $clientValues);
+                $this->tpl->assign('users', new repositories\users());
+                $this->tpl->assign('clientProjects', $project->getClientProjects($id));
+                $this->tpl->assign('files', $file->getFilesByModule('client', $id));
 
 
-                $tpl->display('clients.showClient');
+                $this->tpl->display('clients.showClient');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

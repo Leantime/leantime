@@ -4,10 +4,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class delCanvas
+    class delCanvas extends controller
     {
+
+        private $ideaRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->ideaRepo = new repositories\ideas();
+
+        }
 
         /**
          * run - display template and edit data
@@ -17,9 +34,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $ideaRepo = new repositories\ideas();
-            $language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
@@ -27,15 +42,15 @@ namespace leantime\domain\controllers {
 
             if (isset($_POST['del']) && isset($id)) {
 
-                $ideaRepo->deleteCanvas($id);
+                $this->ideaRepo->deleteCanvas($id);
 
                 unset($_SESSION['currentIdeaCanvas']);
-                $tpl->setNotification($language->__("notification.idea_board_deleted"), "success");
-                $tpl->redirect(BASE_URL."/ideas/showBoards");
+                $this->tpl->setNotification($this->language->__("notification.idea_board_deleted"), "success");
+                $this->tpl->redirect(BASE_URL."/ideas/showBoards");
 
             }
 
-            $tpl->display('ideas.delCanvas');
+            $this->tpl->display('ideas.delCanvas');
 
         }
 

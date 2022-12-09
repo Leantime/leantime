@@ -3,37 +3,41 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
     use DateTime;
     use DateInterval;
+    use leantime\domain\services\auth;
 
-
-    class editBoxLabel
+    class editBoxLabel extends controller
     {
 
-        private $tpl;
-        private $projects;
-        private $sprintService;
+        private $ticketsRepo;
+        private $settingsRepo;
+        private $canvasRepo;
+        private $retroRepo;
+        private $ideaRepo;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
+
             $this->ticketsRepo = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->canvasRepo = new repositories\leancanvas();
-            $this->retroRepo = new repositories\retrospectives();
+            $this->retroRepo = new repositories\retroscanvas();
             $this->ideaRepo = new repositories\ideas();
-            $this->language = new core\language();
 
         }
 
@@ -46,7 +50,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$manager)) {
 
                 $currentLabel = "";
 
@@ -80,7 +84,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->displayPartial('setting.editBoxDialog');
 
             } else {
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
             }
         }
 

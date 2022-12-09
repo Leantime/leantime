@@ -2,37 +2,37 @@
 
 namespace leantime\domain\controllers {
 
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\repositories;
     use leantime\core;
+    use leantime\core\controller;
 
-    class show
+    class show extends controller
     {
 
-        private $tpl;
         private $dashboardRepo;
         private $projectService;
         private $sprintService;
         private $ticketService;
         private $userService;
         private $timesheetService;
+        private $commentService;
 
-
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
+
             $this->dashboardRepo = new repositories\dashboard();
             $this->projectService = new services\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
-            $this->language = new core\language();
+            $this->commentService = new services\comments();
 
             $_SESSION['lastPage'] = BASE_URL."/dashboard/show";
 
-            $reportService = new services\reports();
-            $reportService->dailyIngestion();
+            (new services\reports())->dailyIngestion();
 
         }
 
@@ -41,6 +41,10 @@ namespace leantime\domain\controllers {
          */
         public function get()
         {
+
+            if(!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
+                core\frontcontroller::redirect(BASE_URL."/dashboard/home");
+            }
 
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
@@ -51,12 +55,33 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
 
+            $project = $this->projectService->getProject($_SESSION['currentProject']);
+            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
+            $this->tpl->assign('project', $project);
+
             //Milestones
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
             $this->tpl->assign('milestones', $milestones);
 
+            $comments = new repositories\comments();
+
+            //Delete comment
+            if (isset($_GET['delComment']) === true) {
+
+                $commentId = (int)($_GET['delComment']);
+
+                $comments->deleteComment($commentId);
+
+                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
+
+            }
+
+            $comment = $comments->getComments('project', $_SESSION['currentProject'],"");
+            $this->tpl->assign('comments', $comment);
+            $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
+
             // TICKETS
-            $this->tpl->assign('tickets', $this->ticketService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $_SESSION['currentProject']));
+            $this->tpl->assign('tickets', $this->ticketService->getLastTickets($_SESSION['currentProject']));
             $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
@@ -70,18 +95,37 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if (isset($params['quickadd']) == true) {
+            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
 
-                $result = $this->ticketService->quickAddTicket($params);
+                if (isset($params['quickadd']) == true) {
+                    $result = $this->ticketService->quickAddTicket($params);
 
-                if (isset($result["status"])) {
-                    $this->tpl->setNotification($result["message"], $result["status"]);
-                } else {
-                    $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    if (isset($result["status"])) {
+                        $this->tpl->setNotification($result["message"], $result["status"]);
+                    } else {
+                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    }
+
+                    $this->tpl->redirect(BASE_URL . "/dashboard/show");
+                }
+            }
+
+            // Manage Post comment
+            $comments = new repositories\comments();
+            if (isset($_POST['comment']) === true) {
+
+                $project = $this->projectService->getProject($_SESSION['currentProject']);
+
+                if($this->commentService->addComment($_POST, "project", $_SESSION['currentProject'], $project)) {
+
+                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                }else {
+                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                 }
 
-                $this->tpl->redirect(BASE_URL."/dashboard/show");
             }
+
+            $this->tpl->redirect(BASE_URL . "/dashboard/show");
 
 
         }

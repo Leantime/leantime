@@ -1,0 +1,60 @@
+
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
+  font-family: monospace;
+  padding: 6px 6px;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  color: #555;
+  background: #fafafa;
+}
+
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
+  float: right;
+  margin-left: 8px;
+  color: #888;
+}
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-render-time,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-memory,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-type {
+  color: #555;
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
+  font-family: PhpDebugbarFontAwesome;
+  margin-right: 4px;
+  font-size: 12px;
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before {
+  content: "\f017";
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before {
+  content: "\f085";
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before {
+  content: "\f0ce";
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
+  content: "\f121";
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params {
+  display: none;
+  width: 70%;
+  margin: 10px;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  border-collapse: collapse;
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params td {
+  border: 1px solid #ddd;
+  padding: 0 5px;
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
+  width: 20%;
+  font-weight: bold;
+}

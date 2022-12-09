@@ -2,6 +2,8 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $project = $this->get('project');
+$menuTypes = $this->get('menuTypes');
+
 ?>
 
 
@@ -12,7 +14,7 @@ $project = $this->get('project');
         <div class="span8">
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span><?=$this->__('label.general'); ?></h4>
+                    <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span><?=$this->__('label.general'); ?></h4>
 
                     <div class="form-group">
 
@@ -41,7 +43,22 @@ $project = $this->get('project');
                             <?php } ?>
                         </div>
                     </div>
+					<?php if($config->enableMenuType) {?>
+                        <div class="form-group">
 
+                            <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
+                            <div class="span6">
+                                <select name="menuType" id="menuType">
+						    		<?php foreach($menuTypes as $key => $menu) { ?>
+                                       <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
+							      <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+					<?php } else { ?>
+		                <input type="hidden" name="menuType" id="menuType"
+							   value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
+					<?php } ?>
                     <div class="form-group">
 
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
@@ -62,40 +79,31 @@ $project = $this->get('project');
             <div class="row-fluid">
                 <div class="span12">
                     <h4 class="widgettitle title-light">
-                        <span class="iconfa iconfa-asterisk"></span><?php echo $this->__('label.description'); ?>
+                        <span class="fa fa-asterisk"></span><?php echo $this->__('label.description'); ?>
                     </h4>
-                    <textarea name="details" id="details" class="projectTinymce" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
             </div>
         </div>
         <div class="span4">
+
             <div class="row-fluid">
-                <div class="span12">
+                <div class="span12 ">
                     <h4 class="widgettitle title-light"><span
-                                class="iconfa iconfa-group"></span><?php echo $this->__('label.team_members'); ?></h4>
-                    <div class="form-group">
-                        <?php echo $this->__('text.choose_access_for_users'); ?><br />
-                        <a href='<?=BASE_URL?>/users/showAll/'><?php echo $this->__('links.dont_do_it_alone'); ?></a>
-                        <br /><br />
+                                class="fa fa-lock-open"></span><?php echo $this->__('labels.defaultaccess'); ?></h4>
+                    <?php echo $this->__('text.who_can_access'); ?>
+                    <br /><br />
 
-                        <div class="assign-container">
-                            <?php foreach($this->get('availableUsers') as $row){ ?>
-
-                                    <p class="half">
-                                        <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>'
-                                            <?php if(in_array($row['id'], $project['assignedUsers'])) : ?> checked="checked"<?php
-                                            endif; ?>/>
-
-                                        <label for="user-<?php echo $row['id'] ?>"><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
-                                    </p>
-                            <?php } ?>
-                        </div>
-                    </div>
-
+                    <select name="globalProjectUserAccess" style="max-width:300px;">
+                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $this->__("labels.only_chose"); ?></option>
+                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_client"); ?></option>
+                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $this->__("labels.everyone_in_org"); ?></option>
+                    </select>
 
                 </div>
             </div>
+
             <div class="row-fluid">
                 <div class="span12 padding-top">
                     <h4 class="widgettitle title-light"><span
@@ -122,53 +130,6 @@ $project = $this->get('project');
         </div>
 
     </div>
-
-	<div class="row-fluid  padding-top" style="display:none;">
-		<h4 class="widgettitle title-light">
-			<span class="iconfa iconfa-ambulance"></span><?php echo $this->__('label.additional_settings'); ?>
-		</h4>
-	</div>
-
-	<div class="row-fluid  padding-top" style="display:none;">
-		<div class="span8">
-			<div class="form-group">
-
-				<label class="span4 control-label" for="ticketLayout"><?php echo $this->__('label.ticket_layout'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsTicketLayout" id="ticketLayout">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 0) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.classic'); ?></option>
-
-							<option value="1" <?php if( $_SESSION["projectsettings"]['ticketLayout'] == 1) { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.oneView'); ?></option>
-
-						</select>
-
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="spsan4">
-			<div class="form-group">
-				<label class="span4 control-label" for="commentOrder"><?php echo $this->__('label.comment_order'); ?></label>
-				<div class="span6">
-					<div class="span6">
-						<select name="settingsCommentOrder" id="commentOrder">
-							<option value="0" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "0") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.uptodown'); ?></option>
-
-							<option value="1" <?php if( $_SESSION["projectsettings"]['commentOrder'] == "1") { ?> selected=selected
-							<?php } ?>><?php echo $this->__('label.downtoup'); ?></option>
-
-						</select>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 
     <div class="row-fluid padding-top">
         <?php if ($project['id'] != '') : ?>

@@ -3,19 +3,20 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-    class delTicket
+    class delTicket extends controller
     {
 
         private $ticketService;
-        private $tpl;
-        private $language;
 
-        public function __construct()
+        public function init()
         {
-            $this->tpl = new core\template();
-            $this->language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+
             $this->ticketService = new services\tickets();
 
         }
@@ -25,7 +26,7 @@ namespace leantime\domain\controllers {
         {
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
@@ -36,7 +37,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 
@@ -49,7 +50,7 @@ namespace leantime\domain\controllers {
             }
 
             //Only admins
-            if(core\login::userIsAtLeast("developer")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($params['del'])) {
 
@@ -65,11 +66,11 @@ namespace leantime\domain\controllers {
                     }
 
                 }else{
-                    $this->tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
                 }
 
             }else{
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
             }
         }
 

@@ -7,9 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use leantime\core\config;
-use leantime\core\install;
-use leantime\core\settings;
+use leantime\domain\repositories\install;
 use Exception;
 use leantime\domain\repositories\users;
 use array_values;
@@ -45,14 +43,12 @@ class migrateCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int {
         define('BASE_URL', "");
         define('CURRENT_URL', "");
-        $config = new config();
-        $settings = new settings();
-        $install = new install($config, $settings);
+
+        $install = new install();
         $io = new SymfonyStyle($input, $output);
         $silent = $input->getOption("silent") === "true";
         try {
             if (!$install->checkIfInstalled()) {
-
                 $adminEmail = $silent ? "admin@leantime.io" : $io->ask("Admin Email");
                 $adminPassword = $silent ? "" : $io->askHidden("Admin Password");
                 $adminFirstName = $silent ? "" : $io->ask("Admin First Name");

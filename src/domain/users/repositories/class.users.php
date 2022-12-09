@@ -66,6 +66,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
+            $this->config = new core\config();
 
         }
 
@@ -89,6 +90,57 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
+        }
+
+        /**
+         * getUser - get on user from db
+         *
+         * @access public
+         * @param  $id
+         * @return array
+         */
+        public function getUserBySha($hash)
+        {
+
+
+            $sql = "SELECT * FROM `zp_user` WHERE SHA1(CONCAT(id,:sessionSecret)) = :hash";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
+            $stmn->bindValue(':sessionSecret', $this->config->sessionpassword, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
+
+
+        /**
+         * getLastLogin - get the date of the last login of any user
+         *
+         * @access public
+         * @param  $id
+         * @return string|null returns datetime string with last login or null if nothing could be found
+         */
+        public function getLastLogin() :string|null
+        {
+
+            $sql = "SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if(isset($values['lastlogin'])) {
+                return $values['lastlogin'];
+            }
+            return null;
         }
 
         /**
@@ -145,10 +197,9 @@ namespace leantime\domain\repositories {
             $sql = "SELECT 
 			zp_user.id,
 			zp_user.firstname,
-			zp_user.lastname,
-			zp_roles.roleDescription,
-			zp_roles.roleName AS role
-		 FROM zp_user LEFT JOIN zp_roles ON zp_user.role = zp_roles.id WHERE zp_roles.roleName IN('developer','admin','manager') ORDER BY lastname";
+			zp_user.lastname
+		 FROM zp_user 
+		    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -175,6 +226,7 @@ namespace leantime\domain\repositories {
                       firstname, 
                       role, 
                       profileId, 
+                      status,
                       username,
                       twoFAEnabled,
                       clientId,
@@ -207,6 +259,7 @@ namespace leantime\domain\repositories {
                         firstname, 
                         role, 
                         profileId, 
+                        status,
                         username,
                         twoFAEnabled,
                         zp_clients.name AS clientName
@@ -539,10 +592,11 @@ namespace leantime\domain\repositories {
                 $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
             }
 
-            $sql .= "id=:id WHERE id=:id LIMIT 1";
+            $sql .= "id=:id WHERE id=:id2 LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':id2', $id, PDO::PARAM_STR);
 
             foreach($params as $key=>$value){
                 $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
@@ -553,6 +607,32 @@ namespace leantime\domain\repositories {
 
             return $return;
         }
+
+        /**
+         * getUserIdByName - Get Author/User Id by first- and lastname
+         *
+         * @access public
+         * @param  string $firstnam Firstname
+         * @param  string $lastname Lastname
+         * @return int|bool Identifier of user or false, if not found
+         */
+        public function getUserIdByName(string $firstname, string $lastname): int|bool
+        {
+            $query = "SELECT profileId FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
+
+            $stmn = $this->db->database->prepare($query);
+            
+            $stmn->bindValue(':firstname', $firstname, PDO::PARAM_STR);
+            $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $result = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return  $result['profileId'] ?? false;
+            
+        }
+        
 
     }
 

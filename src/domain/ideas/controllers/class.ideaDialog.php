@@ -3,6 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -10,32 +11,32 @@ namespace leantime\domain\controllers {
     use DateTime;
     use DateInterval;
 
-
-    class ideaDialog
+    class ideaDialog extends controller
     {
 
-        private $tpl;
-        private $projects;
+        private $ideaRepo;
         private $sprintService;
-        private $language;
+        private $ticketRepo;
+        private $ticketService;
+        private $commentsRepo;
+        private $projectService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->ideaRepo = new repositories\ideas();
             $this->sprintService = new services\sprints();
             $this->ticketRepo = new repositories\tickets();
             $this->ticketService = new services\tickets();
             $this->commentsRepo = new repositories\comments();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
+
         }
 
         /**
@@ -46,7 +47,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(isset($params['id'])) {
+            if (isset($params['id'])) {
 
                 //Delete comment
                 if (isset($params['delComment']) === true) {
@@ -233,6 +234,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('canvasTypes',  $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem',  $this->ideaRepo->getSingleCanvasItem($_GET['id']));
             $this->tpl->displayPartial('ideas.ideaDialog');
+
         }
 
         /**

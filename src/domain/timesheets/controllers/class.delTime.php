@@ -3,10 +3,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class delTime
+    class delTime extends controller
     {
+
+        private $timesheetsRepo;
+
+        /**
+         * init - initialize private variable
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->timesheetsRepo = new repositories\timesheets();
+
+        }
 
         /**
          * run - display template and edit data
@@ -16,8 +33,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $msgKey = '';
 
@@ -28,24 +44,24 @@ namespace leantime\domain\controllers {
                 //Delete User
                 if (isset($_POST['del']) === true) {
 
-                    $timesheetsRepo->deleteTime($id);
+                    $this->timesheetsRepo->deleteTime($id);
 
-                   $tpl->setNotification("notifications.time_deleted_successfully", "success");
+                   $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
 
                     if(isset($_SESSION['lastPage'])) {
-                        $tpl->redirect($_SESSION['lastPage']);
+                        $this->tpl->redirect($_SESSION['lastPage']);
                     }else{
-                        $tpl->redirect(BASE_URL."/timsheets/showMyList");
+                        $this->tpl->redirect(BASE_URL."/timsheets/showMyList");
                     }
 
                 }
 
-                $tpl->assign("id", $id);
-                $tpl->displayPartial('timesheets.delTime');
+                $this->tpl->assign("id", $id);
+                $this->tpl->displayPartial('timesheets.delTime');
 
             } else {
 
-                $tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('errors.error403');
 
             }
 

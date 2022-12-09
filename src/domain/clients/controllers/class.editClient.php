@@ -7,10 +7,27 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class editClient
+    class editClient extends controller
     {
+
+        private $clientRepo;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->clientRepo = new repositories\clients();
+
+        }
 
         /**
          * run - display template and edit data
@@ -20,17 +37,16 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $clientRepo = new repositories\clients();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
             //Only admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
 
-                    $row = $clientRepo->getClient($id);
+                    $row = $this->clientRepo->getClient($id);
 
                     $msgKey = '';
 
@@ -62,7 +78,7 @@ namespace leantime\domain\controllers {
 
                         if ($values['name'] !== '') {
 
-                            $clientRepo->editClient($values, $id);
+                            $this->clientRepo->editClient($values, $id);
 
                             $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success');
 
@@ -79,13 +95,13 @@ namespace leantime\domain\controllers {
 
                 } else {
 
-                    $tpl->display('general.error');
+                    $tpl->display('errors.error403');
 
                 }
 
             } else {
 
-                $tpl->display('general.error');
+                $tpl->display('errors.error403');
 
             }
 

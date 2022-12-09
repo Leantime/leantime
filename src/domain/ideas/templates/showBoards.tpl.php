@@ -3,13 +3,60 @@ defined('RESTRICTED') or die('Restricted access');
 $allCanvas = $this->get("allCanvas");
 $canvasTitle = "";
 $canvasLabels = $this->get('canvasLabels');
+
+//get canvas title
+foreach($this->get('allCanvas') as $canvasRow){
+    if($canvasRow["id"] == $this->get('currentCanvas')) {
+        $canvasTitle = $canvasRow["title"];
+        break;
+    }
+}
+
 ?>
 
 <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?php echo $this->__("headlines.ideas") ?></h1>
+        <?php if(count($allCanvas) > 0) {?>
+            <span class="dropdown dropdownWrapper headerEditDropdown">
+        <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+        <ul class="dropdown-menu editCanvasDropdown">
+            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                <li><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></li>
+                <li><a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
+            <?php } ?>
+        </ul>
+        </span>
+        <?php } ?>
+        <h1><?php echo $this->__("headlines.ideas") ?>
+            //
+            <?php if(count($allCanvas) > 0) {?>
+                <span class="dropdown dropdownWrapper">
+                <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" style="max-width:200px;">
+                    <?php $this->e($canvasTitle); ?>&nbsp;<i class="fa fa-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu canvasSelector">
+                     <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$this->__("links.icon.create_new_board") ?></a></li>
+
+                     <?php } ?>
+                    <li class="border"></li>
+                    <?php
+                    $lastClient = "";
+                    $i=0;
+                    foreach($this->get('allCanvas') as $canvasRow){
+
+                        echo "<li><a href='".BASE_URL."/ideas/showBoards/".$canvasRow["id"]."'>".$canvasRow["title"]."</a></li>";
+
+                    }
+                    ?>
+                </ul>
+            </span>
+            <?php } ?>
+
+        </h1>
     </div>
 </div><!--pageheader-->
 
@@ -19,41 +66,16 @@ $canvasLabels = $this->get('canvasLabels');
 
         <div class="row">
             <div class="col-md-4">
-                <?php if (count($this->get('allCanvas')) > 0) { ?>
-                    <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
-                                class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea") ?></a>
+                <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
+                    <?php if (count($this->get('allCanvas')) > 0) { ?>
+                        <a href="<?=BASE_URL ?>/ideas/ideaDialog?type=idea" class="ideaModal  btn btn-primary" id="customersegment"><span
+                                    class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea") ?></a>
+                    <?php } ?>
                 <?php } ?>
             </div>
 
             <div class="col-md-4 center">
-                <span class="currentSprint">
-                    <form action="" method="post">
-                        <?php if (count($this->get('allCanvas')) > 0) { ?>
-                            <select data-placeholder="<?php echo $this->__("input.placeholders.filter_by_sprint") ?>"
-                                    name="searchCanvas"
-                                    class="mainSprintSelector" onchange="form.submit()">
-                            <?php
-                            $lastClient = "";
-                            $i = 0;
-                            foreach ($this->get('allCanvas') as $canvasRow) { ?>
 
-                                <?php echo "<option value='" . $canvasRow["id"] . "'";
-                                if ($this->get('currentCanvas') == $canvasRow["id"]) {
-                                    $canvasTitle = $canvasRow["title"];
-                                    echo " selected='selected' ";
-                                }
-                                echo ">" . $this->escape($canvasRow["title"]) . "</option>"; ?>
-
-                            <?php } ?>
-                        </select><br/>
-                            <small><a href="javascript:void(0)"
-                                      class="addCanvasLink"><?php echo $this->__("links.create_idea_board") ?></a></small> |
-                         <small><a href="javascript:void(0)"
-                                   class="editCanvasLink "><?php echo $this->__("links.edit_idea_board") ?></a></small>
-                        <?php } ?>
-                    </form>
-
-                    </span>
             </div>
             <div class="col-md-4">
                 <div class="pull-right">
@@ -73,7 +95,7 @@ $canvasLabels = $this->get('canvasLabels');
         <div class="clearfix"></div>
         <?php if (count($this->get('allCanvas')) > 0) { ?>
 
-            <div id="ideaMason" class="sortableTicketList">
+            <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">
 
 
                 <?php foreach ($this->get('canvasItems') as $row) { ?>
@@ -83,12 +105,17 @@ $canvasLabels = $this->get('canvasLabels');
                         <div class="row">
                             <div class="col-md-12">
 
-                                <?php  if ($login::userIsAtLeast("developer")) { ?>
+                                <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="inlineDropDownContainer" style="float:right;">
 
                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                         </a>
+                                <?php } ?>
+
+                                    <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
+                               <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                        &nbsp;&nbsp;&nbsp;
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
                                             <li><a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"];?>" class="ideaModal" data="item_<?php echo $row["id"];?>"> <?php echo $this->__("links.edit_canvas_item"); ?></a></li>
@@ -102,7 +129,7 @@ $canvasLabels = $this->get('canvasLabels');
                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                 <div class="mainIdeaContent">
-                                    <?php echo($row["data"]); ?>
+                                    <?=$row["data"] ?>
                                 </div>
 
                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -149,7 +176,6 @@ $canvasLabels = $this->get('canvasLabels');
                                 </div>
                             </div>
                         </div>
-                        <?=sprintf($this->__("text.num_comments"), $row['commentCount'])?>
 
                         <?php if ($row['milestoneHeadline'] != '') {
                             ?>
@@ -181,14 +207,12 @@ $canvasLabels = $this->get('canvasLabels');
                 <?php } ?>
 
 
-            </div>
-            <div class="clearfix"></div>
 
-            <?php  if ($login::userIsAtLeast("clientManager")) { ?>
-                <br/>
-                <a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas') ?>"
-                   class="delete right"><?php echo $this->__("links.delete_board") ?></a>
+            </div>
+            <?php if(count($this->get('canvasItems')) == 0){ ?>
+                <?=$this->__('text.no_ideas_yet') ?>
             <?php } ?>
+            <div class="clearfix"></div>
 
         <?php } else { ?>
 
@@ -200,8 +224,10 @@ $canvasLabels = $this->get('canvasLabels');
 
                 <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>
                 <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
+                <?php  if($login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="javascript:void(0)"
                    class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_new_idea_board") ?></a>
+                <?php } ?>
             </div>
 
         <?php } ?>
@@ -267,11 +293,20 @@ $canvasLabels = $this->get('canvasLabels');
 
     jQuery(document).ready(function () {
 
+        //new SlimSelect({ select: '#searchCanvas' });
+
         leantime.ideasController.initMasonryWall();
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.initWallImageModals();
-        leantime.ideasController.initStatusDropdown();
-        leantime.ideasController.initUserDropdown();
+
+        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+            leantime.ideasController.initStatusDropdown();
+            leantime.ideasController.initUserDropdown();
+        <?php }else{ ?>
+
+        leantime.generalController.makeInputReadonly(".maincontentinner");
+
+        <?php } ?>
 
         <?php if(isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
             leantime.helperController.showHelperModal("ideaBoard");

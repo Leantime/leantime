@@ -3,38 +3,48 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
+    use leantime\domain\services\auth;
 
-    class showAll
+    class showAll extends controller
     {
 
+        public function init()
+        {
+
+            $this->userRepo =  new repositories\users();
+            $this->ldapService = new services\ldap();
+
+        }
 
         public function get()
         {
 
-            $tpl = new core\template();
-            $userRepo =  new repositories\users();
-            $ldapService = new services\ldap();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
+
+
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
+            if(auth::userIsAtLeast(roles::$admin)) {
 
-                if(core\login::userIsAtLeast("manager")) {
-                    $tpl->assign('allUsers', $userRepo->getAll());
+                if(auth::userIsAtLeast(roles::$admin)) {
+                    $this->tpl->assign('allUsers', $this->userRepo->getAll());
 
                 }else{
-                    $tpl->assign('allUsers', $userRepo->getAllClientUsers(core\login::getUserClientId()));
+                    $this->tpl->assign('allUsers', $this->userRepo->getAllClientUsers(auth::getUserClientId()));
                 }
 
-                $tpl->assign('admin', true);
-                $tpl->assign('roles', core\login::$userRoles);
+                $this->tpl->assign('admin', true);
+                $this->tpl->assign('roles', roles::getRoles());
 
-                $tpl->display('users.showAll');
+                $this->tpl->display('users.showAll');
 
             }else{
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

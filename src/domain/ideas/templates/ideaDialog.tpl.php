@@ -17,10 +17,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
+<div class="showDialogOnLoad" >
 
     <h4 class="widgettitle title-light"><i
-                class="iconfa iconfa-columns"></i>
+                class="fa fa-columns"></i>
         <?php
         if($canvasItem['description'] == "") {
                 echo $this->__("headlines.ideas");
@@ -35,7 +35,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
-        <input type="hidden" value="<?php echo $canvasItem['box'] ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
         <label><?php echo $this->__("label.name") ?></label>
@@ -43,8 +43,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
 
         <label><?php echo $this->__("label.description") ?></label>
-        <textarea rows="3" cols="10" name="data" class="ideaTextEditor"
-                  placeholder=""><?php $this->e($canvasItem['data']) ?></textarea><br/>
+        <textarea rows="3" cols="10" name="data" class="tinymceSimple"
+                  placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>
@@ -69,12 +69,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
                         <?php echo $this->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
                                    onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
                                 | <a href="javascript:void(0);"
                                      onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
                             </div>
+                            <?php } ?>
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
@@ -178,9 +180,30 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <br/>
         <input type="hidden" name="comment" value="1"/>
 
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
-        $this->displaySubmodule('comments-generalComment'); ?>
+            $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
+
+            $this->displaySubmodule('comments-generalComment'); ?>
     <?php } ?>
 
 </div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+
+        leantime.generalController.initSimpleEditor();
+
+        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
+
+        leantime.generalController.makeInputReadonly(".nyroModalCont");
+
+        <?php } ?>
+
+        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        leantime.generalController.enableCommenterForms();
+        <?php }?>
+
+
+    })
+</script>

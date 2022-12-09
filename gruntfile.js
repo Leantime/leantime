@@ -16,7 +16,11 @@ module.exports = function (grunt) {
                     "public/js/app/app.js",
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
-                    "src/domain/**/*.js"
+                    "public/js/app/core/wysiwyg.js",
+                    "src/domain/**/*.js",
+                    "custom/domain/**/*.js",
+                    "src/plugin/**/*.js",
+                    "custom/plugin/**/*.js"
                 ]
                 , dest: "public/js/compiled-app.min.js"
             },
@@ -31,12 +35,15 @@ module.exports = function (grunt) {
                     "node_modules/jquery/dist/jquery.js",
                     "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
+                    "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/moment/moment.js",
+                    "node_modules/js-cookie/dist/js.cookie.js",
                     "public/js/libs/bootstrap.min.js",
                     "public/js/libs/bootstrap-timepicker.min.js",
                     "public/js/libs/bootstrap-fileupload.min.js",
                     "public/js/libs/jquery.jgrowl.js",
+                    "public/js/libs/slimselect.min.js",
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
                     "public/js/libs/jquery.tagsinput.min.js"
@@ -75,30 +82,40 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/textcolor/plugin.js",
                     "node_modules/tinymce/plugins/image/plugin.js",
                     "node_modules/tinymce/plugins/lists/plugin.js",
-                    "node_modules/tinymce/plugins/pagebreak/plugin.js",
                     "node_modules/tinymce/plugins/table/plugin.js",
                     "node_modules/tinymce/plugins/save/plugin.js",
-                    "node_modules/tinymce/plugins/insertdatetime/plugin.js",
                     "node_modules/tinymce/plugins/preview/plugin.js",
                     "node_modules/tinymce/plugins/media/plugin.js",
                     "node_modules/tinymce/plugins/searchreplace/plugin.js",
-                    "node_modules/tinymce/plugins/print/plugin.js",
                     "node_modules/tinymce/plugins/paste/plugin.js",
                     "node_modules/tinymce/plugins/directionality/plugin.js",
                     "node_modules/tinymce/plugins/fullscreen/plugin.js",
                     "node_modules/tinymce/plugins/noneditable/plugin.js",
                     "node_modules/tinymce/plugins/visualchars/plugin.js",
-                    "node_modules/tinymce/plugins/nonbreaking/plugin.js",
+                    "node_modules/tinymce/plugins/emoticons/plugin.js",
+                    "node_modules/tinymce/plugins/emoticons/js/emojis.min.js",
                     "node_modules/tinymce/plugins/template/plugin.js",
                     "node_modules/tinymce/plugins/advlist/plugin.js",
+                    "node_modules/tinymce/plugins/autoresize/plugin.js",
+                    "node_modules/tinymce/plugins/codesample/plugin.js",
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
+                    "node_modules/jstree/dist/jstree.js",
+                    "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
+                    "public/js/libs/tinymce-plugins/helper.js",
+                    "public/js/libs/tinymce-plugins/checklist/index.js",
+                    "public/js/libs/tinymce-plugins/shortlink/index.js",
+                    "public/js/libs/tinymce-plugins/bettertable/index.js",
+                    "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
+                    "public/js/libs/tinymce-plugins/embed/index.js",
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
-                    "public/js/libs/colorpicker.js",
                     "public/js/libs/simpleGantt/moment.min.js",
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
-                    "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js"
+                    "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
+                    "public/js/libs/prism/js/prism.js",
+
+
                 ]
                 , dest: "public/js/compiled-extended-libs.min.js"
             }
@@ -147,4 +164,9 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
+
+    grunt.registerTask("Build-App-Src", ["uglify:app_src", "jshint"]);
+    grunt.registerTask("Build-Base-Lib", ["uglify:base_lib_src"]);
+    grunt.registerTask("Build-Extended-Src", ["uglify:extended_lib_src"]);
+    grunt.registerTask("Build-Less-Dev", ["less:dev"]);
 };

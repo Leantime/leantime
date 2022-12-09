@@ -5,16 +5,17 @@ $values = $this->get('client');
 $users = $this->get('users');
 ?>
 
-
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-
-
-<div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
         <h1><?php $this->e($values['name']); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
@@ -30,9 +31,10 @@ $users = $this->get('users');
 
             <div id='clientDetails'>
                 <form action="" method="post">
+
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="iconfa iconfa-leaf"></span> <?php echo $this->__('subtitle.details'); ?></h4>
+                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> <?php echo $this->__('subtitle.details'); ?></h4>
 
                             <div class="form-group">
                                 <label class="span4 control-label"><?php echo $this->__('label.client_id') ?></label>
@@ -191,7 +193,7 @@ $users = $this->get('users');
                                 <input type="hidden" />
                                 <div class="input-append">
                                     <div class="uneditable-input span3">
-                                        <i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+                                        <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
                                                          <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>
@@ -223,7 +225,7 @@ $users = $this->get('users');
                                                     <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
 
                                                     <?php
-                                                    if ($login::userIsAtLeast("developer")) { ?>
+                                                    if ($login::userIsAtLeast($roles::$admin)) { ?>
                                                         <li><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $this->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                                                     <?php  } ?>
 
@@ -287,11 +289,15 @@ $users = $this->get('users');
 </div>
 
 <script type="text/javascript">
+
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     jQuery(document).ready(function($)
         {
             leantime.clientsController.initClientTabs();
-
         }
     );
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

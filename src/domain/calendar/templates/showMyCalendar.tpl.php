@@ -2,21 +2,26 @@
     defined('RESTRICTED') or die('Restricted access');
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-
-    <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('headline.calendar'); ?></h5>
         <h1><?php echo $this->__('headline.my_calendar'); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
 
+        <a href="<?=BASE_URL?>/calendar/export" class="btn btn-default right exportModal">Export</a>
+
         <?php echo $this->displayLink(
             'calendar.addEvent',
-            "<i class='iconfa-plus'></i> ".$this->__('buttons.add_event'),
+            "<i class='fa fa-plus'></i> ".$this->__('buttons.add_event'),
             null,
             array('class'=>'btn btn-primary btn-rounded')
         ) ?>
@@ -29,8 +34,9 @@
 
 <script type='text/javascript'>
 
-    jQuery(document).ready(function() {
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
+    jQuery(document).ready(function() {
 
         var events=[<?php foreach($this->get('calendar') as $calendar): ?>
             {
@@ -65,7 +71,10 @@
             <?php endforeach; ?>];
 
         leantime.calendarController.initCalendar(events);
+        leantime.calendarController.initExportModal();
 
     });
+
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

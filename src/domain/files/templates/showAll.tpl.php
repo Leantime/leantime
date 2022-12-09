@@ -1,5 +1,5 @@
 <?php
-/** @var leantime\core\login $login */
+/** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 ?>
     <div id="fileManager">
@@ -18,7 +18,7 @@
 					   	 	<input type="hidden" />
 							<div class="input-append">
 								<div class="uneditable-input span3">
-									<i class="iconfa-file fileupload-exists"></i><span class="fileupload-preview"></span>
+									<i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
 								</div>
 								<span class="btn btn-file">
 									<span class="fileupload-new">Select file</span>
@@ -42,7 +42,7 @@
                     	<ul id='medialist' class='listfile'>
                     		<?php foreach($this->get('files') as $file): ?>
                     		<li class="<?php echo $file['moduleId'] ?>">
-                                <div class="inlineDropDownContainer" style="float:right;">
+                                <div class="inlineDropDownContainer dropright" style="float:right;">
 
                                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
@@ -53,7 +53,7 @@
 
                                         <?php
 
-                                        if ($login::userIsAtLeast("developer")) { ?>
+                                        if ($login::userIsAtLeast($roles::$editor)) { ?>
                                             <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
                                         <?php  } ?>
 

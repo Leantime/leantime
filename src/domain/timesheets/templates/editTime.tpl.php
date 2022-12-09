@@ -32,7 +32,7 @@ $values = $this->get('values');
         });
 
         jQuery(document).ready(function ($) {
-            jQuery("#datepicker").datepicker({
+            jQuery("#datepicker, #date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
                 numberOfMonths: 1,
                 dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
@@ -56,7 +56,7 @@ $values = $this->get('values');
 
 <?php echo $this->displayNotification() ?>
 
-<h4  class="widgettitle title-light"><span class="iconfa-time"></span> <?php echo $this->__('headlines.edit_time'); ?></h4>
+<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $this->__('headlines.edit_time'); ?></h4>
 <form action="<?=BASE_URL?>/timesheets/editTime/<?=(int)$_GET['id']?>" method="post" class="editTimeModal">
 
 <label for="projects"><?php echo $this->__('label.project')?></label>
@@ -77,13 +77,13 @@ $values = $this->get('values');
 <label for="tickets"><?php echo $this->__('label.ticket')?></label>
 <select name="tickets" id="tickets" class="ticket-select">
 
-    <?php foreach($this->get('allTickets') as $row) { 
+    <?php foreach($this->get('allTickets') as $row) {
         echo'<option class="project_'.$row['projectId'].'" data-value="'.$row["projectId"].'" value="'.$row['id'].'"';
         if($row['id'] == $values['ticket']) { echo' selected="selected" ';
         }
         echo'>'.$row['headline'].'</option>';
     } ?>
-    
+
 </select> <br />
 </div>
     <label for="kind"><?php echo $this->__('label.kind')?></label> <select id="kind"
@@ -111,7 +111,7 @@ $values = $this->get('values');
 
 
 
-    <?php if ($login::userIsAtLeast("clientManager")) { ?>
+    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
 
         <input style="float:left; margin-right:5px;"
                 type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
@@ -140,6 +140,20 @@ $values = $this->get('values');
                                                       name="invoicedCompDate"
                                                       value="<?php echo $this->getFormattedDateString($values['invoicedCompDate']); ?>"
                                                       size="7"/><br/>
+
+        <br/>
+        <input style="float:left; margin-right:5px;"
+               type="checkbox" name="paid" id="paid"
+            <?php if ($values['paid'] == '1') {
+                echo ' checked="checked"';
+            } ?> />
+
+        <label for="paid"><?php echo $this->__('label.paid') ?></label>
+        <?php echo $this->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+                                                          id="paidDate"
+                                                          name="paidDate"
+                                                          value="<?php echo $this->getFormattedDateString($values['paidDate']); ?>"
+                                                          size="7"/><br/>
     <?php } ?>
 
 

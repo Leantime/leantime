@@ -1,15 +1,19 @@
 <?php
 
     defined( 'RESTRICTED' ) or die( 'Restricted access' );
+
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
     $currentSprint  = $this->get("currentSprint");
+    $allTickets     = $this->get('allTickets');
 
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
     $efforts        = $this->get('efforts');
     $priorities     = $this->get('priorities');
     $statusLabels   = $this->get('allTicketStates');
+    $groupBy        = $this->get('groupBy');
+    $newField       = $this->get('newField');
 
     //All states >0 (<1 is archive)
     $numberofColumns = count($this->get('allTicketStates'))-1;
@@ -17,13 +21,17 @@
 
 ?>
 
+<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-   <div class="pageicon"><span class="<?php echo $this->getModulePicture() ?>"></span></div>
-   <div class="pagetitle">
+    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
+    <div class="pagetitle">
        <h5><?php $this->e($_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']); ?></h5>
    	    <h1><?php echo $this->__("headlines.todos"); ?></h1>
     </div>
+    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
+<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 	<div class="maincontentinner">
@@ -31,23 +39,40 @@
         <?php echo $this->displayNotification(); ?>
 
 		<form action="" method="get" id="ticketSearch">
+
+            <?php $this->dispatchTplEvent('filters.afterFormOpen'); ?>
+
             <input type="hidden" value="1" name="search"/>
             <div class="row">
                 <div class="col-md-5">
+                    <?php
+                    $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                    if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) {
+                    ?>
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/newTicket"> <?=$this->__("links.add_todo") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
+                            <?php foreach($newField as $option) { ?>
+                                <li>
+                                    <a
+                                        href="<?= !empty($option['url']) ? $option['url'] : '' ?>"
+                                        class="<?= !empty($option['class']) ? $option['class'] : '' ?>"
+                                    > <?= !empty($option['text']) ? $this->__($option['text']) : '' ?></a>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
-
+                    <?php
+                    }
+                    $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                    ?>
                 </div>
 
                 <div class="col-md-2 center">
+
+                    <?php $this->dispatchTplEvent('filters.afterCenterSectionOpen'); ?>
                     <span class="currentSprint">
-                        <?php  if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
+                        <?php if($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
                             <option value="all" <?php if($searchCriteria['sprint'] != "all") echo"selected='selected'"; ?>><?=$this->__("links.all_todos") ?></option>
                             <option value="backlog" <?php if($searchCriteria['sprint'] == "backlog") echo"selected='selected'"; ?>><?=$this->__("links.backlog") ?></option>
@@ -70,18 +95,23 @@
                                 <?php } 	?>
                             </select>
                             <br/>
-                            <small>
-                            <?php if($dates != "") {
-                                echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
-                            <?php }else{ ?>
-                                <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <small>
+                                <?php if($dates != "") {
+                                    echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
+                                <?php }else{ ?>
+                                    <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
+                                <?php } ?>
+                                </small>
                             <?php } ?>
-                        </small>
                         <?php } ?>
                     </span>
+                    <?php $this->dispatchTplEvent('filters.beforeCenterSectionClose'); ?>
                 </div>
                 <div class="col-md-5">
                     <div class="pull-right">
+
+                        <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
                         <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
@@ -89,10 +119,21 @@
 
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == ""){echo "checked='checked'";}?> value="" id="groupByNothingLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByNothingLink"><?=$this->__("label.no_group") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "milestone"){echo "checked='checked'";}?> value="milestone" id="groupByMilestoneLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByMilestoneLink"><?=$this->__("label.milestone") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "user"){echo "checked='checked'";}?> value="user" id="groupByUserLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupByUserLink"><?=$this->__("label.user") ?></label></span></li>
-                                <li><span class="radio"><input type="radio" name="groupBy" <?php if($searchCriteria["groupBy"] == "sprint"){echo "checked='checked'";}?> value="sprint" id="groupBySprintLink" onclick="jQuery('#ticketSearch').submit();"/><label for="groupBySprintLink"><?=$this->__("label.sprint") ?></label></span></li>
+                                <?php foreach ($groupBy as $input): ?>
+                                    <li>
+                                        <span class="radio">
+                                            <input
+                                                type="radio"
+                                                name="groupBy"
+                                                <?php if($searchCriteria["groupBy"] == $input['status']){echo "checked='checked'";}?>
+                                                value="<?php echo $input['status']; ?>"
+                                                id="<?php echo $input['id']; ?>"
+                                                onclick="jQuery('#ticketSearch').submit();"
+                                            />
+                                            <label for="<?php echo $input['id'] ?>"><?=$this->__("label.{$input['label']}") ?></label>
+                                        </span>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
 
                         </div>
@@ -104,21 +145,28 @@
                                 <li><a href="<?php if(isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != ""){ echo $_SESSION['lastFilterdTicketTableView']; }else{ echo BASE_URL."/tickets/showAll"; } ?>" class="active"><?=$this->__("links.table") ?></a></li>
                             </ul>
                         </div>
+
+                        <?php $this->dispatchTplEvent('filters.beforeRighthandSectionClose'); ?>
+
                     </div>
                 </div>
 
             </div>
 
             <div class="clearfix"></div>
+
+            <?php $this->dispatchTplEvent('filters.beforeBar'); ?>
+
             <div class="filterBar <?php if(!isset($_GET['search'])) { echo "hideOnLoad"; } ?>">
 
                 <div class="row-fluid">
 
+                    <?php $this->dispatchTplEvent('filters.beforeFirstBarField'); ?>
 
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.user") ?></label>
                         <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
+                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>"  style="width:130px;" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
                                 <option value=""></option>
                                 <?php foreach($this->get('users') as $userRow){ 	?>
 
@@ -131,10 +179,9 @@
                                 <?php } 	?>
                             </select>
                         </div>
-
                     </div>
-                    <div class="filterBoxLeft">
 
+                    <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.milestone") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
@@ -147,14 +194,12 @@
 
                                     echo">".$this->escape($milestoneRow->headline)."</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
-
                         <label class="inline"><?=$this->__("label.todo_type") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_type") ?>" title="<?=$this->__("input.placeholders.filter_by_type") ?>" name="type" id="typeSelect">
@@ -167,14 +212,12 @@
 
                                     echo">$type</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
-
                         <label class="inline"><?=$this->__("label.todo_priority") ?></label>
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_priority") ?>" title="<?=$this->__("input.placeholders.filter_by_priority") ?>" name="type" id="prioritySelect">
@@ -187,16 +230,14 @@
 
                                     echo">$priorityValue</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
                     </div>
 
-
                     <div class="filterBoxLeft">
                         <label class="inline"><?=$this->__("label.todo_status") ?></label>
                         <div class="form-group">
-
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_status")?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
                                 <option value=""></option>
                                 <option value="not_done" <?php if($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) echo" selected='selected' ";?>><?=$this->__("label.not_done")?></option>
@@ -207,10 +248,9 @@
                                     if($searchCriteria['status'] !== false && array_search((string) $key, explode(",",$searchCriteria['status'])) !== false) echo" selected='selected' ";
                                     echo">". $this->escape($label["name"])."</option>"; ?>
 
-                                <?php } 	?>
+                                <?php } ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="filterBoxLeft">
@@ -223,12 +263,15 @@
                 </div>
 
             </div>
+
+            <?php $this->dispatchTplEvent('filters.beforeFormClose'); ?>
+
         </form>
+
+        <?php $this->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTickets]); ?>
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1" width="20%">
-                <col class="con0">
                 <col class="con1">
                 <col class="con0">
                 <col class="con1">
@@ -238,32 +281,45 @@
                 <col class="con1">
                 <col class="con0">
                 <col class="con1">
+                <col class="con0">
+                <col class="con1">
+                <col class="con0">
             </colgroup>
+            <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
             <thead>
-            <tr>
-                <th><?= $this->__("label.title"); ?></th>
-                <th><?= $this->__("label.todo_status"); ?></th>
-                <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
-                <th><?= $this->__("label.effort"); ?></th>
-                <th><?= $this->__("label.priority"); ?></th>
-                <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
-                <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
-                <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
-                <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
-                <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
-                <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
-
-            </tr>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
+                <tr>
+                    <th><?= $this->__("label.title"); ?></th>
+                    <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
+                    <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
+                    <th><?= $this->__("label.effort"); ?></th>
+                    <th><?= $this->__("label.priority"); ?></th>
+                    <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
+                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                    <th class="tags-col"><?= $this->__("label.tags"); ?></th>
+                    <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
+                    <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
+                    <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
+                    <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
+                </tr>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
             </thead>
+            <?php $this->dispatchTplEvent('allTicketsTable.afterHead', ['tickets' => $allTickets]); ?>
             <tbody>
-                <?php foreach($this->get('allTickets') as $row){?>
+                <?php $this->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
+                <?php foreach($allTickets as $rowNum => $row){?>
                     <tr>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
+                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                <a class="dropdown-toggle f-left status <?=$statusLabels[$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle f-left status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
-                                        <?php echo $statusLabels[$row['status']]["name"]; ?>
+                                        <?php
+                                        if(isset($statusLabels[$row['status']])){
+                                        echo $statusLabels[$row['status']]["name"]; }
+                                        ?>
+
                                     </span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </a>
@@ -401,6 +457,21 @@
                             </div>
                         </td>
 
+                        <td data-order="<?=$row['tags'] ?>">
+                            <?php if($row['tags'] != ''){?>
+                            <?php  $tagsArray = explode(",", $row['tags']); ?>
+                                <div class='tagsinput readonly'>
+                                    <?php
+
+                                    foreach($tagsArray as $tag){
+                                        echo"<span class='tag'><span>".$tag."</span></span>";
+                                    }
+
+                                    ?>
+                                </div>
+                            <?php } ?>
+                        </td>
+
                         <?php
                         if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                             $date = $this->__("text.anytime");
@@ -412,10 +483,7 @@
                         }
                         ?>
                         <td data-order="<?=$date?>" >
-
-
-                            <?php echo $this->__("label.due_icon"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
-
+                            <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">
                             <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
@@ -428,27 +496,38 @@
 
                             <?php if($row['bookedHours'] === null || $row['bookedHours'] == "") echo "0"; else echo $row['bookedHours']?>
                         </td>
-
+                        <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                     </tr>
-
                 <?php } ?>
+                <?php $this->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
             </tbody>
+            <?php $this->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
         </table>
+        <?php $this->dispatchTplEvent('allTicketsTable.afterClose', ['tickets' => $allTickets]); ?>
 	</div>
 </div>
 
 <script type="text/javascript">
 
+    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
-    leantime.ticketsController.initUserDropdown();
-    leantime.ticketsController.initMilestoneDropdown();
-    leantime.ticketsController.initEffortDropdown();
-    leantime.ticketsController.initPriorityDropdown();
-    leantime.ticketsController.initStatusDropdown();
-    leantime.ticketsController.initSprintDropdown();
+
     leantime.ticketsController.initUserSelectBox();
     leantime.ticketsController.initStatusSelectBox();
+
+    <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.ticketsController.initUserDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initPriorityDropdown();
+        leantime.ticketsController.initSprintDropdown();
+        leantime.ticketsController.initStatusDropdown();
+    <?php }else{ ?>
+    leantime.generalController.makeInputReadonly(".maincontentinner");
+    <?php } ?>
+
 
 
     leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
@@ -460,5 +539,6 @@
     $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
     } ?>
 
+    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

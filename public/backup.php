@@ -10,19 +10,18 @@ define('ROOT', dirname(__FILE__));
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 
-include_once '../config/settings.php';
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
 $config = new leantime\core\config();
-$settings = new leantime\core\settings();
+$settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
 function runBackup($backupFile, $config){
 
     $backupPath = $config->dbBackupPath.$backupFile;
     $output = array();
-    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --result-file={$backupPath} 2>&1", $output,$worked);
+    exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --port={$config->dbPort} --result-file={$backupPath} 2>&1", $output,$worked);
 
     switch ($worked) {
         case 0:

@@ -3,10 +3,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class delUser
+    class delUser extends controller
     {
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->userRepo = new repositories\users();
+
+        }
 
         /**
          * run - display template and edit data
@@ -16,32 +31,28 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $userRepo =  new repositories\users();
-            $language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
             //Only Admins
-            if(core\login::userIsAtLeast("clientManager")) {
-
                 if (isset($_GET['id']) === true) {
 
                     $id = (int)($_GET['id']);
 
-                    $user = $userRepo->getUser($id);
+                    $user = $this->userRepo->getUser($id);
 
                     //Delete User
                     if (isset($_POST['del']) === true) {
 
                         if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
 
-                            $userRepo->deleteUser($id);
+                            $this->userRepo->deleteUser($id);
 
-                            $tpl->setNotification($language->__("notifications.user_deleted"), "success");
+                            $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success");
 
-                            $tpl->redirect(BASE_URL."/users/showAll");
+                            $this->tpl->redirect(BASE_URL."/users/showAll");
 
                         }else{
-                            $tpl->setNotification($language->__("notification.form_token_incorrect"), 'error');
+                            $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                         }
 
                     }
@@ -52,21 +63,15 @@ namespace leantime\domain\controllers {
                     $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
                     //Assign variables
-                    $tpl->assign('user', $user);
+                    $this->tpl->assign('user', $user);
 
-                    $tpl->display('users.delUser');
+                    $this->tpl->display('users.delUser');
 
                 } else {
 
-                    $tpl->display('general.error');
+                    $this->tpl->display('errors.error403');
 
                 }
-
-            } else {
-
-                $tpl->display('general.error');
-
-            }
 
         }
 

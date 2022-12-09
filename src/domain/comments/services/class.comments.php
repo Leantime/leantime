@@ -19,7 +19,7 @@ namespace leantime\domain\services {
 
             $this->commentRepository = new repositories\comments();
             $this->projectService = new services\projects();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
@@ -29,8 +29,8 @@ namespace leantime\domain\services {
         }
 
         public function addComment($values, $module, $entityId, $entity) {
-            
-           
+
+
             if(isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)){
 
                 $mapper = array(
@@ -38,10 +38,9 @@ namespace leantime\domain\services {
                     'date' => date("Y-m-d H:i:s"),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $entityId,
-                    'commentParent' => ($values['father'])
+                    'commentParent' => ($values['father']),
+                    'status' => $values['status'] ?? ''
                 );
-
-
 
                 if($this->commentRepository->addComment($mapper, $module)) {
 
@@ -64,7 +63,6 @@ namespace leantime\domain\services {
                             $linkLabel = $this->language->__("email_notifications.new_comment_general_cta");
                             break;
                     }
-
 
                     $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$currentUrl, "text"=> $linkLabel));
 

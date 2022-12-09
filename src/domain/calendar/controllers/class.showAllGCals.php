@@ -8,10 +8,25 @@ namespace leantime\domain\controllers {
      */
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class showAllGCals
+    class showAllGCals extends controller
     {
+
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -21,15 +36,12 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             //Assign vars
-            $tpl->assign('allCalendars', $calendarRepo->getMyGoogleCalendars());
+            $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
 
-
-            $tpl->display('calendar.showAllGCals');
-
+            $this->tpl->display('calendar.showAllGCals');
 
         }
 

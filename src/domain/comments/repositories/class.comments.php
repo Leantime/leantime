@@ -21,7 +21,7 @@ namespace leantime\domain\repositories {
         {
 			$orderBy = "DESC";
 
-        	if ($orderByState == 1 || (isset($_SESSION["projectsettings"]['commentOrder']) && $_SESSION["projectsettings"]['commentOrder'] == 1))
+        	if ($orderByState == 1)
 			{
 				$orderBy = "ASC";
 			}
@@ -34,6 +34,7 @@ namespace leantime\domain\repositories {
 					comment.moduleId, 
 					comment.userId, 
 					comment.commentParent,
+                    comment.status,
 					user.firstname, 
 					user.lastname,
 					user.profileId 
@@ -54,22 +55,45 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function countComments($module,$moduleId)
+        public function countComments($module = null, $moduleId = null)
         {
 
             $sql = "SELECT count(id) as count
-				FROM zp_comment as comment
-				WHERE moduleId = :moduleId AND module = :module";
+				FROM zp_comment as comment";
+
+            if($module != null || $moduleId != null){
+                $sql.=" WHERE ";
+                if($module != null) {
+                    $sql.="module = :module AND ";
+                }
+
+                if($moduleId != null) {
+                    $sql.="moduleId = :moduleId AND ";
+                }
+
+                $sql.= "1=1";
+
+            }
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-            $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+
+            if($module != null) {
+                $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            }
+
+            if($moduleId != null) {
+                $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values['count'];
+            if(isset($values['count'])) {
+                return $values['count'];
+            }else{
+                return 0;
+            }
         }
 
         public function getReplies($id)
@@ -96,7 +120,7 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "SELECT 
-					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent,
+					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status
 					user.firstname, user.lastname  
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
@@ -113,8 +137,8 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "INSERT INTO zp_comment (
-			text, userId, date, moduleId, module, commentParent
-		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent)";
+			text, userId, date, moduleId, module, commentParent, status
+		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent, :status)";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -124,6 +148,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue(':status',  $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();

@@ -15,21 +15,24 @@ leantime.helperController = (function () {
     //Functions
     var showHelperModal = function (module, minW, minH) {
 
-        jQuery.nmManual(
-            leantime.appUrl+"/help/showOnboardingDialog?module="+module,
-            {sizes: {
-                minW: minW || 200,
-                minH: minH || 500,
-                },
-                resizable: true,
-                autoSizable: true,
-                callbacks: {
-                    beforeShowCont: function () {
-                        leantime.replaceSVGColors();
+        jQuery(document).ready(function(){
+            jQuery.nmManual(
+                leantime.appUrl+"/help/showOnboardingDialog?module="+module,
+                {sizes: {
+                        minW: minW || 200,
+                        minH: minH || 500,
+                    },
+                    resizable: true,
+                    autoSizable: true,
+                    callbacks: {
+                        beforeShowCont: function () {
+                            leantime.replaceSVGColors();
+                        }
                     }
                 }
-            }
-        );
+            );
+        });
+
     };
 
     //Functions
@@ -135,25 +138,7 @@ leantime.helperController = (function () {
             }
         );
 
-        tour.addStep(
-            'Your Todos', {
-                title: leantime.i18n.__("tour.milestone_progress"),
-                text: leantime.i18n.__("tour.milestone_progress_text"),
-                attachTo: '#milestoneProgressContainer left',
-                advanceOn: '.headmenu click',
-                buttons: [
-                    {
-                        text: leantime.i18n.__("tour.back"),
-                        classes: 'shepherd-button-secondary',
-                        action: tour.back
-                    },
-                    {
-                        text: leantime.i18n.__("tour.next"),
-                        action: tour.next
-                    }
-                ]
-            }
-        );
+
 
         tour.addStep(
             'Your Todos', {
@@ -183,6 +168,14 @@ leantime.helperController = (function () {
                 {
                     text:leantime.i18n.__("tour.close"),
                     action:tour.cancel
+                },
+                {
+                    text: leantime.i18n.__("tour.goto_projects"),
+                    events: {
+                        'click': function () {
+                            window.location.href = leantime.appUrl + "/projects/newProject/";
+                        }
+                    }
                 }
                 ],
                 advanceOn: '.headmenu click'

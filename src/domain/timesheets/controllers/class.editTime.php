@@ -3,12 +3,32 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class editTime
+    class editTime extends controller
     {
 
-        public $language;
+        private $timesheetsRepo;
+        private $projects;
+        private $tickets;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->timesheetsRepo = new repositories\timesheets();
+            $this->projects = new repositories\projects();
+            $this->tickets = new repositories\tickets();
+
+        }
+
         /**
          * run - display template and edit data
          *
@@ -17,24 +37,17 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
-            $this->language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $info = '';
             //Only admins and employees
-            if(core\login::userIsAtLeast("developer")) {
-
+            if(auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($_GET['id']) === true) {
 
-                    $projects = new repositories\projects();
-                    $tickets = new repositories\tickets();
-
                     $id = ($_GET['id']);
 
-                    $timesheet = $timesheetsRepo->getTimesheet($id);
-
+                    $timesheet = $this->timesheetsRepo->getTimesheet($id);
 
                     $values = array(
                         'id' => $id,
@@ -48,10 +61,12 @@ namespace leantime\domain\controllers {
                         'invoicedEmpl' => $timesheet['invoicedEmpl'],
                         'invoicedComp' => $timesheet['invoicedComp'],
                         'invoicedEmplDate' => $timesheet['invoicedEmplDate'],
-                        'invoicedCompDate' => $timesheet['invoicedCompDate']
+                        'invoicedCompDate' => $timesheet['invoicedCompDate'],
+                        'paid' => $timesheet['paid'],
+                        'paidDate' => $timesheet['paidDate']
                     );
 
-                    if(core\login::userIsAtLeast("admin") || $_SESSION['userdata']['id'] == $values['userId']) {
+                    if(auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
 
                         if (isset($_POST['saveForm']) === true) {
 
@@ -88,7 +103,7 @@ namespace leantime\domain\controllers {
 
                             }
 
-                            if(core\login::userIsAtLeast("clientManager")) {
+                            if(auth::userIsAtLeast(roles::$manager)){
 
                                 if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
 
@@ -116,10 +131,7 @@ namespace leantime\domain\controllers {
 
                                 }
 
-
-
                                 if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
-
 
                                     if ($_POST['invoicedComp'] == 'on') {
 
@@ -137,11 +149,37 @@ namespace leantime\domain\controllers {
 
                                     }
 
-
                                 } else {
 
                                     $values['invoicedComp'] = 0;
                                     $values['invoicedCompDate'] = '';
+
+                                }
+
+                                if (isset($_POST['paid']) && $_POST['paid'] != '') {
+
+
+                                    if ($_POST['paid'] == 'on') {
+
+                                        $values['paid'] = 1;
+
+                                    }
+
+                                    if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
+
+                                        $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+
+                                    } else {
+
+                                        $values['paidDate'] = date("Y-m-d");
+
+                                    }
+
+
+                                } else {
+
+                                    $values['paid'] = 0;
+                                    $values['paidDate'] = '';
 
                                 }
 
@@ -156,10 +194,10 @@ namespace leantime\domain\controllers {
 
                                         if ($values['hours'] != '' && $values['hours'] > 0) {
 
-                                            $timesheetsRepo->updateTime($values);
-                                            $tpl->setNotification('notifications.time_logged_success', 'success');
+                                            $this->timesheetsRepo->updateTime($values);
+                                            $this->tpl->setNotification('notifications.time_logged_success', 'success');
 
-                                            $timesheetUpdated = $timesheetsRepo->getTimesheet($id);
+                                            $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
 
                                             $values = array(
                                                 'id' => $id,
@@ -173,58 +211,60 @@ namespace leantime\domain\controllers {
                                                 'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
                                                 'invoicedComp' => $timesheetUpdated['invoicedComp'],
                                                 'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
-                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate']
+                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate'],
+                                                'paid' => $timesheetUpdated['paid'],
+                                                'paidDate' => $timesheetUpdated['paidDate']
                                             );
 
                                         } else {
 
-                                            $tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
+                                            $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
 
 
                                         }
 
 
                                     } else {
-                                        $tpl->setNotification('notifications.time_logged_error_no_date', 'error');
+                                        $this->tpl->setNotification('notifications.time_logged_error_no_date', 'error');
 
                                     }
 
                                 } else {
 
-                                    $tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
+                                    $this->tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
 
                                 }
 
                             } else {
 
-                                $tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
+                                $this->tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
 
                             }
 
                         }
 
 
-                        $tpl->assign('values', $values);
+                        $this->tpl->assign('values', $values);
 
-                        $tpl->assign('info', $info);
-                        $tpl->assign('allProjects', $projects->getAll());
-                        $tpl->assign('allTickets', $tickets->getAll());
-                        $tpl->assign('kind', $timesheetsRepo->kind);
-                        $tpl->displayPartial('timesheets.editTime');
+                        $this->tpl->assign('info', $info);
+                        $this->tpl->assign('allProjects', $this->projects->getAll());
+                        $this->tpl->assign('allTickets', $this->tickets->getAll());
+                        $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+                        $this->tpl->displayPartial('timesheets.editTime');
 
                     } else {
 
-                        $tpl->displayPartial('general.error');
+                        $this->tpl->displayPartial('errors.error403');
 
                     }
                 } else {
-                    $tpl->displayPartial('general.error');
+                    $this->tpl->displayPartial('errors.error403');
                 }
 
 
             } else {
 
-                $tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('errors.error403');
 
             }
 

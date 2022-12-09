@@ -6,8 +6,12 @@
  */
 namespace leantime\core;
 
+use leantime\core\eventhelpers;
+
 class session
 {
+
+    use eventhelpers;
 
     /**
      * @access private
@@ -39,17 +43,19 @@ class session
         $config = new config();
 
         ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
+        ini_set('session.cookie_lifetime', ($config->sessionExpiration));
 
         $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
+        $testSession = false;
+
         if(isset($_COOKIE['sid']) === true) {
-            
+
             self::$sid=htmlspecialchars($_COOKIE['sid']);
+            $testSession = explode('-', self::$sid);
 
         }
-
-        $testSession = explode('-', self::$sid);
 
         //Don't allow session ids from user.
         if(is_array($testSession) === true && count($testSession) > 1) {
@@ -59,9 +65,9 @@ class session
             if($testMD5 !== $testSession[1]) {
 
                 self::makeSID();
-                    
+
             }
-                
+
         }else{
 
             self::makeSID();
@@ -71,7 +77,8 @@ class session
         session_name("sid");
         session_id(self::$sid);
         session_start();
-        setcookie("sid", self::$sid, time()+$config->sessionExpiration, "/");
+
+        setcookie("sid", self::$sid,  [ 'expires' => time() + $config->sessionExpiration, 'path' => '/' ]);
 
     }
 
@@ -85,7 +92,7 @@ class session
     {
 
         if (self::$instance === null) {
-                
+
             self::$instance = new self();
 
         }
@@ -102,7 +109,7 @@ class session
     public static function getSID()
     {
 
-        return self::$sid;
+        return self::getInstance()::$sid;
 
     }
 
@@ -121,7 +128,16 @@ class session
 
     }
 
-}
+    public static function destroySession()
+    {
 
-/* @var string */
-$singlesession = session::getInstance();
+        $config = new config();
+
+        if(isset($_COOKIE['sid'])){
+            unset($_COOKIE['sid']);
+        }
+
+        setcookie('sid', "",  [ 'expires' => time() - 42000, 'path' => '/' ]);
+    }
+
+}

@@ -3,47 +3,6 @@ defined('RESTRICTED') or die('Restricted access');
 
 $values = $this->get('values');
 ?>
-<script type="text/javascript">
-    function removeOptions(className) {
-
-        if (className != "all") {
-            $('select#tickets option').attr('disabled', 'disabled');
-            $('select#tickets option').css('display', 'none');
-
-            $('.' + className).removeAttr('disabled');
-            $('.' + className).css('display', 'list-item');
-        } else {
-            $('select#tickets option').css('display', 'list-item');
-            $('select#tickets option').removeAttr('disabled');
-        }
-
-    }
-
-    $(document).ready(function () {
-
-
-            $("#date, #invoicedCompDate, #invoicedEmplDate").datepicker({
-
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
-                dayNames: leantime.i18n.__("language.dayNames").split(","),
-                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                monthNames: leantime.i18n.__("language.monthNames").split(","),
-                currentText: leantime.i18n.__("language.currentText"),
-                closeText: leantime.i18n.__("language.closeText"),
-                buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
-                nextText: leantime.i18n.__("language.nextText"),
-                prevText: leantime.i18n.__("language.prevText"),
-                weekHeader: leantime.i18n.__("language.weekHeader"),
-                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-            });
-
-
-        }
-    );
-
-</script>
 
 
 <div class="pageheader">
@@ -52,7 +11,7 @@ $values = $this->get('values');
                placeholder="<?php echo $this->__('input.placeholders.search_type_hit_enter') ?>"/>
     </form>
 
-    <div class="pageicon"><span class="iconfa-laptop"></span></div>
+    <div class="pageicon"><span class="fa-laptop"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('OVERVIEW'); ?></h5>
         <h1><?php echo $this->__('MY_TIMESHEETS'); ?></h1>
@@ -157,7 +116,7 @@ $values = $this->get('values');
                                                                           size="7"/><br/>
 
 
-                            <?php if ($login::userIsAtLeast("clientManager")) { ?> <br/>
+                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?> <br/>
                                 <label for="invoicedComp"><?php echo $this->__('INVOICED_COMP') ?></label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
                                     <?php if ($values['invoicedComp'] == '1') {
@@ -168,6 +127,20 @@ $values = $this->get('values');
                                                                               name="invoicedCompDate"
                                                                               value="<?php echo $values['invoicedCompDate'] ?>"
                                                                               size="7"/><br/>
+
+                                <label for="paid"><?php echo $this->__('labels.paid') ?></label> <input
+                                    type="checkbox" name="paid" id="paid"
+                                    <?php if ($values['paid'] == '1') {
+                                        echo ' checked="checked"';
+                                    } ?> />
+                                <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
+                                                                              id="paidDate"
+                                                                              name="paidDate"
+                                                                              value="<?php echo $values['paidDate'] ?>"
+                                                                              size="7"/><br/>
+
+
+
                             <?php } ?> <input type="submit" value="<?php echo $this->__('SAVE'); ?>"
                                               name="save" class="button"/> <input type="submit"
                                                                                   value="<?php echo $this->__('SAVE_NEW'); ?>"
@@ -177,3 +150,28 @@ $values = $this->get('values');
         </form>
     </div>
 </div>
+
+
+<script type="text/javascript">
+
+
+        jQuery("#date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
+
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            });
+
+
+</script>
+

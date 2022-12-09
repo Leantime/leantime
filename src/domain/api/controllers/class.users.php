@@ -3,26 +3,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class users
+    class users extends controller
     {
 
-        private $tpl;
         private $usersService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->usersService = new services\users();
             $this->filesRepository = new repositories\files();
 
@@ -53,6 +52,14 @@ namespace leantime\domain\controllers {
                     $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                 }
 
+                $this->tpl->redirect($return);
+
+            }
+
+            if(isset($params["profileImageByUserId"])) {
+
+
+                $return = $this->usersService->getProfilePicture($params["profileImageByUserId"]);
                 $this->tpl->redirect($return);
 
             }
@@ -102,7 +109,6 @@ namespace leantime\domain\controllers {
             }
 
             if(isset($params['patchViewSettings'])) {
-
                 if($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
                     echo "{status:ok}";
                 }

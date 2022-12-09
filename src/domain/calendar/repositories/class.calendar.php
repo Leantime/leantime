@@ -25,14 +25,14 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
         public function getAllDates($dateFrom, $dateTo)
         {
 
-            $query = "SELECT * FROM zp_calendar WHERE 
+            $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
 
             $stmn = $this->db->database->prepare($query);
@@ -48,10 +48,10 @@ namespace leantime\domain\repositories {
         public function getCalendar($id)
         {
 
-
-            $userTickets = "SELECT 
-					tickets.dateToFinish, 
-					tickets.headline, 
+            /*
+           $userTickets = "SELECT
+					tickets.dateToFinish,
+					tickets.headline,
 					tickets.id,
 					tickets.projectId,
 					tickets.editFrom,
@@ -65,6 +65,23 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $tickets = $stmn->fetchAll();
             $stmn->closeCursor();
+            */
+
+            $ticketService = new \leantime\domain\services\tickets();
+            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater('', "");
+
+            if(!empty($ticketArray)) {
+				if(isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
+					$tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
+				}elseif(isset($ticketArray["thisWeek"]["tickets"])){
+					$tickets = $ticketArray["thisWeek"]["tickets"];
+				}elseif($ticketArray["later"]["tickets"]) {
+					$tickets = $ticketArray["later"]["tickets"];
+				}
+            }else{
+                $tickets = array();
+            }
+
 
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
 
@@ -88,14 +105,16 @@ namespace leantime\domain\repositories {
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
                         'h' => date('H', $dateFrom),
-                        'i' => date('i', $dateFrom)
+                        'i' => date('i', $dateFrom),
+                        'ical' => date('Ymd\THis\Z', $dateFrom)
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
                         'd' => date('d', $dateTo),
                         'h' => date('H', $dateTo),
-                        'i' => date('i', $dateTo)
+                        'i' => date('i', $dateTo),
+                        'ical' => date('Ymd\THis\Z', $dateTo)
                     ),
                     'id' => $value['id'],
                     'projectId' => '',
@@ -121,20 +140,22 @@ namespace leantime\domain\repositories {
 
                     $newValues[] = array(
                         'title'  => $context.$ticket['headline'],
-                        'allDay' => true,
+                        'allDay' => false,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
                             'm' => date('m', $dateFrom),
                             'd' => date('d', $dateFrom),
                             'h' => date('H', $dateFrom),
-                            'i' => date('i', $dateFrom)
+                            'i' => date('i', $dateFrom),
+                            'ical' => date('Ymd\THis\Z', $dateFrom)
                         ),
                         'dateTo' => array(
                             'y' => date('Y', $dateTo),
                             'm' => date('m', $dateTo),
                             'd' => date('d', $dateTo),
                             'h' => date('H', $dateTo),
-                            'i' => date('i', $dateTo)
+                            'i' => date('i', $dateTo),
+                            'ical' => date('Ymd\THis\Z', $dateTo)
                         ),
                         'id' => $ticket['id'],
                         'projectId' => $ticket['projectId'],
@@ -146,20 +167,44 @@ namespace leantime\domain\repositories {
             return $newValues;
         }
 
+        public function getCalendarBySecretHash($userHash, $calHash) {
+
+            //get user
+
+            $userRepo = new \leantime\domain\repositories\users();
+            $user = $userRepo->getUserBySha($userHash);
+
+
+            if(!isset($user['id'])) {
+                return false;
+            }
+
+            //Check if setting exists
+            $settingService = new \leantime\domain\repositories\setting();
+            $hash = $settingService->getSetting("usersettings.".$user['id'].".icalSecret");
+
+            if($hash!== false && $calHash == $hash){
+                return $this->getCalendar($user['id']);
+            }else{
+                return false;
+            }
+
+        }
+
         public function getCalendarEventsForToday($id)
         {
 
 
-            $userTickets = "SELECT 
-					tickets.dateToFinish, 
-					tickets.headline, 
+            $userTickets = "SELECT
+					tickets.dateToFinish,
+					tickets.headline,
 					tickets.id,
 					tickets.editFrom,
 					tickets.editTo
 				FROM zp_tickets AS tickets
-				WHERE 
+				WHERE
 					(tickets.userId = :userId OR tickets.editorId = :userId)
-					AND 
+					AND
 					(
 						TO_DAYS(tickets.dateToFinish) = TO_DAYS(CURDATE()) OR
 						(TO_DAYS(tickets.editFrom) <= TO_DAYS(CURDATE()) AND TO_DAYS(tickets.editTo) >= TO_DAYS(CURDATE()) )
@@ -232,6 +277,7 @@ namespace leantime\domain\repositories {
 
                     $newValues[] = array(
                         'title'  => 'To-Do: ' . $ticket['headline'],
+                        'allDay' => false,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
                             'm' => date('m', $dateFrom),
@@ -291,7 +337,7 @@ namespace leantime\domain\repositories {
         public function addEvent($values)
         {
 
-            $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay) 
+            $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay)
 		VALUES (:userId, :dateFrom, :dateTo, :description, :allDay)";
 
             $stmn = $this->db->database->prepare($query);
@@ -325,9 +371,9 @@ namespace leantime\domain\repositories {
         public function editEvent($values, $id)
         {
 
-            $query = "UPDATE zp_calendar SET 
+            $query = "UPDATE zp_calendar SET
 			dateFrom = :dateFrom,
-			dateTo = :dateTo, 
+			dateTo = :dateTo,
 			description = :description,
 			allDay = :allDay
 			WHERE id = :id AND userId = :userId LIMIT 1";
@@ -398,10 +444,10 @@ namespace leantime\domain\repositories {
         public function editGUrl($values, $id)
         {
 
-            $query = "UPDATE zp_gcallinks SET 
+            $query = "UPDATE zp_gcallinks SET
 			url = :url,
 			name = :name,
-			colorClass = :colorClass 
+			colorClass = :colorClass
 		WHERE userId = :userId AND id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -434,8 +480,8 @@ namespace leantime\domain\repositories {
         public function addGUrl($values)
         {
 
-            $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass) 
-					VALUES 
+            $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass)
+					VALUES
 				(:userId, :name, :url, :colorClass)";
 
             $stmn = $this->db->database->prepare($query);

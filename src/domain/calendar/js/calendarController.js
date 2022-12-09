@@ -154,14 +154,31 @@ leantime.calendarController = (function () {
                     }
                     return date;
                 }
+    }
+
+    var initExportModal = function () {
+
+        var exportModalConfig = {
+            sizes: {
+                minW: 400,
+                minH: 350
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+
+                    jQuery(".formModal").nyroModal(exportModalConfig);
+                },
+                beforeClose: function () {
+                    location.reload();
+                }
 
 
-            jQuery('#event_time_from').timepicker({
-                showMeridian:leantime.i18n.__("language.isMeridian") == "false" ? false : true
-            });
-            jQuery('#event_time_to').timepicker({
-                showMeridian:leantime.i18n.__("language.isMeridian") == "false" ? false : true
-            });
+            },
+            titleFromIframe: true
+        };
+        jQuery(".exportModal").nyroModal(exportModalConfig);
 
     }
 
@@ -169,6 +186,7 @@ leantime.calendarController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         initCalendar:initCalendar,
-        initEventDatepickers:initEventDatepickers
+        initEventDatepickers:initEventDatepickers,
+        initExportModal:initExportModal
     };
 })();

@@ -3,10 +3,34 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use Datetime;
-    class showMy
+    use leantime\domain\services\auth;
+
+    class showMy extends controller
     {
+
+        private $timesheetsRepo;
+        private $projects;
+        private $tickets;
+        private $userRepo;
+
+        /**
+         * init - initialze private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->timesheetsRepo = new repositories\timesheets();
+            $this->projects = new repositories\projects();
+            $this->tickets = new repositories\tickets();
+            $this->userRepo = new repositories\users();
+
+        }
 
         /**
          * run - display template and edit data
@@ -15,17 +39,10 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
-
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $invEmplCheck = '0';
             $invCompCheck = '0';
-
-            $projects = new repositories\projects();
-            $tickets = new repositories\tickets();
-            $language = new core\language();
-
 
             $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
 
@@ -36,7 +53,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
 
-                        $dateFrom = $language->getISODateString($_POST['startDate']);
+                        $dateFrom = $this->language->getISODateString($_POST['startDate']);
 
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
@@ -49,7 +66,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
 
-                        $dateFrom = $language->getISODateString($_POST['startDate']);
+                        $dateFrom = $this->language->getISODateString($_POST['startDate']);
 
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
@@ -58,18 +75,18 @@ namespace leantime\domain\controllers {
 
                 $this->saveTimeSheet($_POST);
 
-                $tpl->setNotification('Timesheet successfully updated', 'success');
+                $this->tpl->setNotification('Timesheet successfully updated', 'success');
             }
 
-            $myTimesheets = $timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
+            $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
 
-            $tpl->assign('dateFrom', new DateTime($dateFrom));
-            $tpl->assign('actKind', $kind);
-            $tpl->assign('kind', $timesheetsRepo->kind);
-            $tpl->assign('allProjects', $projects->getUserProjects($_SESSION["userdata"]["id"]));
-            $tpl->assign('allTickets', $tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
-            $tpl->assign('allTimesheets', $myTimesheets);
-            $tpl->display('timesheets.showMy');
+            $this->tpl->assign('dateFrom', new DateTime($dateFrom));
+            $this->tpl->assign('actKind', $kind);
+            $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+            $this->tpl->assign('allProjects', $this->projects->getUserProjects($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
+            $this->tpl->assign('allTimesheets', $myTimesheets);
+            $this->tpl->display('timesheets.showMy');
 
         }
 
@@ -78,9 +95,7 @@ namespace leantime\domain\controllers {
             $ticketId = "";
 
             $currentTimesheetId = -1;
-            $user = new repositories\users();
-            $userinfo = $user->getUser($_SESSION["userdata"]["id"]);
-            $timesheetRepo = new repositories\timesheets();
+            $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
 
             foreach ($postData as $key => $dateEntry) {
 
@@ -117,12 +132,12 @@ namespace leantime\domain\controllers {
 
                         if ($values["hours"] > 0) {
 
-                            $timesheetRepo->simpleInsert($values);
+                            $this->timesheetsRepo->simpleInsert($values);
                         }
 
                     } else {
 
-                        $timesheetRepo->UpdateHours($values);
+                        $this->timesheetsRepo->UpdateHours($values);
 
                     }
                 }

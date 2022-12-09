@@ -8,12 +8,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class addEvent
+    class addEvent extends controller
     {
 
-        public $language;
+        private $calendarRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
+        {
+
+            $this->calendarRepo = new repositories\calendar();
+
+        }
 
         /**
          * run - display template and edit data
@@ -23,10 +36,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $calendarRepo = new repositories\calendar();
-            $this->language = new core\language();
-
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             $values = array(
                 'description' => '',
@@ -43,16 +53,14 @@ namespace leantime\domain\controllers {
                     $allDay = 'false';
                 }
 
-
-
                 $dateFrom = null;
                 if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom']." ".$_POST['timeFrom']);
+                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom'], $_POST['timeFrom']);
                 }
 
                 $dateTo = null;
                 if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo']." ".$_POST['timeTo']);
+                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo'], $_POST['timeTo']);
                 }
 
                 $values = array(
@@ -64,21 +72,21 @@ namespace leantime\domain\controllers {
 
                 if ($values['description'] !== '') {
 
-                    $calendarRepo->addEvent($values);
+                    $this->calendarRepo->addEvent($values);
 
-                    $tpl->setNotification('notification.event_created_successfully', 'success');
+                    $this->tpl->setNotification('notification.event_created_successfully', 'success');
 
                 } else {
 
-                    $tpl->setNotification('notification.please_enter_title', 'error');
+                    $this->tpl->setNotification('notification.please_enter_title', 'error');
 
                 }
 
-                $tpl->assign('values', $values);
+                $this->tpl->assign('values', $values);
             }
 
-            $tpl->assign('values', $values);
-            $tpl->display('calendar.addEvent');
+            $this->tpl->assign('values', $values);
+            $this->tpl->display('calendar.addEvent');
 
         }
 

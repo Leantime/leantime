@@ -3,11 +3,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
-    class advancedBoards
+    class advancedBoards extends controller
     {
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->ideaRepo = new repositories\ideas();
+            $this->projectService = new services\projects();
+
+        }
 
         /**
          * run - display template and edit data
@@ -17,12 +31,7 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $ideaRepo = new repositories\ideas();
-            $projectService = new services\projects();
-            $language = new core\language();
-
-            $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
             if(isset($_SESSION['currentIdeaCanvas'])) {
                 $currentCanvasId = $_SESSION['currentIdeaCanvas'];
@@ -52,26 +61,32 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
-                    $currentCanvasId = $ideaRepo->addCanvas($values);
-                    $allCanvas = $ideaRepo->getAllCanvas($_SESSION['currentProject']);
+                    $currentCanvasId = $this->ideaRepo->addCanvas($values);
+                    $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $tpl->setNotification($language->__('notification.idea_board_created'), 'success');
+                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success');
 
                     $mailer = new core\mailer();
-                    $projectService = new services\projects();
-                    $users = $projectService->getUsersToNotify($_SESSION['currentProject']);
+                    $mailer->setContext('idea_board_created');
+                    $this->projectService = new services\projects();
+                    $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
-                    $mailer->setSubject($language->__('email_notifications.idea_board_created_subject'));
-                    $message = sprintf($language->__('email_notifications.idea_board_created_message'), $_SESSION["userdata"]["name"], "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
+                    $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
+                    $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), $_SESSION["userdata"]["name"], "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
 
                     $mailer->setHtml($message);
-                    $mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+
+                    // NEW Queuing messaging system
+                    $queue = new repositories\queue();
+                    $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
+
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
+                    $this->tpl->redirect(BASE_URL."/ideas/advancedBoards/");
 
                 } else {
-                    $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
 
 
@@ -83,29 +98,29 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['canvastitle']) === true) {
 
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
-                    $currentCanvasId = $ideaRepo->updateCanvas($values);
+                    $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
-                    $tpl->setNotification($language->__("notification.board_edited"), "success");
-                    $tpl->redirect(BASE_URL."/ideas/advancedBoards/");
+                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success");
+                    $this->tpl->redirect(BASE_URL."/ideas/advancedBoards/");
 
 
                 } else {
 
-                    $tpl->setNotification($language->__('notification.please_enter_title'), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
 
                 }
 
             }
 
-            $tpl->assign('currentCanvas', $currentCanvasId);
+            $this->tpl->assign('currentCanvas', $currentCanvasId);
 
-            $tpl->assign('users', $projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $tpl->assign('allCanvas', $allCanvas);
-            $tpl->assign('canvasItems', $ideaRepo->getCanvasItemsById($currentCanvasId));
-            $tpl->assign('canvasLabels', $ideaRepo->getCanvasLabels());
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('allCanvas', $allCanvas);
+            $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
+            $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
 
             if (isset($_GET["raw"]) === false) {
-                $tpl->display('ideas.advancedBoards');
+                $this->tpl->display('ideas.advancedBoards');
             }
         }
 

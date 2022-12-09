@@ -12,9 +12,12 @@ namespace leantime\core {
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
     use phpmailerException;
+    use leantime\core\eventhelpers;
 
     class mailer
     {
+
+        use eventhelpers;
 
         /**
          * @access public
@@ -40,6 +43,11 @@ namespace leantime\core {
          */
         public $subject;
 
+        /**
+         * @access public
+         * @var    string
+         */
+        public $context;
 
         private $mailAgent;
 
@@ -65,35 +73,71 @@ namespace leantime\core {
                 $this->emailDomain = "no-reply@".$host;
             }
             //PHPMailer
-            $this->mailAgent = new PHPMailer(true);
+            $this->mailAgent = new PHPMailer(false);
 
 	        $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
 
             //Use SMTP or php mail().
             if($config->useSMTP === true) {
 
-                $this->mailAgent->SMTPDebug = 0;                                  // Enable verbose debug output
+                if($config->debug) {
+
+                    $this->mailAgent->SMTPDebug = 2;                                  // Enable verbose debug output
+                    $this->mailAgent->Debugoutput = function ($str, $level) {
+
+                        error_log($level.' '.$str);
+                    };
+
+                }else {
+                    $this->mailAgent->SMTPDebug = 0;
+                }
+
                 $this->mailAgent->Timeout = 20;
 
                 $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
                 $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
-                $this->mailAgent->SMTPAuth = true;                               // Enable SMTP authentication
+                $this->mailAgent->SMTPAuth = $config->smtpAuth ?? true;             // Enable SMTP user/password authentication
                 $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
                 $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
                 $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
                 $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
                 $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-                
+                if(isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
+                    $this->mailAgent->SMTPOptions = [
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        ]
+                    ];
+                }
+
             }else{
 
                 $this->mailAgent->isMail();
 
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"];
-            $this->companyColor = $_SESSION["companysettings.mainColor"];
+            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
+            $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
-            $this->language = new language();
+            $this->language = language::getInstance();
+
+        }
+
+        /**
+         *
+         * setContext - sets the context for the mailing
+         * (used for filters & events)
+         *
+         * @access public
+         * @param $context
+         * @return void
+         */
+        public function setContext($context)
+        {
+
+            $this->context = $context;
 
         }
 
@@ -141,6 +185,32 @@ namespace leantime\core {
 
         }
 
+        private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
+        {
+            if ($type !== 'filter' || $type !== 'event') {
+                return false;
+            }
+
+            $hooks = [$hookname];
+
+            if (!empty($this->context)) {
+                $hooks[] = "$hookname.{$this->context}";
+            }
+
+            $filteredValue = null;
+            foreach ($hooks as $hook) {
+                if ($type == 'filter') {
+                    $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
+                } elseif ($type == 'event') {
+                    self::dispatch_event($hook, $payload);
+                }
+            }
+
+            if ($type == 'filter') {
+                return $filteredValue;
+            }
+        }
+
         /**
          * sendMail - send the mail with mail()
          *
@@ -153,8 +223,12 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
+            $this->dispatchMailerHook('event', 'beforeSendMail', []);
 
-            $this->mailAgent->isHTML(true);                                  // Set email format to HTML
+            $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
+            $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);
+
+            $this->mailAgent->isHTML(true); // Set email format to HTML
 
             $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
 
@@ -177,7 +251,7 @@ namespace leantime\core {
 			<td align="center" valign="top">
 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
 					<tr>
-						<td style="padding:3px 10px; background-color:#' . $this->companyColor . '">
+						<td style="padding:3px 10px;">
 							<table>
 								<tr>
 								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>
@@ -195,7 +269,6 @@ namespace leantime\core {
 						</td>
 					</tr>
 				</table>
-				
 			</td>
 		</tr>
 		<tr>
@@ -205,24 +278,50 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
+            $bodyTemplate = $this->dispatchMailerHook(
+                'filter',
+                'bodyTemplate',
+                $bodyTemplate,
+                [
+                    [
+                        'companyColor' => $this->companyColor,
+                        'logoUrl' => $inlineLogoContent,
+                        'languageHiText' => $this->language->__('email_notifications.hi'),
+                        'emailContentsHtml' => nl2br($this->html),
+                        'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/')
+                    ]
+                ]
+            );
+
             $this->mailAgent->Body = $bodyTemplate;
-            $this->mailAgent->AltBody = $this->text;
 
-            $to = array_unique($to);
+            $altBody = $this->dispatchMailerHook(
+                'filter',
+                'altBody',
+                $this->text
+            );
 
-            foreach ($to as $recip) {
+            $this->mailAgent->AltBody = $altBody;
 
-                try {
-                    $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
-                }catch(Exception $e){
-                    error_log($this->mailAgent->ErrorInfo);
-                    error_log($e->getMessage());
+            if(is_array($to)) {
+
+                $to = array_unique($to);
+
+                foreach ($to as $recip) {
+                    try {
+                        $this->mailAgent->addAddress($recip);
+                        $this->mailAgent->send();
+                    } catch (Exception $e) {
+                        error_log($this->mailAgent->ErrorInfo);
+                        error_log($e);
+                    }
+
+                    $this->mailAgent->clearAllRecipients();
                 }
 
-                $this->mailAgent->clearAllRecipients();
             }
 
+            $this->dispatchMailerHook('event', 'afterSendMail', $to);
 
         }
 

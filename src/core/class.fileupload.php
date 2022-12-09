@@ -1,6 +1,7 @@
 <?php
 namespace leantime\core;
 
+use leantime\core\eventhelpers;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 use Aws\S3\S3Client;
@@ -12,6 +13,8 @@ use Exception;
  */
 class fileupload
 {
+
+    use eventhelpers;
 
     /**
      * @access private
@@ -78,7 +81,6 @@ class fileupload
      */
     public $s3Client = "";
 
-
     /**
      * fileupload constructor.
      */
@@ -133,7 +135,9 @@ class fileupload
      */
     public function getPublicFilesPath()
     {
-        $path = realpath(__DIR__ . "/../../public/userfiles");
+        $relative_path = self::dispatch_filter('relative_path', "/../../public/userfiles");
+
+        $path = realpath(__DIR__ . $relative_path);
         if ($path === false) {
             throw new Exception("Path not valid");
         } else {
@@ -161,7 +165,7 @@ class fileupload
     /**
      * checkFileSize - Checks if filesize is ok
      *
-     * @access private
+     * @access public
      * @return bool
      */
     public function checkFileSize()
@@ -230,8 +234,13 @@ class fileupload
 
             try {
                 // Upload data.
+
+                if($this->file_tmp_name == null || $this->file_tmp_name == ''){
+                    return false;
+                }
+
                 $file = fopen($this->file_tmp_name, "rb");
-                // implode all non-empty elements to allow s3FolderName to be empty. 
+                // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
                 $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
@@ -242,7 +251,7 @@ class fileupload
 
             } catch (S3Exception $e) {
 
-                error_reporting($e->getMessage());
+                error_log($e, 0);
                 return false;
 
             }
@@ -257,7 +266,7 @@ class fileupload
 
             } catch (Exception $e) {
 
-                error_reporting($e->getMessage());
+                error_log($e, 0);
                 return false;
             }
 
@@ -273,7 +282,7 @@ class fileupload
         try {
             // Upload data.
             $file = fopen($this->file_tmp_name, "rb");
-            // implode all non-empty elements to allow s3FolderName to be empty. 
+            // implode all non-empty elements to allow s3FolderName to be empty.
             // otherwise you will get an error as the key starts with a slash
             $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
 
@@ -283,7 +292,7 @@ class fileupload
 
         } catch (S3Exception $e) {
 
-            error_reporting($e->getMessage());
+            error_log($e, 0);
             return false;
 
         }
@@ -301,7 +310,7 @@ class fileupload
 
         } catch (Exception $e) {
 
-            error_reporting($e->getMessage());
+            error_log($e, 0);
             return false;
         }
 

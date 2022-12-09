@@ -3,19 +3,21 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
     use DateTime;
     use DateInterval;
+    use leantime\domain\services\auth;
 
-
-    class editCompanySettings
+    class editCompanySettings extends controller
     {
 
-        private $tpl;
-
+        private $config;
+        private $settingsRepo;
 
         /**
          * constructor - initialize private variables
@@ -23,13 +25,16 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
+
+            auth::authOrRedirect([roles::$owner, roles::$admin]);
+
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
-            $this->language = new core\language();
+
+
 
 
         }
@@ -42,13 +47,18 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(core\login::userIsAtLeast("admin")) {
+
+
+            if(auth::userIsAtLeast(roles::$owner)) {
 
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
-                    "color" => $_SESSION["companysettings.mainColor"],
+                    "primarycolor" => $_SESSION["companysettings.primarycolor"],
+                    "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
                     "name" => $_SESSION["companysettings.sitename"],
-                    "language" => $_SESSION["companysettings.language"]
+                    "language" => $_SESSION["companysettings.language"],
+                    "telemetryActive" => false,
+                    "messageFrequency" => ''
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -63,7 +73,18 @@ namespace leantime\domain\controllers {
 
                 $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
                 if($mainColor !== false){
-                    $companySettings["color"] = $mainColor;
+                    $companySettings["primarycolor"] = "#".$mainColor;
+                    $companySettings["secondarycolor"] = "#".$mainColor;
+                }
+
+                $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
+                if($primaryColor !== false){
+                    $companySettings["primarycolor"] = $primaryColor;
+                }
+
+                $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
+                if($secondaryColor !== false){
+                    $companySettings["secondarycolor"] = $secondaryColor;
                 }
 
                 $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
@@ -76,13 +97,25 @@ namespace leantime\domain\controllers {
                     $companySettings["language"] = $language;
                 }
 
+                $telemetryActive = $this->settingsRepo->getSetting("companysettings.telemetry.active");
+                if($telemetryActive !== false){
+                    $companySettings["telemetryActive"] = $telemetryActive;
+                }
+
+                $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+                if($messageFrequency !== false){
+                    $companySettings["messageFrequency"] = $messageFrequency;
+                }
+
+
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
+
                 $this->tpl->display('setting.editCompanySettings');
 
             }else{
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('error.error403');
 
             }
         }
@@ -97,22 +130,49 @@ namespace leantime\domain\controllers {
         {
             //If ID is set its an update
             if(isset($params['name']) && $params['name'] != ""
-                && isset($params['color'])  && $params['color'] != ""
+                && isset($params['primarycolor'])  && $params['primarycolor'] != ""
                 && isset($params['language'])  && $params['language'] != "") {
 
-                $this->settingsRepo->saveSetting("companysettings.mainColor", htmlentities(addslashes($params['color'])));
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
-                $_SESSION["companysettings.mainColor"] = htmlentities(addslashes($params['color']));
+                $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
+                $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
+
+                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int)$params['messageFrequency']);
+
+
+                //Check if main color is still in the system
+                //if so remove. This call should be removed in a few versions.
+                $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
+                if($mainColor !== false){
+                    $this->settingsRepo->deleteSetting("companysettings.mainColor");
+                }
+
+
+                $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
+                $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
+                if(isset($_POST['telemetryActive'])) {
+
+                    $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
+
+                }else{
+
+                    //When opting out, delete all telemetry related settings including UUID
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
+                    $this->settingsRepo->deleteSetting("companysettings.telemetry.anonymousId");
+
+                }
+
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
-                $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
-                    
 
             }
+
+            $this->tpl->redirect(BASE_URL."/setting/editCompanySettings");
 
         }
 

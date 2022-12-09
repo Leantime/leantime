@@ -7,10 +7,16 @@
 
 namespace leantime\core {
 
+    use JetBrains\PhpStorm\NoReturn;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services;
+    use leantime\core\eventhelpers;
 
     class template
     {
+
+        use eventhelpers;
 
         /**
          * @access private
@@ -23,7 +29,7 @@ namespace leantime\core {
          * @access private
          * @var    string
          */
-        private $controller = '';
+        private $frontcontroller = '';
 
         /**
          *
@@ -40,6 +46,12 @@ namespace leantime\core {
         private $notifcationType = '';
 
         /**
+         * @access private
+         * @var    string
+         */
+        private $hookContext = '';
+
+        /**
          * @access public
          * @var    string
          */
@@ -53,19 +65,21 @@ namespace leantime\core {
 
         public $template = '';
 
+        public $mainContent = '';
+
         public $picture = array(
-            'calendar'    => 'iconfa-calendar',
-            'clients'     => 'iconfa-group',
-            'dashboard' => 'iconfa-th-large',
-            'files'     => 'iconfa-picture',
-            'leads'     => 'iconfa-signal',
-            'messages'     => 'iconfa-envelope',
-            'projects'     => 'iconfa-bar-chart',
-            'setting'    => 'iconfa-cogs',
-            'tickets'    => 'iconfa-pushpin',
-            'timesheets'=> 'iconfa-table',
-            'users'        => 'iconfa-group',
-            'default'    => 'iconfa-off'
+            'calendar'    => 'fa-calendar',
+            'clients'     => 'fa-people-group',
+            'dashboard' => 'fa-th-large',
+            'files'     => 'fa-picture',
+            'leads'     => 'fa-signal',
+            'messages'     => 'fa-envelope',
+            'projects'     => 'fa-bar-chart',
+            'setting'    => 'fa-cogs',
+            'tickets'    => 'fa-pushpin',
+            'timesheets'=> 'fa-table',
+            'users'        => 'fa-people-group',
+            'default'    => 'fa-off'
         );
 
         /**
@@ -75,9 +89,9 @@ namespace leantime\core {
          */
         public function __construct()
         {
-            $this->controller = frontcontroller::getInstance();
-
-            $this->language = new language();
+            $this->theme = new theme();
+            $this->language = language::getInstance();
+            $this->frontcontroller = frontcontroller::getInstance(ROOT);
 
         }
 
@@ -89,6 +103,8 @@ namespace leantime\core {
          */
         public function assign($name, $value)
         {
+
+            $value = self::dispatch_filter("var.$name", $value);
 
             $this->vars[$name] = $value;
 
@@ -109,17 +125,63 @@ namespace leantime\core {
 
         }
 
-        public function getModulePicture()
+        /***
+         * getTemplatePath - Find template in custom and src directories
+         *
+         * @access public
+         * @param  string $module Module template resides in
+         * @param  string $name   Template filename name (including tpl.php extension)
+         * @return string Full template path
+         *
+         */
+        public function getTemplatePath(string $module, string $name): string|false
         {
 
-            $module = frontcontroller::getModuleName($this->template);
+            $plugin_path = self::dispatch_filter('relative_plugin_template_path', '', [
+                'module' => $module,
+                'name' => $name
+            ]);
 
-            $picture = $this->picture['default'];
-            if (isset($this->picture[$module])) {
-                $picture = $this->picture[$module];
+            if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+                $pluginService = new services\plugins();
             }
 
-            return $picture;
+            if (empty($plugin_path) || !file_exists($plugin_path)) {
+                $file = '/'.$module.'/templates/'.$name;
+
+                if(file_exists(ROOT.'/../src/custom'.$file) && is_readable(ROOT.'/../src/custom'.$file)) {
+                    return ROOT.'/../src/custom'.$file;
+                }
+
+                if(file_exists(ROOT.'/../src/plugins'.$file) && is_readable(ROOT.'/../src/plugins'.$file)) {
+                    if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
+                        return ROOT . '/../src/plugins' . $file;
+                    }
+                }
+
+                if(file_exists(ROOT.'/../src/domain'.$file) && is_readable(ROOT.'/../src/domain/'.$file)) {
+                    return ROOT.'/../src/domain/'.$file;
+                }
+            }
+
+            if(file_exists(ROOT.'/../src/custom'.$plugin_path) && is_readable(ROOT.'/../src/custom'.$plugin_path)) {
+                return ROOT.'/../src/custom'.$plugin_path;
+            }
+
+            if(file_exists(ROOT.'/../src/plugins'.$plugin_path) && is_readable(ROOT.'/../src/plugins'.$plugin_path)) {
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
+                    return ROOT.'/../src/plugins'.$plugin_path;
+                }
+            }
+
+            if(file_exists(ROOT.'/../src/domain'.$plugin_path) && is_readable(ROOT.'/../src/domain/'.$plugin_path)) {
+                return ROOT.'/../src/domain/'.$plugin_path;
+            }
+
+
+
+            throw new \Exception($this->__("notifications.no_template").': '.$module.'/'.$file);
+
         }
 
         /**
@@ -129,40 +191,115 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template)
+        public function display($template, $layout = "app")
         {
 
             //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
+            $settings = new appSettings();
+            $login = services\auth::getInstance();
+            $roles = new roles();
+
             $language = $this->language;
+
+            foreach([
+                'template',
+                "template.$template"
+            ] as $tplfilter) {
+                $template = self::dispatch_filter($tplfilter, $template);
+            }
 
             $this->template = $template;
 
-            require ROOT.'/../src/content.php';
+            //Load Layout file
+            $layout = htmlspecialchars($layout);
 
-            $mainContent = ob_get_clean();
-            ob_start();
-
-            //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
-
-            $module = frontcontroller::getModuleName($template);
-
-            $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-                throw new Exception($this->__("notifications.no_template"));
+            foreach ([
+                'layout',
+                "layout.$template"
+            ] as $tplfilter) {
+                $layout = self::dispatch_filter($tplfilter, $layout);
             }
 
-            include $strTemplate;
+            $layoutFilename = $this->theme->getLayoutFilename($layout.'.php', $template);
 
-            $subContent = ob_get_clean();
+            if($layoutFilename === false) {
 
-            $content = str_replace("<!--###MAINCONTENT###-->", $subContent, $mainContent);
+                $layoutFilename = $this->theme->getLayoutFilename('app.php');
 
-            echo $content;
+            }
+
+            if($layoutFilename === false) {
+
+                throw new \Exception("Cannot find default 'app.php' layout file");
+
+            }
+
+            ob_start();
+
+            require($layoutFilename);
+
+            $layoutContent = ob_get_clean();
+
+            foreach ([
+                'layoutContent',
+                "layoutContent.$template"
+            ] as $tplfilter) {
+                $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
+            }
+
+            //Load Template
+
+            //frontcontroller splits the name (actionname.modulename)
+            $action = $this->frontcontroller::getActionName($template);
+            $module = $this->frontcontroller::getModuleName($template);
+
+            $loadFile = $this->getTemplatePath($module, $action.'.tpl.php');
+
+            $this->hookContext = "tpl.$module.$action";
+
+            ob_start();
+
+            require_once($loadFile);
+
+            $content = ob_get_clean();
+
+            foreach ([
+                'content',
+                "content.$template"
+            ] as $tplfilter) {
+                $content = self::dispatch_filter($tplfilter, $content);
+            }
+
+            //Load template content into layout content
+            $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
+
+            foreach ([
+                'render',
+                "render.$template"
+            ] as $filter) {
+                $render = self::dispatch_filter($filter, $render);
+            }
+
+            echo $render;
+
+        }
+
+        /**
+         * displayJson - returns json data
+         *
+         * @access public
+         * @param  $jsonContent
+         * @return void
+         */
+        public function displayJson($jsonContent) {
+
+            header('Content-Type: application/json; charset=utf-8');
+            if($jsonContent !== false) {
+                echo $jsonContent;
+            }else{
+                echo "{Invalid Json}";
+            }
 
         }
 
@@ -176,46 +313,7 @@ namespace leantime\core {
         public function displayPartial($template)
         {
 
-            //These variables are available in the template
-            $frontController = frontcontroller::getInstance(ROOT);
-            $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
-
-            $this->template = $template;
-
-            //frontcontroller splits the name (actionname.modulename)
-            $action = frontcontroller::getActionName($template);
-
-            $module = frontcontroller::getModuleName($template);
-
-                $strTemplate = '../src/domain/' . $module . '/templates/' . $action.'.tpl.php';
-
-            if ((! file_exists($strTemplate)) || ! is_readable($strTemplate)) {
-
-                error_log($this->__("notifications.no_template"), 0);
-                echo $this->__("notifications.no_template");
-
-            } else {
-
-                include $strTemplate;
-
-            }
-
-        }
-
-
-        /**
-         * includeAction - possible to include Actions from erverywhere
-         *
-         * @access public
-         * @param  $completeName
-         * @return void
-         */
-        public function includeAction($completeName)
-        {
-
-            $this->controller->includeAction($completeName);
+            $this->display($template, 'blank');
 
         }
 
@@ -263,8 +361,9 @@ namespace leantime\core {
 
             $frontController = frontcontroller::getInstance(ROOT);
             $config = new config();
-            $settings = new settings();
-            $login = login::getInstance();
+            $settings = new appSettings();
+            $login = services\auth::getInstance();
+            $roles = new roles();
 
 
             $submodule = array("module"=>'', "submodule"=>'');
@@ -275,7 +374,20 @@ namespace leantime\core {
                 $submodule['submodule'] = $aliasParts[1];
             }
 
-            $file = '../src/domain/'.$submodule['module'].'/templates/submodules/'.$submodule['submodule'].'.sub.php';
+            $relative_path = self::dispatch_filter(
+                'submodule_relative_path',
+                "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
+                [
+                    'module' => $submodule['module'],
+                    'submodule' => $submodule['submodule']
+                ]
+            );
+
+            $file = "../custom/domain/$relative_path";
+
+            if(!file_exists($file)) {
+                $file = "../src/domain/$relative_path";
+            }
 
             if (file_exists($file)) {
 
@@ -285,53 +397,6 @@ namespace leantime\core {
 
         }
 
-        /**
-         * displayLink
-         */
-        public function displayLink($module, $name, $params = null, $attribute = null)
-        {
-
-            $mod = explode('.', $module);
-
-            if(is_array($mod) === true && count($mod) == 2) {
-
-                $action = $mod[1];
-                $module = $mod[0];
-
-                $mod = $module.'/class.'.$action.'.php';
-
-            }else{
-
-                $mod = array();
-                return false;
-
-            }
-
-            $returnLink = false;
-
-            $url = "/".$module."/".$action."/";
-
-            if (!empty($params)) {
-
-                foreach ($params as $key => $value) {
-                    $url .= $value."/";
-                }
-            }
-
-            $attr = '';
-
-            if ($attribute!=null) {
-
-                foreach ($attribute as $key => $value){
-                    $attr .= $key." = '".$value."' ";
-                }
-            }
-
-            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
-
-            return $returnLink;
-        }
-
         public function displayNotification()
         {
 
@@ -339,27 +404,57 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            $alertIcons = array(
-                "success" => '<i class="far fa-check-circle"></i>',
-                "error" => '<i class="fas fa-exclamation-triangle"></i>',
-                "info" => '<i class="fas fa-info-circle"></i>'
-            );
+            foreach ([
+                'message',
+                "message_{$note['msg']}"
+            ] as $filter) {
+                $message = self::dispatch_filter(
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
+                );
+            }
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
 
-                $notification = "<div class='alert alert-".$note['type']."'>
-                                    <div class='infoBox'>
-                                        ".$alertIcons[$note['type']]."
+                $notification = '<script type="text/javascript">
+                                  jQuery.jGrowl("'.$message.'", {theme: "'.$note['type'].'"});
+                                </script>';
+
+                $_SESSION['notification'] = "";
+                $_SESSION['notificationType'] = "";
+
+            }
+
+            return $notification;
+        }
+
+        public function displayInlineNotification()
+        {
+
+            $notification = '';
+            $note = $this->getNotification();
+            $language = $this->language;
+
+            foreach ([
+                'message',
+                "message_{$note['msg']}"
+            ] as $filter) {
+                $message = self::dispatch_filter(
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
+                );
+            }
+
+            if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
+
+                $notification = "<div class='inputwrapper login-alert login-".$note['type']."'>
+                                    <div class='alert alert-".$note['type']."'>
+                                        ".$message."
                                     </div>
-								<button data-dismiss='alert' class='close' type='button'>×</button>
-								<div class='alert-content'><h4>"
-                    .ucfirst($note['type']).
-                    "!</h4>"
-                    .$language->__($note['msg'], false).
-                    "
 								</div>
-								<div class='clearall'></div>
-							</div>";
+								";
 
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
@@ -400,6 +495,7 @@ namespace leantime\core {
         public function e($content): void
         {
 
+            $content = $this->convertRelativePaths($content);
             $escaped = $this->escape($content);
 
             echo $escaped;
@@ -409,7 +505,32 @@ namespace leantime\core {
         public function escape($content): string
         {
 
-            return htmlentities($content);
+            if(!is_null($content)) {
+                $content = $this->convertRelativePaths($content);
+                return htmlentities($content);
+            }
+
+            return '';
+
+        }
+
+        public function escapeMinimal($content): string
+        {
+
+            $content = $this->convertRelativePaths($content);
+            $config = array(
+                'safe'=>1,
+                'style_pass'=>1,
+                'cdata'=>1,
+                'comment'=>1,
+                'deny_attribute'=>'* -href -style',
+                'keep_bad'=>0);
+
+            if(!is_null($content)) {
+                return htmLawed($content, array('valid_xhtml'=>1));
+            }
+
+            return '';
 
         }
 
@@ -441,6 +562,10 @@ namespace leantime\core {
 
         }
 
+        public function get24HourTimestring($dateTime) {
+            return $this->language->get24HourTimestring($dateTime);
+        }
+
         //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
         //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
         public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {
@@ -449,7 +574,7 @@ namespace leantime\core {
             $tags = array();
             $isUtf8 = true;
             $truncate = "";
-
+            $html = $this->convertRelativePaths($html);
             // For UTF-8, we need to count multibyte sequences as one character.
             $re = $isUtf8
                 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}'
@@ -516,12 +641,165 @@ namespace leantime\core {
             while (!empty($tags))
                 $truncate .= sprintf('</%s>', array_pop($tags));
 
-            $truncate .= $ending;
+            if(strlen($truncate)>$maxLength) {
+                $truncate .= $ending;
+            }
 
             return $truncate;
         }
 
+        public function convertRelativePaths($text)
+        {
+            if(is_null($text)){
+                return $text;
+            }
 
+            $base = BASE_URL;
+
+          // base url needs trailing /
+          if (substr($base, -1, 1) != "/")
+            $base .= "/";
+
+          // Replace links
+            $pattern = "/<a([^>]*) " .
+                "href=\"([^http|ftp|https|mailto|#][^\"]*)\"/";
+          $replace = "<a\${1} href=\"" . $base . "\${2}\"";
+          $text = preg_replace($pattern, $replace, $text);
+          // Replace images
+
+            $pattern = "/<img([^>]*) " .
+                       "src=\"([^http|ftp|https][^\"]*)\"/";
+          $replace = "<img\${1} src=\"" . $base . "\${2}\"";
+
+          $text = preg_replace($pattern, $replace, $text);
+          // Done
+          return $text;
+        }
+
+        public function getModulePicture()
+        {
+
+            $module = frontcontroller::getModuleName($this->template);
+
+            $picture = $this->picture['default'];
+            if (isset($this->picture[$module])) {
+                $picture = $this->picture[$module];
+            }
+
+            return $picture;
+        }
+
+        public function displayLink($module, $name, $params = null, $attribute = null)
+        {
+
+            $mod = explode('.', $module);
+
+            if(is_array($mod) === true && count($mod) == 2) {
+
+                $action = $mod[1];
+                $module = $mod[0];
+
+                $mod = $module.'/class.'.$action.'.php';
+
+            }else{
+
+                $mod = array();
+                return false;
+
+            }
+
+            $returnLink = false;
+
+            $url = "/".$module."/".$action."/";
+
+            if (!empty($params)) {
+
+                foreach ($params as $key => $value) {
+                    $url .= $value."/";
+                }
+            }
+
+            $attr = '';
+
+            if ($attribute!=null) {
+
+                foreach ($attribute as $key => $value){
+                    $attr .= $key." = '".$value."' ";
+                }
+            }
+
+            $returnLink = "<a href='".BASE_URL."".$url."' ".$attr.">".$name."</a>";
+
+            return $returnLink;
+        }
+
+        /***
+         * patchDownloadUrlToFilenameOrAwsUrl- Replace all local download.php references in <img src=""> tags
+         *     by either local filenames or AWS URLs that can be accesse without being authenticated
+         *
+         * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
+         * authenticated
+
+         *
+         * @access public
+         * @param  string  $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+         * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+         *                 local filenames or AWS URLs
+         */
+        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
+        {
+            $patchedTextHtml = $this->convertRelativePaths($textHtml);
+
+            // TO DO: Replace local download.php
+            $patchedTextHtml = $patchedTextHtml;
+
+            return $patchedTextHtml;
+
+        }
+
+        /**
+         * @param string $hookName
+         * @param mixed $payload
+         */
+        private function dispatchTplEvent($hookName, $payload = [])
+        {
+            $this->dispatchTplHook('event', $hookName, $payload);
+        }
+
+        /**
+         * @param string $hookName
+         * @param mixed $payload
+         * @param mixed $available_params
+         *
+         * @return mixed
+         */
+        private function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+        {
+            return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
+        }
+
+        /**
+         * @param string $type
+         * @param string $hookName
+         * @param mixed $payload
+         * @param mixed $available_params
+         *
+         * @return null|mixed
+         */
+        private function dispatchTplHook($type, $hookName, $payload = [], $available_params = [])
+        {
+            if (!is_string($type)
+                || !in_array($type, ['event', 'filter'])
+            ) {
+                return;
+            }
+
+            if ($type == 'filter') {
+                return self::dispatch_filter($hookName, $payload, $available_params, $this->hookContext);
+            }
+
+            self::dispatch_event($hookName, $payload, $this->hookContext);
+        }
 
     }
 

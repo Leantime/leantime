@@ -3,26 +3,25 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class sessions
+    class sessions extends controller
     {
 
-        private $tpl;
         private $usersService;
 
         /**
-         * constructor - initialize private variables
+         * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->usersService = new services\users();
 
         }
@@ -71,7 +70,7 @@ namespace leantime\domain\controllers {
 
             if(isset($params['menuState'])) {
 
-                $_SESSION['menuState'] = filter_var($params['menuState'], FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+                $_SESSION['menuState'] = htmlentities($params['menuState']);
             }
         }
 

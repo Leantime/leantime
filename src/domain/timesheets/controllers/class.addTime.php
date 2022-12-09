@@ -3,10 +3,31 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services\auth;
 
-    class addTime
+    class addTime extends controller
     {
+
+        private $timesheetsRepo;
+        private $projects;
+        private $tickets;
+
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         */
+        public function init()
+        {
+
+            $this->timesheetsRepo = new repositories\timesheets();
+            $this->projects = new repositories\projects();
+            $this->tickets = new repositories\tickets();
+
+        }
 
         /**
          * run - display template and edit data
@@ -16,16 +37,12 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
-            $tpl = new core\template();
-            $timesheetsRepo = new repositories\timesheets();
-            $language = new core\language();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $info = '';
             //Only admins and employees
-            if(core\login::userIsAtLeast("developer")) {
+            if(auth::userIsAtLeast(roles::$editor)) {
 
-                $projects = new repositories\projects();
-                $tickets = new repositories\tickets();
                 $values = array(
                     'userId' => $_SESSION['userdata']['id'],
                     'ticket' => '',
@@ -37,7 +54,9 @@ namespace leantime\domain\controllers {
                     'invoicedEmpl' => '',
                     'invoicedComp' => '',
                     'invoicedEmplDate' => '',
-                    'invoicedCompDate' => ''
+                    'invoicedCompDate' => '',
+                    'paid' => '',
+                    'paidDate' => ''
                 );
 
                 if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
@@ -61,7 +80,7 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['date']) && $_POST['date'] != '') {
 
-                        $values['date'] = $language->getISODateString($_POST['date']);
+                        $values['date'] = $this->language->getISODateString($_POST['date']);
 
                     }
 
@@ -81,7 +100,7 @@ namespace leantime\domain\controllers {
 
                         if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
 
-                            $values['invoicedEmplDate'] = $language->getISODateString($_POST['invoicedEmplDate']);
+                            $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate']);
 
                         }
 
@@ -89,7 +108,7 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
 
-                        if(core\login::userIsAtLeast("clientManager")) {
+                        if(auth::userIsAtLeast(roles::$manager)) {
 
                             if ($_POST['invoicedComp'] == 'on') {
 
@@ -99,7 +118,27 @@ namespace leantime\domain\controllers {
 
                             if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
 
-                                $values['invoicedCompDate'] = $language->getISODateString($_POST['invoicedCompDate']);
+                                $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
+
+                            }
+
+                        }
+
+                    }
+
+                    if (isset($_POST['paid']) && $_POST['paid'] != '') {
+
+                        if(auth::userIsAtLeast(roles::$manager)) {
+
+                            if ($_POST['paid'] == 'on') {
+
+                                $values['paid'] = 1;
+
+                            }
+
+                            if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
+
+                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
 
                             }
 
@@ -123,7 +162,7 @@ namespace leantime\domain\controllers {
 
                                 if ($values['hours'] != '' && $values['hours'] > 0) {
 
-                                    $timesheetsRepo->addTime($values);
+                                    $this->timesheetsRepo->addTime($values);
                                     $info = 'TIME_SAVED';
 
                                 } else {
@@ -153,12 +192,13 @@ namespace leantime\domain\controllers {
 
                     if (isset($_POST['save']) === true) {
 
-                        $values['date'] = $language->getFormattedDateString($values['date']);
-                        $values['invoicedCompDate'] = $language->getFormattedDateString($values['invoicedCompDate']);
-                        $values['invoicedEmplDate'] = $language->getFormattedDateString($values['invoicedEmplDate']);
+                        $values['date'] = $this->language->getFormattedDateString($values['date']);
+                        $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
+                        $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
+                        $values['paidDate'] = $this->language->getFormattedDateString($values['paidDate']);
 
 
-                        $tpl->assign('values', $values);
+                        $this->tpl->assign('values', $values);
 
                     } elseif (isset($_POST['saveNew']) === true) {
 
@@ -173,24 +213,26 @@ namespace leantime\domain\controllers {
                             'invoicedEmpl' => '',
                             'invoicedComp' => '',
                             'invoicedEmplDate' => '',
-                            'invoicedCompDate' => ''
+                            'invoicedCompDate' => '',
+                            'paid' => '',
+                            'paidDate' => ''
                         );
 
-                        $tpl->assign('values', $values);
+                        $this->tpl->assign('values', $values);
 
                     }
 
                 }
 
-                $tpl->assign('info', $info);
-                $tpl->assign('allProjects', $projects->getAll());
-                $tpl->assign('allTickets', $tickets->getAll());
-                $tpl->assign('kind', $timesheetsRepo->kind);
-                $tpl->display('timesheets.addTime');
+                $this->tpl->assign('info', $info);
+                $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
+                $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
+                $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+                $this->tpl->display('timesheets.addTime');
 
             } else {
 
-                $tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 
