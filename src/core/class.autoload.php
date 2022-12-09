@@ -6,38 +6,39 @@
  * @param  $class
  * @return
  */
- 
 spl_autoload_register("leantimeAutoloader", true, true);
 
-function leantimeAutoloader($class)
-{
-
+function leantimeAutoloader($class) {
     $namespace = "";
     $classArray = explode('\\', $class);
 
-    if(count($classArray) >0) {
+    if (count($classArray) > 0) {
         $class = $classArray[count($classArray) - 1];
     }
 
-    if(count($classArray) >1) {
+    if (count($classArray) > 1) {
         $namespace = $classArray[count($classArray) - 2];
     }
 
     $paths = array();
-    $paths[] = "../src/{$namespace}/class.{$class}.php";
-    $paths[] = "../src/domain/{$class}/{$namespace}/class.{$class}.php";
-    $paths[] = "../src/resources/libs/{$class}/class.{$class}.php";
+    if ($class == "config") {
+        $paths[] = "../config/configuration.php";
+    } else if ($class == "settings") {
+        $paths[] = "../config/settings.php";
+    } else {
+        $paths[] = "../src/{$namespace}/class.{$class}.php";
+        $paths[] = "../src/domain/{$class}/{$namespace}/class.{$class}.php";
+        $paths[] = "../src/command/class.{$class}.php";
+        $paths[] = "../src/resources/libs/{$class}/class.{$class}.php";
+    }
+    foreach ($paths as &$path) {
 
-
-
-    foreach($paths as &$path){
-
-        if(file_exists($path) === true) {
-            if((include_once $path) !== false) { return; 
+        if (file_exists($path) === true) {
+            if ((include_once $path) !== false) {
+                return;
             }
         }
-            
     }
-
 }
+
 require_once '../vendor/autoload.php';

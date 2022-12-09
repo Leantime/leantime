@@ -6,8 +6,7 @@ namespace leantime\core {
     use PDO;
     use PDOException;
 
-    class install
-    {
+    class install {
 
         /**
          * @access public
@@ -60,8 +59,8 @@ namespace leantime\core {
             20101,
             20102,
             20103,
-			20104,
-			20105,
+            20104,
+            20105,
             20106
         );
 
@@ -84,8 +83,7 @@ namespace leantime\core {
          *
          * @access public
          */
-        public function __construct($config, $settings)
-        {
+        public function __construct($config, $settings) {
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
@@ -101,15 +99,11 @@ namespace leantime\core {
 
                 $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
                 $this->database = new PDO('mysql:host=' . $this->host . '', $this->user, $this->password,
-                    $driver_options);
+                        $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             } catch (PDOException $e) {
-
                 echo $e->getMessage();
-
             }
-
         }
 
         /**
@@ -118,8 +112,7 @@ namespace leantime\core {
          * @access public
          * @return bool
          */
-        public function checkIfInstalled()
-        {
+        public function checkIfInstalled() {
 
             try {
                 $this->database->query("Use `" . $this->config->dbDatabase . "`;");
@@ -132,11 +125,9 @@ namespace leantime\core {
                 $stmn->closeCursor();
 
                 return true;
-
             } catch (PDOException $e) {
 
                 return false;
-
             }
         }
 
@@ -147,8 +138,7 @@ namespace leantime\core {
          * @access public
          * @return bool | string
          */
-        public function setupDB(array $values)
-        {
+        public function setupDB(array $values) {
 
             $config = new config();
             $settings = new settings();
@@ -174,15 +164,12 @@ namespace leantime\core {
                 }
 
                 return true;
-
             } catch (PDOException $e) {
 
                 return $e->getMessage();
-
             }
 
             return "Could not initialize transaction";
-
         }
 
         /**
@@ -191,25 +178,23 @@ namespace leantime\core {
          * @access public
          * @return bool | array
          */
-        public function updateDB()
-        {
+        public function updateDB() {
 
             $errors = array();
 
             $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
-			$versionArray = explode(".", $this->settings->dbVersion);
-			if(is_array($versionArray) && count($versionArray) == 3) {
+            $versionArray = explode(".", $this->settings->dbVersion);
+            if (is_array($versionArray) && count($versionArray) == 3) {
 
-				$major = $versionArray[0];
-				$minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
-				$patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
-				$newDBVersion = $major . $minor . $patch;
-
-			}else{
-				$errors[0] = "Problem identifying the version number";
-				return $errors;
-			}
+                $major = $versionArray[0];
+                $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+                $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+                $newDBVersion = $major . $minor . $patch;
+            } else {
+                $errors[0] = "Problem identifying the version number";
+                return $errors;
+            }
 
             $setting = new setting();
             $dbVersion = $setting->getSetting("db-version");
@@ -217,21 +202,20 @@ namespace leantime\core {
             $currentDBVersion = 0;
             if ($dbVersion != false) {
                 $versionArray = explode(".", $dbVersion);
-                if(is_array($versionArray) && count($versionArray) == 3) {
+                if (is_array($versionArray) && count($versionArray) == 3) {
 
                     $major = $versionArray[0];
                     $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
                     $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
                     $currentDBVersion = $major . $minor . $patch;
-
-                }else{
+                } else {
                     $errors[0] = "Problem identifying the version number";
                     return $errors;
                 }
             }
 
             if ($currentDBVersion == $newDBVersion) {
-                $errors[0] = "Database is up to date! <a href='".BASE_URL."/'> Login to continue</a>";
+                $errors[0] = "Database is up to date! <a href='" . BASE_URL . "/'> Login to continue</a>";
                 return $errors;
             }
 
@@ -248,8 +232,7 @@ namespace leantime\core {
                     if ($result !== true) {
 
                         $errors = array_merge($errors, $result);
-
-                    }else{
+                    } else {
 
                         //Update version number in db
                         try {
@@ -257,8 +240,7 @@ namespace leantime\core {
                             $stmn->execute();
 
                             $currentDBVersion = $updateVersion;
-
-                        }catch(PDOException $e) {
+                        } catch (PDOException $e) {
 
                             error_log($e->getMessage());
                             error_log($e->getTraceAsString());
@@ -269,9 +251,7 @@ namespace leantime\core {
                     if (count($errors) > 0) {
                         return $errors;
                     }
-
                 }
-
             }
 
             return true;
@@ -283,8 +263,7 @@ namespace leantime\core {
          * @access private
          * @return string
          */
-        private function sqlPrep()
-        {
+        private function sqlPrep() {
 
             $sql = "			
                 CREATE TABLE `zp_account` (
@@ -729,9 +708,7 @@ namespace leantime\core {
             ";
 
             return $sql;
-
         }
-
 
         /**
          * update_sql_20004 - database update sql for V2.0.4
@@ -741,25 +718,21 @@ namespace leantime\core {
          * @access public
          * @return bool | array
          */
-        private function update_sql_20004()
-        {
+        private function update_sql_20004() {
 
             $errors = array();
 
             $sql = array(
                 "ALTER TABLE `zp_wiki_articles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_submodulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_canvas` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_wiki_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_tickethistory` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_gcallinks` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_message` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_note` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_timesheets` MODIFY kind VARCHAR(175);",
                 "ALTER TABLE `zp_timesheets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_roles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_projects` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_modulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
@@ -769,16 +742,12 @@ namespace leantime\core {
                 "ALTER TABLE `zp_account` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_sprints` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_lead` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_user` MODIFY username VARCHAR(175);",
                 "ALTER TABLE `zp_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_settings` MODIFY `key` VARCHAR(175);",
                 "ALTER TABLE `zp_settings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_stats` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-
                 "ALTER TABLE `zp_tickets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_canvas_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_dashboard_widgets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
@@ -796,24 +765,20 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20100()
-        {
+        private function update_sql_20100() {
 
             $errors = array();
 
@@ -830,19 +795,16 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
         private function update_sql_20101() {
@@ -877,8 +839,6 @@ namespace leantime\core {
                       KEY `projectAction` (`projectId` ASC, `action` ASC),
                       KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
-
-
             );
 
             foreach ($sql as $statement) {
@@ -887,23 +847,19 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20102()
-        {
+        private function update_sql_20102() {
             $errors = array();
 
             $sql = array(
@@ -917,23 +873,19 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20103()
-        {
+        private function update_sql_20103() {
             $errors = array();
 
             $sql = array(
@@ -947,23 +899,19 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20104()
-        {
+        private function update_sql_20104() {
             $errors = array();
 
             $sql = array(
@@ -980,52 +928,44 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-		private function update_sql_20105()
-		{
-			$errors = array();
+        private function update_sql_20105() {
+            $errors = array();
 
-			$sql = array(
-				"ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
-			);
+            $sql = array(
+                "ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`",
+            );
 
-			foreach ($sql as $statement) {
+            foreach ($sql as $statement) {
 
-				try {
+                try {
 
-					$stmn = $this->database->prepare($statement);
-					$stmn->execute();
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
 
-				} catch (PDOException $e) {
-					array_push($errors, $statement . " Failed:" . $e->getMessage());
-				}
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
 
-			}
-
-			if(count($errors) > 0) {
-				return $errors;
-			}else{
-				return true;
-			}
-
-		}
-
-        private function update_sql_20106()
-        {
+        private function update_sql_20106() {
             $errors = array();
 
             $sql = array(
@@ -1038,20 +978,18 @@ namespace leantime\core {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
     }
+
 }
