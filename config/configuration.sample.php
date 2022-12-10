@@ -208,8 +208,6 @@ class config
             $this->ldapDefaultRoleKey = $this->configEnvironmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $this->ldapDefaultRoleKey);
         }
 
-    /* Plugins */
-        $this->plugins = $this->configEnvironmentHelper("LEAN_PLUGINS", $this->plugins);
     }
 
     private function configEnvironmentHelper($envVar, $default, $dataType = "string")

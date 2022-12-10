@@ -7,11 +7,8 @@
 
 namespace leantime\core {
 
-    use leantime\core\eventhelpers;
 
     class appSettings {
-
-        use eventhelpers;
 
         /**
          * @access private
