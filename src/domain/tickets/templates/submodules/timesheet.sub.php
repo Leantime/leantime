@@ -71,7 +71,7 @@
         foreach ($this->get('ticketHours') as $hours){
             $sum = $sum + $hours['summe'];
 
-            echo"labels.push('".date($this->__("language.dateformat"),  strtotime($hours['utc']))."');
+            echo"labels.push('".date("m/d/Y",  strtotime($hours['utc']))."');
                     ";
             echo"d2.push(".$sum.");
                     ";
