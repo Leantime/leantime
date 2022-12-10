@@ -7,11 +7,8 @@
 
 namespace leantime\core {
 
-    use leantime\core\eventhelpers;
 
     class appSettings {
-
-        use eventhelpers;
 
         /**
          * @access private
@@ -23,14 +20,11 @@ namespace leantime\core {
 
         public $dbVersion = "2.1.12";
 
-
-
         /**
          * __construct
          *
          */
         public function __construct(){
-
         }
 
         /**
@@ -115,8 +109,6 @@ namespace leantime\core {
             return $_SERVER['REQUEST_URI'];
 
         }
-
-
 
     }
 }

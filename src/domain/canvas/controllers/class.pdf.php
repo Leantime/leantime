@@ -57,6 +57,8 @@ namespace leantime\domain\controllers\canvas {
         protected int $fontSizeSmall;
         protected array $filter;
 
+        private $pdfEngine;
+
 
         /***
          * init
@@ -65,6 +67,8 @@ namespace leantime\domain\controllers\canvas {
         {
 
             $this->config = new core\config();
+
+
             $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();
 
@@ -85,6 +89,8 @@ namespace leantime\domain\controllers\canvas {
                 'listShow' => true,'listSize' => $this->paperSize, 'listOrientation' => self::PDF_PORTRAIT,
                 'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
             ];
+
+            $this->pdfEngine = $this->pdfEngineInit();
 
         }
 
@@ -120,9 +126,9 @@ namespace leantime\domain\controllers\canvas {
 
             // Service report
             clearstatcache();
-            header("Content-type: application/pdf");
-            header('Content-Disposition: attachment; filename="report.pdf"');
-            header('Cache-Control: no-cache');
+            //header("Content-type: application/pdf");
+            //header('Content-Disposition: attachment; filename="report.pdf"');
+            //header('Cache-Control: no-cache');
             echo $reportData;
 
         }
@@ -149,21 +155,26 @@ namespace leantime\domain\controllers\canvas {
             !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
 
             // Generate PDF content
-            $pdf = new \YetiForcePDF\Document();
-            $pdf->init();
+
+
             $html = $this->htmlReport($projectAry['name'], $canvasAry[0]['title'], $recordsAry, $filter, $options);
 
             // Handle image tags
-            $html = $this->tpl->patchDownloadUrlToFilenameOrAwsUrl($html);
+            //$html = $this->tpl->patchDownloadUrlToFilenameOrAwsUrl($html);
 
             try {
-                $pdf->loadHtml($html);
+
+                $this->pdfEngine->WriteHTML($html);
             }
             catch(Exception $exception) {
                 $this->tpl->setNotification($this->language->__('notification.pdf.failed'), 'error');
                 return false;
             }
-            return $pdf->render();
+
+            return $this->pdfEngine->output('report.pdf', \Mpdf\Output\Destination::INLINE);
+
+
+            //return $html;
 
         }
 
@@ -189,31 +200,36 @@ namespace leantime\domain\controllers\canvas {
             $this->filter = $filter;
 
             // Initialize HTML page
-            $html = $this->htmlInit();
+            $html = "<div>";
 
             // Layout canvas page
             if($this->params['canvasShow']) {
 
-                $html .= $this->htmlCanvasOpen();
-                $html .= $this->htmlStyles();
-                $html .= $this->htmlHeader($projectTitle, $moduleTitle);
-                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
-                $html .= '<div style="height: '.$this->params['canvasHeight'].'px;">';
+                $html .= $this->htmlCanvasOpen(); //div open
+                $html .= $this->htmlStyles(); //styles
+                $html .= $this->htmlHeader($projectTitle, $moduleTitle); //contained div
+                 $html .= '<div style="height: '.$this->params['canvasHeight'].'px;">';
                 $html .= $this->htmlCanvas($recordsAry);
                 $html .= '</div>';
+                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= $this->htmlPageClose();
+                $html .= "<div style='page-break-before:always'></div>";
 
             }
 
             // Layout list of element details
+
+
+
+
             if($this->params['listShow']) {
 
                 $html .= $this->htmlListOpen();
-                $html .= $this->htmlStyles();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
-                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= $this->htmlList($recordsAry);
+                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
                 $html .= $this->htmlPageClose();
+                $html .= "<div style='page-break-before:always'></div>";
 
             }
 
@@ -376,7 +392,7 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlInit(): string
+        protected function pdfEngineInit()
         {
 
             // Define font sizes
@@ -385,37 +401,44 @@ namespace leantime\domain\controllers\canvas {
             $this->fontSizeTitle = $this->params['fontSizeTitle'];
             $this->fontSizeSmall = $this->params['fontSizeSmall'];
 
-            // Load default font
-            \YetiForcePDF\Document::addFonts([
-                ['family' => 'Roboto', 'weight' => '400', 'style' => 'normal', 'file' => ROOT.'/fonts/roboto/Roboto-Regular.ttf'],
-                ['family' => 'Roboto', 'weight' => '400', 'style' => 'italic', 'file' => ROOT.'/fonts/roboto/Roboto-Italic.ttf'],
-                ['family' => 'Roboto', 'weight' => 'bold', 'style' => 'normal', 'file' => ROOT.'/fonts/roboto/Roboto-Bold.ttf'],
-                ['family' => 'Roboto', 'weight' => 'bold', 'style' => 'italic', 'file' => ROOT.'/fonts/roboto/Roboto-BoldItalic.ttf']
+
+            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+            $fontDirs = $defaultConfig['fontDir'];
+
+            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+            $fontData = $defaultFontConfig['fontdata'];
+
+            $mpdf = new \Mpdf\Mpdf([
+                'fontDir' => array_merge($fontDirs, [ ROOT.'/fonts/roboto', ROOT.'/css/libs/fontawesome-free/webfonts']),
+                'fontdata' => $fontData +
+                    [
+                        'roboto' => [
+                            'R' => 'Roboto-Regular.ttf',
+                            'I' => 'Roboto-Italic.ttf',
+                            'B' => 'Roboto-Bold.ttf'
+                        ],
+                        'robotocondensed' => [
+                            'R' => 'RobotoCondensed-Regular.ttf',
+                            'I' => 'RobotoCondensed-Italic.ttf',
+                            'B' => 'RobotoCondensed-Bold.ttf'
+                        ],
+                        'fontawesome' => [
+                            'R' => 'fa-solid-900.ttf',
+
+                        ],
+                    ],
+                    'default_font' => 'roboto',
+                    'orientation' => $this->params['canvasOrientation'],
+                    'format' => $this->params['canvasSize']
+
             ]);
 
-            // Load condensed font
-            \YetiForcePDF\Document::addFonts([
-                ['family' => 'RobotoCondensed', 'weight' => '400', 'style' => 'normal',
-                 'file' => ROOT.'/fonts/roboto/RobotoCondensed-Regular.ttf'],
-                ['family' => 'RobotoCondensed', 'weight' => '400', 'style' => 'italic',
-                 'file' => ROOT.'/fonts/roboto/RobotoCondensed-Italic.ttf'],
-                ['family' => 'RobotoCondensed', 'weight' => 'bold', 'style' => 'normal',
-                 'file' => ROOT.'/fonts/roboto/RobotoCondensed-Bold.ttf'],
-                ['family' => 'RobotoCondensed', 'weight' => 'bold', 'style' => 'italic',
-                 'file' => ROOT.'/fonts/roboto/RobotoCondensed-BoldItalic.ttf']
-            ]);
+            $mpdf->autoPageBreak = false;
 
-            // Load FontAwsome icon font
-            \YetiForcePDF\Document::addFonts([
-                ['family' => 'FontAwesome', 'weight' => '400', 'style' => 'normal',
-                 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-regular-400.ttf'],
-                ['family' => 'FontAwesome', 'weight' => '900', 'style' => 'normal',
-                 'file' => ROOT.'/css/libs/fontawesome-free/webfonts/fa-solid-900.ttf']
-            ]);
 
             // Start document
-            $html = '<div>';
-            return $html;
+
+            return $mpdf;
 
         }
 
@@ -442,12 +465,17 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlCanvasOpen(): string
         {
 
-            $html = '<div data-page-group data-format="'.$this->params['canvasSize'].'" '.
-					'data-orientation="'.$this->params['canvasOrientation'].'" '.
-					'data-margin-left="'.self::PDF_MARGIN.'" data-margin-right="'.self::PDF_MARGIN.'" '.
-					'data-margin-top="'.self::PDF_MARGIN_TOP.'" data-margin-bottom="'.self::PDF_MARGIN_BOTTOM.'" '.
-					'data-header-top="'.self::PDF_MARGIN_HEADER.'" data-footer-bottom="'.self::PDF_MARGIN_FOOTER.'"></div>';
-            $html .= '<div style="font-family: \'Roboto\'; font-weight: 400; font-style: normal; font-size: '.$this->fontSize.'px">';
+            $html = '<style>
+            @page *{
+                margin-top: '.self::PDF_MARGIN_TOP.';
+                margin-bottom: '.self::PDF_MARGIN_BOTTOM.';
+                margin-left: '.self::PDF_MARGIN.';
+                margin-right: '.self::PDF_MARGIN.';
+            }
+            </style>';
+
+
+            $html .= '<div style="font-family: \'roboto\'; font-weight: 400; font-style: normal; font-size: '.$this->fontSize.'px;">';
             return $html;
 
         }
@@ -461,11 +489,7 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlListOpen(): string
         {
 
-            $html = '<div data-page-group data-format="'.$this->params['listSize'].'" '.
-					'data-orientation="'.$this->params['listOrientation'].'" '.
-					'data-margin-left="'.self::PDF_MARGIN.'" data-margin-right="'.self::PDF_MARGIN.'" '.
-					'data-margin-top="'.self::PDF_MARGIN_TOP.'" data-margin-bottom="'.self::PDF_MARGIN_BOTTOM.'" '.
-					'data-header-top="'.self::PDF_MARGIN_HEADER.'" data-footer-bottom="'.self::PDF_MARGIN_FOOTER.'"></div>';
+            $html = '';
             $html .= '<div style="font-family: \'Roboto\'; font-weight: 400; font-style: normal; font-size: '.$this->fontSize.'px">';
             return $html;
 
@@ -480,8 +504,8 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlPageClose(): string
         {
 
-            $html = '</div></div>';
-            return $html;
+
+            return "</div>";
 
         }
 
@@ -496,20 +520,23 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlHeader(string $projectTitle, string $moduleTitle): string
         {
 
-            $html = '<div data-header>'.
-					'<div style="padding: '.self::PDF_MARGIN.'px; height: '.self::PDF_HEADER_HEIGHT.'px">'.
-					'<table class="header" style="width: 100%"><tbody>'.
-					'  <tr>'.
-					'    <td style="width:30%; vertical-align: top;">'.
-					'      <img src="'.$this->config->printLogoURL.'" '.
-					'        style="height: '.self::PDF_HEADER_ROW_HEIGHT.'px" /></td>'.
-					'    <td style="width: 40%; text-align: center; font-size: '.$this->fontSizeTitle.'px">'.
-					'      <strong>'.$moduleTitle.'</strong></td>'.
-					'    <td style="width: 30%; text-align: right; vertical-align:top;">'.
-					'      <strong>'.$projectTitle.'</strong><br /><em>'.date($this->language->__('pdf.language.longdateformat')).'</em></td>'.
-					'  </tr>'.
-					'</tbody></table>'.
-					'</div></div>';
+            $logo = ROOT."/images/logo.png";
+
+            $html = ''.
+					'<div style="padding: '.self::PDF_MARGIN.'px; height: '.self::PDF_HEADER_HEIGHT.'px;">'.
+                        '<table class="header" style="width: 100%"><tbody>'.
+                        '  <tr>'.
+                        '    <td style="width:30%; vertical-align: top;">'.
+                        '      <img src="'.$logo.'" '.
+                        '        style="height: '.self::PDF_HEADER_ROW_HEIGHT.'px" /></td>'.
+                        '    <td style="width: 40%; text-align: center; font-size: '.$this->fontSizeTitle.'px">'.
+                        '      <strong>'.$moduleTitle.'</strong></td>'.
+                        '    <td style="width: 30%; text-align: right; vertical-align:top;">'.
+                        '      <strong>'.$projectTitle.'</strong><br /><em>'.date($this->language->__('pdf.language.longdateformat')).'</em></td>'.
+                        '  </tr>'.
+                        '</tbody></table>'.
+					'</div>
+                   ';
             return $html;
 
         }
@@ -525,8 +552,7 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlFooter(string $templateName, string $disclaimer = ''): string
         {
 
-            $html = '<div data-footer>'.
-					'<div style="padding-top: 0; padding-left: '.self::PDF_MARGIN.'px; padding-right: '.self::PDF_MARGIN.'px; '.
+            $html = '<div style="padding-top: 0; padding-left: '.self::PDF_MARGIN.'px; padding-right: '.self::PDF_MARGIN.'px; '.
 					'  height: '.self::PDF_FOOTER_HEIGHT.'px; font-size: '.$this->fontSizeSmall.'px;">'.
 					(isset($this->params['confidential']) && $this->params['confidential'] ?
 					 '<p style="text-align: center; color: red; font-weight: bold;">'.
@@ -535,11 +561,11 @@ namespace leantime\domain\controllers\canvas {
 					'  <tr>'.
 					'    <td style="text-align:left;width:70%;vertical-align:top;"><strong>'.$this->language->__($templateName).'</strong>'.
 					'</td>'.
-					'    <td style="text-align: right; width: 30%; vertical-align:top">'.$this->language->__('pdf.label.page').' {p}</td>'.
+					'    <td style="text-align: right; width: 30%; vertical-align:top">'.$this->language->__('pdf.label.page').' {PAGENO}</td>'.
 					'  </tr>'.
 					'</tbody></table>'.
 					(!empty($disclaimer) ? '<p>'.$this->language->__($disclaimer).'</p>' : '').
-					'</div></div>';
+					'</div>';
             return $html;
 
         }
@@ -682,7 +708,7 @@ namespace leantime\domain\controllers\canvas {
 		};
 
 		$fontSize = ($fontSize === 0 ? $this->fontSize : $fontSize);
-		$html = '<span style="font-family: \'FontAwesome\'; font-weight: 900; font-style: normal; font-size: '.$fontSize.'px;">'.
+		$html = '<span style="font-family: \'fontawesome\'; font-size: '.$fontSize.'px;">'.
 				$iconCode.'</span>';
 
 		return $html;
@@ -725,8 +751,8 @@ namespace leantime\domain\controllers\canvas {
 			   ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) &&
 			   ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
 
-				$html .= '<tr><td style="width: 14px;" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
-						 '  <td class="canvas-box"><span style="font-family: \'RobotoCondensed\';">'.$record['description'].'</span> '.
+				$html .= '<tr><td style="width: 14px; font-family:fontawesome" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
+						 '  <td class="canvas-box"><span style="font-family: \'robotocondensed\';">'.$record['description'].'</span> '.
 						 (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
 
 			}
