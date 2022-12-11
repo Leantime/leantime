@@ -171,9 +171,9 @@ namespace leantime\domain\controllers\canvas {
                 return false;
             }
 
-            return $this->pdfEngine->output('report.pdf', \Mpdf\Output\Destination::INLINE);
+            $this->pdfEngine->output('report.pdf', \Mpdf\Output\Destination::INLINE);
 
-
+            return true;
             //return $html;
 
         }
