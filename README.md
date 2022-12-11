@@ -13,12 +13,6 @@
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
 
-## Updates ##
-
-Just released! Leantime is now on 2.3.0 beta 
-
-For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.10
-
 ## Features: ##
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
@@ -35,7 +29,7 @@ For more details on this release, visit:  https://github.com/Leantime/leantime/r
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
-* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T), Japanese
+* Available in 19 languages
 
 
 ### Screenshots ###
