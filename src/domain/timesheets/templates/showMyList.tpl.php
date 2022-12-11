@@ -100,6 +100,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                         <th><?php echo $this->__('label.description'); ?></th>
                         <th><?php echo $this->__('label.invoiced'); ?></th>
                         <th><?php echo $this->__('label.invoiced_comp'); ?></th>
+                        <th><?php echo $this->__('label.paid'); ?></th>
                     </tr>
 
                 </thead>
@@ -117,9 +118,9 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                         <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
                             <?php echo $this->getFormattedDateString($row['workDate']); ?>
                         </td>
-                        <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
-                        <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
-                        <?php $diff = $row['planHours']-$row['hours']; ?>
+                        <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours'] ?: 0); ?></td>
+                        <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours'] ?: 0); ?></td>
+                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                         <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
@@ -136,6 +137,11 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                         <?php }else{
                                 echo $this->__("label.pending");
                             } ?></td>
+                        <td data-order="<?php if($row['paid'] == '1'){ echo $this->getFormattedDateString($row['paidDate']); }?>">
+                            <?php if($row['paid'] == '1'){?> <?php echo $this->getFormattedDateString($row['paidDate']); ?>
+                            <?php }else{
+                                echo $this->__("label.pending");
+                            } ?></td>
                     </tr>
                     <?php } ?>
                 </tbody>
@@ -143,7 +149,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     <tr>
                         <td></td>
                         <td colspan="1"><strong><?php echo $this->__("label.total_hours")?></strong></td>
-                        <td colspan="10"><strong><?php echo $sum; ?></strong></td>
+                        <td colspan="11"><strong><?php echo $sum; ?></strong></td>
 
 
                     </tr>

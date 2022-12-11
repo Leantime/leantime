@@ -124,10 +124,12 @@ class ldap
 
             }else{
 
-                error_log(ldap_error($this->ldapConnection));
-                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-                if($err) {
-                    error_log($err);
+                if($this->config->debug == 1){
+                    error_log(ldap_error($this->ldapConnection));
+                    ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                    if($err) {
+                        error_log($err);
+                    }
                 }
 
                 return false;

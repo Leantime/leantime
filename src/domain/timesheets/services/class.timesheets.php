@@ -18,7 +18,7 @@ namespace leantime\domain\services {
         {
 
             $this->timesheetsRepo = new repositories\timesheets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
@@ -55,7 +55,9 @@ namespace leantime\domain\services {
                 'invoicedEmpl' => '',
                 'invoicedComp' => '',
                 'invoicedEmplDate' => '',
-                'invoicedCompDate' => ''
+                'invoicedCompDate' => '',
+                'paid' => '',
+                'paidDate' => ''
             );
 
             if (isset($params['kind']) && $params['kind'] != '') {
@@ -143,8 +145,8 @@ namespace leantime\domain\services {
             return $this->timesheetsRepo->kind;
         }
 
-        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1'){
-            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter);
+        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1'){
+            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid);
         }
 
     }

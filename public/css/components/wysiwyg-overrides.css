@@ -101,8 +101,13 @@ body.mce-content-body {
     margin-bottom:15px;
 }
 
+.mce-content-body table thead td {
+    background:var(--neutral);
+}
+
 .mce-content-body table td {
     padding:5px;
+    border:1px solid var(--neutral);
 }
 
 .mce-content-body  p {

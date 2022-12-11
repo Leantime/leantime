@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -38,152 +38,6 @@ namespace leantime\domain\controllers {
             }
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         *
-         * DEPRECATED
-         */
-
-        /*
-        public function run()
-        {
-
-            $tpl = new core\template();
-            $ticketRepo = new repositories\tickets();
-
-            $projectObj = new repositories\projects();
-            $user = new repositories\users();
-            $language = new core\language();
-            $mailer = new core\mailer();
-            $sprintService = new services\sprints();
-            $ticketService = new services\tickets();
-
-            //Set current project ID
-            if (isset($_COOKIE['searchCriteria']) === true) {
-                $searchCriteria = unserialize($_COOKIE['searchCriteria']);
-
-            }
-
-
-            $msgKey = '';
-            $userinfo = $user->getUser($_SESSION['userdata']['id']);
-
-            $values = array(
-                'headline' => "",
-                'type' => "",
-                'description' => "",
-                'projectId' => $_SESSION['currentProject'],
-                'editorId' => "",
-                'userId' => $_SESSION['userdata']['id'],
-                'userFirstname' => $userinfo["firstname"],
-                'userLastname' => $userinfo["lastname"],
-                'date' => $language->getFormattedDateString(date("Y-m-d H:i:s")),
-                'dateToFinish' => "",
-                'status' => 3,
-                'planHours' => "0",
-                'sprint' => "",
-                'storypoints' => "",
-                'priority' => "",
-                'hourRemaining' => "",
-                'acceptanceCriteria' => "",
-                'tags' => "",
-                'editFrom' => "",
-                'editTo' => "",
-                'dependingTicketId' => ''
-            );
-
-            if (isset($_POST['saveTicket']) || isset($_POST['saveAndCloseTicket'])) {
-
-                $values = array(
-                    'headline' => $_POST['headline'],
-                    'type' => $_POST['type'],
-                    'description' => $_POST['description'],
-                    'projectId' => $_SESSION['currentProject'],
-                    'editorId' => $_POST['editorId'],
-                    'userId' => $_SESSION['userdata']['id'],
-                    'userFirstname' => $userinfo["firstname"],
-                    'userLastname' => $userinfo["lastname"],
-                    'date' => $this->language->getFormattedDateString(date("Y-m-d H:i:s")),
-                    'dateToFinish' => $_POST['dateToFinish'],
-                    'status' => $_POST['status'],
-                    'storypoints' => $_POST['storypoints'],
-                    'priority' => $_POST['priority'],
-
-                    'hourRemaining' => $_POST['hourRemaining'],
-                    'planHours' => $_POST['planHours'],
-                    'sprint' => $_POST['sprint'],
-                    'acceptanceCriteria' => $_POST['acceptanceCriteria'],
-                    'tags' => $_POST['tags'],
-                    'editFrom' => $_POST['editFrom'],
-                    'editTo' => $_POST['editTo'],
-                    'dependingTicketId' => $_POST['dependingTicketId']
-                );
-
-                if ($values['headline'] === '') {
-
-                    $tpl->setNotification('ERROR_NO_HEADLINE', 'error');
-
-                } elseif ($values['projectId'] === '') {
-
-                    $tpl->setNotification('ERROR_NO_PROJECT', 'error');
-
-                } else {
-
-                    $values['date'] = $this->language->getISODateString($values['date']);
-                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
-                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
-                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
-
-                    // returns last inserted id
-                    $id = $ticketRepo->addTicket($values);
-
-                    $_SESSION['msg'] = "NEW_TICKET_ADDED";
-                    $_SESSION['msgT'] = "success";
-
-
-                    $subject = "New To-Do has been added to one of your projects.";
-                    $actual_link = BASE_URL."/tickets/showTicket/". $id;
-                    $message = "" . $_SESSION["userdata"]["name"] . " added a new To-Do to one of your projects: '".$values['headline']."'";
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> "Click here to see it."));
-
-
-                    $tpl->setNotification('To-Do created successfully', 'success');
-
-                    if (isset($_POST['saveTicket'])) {
-                        $tpl->redirect(BASE_URL."/tickets/showTicket/" . $id);
-                    }
-
-
-                    if(isset($_POST["saveAndCloseTicket"]) === true) {
-                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$id."?closeModal=1");
-                    }
-                }
-
-            }
-
-            $tpl->assign('ticket', $values);
-
-            $tpl->assign("sprints", $sprintService->getAllSprints($_SESSION["currentProject"]));
-            $tpl->assign("milestones", $ticketService->getAllMilestones($_SESSION["currentProject"]));
-            $tpl->assign('role', $_SESSION['userdata']['role']);
-            $tpl->assign('users', $ticketRepo->getAvailableUsersForTicket());
-            $tpl->assign('type', $ticketRepo->getType());
-            $tpl->assign('info', $msgKey);
-            $tpl->assign('efforts', $ticketRepo->efforts);
-            $tpl->assign('priorities', $ticketRepo->priority);
-            $allprojects = $projectObj->getUserProjects();
-            $tpl->assign('allProjects', $allprojects);
-            $tpl->assign('type', $ticketRepo->getType());
-            $tpl->assign('objTicket', $ticketRepo);
-            $tpl->assign('employees', $user->getEmployees());
-            $tpl->assign('timesheetsAllHours', 0);
-
-            $tpl->displayPartial('tickets.newTicketModal');
-
-        }
-        */
 
         public function get () {
 
@@ -191,7 +45,8 @@ namespace leantime\domain\controllers {
                 array(
                     "userLastname"=>$_SESSION['userdata']["name"],
                     "status"=>3,
-                    "projectId"=>$_SESSION['currentProject']
+                    "projectId"=>$_SESSION['currentProject'],
+                    "sprint" => $_SESSION['currentSprint'] ?? ''
                 )
             );
 

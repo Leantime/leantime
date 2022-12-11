@@ -10,7 +10,7 @@ namespace leantime\core {
     use Exception;
     use leantime\domain\controllers;
     use leantime\domain\repositories;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class frontcontroller
     {
@@ -116,7 +116,7 @@ namespace leantime\core {
 
             } else {
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
 
             }
         }
@@ -142,9 +142,11 @@ namespace leantime\core {
             if((is_dir('../src/domain/'.$moduleName) === false ||
                 is_file('../src/domain/'. $moduleName.'/controllers/class.'.$actionName.'.php') === false) &&
                (is_dir('../custom/domain/'.$moduleName) === false ||
-                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
+                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false) &&
+                (is_dir('../src/plugins/'.$moduleName) === false ||
+                    is_file('../src/plugins/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
 
-                self::dispatch("general.error404");
+                self::dispatch("errors.error404");
                 return;
 
             }
@@ -156,11 +158,20 @@ namespace leantime\core {
 
             $controllerNs = "domain";
 
+            if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+                $pluginService = new \leantime\domain\services\plugins();
+            }
+
             //Try plugin folder first for overrides
             if(file_exists($customPluginPath)) {
 
-                $controllerNs = "plugins";
-                require_once $customPluginPath;
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $customPluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
 
             }elseif(file_exists($customDomainPath)) {
 
@@ -168,8 +179,13 @@ namespace leantime\core {
 
             }elseif(file_exists($pluginPath)) {
 
-                $controllerNs = "plugins";
-                require_once $pluginPath;
+                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
+                    $controllerNs = "plugins";
+                    require_once $pluginPath;
+                }else{
+                    self::dispatch("errors.error404", 404);
+                    return;
+                }
 
             }elseif(file_exists($domainPath)) {
 
@@ -177,7 +193,7 @@ namespace leantime\core {
 
             }else{
 
-                self::dispatch("general.error404", 404);
+                self::dispatch("errors.error404", 404);
                 return;
 
             }
@@ -192,10 +208,13 @@ namespace leantime\core {
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if (is_subclass_of($classname, "leantime\\base\\controller")) {
+                if (is_subclass_of($classname, "leantime\\core\\controller")) {
+
+
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
+
                     $action = new $classname;
 
                     if(method_exists($action, $method)) {

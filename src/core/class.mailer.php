@@ -12,7 +12,7 @@ namespace leantime\core {
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
     use phpmailerException;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class mailer
     {
@@ -121,7 +121,7 @@ namespace leantime\core {
             $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
             $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
-            $this->language = new language();
+            $this->language = language::getInstance();
 
         }
 
@@ -185,7 +185,7 @@ namespace leantime\core {
 
         }
 
-        private function dispatchMailerHook($type, $hookname, $payload = '', $additional_params)
+        private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
         {
             if ($type !== 'filter' || $type !== 'event') {
                 return false;
@@ -223,7 +223,7 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
-            $this->dispatchMailerHook('event', 'beforeSendMail');
+            $this->dispatchMailerHook('event', 'beforeSendMail', []);
 
             $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
             $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);
@@ -251,7 +251,7 @@ namespace leantime\core {
 			<td align="center" valign="top">
 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
 					<tr>
-						<td style="padding:3px 10px; background-color:' . $this->companyColor . '">
+						<td style="padding:3px 10px;">
 							<table>
 								<tr>
 								<td width="150"><img alt="Logo" src="'.$inlineLogoContent. '" width="150" style="width:150px;"></td>
@@ -278,7 +278,7 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
-            $this->dispatchMailerHook(
+            $bodyTemplate = $this->dispatchMailerHook(
                 'filter',
                 'bodyTemplate',
                 $bodyTemplate,
@@ -295,7 +295,7 @@ namespace leantime\core {
 
             $this->mailAgent->Body = $bodyTemplate;
 
-            $this->dispatchMailerHook(
+            $altBody = $this->dispatchMailerHook(
                 'filter',
                 'altBody',
                 $this->text
@@ -303,22 +303,25 @@ namespace leantime\core {
 
             $this->mailAgent->AltBody = $altBody;
 
-            $to = array_unique($to);
+            if(is_array($to)) {
 
-            foreach ($to as $recip) {
+                $to = array_unique($to);
 
-                try {
-                    $this->mailAgent->addAddress($recip);
-                    $this->mailAgent->send();
-                }catch(Exception $e){
-                    error_log($this->mailAgent->ErrorInfo);
-                    error_log($e);
+                foreach ($to as $recip) {
+                    try {
+                        $this->mailAgent->addAddress($recip);
+                        $this->mailAgent->send();
+                    } catch (Exception $e) {
+                        error_log($this->mailAgent->ErrorInfo);
+                        error_log($e);
+                    }
+
+                    $this->mailAgent->clearAllRecipients();
                 }
 
-                $this->mailAgent->clearAllRecipients();
             }
 
-            $this->dispatchMailerHook('event', 'afterSendMail');
+            $this->dispatchMailerHook('event', 'afterSendMail', $to);
 
         }
 

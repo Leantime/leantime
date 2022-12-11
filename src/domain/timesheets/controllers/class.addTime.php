@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -54,7 +54,9 @@ namespace leantime\domain\controllers {
                     'invoicedEmpl' => '',
                     'invoicedComp' => '',
                     'invoicedEmplDate' => '',
-                    'invoicedCompDate' => ''
+                    'invoicedCompDate' => '',
+                    'paid' => '',
+                    'paidDate' => ''
                 );
 
                 if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
@@ -124,6 +126,26 @@ namespace leantime\domain\controllers {
 
                     }
 
+                    if (isset($_POST['paid']) && $_POST['paid'] != '') {
+
+                        if(auth::userIsAtLeast(roles::$manager)) {
+
+                            if ($_POST['paid'] == 'on') {
+
+                                $values['paid'] = 1;
+
+                            }
+
+                            if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
+
+                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+
+                            }
+
+                        }
+
+                    }
+
 
                     if (isset($_POST['description']) && $_POST['description'] != '') {
 
@@ -173,6 +195,7 @@ namespace leantime\domain\controllers {
                         $values['date'] = $this->language->getFormattedDateString($values['date']);
                         $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
                         $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
+                        $values['paidDate'] = $this->language->getFormattedDateString($values['paidDate']);
 
 
                         $this->tpl->assign('values', $values);
@@ -190,7 +213,9 @@ namespace leantime\domain\controllers {
                             'invoicedEmpl' => '',
                             'invoicedComp' => '',
                             'invoicedEmplDate' => '',
-                            'invoicedCompDate' => ''
+                            'invoicedCompDate' => '',
+                            'paid' => '',
+                            'paidDate' => ''
                         );
 
                         $this->tpl->assign('values', $values);
@@ -207,7 +232,7 @@ namespace leantime\domain\controllers {
 
             } else {
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('errors.error403');
 
             }
 

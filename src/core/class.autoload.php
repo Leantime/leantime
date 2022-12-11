@@ -2,16 +2,9 @@
 
 namespace leantime\core;
 
-require_once ROOT.'/../vendor/autoload.php';
+require_once ROOT . '/../vendor/autoload.php';
 
-/**
- * __autoload - includes class
- *
- * @param string $class
- *
- * @return void
- */
-spl_autoload_register(__NAMESPACE__."\\leantimeAutoloader", true, true);
+spl_autoload_register(__NAMESPACE__ . "\\leantimeAutoloader", true, true);
 
 /**
  * the leantime autoloader function
@@ -28,54 +21,37 @@ spl_autoload_register(__NAMESPACE__."\\leantimeAutoloader", true, true);
  *
  * @return void
  */
-function leantimeAutoloader($class)
-{
+function leantimeAutoloader($class) {
 
     $parts = getLeantimeClassPath($class);
     $path = $parts['path'];
     $class = $parts['class'];
 
     // Check if a customized version of the requested class exists
-    if(!empty($path)) {
-
-        foreach([
-            'class',
-            'trait'
-        ] as $prefix) {
-
-            if(file_exists(ROOT."/../custom/$path/$prefix.$class.php")) {
-
-                require_once(ROOT."/../custom/$path/$prefix.$class.php");
+    if (!empty($path)) {
+        foreach (['class', 'trait'] as $prefix) {
+            if ($class == "config") {
+                require_once( ROOT . "/../config/configuration.php");
+            } elseif (file_exists(ROOT . "/../custom/$path/$prefix.$class.php")) {
+                require_once(ROOT . "/../custom/$path/$prefix.$class.php");
                 break;
-
-            }elseif(file_exists(ROOT."/../src/$path/$prefix.$class.php")) {
-
-                require_once(ROOT."/../src/$path/$prefix.$class.php");
+            } elseif (file_exists(ROOT . "/../src/$path/$prefix.$class.php")) {
+                require_once(ROOT . "/../src/$path/$prefix.$class.php");
                 break;
-
             }
-
         }
-
     }
-
 }
 
-/**
- * get leantime class path
- *
- * @param string $class
- *
- * @return array
- */
-function getLeantimeClassPath($class)
-{
+require_once '../vendor/autoload.php';
+
+function getLeantimeClassPath($class) {
     $mvcFolder = $module = $path = "";
 
     $classArray = explode('\\', $class);
     $classPartsCount = count($classArray);
 
-    if($classPartsCount == 3) {
+    if ($classPartsCount == 3) {
         $class = $classArray[2];
         $srcFolder = $classArray[1];
 
@@ -83,7 +59,7 @@ function getLeantimeClassPath($class)
     }
 
     //domain
-    if($classPartsCount == 4) {
+    if ($classPartsCount == 4) {
         $class = $classArray[3];
         $srcFolder = $classArray[1];
         $mvcFolder = $classArray[2];
@@ -91,7 +67,7 @@ function getLeantimeClassPath($class)
         $path = "{$srcFolder}/{$class}/{$mvcFolder}";
     }
 
-    if($classPartsCount == 5) {
+    if ($classPartsCount == 5) {
         $class = $classArray[4];
         $srcFolder = $classArray[1];
         $mvcFolder = $classArray[2];

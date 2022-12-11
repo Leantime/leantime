@@ -6,7 +6,7 @@ namespace leantime\domain\services {
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\core;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
 
     class auth
@@ -139,7 +139,7 @@ namespace leantime\domain\services {
         {
             $this->config = new core\config();
             $this->cookieTime = $this->config->sessionExpiration;
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $this->settingsRepo = new repositories\setting();
             $this->authRepo = new repositories\auth();
             $this->userRepo = new repositories\users();
@@ -420,8 +420,6 @@ namespace leantime\domain\services {
         }
 
         public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false) {
-
-
 
             //If statement split up for readability
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)

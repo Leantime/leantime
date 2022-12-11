@@ -6,7 +6,7 @@ namespace leantime\domain\repositories {
 
     class retroscanvas extends \leantime\domain\repositories\canvas
     {
-        
+
         /**
          * Constant that must be redefined
          */
@@ -19,7 +19,7 @@ namespace leantime\domain\repositories {
 		 * @var    string Fontawesome icone
 		 */
 		protected string $icon = 'fa-hand-spock';
-        
+
         /**
          * canvasTypes - Must be extended
          *
@@ -27,11 +27,11 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-		    'well'       => [ 'icon' => 'fa-circle-check', 'title' => 'box.retros.continue' ], 
-		    'notwell'    => [ 'icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing' ], 
+		    'well'       => [ 'icon' => 'fa-circle-check', 'title' => 'box.retros.continue' ],
+		    'notwell'    => [ 'icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing' ],
 		    'startdoing' => [ 'icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing' ]
 	    ];
-		
+
 		/**
 		 * dataLabels - Data labels (may be extended)
          *
@@ -43,7 +43,7 @@ namespace leantime\domain\repositories {
 			2 => [ 'title' => 'label.data',        'field' => 'data',        'active' => false ],
 			3 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false ]
 	    ];
-		
+
         /**
          * statusLabels - Status labels (may be extended)
          *
@@ -52,6 +52,9 @@ namespace leantime\domain\repositories {
          */
 		protected array $statusLabels = [ ];
 
-		
+
+        protected array $relatesLabels = [];
+
+
     }
 }

@@ -14,7 +14,7 @@ namespace leantime\domain\repositories {
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = '??';
-        
+
         /***
          * icon - Icon associated with canvas (must be extended)
          *
@@ -22,7 +22,7 @@ namespace leantime\domain\repositories {
          * @var    string Fontawesome icone
          */
         protected string $icon = 'fa-x';
-        
+
         /***
          * disclaimer - Disclaimer (may be extended)
          *
@@ -30,7 +30,7 @@ namespace leantime\domain\repositories {
          * @var    string Disclaimer (including href)
          */
         protected string $disclaimer = '';
-        
+
         /**
          * canvasTypes - Canvas elements / boxes (must be extended)
          *
@@ -38,7 +38,7 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ], 
+            // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ],
         ];
 
         /**
@@ -54,7 +54,7 @@ namespace leantime\domain\repositories {
             'status_hold' =>    [ 'icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true ],
             'status_invalid' => [ 'icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active' => true ]
         ];
-        
+
         /**
          * relatesLabels - Relates to label (same structure as `statusLabels`)
          *
@@ -71,7 +71,7 @@ namespace leantime\domain\repositories {
             'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true ],
             'relates_firm'        => [ 'icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true ]
         ];
-        
+
         /**
          * dataLabels - Data labels (may be extended)
          *
@@ -83,7 +83,7 @@ namespace leantime\domain\repositories {
             2 => [ 'title' => 'label.data',        'field' => 'data',        'active' => true],
             3 => [ 'title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true]
         ];
-        
+
         /**
          * @access public
          * @var    object
@@ -112,7 +112,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
@@ -124,11 +124,11 @@ namespace leantime\domain\repositories {
          */
         public function getIcon(): string
         {
-            
+
             return $this->icon;
-            
+
         }
-        
+
         /**
          * getDisclaimer() - Retrieve disclaimer
          *
@@ -137,12 +137,12 @@ namespace leantime\domain\repositories {
          */
         public function getDisclaimer(): string
         {
-            
+
             if(empty($this->disclaimer)) return '';
             return $this->language->__($this->disclaimer);
-            
+
         }
-        
+
         /**
          * getCanvasTypes() - Retrieve translated canvaas items
          *
@@ -151,22 +151,22 @@ namespace leantime\domain\repositories {
          */
         public function getCanvasTypes(): array
         {
-            
+
             $canvasTypes = $this->canvasTypes;
             foreach($canvasTypes as $key => $data) {
-                
+
                 if(isset($data['title'])) {
-                    
+
                     $canvasTypes[$key]['title'] = $this->language->__($data['title']);
-                    
+
                 }
-                
+
             }
-            
+
             return $canvasTypes;
-            
+
         }
-    
+
         /**
          * getStatusLabels() - Retrieve translated status labels
          *
@@ -175,21 +175,21 @@ namespace leantime\domain\repositories {
          */
         public function getStatusLabels(): array
         {
-            
+
             $statusLabels = $this->statusLabels;
-            
+
             foreach($statusLabels as $key => $data) {
-                
+
                 if(isset($data['title'])) {
-                    
+
                     $statusLabels[$key]['title'] = $this->language->__($data['title']);
-                    
+
                 }
-                
+
             }
-            
+
             return $statusLabels;
-            
+
         }
 
         /**
@@ -200,20 +200,20 @@ namespace leantime\domain\repositories {
          */
         public function getRelatesLabels(): array
         {
-            
+
             $relatesLabels = $this->relatesLabels;
             foreach($relatesLabels as $key => $data) {
-                
+
                 if(isset($data['title'])) {
-                    
+
                     $relatesLabels[$key]['title'] = $this->language->__($data['title']);
-                    
+
                 }
-                
+
             }
-            
+
             return $relatesLabels;
-            
+
         }
 
         /**
@@ -224,23 +224,23 @@ namespace leantime\domain\repositories {
          */
         public function getDataLabels(): array
         {
-            
+
             $dataLabels = $this->dataLabels;
             foreach($dataLabels as $key => $data) {
-                
+
                 if(isset($data['title'])) {
-                    
+
                     $dataLabels[$key]['title'] = $this->language->__($data['title']);
-                    
+
                 }
-                
+
             }
-            
+
             return $dataLabels;
-            
+
         }
 
-        
+
         public function getAllCanvas($projectId)
         {
 
@@ -248,11 +248,11 @@ namespace leantime\domain\repositories {
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
-                        zp_canvas.created,                        
-                        t1.firstname AS authorFirstname, 
+                        zp_canvas.created,
+                        t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname
-                
-                FROM 
+
+                FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
                 WHERE type = '".static::CANVAS_NAME."canvas' AND projectId = :projectId
@@ -275,12 +275,12 @@ namespace leantime\domain\repositories {
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
-                        zp_canvas.created,    
+                        zp_canvas.created,
                         zp_canvas.projectId,
-                        t1.firstname AS authorFirstname, 
+                        t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname
-                
-                FROM 
+
+                FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
                 WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
@@ -446,7 +446,7 @@ namespace leantime\domain\repositories {
                         zp_canvas_items.parent,
                         zp_canvas_items.title,
                         zp_canvas_items.tags,
-                        t1.firstname AS authorFirstname, 
+                        t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname,
                         t1.profileId AS authorProfileId,
                         milestone.headline as milestoneHeadline,
@@ -457,27 +457,27 @@ namespace leantime\domain\repositories {
                         SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
                         SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
                         COUNT(progressTickets.id) AS allTickets,
-                        
-                        CASE WHEN 
-                          COUNT(progressTickets.id) > 0 
-                        THEN 
+
+                        CASE WHEN
+                          COUNT(progressTickets.id) > 0
+                        THEN
                           ROUND(
                             (
-                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
                               SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                            ) *100) 
-                        ELSE 
-                          0 
+                            ) *100)
+                        ELSE
+                          0
                         END AS percentDone
-                
-                FROM 
+
+                FROM
                 zp_canvas_items
-            
+
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask' 
+                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
                 LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                 LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = '".static::CANVAS_NAME."canvasitem'
-                WHERE zp_canvas_items.canvasId = :id 
+                WHERE zp_canvas_items.canvasId = :id
                 GROUP BY zp_canvas_items.id
                 ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
 
@@ -507,10 +507,10 @@ namespace leantime\domain\repositories {
                         zp_canvas_items.modified,
                         zp_canvas_items.canvasId,
                         zp_canvas_items.sortindex,
-                        zp_canvas_items.status,    
-                        zp_canvas_items.relates,    
-                        zp_canvas_items.milestoneId,                
-                        t1.firstname AS authorFirstname, 
+                        zp_canvas_items.status,
+                        zp_canvas_items.relates,
+                        zp_canvas_items.milestoneId,
+                        t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname,
                         milestone.headline as milestoneHeadline,
                         milestone.editTo as milestoneEditTo,
@@ -519,24 +519,24 @@ namespace leantime\domain\repositories {
                         SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
                         SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
                         COUNT(progressTickets.id) AS allTickets,
-                        
-                        CASE WHEN 
-                          COUNT(progressTickets.id) > 0 
-                        THEN 
+
+                        CASE WHEN
+                          COUNT(progressTickets.id) > 0
+                        THEN
                           ROUND(
                             (
-                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
                               SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                            ) *100) 
-                        ELSE 
-                          0 
+                            ) *100)
+                        ELSE
+                          0
                         END AS percentDone
-                FROM 
-                zp_canvas_items 
+                FROM
+                zp_canvas_items
                 LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
                 LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-                WHERE zp_canvas_items.id = :id 
+                WHERE zp_canvas_items.id = :id
                 ";
 
             $stmn = $this->db->database->prepare($sql);
@@ -619,8 +619,8 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "SELECT
-                    count(zp_canvas_items.id) AS canvasCount    
-                FROM 
+                    count(zp_canvas_items.id) AS canvasCount
+                FROM
                 zp_canvas_items
                 LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
                 WHERE canvasBoard.type = '".static::CANVAS_NAME."canvas'  ";
@@ -642,9 +642,9 @@ namespace leantime\domain\repositories {
             if(isset($values['canvasCount']) === true) {
                 return $values['canvasCount'];
             }
-            
+
             return 0;
-            
+
         }
 
         public function getNumberOfBoards($projectId=null)
@@ -652,7 +652,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT
                         count(zp_canvas.id) AS boardCount
-                FROM 
+                FROM
                     zp_canvas
                 ";
 
@@ -720,7 +720,7 @@ namespace leantime\domain\repositories {
             // Create new canvas
             $values = ["title" => $canvasTitle, "author" => $authorId, "projectId" => $projectId, "type" => static::CANVAS_NAME."canvas"];
             $newCanvasId = $this->addCanvas($values);
-            
+
             // Copy elements from existing canvas to new canvas
             $sql = "INSERT INTO ".
               "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) ".
@@ -740,7 +740,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  int  $canvasId   Original canvas identifier
-         * @param  int  $mergeId    Canvas to perge into existing one 
+         * @param  int  $mergeId    Canvas to perge into existing one
          * @return bool Status of merge
          */
         public function mergeCanvas(int $canvasId, string $mergeId): bool
@@ -759,6 +759,121 @@ namespace leantime\domain\repositories {
             return true;
 
         }
-        
+
+        /***
+         * getCanvasProgressCount - gets canvases by type and counts number of items per box
+         *
+         * @access public
+         * @param  int  $projectId   Project od
+         * @param  array  $boards    List of board types to pull
+         * @return bool Status of merge
+         */
+        public function getCanvasProgressCount(int $projectId, array $boards) {
+
+            $sql = "SELECT
+                    zp_canvas.id AS canvasId,
+                    zp_canvas.type AS canvasType,
+                    zp_canvas_items.box,
+                    count(zp_canvas_items.id) AS boxItems
+                FROM
+                    zp_canvas
+                    LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
+
+                ";
+
+                if($projectId != '' && count($boards) >0){
+                    $sql .= " WHERE 1=1 ";
+                }
+
+                if($projectId != ''){
+                    $sql .= "AND projectId = :projectId ";
+                }
+
+                if(count($boards) >0){
+
+                    $boardString = implode("','", $boards);
+                    $sql .= "AND type IN ('".$boardString."') ";
+                }
+
+
+
+                $sql .= "
+                GROUP BY
+                    zp_canvas.id,
+                    zp_canvas.type,
+                    zp_canvas_items.box
+                ORDER BY zp_canvas.title, zp_canvas.created";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if($projectId != '') {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
+        /***
+         * getLastUpdateCanvas - gets the list of canvas that have been updated recently
+         *
+         * @access public
+         * @param  int      $projectId   Project od
+         * @param  array    $boards    List of board types to pull
+         * @return array    array of canvas boards sorted by last update date
+         */
+        public function getLastUpdatedCanvas(int $projectId, array $boards) {
+
+            $sql = "SELECT
+                    zp_canvas.id AS id,
+                    zp_canvas.type AS type,
+                    zp_canvas.title AS title,
+                    IF(MAX(zp_canvas_items.modified) IS NULL, zp_canvas.created, MAX(zp_canvas_items.modified)) AS modified
+                FROM
+                    zp_canvas
+                    LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
+
+                ";
+
+            if($projectId != '' && count($boards) >0){
+                $sql .= " WHERE 1=1 ";
+            }
+
+            if($projectId != ''){
+                $sql .= "AND projectId = :projectId ";
+            }
+
+            if(count($boards) >0){
+
+                $boardString = implode("','", $boards);
+                $sql .= "AND type IN ('".$boardString."') ";
+            }
+
+            $sql .= "
+                GROUP BY
+                    zp_canvas.id,
+                    zp_canvas.type,
+                     zp_canvas.title
+                ORDER BY modified DESC";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if($projectId != '') {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
+
     }
 }

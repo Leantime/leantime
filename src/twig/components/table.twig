@@ -1,0 +1,16 @@
+{% spaceless %}
+    <table {{ attributes }}>
+        {% if caption is not empty %}
+            <caption {{ caption.attributes }}>
+                {{ caption }}
+            </caption>
+        {% endif %}
+        {% for row in rows %}
+            <tr {{ row.attributes.merge({}) }}>
+                {% for cell in column %}
+                    <{{ cell.type }} {{ cell.attributes.merge({}) }}>{{ cell.label ?: '&nbsp;' }}</{{ cell.type }}>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endspaceless %}

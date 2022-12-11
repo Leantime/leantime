@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\models\wiki;
     use leantime\domain\repositories;
@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
     class wikiModal extends controller
     {
 
-        public function __construct() {
+        public function init() {
 
             $this->wikiService = new services\wiki();
 
@@ -54,11 +54,11 @@ namespace leantime\domain\controllers {
 
                 $id = $this->wikiService->createWiki($wiki);
 
-                $_SESSION['currentWiki'] = $id;
+                //$_SESSION['currentWiki'] = $id;
 
                 if($id){
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success");
-                    $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id);
+                    $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id."?closeModal=1");
                 }
 
 

@@ -4,7 +4,7 @@ namespace leantime\core;
 
 use leantime\domain\services;
 use leantime\domain\repositories;
-use leantime\base\eventhelpers;
+use leantime\core\eventhelpers;
 
 class application
 {
@@ -25,7 +25,7 @@ class application
         "auth.resetPw",
         "install",
         "install.update",
-        "general.error404",
+        "errors.error404",
         "api.i18n",
         "calendar.ical"
     );
@@ -39,12 +39,8 @@ class application
         //Set Session
         $session = session::getInstance();
         $this->auth = services\auth::getInstance($session->getSID());
-
-        $this->config = new config();
         $this->settings = new appSettings();
-
         $this->frontController = frontcontroller::getInstance(ROOT);
-        $this->language = new language();
         $this->projectService = new services\projects();
         $this->settingsRepo = new repositories\setting();
         $this->reportService = new services\reports();
@@ -59,8 +55,6 @@ class application
      */
     public function start()
     {
-        events::discover_listeners();
-
         //Only run telemetry when logged in
         $telemetryResponse = false;
 
@@ -69,7 +63,9 @@ class application
         //Check if Leantime is installed
         $this->checkIfInstalled();
 
-        self::dispatch_event("beginning", $this);
+        events::discover_listeners();
+
+        self::dispatch_event("beginning", ['application' => $this]);
 
         //Allow a limited set of actions to be public
         if($this->auth->logged_in()===true) {
@@ -86,7 +82,13 @@ class application
                 if($this->frontController::getCurrentRoute() !== "twoFA.verify"
                     && $this->frontController::getCurrentRoute() !== "auth.logout"
                     && $this->frontController::getCurrentRoute() !== "api.i18n") {
-                    $this->frontController::redirect(BASE_URL."/twoFA/verify");
+
+                    $redirectURL = "";
+                    if(isset($_GET['redirect'])) {
+                        $redirectURL = "?redirect=".$_GET['redirect'];
+                    }
+
+                    $this->frontController::redirect(BASE_URL."/twoFA/verify".$redirectURL);
                 }
 
             }else{
@@ -102,8 +104,13 @@ class application
 
             if(!in_array(frontController::getCurrentRoute(), $this->publicActions)) {
 
+                $redirectURL = '';
+                if(strlen($this->settings->getRequestURI()) > 1){
+                    $redirectURL = "?redirect=".urlencode($this->settings->getRequestURI());
+                }
+
                 if ($this->frontController::getCurrentRoute() !== "auth.login") {
-                    $this->frontController::redirect(BASE_URL . "/auth/login");
+                    $this->frontController::redirect(BASE_URL . "/auth/login".$redirectURL);
                 }
 
             }
@@ -128,7 +135,7 @@ class application
 
         }
 
-        self::dispatch_event("end", $this);
+        self::dispatch_event("end", ['application' => $this]);
 
     }
 
@@ -205,6 +212,11 @@ class application
 
                 $_SESSION['isInstalled'] = false;
 
+                //In case we have a previous session
+                if(isset($_SESSION['userdata'])){
+                    unset($_SESSION['userdata']);
+                }
+
                 //Don't redirect on i18n call
                 if($this->frontController::getCurrentRoute() !== "install" &&
                     $this->frontController::getCurrentRoute() !== "api.i18n") {
@@ -219,7 +231,25 @@ class application
 
         if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] === true) {
 
+            //Check if installed first. Depending on session state it might say installed after a user uninstalled
+            if ($this->settingsRepo->checkIfInstalled() === false){
+                $_SESSION['isInstalled'] = false;
+
+                //In case we have a previous session
+                if(isset($_SESSION['userdata'])){
+                    unset($_SESSION['userdata']);
+                }
+                $this->frontController::redirect(BASE_URL . "/install");
+            }
+
             $dbVersion = $this->settingsRepo->getSetting("db-version");
+
+            if ($this->settings->dbVersion != $dbVersion){
+                $_SESSION['isUpdated'] = false;
+            }else{
+                $_SESSION['isUpdated'] = true;
+            }
+
             if ($this->settings->dbVersion != $dbVersion && isset($_GET['update']) === false && isset($_GET['install']) === false) {
 
                 //Don't redirect on i18n call

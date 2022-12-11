@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -52,6 +52,14 @@ namespace leantime\domain\controllers {
                     $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                 }
 
+                $this->tpl->redirect($return);
+
+            }
+
+            if(isset($params["profileImageByUserId"])) {
+
+
+                $return = $this->usersService->getProfilePicture($params["profileImageByUserId"]);
                 $this->tpl->redirect($return);
 
             }

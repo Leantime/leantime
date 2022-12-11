@@ -4,9 +4,9 @@
  */
 namespace leantime\domain\controllers {
 
-    class smcanvas extends pi\canvas
+    class smcanvas extends api\canvas
     {
-		
+
 	    protected const CANVAS_NAME = 'sm';
 
     }

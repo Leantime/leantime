@@ -23,7 +23,8 @@ namespace leantime\domain\services {
             $this->userRepo = new repositories\users();
             $this->settingsRepo = new \leantime\domain\repositories\setting();
             $this->mailer = new \leantime\core\mailer();
-            $this->language = new \leantime\core\language();
+            $this->language = \leantime\core\language::getInstance();
+
         }
 
         // Fake template to be replaced by something better
@@ -44,7 +45,6 @@ namespace leantime\domain\services {
 
         public function processQueue()
         {
-
 
             $messages=$this->queue->listMessageInQueue('email');
 
@@ -82,16 +82,17 @@ namespace leantime\domain\services {
                 debug_print("Time elapsed since : ".$timeSince);
 
                 $messageFrequency=$this->settingsRepo->getSetting("usersettings.".$theuser['id'].".messageFrequency");
+
                 // Check if there is a default value in DB
                 if ( $messageFrequency == "" )
                 {
-                    $messageFrequency=$this->settingsRepo->getSetting("usersettings.default.messageFrequency");
+                    $messageFrequency=$this->settingsRepo->getSetting("companysettings.messageFrequency");
                 }
+
                 // Last security to avoid flooding people.
                 if ( $messageFrequency == "" )
                 {
                     $messageFrequency=3600;
-            	$this->settingsRepo->saveSetting("usersettings.default.messageFrequency", 3600);
                 }
                 // echo for DEBUG PURPOSE
                 debug_print( "The message frequency for ".$recipient." : ".$messageFrequency);
@@ -127,7 +128,7 @@ namespace leantime\domain\services {
                 // TODO here : only delete these if the send was successful
                 // echo for DEBUG PURPOSE
                 debug_print( "Messages send (about to delete) :");
-                print_r($allMessagesToDelete[$currentUserId]);
+
                 $this->queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 
                 // Store the last time a mail was sent to $recipient email

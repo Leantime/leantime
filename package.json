@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.2.8",
+  "version": "2.3.1-beta",
   "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {

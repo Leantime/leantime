@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services\auth;
@@ -61,7 +61,9 @@ namespace leantime\domain\controllers {
                         'invoicedEmpl' => $timesheet['invoicedEmpl'],
                         'invoicedComp' => $timesheet['invoicedComp'],
                         'invoicedEmplDate' => $timesheet['invoicedEmplDate'],
-                        'invoicedCompDate' => $timesheet['invoicedCompDate']
+                        'invoicedCompDate' => $timesheet['invoicedCompDate'],
+                        'paid' => $timesheet['paid'],
+                        'paidDate' => $timesheet['paidDate']
                     );
 
                     if(auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
@@ -129,10 +131,7 @@ namespace leantime\domain\controllers {
 
                                 }
 
-
-
                                 if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
-
 
                                     if ($_POST['invoicedComp'] == 'on') {
 
@@ -150,11 +149,37 @@ namespace leantime\domain\controllers {
 
                                     }
 
-
                                 } else {
 
                                     $values['invoicedComp'] = 0;
                                     $values['invoicedCompDate'] = '';
+
+                                }
+
+                                if (isset($_POST['paid']) && $_POST['paid'] != '') {
+
+
+                                    if ($_POST['paid'] == 'on') {
+
+                                        $values['paid'] = 1;
+
+                                    }
+
+                                    if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
+
+                                        $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+
+                                    } else {
+
+                                        $values['paidDate'] = date("Y-m-d");
+
+                                    }
+
+
+                                } else {
+
+                                    $values['paid'] = 0;
+                                    $values['paidDate'] = '';
 
                                 }
 
@@ -186,7 +211,9 @@ namespace leantime\domain\controllers {
                                                 'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
                                                 'invoicedComp' => $timesheetUpdated['invoicedComp'],
                                                 'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
-                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate']
+                                                'invoicedCompDate' => $timesheetUpdated['invoicedCompDate'],
+                                                'paid' => $timesheetUpdated['paid'],
+                                                'paidDate' => $timesheetUpdated['paidDate']
                                             );
 
                                         } else {
@@ -227,17 +254,17 @@ namespace leantime\domain\controllers {
 
                     } else {
 
-                        $this->tpl->displayPartial('general.error');
+                        $this->tpl->displayPartial('errors.error403');
 
                     }
                 } else {
-                    $this->tpl->displayPartial('general.error');
+                    $this->tpl->displayPartial('errors.error403');
                 }
 
 
             } else {
 
-                $this->tpl->displayPartial('general.error');
+                $this->tpl->displayPartial('errors.error403');
 
             }
 

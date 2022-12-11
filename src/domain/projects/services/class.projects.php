@@ -4,7 +4,7 @@ namespace leantime\domain\services {
 
     use GuzzleHttp\Exception\RequestException;
     use leantime\core;
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
@@ -32,7 +32,7 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
         }
 
         public function getProject($id) {
@@ -135,7 +135,24 @@ namespace leantime\domain\services {
             }
 
             return $to;
+        }
 
+        public function getAllUserInfoToNotify($projectId)
+        {
+
+            $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            $to = array();
+
+            //Only users that actually want to be notified
+            foreach ($users as $user) {
+
+                if ($user["notifications"] != 0 && ($user['username'] != $_SESSION['userdata']['mail'])) {
+                    $to[] = $user;
+                }
+            }
+
+            return $to;
         }
 
         public function notifyProjectUsers($message, $subject, $projectId, $url = false){
@@ -150,7 +167,6 @@ namespace leantime\domain\services {
                 return $user != $_SESSION['userdata']['mail'];
             }, ARRAY_FILTER_USE_BOTH);
 
-
             $mailer = new core\mailer();
             $mailer->setContext('notify_project_users');
             $mailer->setSubject($subject);
@@ -162,8 +178,8 @@ namespace leantime\domain\services {
             $mailer->setHtml($emailMessage);
             //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
-	    // NEW Queuing messaging system
-	    $queue = new repositories\queue();
+	        // NEW Queuing messaging system
+	        $queue = new repositories\queue();
             $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
 
 
@@ -336,6 +352,8 @@ namespace leantime\domain\services {
                 }
 
             }
+
+            core\events::dispatch_event("notifyProjectUsers", array("type"=> "projectUpdate", "module" => "projects", "moduleId"=> $projectId, "message"=>$message, "subject"=>$subject, "users"=>$this->getAllUserInfoToNotify($projectId), "url"=>$url['link']), "domain.services.projects");
 
         }
 

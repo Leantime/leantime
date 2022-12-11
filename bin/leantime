@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+define('ROOT', dirname(__FILE__));
+
+require __DIR__ . '/../src/core/class.autoload.php';
+
+use leantime\command\migrateCommand;
+use leantime\command\addUserCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new addUserCommand());
+$application->add(new migrateCommand());
+$application->run();

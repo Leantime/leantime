@@ -138,6 +138,101 @@ namespace leantime\domain\services {
             return $canvasId;
         }
 
+        /**
+         * getBoardProgress - gets the progress of canvas types. counts items in each box-type and calculates percent done if each box type has at least 1 item.
+         *
+         * @access public
+         * @param  string   $projectId    projectId (optional)
+         * @param  array    $boards Array of project board types
+         * @return array List of boards with a progress percentage
+         */
+        public function getBoardProgress($projectId = '', $boards = array()) :array {
+
+            $canvasRepo = new repositories\canvas();
+            $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
+
+            $results = array();
+
+            foreach($values as $row) {
+
+                if(!isset($results[$row['canvasType']])) {
+                    $results[$row['canvasType']] = array();
+                }
+
+                if(!isset($results[$row['canvasType']][$row['canvasId']])) {
+
+                    $classname = 'leantime\\domain\\repositories\\'.$row['canvasType'];
+
+
+                    $canvasTypeRepo = new $classname();
+                    $results[$row['canvasType']][$row['canvasId']] = array();
+
+                    foreach($canvasTypeRepo->getCanvasTypes() as $type => $box){
+                        $results[$row['canvasType']][$row['canvasId']][$type] = 0;
+                    }
+
+                }
+
+                if($row['box'] != '' && $row['boxItems'] > 0 ){
+                    $results[$row['canvasType']][$row['canvasId']][$row['box']]++;
+                }
+
+            }
+
+            $progressResults = array();
+
+            //Once the count is done calculate progress per canvastype Id
+            foreach($results as $key => &$canvas) {
+
+                $classname = 'leantime\\domain\\repositories\\'.$key;
+                $canvasTypeRepo = new $classname();
+
+                $numOfBoxes = count($canvasTypeRepo->getCanvasTypes());
+
+                if(!isset($progressResults[$key]))
+                {
+                    $progressResults[$key] = '';
+                }
+
+                $maxProgress = 0;
+                foreach($canvas as $canvasId => $singleCanvas) {
+
+                    $numOfBoxesFilled = 0;
+                    foreach ($singleCanvas as $box) {
+                        if ($box > 0) {
+                            $numOfBoxesFilled++;
+                        }
+                    }
+                    $progress = $numOfBoxesFilled / $numOfBoxes;
+                    if($progress > $maxProgress){
+                        $maxProgress = $progress;
+                    }
+                }
+
+                $progressResults[$key] = $maxProgress;
+
+            }
+
+            return $progressResults;
+
+        }
+
+
+        /**
+         * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
+         *
+         * @access public
+         * @param  string   $projectId    projectId (optional)
+         * @param  array    $boards Array of project board types
+         * @return array List of boards with a progress percentage
+         */
+        public function getLastUpdatedCanvas($projectId = '', $boards = array())
+        {
+            $canvasRepo = new repositories\canvas();
+            return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
+
+        }
+
     }
 
 }
