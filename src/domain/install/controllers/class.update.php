@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -56,8 +56,6 @@ namespace leantime\domain\controllers {
                 $success = $this->installRepo->updateDB();
 
                 if(is_array($success) === true) {
-
-                    var_dump($success);
 
                     foreach($success as $errorMessage) {
 

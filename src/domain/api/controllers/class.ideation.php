@@ -6,11 +6,11 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use leantime\core\controller;
 
-    class ideation
+    class ideation extends controller
     {
 
-        private $tpl;
         private $projects;
 
         /**
@@ -19,10 +19,9 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function __construct()
+        public function init()
         {
 
-            $this->tpl = new core\template();
             $this->projects = new repositories\projects();
             $this->ideationAPIRepo = new repositories\ideation();
 

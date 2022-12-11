@@ -21,7 +21,7 @@
         <?php echo $this->displayInlineNotification(); ?>
 
         <div class="">
-            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $this->language->__("input.placeholders.enter_email"); ?>" value=""/>
+            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $this->language->__($this->get("inputPlaceholder")); ?>" value=""/>
         </div>
         <div class="">
             <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $this->language->__("input.placeholders.enter_password"); ?>" value=""/>

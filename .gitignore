@@ -101,16 +101,15 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Lock files
-composer.lock
-package-lock.json
 .github/workflows/phpmd.yml
 
 # Ignore logging files
 logs/*
 
 # Ignore all customization files
-custom/domain/
-custom/plugin/
-custom/language/
+src/custom/domain/
+src/custom/plugin/
+src/custom/language/
 public/theme/*/css/custom.css
 public/theme/dts/
+nbproject

@@ -5,7 +5,7 @@
 
 namespace leantime\core {
 
-    use leantime\base\eventhelpers;
+    use leantime\core\eventhelpers;
 
 	class theme {
 
@@ -112,7 +112,7 @@ namespace leantime\core {
         public function getAll(): array
         {
 
-            $language = new language();
+            $language = language::getInstance();
             $themeRoot = ROOT.'/theme/';
             $themeAll = [];
             $themeAll[static::DEFAULT] = 'theme.'.static::DEFAULT.'.name';
@@ -329,7 +329,7 @@ namespace leantime\core {
         {
 
             // Make sure we get the current language
-            $language = new language();
+            $language = language::getInstance();
 
             if(empty($this->iniData)) $this->readIniData();
 

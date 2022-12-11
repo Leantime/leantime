@@ -1,7 +1,7 @@
 <?php
 namespace leantime\core;
 
-use leantime\base\eventhelpers;
+use leantime\core\eventhelpers;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 use Aws\S3\S3Client;

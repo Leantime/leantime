@@ -4,7 +4,7 @@ namespace leantime\domain\controllers {
 
     use _PHPStan_ccec86fc8\Nette\Neon\Exception;
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\services;
     use leantime\domain\services\auth;

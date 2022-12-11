@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -46,10 +46,9 @@ namespace leantime\domain\controllers {
                 }
 
             }else if(isset($params['id'])) {
-
                 $currentArticle = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
 
-                if($currentArticle && $currentArticle->id != null) {
+                if ($currentArticle && $currentArticle->id != null) {
                     $_SESSION['currentWiki'] = $currentArticle->canvasId;
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
                         $_SESSION['currentWiki'],
@@ -57,14 +56,29 @@ namespace leantime\domain\controllers {
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-
-                }else{
-
-                    $this->tpl->redirect(BASE_URL."/wiki/show");
-
+                } else {
+                    $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
 
-            //Last Article is set
+            }else if(isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0){
+
+                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
+
+                if(is_array($wikiHeadlines) && count($wikiHeadlines)>0) {
+
+                    $currentArticle = $this->wikiService->getArticle(
+                        $wikiHeadlines[0]->id,
+                        $_SESSION['currentProject']
+                    );
+
+                    $_SESSION['lastArticle'] = $currentArticle->id;
+
+                }else{
+                    $currentArticle = false;
+                }
+
+
+                //Last Article is set
             }else if(isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
 
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);

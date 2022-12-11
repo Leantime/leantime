@@ -47,7 +47,7 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
 
         }
 
@@ -111,11 +111,11 @@ namespace leantime\domain\repositories {
 						zp_canvas.id,
 						zp_canvas.title,
 						zp_canvas.author,
-						zp_canvas.created,						
-						t1.firstname AS authorFirstname, 
+						zp_canvas.created,
+						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname
-				
-				FROM 
+
+				FROM
 				zp_canvas
 				LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
 				WHERE type = 'idea' AND projectId = :projectId
@@ -294,42 +294,42 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
 						zp_canvas_items.milestoneId,
-						IF(zp_canvas_items.status IS NULL, 'idea', zp_canvas_items.status) as status,						
-						t1.firstname AS authorFirstname, 
+						IF(zp_canvas_items.status IS NULL, 'idea', zp_canvas_items.status) as status,
+						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,
 						t1.profileId AS authorProfileId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
-						COUNT(DISTINCT zp_comment.id) AS commentCount,			
+						COUNT(DISTINCT zp_comment.id) AS commentCount,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
 						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
 						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
 						COUNT(progressTickets.id) AS allTickets,
-						
-						CASE WHEN 
-						  COUNT(progressTickets.id) > 0 
-						THEN 
+
+						CASE WHEN
+						  COUNT(progressTickets.id) > 0
+						THEN
 						  ROUND(
 						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
 						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100) 
-						ELSE 
-						  0 
+						    ) *100)
+						ELSE
+						  0
 						END AS percentDone
-						
-						
-						
-				
-				FROM 
+
+
+
+
+				FROM
 				zp_canvas_items
-			
+
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
 				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
-				WHERE zp_canvas_items.canvasId = :id  
+				WHERE zp_canvas_items.canvasId = :id
 				GROUP BY zp_canvas_items.id
 				ORDER BY zp_canvas_items.sortindex";
 
@@ -359,9 +359,9 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.modified,
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
-						zp_canvas_items.status,	
-						zp_canvas_items.milestoneId,				
-						t1.firstname AS authorFirstname, 
+						zp_canvas_items.status,
+						zp_canvas_items.milestoneId,
+						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,
 						zp_canvas_items.milestoneId,
 						milestone.headline as milestoneHeadline,
@@ -371,24 +371,24 @@ namespace leantime\domain\repositories {
 						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
 						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
 						COUNT(progressTickets.id) AS allTickets,
-						
-						CASE WHEN 
-						  COUNT(progressTickets.id) > 0 
-						THEN 
+
+						CASE WHEN
+						  COUNT(progressTickets.id) > 0
+						THEN
 						  ROUND(
 						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
 						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100) 
-						ELSE 
-						  0 
+						    ) *100)
+						ELSE
+						  0
 						END AS percentDone
-				FROM 
+				FROM
 				zp_canvas_items
 			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-				WHERE zp_canvas_items.id = :id 
+				WHERE zp_canvas_items.id = :id
 				";
 
             $stmn = $this->db->database->prepare($sql);
@@ -489,8 +489,8 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "SELECT
-					count(zp_canvas_items.id) AS ideaCount	
-				FROM 
+					count(zp_canvas_items.id) AS ideaCount
+				FROM
 				zp_canvas_items
 				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
 				WHERE canvasBoard.type = 'idea'  ";

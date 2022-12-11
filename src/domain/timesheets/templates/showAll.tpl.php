@@ -29,6 +29,17 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 	    	}
 	    });
 
+        jQuery("#checkAllPaid").change(function(){
+            jQuery(".paid").prop('checked', jQuery(this).prop("checked"));
+            if(jQuery(this).prop("checked") == true){
+                jQuery(".paid").attr("checked", "checked");
+                jQuery(".paid").parent().addClass("checked");
+            }else{
+                jQuery(".paid").removeAttr("checked");
+                jQuery(".paid").parent().removeClass("checked");
+            }
+        });
+
 	    leantime.timesheetsController.initTimesheetsTable();
 
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
@@ -76,10 +87,10 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
     <div class="pull-right">
 
         <div id="tableButtons" style="display:inline-block"></div>
-        <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
+
     </div>
     <div class="clearfix"></div>
-    <div class="headtitle" style="<?php if(isset($_POST['filterSubmit'])===false){ echo"display:none;";} ?>">
+    <div class="headtitle" style="">
 
 	<table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
 
@@ -141,6 +152,15 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 				?>
 			/><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
 			</td>
+
+            <td>
+
+                <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
+                    <?php
+                    if($this->get('paid') == '1') echo ' checked="checked"';
+                    ?>
+                /><label for="paid"><?php echo $this->__("label.paid"); ?></label>
+            </td>
 			<td>
                 <input type="hidden" name='filterSubmit' value="1"/>
                 <input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
@@ -164,6 +184,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
           <col class="con1" />
       	  <col class="con0"/>
           <col class="con1"/>
+          <col class="con0"/>
 	</colgroup>
 	<thead>
 		<tr>
@@ -179,6 +200,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 			<th><?php echo $this->__('label.description'); ?></th>
 			<th><?php echo $this->__('label.invoiced'); ?></th>
 			<th><?php echo $this->__('label.invoiced_comp'); ?></th>
+            <th><?php echo $this->__('label.paid'); ?></th>
 		</tr>
 
 	</thead>
@@ -227,6 +249,16 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     <?php } ?>
                     <?php } ?>
             </td>
+            <td data-order="<?php if($row['paid'] == '1'){ echo $this->getFormattedDateString($row['paidDate']); }?>">
+
+                <?php if($row['paid'] == '1'){?>
+                    <?php echo $this->getFormattedDateString($row['paidDate']); ?>
+                <?php }else{ ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                        <input type="checkbox" name="paid[]" class="paid" value="<?php echo $row['id']; ?>" />
+                    <?php } ?>
+                <?php } ?>
+            </td>
 		</tr>
 		<?php } ?>
 	</tbody>
@@ -242,11 +274,16 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
             </td>
 			<td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                <input type="checkbox" id="checkAllEmpl" /><?php echo $this->__('label.select_all')?></td>
+                <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?></td>
             <?php } ?>
             <td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                <input type="checkbox"  id="checkAllComp" /><?php echo $this->__('label.select_all')?>
+                <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?>
+                <?php } ?>
+            </td>
+            <td>
+                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                    <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?>
                 <?php } ?>
             </td>
 		</tr>

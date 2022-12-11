@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
@@ -39,8 +39,8 @@ namespace leantime\domain\controllers {
 
             $redirectUrl = BASE_URL."/dashboard/show";
 
-            if(isset($_SESSION['redirectOrigin'])){
-                $redirectUrl = $_SESSION['redirectOrigin'];
+            if(isset($_GET['redirect'])){
+                $redirectUrl = BASE_URL.urldecode($_GET['redirect']);
             }
 
             $this->tpl->assign("redirectUrl", $redirectUrl);

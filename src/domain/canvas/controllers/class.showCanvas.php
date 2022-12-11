@@ -5,7 +5,7 @@
 namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
@@ -57,8 +57,8 @@ namespace leantime\domain\controllers\canvas {
                 $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'] = $currentCanvasId;
             }
 
-            if(isset($_POST['searchCanvas']) === true) {
-                $currentCanvasId = (int)$_POST['searchCanvas'];
+        if(isset($_REQUEST['searchCanvas']) === true) {
+                $currentCanvasId = (int)$_REQUEST['searchCanvas'];
                 $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'] = $currentCanvasId;
                 $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas/');
             }

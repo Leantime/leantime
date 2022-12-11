@@ -29,6 +29,9 @@ namespace leantime\domain\repositories {
 
         public function getSetting($type)
         {
+            if($this->checkIfInstalled() === false){
+                return false;
+            }
 
                 $sql = "SELECT
 						value
@@ -60,6 +63,10 @@ namespace leantime\domain\repositories {
 
         public function saveSetting($type, $value)
         {
+
+            if($this->checkIfInstalled() === false){
+                return false;
+            }
 
             $sql = "INSERT INTO zp_settings (`key`, `value`)
 				VALUES (:key, :value) ON DUPLICATE KEY UPDATE
@@ -100,6 +107,10 @@ namespace leantime\domain\repositories {
         public function checkIfInstalled()
         {
 
+            if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true){
+                return true;
+            }
+
             try {
 
 
@@ -109,8 +120,10 @@ namespace leantime\domain\repositories {
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                if( !count( $values ))
+                if( !count( $values )) {
+                    $_SESSION['isInstalled'] = false;
                     return false;
+                }
 
                 $stmn = $this->db->database->prepare("SELECT COUNT(*) FROM zp_user");
 
@@ -118,11 +131,12 @@ namespace leantime\domain\repositories {
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
+                $_SESSION['isInstalled'] = true;
                 return true;
 
             } catch (\Exception $e) {
                 error_log($e);
-
+                $_SESSION['isInstalled'] = false;
                 return false;
 
             }

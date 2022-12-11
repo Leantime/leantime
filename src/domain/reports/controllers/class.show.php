@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
@@ -20,7 +20,7 @@ namespace leantime\domain\controllers {
         private $timesheetService;
         private $reportService;
 
-        public function __construct()
+        public function init()
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 

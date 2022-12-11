@@ -54,7 +54,6 @@ leantime.wikiController = (function () {
             autoSizable: true,
             callbacks: {
                 afterShowCont: function () {
-
                     jQuery(".formModal").nyroModal(wikiModalConfig);
                 },
                 beforeClose: function () {

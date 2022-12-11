@@ -14,35 +14,32 @@
 </h4>
 <div class="contentInner even status_<?php echo $elementName; ?>"
      <?=(isset($canvasTypes[$elementName]['color']) ? 'style="background: '.$canvasTypes[$elementName]['color'].';"' : '') ?>>
-      
+
     <?php foreach($canvasItems as $row) {
-      
+
         $filterStatus = $filter['status'] ?? 'all';
         $filterRelates = $filter['relates'] ?? 'all';
-        
+
         if($row['box'] === $elementName && ($filterStatus == 'all' ||
                                             $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                                                                  $filterRelates == $row['relates'])) {
             $comments = new \leantime\domain\repositories\comments();
             $nbcomments = $comments->countComments(moduleId: $row['id']);
     ?>
-        
+
         <div class="ticketBox" id="item_<?php echo $row["id"];?>">
             <div class="row">
                 <div class="col-md-12">
                     <div class="inlineDropDownContainer" style="float:right;">
-                        
+
                         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                         <?php } ?>
-                        
-                        <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                           class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
-                           <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
-                           ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small> 
-                        
+
+
+
                         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
                             &nbsp;&nbsp;&nbsp;
                             <ul class="dropdown-menu">
@@ -56,15 +53,15 @@
                             </ul>
                         <?php } ?>
                     </div>
-                    
+
                     <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                            class="<?=$canvasName ?>CanvasModal"
                            data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
-                                                                                            
+
                     <?php if($row["conclusion"] != "") { echo '<small>'.$this->convertRelativePaths($row["conclusion"]).'</small>'; } ?>
 
                     <div class="clearfix" style="padding-bottom: 8px;"></div>
-                    
+
                     <?php if(!empty($statusLabels)) { ?>
                         <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
                             <a class="dropdown-toggle f-left status label-<?=$statusLabels[$row['status']]['dropdown'] ?>"
@@ -87,7 +84,7 @@
                             </ul>
                         </div>
                     <?php } ?>
-                    
+
                     <?php if(!empty($relatesLabels)) {  ?>
                         <div class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
                             <a class="dropdown-toggle f-left relates label-<?=$relatesLabels[$row['relates']]['dropdown'] ?>"
@@ -112,7 +109,7 @@
                             </ul>
                         </div>
                     <?php } ?>
-                    
+
                     <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                         <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -144,9 +141,15 @@
                             }?>
                         </ul>
                     </div>
+                    <div class="pull-right">
+                        <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                           class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
+                            <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
+                            ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
+                    </div>
                 </div>
             </div>
-            
+
             <?php if($row['milestoneHeadline'] != '') {?>
                 <hr style="margin-top: 5px; margin-bottom: 5px;"/><small>
                     <div class="row">

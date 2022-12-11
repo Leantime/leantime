@@ -7,41 +7,29 @@
 [![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
 [![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
-
+[![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
 Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
 <br /><br />
 
-## Updates ##
-
-Just released! Leantime is now on 2.2.10. 
-
-New features included in this release: 
-*  Document Manager & Wiki Option (with Google Docs import) 
-*  * Updated Dashboard for project updates and team overview 
-*  * iCal calendar export (Thank you @calawhkbu). 
-
-| ![alt text](public/images/Screenshots/Docs.png "Document Manager")    |
-
-For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.10
-
 ## Features: ##
 * Task management using kanban boards, table and calendar views
 * Idea boards & idea kanban boards
-* Research boards using the Lean Canvas
+* Various research and strategy boards
 * Milestone management using Gantt charts
 * Timesheet management
+* Manage goals
 * Retrospectives
 * Project dashboards
 * Project reports
-* Multiple user roles (client, team member, client manager, manager, administrator)
+* Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
-* Available in English, Spanish, Russian, Dutch, German, French, Hebrew, Japanese, Portuguese (Brazil), Vietnamese (Viet Nam), Chinese (S), Chinese (T), Japanese
+* Available in 19 languages
 
 
 ### Screenshots ###
@@ -124,3 +112,4 @@ This file forms part of the Leantime Software for which the following exception 
 * Community Forum [https://community.leantime.io](https://community.leantime.io)
 * Discussions on [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
+* Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)

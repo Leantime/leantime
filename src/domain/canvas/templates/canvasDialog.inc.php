@@ -48,7 +48,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if(!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>
             <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br />
+            </select><br /><br />
         <?php }else{ ?>
             <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
         <?php } ?>
@@ -60,36 +60,54 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php }else{ ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
         <?php } ?>
-        
+
         <?php if($dataLabels[1]['active']) { ?>
           <label><?=$this->__($dataLabels[1]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
+            <?php if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int'){ ?>
+                <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
+            <?php }else if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string'){ ?>
+                <input type="text" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
+            <?php }else{ ?>
+                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
+            <?php } ?>
         <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
         <?php } ?>
 
         <?php if($dataLabels[2]['active']) { ?>
           <label><?=$this->__($dataLabels[2]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
+            <?php if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int'){ ?>
+                <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
+            <?php }else if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string'){ ?>
+                <input type="text" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
+            <?php }else{ ?>
+                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
+            <?php } ?>
         <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
         <?php } ?>
 
         <?php if($dataLabels[3]['active']) { ?>
           <label><?=$this->__($dataLabels[3]['title']) ?></label>
-          <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
+            <?php if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int'){ ?>
+                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
+            <?php }else if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string'){ ?>
+                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
+            <?php }else{ ?>
+                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
+            <?php } ?>
         <?php }else{ ?>
             <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
         <?php } ?>
 
-        
+
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if($id != '') {?>
             <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
-                                
+
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
             <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
@@ -224,7 +242,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
                         <?php } ?>
 				    <?php } ?>
-				]                    
+				]
 			});
 		<?php } ?>
 
@@ -240,10 +258,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
                         <?php } ?>
 				    <?php } ?>
-				]                    
+				]
 			});
 		<?php } ?>
-		
+
         leantime.generalController.initSimpleEditor();
 
         <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>

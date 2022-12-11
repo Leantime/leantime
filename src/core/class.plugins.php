@@ -3,7 +3,7 @@
 namespace leantime\core;
 
 use leantime\core\config;
-use leantime\base\eventhelpers;
+use leantime\core\eventhelpers;
 
 class plugins {
 
@@ -22,8 +22,17 @@ class plugins {
      */
     public function __construct()
     {
+        $config = new config();
+
+        if(isset($config->plugins)){
+            $plugins = json_decode($config->plugins);
+        }else{
+            $plugins = [];
+        }
+
+
         $this->enabledPlugins = $this->standardize_plugin_keys(
-            (array) (new config)->getEnabledPlugins()
+            (array) $plugins
         );
     }
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
     $values = $this->get('timesheetValues');
     $ticket = $this->get('ticket');
     $userInfo = $this->get('userInfo');
@@ -9,7 +9,7 @@
 
         <div class="row-fluid">
             <div class="span6">
-                
+
 
                 <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $this->__('headline.add_time_entry', false); ?></h4>
                 <br />
@@ -71,7 +71,7 @@
         foreach ($this->get('ticketHours') as $hours){
             $sum = $sum + $hours['summe'];
 
-            echo"labels.push('".date($this->__("language.dateformat"),  strtotime($hours['utc']))."');
+            echo"labels.push('".date("Y-m-d", strtotime($hours['utc']))."');
                     ";
             echo"d2.push(".$sum.");
                     ";

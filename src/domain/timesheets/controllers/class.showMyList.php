@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -59,7 +59,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('dateTo', $dateTo);
             $this->tpl->assign('actKind', $kind);
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
-            $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0));
+            $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0, "-1" ,0));
 
             $this->tpl->display('timesheets.showMyList');
 

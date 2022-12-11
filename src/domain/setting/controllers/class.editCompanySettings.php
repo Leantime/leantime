@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -25,12 +25,17 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function __construct()
+        public function init()
         {
+
+
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
             $this->config = new core\config();
             $this->settingsRepo = new repositories\setting();
+
+
+
 
         }
 
@@ -42,6 +47,8 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+
             if(auth::userIsAtLeast(roles::$owner)) {
 
                 $companySettings = array(
@@ -50,7 +57,8 @@ namespace leantime\domain\controllers {
                     "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
                     "name" => $_SESSION["companysettings.sitename"],
                     "language" => $_SESSION["companysettings.language"],
-                    "telemetryActive" => false
+                    "telemetryActive" => false,
+                    "messageFrequency" => ''
                 );
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -94,13 +102,20 @@ namespace leantime\domain\controllers {
                     $companySettings["telemetryActive"] = $telemetryActive;
                 }
 
+                $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+                if($messageFrequency !== false){
+                    $companySettings["messageFrequency"] = $messageFrequency;
+                }
+
+
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
+
                 $this->tpl->display('setting.editCompanySettings');
 
             }else{
 
-                $this->tpl->display('general.error');
+                $this->tpl->display('error.error403');
 
             }
         }
@@ -123,6 +138,8 @@ namespace leantime\domain\controllers {
 
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
                 $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
+
+                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int)$params['messageFrequency']);
 
 
                 //Check if main color is still in the system

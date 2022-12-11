@@ -6,7 +6,7 @@
 namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\repositories;
 
     /**
@@ -35,11 +35,11 @@ namespace leantime\domain\controllers\canvas {
         /***
          * Constructor
          */
-        public function __construct()
+        public function init()
         {
 
             $this->config = new core\config();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
             $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();
 

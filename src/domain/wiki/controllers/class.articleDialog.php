@@ -3,7 +3,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core;
-    use leantime\base\controller;
+    use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\models\wiki;
     use leantime\domain\repositories;
@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
     class articleDialog extends controller
     {
 
-        public function __construct() {
+        public function init() {
 
             $this->wikiService = new services\wiki();
             $this->ticketService = new services\tickets();

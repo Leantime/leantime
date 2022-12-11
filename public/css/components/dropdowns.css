@@ -274,3 +274,47 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     float:left;
     display:inline-block;
 }
+
+.pagetitle .header-title-dropdown {
+    border: 1px solid transparent;
+    display:inline-block;
+    background:transparent;
+    width:auto;
+    color:var(--main-action-color);
+    text-decoration:underline;
+    padding:0px 3px ;
+    border-radius: var(--box-radius-small);
+}
+
+.pagetitle .header-title-dropdown .fa {
+    padding-left:10px;
+}
+
+.pagetitle .header-title-dropdown:hover {
+    border: 1px solid var(--main-action-color);
+}
+
+.dropdownWrapper {
+    position:relative;
+}
+
+.dropdownWrapper .border {
+    border-top:1px solid var(--neutral);
+}
+
+.headerEditDropdown {
+    float:right;
+    padding-top:20px;
+}
+
+.pagetitle .btn-transparent {
+    background:transparent;
+    color:var(--main-action-color);
+    border:1px solid var(--main-action-color);
+    font-size:var(--font-size-l);
+}
+
+.editCanvasDropdown {
+    right:0px;
+    left:auto;
+}

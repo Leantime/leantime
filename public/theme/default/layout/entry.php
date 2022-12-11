@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
-    <?php echo $this->frontcontroller->includeAction('general.header'); ?>
+    <?php echo $this->frontcontroller->includeAction('pageparts.header'); ?>
 
 </head>
 
@@ -15,7 +15,7 @@
 
 </div>
 
-            
+
 <style>
  .leantimeLogo { position: fixed; bottom: 10px; right: 10px; }
 </style>
@@ -48,4 +48,4 @@
 	</div>
 </div>
 
-<?php echo $this->frontcontroller->includeAction('general.pageBottom'); ?>
+<?php echo $this->frontcontroller->includeAction('pageparts.pageBottom'); ?>

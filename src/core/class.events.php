@@ -116,16 +116,20 @@ class events
             }
         }
 
-        $enabledPlugins = (new plugins)->getEnabledPlugins();
-        $plugins = glob(ROOT."/../src/plugins" . '/*' , GLOB_ONLYDIR);
-        foreach($plugins as $pluginLocation){
-            $plugin = strtolower(substr($pluginLocation, strrpos($pluginLocation, '/') + 1));
+        $pluginPath = ROOT."/../src/plugins/";
 
-            if(file_exists($pluginLocation."/register.php")
-                && in_array($plugin, array_keys($enabledPlugins))
-                && $enabledPlugins[$plugin] == true
-            ) {
-                include $pluginLocation . "/register.php";
+        $enabledPlugins = [];
+        if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+            $pluginService = new \leantime\domain\services\plugins();
+            $enabledPlugins = $pluginService->getEnabledPlugins();
+        }
+
+        //var_dump($enabledPlugins); exit;
+
+        foreach($enabledPlugins as $plugin){
+
+            if(file_exists($pluginPath.$plugin->foldername."/register.php")) {
+                include $pluginPath.$plugin->foldername . "/register.php";
             }
         }
 

@@ -392,4 +392,12 @@
 }
 
 
+.articleBody table thead td{
+    background:var(--neutral);
+}
+
+.articleBody table td {
+    border:1px solid var(--neutral);
+}
+
 

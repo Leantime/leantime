@@ -164,7 +164,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     <?php
                                     $tagsArray = explode(",", $currentArticle->tags);
                                     foreach($tagsArray as $tag){
-                                        echo"<span class='tag'><span>".$tag."</span></span>";
+                                        echo"<span class='tag'><span>".$this->escape($tag)."</span></span>";
                                     }
 
                                     ?>

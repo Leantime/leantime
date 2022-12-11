@@ -24,7 +24,7 @@ namespace leantime\domain\services {
             $this->wikiRepository = new repositories\wiki();
             $this->reportRepository = new repositories\reports();
             $this->ticketRepository = new repositories\tickets();
-            $this->language = new core\language();
+            $this->language = core\language::getInstance();
         }
 
         public function getArticle($id, $projectId=null)
