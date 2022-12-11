@@ -17,7 +17,7 @@ Leantime is a lean open source project management system for startups and innova
 
 Just released! Leantime is now on 2.3.0 beta 
 
-For more details on this release, visit:  https://github.com/Leantime/leantime/releases/tag/v2.2.10
+For more details on this release, visit: [https://github.com/Leantime/leantime/releases/tag/v2.3-beta](https://github.com/Leantime/leantime/releases/tag/v2.3-beta)
 
 ## Features: ##
 * Task management using kanban boards, table and calendar views
