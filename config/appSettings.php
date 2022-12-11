@@ -16,7 +16,7 @@ namespace leantime\core {
          */
         public $debug = 0;
 
-        public $appVersion = "2.3.0-beta";
+        public $appVersion = "2.3.1-beta";
 
         public $dbVersion = "2.1.12";
 
