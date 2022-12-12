@@ -24,7 +24,7 @@ rm -f vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 #Remove DeepL.com and mltranslate engine (not needed in production)
 rm -rf vendor/deeplcom
 rm -rf src/languages/mltranslate
-rm -rf vendor/yetiforce/yetiforcepdf/examples
+rm -rf vendor/mpdf/mpdf/ttfonts
 
 #Remove local configuration, if any
 rm -rf custom/*/*
@@ -46,7 +46,7 @@ find ./public/js/ -mindepth 1 ! -name "*compiled*" -exec rm -f -r {} \;
 
 #Exiting release folder and creating archives for Github
 cd ..
-version=`grep "appVersion" leantime/src/core/class.appSettings.php |awk -F' = ' '{print substr($2,2,length($2)-3)}'`
+version=`grep "appVersion" leantime/config/appSettings.php |awk -F' = ' '{print substr($2,2,length($2)-3)}'`
 zip -r -X "Leantime-v$version$1.zip" leantime
 tar -zcvf "Leantime-v$version$1.tar.gz" leantime
 
