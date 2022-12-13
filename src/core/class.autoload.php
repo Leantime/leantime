@@ -34,7 +34,11 @@ function leantimeAutoloader($class) {
                 require_once( ROOT . "/../config/appSettings.php");
                 break;
             } elseif ($class == "config") {
-                require_once( ROOT . "/../config/configuration.php");
+                if (file_exists(ROOT . "/../config/configuration.php")) {
+                    require_once( ROOT . "/../config/configuration.php");
+                } else {
+                    require_once(ROOT . "/../src/core/class.defaultConfiguration.php");
+                }
                 break;
             } elseif (file_exists(ROOT . "/../custom/$path/$prefix.$class.php")) {
                 require_once(ROOT . "/../custom/$path/$prefix.$class.php");

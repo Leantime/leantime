@@ -12,7 +12,7 @@ include_once '../config/configuration.php';
 
 
 $login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
-$config = new leantime\core\config();
+$config = new leantime\core\environment();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
@@ -43,7 +43,7 @@ if ($login->logged_in()!==true) {
 
 function getFileLocally(){
 
-	$config = new leantime\core\config();
+	$config = new leantime\core\environment();
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -114,7 +114,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = new leantime\core\config();
+    $config = new leantime\core\environment();
 
     $mimes = array
     (

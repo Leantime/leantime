@@ -13,7 +13,7 @@ use Aws\S3;
 include_once '../src/core/class.autoload.php';
 include_once '../config/configuration.php';
 
-$config = new leantime\core\config();
+$config = new leantime\core\environment();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
