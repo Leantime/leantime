@@ -2,7 +2,7 @@
 
 namespace leantime\domain\services;
 
-use leantime\core\config;
+use leantime\core\environment;
 use leantime\domain\repositories;
 
 class ldap
@@ -49,7 +49,7 @@ class ldap
 
         if($differentConfig == false) {
 
-            $this->config = new config();
+            $this->config = new environment();
             //Map config vars
             $this->useLdap = $this->config->useLdap;
 

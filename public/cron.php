@@ -28,7 +28,7 @@ include_once '../src/core/class.autoload.php';
 use leantime\domain\repositories;
 use leantime\domain\services;
 
-$config = new leantime\core\config();
+$config = new leantime\core\environment();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 
