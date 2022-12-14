@@ -1,8 +1,6 @@
 <?php
 /**
  * Generates an API
- *
- * NOTE: Should not extend base controller class
  */
 
 namespace leantime\core;
@@ -20,6 +18,8 @@ class restapi
      */
     public function __call(string $service, array $arguments): void
     {
+
+        header('Content-Type: application/json; charset=utf-8');
 
         $servicename = "leantime\\domain\\services\\$service";
         $methodName = $arguments['function'];
@@ -131,6 +131,7 @@ class restapi
      */
     private function returnResponse(array|null $returnValue, string $requestMethod): void
     {
+        http_response_code(200);
         echo json_encode([
             'message' => "$requestMethod request was successful",
             'response' => $returnValue
@@ -147,6 +148,7 @@ class restapi
      */
     private function returnError(string $errorMessage, int $httpResponseCode = 500): void
     {
+        http_response_code($httpResponseCode);
         echo json_encode([
             'error' => $errorMessage
         ]);
