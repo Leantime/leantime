@@ -6,9 +6,20 @@
             </caption>
         {% endif %}
         {% for row in rows %}
-            <tr {{ row.attributes.merge({}) }}>
+            <tr {{ row.attributes }}>
                 {% for cell in column %}
-                    <{{ cell.type }} {{ cell.attributes.merge({}) }}>{{ cell.label ?: '&nbsp;' }}</{{ cell.type }}>
+                    {% if cell.type !== 'td' or cell.type !== 'th' %}
+                        {% set cell.type = 'td' %}
+                    {% endif %}
+                    {% if cell.type == 'td' %}
+                        <td {{ cell.attributes }}>
+                            {{ cell ?: '&nbsp;' }}
+                        </td>
+                    {% elseif (cell.type == 'th') %}
+                        <th {{ cell.attributes.merge({ scope: 'column' }) }}>
+                            {{ cell ?: '&nbsp;' }}
+                        </th>
+                    {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}

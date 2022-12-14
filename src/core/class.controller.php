@@ -90,4 +90,12 @@ abstract class controller {
 
     }
 
+    /**
+     *
+     */
+    protected function render(string $template, array $parameters = [])
+    {
+        return $this->tpl->twig->render($template, $parameters);
+    }
+
 }
