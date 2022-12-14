@@ -1,0 +1,228 @@
+[14-Dec-2022 10:14:25 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\controller::__construct(), 0 passed in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 227 and exactly 2 expected in /Users/josephroberts/localdev/leantime/src/core/class.controller.php:24
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(227): leantime\core\controller->__construct()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(109): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.controller.php on line 24
+[14-Dec-2022 10:15:00 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\controller::__construct(), 0 passed in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 227 and exactly 2 expected in /Users/josephroberts/localdev/leantime/src/core/class.controller.php:24
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(227): leantime\core\controller->__construct()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(109): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.controller.php on line 24
+[14-Dec-2022 10:28:00 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\controller::__construct(), 0 passed in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 227 and exactly 2 expected in /Users/josephroberts/localdev/leantime/src/core/class.controller.php:24
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(227): leantime\core\controller->__construct()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(109): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.controller.php on line 24
+[14-Dec-2022 10:28:44 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\controller::__construct(), 0 passed in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 227 and exactly 2 expected in /Users/josephroberts/localdev/leantime/src/core/class.controller.php:24
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(227): leantime\core\controller->__construct()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(109): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.controller.php on line 24
+[14-Dec-2022 10:28:50 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\controller::__construct(), 0 passed in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 227 and exactly 2 expected in /Users/josephroberts/localdev/leantime/src/core/class.controller.php:24
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(227): leantime\core\controller->__construct()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(109): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.controller.php on line 24
+[14-Dec-2022 11:15:30 America/Los_Angeles] PHP Warning:  Undefined variable $routeParts in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 234
+[14-Dec-2022 11:15:30 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 234
+[14-Dec-2022 11:15:30 America/Los_Angeles] PHP Warning:  Undefined variable $routeParts in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 235
+[14-Dec-2022 11:15:30 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 235
+[14-Dec-2022 11:15:30 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\api\controllers\api" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:237
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 237
+[14-Dec-2022 11:16:15 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\api\controllers\api" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:16:32 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\domain\controllers\api" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:16:41 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "controller" not found in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.api.php:6
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.autoload.php(47): require_once()
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(238): leantime\core\leantimeAutoloader('api')
+#2 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#5 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#6 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.api.php on line 6
+[14-Dec-2022 11:17:04 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\api" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:17:19 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\api" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:18:04 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\api\masterApi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:18:46 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\masterApi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:20:46 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\masterApi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:20:57 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\masterapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:22:04 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\masterapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:23:36 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\domain\controllers\masterapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:24:05 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\domain\controllers\masterapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeApiRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:27:23 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\domain\controllers\restapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeRestRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:28:03 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\domain\controllers\restapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeRestRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:28:35 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\leantime\domain\controllers\restapi" not found in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php:238
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeRestRoute('api.comments.ge...', Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#3 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#4 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php on line 238
+[14-Dec-2022 11:35:06 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Non-static method ReflectionFunctionAbstract::getAttributes() cannot be called statically in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php:30
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(243): leantime\domain\controllers\restapi->__call('comments', Array, request_method: 'get', function: 'getComments', parameters: Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeRestRoute('api.comments.ge...', Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#4 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#5 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 30
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:35:37 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:36:19 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 34
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:23 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42

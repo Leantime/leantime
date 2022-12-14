@@ -4,8 +4,9 @@ namespace leantime\core;
 
 class environment {
 
-    public function __construct() {
-        $defaultConfiguration = new leantime\core\config();
+    public function __construct()
+    {
+        $defaultConfiguration = new config();
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename);
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language);
@@ -18,7 +19,7 @@ class environment {
         $this->debug = $this->environmentHelper("LEAN_DEBUG", $defaultConfiguration->debug);
         $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone);
         $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType);
-        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $this->keepTheme);
+        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme);
 
         /* Database */
         $this->dbHost = $this->environmentHelper("LEAN_DB_HOST", $defaultConfiguration->dbHost);
@@ -73,7 +74,8 @@ class environment {
         }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string") {
+    private function environmentHelper($envVar, $default, $dataType = "string")
+    {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
@@ -96,6 +98,15 @@ class environment {
 
             return $_SESSION['mainconfig'][$envVar];
         }
+    }
+
+    public function get(string $variable): mixed
+    {
+        if (!isset($this->$variable)) {
+            throw new Error("This Configuration Variable has not been set");
+        }
+
+        return $this->$variable;
     }
 
 }

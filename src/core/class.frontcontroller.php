@@ -87,21 +87,26 @@ namespace leantime\core {
         {
 
             //Set action-name from request
-            if(isset($_REQUEST['act'])) {
+            if (isset($_REQUEST['act'])) {
 
                 self::$fullAction = htmlspecialchars($_REQUEST['act']);
 
             }
 
+            if (isset($_REQUEST['id'])) {
+
+                self::$fullAction .= '.' . htmlspecialchars($_REQUEST['id']);
+
+            }
+
             //action parameter overrides Request['act']
-            if($action !== '') {
+            if ($action !== '') {
 
                 self::$fullAction = $action;
 
             }
 
-            if(self::$fullAction != '') {
-
+            if (self::$fullAction != '') {
 
                 //execute action
                 try {
@@ -125,80 +130,63 @@ namespace leantime\core {
          * executeAction - includes the class in includes/modules by the Request
          *
          * @access private
-         * @param  $completeName
+         * @param  $completeName actionname.filename
          * @return string|object
          */
         private static function executeAction($completeName, $params=array())
         {
-
-            //actionname.filename
-            //actionName is foldername
-            $actionName = self::getActionName($completeName);
-
-            //moduleName is filename
-            $moduleName = self::getModuleName($completeName);
-
-            //Folder doesn't exist.
-            if((is_dir('../src/domain/'.$moduleName) === false ||
-                is_file('../src/domain/'. $moduleName.'/controllers/class.'.$actionName.'.php') === false) &&
-               (is_dir('../custom/domain/'.$moduleName) === false ||
-                is_file('../custom/domain/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false) &&
-                (is_dir('../src/plugins/'.$moduleName) === false ||
-                    is_file('../src/plugins/'.$moduleName.'/controllers/class.'.$actionName . '.php') === false)) {
-
-                self::dispatch("errors.error404");
+            if (self::isRestRoute($completeName)) {
+                self::executeRestRoute($completeName, $params);
                 return;
-
             }
 
-            $customPluginPath = ROOT.'/../custom/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-            $customDomainPath = ROOT.'/../custom/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-            $pluginPath = ROOT.'/../src/plugins/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-            $domainPath = ROOT.'/../src/domain/' . $moduleName . '/controllers/class.' . $actionName.'.php';
-
+            $actionName = self::getActionName($completeName); //actionName is foldername
+            $moduleName = self::getModuleName($completeName); //moduleName is filename
             $controllerNs = "domain";
 
+            // initialize plugin service to check
             if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
                 $pluginService = new \leantime\domain\services\plugins();
             }
 
-            //Try plugin folder first for overrides
-            if(file_exists($customPluginPath)) {
+            // Check If Route Exists And Fetch Right Route Based On Priority
+            $routeExists = false;
+            foreach ([
+                'custom/plugins',
+                'custom/domain',
+                'plugins',
+                'domain'
+            ] as $path) {
+                $fullpath = ROOT . "/../src/$path/$moduleName/controllers/class.$actionName.php";
 
-                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
-                    $controllerNs = "plugins";
-                    require_once $customPluginPath;
-                }else{
-                    self::dispatch("errors.error404", 404);
-                    return;
+                if (!file_exists($fullpath)) {
+                    continue;
                 }
 
-            }elseif(file_exists($customDomainPath)) {
+                $routeExists = true;
 
-                require_once $customDomainPath;
+                if ($path == 'plugins') {
+                    if (!$_SESSION['isInstalled']
+                        || !$_SESSION['isUpdated']
+                        || !$pluginService->isPluginEnabled($moduleName)
+                    ) {
+                        self::dispatch("errors.error404", 404);
+                        return;
+                    }
 
-            }elseif(file_exists($pluginPath)) {
-
-                if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($moduleName)) {
-                    $controllerNs = "plugins";
-                    require_once $pluginPath;
-                }else{
-                    self::dispatch("errors.error404", 404);
-                    return;
+                    $controllerNs = 'plugins';
                 }
 
-            }elseif(file_exists($domainPath)) {
-
-                require_once $domainPath;
-
-            }else{
-
-                self::dispatch("errors.error404", 404);
-                return;
-
+                require $fullpath;
+                break;
             }
 
-            //Initialize Action
+            if (!$routeExists) {
+                self::dispatch("errors.error404", 404);
+                return;
+            }
+
+            // Execute The Route
             try {
 
                 $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
@@ -208,33 +196,21 @@ namespace leantime\core {
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if ($moduleName == 'api'
-                    && count(explode('.', $completeName)) == 3
-                ) {
-                    $route_parts = explode('.', $completeName);
-                    $repository = $route_parts[1];
-                    $function = $route_parts[2];
-
-                    (new leantime\api\controllers\api())->$repository(
-                        request_method: $method,
-                        function: $function,
-                        parameters: $params
-                    );
-                } elseif (is_subclass_of($classname, "leantime\\base\\controller")) {
+                if (is_subclass_of($classname, "leantime\\core\\controller")) {
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
                     $action = new $classname;
 
-                    if(method_exists($action, $method)) {
+                    if (method_exists($action, $method)) {
                         $action->$method($params);
                     //Use run for all other request types.
-                    }else{
+                    } else {
                         $action->run();
                     }
                 }
 
-            }catch(Exception $e){
+            } catch (Exception $e){
 
                 error_log($e, 0);
 
@@ -246,6 +222,41 @@ namespace leantime\core {
 
             self::$lastAction = $completeName;
 
+        }
+
+        private static function executeRestRoute($completeName, $params = [])
+        {
+            if (!self::isRestRoute($completeName)) {
+                self::dispatch("errors.error404", 404);
+                return;
+            }
+
+            $routeParts = explode('.', $completeName);
+            $serviceName = $routeParts[1];
+            $methodName = $routeParts[2];
+            $requestMethod = self::getRequestMethod();
+            $requestParams = self::getRequestParams($requestMethod);
+
+            unset($requestParams['act'], $requestParams['id']);
+
+            (new restapi())->$serviceName(
+                request_method: $requestMethod,
+                function: $methodName,
+                parameters: $requestParams
+            );
+        }
+
+        private static function isRestRoute(string $completeName): bool
+        {
+            $routeParts = explode('.', $completeName);
+
+            if ($routeParts[0] !== 'api'
+                || count($routeParts) !== 3
+            ) {
+                return false;
+            }
+
+            return true;
         }
 
         private static function getRequestMethod()
