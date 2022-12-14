@@ -226,3 +226,13 @@ Stack trace:
 [14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Undefined variable $arguments in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
 [14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
 [14-Dec-2022 11:37:45 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/src/domain/restapi/controllers/class.restapi.php on line 42
+[14-Dec-2022 12:31:24 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Call to a member function isDefaultValueAvailable() on string in /Users/josephroberts/localdev/leantime/src/core/class.restapi.php:85
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/core/class.restapi.php(37): leantime\core\restapi->prepareParameters(Array, Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(243): leantime\core\restapi->__call('comments', Array, request_method: 'get', function: 'getComments', parameters: Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(139): leantime\core\frontcontroller::executeRestRoute('api.comments.ge...', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(114): leantime\core\frontcontroller::executeAction('api.comments.ge...', Array, 200)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#5 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#6 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/core/class.restapi.php on line 85

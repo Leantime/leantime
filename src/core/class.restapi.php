@@ -34,7 +34,7 @@ class restapi
         }
 
         $methodParams = $this->getMethodParameters($servicename, $methodName);
-        $preparedParams = $this->prepareParameters($methodParams, $requestBody);
+        $preparedParams = $this->prepareParameters($requestBody, $methodParams);
 
         // can be null
         try {
