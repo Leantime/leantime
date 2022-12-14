@@ -208,13 +208,22 @@ namespace leantime\core {
                 //Setting default response code to 200, can be changed in controller
                 self::setResponseCode(200);
 
-                if (is_subclass_of($classname, "leantime\\core\\controller")) {
+                if ($moduleName == 'api'
+                    && count(explode('.', $completeName)) == 3
+                ) {
+                    $route_parts = explode('.', $completeName);
+                    $repository = $route_parts[1];
+                    $function = $route_parts[2];
 
-
+                    (new leantime\api\controllers\api())->$repository(
+                        request_method: $method,
+                        function: $function,
+                        parameters: $params
+                    );
+                } elseif (is_subclass_of($classname, "leantime\\base\\controller")) {
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
-
                     $action = new $classname;
 
                     if(method_exists($action, $method)) {
