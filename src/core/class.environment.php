@@ -81,7 +81,8 @@ class environment {
         }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string") {
+    private function environmentHelper($envVar, $default, $dataType = "string")
+    {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
