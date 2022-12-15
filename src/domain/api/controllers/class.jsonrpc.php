@@ -75,10 +75,9 @@ class jsonrpc extends controller
     }
 
     /**
-     * post - executes api call
+     * executes api call
      *
-     * @param string $service - service method name
-     * @param array $arguments - [$request_method, $function, $parameters]
+     * @param array $params - request body
      *
      * @return void
      */
