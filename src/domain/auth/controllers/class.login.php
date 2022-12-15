@@ -46,7 +46,7 @@ namespace leantime\domain\controllers {
                 $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
             }
 
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
 
             if ($config->useLdap) {
                 $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email_or_username");

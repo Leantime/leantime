@@ -60,7 +60,7 @@ namespace leantime\core {
          */
         public function __construct() {
 
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
 
             if ($config->email != '') {
                 $this->emailDomain = $config->email;

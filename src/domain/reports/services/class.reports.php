@@ -87,7 +87,7 @@ namespace leantime\domain\services {
             $this->clientRepository = new repositories\clients();
             $this->commentsRepository = new repositories\comments();
             $this->timesheetRepo = new repositories\timesheets();
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
 // Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
             $this->cpCanvasRepo = new repositories\cpcanvas();
             $this->dbmCanvasRepo = new repositories\dbmcanvas();

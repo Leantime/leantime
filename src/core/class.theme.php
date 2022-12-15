@@ -27,7 +27,7 @@ namespace leantime\core {
          * __construct - Constructor
          */
         function __construct() {
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
             $this->settings = new appSettings();
             $this->iniData = [];
         }

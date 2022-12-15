@@ -24,7 +24,7 @@ namespace leantime\domain\controllers {
          */
         public function init() {
 
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
         }
 

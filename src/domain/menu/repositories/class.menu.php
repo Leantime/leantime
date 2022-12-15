@@ -68,7 +68,7 @@ namespace leantime\domain\repositories {
         public function getMenuTypes(): array {
 
             $language = core\language::getInstance();
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
 
             if (!$config->enableMenuType) {
 

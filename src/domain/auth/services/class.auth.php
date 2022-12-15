@@ -131,7 +131,7 @@ namespace leantime\domain\services {
          * @throws Exception
          */
         protected function __construct($sessionid) {
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
             $this->cookieTime = $this->config->sessionExpiration;
             $this->language = core\language::getInstance();
             $this->settingsRepo = new repositories\setting();

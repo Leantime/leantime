@@ -184,7 +184,7 @@ namespace leantime\domain\services {
                 $_SESSION["currentSprint"] = $searchCriteria["sprint"];
             }
 
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
             setcookie(
                     "searchCriteria",
                     serialize($searchCriteria),

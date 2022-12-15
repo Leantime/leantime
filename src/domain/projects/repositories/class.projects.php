@@ -47,7 +47,7 @@ namespace leantime\domain\repositories {
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
         public function __construct() {
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
             $this->db = core\db::getInstance();
         }
 

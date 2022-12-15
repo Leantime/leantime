@@ -2,11 +2,19 @@
 
 namespace leantime\core;
 
-use yaml_parse_file;
-
 class environment {
 
-    public function __construct() {
+    private static $instance = null;
+
+    public static function getInstance() {
+
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         $defaultConfiguration = new \leantime\core\config();
         $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
         $this->dotenv->safeLoad();
@@ -81,8 +89,7 @@ class environment {
         }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string")
-    {
+    private function environmentHelper($envVar, $default, $dataType = "string") {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
