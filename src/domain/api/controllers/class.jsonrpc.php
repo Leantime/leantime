@@ -27,7 +27,7 @@ class jsonrpc extends controller
      *
      * @return void
      */
-    public function post($params): void
+    public function post(array $params): void
     {
         $this->executeApiRequest($params);
     }
@@ -39,7 +39,7 @@ class jsonrpc extends controller
      *
      * @return void
      */
-    public function get($params): void
+    public function get(array $params): void
     {
         if (!isset($params['q'])) {
             $this->returnInvalidRequest("you must encode your request body in JSON and place it in a \"q\" query parameter when using GET");
