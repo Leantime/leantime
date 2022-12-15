@@ -6,6 +6,13 @@ class environment {
 
     public function __construct() {
         $defaultConfiguration = new leantime\core\config();
+        $this->dotenv = Dotenv\Dotenv::createImmutable(ROOT . "/../config");
+        $this->dotenv->safeLoad();
+        $this->yaml = null;
+        if (file_exists(ROOT . "/../config/config.yaml")) {
+            $this->yaml = yaml_parse_file(ROOT . "/../config/config.yaml");
+        }
+
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename);
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language);
@@ -78,7 +85,14 @@ class environment {
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
         } else {
-            $found = getenv($envVar);
+            /*
+             * Basically, here, we are doing the fetch order of 
+             * environment -> .env file -> yaml file -> user default -> leantime default
+             * This allows us to use any one or a combination of those methods to configure leantime. 
+             */
+            $found = null;
+            $found = $this->tryGetFromEnvironment($envVar, $found);
+            $found = $this->tryGetFromYaml($envVar, $found);
             if (!$found || $found == "") {
                 $_SESSION['mainconfig'][$envVar] = $default;
                 return $default;
@@ -95,6 +109,24 @@ class environment {
             }
 
             return $_SESSION['mainconfig'][$envVar];
+        }
+    }
+
+    private function tryGetFromEnvironment($envVar, $currentValue) {
+        if ($currentValue && $currentValue != "") {
+            return $currentValue;
+        }
+        return $_ENV[$envVar];
+    }
+
+    private function tryGetFromYaml($envVar, $currentValue) {
+        if ($currentValue && $currentValue != "") {
+            return $currentValue;
+        }
+        if ($this->yaml) {
+            return $this->yaml[strtolower(preg_replace('/^LEAN_/', '', $envVar))];
+        } else {
+            return null;
         }
     }
 
