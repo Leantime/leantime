@@ -72,8 +72,6 @@ namespace leantime\domain\services {
 
         public function saveStatusLabels($params) {
 
-
-
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
 
                 $statusArray = array();
@@ -141,7 +139,9 @@ namespace leantime\domain\services {
         }
 
         public function getPriorityLabels() {
+
             return $this->ticketRepository->priority;
+
         }
 
         public function prepareTicketSearchArray(array $searchParams)
@@ -388,8 +388,8 @@ namespace leantime\domain\services {
 
         public function getAllSubtasks($ticketId)
         {
-            $values = $this->ticketRepository->getAllSubtasks($ticketId);
 
+            $values = $this->ticketRepository->getAllSubtasks($ticketId);
 
             return $values;
         }
@@ -828,6 +828,7 @@ namespace leantime\domain\services {
 
         public function getGroupByFieldOptions()
         {
+
             return [
                 [
                     'id' => 'groupByNothingLink',
@@ -864,6 +865,7 @@ namespace leantime\domain\services {
 
         public function getNewFieldOptions()
         {
+
             if (!defined('BASE_URL')) {
                 return [];
             }
