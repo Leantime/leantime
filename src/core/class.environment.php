@@ -14,7 +14,7 @@ class environment {
         return self::$instance;
     }
 
-    public function __construct() {
+    private function __construct() {
         $defaultConfiguration = new \leantime\core\config();
         $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
         $this->dotenv->safeLoad();
