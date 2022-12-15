@@ -1,6 +1,6 @@
 <?php
 /**
- * Generates an JSON-RPC API
+ * Generates an JSON-RPC 2.0 API
  */
 
 namespace leantime\domain\controllers;
