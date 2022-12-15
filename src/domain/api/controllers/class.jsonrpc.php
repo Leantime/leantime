@@ -23,7 +23,7 @@ class jsonrpc extends controller
     public function get($params): void
     {
         if (!isset($params['q'])) {
-            $this->returnInvalidRequest("you must encode your request body in JSON and place it in a 'q' query parameter when using GET");
+            $this->returnInvalidRequest("you must encode your request body in JSON and place it in a \"q\" query parameter when using GET");
         }
 
         $params = (array) json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
