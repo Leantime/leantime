@@ -2,17 +2,18 @@
 
 namespace leantime\core;
 
+use yaml_parse_file;
+
 class environment {
 
     public function __construct() {
-        $defaultConfiguration = new leantime\core\config();
-        $this->dotenv = Dotenv\Dotenv::createImmutable(ROOT . "/../config");
+        $defaultConfiguration = new \leantime\core\config();
+        $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
         $this->dotenv->safeLoad();
         $this->yaml = null;
         if (file_exists(ROOT . "/../config/config.yaml")) {
-            $this->yaml = yaml_parse_file(ROOT . "/../config/config.yaml");
+            $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(ROOT . "/../config/config.yaml");
         }
-
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename);
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language);
@@ -25,7 +26,7 @@ class environment {
         $this->debug = $this->environmentHelper("LEAN_DEBUG", $defaultConfiguration->debug);
         $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone);
         $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType);
-        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $this->keepTheme);
+        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme);
 
         /* Database */
         $this->dbHost = $this->environmentHelper("LEAN_DB_HOST", $defaultConfiguration->dbHost);
@@ -91,8 +92,9 @@ class environment {
              * This allows us to use any one or a combination of those methods to configure leantime. 
              */
             $found = null;
-            $found = $this->tryGetFromEnvironment($envVar, $found);
             $found = $this->tryGetFromYaml($envVar, $found);
+            $found = $this->tryGetFromEnvironment($envVar, $found);
+
             if (!$found || $found == "") {
                 $_SESSION['mainconfig'][$envVar] = $default;
                 return $default;
@@ -113,18 +115,19 @@ class environment {
     }
 
     private function tryGetFromEnvironment($envVar, $currentValue) {
-        if ($currentValue && $currentValue != "") {
+        if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
-        return $_ENV[$envVar];
+        return isset($_ENV[$envVar]) ? $_ENV[$envVar] : null;
     }
 
     private function tryGetFromYaml($envVar, $currentValue) {
-        if ($currentValue && $currentValue != "") {
+        if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
         if ($this->yaml) {
-            return $this->yaml[strtolower(preg_replace('/^LEAN_/', '', $envVar))];
+            $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
+            return isset($this->yaml[$key]) ? $this->yaml[$key] : null;
         } else {
             return null;
         }

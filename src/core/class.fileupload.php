@@ -87,7 +87,7 @@ class fileupload
     public function __construct()
     {
 
-        $this->config = new config();
+        $this->config = new \leantime\core\environment();
         $this->path = $this->config->userFilePath;
 
         if ($this->config->useS3 == true) {
