@@ -2,11 +2,18 @@
 
 namespace leantime\core;
 
+use yaml_parse_file;
+
 class environment {
 
-    public function __construct()
-    {
-        $defaultConfiguration = new config();
+    public function __construct() {
+        $defaultConfiguration = new \leantime\core\config();
+        $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
+        $this->dotenv->safeLoad();
+        $this->yaml = null;
+        if (file_exists(ROOT . "/../config/config.yaml")) {
+            $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(ROOT . "/../config/config.yaml");
+        }
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename);
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language);
@@ -80,7 +87,15 @@ class environment {
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
         } else {
-            $found = getenv($envVar);
+            /*
+             * Basically, here, we are doing the fetch order of 
+             * environment -> .env file -> yaml file -> user default -> leantime default
+             * This allows us to use any one or a combination of those methods to configure leantime. 
+             */
+            $found = null;
+            $found = $this->tryGetFromYaml($envVar, $found);
+            $found = $this->tryGetFromEnvironment($envVar, $found);
+
             if (!$found || $found == "") {
                 $_SESSION['mainconfig'][$envVar] = $default;
                 return $default;
@@ -97,6 +112,25 @@ class environment {
             }
 
             return $_SESSION['mainconfig'][$envVar];
+        }
+    }
+
+    private function tryGetFromEnvironment($envVar, $currentValue) {
+        if ($currentValue != null && $currentValue != "") {
+            return $currentValue;
+        }
+        return isset($_ENV[$envVar]) ? $_ENV[$envVar] : null;
+    }
+
+    private function tryGetFromYaml($envVar, $currentValue) {
+        if ($currentValue != null && $currentValue != "") {
+            return $currentValue;
+        }
+        if ($this->yaml) {
+            $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
+            return isset($this->yaml[$key]) ? $this->yaml[$key] : null;
+        } else {
+            return null;
         }
     }
 

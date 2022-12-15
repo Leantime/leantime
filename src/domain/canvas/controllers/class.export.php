@@ -38,7 +38,7 @@ namespace leantime\domain\controllers\canvas {
         public function init()
         {
 
-            $this->config = new core\config();
+            $this->config = new \leantime\core\environment();
             $this->language = core\language::getInstance();
             $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();

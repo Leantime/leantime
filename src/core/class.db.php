@@ -60,7 +60,7 @@ class db
     {
 
             //Get configuration-object for connection-details
-            $config = new config();
+            $config = new \leantime\core\environment();
 
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;

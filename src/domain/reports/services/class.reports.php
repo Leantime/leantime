@@ -8,16 +8,14 @@ namespace leantime\domain\services {
     use leantime\domain\repositories;
     use Ramsey\Uuid\Uuid;
 
-    class reports
-    {
+    class reports {
 
         private $projectRepository;
         private $sprintRepository;
         private $ticketRepository;
         private $reportRepository;
 
-        public function __construct()
-        {
+        public function __construct() {
 
             $this->tpl = new core\template();
             $this->projectRepository = new repositories\projects();
@@ -28,10 +26,9 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
         }
 
-        public function dailyIngestion()
-        {
+        public function dailyIngestion() {
 
-            if(!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
+            if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
 
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
@@ -56,17 +53,14 @@ namespace leantime\domain\services {
                     if ($backlogReport !== false) {
                         $this->reportRepository->addReport($backlogReport);
 
-                        if(!isset($_SESSION["reportCompleted"]) || is_array($_SESSION["reportCompleted"]) === false){
+                        if (!isset($_SESSION["reportCompleted"]) || is_array($_SESSION["reportCompleted"]) === false) {
                             $_SESSION["reportCompleted"] = array();
                         }
 
                         $_SESSION["reportCompleted"][$_SESSION['currentProject']] = 1;
                     }
-
                 }
-
             }
-
         }
 
         public function getFullReport($projectId) {
@@ -93,9 +87,8 @@ namespace leantime\domain\services {
             $this->clientRepository = new repositories\clients();
             $this->commentsRepository = new repositories\comments();
             $this->timesheetRepo = new repositories\timesheets();
-            $this->config = new core\config();
-
-			// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
+            $this->config = new \leantime\core\environment();
+// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
             $this->cpCanvasRepo = new repositories\cpcanvas();
             $this->dbmCanvasRepo = new repositories\dbmcanvas();
             $this->eaCanvasRepo = new repositories\eacanvas();
@@ -112,9 +105,9 @@ namespace leantime\domain\services {
             $this->swotCanvasRepo = new repositories\swotcanvas();
 
             $companyLang = $this->settings->getSetting("companysettings.language");
-            if($companyLang != "" && $companyLang !== false){
+            if ($companyLang != "" && $companyLang !== false) {
                 $currentLanguage = $companyLang;
-            }else{
+            } else {
                 $currentLanguage = $this->config->language;
             }
 
@@ -132,7 +125,7 @@ namespace leantime\domain\services {
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
                 'numIdeaItems' => $this->ideaRepository->getNumberOfIdeas(),
                 'numHoursBooked' => $this->timesheetRepo->getHoursBooked(),
-				// Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
+                // Canvas: cp, dbm, ea, em, insights, lbm, lean, obm, retros, risks, sb, sm, sq, swot
                 'numResearchBoards' => $this->leanCanvasRepo->getNumberOfBoards(),
                 'numRetroBoards' => $this->retrosCanvasRepo->getNumberOfBoards(),
                 'numCPBoards' => $this->cpCanvasRepo->getNumberOfBoards(),
@@ -166,15 +159,14 @@ namespace leantime\domain\services {
             return $telemetry;
         }
 
-        public function  sendAnonymousTelemetry(): bool|PromiseInterface
-        {
+        public function sendAnonymousTelemetry(): bool|PromiseInterface {
 
-            if(isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
+            if (isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
                 return false;
             }
 
             //Only send once a day
-            $allowTelemetry = (bool)$this->settings->getSetting("companysettings.telemetry.active");
+            $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
 
@@ -193,19 +185,18 @@ namespace leantime\domain\services {
                         $data_string = json_encode($telemetry);
 
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
-                            'form_params' => [
-                                'telemetry' => $data_string
-                            ],
-                            'timeout' => 5
-                        ])->then(function ($response) use ($today) {
+                                    'form_params' => [
+                                        'telemetry' => $data_string
+                                    ],
+                                    'timeout' => 5
+                                ])->then(function ($response) use ($today) {
 
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                             $_SESSION['skipTelemetry'] = true;
                         });
 
                         return $promise;
-
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
 
                         error_log($e);
 

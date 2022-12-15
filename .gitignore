@@ -113,3 +113,5 @@ src/custom/language/
 public/theme/*/css/custom.css
 public/theme/dts/
 nbproject
+config/config.yaml
+config/.env

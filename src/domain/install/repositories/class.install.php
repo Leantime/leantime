@@ -107,7 +107,7 @@ namespace leantime\domain\repositories {
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
-            $this->config = new core\config();
+            $this->config = new core\environment();
             $this->settings = new core\appSettings();
 
             $this->user = $this->config->dbUser;

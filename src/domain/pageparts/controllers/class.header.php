@@ -8,75 +8,62 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories\reports;
     use DebugBar\StandardDebugBar;
 
-    class header extends controller
-    {
+    class header extends controller {
+
         private $settingsRepo;
         private $config;
         private $appSettings;
         private $themeCore;
 
-        public function init()
-        {
+        public function init() {
 
             $this->settingsRepo = new \leantime\domain\repositories\setting();
-            $this->config = new core\config();
+            $this->config = new \leantime\core\environment();
             $this->appSettings = new core\appSettings();
             $this->themeCore = new core\theme();
-
         }
 
-        public function run()
-        {
+        public function run() {
 
-            if(!isset($_SESSION["userdata"]["id"])) {
+            if (!isset($_SESSION["userdata"]["id"])) {
 
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
-                if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
+                if (isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
 
                     $theme = $_COOKIE['theme'];
-
-                }else{
+                } else {
 
                     $theme = $this->config->defaultTheme;
-
                 }
-
-            }
-            else {
+            } else {
 
                 // This is not a login session
-                if(!isset($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"]) ||
-                   empty($_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"])) {
+                if (!isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"]) ||
+                        empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"])) {
 
                     // User has a saved theme
-                    $theme = $this->settingsRepo->getSetting("usersettings.".$_SESSION["userdata"]["id"].".theme");
-                    if($theme === false) {
+                    $theme = $this->settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".theme");
+                    if ($theme === false) {
 
-                        if(isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
+                        if (isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
 
                             $theme = $_COOKIE['theme'];
-
-                        }else{
+                        } else {
 
                             $theme = $this->config->defaultTheme;
-
                         }
-
                     }
+                } else {
 
-                }else{
-
-                    $theme = $_SESSION["usersettings.".$_SESSION["userdata"]["id"].".theme"];
-
+                    $theme = $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"];
                 }
-
             }
             $this->themeCore->setActive($theme);
 
             // Set logo to use
             $themeLogoPath = $this->settingsRepo->getSetting("companysettings.$theme.logoPath");
             if (!isset($_SESSION["companysettings.logoPath"]) ||
-                ($themeLogoPath !== false &&  $themeLogoPath !== $_SESSION["companysettings.logoPath"])) {
+                    ($themeLogoPath !== false && $themeLogoPath !== $_SESSION["companysettings.logoPath"])) {
 
                 if ($themeLogoPath !== false) {
                     if (strpos($themeLogoPath, 'http') === 0) {
@@ -91,7 +78,7 @@ namespace leantime\domain\controllers {
 
             $themeLogoPath = $this->themeCore->getLogoUrl();
             if (!isset($_SESSION["companysettings.logoPath"]) ||
-                ($themeLogoPath !== false &&  $themeLogoPath !== $_SESSION["companysettings.logoPath"])) {
+                    ($themeLogoPath !== false && $themeLogoPath !== $_SESSION["companysettings.logoPath"])) {
 
                 if ($themeLogoPath !== false) {
                     if (strpos($themeLogoPath, 'http') === 0) {
@@ -175,7 +162,6 @@ namespace leantime\domain\controllers {
                     $_SESSION["companysettings.secondarycolor"] = $secondaryColor;
                     $_SESSION["companysettings.$theme.secondarycolor"] = $secondaryColor;
                 }
-
             } else {
 
                 if (!str_starts_with($_SESSION["companysettings.primarycolor"], "#")) {
@@ -184,7 +170,6 @@ namespace leantime\domain\controllers {
                     $_SESSION["companysettings.$theme.primarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                     $_SESSION["companysettings.$theme.secondarycolor"] = "#" . $_SESSION["companysettings.primarycolor"];
                 }
-
             }
 
             if (!isset($_SESSION["companysettings.sitename"])) {
@@ -195,12 +180,13 @@ namespace leantime\domain\controllers {
                 } else {
                     $_SESSION["companysettings.sitename"] = $this->config->sitename;
                 }
-
             }
 
             $this->tpl->assign('theme', $this->themeCore->getActive());
             $this->tpl->assign('appSettings', $this->appSettings);
             $this->tpl->displayPartial('pageparts.header');
         }
+
     }
+
 }

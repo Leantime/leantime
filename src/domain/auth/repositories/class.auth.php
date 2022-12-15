@@ -11,8 +11,7 @@ namespace leantime\domain\repositories {
     use leantime\core;
     use RobThree\Auth\TwoFactorAuth;
 
-    class auth
-    {
+    class auth {
 
         /**
          * @access private
@@ -91,7 +90,6 @@ namespace leantime\domain\repositories {
          * @var    string userrole (admin, client, employee)
          */
         public $role = '';
-
         public $settings = '';
 
         /**
@@ -123,26 +121,20 @@ namespace leantime\domain\repositories {
          * @var    object
          */
         public $hasher;
-
-
         private static $instance;
 
         /*
          * How often can a user reset a password before it has to be changed
          */
         public $pwResetLimit = 5;
-
         private $config;
 
-
-        public function __construct()
-        {
+        public function __construct() {
 
             $this->db = core\db::getInstance();
-            $this->config = new core\config();
+            $this->config = new \leantime\core\environment();
             $this->userService = new services\users();
             $this->userRepo = new repositories\users();
-
         }
 
         /**
@@ -151,8 +143,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @return bool
          */
-        public function invalidateSession($sessionId)
-        {
+        public function invalidateSession($sessionId) {
 
             $query = "UPDATE zp_user SET session = '' 
 				 WHERE session = :sessionid LIMIT 1";
@@ -172,19 +163,16 @@ namespace leantime\domain\repositories {
          * @access private
          * @return void
          */
-        private function invalidateExpiredUserSessions(): bool
-        {
+        private function invalidateExpiredUserSessions(): bool {
 
-            $query = "UPDATE zp_user SET session = '' WHERE (".time()." - sessionTime) > ".$this->config->sessionExpiration." ";
+            $query = "UPDATE zp_user SET session = '' WHERE (" . time() . " - sessionTime) > " . $this->config->sessionExpiration . " ";
 
             $stmn = $this->db->database->prepare($query);
             $result = $stmn->execute();
             $stmn->closeCursor();
 
             return $result;
-
         }
-
 
         /**
          * getUserByLogin - Check login data and returns user if correct
@@ -194,15 +182,13 @@ namespace leantime\domain\repositories {
          * @param  $password
          * @return bool
          */
-        public function getUserByLogin($username, $password): array|bool
-        {
+        public function getUserByLogin($username, $password): array|bool {
 
             $user = $this->userRepo->getUserByEmail($username);
 
-            if($user !== false && password_verify($password, $user['password'])) {
+            if ($user !== false && password_verify($password, $user['password'])) {
 
                 return $user;
-
             }
 
             return false;
@@ -216,8 +202,7 @@ namespace leantime\domain\repositories {
          * @param  $time
          * @return
          */
-        public function updateUserSession($userId, $sessionid, $time)
-        {
+        public function updateUserSession($userId, $sessionid, $time) {
 
             $query = "UPDATE
 					zp_user 
@@ -250,8 +235,7 @@ namespace leantime\domain\repositories {
          * @param
          * @return bool
          */
-        public function validateResetLink($hash)
-        {
+        public function validateResetLink($hash) {
 
             $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink LIMIT 1";
 
@@ -262,16 +246,14 @@ namespace leantime\domain\repositories {
             $returnValues = $stmn->fetch();
             $stmn->closeCursor();
 
-            if($returnValues !== false && count($returnValues) > 0) {
+            if ($returnValues !== false && count($returnValues) > 0) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
 
-
-        public function setPWResetLink($username, $resetLink): bool
-        {
+        public function setPWResetLink($username, $resetLink): bool {
 
             $query = "UPDATE
 					zp_user 
@@ -283,7 +265,6 @@ namespace leantime\domain\repositories {
 					username = :user
 				LIMIT 1";
 
-
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':user', $username, PDO::PARAM_STR);
             $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
@@ -294,8 +275,7 @@ namespace leantime\domain\repositories {
             return $result;
         }
 
-        public function changePW($password, $hash)
-        {
+        public function changePW($password, $hash) {
 
             $query = "UPDATE
 					zp_user 
@@ -317,7 +297,8 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
+
     }
+
 }
