@@ -259,26 +259,71 @@ class jsonrpc extends controller
         exit;
     }
 
+    /**
+     * Returns a parse error
+     *
+     * @see https://jsonrpc.org/specification#error_object
+     *
+     * @param mixed|null $additional_info
+     *
+     * @return void
+     */
     private function returnParseError(mixed $additional_info = null): void
     {
         $this->returnError('Parse error', -32700, $additional_info);
     }
 
+    /**
+     * Returns an invalid request error
+     *
+     * @see https://jsonrpc.org/specification#error_object
+     *
+     * @param mixed|null $additional_info
+     *
+     * @return void
+     */
     private function returnInvalidRequest(mixed $additional_info = null): void
     {
         $this->returnError('Invalid Request', -32600, $additional_info);
     }
 
+    /**
+     * Returns a method not found error
+     *
+     * @see https://jsonrpc.org/specification#error_object
+     *
+     * @param mixed|null $additional_info
+     *
+     * @return void
+     */
     private function returnMethodNotFound(mixed $additional_info = null): void
     {
         $this->returnError('Method not found', -32601, $additional_info);
     }
 
+    /**
+     * Returns an invalid parameters error
+     *
+     * @see https://jsonrpc.org/specification#error_object
+     *
+     * @param mixed|null $additional_info
+     *
+     * @return void
+     */
     private function returnInvalidParams(mixed $additional_info = null): void
     {
         $this->returnError('Invalid params', -32602, $additional_info);
     }
 
+    /**
+     * Returns a server error
+     *
+     * @see https://jsonrpc.org/specification#error_object
+     *
+     * @param mixed|null $additional_info
+     *
+     * @return void
+     */
     private function returnServerError(mixed $additional_info): void
     {
         $this->returnError('Server error', -32000, $additional_info);
