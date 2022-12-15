@@ -23,7 +23,7 @@ class jsonrpc extends controller
     /**
      * Handles post requests
      *
-     * @param $params - value of $_POST
+     * @param array $params - value of $_POST
      *
      * @return void
      */
@@ -35,7 +35,7 @@ class jsonrpc extends controller
     /**
      * Handles get requests
      *
-     * @param $params - value of $_GET
+     * @param array $params - value of $_GET
      *
      * @return void
      */
