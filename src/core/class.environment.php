@@ -100,13 +100,4 @@ class environment {
         }
     }
 
-    public function get(string $variable): mixed
-    {
-        if (!isset($this->$variable)) {
-            throw new Error("This Configuration Variable has not been set");
-        }
-
-        return $this->$variable;
-    }
-
 }
