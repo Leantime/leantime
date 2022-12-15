@@ -225,6 +225,8 @@ class jsonrpc extends controller
     /**
      * Echos the return response
      *
+     * @see https://jsonrpc.org/specification#response_object
+     *
      * @param array|null $returnValue
      * @param string $requestMethod
      *
@@ -242,6 +244,8 @@ class jsonrpc extends controller
 
     /**
      * Return error response
+     *
+     * @see https://jsonrpc.org/specification#error_object
      *
      * @param string $errorMessage
      * @param int $httpResponseCode
