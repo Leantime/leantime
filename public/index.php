@@ -8,7 +8,7 @@ require_once '../config/configuration.php';
 require_once '../config/appSettings.php';
 
 
-$config = new leantime\core\environment();
+$config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone, $config->debug ?? 0);
 
