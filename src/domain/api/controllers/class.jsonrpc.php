@@ -45,11 +45,13 @@ class jsonrpc extends controller
             $this->returnInvalidRequest("you must encode your request body in JSON and place it in a \"q\" query parameter when using GET");
         }
 
-        $params = (array) json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
+        $params = json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
 
         if ($params == null) {
             $this->returnParseError('JSON is invalid and was not able to be parsed');
         }
+
+        $params = (array) $params;
 
         $this->executeApiRequest($params);
     }
