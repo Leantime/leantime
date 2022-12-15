@@ -135,10 +135,6 @@ namespace leantime\core {
          */
         private static function executeAction($completeName, $params=array())
         {
-            if (self::isRestRoute($completeName)) {
-                self::executeRestRoute($completeName, $params);
-                return;
-            }
 
             $actionName = self::getActionName($completeName); //actionName is foldername
             $moduleName = self::getModuleName($completeName); //moduleName is filename
@@ -222,41 +218,6 @@ namespace leantime\core {
 
             self::$lastAction = $completeName;
 
-        }
-
-        private static function executeRestRoute($completeName, $params = [])
-        {
-            if (!self::isRestRoute($completeName)) {
-                self::dispatch("errors.error404", 404);
-                return;
-            }
-
-            $routeParts = explode('.', $completeName);
-            $serviceName = $routeParts[1];
-            $methodName = $routeParts[2];
-            $requestMethod = self::getRequestMethod();
-            $requestParams = self::getRequestParams($requestMethod);
-
-            unset($requestParams['act'], $requestParams['id']);
-
-            (new restapi())->$serviceName(
-                request_method: $requestMethod,
-                function: $methodName,
-                parameters: $requestParams
-            );
-        }
-
-        private static function isRestRoute(string $completeName): bool
-        {
-            $routeParts = explode('.', $completeName);
-
-            if ($routeParts[0] !== 'api'
-                || count($routeParts) !== 3
-            ) {
-                return false;
-            }
-
-            return true;
         }
 
         private static function getRequestMethod()
