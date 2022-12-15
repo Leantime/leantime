@@ -10,6 +10,11 @@ use leantime\core\controller;
 class jsonrpc extends controller
 {
 
+    public function init()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+    }
+
     public function post($params): void
     {
         $this->executeApiRequest($params);
@@ -18,10 +23,10 @@ class jsonrpc extends controller
     public function get($params): void
     {
         if (!isset($params['q'])) {
-            $this->returnInvalidRequest('you must encode your request body in json and place it in a \"q\" query parameter when using GET');
+            $this->returnInvalidRequest("you must encode your request body in JSON and place it in a 'q' query parameter when using GET");
         }
 
-        $params = json_encode($params['q']);
+        $params = (array) json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
 
         if ($params == null) {
             $this->returnParseError('JSON is invalid and was not able to be parsed');
@@ -51,18 +56,12 @@ class jsonrpc extends controller
     private function executeApiRequest($params): void
     {
 
-        var_dump($params);
-        exit;
-
-        header('Content-Type: application/json; charset=utf-8');
-
-        $methodparts = $this->parseMethodString($params['method']);
-
-        $jsonRpcVer = $params['jsonrpc'];
-        $serviceName = "leantime\\domain\\services\\{$methodparts[0]}";
-        $methodName = $methodparts[1];
-        $requestBody = $params['params'];
-        $requestMethod = $params['id'];
+        $methodparts = $this->parseMethodString(isset($params['method']) ? $params['method'] : '');
+        $jsonRpcVer = isset($params['jsonrpc']) ? $params['jsonrpc'] : null;
+        $serviceName = "leantime\\domain\\services\\{$methodparts['service']}";
+        $methodName = $methodparts['method'];
+        $paramsFromRequest = isset($params['params']) ? $params['params'] : [];
+        $id = isset($params['id']) ? $params['id'] : null;
 
         if (!class_exists($serviceName)) {
             $this->returnMethodNotFound("Service doesn't exist: $serviceName");
@@ -76,16 +75,16 @@ class jsonrpc extends controller
             $this->returnInvalidRequest("You must include a \"jsonrpc\" parameter with a value of \"2.0\"");
         }
 
-        if ($jsonRpcVer !== '1.0') {
-            $this->returnInvalidRequest("Leantime doesn't support JSON-RPC version 1.0");
+        if ($jsonRpcVer !== '2.0') {
+            $this->returnInvalidRequest("Leantime only supports JSON-RPC version 2.0");
         }
 
         $methodParams = $this->getMethodParameters($serviceName, $methodName);
-        $preparedParams = $this->prepareParameters($requestBody, $methodParams);
+        $preparedParams = $this->prepareParameters($paramsFromRequest, $methodParams);
 
         // can be null
         try {
-            $method_response = new $serviceName->$requestMethod($methodName, $preparedParams);
+            $method_response = (new $serviceName())->$methodName($preparedParams);
         } catch (Error $e) {
             $this->returnServerError($e);
         }
@@ -96,7 +95,7 @@ class jsonrpc extends controller
             }
         }
 
-        $this->returnResponse($method_response, $requestMethod);
+        $this->returnResponse($method_response, $id);
     }
 
     /**
@@ -110,7 +109,7 @@ class jsonrpc extends controller
             $this->returnInvalidRequest("Must include method");
         }
 
-        if (!str_starts_with("leantime.rpc.")) {
+        if (!str_starts_with($methodstring, "leantime.rpc.")) {
             $this->returnInvalidRequest("Method string doesn't start with \"leantime.rpc.\"");
         }
 
@@ -203,11 +202,11 @@ class jsonrpc extends controller
      *
      * @return void
      */
-    private function returnResponse(array|null $returnValue, string $requestMethod, string $id = null): void
+    private function returnResponse(array|null $returnValue, string $id = null): void
     {
         echo json_encode([
             'jsonrpc' => '2.0',
-            'message' => "$requestMethod request was successful",
+            'message' => "Request was successful",
             'result' => $returnValue,
             'id' => $id
         ]);

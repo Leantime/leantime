@@ -1,0 +1,152 @@
+[15-Dec-2022 10:21:46 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:56
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(30): leantime\domain\controllers\jsonrpc->executeApiRequest('"{\\"method\\": \\...')
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get('"{\\"method\\": \\...')
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 56
+[15-Dec-2022 10:21:58 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:56
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(30): leantime\domain\controllers\jsonrpc->executeApiRequest('"{\\"method\\": \\...')
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get('"{\\"method\\": \\...')
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 56
+[15-Dec-2022 10:23:08 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:56
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(30): leantime\domain\controllers\jsonrpc->executeApiRequest(Object(stdClass))
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Object(stdClass))
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 56
+[15-Dec-2022 10:24:02 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:59
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Object(stdClass))
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Object(stdClass))
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 59
+[15-Dec-2022 10:26:39 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:59
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Object(stdClass))
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Object(stdClass))
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 59
+[15-Dec-2022 10:27:20 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:59
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Object(stdClass))
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Object(stdClass))
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 59
+[15-Dec-2022 10:28:36 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Cannot use object of type stdClass as array in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:67
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(40): leantime\domain\controllers\jsonrpc->executeApiRequest(Object(stdClass))
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Object(stdClass))
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 67
+[15-Dec-2022 10:29:55 America/Los_Angeles] PHP Fatal error:  Uncaught ArgumentCountError: str_starts_with() expects exactly 2 arguments, 1 given in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:117
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(117): str_starts_with('leantime.rpc.')
+#1 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(67): leantime\domain\controllers\jsonrpc->parseMethodString('leantime.rpc.ti...')
+#2 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(40): leantime\domain\controllers\jsonrpc->executeApiRequest(Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#6 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#9 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 117
+[15-Dec-2022 10:31:26 America/Los_Angeles] PHP Warning:  Undefined array key "jsonrpc" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 10:31:26 America/Los_Angeles] PHP Warning:  Undefined array key 0 in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 70
+[15-Dec-2022 10:31:26 America/Los_Angeles] PHP Warning:  Undefined array key 1 in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 71
+[15-Dec-2022 10:31:26 America/Los_Angeles] PHP Warning:  Undefined array key "params" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 72
+[15-Dec-2022 10:31:26 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 73
+[15-Dec-2022 10:32:29 America/Los_Angeles] PHP Warning:  Undefined array key "jsonrpc" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 10:32:29 America/Los_Angeles] PHP Warning:  Undefined array key "params" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 72
+[15-Dec-2022 10:32:29 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 73
+[15-Dec-2022 10:32:49 America/Los_Angeles] PHP Warning:  Undefined array key "params" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 72
+[15-Dec-2022 10:32:49 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 73
+[15-Dec-2022 10:33:00 America/Los_Angeles] PHP Warning:  Undefined array key "params" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 72
+[15-Dec-2022 10:33:00 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 73
+[15-Dec-2022 10:36:58 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 65
+[15-Dec-2022 10:36:58 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: leantime\domain\controllers\jsonrpc::prepareParameters(): Argument #1 ($params) must be of type array, stdClass given, called in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 84 and defined in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:153
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(84): leantime\domain\controllers\jsonrpc->prepareParameters(Object(stdClass), Array)
+#1 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#6 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#7 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#8 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 153
+[15-Dec-2022 10:40:02 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 65
+[15-Dec-2022 10:40:02 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: leantime\domain\controllers\jsonrpc::prepareParameters(): Argument #1 ($params) must be of type array, stdClass given, called in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 84 and defined in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:153
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(84): leantime\domain\controllers\jsonrpc->prepareParameters(Object(stdClass), Array)
+#1 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#6 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#7 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#8 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 153
+[15-Dec-2022 10:42:19 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: leantime\domain\controllers\jsonrpc::prepareParameters(): Argument #1 ($params) must be of type array, stdClass given, called in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 83 and defined in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:152
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(83): leantime\domain\controllers\jsonrpc->prepareParameters(Object(stdClass), Array)
+#1 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#6 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#7 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#8 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 152
+[15-Dec-2022 10:45:07 America/Los_Angeles] PHP Warning:  Attempt to read property "getTicket" on string in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 87
+[15-Dec-2022 10:45:07 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class name must be a valid object or a string in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php:87
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php(35): leantime\domain\controllers\jsonrpc->executeApiRequest(Array)
+#1 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(63): leantime\domain\controllers\jsonrpc->get(Array)
+#2 /Users/josephroberts/localdev/leantime/src/core/class.controller.php(35): leantime\core\controller->executeActions('get', Array)
+#3 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(190): leantime\core\controller->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/src/core/class.frontcontroller.php(108): leantime\core\frontcontroller::executeAction('api.jsonrpc', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/src/core/class.application.php(121): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 87
