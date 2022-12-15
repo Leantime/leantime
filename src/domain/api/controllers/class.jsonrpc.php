@@ -51,8 +51,6 @@ class jsonrpc extends controller
             $this->returnParseError('JSON is invalid and was not able to be parsed');
         }
 
-        $params = (array) $params;
-
         $this->executeApiRequest($params);
     }
 
