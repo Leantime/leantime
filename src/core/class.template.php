@@ -183,7 +183,7 @@ namespace leantime\core {
         public function display($template, $layout = "app") {
 
             //These variables are available in the template
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
             $settings = new appSettings();
             $login = services\auth::getInstance();
             $roles = new roles();
@@ -336,7 +336,7 @@ namespace leantime\core {
         public function displaySubmodule($alias) {
 
             $frontController = frontcontroller::getInstance(ROOT);
-            $config = new \leantime\core\environment();
+            $config = \leantime\core\environment::getInstance();
             $settings = new appSettings();
             $login = services\auth::getInstance();
             $roles = new roles();

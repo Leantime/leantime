@@ -67,7 +67,7 @@ namespace leantime\core {
          */
         private function __construct() {
 
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
             $settingsRepo = new setting();
             $this->themeCore = new theme();
             $this->theme = $this->themeCore->getActive();

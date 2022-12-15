@@ -63,7 +63,7 @@ namespace leantime\domain\repositories {
         public function __construct() {
 
             $this->db = core\db::getInstance();
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
         }
 
         /**

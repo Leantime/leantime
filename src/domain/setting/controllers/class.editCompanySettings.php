@@ -28,7 +28,7 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
-            $this->config = new \leantime\core\environment();
+            $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
         }
 
