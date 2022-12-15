@@ -267,6 +267,15 @@ class jsonrpc extends controller
      */
     private function returnResponse(array|null $returnValue, string $id = null): void
     {
+        /**
+         * No IDs imply notification and MUST not be responded to
+         *
+         * @see https://jsonrpc.org/specification#notification
+         */
+        if ($id == null) {
+            return;
+        }
+
         echo json_encode([
             'jsonrpc' => '2.0',
             'message' => "Request was successful",
