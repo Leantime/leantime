@@ -1,2 +1,0 @@
-[15-Dec-2022 09:25:06 America/Los_Angeles] PHP Warning:  Undefined array key "HTTP_ACCEPT_LANGUAGE" in /Users/josephroberts/localdev/leantime/src/core/class.language.php on line 444
-[15-Dec-2022 09:32:48 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token "}" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 31
