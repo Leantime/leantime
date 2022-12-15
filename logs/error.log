@@ -1,0 +1,8 @@
+[15-Dec-2022 12:26:20 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 12:26:20 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 12:26:20 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 70
+[15-Dec-2022 12:26:20 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 70
+[15-Dec-2022 12:27:24 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 12:27:24 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 69
+[15-Dec-2022 12:27:24 America/Los_Angeles] PHP Warning:  Undefined variable $i in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 70
+[15-Dec-2022 12:27:24 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/josephroberts/localdev/leantime/src/domain/api/controllers/class.jsonrpc.php on line 70

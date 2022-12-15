@@ -29,7 +29,23 @@ class jsonrpc extends controller
      */
     public function post(array $params): void
     {
-        $this->executeApiRequest($params);
+        /**
+         * batch requests
+         *
+         * @see https://jsonrpc.org/specification#batch
+         */
+        if (array_keys($params) == range(0, count($params) - 1)) {
+            for ($i = 0; $i < count($params); $i++) {
+                $this->executeApiRequest($params[$i]);
+
+                if ($i !== count($params) - 1) {
+                    echo ",";
+                }
+            }
+        // normal requests
+        } else {
+            $this->executeApiRequest($params);
+        }
     }
 
     /**
@@ -47,11 +63,28 @@ class jsonrpc extends controller
 
         $params = json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
 
+        // check if decode failed
         if ($params == null) {
             $this->returnParseError('JSON is invalid and was not able to be parsed');
         }
 
-        $this->executeApiRequest($params);
+        /**
+         * batch requests
+         *
+         * @see https://jsonrpc.org/specification#batch
+         */
+        if (array_keys($params) == range(0, count($params) - 1)) {
+            for ($i = 0; $i < count($params); $i++) {
+                $this->executeApiRequest($params[$i]);
+
+                if ($i !== count($params) - 1) {
+                    echo ",";
+                }
+            }
+        // normal requests
+        } else {
+            $this->executeApiRequest($params);
+        }
     }
 
     /**
