@@ -4,11 +4,12 @@ namespace leantime\domain\services {
 
     use DateTime;
     use leantime\core;
+    use leantime\core\service;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class tickets
+    class tickets extends service
     {
 
         private $projectRepository;
@@ -33,11 +34,15 @@ namespace leantime\domain\services {
         //GET Properties
         public function getStatusLabels() {
 
+            $this->setGet(__FUNCTION__);
+
             return $this->ticketRepository->getStateLabels();
 
         }
 
         public function getAllStatusLabelsByUserId($userId) {
+
+            $this->setGet(__FUNCTION__);
 
             $statusLabelsByProject = array();
 
@@ -72,7 +77,7 @@ namespace leantime\domain\services {
 
         public function saveStatusLabels($params) {
 
-
+            $this->setPost(__FUNCTION__);
 
             if(isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0){
 
@@ -104,6 +109,8 @@ namespace leantime\domain\services {
 
         public function getKanbanColumns() {
 
+            $this->setGet(__FUNCTION__);
+
             $statusList = $this->ticketRepository->getStateLabels();
 
             $visibleCols = array();
@@ -124,11 +131,15 @@ namespace leantime\domain\services {
 
         public function getTypeIcons() {
 
+            $this->setGet(__FUNCTION__);
+
             return $this->ticketRepository->typeIcons;
 
         }
 
         public function getEffortLabels() {
+
+            $this->setGet(__FUNCTION__);
 
             return $this->ticketRepository->efforts;
 
@@ -136,12 +147,18 @@ namespace leantime\domain\services {
 
         public function getTicketTypes() {
 
+            $this->setGet(__FUNCTION__);
+
             return $this->ticketRepository->type;
 
         }
 
         public function getPriorityLabels() {
+
+            $this->setGet(__FUNCTION__);
+
             return $this->ticketRepository->priority;
+
         }
 
         public function prepareTicketSearchArray(array $searchParams)
@@ -218,11 +235,15 @@ namespace leantime\domain\services {
         //GET
         public function getAll($searchCriteria){
 
+            $this->setGet(__FUNCTION__);
+
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy']);
         }
 
         public function getTicket($id)
         {
+
+            $this->setGet(__FUNCTION__);
 
             $ticket = $this->ticketRepository->getTicket($id);
 
@@ -245,6 +266,8 @@ namespace leantime\domain\services {
         }
 
         public function getOpenUserTicketsThisWeekAndLater ($userId, $projectId) {
+
+            $this->setGet(__FUNCTION__);
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint"=>""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
@@ -309,6 +332,8 @@ namespace leantime\domain\services {
 
         public function getLastTickets($projectId, $limit=5){
 
+            $this->setGet(__FUNCTION__);
+
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => "", "status" => "not_done", "sprint"=>"", "limit"=>$limit));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "date", $limit);
 
@@ -317,6 +342,8 @@ namespace leantime\domain\services {
         }
 
         public function getOpenUserTicketsByProject ($userId, $projectId) {
+
+            $this->setGet(__FUNCTION__);
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint"=>""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
@@ -348,6 +375,8 @@ namespace leantime\domain\services {
         public function getAllMilestones($projectId, $includeArchived = false, $sortBy="duedate")
         {
 
+            $this->setGet(__FUNCTION__);
+
             if($projectId > 0) {
                 return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy);
             }
@@ -357,6 +386,8 @@ namespace leantime\domain\services {
         }
 
         public function getAllMilestonesByUserProjects($userId) {
+
+            $this->setGet(__FUNCTION__);
 
             $milestones = array();
 
@@ -388,8 +419,10 @@ namespace leantime\domain\services {
 
         public function getAllSubtasks($ticketId)
         {
-            $values = $this->ticketRepository->getAllSubtasks($ticketId);
 
+            $this->setGet(__FUNCTION__);
+
+            $values = $this->ticketRepository->getAllSubtasks($ticketId);
 
             return $values;
         }
@@ -397,6 +430,8 @@ namespace leantime\domain\services {
         //Add
         public function quickAddTicket($params)
         {
+
+            $this->setPost(__FUNCTION__);
 
             $values = array(
                 'headline' => $params['headline'],
@@ -447,6 +482,8 @@ namespace leantime\domain\services {
         public function quickAddMilestone($params)
         {
 
+            $this->setPost(__FUNCTION__);
+
             $values = array(
                 'headline' => $params['headline'],
                 'type' => 'milestone',
@@ -482,6 +519,8 @@ namespace leantime\domain\services {
 
         public function addTicket($values)
         {
+
+            $this->setPost(__FUNCTION__);
 
             $values = array(
                 'id' => '',
@@ -560,6 +599,8 @@ namespace leantime\domain\services {
         public function updateTicket($id, $values)
         {
 
+            $this->setPut(__FUNCTION__);
+
             $values = array(
                 'id' => $id,
                 'headline' => $values['headline'],
@@ -631,6 +672,8 @@ namespace leantime\domain\services {
         public function patchTicket($id, $params)
         {
 
+            $this->setPut(__FUNCTION__);
+
             //$params is an array of field names. Exclude id
             unset($params["id"]);
 
@@ -640,6 +683,8 @@ namespace leantime\domain\services {
 
         public function quickUpdateMilestone($params)
         {
+
+            $this->setPut(__FUNCTION__);
 
             $values = array(
                 'headline' => $params['headline'],
@@ -675,6 +720,8 @@ namespace leantime\domain\services {
 
         public function upsertSubtask($values, $parentTicket)
         {
+
+            $this->setPut(__FUNCTION__);
 
             $subtaskId = $values['subtaskId'];
 
@@ -723,6 +770,8 @@ namespace leantime\domain\services {
 
         public function updateTicketStatusAndSorting($params, $handler=null)
         {
+
+            $this->setPut(__FUNCTION__);
 
             //Jquery sortable serializes the array for kanban in format
             //statusKey: ticket[]=X&ticket[]=X2...,
@@ -774,6 +823,8 @@ namespace leantime\domain\services {
         //Delete
         public function deleteTicket($id){
 
+            $this->setDelete(__FUNCTION__);
+
             $ticket = $this->getTicket($id);
 
             if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
@@ -790,6 +841,8 @@ namespace leantime\domain\services {
 
         public function deleteMilestone($id){
 
+            $this->setDelete(__FUNCTION__);
+
             $ticket = $this->getTicket($id);
 
             if(!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
@@ -805,6 +858,8 @@ namespace leantime\domain\services {
         }
 
         public function getLastTicketViewUrl() {
+
+            $this->setGet(__FUNCTION__);
 
             $url = BASE_URL."/tickets/showKanban";
 
@@ -828,6 +883,9 @@ namespace leantime\domain\services {
 
         public function getGroupByFieldOptions()
         {
+
+            $this->setGet(__FUNCTION__);
+
             return [
                 [
                     'id' => 'groupByNothingLink',
@@ -864,6 +922,9 @@ namespace leantime\domain\services {
 
         public function getNewFieldOptions()
         {
+
+            $this->setGet(__FUNCTION__);
+
             if (!defined('BASE_URL')) {
                 return [];
             }

@@ -24,9 +24,14 @@ class restapi
         $servicename = "leantime\\domain\\services\\$service";
         $methodName = $arguments['function'];
         $requestBody = $arguments['parameters'];
+        $requestMethod = $arguments['request_method'];
 
         if (!class_exists($servicename)) {
             $this->returnError("Service doesn't exist");
+        }
+
+        if (!is_subclass_of($servicename, 'leantime\\core\\service')) {
+            $this->returnError("Service is not supported yet.");
         }
 
         if (!method_exists($servicename, $methodName)) {
@@ -38,7 +43,7 @@ class restapi
 
         // can be null
         try {
-            $return_value = new $servicename->$methodName($preparedParams);
+            $return_value = new $servicename->$requestMethod($methodName, $preparedParams);
         } catch (Error $e) {
             $this->returnError($e);
         }
@@ -49,7 +54,7 @@ class restapi
             }
         }
 
-        $this->returnResponse($return_value, $arguments['request_method']);
+        $this->returnResponse($return_value, $requestMethod);
     }
 
     /**
@@ -81,6 +86,7 @@ class restapi
     {
         $filtered_parameters = [];
 
+        // matches params, params that don't match are ignored
         foreach ($methodParams as $methodparam) {
             $required = $methodparam->isDefaultValueAvailable() ? false : true;
             $position = $methodparam->getPosition();
