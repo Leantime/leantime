@@ -10,16 +10,35 @@ use leantime\core\controller;
 class jsonrpc extends controller
 {
 
+    /**
+     * init - initialize private variables or events to happen before route execution
+     *
+     * @return void
+     */
     public function init()
     {
         header('Content-Type: application/json; charset=utf-8');
     }
 
+    /**
+     * Handles post requests
+     *
+     * @param $params - value of $_POST
+     *
+     * @return void
+     */
     public function post($params): void
     {
         $this->executeApiRequest($params);
     }
 
+    /**
+     * Handles get requests
+     *
+     * @param $params - value of $_GET
+     *
+     * @return void
+     */
     public function get($params): void
     {
         if (!isset($params['q'])) {
@@ -35,11 +54,21 @@ class jsonrpc extends controller
         $this->executeApiRequest($params);
     }
 
+    /**
+     * Handles patch requests
+     *
+     * @return void
+     */
     public function patch(): void
     {
         $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
     }
 
+    /**
+     * Handles delete requests
+     *
+     * @return void
+     */
     public function delete(): void
     {
         $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
