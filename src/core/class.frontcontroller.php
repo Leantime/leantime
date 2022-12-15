@@ -93,12 +93,6 @@ namespace leantime\core {
 
             }
 
-            if (isset($_REQUEST['id'])) {
-
-                self::$fullAction .= '.' . htmlspecialchars($_REQUEST['id']);
-
-            }
-
             //action parameter overrides Request['act']
             if ($action !== '') {
 
