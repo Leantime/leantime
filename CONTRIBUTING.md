@@ -44,5 +44,81 @@ People *love* thorough bug reports. I'm not even kidding.
 ## Use a Consistent Coding Style
 We are using the [PSR-12 coding style](https://www.php-fig.org/psr/psr-12/) for PHP. 
 
+## Directory Structure in Leantime
+
+This isn't a complete list, but points out the things of note to most contributors.
+
+```yaml
+├── bin/leantime # leantime cli
+├── config/
+│   ├── .env OR config.yaml OR configuration.php # different configuration file options
+│   └── appSettings.php # application settings, including current version
+├── logs/error.log # error and debug logging
+├── vendor/ # composer dependencies
+├── public/ # directory root
+│   ├── css/
+│   ├── fonts/
+│   ├── images/
+│   ├── js/
+│   ├── less/
+│   ├── theme/ # different themes for leantime
+│   │   └── {themename}/
+│   │       ├── css/
+│   │       ├── js/
+│   │       ├── language/
+│   │       ├── layout/ # layout files of the applicaiton
+│   │       │   ├── app.twig
+│   │       │   ├── {layoutname}.twig
+│   │       │   └── partials/ # twig partials for layouts
+│   │       │       ├── header.twig
+│   │       │       └── {partialname}.twig
+│   │       └── theme.ini # config file for themes
+│   ├── userfiles/
+│   ├── backup.php
+│   ├── cron.php
+│   ├── download.php
+│   └── index.php # index file of the application
+└── src/
+    ├── command/ # each of these files are a command in leantime-cli
+    │   └── class.{name}Command.php 
+    ├── core/ # this folder contains the core functionality of the application
+    │   ├── abstract.{name}.php # abstract classes for the application
+    │   ├── trait.{name}.php # traits for the application
+    │   └── class.{name}.php # classes for the application
+    ├── custom/... # overwrites the src/ folder, instance specific
+    ├── domain/ # contains all the different modules (routes) of the application
+    │   └── {modulename}/
+    │       ├── pages/
+    │       │   ├── controllers/class.{actionname}.php
+    │       │   └── templates/{actionname}.twig
+    │       ├── components/
+    │       │   ├── controllers/class.{componentname}.php
+    │       │   └── templates/{componentname}.twig
+    │       ├── events/register.php # contains events for the module
+    │       ├── repositories/class.{modulename}.php # module repository
+    │       └── services/class.{modulename}.php # module service
+    ├── language/
+    │   ├── {language_code}.ini
+    │   └── ...
+    ├── plugins/
+    │   ├── {pluginname}/...
+    │   └── motivationalQuotes/ # example plugin
+    │       └── register.php # only required file for plugins, used to hook into events
+    └── macros/ # small reusable templates, used throughout the application
+        ├── icon.twig
+        ├── searchabledropdown.twig
+        ├── passwordfield.twig
+        └── {macroname}.twig
+```
+
+## Templates in Leantime
+| Type       | Description                                      | Location                                                      |
+| ---------- | ------------------------------------------------ | ------------------------------------------------------------- |
+| Macros     | Small building blocks, very reusable             | `src/macros/{macroname}.twig`                                 |
+| Components | HTML partials generated and sent from the server | `src/domain/{modulename}/components/`                         |
+| Layouts    | Specific page structures, uses partials          | `public/theme/{themename}/layout/{layoutname}.twig`           |
+| Partials   | Templates for pieces of specific page structure  | `public/theme/{themename}/layout/partials/{partialname}.twig` |
+| Pages      | Templates for specific routes, extends layouts   | `src/domain/{modulename}/pages/`                              |
+
 ## References
 This document was adapted from the open-source contribution guidelines for [Facebook's Draft](https://github.com/facebook/draft-js/blob/a9316a723f9e918afde44dea68b5f9f39b7d9b00/CONTRIBUTING.md)
