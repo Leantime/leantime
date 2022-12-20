@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access'); 
+defined('RESTRICTED') or die('Restricted access');
 $roles = $this->get('roles');
 $values = $this->get('values');
 $projects = $this->get('relations');
@@ -66,25 +66,26 @@ $projects = $this->get('relations');
 </script>
 
 <div class="pageheader">
-                       
+
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
         <h1><h1><?php echo $this->__('headlines.new_user'); ?></h1></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
-    <div class="maincontentinner">
+
 
         <?php echo $this->displayNotification() ?>
         <form action="" method="post" class="stdform">
 
-            <div class="row-fluid">
-            <span class="span6">
-                <div class="widget">
-                    <h4 class="widgettitle"><?php echo $this->__('label.overview'); ?></h4>
-                    <div class="widgetcontent">
+            <div class="row">
+            <div class="col-md-8">
+                    <div class="maincontentinner">
+
+                    <h4 class="widgettitle title-light"><?php echo $this->__('label.profile_information'); ?></h4>
+
                         <label for="firstname"><?php echo $this->__('label.firstname'); ?></label> <input
                             type="text" name="firstname" id="firstname"
                             value="<?php echo $values['firstname'] ?>" /><br />
@@ -124,84 +125,62 @@ $projects = $this->get('relations');
                             <?php endforeach; ?>
                         </select><br/>
 
-                        <label for="password"><?php echo $this->__('label.password'); ?></label> <input
-                            type="password" name="password" id="password" value="" autocomplete="new-password"/><br />
-
-                        <label for="password2"><?php echo $this->__('label.password_repeat'); ?></label> <input
-                            type="password" name="password2" id="password2" value="" autocomplete="new-password"/><br />
-
                         <p class="stdformbutton">
                             <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
                         </p>
                     </div>
-                </div>
-            </span>
-            <span class="span6">
-                <div class="widget ">
-                        <h4 class="widgettitle"><?php echo $this->__('label.project_assignment'); ?></h4>
-                        <div class="widgetcontent">
+            </div>
+            <div class="col-md-4">
+                <div class="maincontentinner">
+                    <h4 class="widgettitle title-light"><?php echo $this->__('label.project_assignment'); ?></h4>
 
-                             <span id="dualselect" class="dualselect" style="margin-left:0px;">
+                    <div class="scrollableItemList">
+                        <?php
+                        $currentClient = '';
+                        $i = 0;
+                        foreach($this->get('allProjects') as $row){
 
-                                 <div class="row">
-                                     <div class="col-5">
-                                         <span><?php echo $this->__('label.available_projects'); ?></span>
-                                          <select class="uniformselect" name="select3" multiple="multiple" size="10" id="selectOrigin" style="width:100%">
-
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === false) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?> / <?php $this->e($row['clientName']); ?></option>
-                                                                <?php } ?>
-                                                            <?php } ?>
-
-                                                    </select>
-
-                                     </div>
-                                      <div class="col-2" class="align-center">
-                                           <span class="ds_arrow">
-                                                        <button class="btn ds_prev"><i class="fa fa-chevron-left"></i></button><br />
-                                                        <button class="btn ds_next"><i class="fa fa-chevron-right"></i></button>
-                                                    </span>
-
-                                     </div>
-                                      <div class="col-5">
-                                          <span><?php echo $this->__('label.assigned_projects'); ?></span>
-                                            <select name="select4" multiple="multiple" size="10" id="selectDest" style="width:100%">
-
-
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>"><?php echo $row['clientName']; ?> / <?php echo $row['name']; ?></option>
-
-                                                                <?php } ?>
-
-                                                            <?php } ?>
-                                                    </select>
-                                     </div>
-                                 </div>
-
-
-
-
-
-                                                </span>
-
-                                                <select name="projects[]" multiple="multiple" size="10" id="projects" style="display:none;">
-
-
-                                                            <?php foreach($this->get('allProjects') as $row){ ?>
-                                                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { ?>
-                                                                    <option value="<?php echo $row['id'] ?>" selected="selected"><?php echo $row['name']; ?> / <?php echo $row['clientName']; ?></option>
-                                                                <?php } ?>
-
-                                                            <?php } ?>
-                                                    </select>
+                            if($currentClient != $row['clientName']){
+                                if($i>0) { echo"</div>"; }
+                                echo "<h3 id='accordion_link_".$i."'>
+                                <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$this->escape($row['clientName'])."</a>
+                                </h3>
+                                <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+                                $currentClient = $row['clientName'];
+                            } ?>
+                                <div class="item">
+                                    <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
+                                    <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { echo "checked='checked';"; } ?>
+                                    /><label for="project_<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?></label>
+                                    <div class="clearall"></div>
+                                </div>
+                            <?php $i++; ?>
+                        <?php } ?>
 
                     </div>
+
                 </div>
-            </span>
+            </div>
             </div>
         </form>
 
     </div>
 </div>
+
+<script>
+    function accordionToggle(id) {
+
+        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
+
+        if(currentLink.hasClass("fa-angle-right")){
+            currentLink.removeClass("fa-angle-right");
+            currentLink.addClass("fa-angle-down");
+            jQuery('#accordion_'+id).slideDown("fast");
+        }else{
+            currentLink.removeClass("fa-angle-down");
+            currentLink.addClass("fa-angle-right");
+            jQuery('#accordion_'+id).slideUp("fast");
+        }
+
+    }
+</script>

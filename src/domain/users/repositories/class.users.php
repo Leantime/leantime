@@ -153,7 +153,7 @@ namespace leantime\domain\repositories {
         public function getUserByEmail($email)
         {
 
-            $sql = "SELECT * FROM `zp_user` WHERE username = :email LIMIT 1";
+            $sql = "SELECT * FROM `zp_user` WHERE username = :email AND status LIKE 'a' LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':email', $email, PDO::PARAM_STR);
@@ -194,11 +194,11 @@ namespace leantime\domain\repositories {
         public function getEmployees()
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 			zp_user.id,
 			zp_user.firstname,
 			zp_user.lastname
-		 FROM zp_user 
+		 FROM zp_user
 		    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
@@ -220,18 +220,18 @@ namespace leantime\domain\repositories {
         public function getAll()
         {
 
-            $query = "SELECT 
-                      zp_user.id, 
-                      lastname, 
-                      firstname, 
-                      role, 
-                      profileId, 
+            $query = "SELECT
+                      zp_user.id,
+                      lastname,
+                      firstname,
+                      role,
+                      profileId,
                       status,
                       username,
                       twoFAEnabled,
                       clientId,
                       zp_clients.name AS clientName
-					FROM `zp_user` 
+					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					ORDER BY lastname";
 
@@ -253,19 +253,19 @@ namespace leantime\domain\repositories {
         public function getAllClientUsers($clientId)
         {
 
-            $query = "SELECT 
-                        zp_user.id, 
-                        lastname, 
-                        firstname, 
-                        role, 
-                        profileId, 
+            $query = "SELECT
+                        zp_user.id,
+                        lastname,
+                        firstname,
+                        role,
+                        profileId,
                         status,
                         username,
                         twoFAEnabled,
                         zp_clients.name AS clientName
-					FROM `zp_user` 
+					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-					WHERE clientId = :clientId 
+					WHERE clientId = :clientId
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -319,7 +319,6 @@ namespace leantime\domain\repositories {
 				wage = :wage,
 				clientId = :clientId,
 				password = :password
-				
 			 WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -335,8 +334,10 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 			$stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
 
-            $stmn->execute();
+           $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
 
         }
 
@@ -408,12 +409,12 @@ namespace leantime\domain\repositories {
             }
 
             $query = "UPDATE `zp_user` SET
-				lastname = :lastname, 
-				firstname = :firstname, 
-				username = :username, 
+				lastname = :lastname,
+				firstname = :firstname,
+				username = :username,
 				".$chgPW."
 				phone = :phone,
-				notifications = :notifications			 
+				notifications = :notifications
 				WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -448,13 +449,13 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_user` (
-							firstname, 
-							lastname, 
-							phone, 
-							username, 
+							firstname,
+							lastname,
+							phone,
+							username,
 							role,
 					        notifications,
-							clientId, 
+							clientId,
 							password,
 							source
 						) VALUES (
@@ -621,7 +622,7 @@ namespace leantime\domain\repositories {
             $query = "SELECT profileId FROM `zp_user` WHERE `firstname` = :firstname AND `lastname` = :lastname";
 
             $stmn = $this->db->database->prepare($query);
-            
+
             $stmn->bindValue(':firstname', $firstname, PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $lastname, PDO::PARAM_STR);
 
@@ -630,9 +631,9 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return  $result['profileId'] ?? false;
-            
+
         }
-        
+
 
     }
 

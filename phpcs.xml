@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <ruleset name="PHP_CodeSniffer">
     <description>PHP_CodeSniffer configuration</description>
-    <rule ref="PSR-4" />
+    <rule ref="PSR2" />
 </ruleset>

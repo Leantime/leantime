@@ -1,7 +1,7 @@
 <?php
 /**
  * backup.php - For Handling Backup DB.
- * 
+ *
  * Can use CronJob for run 0 5 * * * wget http://yourleantimeurl.com/backup.php
  *
  */
@@ -10,8 +10,9 @@ define('ROOT', dirname(__FILE__));
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 
-include_once '../src/core/class.autoload.php';
-include_once '../config/configuration.php';
+require_once '../src/core/class.autoload.php';
+require_once '../config/configuration.php';
+require_once '../config/appSettings.php';
 
 $config = new leantime\core\config();
 $settings = new leantime\core\appSettings();
@@ -40,7 +41,7 @@ function runBackup($backupFile, $config){
 }
 
 function uploadS3($backupFile, $config){
-   
+
     $s3Client = new S3\S3Client(
         [
             'version'     => 'latest',
@@ -55,7 +56,7 @@ function uploadS3($backupFile, $config){
     );
 
     try {
-        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
         $fileKey = implode('/', array_filter(array($config->s3FolderName, 'backupdb' , $backupFile)));
         $result = $s3Client->putObject([

@@ -187,7 +187,7 @@ namespace leantime\core {
 
         private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
         {
-            if ($type !== 'filter' || $type !== 'event') {
+            if ($type !== 'filter' && $type !== 'event') {
                 return false;
             }
 

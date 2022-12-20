@@ -594,3 +594,7 @@ div.border {
     border-radius: var(--box-radius);
     padding:10px;
 }
+
+body select {
+    max-witdh:206px;
+}

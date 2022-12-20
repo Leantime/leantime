@@ -96,9 +96,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if($dataLabels[3]['active']) { ?>
           <label><?=$this->__($dataLabels[3]['title']) ?></label>
             <?php if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int'){ ?>
-                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
+                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[3]['field']] ?>"/><br />
             <?php }else if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string'){ ?>
-                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
+                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[3]['field']] ?>"/><br />
             <?php }else{ ?>
                 <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
             <?php } ?>

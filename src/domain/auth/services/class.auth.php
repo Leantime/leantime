@@ -378,6 +378,19 @@ namespace leantime\domain\services {
             return $this->authRepo->validateResetLink($hash);
         }
 
+        /**
+         * validateResetLink - validates that the password reset link belongs to a user account in the database
+         *
+         * @access public
+         * @param
+         * @return bool
+         */
+        public function getUserByInviteLink($hash)
+        {
+
+            return $this->authRepo->getUserByInviteLink($hash);
+        }
+
 
         public function generateLinkAndSendEmail($username)
         {

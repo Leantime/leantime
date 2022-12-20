@@ -23,6 +23,7 @@ class application
     private $publicActions = array(
         "auth.login",
         "auth.resetPw",
+        "auth.userInvite",
         "install",
         "install.update",
         "errors.error404",

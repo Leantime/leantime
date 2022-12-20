@@ -11,194 +11,114 @@ $user = $this->get('user');
     <div class="pageicon"><span class="fa fa-user"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.overview') ?></h5>
-        <h1><h1><?php echo $this->__('headlines.my_profile'); ?></h1></h1>
+        <h1><h1><?php echo $this->__('headlines.accountSettings'); ?></h1></h1>
     </div>
 </div><!--pageheader-->
 
+<?php echo $this->displayNotification(); ?>
+
 <div class="maincontent">
-    <div class="maincontentinner">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="maincontentinner">
+                <div class="tabbedwidget tab-primary accountTabs">
 
-        <?php echo $this->displayNotification(); ?>
+                    <ul>
+                        <li><a href="#myProfile"><?php echo $this->__('tabs.myProfile'); ?></a></li>
+                        <li><a href="#security"><?php echo $this->__('tabs.security'); ?></a></li>
+                        <li><a href="#look"><?php echo $this->__('tabs.look_feel'); ?></a></li>
+                        <li><a href="#notifications"><?php echo $this->__('tabs.notifications'); ?></a></li>
+                    </ul>
 
-        <div class="row-fluid">
-            <div class="span7">
-
-                <div class="widget">
-                    <h4 class="widgettitle"><?php echo $this->__('label.overview'); ?></h4>
-                    <div class="widgetcontent">
-
+                    <div id="myProfile">
                         <form action="" method="post" class='stdform'>
+
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
-                            <p>
-                                <label for="firstname"><?php echo $this->__('label.firstname'); ?></label>
-                                <span class='field'>
-                                    <input type="text" class="input" name="firstname" id="firstname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           value="<?php $this->e($values['firstname']) ?>"/><br/>
-                                </span>
-                            </p>
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="firstname" class="span3"><?php echo $this->__('label.firstname'); ?></label>
+                                    <span class='field span6'>
+                                        <input type="text" class="input" name="firstname" id="firstname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               value="<?php $this->e($values['firstname']) ?>"/><br/>
+                                    </span>
+                                </div>
 
-                            <p>
-                                <label for="lastname"><?php echo $this->__('label.lastname'); ?></label>
-                                <span class='field'>
-                                    <input type="text" name="lastname" class="input" id="lastname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           value="<?php $this->e($values['lastname']) ?>"/><br/>
-                                </span>
-                            </p>
+                                <div class="form-group">
+                                    <label for="lastname" class="span3"><?php echo $this->__('label.lastname'); ?></label>
+                                    <span class='field span6'>
+                                        <input type="text" name="lastname" class="input" id="lastname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               value="<?php $this->e($values['lastname']) ?>"/><br/>
+                                    </span>
+                                </div>
 
-                            <p>
-                                <label for="user"><?php echo $this->__('label.email'); ?></label>
-                                <span class='field'>
-                                    <input type="text" name="user" class="input" id="user" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           value="<?php $this->e($values['user']) ?>"/><br/>
-                                </span>
-                            </p>
+                                <div class="form-group">
+                                    <label for="user" class="span3"><?php echo $this->__('label.email'); ?></label>
+                                    <span class='field span6'>
+                                        <input type="text" name="user" class="input" id="user" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               value="<?php $this->e($values['user']) ?>"/><br/>
+                                    </span>
+                                </div>
 
-                            <p>
-                                <label for="phone"><?php echo $this->__('label.phone'); ?></label>
-                                <span class='field'>
-                                    <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>
-                                           value="<?php $this->e($values['phone']) ?>"/><br/>
-                                </span>
-                            </p>
+                                <div class="form-group">
+                                    <label for="phone" class="span3"><?php echo $this->__('label.phone'); ?></label>
+                                    <span class='field span6'>
+                                        <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>
+                                               value="<?php $this->e($values['phone']) ?>"/><br/>
+                                    </span>
+                                </div>
 
-                            <p>
-                                <label for="currentPassword"><?php echo $this->__('label.old_password') ?></label>
-                                <span class='field'>
-                                    <input type='password' value="" name="currentPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           id="currentPassword"/><br/>
-                                </span>
-                            </p>
-
-                            <p>
-                                <label for="oldPassword"><?php echo $this->__('label.new_password') ?></label>
-                                <span class='field'>
-                                    <input type='password' value="" name="newPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           id="newPassword"/><br/>
-                                </span>
-                            </p>
-
-                            <p>
-                                <label for="newPassword"><?php echo $this->__('label.password_repeat') ?></label>
-                                <span class='field'>
-                                    <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
-                                           id="confirmPassword"/><br/>
-                                </span>
-                            </p>
-
-                            <p>
-                                <label for="notifications"><?php echo $this->__('label.receive_notifications') ?></label>
-                                <span class='field'>
-                                    <input type="checkbox" value="" name="notifications" class="input"
-                                           id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
-                                </span>
-                            </p>
-                            <br />
-                            <p>
-                                <label for="messagesfrequency"><?php echo $this->__('label.messages_frequency') ?></label>
-                                <span class='field'>
-                                    <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
-                                        <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
-                                        <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
-                                        <option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
-                                        <option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>><?php echo $this->__('label.30min') ?></option>
-                                        <option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>><?php echo $this->__('label.1h') ?></option>
-                                        <option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>><?php echo $this->__('label.3h') ?></option>
-                                        <option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>><?php echo $this->__('label.6h') ?></option>
-                                        <option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>><?php echo $this->__('label.12h') ?></option>
-                                        <option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>><?php echo $this->__('label.24h') ?></option>
-                                        <option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>><?php echo $this->__('label.48h') ?></option>
-                                        <option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
-                                    </select> <br/>
-                                </span>
-                            </p>
-
-                            <p>
-                                <label for="language"><?php echo $this->__('label.language') ?></label>
-                                <span class='field'>
-                                    <select name="language" id="language" style="width: 220px">
-                                        <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
-                                            <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
-                                        <?php } ?>
-                                    </select>
-                                </span>
-                            </p>
-
-                            <p>
-                                <label for="theme"><?php echo $this->__('label.theme') ?></label>
-                                <span class='field'>
-                                    <select name="theme" id="theme" style="width: 220px">
-                                        <?php
-                                        $themeCore = new \leantime\core\theme();
-                                        $themeAll = $themeCore->getAll();
-                                        foreach($themeAll as $key => $name) {
-                                        ?>
-                                           <option value="<?=$key ?>" <?php if($this->get('userTheme') == $key) echo "selected='selected'" ?>><?=$this->__($name) ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </span>
-                            </p>
-
-
-
+                            </div>
                             <p class='stdformbutton'>
-                                <input type="submit" name="save" id="save"
-                                       value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                                <input type="hidden" name="profileInfo" value="1" />
+
+                                <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
                             </p>
 
                         </form>
-
                     </div>
-                </div>
-            </div>
-            <div class="span5">
-                <div class='widgetbox'>
-                    <h4 class='widgettitle'><?php echo $this->__('headlines.profile_picture'); ?></h4>
 
-                    <div class='widgetcontent' style="text-align:center;">
-
-                        <img src='<?php echo $this->get('profilePic') ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
-                        <div id="profileImg">
-                        </div>
-
-                        <div class="par">
-
-                            <label><?php echo $this->__('label.upload') ?></label>
-
-                            <div class='fileupload fileupload-new' data-provides='fileupload'>
-                                <input type="hidden"/>
-                                <div class="input-append">
-                                    <div class="uneditable-input span3">
-                                        <i class="fa-file fileupload-exists"></i>
-                                        <span class="fileupload-preview"></span>
-                                    </div>
-                                    <span class="btn btn-file">
-                                        <span class="fileupload-new"><?php echo $this->__('buttons.select_file') ?></span>
-                                        <span class='fileupload-exists'><?php echo $this->__('buttons.change') ?></span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)"/>
+                    <div id="security">
+                        <h4 class="widgettitle title-light">
+                            <?=$this->__('headlines.change_password'); ?>
+                        </h4>
+                        <form method="post">
+                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="currentPassword" class="span3"><?php echo $this->__('label.old_password') ?></label>
+                                    <span class='field span6'>
+                                        <input type='password' value="" name="currentPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               id="currentPassword"/><br/>
                                     </span>
-
-                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?php echo $this->__('buttons.remove') ?></a>
                                 </div>
-                                <p class='stdformbutton'>
-                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                        <span onclick="leantime.usersController.saveCroppie()"><?php echo $this->__('buttons.save') ?></span>
-                                        <span class="ld ld-ring ld-spin"></span>
+
+                                <div class="form-group">
+                                    <label for="newPassword" class="span3"><?php echo $this->__('label.new_password') ?></label>
+                                    <span class='field span6'>
+                                        <input type='password' value="" name="newPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               id="newPassword"/>
+                                        <span id="pwStrength"></span>
+
                                     </span>
-                                    <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                                           value="<?php echo $this->__('buttons.upload'); ?>"/>
-                                </p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmPassword" class="span3"><?php echo $this->__('label.password_repeat') ?></label>
+                                    <span class='field span6'>
+                                        <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                               id="confirmPassword"/><br/>
+                                        <small><?=$this->__('label.passwordRequirements') ?></small>
+                                    </span>
+
+                                </div>
                             </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="span5">
-                <div class='widgetbox'>
-                    <h4 class='widgettitle'><?php echo $this->__('headlines.twoFA'); ?></h4>
-                    <div class='widgetcontent'>
+                            <input type="hidden" name="savepw" value="1" />
+                            <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                        </form>
+                        <br /><br />
+                        <h4 class="widgettitle title-light">
+                            <i class="fa-solid fa-shield-halved"></i> <?=$this->__('headlines.twoFA'); ?>
+                        </h4>
                         <?php if ($values['twoFAEnabled']) { ?>
                             <p><?php echo $this->__('text.twoFA_enabled'); ?></p>
                         <?php } else { ?>
@@ -206,20 +126,131 @@ $user = $this->get('user');
                         <?php } ?>
                         <p><a href="<?=BASE_URL ?>/twoFA/edit"><?php echo $this->__('text.twoFA_manage'); ?></a></p>
                     </div>
+
+                    <div id="look">
+                        <form action="" method="post">
+                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="language" class="span3"><?php echo $this->__('label.language') ?></label>
+                                    <span class='field span6'>
+                                        <select name="language" id="language" style="width: 220px">
+                                            <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
+                                                <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="theme" class="span3"><?php echo $this->__('label.theme') ?></label>
+                                    <span class='field span6'>
+                                        <select name="theme" id="theme" style="width: 220px">
+                                            <?php
+                                            $themeCore = new \leantime\core\theme();
+                                            $themeAll = $themeCore->getAll();
+                                            foreach($themeAll as $key => $name) {
+                                                ?>
+                                                <option value="<?=$key ?>" <?php if($this->get('userTheme') == $key) echo "selected='selected'" ?>><?=$this->__($name) ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" name="saveLook" value="1" />
+                            <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                        </form>
+                    </div>
+
+                    <div id="notifications">
+                        <form action="" method="post">
+                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="notifications" class="span3"><?php echo $this->__('label.receive_notifications') ?></label>
+                                    <span class='field span6'>
+                                        <input type="checkbox" value="" name="notifications" class="input"
+                                               id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="messagesfrequency" class="span3"><?php echo $this->__('label.messages_frequency') ?></label>
+                                    <span class='field span6'>
+                                        <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
+                                            <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
+                                            <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
+                                            <option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
+                                            <option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>><?php echo $this->__('label.30min') ?></option>
+                                            <option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>><?php echo $this->__('label.1h') ?></option>
+                                            <option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>><?php echo $this->__('label.3h') ?></option>
+                                            <option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>><?php echo $this->__('label.6h') ?></option>
+                                            <option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>><?php echo $this->__('label.12h') ?></option>
+                                            <option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>><?php echo $this->__('label.24h') ?></option>
+                                            <option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>><?php echo $this->__('label.48h') ?></option>
+                                            <option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
+                                        </select> <br/>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" name="savenotifications" value="1" />
+                            <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="maincontentinner center">
+                <img src='<?php echo $this->get('profilePic') ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                <div id="profileImg">
+                </div>
 
+                <div class="par">
+
+                    <label><?php echo $this->__('label.upload') ?></label>
+
+                    <div class='fileupload fileupload-new' data-provides='fileupload'>
+                        <input type="hidden"/>
+                        <div class="input-append">
+                            <div class="uneditable-input span3">
+                                <i class="fa-file fileupload-exists"></i>
+                                <span class="fileupload-preview"></span>
+                            </div>
+                            <span class="btn btn-file">
+                                        <span class="fileupload-new"><?php echo $this->__('buttons.select_file') ?></span>
+                                        <span class='fileupload-exists'><?php echo $this->__('buttons.change') ?></span>
+                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)"/>
+                                    </span>
+
+                            <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?php echo $this->__('buttons.remove') ?></a>
+                        </div>
+                        <p class='stdformbutton'>
+                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
+                                        <span onclick="leantime.usersController.saveCroppie()"><?php echo $this->__('buttons.save') ?></span>
+                                        <span class="ld ld-ring ld-spin"></span>
+                                    </span>
+                            <input type="hidden" name="profileImage" value="1" />
+                            <input id="picSubmit" type="submit" name="savePic" class="hidden"
+                                   value="<?php echo $this->__('buttons.upload'); ?>"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
 
     jQuery(document).ready(function() {
 
-        new SlimSelect({ select:  '#messagesfrequency' });
-        new SlimSelect({ select:  '#language' });
-        new SlimSelect({ select:  '#theme' });
+        leantime.usersController.checkPWStrength('newPassword');
+
+        jQuery('.accountTabs').tabs();
+
+        jQuery("#messagesfrequency").chosen();
+        jQuery("#language").chosen();
+        jQuery("#theme").chosen();
 
     });
 </script>

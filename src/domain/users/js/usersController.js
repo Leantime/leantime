@@ -136,12 +136,58 @@ leantime.usersController = (function () {
         jQuery(".userImportModal").nyroModal(userImportModalConfig);
     }
 
+    var checkPWStrength = function(pwField) {
+
+        let timeout;
+
+        // traversing the DOM and getting the input and span using their IDs
+
+        let password = document.getElementById(pwField)
+        let strengthBadge = document.getElementById('pwStrength')
+
+        // The strong and weak password Regex pattern checker
+
+        let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})')
+        let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))')
+
+        function StrengthChecker(PasswordParameter) {
+            if (strongPassword.test(PasswordParameter)) {
+                strengthBadge.style.backgroundColor = "#468847";
+                strengthBadge.textContent = leantime.i18n.__('label.strong');
+            } else if (mediumPassword.test(PasswordParameter)) {
+                strengthBadge.style.backgroundColor = '#f89406';
+                strengthBadge.textContent = leantime.i18n.__('label.medium');
+            } else {
+                strengthBadge.style.backgroundColor = '#b94a48';
+                strengthBadge.textContent = leantime.i18n.__('label.weak');
+            }
+        }
+
+        password.addEventListener("input", () => {
+
+            //The badge is hidden by default, so we show it
+
+            strengthBadge.style.display= 'block';
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => StrengthChecker(password.value), 500);
+
+            if(password.value.length !== 0){
+                strengthBadge.style.display != 'block'
+            } else{
+                strengthBadge.style.display = 'none'
+            }
+        });
+
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         readURL: readURL,
         clearCroppie: clearCroppie,
         saveCroppie: saveCroppie,
         initUserTable:initUserTable,
-        _initModals:_initModals
+        _initModals:_initModals,
+        checkPWStrength:checkPWStrength
     };
 })();
