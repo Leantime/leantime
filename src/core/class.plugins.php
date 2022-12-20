@@ -2,7 +2,7 @@
 
 namespace leantime\core;
 
-use leantime\core\config;
+use leantime\core\environment;
 use leantime\core\eventhelpers;
 
 class plugins {
@@ -20,19 +20,18 @@ class plugins {
     /**
      * constructor
      */
-    public function __construct()
-    {
-        $config = new config();
+    public function __construct() {
+        $config = \leantime\core\environment::getInstance();
 
-        if(isset($config->plugins)){
+        if (isset($config->plugins)) {
             $plugins = json_decode($config->plugins);
-        }else{
+        } else {
             $plugins = [];
         }
 
 
         $this->enabledPlugins = $this->standardize_plugin_keys(
-            (array) $plugins
+                (array) $plugins
         );
     }
 
@@ -45,8 +44,7 @@ class plugins {
      *
      * @return array
      */
-    private function standardize_plugin_keys($plugins)
-    {
+    private function standardize_plugin_keys($plugins) {
         foreach ($plugins as $plugin_key => $plugin_enabled) {
             if ($plugin_key == strtolower($plugin_key)) {
                 continue;
@@ -66,8 +64,7 @@ class plugins {
      *
      * @return array
      */
-    public function getEnabledPlugins()
-    {
+    public function getEnabledPlugins() {
         return $this->enabledPlugins;
     }
 
@@ -80,12 +77,10 @@ class plugins {
      *
      * @return bool
      */
-    public function isPluginEnabled($plugin_name)
-    {
+    public function isPluginEnabled($plugin_name) {
         $plugin_name = strtolower($plugin_name);
 
-        if (in_array($plugin_name, array_keys($this->enabledPlugins))
-            && $this->enabledPlugins[$plugin_name] == true
+        if (in_array($plugin_name, array_keys($this->enabledPlugins)) && $this->enabledPlugins[$plugin_name] == true
         ) {
             return true;
         }

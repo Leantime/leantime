@@ -14,7 +14,7 @@ require_once '../src/core/class.autoload.php';
 require_once '../config/configuration.php';
 require_once '../config/appSettings.php';
 
-$config = new leantime\core\config();
+$config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 

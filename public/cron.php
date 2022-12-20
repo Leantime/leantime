@@ -29,7 +29,7 @@ require_once '../config/appSettings.php';
 use leantime\domain\repositories;
 use leantime\domain\services;
 
-$config = new leantime\core\config();
+$config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone);
 

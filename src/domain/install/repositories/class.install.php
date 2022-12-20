@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leantime\domain\repositories {
 
     use Exception;
@@ -11,8 +10,8 @@ namespace leantime\domain\repositories {
     use PDOException;
     use leantime\core;
 
-    class install
-    {
+    class install {
+
         /**
          * @access public
          * @var string
@@ -101,13 +100,12 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
-        {
+        public function __construct() {
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
-            $this->config = new core\config();
+            $this->config = \leantime\core\environment::getInstance();
             $this->settings = new core\appSettings();
 
             $this->user = $this->config->dbUser;
@@ -119,7 +117,7 @@ namespace leantime\domain\repositories {
 
                 $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
                 $this->database = new PDO('mysql:host=' . $this->host . ';port=' . $this->port, $this->user, $this->password,
-                    $driver_options);
+                        $driver_options);
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
 
@@ -187,7 +185,6 @@ namespace leantime\domain\repositories {
             } catch (PDOException $e) {
                 error_log($e);
                 return false;
-
             }
 
             return "Could not initialize transaction";
@@ -206,17 +203,15 @@ namespace leantime\domain\repositories {
             $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
             $versionArray = explode(".", $this->settings->dbVersion);
-            if(is_array($versionArray) && count($versionArray) == 3) {
+            if (is_array($versionArray) && count($versionArray) == 3) {
 
                 $major = $versionArray[0];
                 $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
                 $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
                 $newDBVersion = $major . $minor . $patch;
-
-            }else{
+            } else {
                 $errors[0] = "Problem identifying the version number";
                 return $errors;
-
             }
 
             $setting = new setting();
@@ -232,9 +227,7 @@ namespace leantime\domain\repositories {
                     $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
                     $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
                     $currentDBVersion = $major . $minor . $patch;
-
-
-                }else{
+                } else {
                     $errors[0] = "Problem identifying the version number";
                     return $errors;
                 }
@@ -422,7 +415,7 @@ namespace leantime\domain\repositories {
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is you first project to get you started</p>',0,'0',0,NULL, '".repositories\menu::DEFAULT_MENU."',NULL);
+                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is you first project to get you started</p>',0,'0',0,NULL, '" . repositories\menu::DEFAULT_MENU . "',NULL);
 
                 CREATE TABLE `zp_punch_clock` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -907,8 +900,7 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20105()
-        {
+        private function update_sql_20105() {
             $errors = array();
 
             $sql = array(
@@ -921,23 +913,19 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20106()
-        {
+        private function update_sql_20106() {
             $errors = array();
 
             $sql = array(
@@ -962,8 +950,7 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20107()
-        {
+        private function update_sql_20107() {
             $errors = array();
 
             $sql = array(
@@ -976,23 +963,19 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        private function update_sql_20108()
-        {
+        private function update_sql_20108() {
             $errors = array();
 
             $sql = array(
@@ -1021,7 +1004,7 @@ namespace leantime\domain\repositories {
 
             $errors = array();
 
-            $sql = array( "CREATE TABLE IF NOT EXISTS `zp_queue` (
+            $sql = array("CREATE TABLE IF NOT EXISTS `zp_queue` (
                                `msghash` varchar(50) NOT NULL,
                                 `channel` varchar(255),
                                `userId` int(11) NOT NULL,
@@ -1033,7 +1016,7 @@ namespace leantime\domain\repositories {
                                KEY `projectId` (`projectId`),
                                KEY `userId` (`userId`)
 			   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-                   );
+            );
 
             foreach ($sql as $statement) {
 
@@ -1041,28 +1024,24 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
 
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
-
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
         private function update_sql_20110() {
 
             $errors = array();
 
-            $sql = array( "alter table zp_canvas_items add tags text null",
+            $sql = array("alter table zp_canvas_items add tags text null",
                 "alter table zp_canvas_items add title varchar(255) null",
                 "alter table zp_canvas_items add parent int null",
                 "alter table zp_canvas_items add featured int null",
@@ -1088,44 +1067,41 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
 
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
-
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-		/***
-		 * update_sql_20111 - Update database for new canvas
-		 *
-		 * @access private
-		 * @return bool|array    Success of database update or array of errors
-		 */
-		private function update_sql_20111(): bool|array {
+        /*         * *
+         * update_sql_20111 - Update database for new canvas
+         *
+         * @access private
+         * @return bool|array    Success of database update or array of errors
+         */
+
+        private function update_sql_20111(): bool|array {
 
             $errors = array();
 
-			$sql = [
+            $sql = [
                 "ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null",
-				"UPDATE zp_projects SET menuType = '".repositories\menu::DEFAULT_MENU."'",
-				"ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
-				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
-				"SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
-				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
-				"SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
-				"UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id ".
-				"SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
-				"UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'"
+                "UPDATE zp_projects SET menuType = '" . repositories\menu::DEFAULT_MENU . "'",
+                "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
+                "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
+                "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+                "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
+                "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+                "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
+                "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+                "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'"
             ];
 
             foreach ($sql as $statement) {
@@ -1134,29 +1110,26 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
 
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
-
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
 
-        /***
+        /*         * *
          * update_sql_20112 - Update database for new canvas
          *
          * @access private
          * @return bool|array    Success of database update or array of errors
          */
+
         private function update_sql_20112(): bool|array {
 
             $errors = array();
@@ -1192,9 +1165,7 @@ namespace leantime\domain\repositories {
                   INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
                   INDEX `userId,read` (`userId` ASC, `read` DESC)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-                ];
-
-
+            ];
 
             foreach ($sql as $statement) {
 
@@ -1202,23 +1173,18 @@ namespace leantime\domain\repositories {
 
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
-
                 } catch (PDOException $e) {
 
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
-
                 }
-
             }
 
-            if(count($errors) > 0) {
+            if (count($errors) > 0) {
                 return $errors;
-            }else{
+            } else {
                 return true;
             }
-
         }
-
 
     }
 

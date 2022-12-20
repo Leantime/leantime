@@ -4,12 +4,12 @@
  * Session class - login procedure
  *
  */
+
 namespace leantime\core;
 
 use leantime\core\eventhelpers;
 
-class session
-{
+class session {
 
     use eventhelpers;
 
@@ -29,7 +29,7 @@ class session
      * @access private
      * @var    string
      */
-    private $sessionpassword='';
+    private $sessionpassword = '';
 
     /**
      * __construct - get and test Session or make session
@@ -37,12 +37,11 @@ class session
      * @access private
      * @return
      */
-    private  function __construct()
-    {
+    private function __construct() {
 
-        $config = new config();
+        $config = \leantime\core\environment::getInstance();
 
-        ini_set('session.gc_maxlifetime', ($config->sessionExpiration*2));
+        ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
         ini_set('session.cookie_lifetime', ($config->sessionExpiration));
 
         $this->sessionpassword = $config->sessionpassword;
@@ -50,36 +49,31 @@ class session
         //Get sid from cookie
         $testSession = false;
 
-        if(isset($_COOKIE['sid']) === true) {
+        if (isset($_COOKIE['sid']) === true) {
 
-            self::$sid=htmlspecialchars($_COOKIE['sid']);
+            self::$sid = htmlspecialchars($_COOKIE['sid']);
             $testSession = explode('-', self::$sid);
-
         }
 
         //Don't allow session ids from user.
-        if(is_array($testSession) === true && count($testSession) > 1) {
+        if (is_array($testSession) === true && count($testSession) > 1) {
 
-            $testMD5 = hash('sha1', $testSession[0].$this->sessionpassword);
+            $testMD5 = hash('sha1', $testSession[0] . $this->sessionpassword);
 
-            if($testMD5 !== $testSession[1]) {
+            if ($testMD5 !== $testSession[1]) {
 
                 self::makeSID();
-
             }
-
-        }else{
+        } else {
 
             self::makeSID();
-
         }
 
         session_name("sid");
         session_id(self::$sid);
         session_start();
 
-        setcookie("sid", self::$sid,  [ 'expires' => time() + $config->sessionExpiration, 'path' => '/' ]);
-
+        setcookie("sid", self::$sid, ['expires' => time() + $config->sessionExpiration, 'path' => '/']);
     }
 
     /**
@@ -88,13 +82,11 @@ class session
      * @access private
      * @return object
      */
-    public static function getInstance()
-    {
+    public static function getInstance() {
 
         if (self::$instance === null) {
 
             self::$instance = new self();
-
         }
 
         return self::$instance;
@@ -106,11 +98,9 @@ class session
      * @access public
      * @return string
      */
-    public static function getSID()
-    {
+    public static function getSID() {
 
         return self::getInstance()::$sid;
-
     }
 
     /**
@@ -119,25 +109,22 @@ class session
      * @access private
      * @return string
      */
-    private function makeSID()
-    {
+    private function makeSID() {
 
-        $tmp = hash('sha1', (string)mt_rand(32,32) . $_SERVER['REMOTE_ADDR'] . time());
+        $tmp = hash('sha1', (string) mt_rand(32, 32) . $_SERVER['REMOTE_ADDR'] . time());
 
-        self::$sid=$tmp .'-'.hash('sha1', $tmp.$this->sessionpassword);
-
+        self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
     }
 
-    public static function destroySession()
-    {
+    public static function destroySession() {
 
-        $config = new config();
+        $config = \leantime\core\environment::getInstance();
 
-        if(isset($_COOKIE['sid'])){
+        if (isset($_COOKIE['sid'])) {
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "",  [ 'expires' => time() - 42000, 'path' => '/' ]);
+        setcookie('sid', "", ['expires' => time() - 42000, 'path' => '/']);
     }
 
 }

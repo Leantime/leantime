@@ -1,4 +1,5 @@
 <?php
+
 /**
  * pdf class - Template - HTML code for PDF report
  */
@@ -12,27 +13,23 @@ namespace leantime\domain\controllers\canvas {
     /**
      * Template class for generating PDF reports
      */
-    class pdf extends controller
-    {
+    class pdf extends controller {
 
         /**
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = '??';
-		protected const CANVAS_TYPE = 'canvas';
-
+        protected const CANVAS_TYPE = 'canvas';
         // Color constants
         public const PDF_COLOR_BG = '#f4f4f6';           // Background color of canvas boxes
         public const PDF_COLOR_BG_TITLE = '#fefefe';     // Background color of list box titles
         public const PDF_COLOR_BG_SUBTITLE = '#f5f4f3';  // Background color of canvas box titles
-
         // Page layout constants
         public const PDF_A3 = 'A3';
         public const PDF_A4 = 'A4';
         public const PDF_PORTRAIT = 'P';
         public const PDF_LANDSCAPE = 'L';
         public const PDF_CANVAS_A3_HEIGHT = 450;
-
         private const PDF_MARGIN = 30;
         private const PDF_MARGIN_TOP = 90;
         private const PDF_MARGIN_BOTTOM = 100;
@@ -56,24 +53,21 @@ namespace leantime\domain\controllers\canvas {
         protected int $fontSizeTitle;
         protected int $fontSizeSmall;
         protected array $filter;
-
         private $pdfEngine;
 
-
-        /***
+        /*         * *
          * init
          */
-        public function init()
-        {
 
-            $this->config = new core\config();
+        public function init() {
 
+            $this->config = \leantime\core\environment::getInstance();
 
-            $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
+            $canvasRepoName = "\\leantime\\domain\\repositories\\" . static::CANVAS_NAME . static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();
 
             $this->paperSize = $this->language->__('language.pagesize');
-            $this->paperSize = ($this->paperSize === 'language.pagesize' ?  self::PDF_A4 : $this->paperSize);
+            $this->paperSize = ($this->paperSize === 'language.pagesize' ? self::PDF_A4 : $this->paperSize);
 
             $this->canvasTypes = $this->canvasRepo->getCanvasTypes();
             $this->statusLabels = $this->canvasRepo->getStatusLabels();
@@ -82,36 +76,30 @@ namespace leantime\domain\controllers\canvas {
 
             // Set default parameters
             $this->params = [
-				'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
+                'fontSize' => 10, 'fontSizeLarge' => 11, 'fontSizeSmall' => 8, 'fontSizeTitle' => 12,
                 'confidential' => true, 'disclaimer' => '',
                 'canvasShow' => true, 'canvasSize' => self::PDF_A3, 'canvasOrientation' => self::PDF_LANDSCAPE,
                 'canvasHeight' => self::PDF_CANVAS_A3_HEIGHT,
-                'listShow' => true,'listSize' => $this->paperSize, 'listOrientation' => self::PDF_PORTRAIT,
+                'listShow' => true, 'listSize' => $this->paperSize, 'listOrientation' => self::PDF_PORTRAIT,
                 'elementStatus' => 'label.status', 'elementRelates' => 'label.relates',
             ];
 
             $this->pdfEngine = $this->pdfEngineInit();
-
         }
 
         /**
          * run - Generate PDF report
          */
-        public function run()
-        {
+        public function run() {
 
             // Retrieve id of canvas to print
-            if(isset($_GET['id']) === true) {
+            if (isset($_GET['id']) === true) {
 
-                $canvasId = (int)$_GET['id'];
+                $canvasId = (int) $_GET['id'];
+            } elseif (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
 
-            }
-            elseif(isset($_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'])) {
-
-                $canvasId = $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'];
-
-            }
-            else{
+                $canvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+            } else {
                 return;
             }
 
@@ -122,7 +110,8 @@ namespace leantime\domain\controllers\canvas {
 
             // Generate report
             $reportData = $this->reportGenerate($canvasId, $filter);
-            if($reportData === false) return;
+            if ($reportData === false)
+                return;
 
             // Service report
             clearstatcache();
@@ -130,10 +119,9 @@ namespace leantime\domain\controllers\canvas {
             //header('Content-Disposition: attachment; filename="report.pdf"');
             //header('Cache-Control: no-cache');
             echo $reportData;
-
         }
 
-        /***
+        /*         * *
          * reportGenerate - Generate report for module
          *
          * @access public
@@ -142,8 +130,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $options Options
          * @return string|false PDF filename or false if it failed
          */
-        public function reportGenerate(int $id, array $filter = [], array $options = []): string|false
-        {
+
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string|false {
 
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
@@ -165,8 +153,7 @@ namespace leantime\domain\controllers\canvas {
             try {
 
                 $this->pdfEngine->WriteHTML($html);
-            }
-            catch(Exception $exception) {
+            } catch (Exception $exception) {
                 $this->tpl->setNotification($this->language->__('notification.pdf.failed'), 'error');
                 return false;
             }
@@ -175,7 +162,6 @@ namespace leantime\domain\controllers\canvas {
 
             return true;
             //return $html;
-
         }
 
         /**
@@ -190,11 +176,10 @@ namespace leantime\domain\controllers\canvas {
          * @return string HTML code
          */
         public function htmlReport(string $projectTitle, string $moduleTitle, array $recordsAry, array $filter = [],
-                                   array $options = []): string
-        {
+                array $options = []): string {
 
             // Set options
-            foreach($options as $key => $value) {
+            foreach ($options as $key => $value) {
                 $this->params[$key] = $value;
             }
             $this->filter = $filter;
@@ -203,18 +188,17 @@ namespace leantime\domain\controllers\canvas {
             $html = "<div>";
 
             // Layout canvas page
-            if($this->params['canvasShow']) {
+            if ($this->params['canvasShow']) {
 
                 $html .= $this->htmlCanvasOpen(); //div open
                 $html .= $this->htmlStyles(); //styles
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle); //contained div
-                 $html .= '<div style="height: '.$this->params['canvasHeight'].'px;">';
+                $html .= '<div style="height: ' . $this->params['canvasHeight'] . 'px;">';
                 $html .= $this->htmlCanvas($recordsAry);
                 $html .= '</div>';
-                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
+                $html .= $this->htmlFooter($this->language->__("headline." . static::CANVAS_NAME . ".board"), $this->params['disclaimer']);
                 $html .= $this->htmlPageClose();
                 $html .= "<div style='page-break-before:always'></div>";
-
             }
 
             // Layout list of element details
@@ -222,20 +206,18 @@ namespace leantime\domain\controllers\canvas {
 
 
 
-            if($this->params['listShow']) {
+            if ($this->params['listShow']) {
 
                 $html .= $this->htmlListOpen();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
                 $html .= $this->htmlList($recordsAry);
-                $html .= $this->htmlFooter($this->language->__("headline.".static::CANVAS_NAME.".board"), $this->params['disclaimer']);
+                $html .= $this->htmlFooter($this->language->__("headline." . static::CANVAS_NAME . ".board"), $this->params['disclaimer']);
                 $html .= $this->htmlPageClose();
                 $html .= "<div style='page-break-before:always'></div>";
-
             }
 
             $html .= $this->htmlEnd();
             return $html;
-
         }
 
         /**
@@ -245,18 +227,15 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $status Element status key
          * @return string HTML code
          */
-        protected function htmlCanvasStatus(string $status): string
-        {
+        protected function htmlCanvasStatus(string $status): string {
 
-            if(isset($this->statusLabels[$status]['color'])) {
+            if (isset($this->statusLabels[$status]['color'])) {
 
-                return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.
-                       $this->htmlIcon($this->statusLabels[$status]['icon']).'</span>';
-
+                return '<span style="color : ' . $this->statusLabels[$status]['color'] . '">' .
+                        $this->htmlIcon($this->statusLabels[$status]['icon']) . '</span>';
             }
 
             return $this->htmlIcon($this->statusLabels[$status]['icon']);
-
         }
 
         /**
@@ -266,13 +245,11 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $status Element status key
          * @return string HTML code
          */
-        protected function htmlListStatus(string $status): string
-        {
+        protected function htmlListStatus(string $status): string {
 
-            if(isset($this->statusLabels[$status]['color'])) {
+            if (isset($this->statusLabels[$status]['color'])) {
 
-                return '<span style="color : '.$this->statusLabels[$status]['color'].'">'.$this->statusLabels[$status]['title'].'</span>';
-
+                return '<span style="color : ' . $this->statusLabels[$status]['color'] . '">' . $this->statusLabels[$status]['title'] . '</span>';
             }
 
             return $this->statusLabels[$status]['title'];
@@ -285,18 +262,15 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $relates Element relates key
          * @return string HTML code
          */
-        protected function htmlCanvasRelates(string $relates): string
-        {
+        protected function htmlCanvasRelates(string $relates): string {
 
-            if(isset($this->relatesLabels[$relates]['color'])) {
+            if (isset($this->relatesLabels[$relates]['color'])) {
 
-                return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.
-                       $this->htmlIcon($this->statusLabels[$relates]['icon']).'</span>';
-
+                return '<span style="color : ' . $this->relatesLabels[$relates]['color'] . '">' .
+                        $this->htmlIcon($this->statusLabels[$relates]['icon']) . '</span>';
             }
 
             return $this->htmlIcon($this->statusLabels[$relates]['icon']);
-
         }
 
         /*
@@ -306,18 +280,16 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $relates Element status key
          * @return string HTML code
          */
-        protected function htmlListRelates(string $relates): string
-        {
 
-            if(isset($this->relatesLabels[$relates]['color'])) {
+        protected function htmlListRelates(string $relates): string {
 
-                return '<span style="color : '.$this->relatesLabels[$relates]['color'].'">'.$this->relatesLabels[$relates]['title'].
-                       '</span>';
+            if (isset($this->relatesLabels[$relates]['color'])) {
 
+                return '<span style="color : ' . $this->relatesLabels[$relates]['color'] . '">' . $this->relatesLabels[$relates]['title'] .
+                        '</span>';
             }
 
             return $this->relatesLabels[$relates]['title'];
-
         }
 
         /**
@@ -327,11 +299,9 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlCanvas(array $recordsAry): string
-        {
+        protected function htmlCanvas(array $recordsAry): string {
 
             return 'NOT IMPLEMENTED';
-
         }
 
         /**
@@ -341,11 +311,9 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlList(array $recordsAry): string
-        {
+        protected function htmlList(array $recordsAry): string {
 
             return $this->htmlListDetailed($recordsAry);
-
         }
 
         /**
@@ -355,16 +323,14 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlListCompact(array $recordsAry): string
-        {
+        protected function htmlListCompact(array $recordsAry): string {
 
             $html = '';
-            foreach($this->canvasTypes as $key => $data) {
-                $html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
-                $html .= '<div>'.$this->htmlListElementsCompact($recordsAry, $key).'</div>';
+            foreach ($this->canvasTypes as $key => $data) {
+                $html .= '<div>' . $this->htmlListTitle($data['title'], $data['icon']) . '</div>';
+                $html .= '<div>' . $this->htmlListElementsCompact($recordsAry, $key) . '</div>';
             }
             return $html;
-
         }
 
         /**
@@ -374,16 +340,14 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlListDetailed(array $recordsAry): string
-        {
+        protected function htmlListDetailed(array $recordsAry): string {
 
             $html = '';
-            foreach($this->canvasTypes as $key => $data) {
-                $html .= '<div>'.$this->htmlListTitle($data['title'], $data['icon']).'</div>';
-                $html .= '<div>'.$this->htmlListElementsDetailed($recordsAry, $key).'</div>';
+            foreach ($this->canvasTypes as $key => $data) {
+                $html .= '<div>' . $this->htmlListTitle($data['title'], $data['icon']) . '</div>';
+                $html .= '<div>' . $this->htmlListElementsDetailed($recordsAry, $key) . '</div>';
             }
             return $html;
-
         }
 
         /**
@@ -392,15 +356,13 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function pdfEngineInit()
-        {
+        protected function pdfEngineInit() {
 
             // Define font sizes
             $this->fontSize = $this->params['fontSize'];
             $this->fontSizeLarge = $this->params['fontSizeLarge'];
             $this->fontSizeTitle = $this->params['fontSizeTitle'];
             $this->fontSizeSmall = $this->params['fontSizeSmall'];
-
 
             $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
             $fontDirs = $defaultConfig['fontDir'];
@@ -409,37 +371,33 @@ namespace leantime\domain\controllers\canvas {
             $fontData = $defaultFontConfig['fontdata'];
 
             $mpdf = new \Mpdf\Mpdf([
-                'fontDir' => array_merge($fontDirs, [ ROOT.'/fonts/roboto', ROOT.'/css/libs/fontawesome-free/webfonts']),
+                'fontDir' => array_merge($fontDirs, [ROOT . '/fonts/roboto', ROOT . '/css/libs/fontawesome-free/webfonts']),
                 'fontdata' => $fontData +
-                    [
-                        'roboto' => [
-                            'R' => 'Roboto-Regular.ttf',
-                            'I' => 'Roboto-Italic.ttf',
-                            'B' => 'Roboto-Bold.ttf'
-                        ],
-                        'robotocondensed' => [
-                            'R' => 'RobotoCondensed-Regular.ttf',
-                            'I' => 'RobotoCondensed-Italic.ttf',
-                            'B' => 'RobotoCondensed-Bold.ttf'
-                        ],
-                        'fontawesome' => [
-                            'R' => 'fa-solid-900.ttf',
-
-                        ],
+                [
+                    'roboto' => [
+                        'R' => 'Roboto-Regular.ttf',
+                        'I' => 'Roboto-Italic.ttf',
+                        'B' => 'Roboto-Bold.ttf'
                     ],
-                    'default_font' => 'roboto',
-                    'orientation' => $this->params['canvasOrientation'],
-                    'format' => $this->params['canvasSize']
-
+                    'robotocondensed' => [
+                        'R' => 'RobotoCondensed-Regular.ttf',
+                        'I' => 'RobotoCondensed-Italic.ttf',
+                        'B' => 'RobotoCondensed-Bold.ttf'
+                    ],
+                    'fontawesome' => [
+                        'R' => 'fa-solid-900.ttf',
+                    ],
+                ],
+                'default_font' => 'roboto',
+                'orientation' => $this->params['canvasOrientation'],
+                'format' => $this->params['canvasSize']
             ]);
 
             $mpdf->autoPageBreak = false;
 
-
             // Start document
 
             return $mpdf;
-
         }
 
         /**
@@ -448,12 +406,10 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlEnd(): string
-        {
+        protected function htmlEnd(): string {
 
             $html = '</div>';
             return $html;
-
         }
 
         /**
@@ -462,22 +418,19 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlCanvasOpen(): string
-        {
+        protected function htmlCanvasOpen(): string {
 
             $html = '<style>
             @page *{
-                margin-top: '.self::PDF_MARGIN_TOP.';
-                margin-bottom: '.self::PDF_MARGIN_BOTTOM.';
-                margin-left: '.self::PDF_MARGIN.';
-                margin-right: '.self::PDF_MARGIN.';
+                margin-top: ' . self::PDF_MARGIN_TOP . ';
+                margin-bottom: ' . self::PDF_MARGIN_BOTTOM . ';
+                margin-left: ' . self::PDF_MARGIN . ';
+                margin-right: ' . self::PDF_MARGIN . ';
             }
             </style>';
 
-
-            $html .= '<div style="font-family: \'roboto\'; font-weight: 400; font-style: normal; font-size: '.$this->fontSize.'px;">';
+            $html .= '<div style="font-family: \'roboto\'; font-weight: 400; font-style: normal; font-size: ' . $this->fontSize . 'px;">';
             return $html;
-
         }
 
         /**
@@ -486,13 +439,11 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlListOpen(): string
-        {
+        protected function htmlListOpen(): string {
 
             $html = '';
-            $html .= '<div style="font-family: \'Roboto\'; font-weight: 400; font-style: normal; font-size: '.$this->fontSize.'px">';
+            $html .= '<div style="font-family: \'Roboto\'; font-weight: 400; font-style: normal; font-size: ' . $this->fontSize . 'px">';
             return $html;
-
         }
 
         /**
@@ -501,12 +452,10 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlPageClose(): string
-        {
+        protected function htmlPageClose(): string {
 
 
             return "</div>";
-
         }
 
         /**
@@ -517,28 +466,26 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $moduleTitle Module title
          * @return string HTML code
          */
-        protected function htmlHeader(string $projectTitle, string $moduleTitle): string
-        {
+        protected function htmlHeader(string $projectTitle, string $moduleTitle): string {
 
-            $logo = ROOT."/images/logo.png";
+            $logo = ROOT . "/images/logo.png";
 
-            $html = ''.
-					'<div style="padding: '.self::PDF_MARGIN.'px; height: '.self::PDF_HEADER_HEIGHT.'px;">'.
-                        '<table class="header" style="width: 100%"><tbody>'.
-                        '  <tr>'.
-                        '    <td style="width:30%; vertical-align: top;">'.
-                        '      <img src="'.$logo.'" '.
-                        '        style="height: '.self::PDF_HEADER_ROW_HEIGHT.'px" /></td>'.
-                        '    <td style="width: 40%; text-align: center; font-size: '.$this->fontSizeTitle.'px">'.
-                        '      <strong>'.$moduleTitle.'</strong></td>'.
-                        '    <td style="width: 30%; text-align: right; vertical-align:top;">'.
-                        '      <strong>'.$projectTitle.'</strong><br /><em>'.date($this->language->__('pdf.language.longdateformat')).'</em></td>'.
-                        '  </tr>'.
-                        '</tbody></table>'.
-					'</div>
+            $html = '' .
+                    '<div style="padding: ' . self::PDF_MARGIN . 'px; height: ' . self::PDF_HEADER_HEIGHT . 'px;">' .
+                    '<table class="header" style="width: 100%"><tbody>' .
+                    '  <tr>' .
+                    '    <td style="width:30%; vertical-align: top;">' .
+                    '      <img src="' . $logo . '" ' .
+                    '        style="height: ' . self::PDF_HEADER_ROW_HEIGHT . 'px" /></td>' .
+                    '    <td style="width: 40%; text-align: center; font-size: ' . $this->fontSizeTitle . 'px">' .
+                    '      <strong>' . $moduleTitle . '</strong></td>' .
+                    '    <td style="width: 30%; text-align: right; vertical-align:top;">' .
+                    '      <strong>' . $projectTitle . '</strong><br /><em>' . date($this->language->__('pdf.language.longdateformat')) . '</em></td>' .
+                    '  </tr>' .
+                    '</tbody></table>' .
+                    '</div>
                    ';
             return $html;
-
         }
 
         /**
@@ -549,25 +496,23 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $displayer    Optional: Template disclaimer
          * @return string HTML code
          */
-        protected function htmlFooter(string $templateName, string $disclaimer = ''): string
-        {
+        protected function htmlFooter(string $templateName, string $disclaimer = ''): string {
 
-            $html = '<div style="padding-top: 0; padding-left: '.self::PDF_MARGIN.'px; padding-right: '.self::PDF_MARGIN.'px; '.
-					'  height: '.self::PDF_FOOTER_HEIGHT.'px; font-size: '.$this->fontSizeSmall.'px;">'.
-					(isset($this->params['confidential']) && $this->params['confidential'] ?
-					 '<p style="text-align: center; color: red; font-weight: bold;">'.
-					 $this->language->__('pdf.disclaimer.confidential').'</p>' : '').
-					'<table class="footer" style="width: 100%;"><tbody>'.
-					'  <tr>'.
-					'    <td style="text-align:left;width:70%;vertical-align:top;"><strong>'.$this->language->__($templateName).'</strong>'.
-					'</td>'.
-					'    <td style="text-align: right; width: 30%; vertical-align:top">'.$this->language->__('pdf.label.page').' {PAGENO}</td>'.
-					'  </tr>'.
-					'</tbody></table>'.
-					(!empty($disclaimer) ? '<p>'.$this->language->__($disclaimer).'</p>' : '').
-					'</div>';
+            $html = '<div style="padding-top: 0; padding-left: ' . self::PDF_MARGIN . 'px; padding-right: ' . self::PDF_MARGIN . 'px; ' .
+                    '  height: ' . self::PDF_FOOTER_HEIGHT . 'px; font-size: ' . $this->fontSizeSmall . 'px;">' .
+                    (isset($this->params['confidential']) && $this->params['confidential'] ?
+                    '<p style="text-align: center; color: red; font-weight: bold;">' .
+                    $this->language->__('pdf.disclaimer.confidential') . '</p>' : '') .
+                    '<table class="footer" style="width: 100%;"><tbody>' .
+                    '  <tr>' .
+                    '    <td style="text-align:left;width:70%;vertical-align:top;"><strong>' . $this->language->__($templateName) . '</strong>' .
+                    '</td>' .
+                    '    <td style="text-align: right; width: 30%; vertical-align:top">' . $this->language->__('pdf.label.page') . ' {PAGENO}</td>' .
+                    '  </tr>' .
+                    '</tbody></table>' .
+                    (!empty($disclaimer) ? '<p>' . $this->language->__($disclaimer) . '</p>' : '') .
+                    '</div>';
             return $html;
-
         }
 
         /**
@@ -576,24 +521,22 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlStyles(): string
-        {
+        protected function htmlStyles(): string {
 
-            $html = '<style>'.
-			'  .header { border-collapse: collapse; }'.
-			'  .footer { border-collapse: collapse;}'.
-			'  .canvas { border-collapse: collapse; }'.
-			'  .canvas-elt-title { background: '.self::PDF_COLOR_BG_SUBTITLE.';text-align:center;padding:5px;border:2px solid white; }'.
-			'  .canvas-elt-box { background: '.self::PDF_COLOR_BG.'; vertical-align: top; text-align: left; '.
-			'     padding: 2px; border: 2px solid white; }'.
-			'  .canvas-box { vertical-align:top; text-align:left; padding: 0px 1px 0px 1px;}'.
-			'  .list-title { font-weight: bold; width: 100%; color: white; background: darkgrey; padding: 4px; }'.
-			'  .list-elt-title { font-weight: bold; width: 100%; background: '.self::PDF_COLOR_BG_SUBTITLE.'; padding: 4px;}'.
-			'  .list-elt-box { vertical-align: top; width: 100%; padding: 4px 0px 4px 0px; }'.
-			'  .hr-black { background: black; border: .5px; }'.
-			'</style>';
+            $html = '<style>' .
+                    '  .header { border-collapse: collapse; }' .
+                    '  .footer { border-collapse: collapse;}' .
+                    '  .canvas { border-collapse: collapse; }' .
+                    '  .canvas-elt-title { background: ' . self::PDF_COLOR_BG_SUBTITLE . ';text-align:center;padding:5px;border:2px solid white; }' .
+                    '  .canvas-elt-box { background: ' . self::PDF_COLOR_BG . '; vertical-align: top; text-align: left; ' .
+                    '     padding: 2px; border: 2px solid white; }' .
+                    '  .canvas-box { vertical-align:top; text-align:left; padding: 0px 1px 0px 1px;}' .
+                    '  .list-title { font-weight: bold; width: 100%; color: white; background: darkgrey; padding: 4px; }' .
+                    '  .list-elt-title { font-weight: bold; width: 100%; background: ' . self::PDF_COLOR_BG_SUBTITLE . '; padding: 4px;}' .
+                    '  .list-elt-box { vertical-align: top; width: 100%; padding: 4px 0px 4px 0px; }' .
+                    '  .hr-black { background: black; border: .5px; }' .
+                    '</style>';
             return $html;
-
         }
 
         /**
@@ -604,393 +547,357 @@ namespace leantime\domain\controllers\canvas {
          * @param  int    $fontSize Optional: Font size, or 0 if not font size adjustment
          * @return string HTML code
          */
-        protected function htmlIcon(string $icon, int $fontSize = 0): string
-        {
-
-            $iconCode = match($icon) {
-			'fa-1' => '&#x0031',
-            'fa-2' => '&#x0032',
-			'fa-3' => '&#x0033',
-			'fa-4' => '&#x0034',
-			'fa-5' => '&#x0035',
-			'fa-6' => '&#x0036',
-			'fa-7' => '&#x0037',
-			'fa-apple-whole' => '&#xf5d1',
-			'fa-arrow-down-up-across-line' => '&#xe4af',
-			'fa-arrow-trend-up' => '&#xe098',
-			'fa-arrows-up-down' => '&#xf07d',
-			'fa-barcode' => '&#xf02a',
-			'fa-bolt-lightning' => '&#xe0b7',
-			'fa-book' => '&#xf02d',
-			'fa-book-skull' => '&#xf6b7',
-			'fa-bullseye' => '&#xf140',
-			'fa-business-time' => '&#xf64a',
-			'fa-cash-register' => '&#xf788',
-			'fa-chalkboard-user' => '&#xf51c',
-			'fa-chart-column' => '&#xe0e3',
-			'fa-chart-line' => '&#xf201',
-			'fa-chart-pie' => '&#xf200',
-			'fa-check' => '&#xf00c',
-			'fa-chess' => '&#xf439',
-			'fa-circle-check' => '&#xf058',
-			'fa-circle-exclamation' => '&#xf06a',
-			'fa-circle-h' => '&#xf47e',
-			'fa-circle-plus' => '&#xf055',
-			'fa-circle-question' => '&#xf059',
-			'fa-circle-xmark' => '&#xf057',
-			'fa-city' => '&#xf64f',
-			'fa-clipboard-question', => '&#xe4e3',
-			'fa-cloud-bolt' => '&#xf76c',
-			'fa-cloud-sun' => '&#xf6c4',
-			'fa-clover' => '&#xe139',
-			'fa-computer' => '&#xe4e5',
-			'fa-cookie-bite' => '&#xf564',
-			'fa-dumbbell' => '&#xf44b',
-			'fa-envelope-open', => '&#xf2b6',
-			'fa-face-frown' => '&#xf119',
-			'fa-face-rolling-eyes' => '&#xf5a5',
-			'fa-face-smile' => '&#xf118',
-			'fa-file-circle-plus' => '&#x494',
-			'fa-file-invoice-dollar' => '&#xf571',
-			'fa-file-lines' => '&#xf15c',
-			'fa-file-signature' => '&#xf573',
-			'fa-fingerprint' => '&#xf577',
-			'fa-fire' => '&#xf06d',
-			'fa-gift' => '&#xf06b',
-			'fa-hammer' => '&#xf6e3',
-			'fa-hand-holding-dollar' => '&#xf4c0',
-			'fa-handshake' => '&#xf2b5',
-			'fa-heading' => '&#xf1dc',
-			'fa-heart' => '&#xf004',
-			'fa-industry' => '&#xf275',
-			'fa-key' => '&#xf084',
-			'fa-landmark' => '&#xf66f',
-			'fa-lightbulb' => '&#xf0eb',
-			'fa-list-check' => '&#xf0ae',
-			'fa-lock' => '&#xf023',
-			'fa-masks-theater' => '&#xf630',
-			'fa-money-bill' => '&#xf0d6',
-			'fa-money-bill-transfer' => '&#xe528',
-			'fa-money-bills' => '&#xe1f3',
-			'fa-pen-ruler' => '&#xf5ae',
-			'fa-pen-to-square' => '&#xf044',
-			'fa-people-arrows' => '&#xe068',
-			'fa-people-group' => '&#xe533',
-			'fa-people-line' => '&#xe534',
-			'fa-person' => '&#xf183',
-			'fa-person-circle-check' => '&#xe55c',
-			'fa-person-circle-question' => '&#xe542',
-			'fa-person-circle-xmark' => '&#xe543',
-			'fa-person-digging' => '&#xf85e',
-			'fa-person-falling' => '&#xe546',
-			'fa-person-running' => '&#xf70c',
-			'fa-person-skating' => '&#xf7c5',
-			'fa-question' => '&#x003f',
-			'fa-ring' => '&#xf70b',
-			'fa-ruler-combined' => '&#xf546',
-			'fa-sack-dollar' => '&#xf81d',
-			'fa-scale-balanced' => '&#xf24e',
-			'fa-sitemap' => '&#xf0e8',
-			'fa-stop' => '&#xf04d',
-			'fa-street-view' => '&#xf21d',
-			'fa-tags' => '&#xf02c',
-			'fa-thumbs-up' => '&#xf164',
-			'fa-thumbs-down' => '&#xf165',
-			'fa-tower-observation' => '&#xe586',
-			'fa-tree' => '&#xf1bb',
-			'fa-truck' => '&#xf0d1',
-			'fa-user-doctor' => '&#xf0f0',
-			'fa-user-graduate' => '&#xf501',
-			'fa-users' => '&#xf0c0',
-			'fa-wand-magic-sparkles' => '&#xe2ca',
-			'fa-xmark' => '&#xf00d',
-			default => ''
-		};
+        protected function htmlIcon(string $icon, int $fontSize = 0): string {
+
+            $iconCode = match ($icon) {
+                'fa-1' => '&#x0031',
+                'fa-2' => '&#x0032',
+                'fa-3' => '&#x0033',
+                'fa-4' => '&#x0034',
+                'fa-5' => '&#x0035',
+                'fa-6' => '&#x0036',
+                'fa-7' => '&#x0037',
+                'fa-apple-whole' => '&#xf5d1',
+                'fa-arrow-down-up-across-line' => '&#xe4af',
+                'fa-arrow-trend-up' => '&#xe098',
+                'fa-arrows-up-down' => '&#xf07d',
+                'fa-barcode' => '&#xf02a',
+                'fa-bolt-lightning' => '&#xe0b7',
+                'fa-book' => '&#xf02d',
+                'fa-book-skull' => '&#xf6b7',
+                'fa-bullseye' => '&#xf140',
+                'fa-business-time' => '&#xf64a',
+                'fa-cash-register' => '&#xf788',
+                'fa-chalkboard-user' => '&#xf51c',
+                'fa-chart-column' => '&#xe0e3',
+                'fa-chart-line' => '&#xf201',
+                'fa-chart-pie' => '&#xf200',
+                'fa-check' => '&#xf00c',
+                'fa-chess' => '&#xf439',
+                'fa-circle-check' => '&#xf058',
+                'fa-circle-exclamation' => '&#xf06a',
+                'fa-circle-h' => '&#xf47e',
+                'fa-circle-plus' => '&#xf055',
+                'fa-circle-question' => '&#xf059',
+                'fa-circle-xmark' => '&#xf057',
+                'fa-city' => '&#xf64f',
+                'fa-clipboard-question', => '&#xe4e3',
+                'fa-cloud-bolt' => '&#xf76c',
+                'fa-cloud-sun' => '&#xf6c4',
+                'fa-clover' => '&#xe139',
+                'fa-computer' => '&#xe4e5',
+                'fa-cookie-bite' => '&#xf564',
+                'fa-dumbbell' => '&#xf44b',
+                'fa-envelope-open', => '&#xf2b6',
+                'fa-face-frown' => '&#xf119',
+                'fa-face-rolling-eyes' => '&#xf5a5',
+                'fa-face-smile' => '&#xf118',
+                'fa-file-circle-plus' => '&#x494',
+                'fa-file-invoice-dollar' => '&#xf571',
+                'fa-file-lines' => '&#xf15c',
+                'fa-file-signature' => '&#xf573',
+                'fa-fingerprint' => '&#xf577',
+                'fa-fire' => '&#xf06d',
+                'fa-gift' => '&#xf06b',
+                'fa-hammer' => '&#xf6e3',
+                'fa-hand-holding-dollar' => '&#xf4c0',
+                'fa-handshake' => '&#xf2b5',
+                'fa-heading' => '&#xf1dc',
+                'fa-heart' => '&#xf004',
+                'fa-industry' => '&#xf275',
+                'fa-key' => '&#xf084',
+                'fa-landmark' => '&#xf66f',
+                'fa-lightbulb' => '&#xf0eb',
+                'fa-list-check' => '&#xf0ae',
+                'fa-lock' => '&#xf023',
+                'fa-masks-theater' => '&#xf630',
+                'fa-money-bill' => '&#xf0d6',
+                'fa-money-bill-transfer' => '&#xe528',
+                'fa-money-bills' => '&#xe1f3',
+                'fa-pen-ruler' => '&#xf5ae',
+                'fa-pen-to-square' => '&#xf044',
+                'fa-people-arrows' => '&#xe068',
+                'fa-people-group' => '&#xe533',
+                'fa-people-line' => '&#xe534',
+                'fa-person' => '&#xf183',
+                'fa-person-circle-check' => '&#xe55c',
+                'fa-person-circle-question' => '&#xe542',
+                'fa-person-circle-xmark' => '&#xe543',
+                'fa-person-digging' => '&#xf85e',
+                'fa-person-falling' => '&#xe546',
+                'fa-person-running' => '&#xf70c',
+                'fa-person-skating' => '&#xf7c5',
+                'fa-question' => '&#x003f',
+                'fa-ring' => '&#xf70b',
+                'fa-ruler-combined' => '&#xf546',
+                'fa-sack-dollar' => '&#xf81d',
+                'fa-scale-balanced' => '&#xf24e',
+                'fa-sitemap' => '&#xf0e8',
+                'fa-stop' => '&#xf04d',
+                'fa-street-view' => '&#xf21d',
+                'fa-tags' => '&#xf02c',
+                'fa-thumbs-up' => '&#xf164',
+                'fa-thumbs-down' => '&#xf165',
+                'fa-tower-observation' => '&#xe586',
+                'fa-tree' => '&#xf1bb',
+                'fa-truck' => '&#xf0d1',
+                'fa-user-doctor' => '&#xf0f0',
+                'fa-user-graduate' => '&#xf501',
+                'fa-users' => '&#xf0c0',
+                'fa-wand-magic-sparkles' => '&#xe2ca',
+                'fa-xmark' => '&#xf00d',
+                default => ''
+            };
+
+            $fontSize = ($fontSize === 0 ? $this->fontSize : $fontSize);
+            $html = '<span style="font-family: \'fontawesome\'; font-size: ' . $fontSize . 'px;">' .
+                    $iconCode . '</span>';
+
+            return $html;
+        }
+
+        /**
+         * htmlCanvasTitle - Typeset title of element box in canvas
+         *
+         * @access protected
+         * @param  string $text Canvas element title
+         * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
+         * @return string HTML code
+         */
+        protected function htmlCanvasTitle(string $text, string $icon = ''): string {
+
+            return (!empty($icon) ? $this->htmlIcon($icon) . ' ' : '') . '<strong>' . $this->language->__($text) . '</strong>';
+        }
+
+        /**
+         * htmlCanvasElements - Typeset data of element box in canvas
+         *
+         * @access protected
+         * @param  array  $recordsAry Array of canvas data records
+         * @para,  string $box        Identifier of elements/box to display
+         * @return string HTML code
+         */
+        protected function htmlCanvasElements(array $recordsAry, string $box): string {
 
-		$fontSize = ($fontSize === 0 ? $this->fontSize : $fontSize);
-		$html = '<span style="font-family: \'fontawesome\'; font-size: '.$fontSize.'px;">'.
-				$iconCode.'</span>';
+            $html = '<table class="table" style="width: 100%"><tbody>';
+            foreach ($recordsAry as $record) {
+
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
+
+                if ($record['box'] === $box &&
+                        ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) &&
+                        ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
+
+                    $html .= '<tr><td style="width: 14px; font-family:fontawesome" class="canvas-box">' . $this->htmlIcon('fa-stop') . '</td>' .
+                            '  <td class="canvas-box"><span style="font-family: \'robotocondensed\';">' . $record['description'] . '</span> ' .
+                            (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '') . '</td></tr>';
+                }
+            }
+
+            $html .= '</tbody></table>';
+
+            return $html;
+        }
+
+        /**
+         * htmlListBoxTitle -  Typeset title of element box in list view
+         *
+         * @access protected
+         * @param  string $text Canvas element title
+         * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
+         * @return string HTML code
+         */
+        protected function htmlListTitle(string $text, string $icon = ''): string {
+
+            return '<div class="list-title" style="font-size: ' . $this->fontSizeLarge . 'px">' .
+                    (!empty($icon) ? $this->htmlIcon($icon) . ' ' : '') . '<strong>' . $this->language->__($text) . '</strong></div>';
+        }
+
+        /**
+         * htmlListElementsDetailed - Typeset data of element box in canvas
+         *
+         * @access protected
+         * @param  array  $recordsAry Array of canvas data records
+         * @para,  string $box        Identifier of elements/box to display
+         * @return string HTML code
+         */
+        protected function htmlListElementsDetailed(array $recordsAry, string $box): string {
+
+            $html = '';
+            foreach ($recordsAry as $record) {
+
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
+                if ($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
+                        ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
 
-		return $html;
+                    if (isset($record['description']) && !empty($record['description'])) {
 
-	}
+                        $html .= '<div class="list-elt-box"><strong>' . $record['description'] . '</strong></div>';
+                    }
 
-	/**
-	 * htmlCanvasTitle - Typeset title of element box in canvas
-	 *
-	 * @access protected
-	 * @param  string $text Canvas element title
-	 * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
-	 * @return string HTML code
-	 */
-	protected function htmlCanvasTitle(string $text, string $icon = ''): string
-	{
+                    if (isset($record['relates']) && !empty($record['relates'])) {
 
-		return (!empty($icon) ? $this->htmlIcon($icon).' ' : '').'<strong>'.$this->language->__($text).'</strong>';
+                        $relates = $this->htmlListRelates($record['relates']);
 
-	}
+                        if (!empty($relates)) {
 
-	/**
-	 * htmlCanvasElements - Typeset data of element box in canvas
-	 *
-	 * @access protected
-	 * @param  array  $recordsAry Array of canvas data records
-	 * @para,  string $box        Identifier of elements/box to display
-	 * @return string HTML code
-	 */
-	protected function htmlCanvasElements(array $recordsAry, string $box): string
-	{
+                            $html .= '<div class="list-elt-box">' . $this->language->__($this->params['elementRelates']) . ': ' .
+                                    '<em>' . $relates . '</em></div>';
+                        }
+                    }
 
-		$html = '<table class="table" style="width: 100%"><tbody>';
-		foreach($recordsAry as $record) {
+                    if (isset($record['status']) && !empty($record['status'])) {
 
-			$filterStatus = $this->filter['status'] ?? 'all';
-			$filterRelates = $this->filter['relates'] ?? 'all';
+                        $status = $this->htmlListStatus($record['status']);
 
-			if($record['box'] === $box &&
-			   ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) &&
-			   ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
+                        if (!empty($status)) {
 
-				$html .= '<tr><td style="width: 14px; font-family:fontawesome" class="canvas-box">'.$this->htmlIcon('fa-stop').'</td>'.
-						 '  <td class="canvas-box"><span style="font-family: \'robotocondensed\';">'.$record['description'].'</span> '.
-						 (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '').'</td></tr>';
+                            $html .= '<div class="list-elt-box">' . $this->language->__($this->params['elementStatus']) . ': ' .
+                                    '<em>' . $status . '</em></div>';
+                        }
+                    }
 
-			}
 
-		}
+                    if ($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) &&
+                            !empty($record[$this->dataLabels[1]['field']])) {
 
-		$html .= '</tbody></table>';
+                        $html .= '<div class="list-elt-title">' . $this->dataLabels[1]['title'] . '</div>';
+                        $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[1]['field']]) . '</div>';
+                    }
 
-		return $html;
+                    if ($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) &&
+                            !empty($record[$this->dataLabels[2]['field']])) {
 
-	}
+                        $html .= '<div class="list-elt-title">' . $this->dataLabels[2]['title'] . '</div>';
+                        $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[2]['field']]) . '</div>';
+                    }
 
-	/**
-	 * htmlListBoxTitle -  Typeset title of element box in list view
-	 *
-	 * @access protected
-	 * @param  string $text Canvas element title
-	 * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
-	 * @return string HTML code
-	 */
-	protected function htmlListTitle(string $text, string $icon = ''): string
-	{
+                    if ($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) &&
+                            !empty($record[$this->dataLabels[3]['field']])) {
 
-		return '<div class="list-title" style="font-size: '.$this->fontSizeLarge.'px">'.
-			   (!empty($icon) ? $this->htmlIcon($icon).' ' : '').'<strong>'.$this->language->__($text).'</strong></div>';
+                        $html .= '<div class="list-elt-title">' . $this->dataLabels[3]['title'] . '</div>';
+                        $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[3]['field']]) . '</div>';
+                    }
+                    $html .= '<hr class="hr-black"/>';
+                }
+            }
+            return $html;
+        }
 
-	}
+        /**
+         * htmlListElementsCompact - Typeset data of element box in canvas in short form
+         *
+         * @access protected
+         * @param  array  $recordsAry Array of canvas data records
+         * @para,  string $box        Identifier of elements/box to display
+         * @return string HTML code
+         */
+        protected function htmlListElementsCompact(array $recordsAry, string $box): string {
 
-	/**
-	 * htmlListElementsDetailed - Typeset data of element box in canvas
-	 *
-	 * @access protected
-	 * @param  array  $recordsAry Array of canvas data records
-	 * @para,  string $box        Identifier of elements/box to display
-	 * @return string HTML code
-	 */
-	protected function htmlListElementsDetailed(array $recordsAry, string $box): string
-	{
+            $html = '';
+            foreach ($recordsAry as $record) {
 
-		$html = '';
-		foreach($recordsAry as $record) {
+                $filterStatus = $this->filter['status'] ?? 'all';
+                $filterRelates = $this->filter['relates'] ?? 'all';
+                if ($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
+                        ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
 
-			$filterStatus = $this->filter['status'] ?? 'all';
-			$filterRelates = $this->filter['relates'] ?? 'all';
-			if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
-			   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+                    $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
+                    if (isset($record['description']) && !empty($record['description'])) {
 
-				if(isset($record['description']) && !empty($record['description'])) {
+                        $html .= '<strong>' . $record['description'] . '</strong>';
+                    }
 
-					$html .= '<div class="list-elt-box"><strong>'.$record['description'].'</strong></div>';
+                    if ($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) &&
+                            isset($record['description']) && !empty($record['description'])) {
 
-				}
+                        $html .= ' - ';
+                    }
 
-				if(isset($record['relates']) && !empty($record['relates'])) {
+                    if ($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
 
-					$relates = $this->htmlListRelates($record['relates']);
+                        $html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
+                    }
 
-					if(!empty($relates)) {
+                    if ((isset($record['status']) && !empty($record['status'])) ||
+                            (isset($record['relates']) && !empty($record['relates']))) {
 
-						$html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementRelates']).': '.
-								 '<em>'.$relates.'</em></div>';
+                        $html .= ' (';
+                    }
 
-					}
+                    if (isset($record['status']) && !empty($record['status'])) {
 
-				}
+                        $status = $this->htmlListStatus($record['status']);
 
-				if(isset($record['status']) && !empty($record['status'])) {
+                        if (!empty($status)) {
 
-					$status = $this->htmlListStatus($record['status']);
+                            $html .= $this->language->__($status);
+                        }
+                    }
 
-					if(!empty($status)) {
+                    if ((isset($record['status']) && !empty($record['status'])) &&
+                            (isset($record['relates']) && !empty($record['relates']))) {
 
-						$html .= '<div class="list-elt-box">'.$this->language->__($this->params['elementStatus']).': '.
-								 '<em>'.$status.'</em></div>';
+                        $html .= ', ';
+                    }
 
-					}
+                    if (isset($record['relates']) && !empty($record['relates'])) {
 
-				}
+                        $relates = $this->htmlListRelates($record['relates']);
 
+                        if (!empty($relates)) {
 
-				if($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) &&
-				   !empty($record[$this->dataLabels[1]['field']])) {
+                            $html .= $this->language->__($relates);
+                        }
+                    }
 
-					$html .= '<div class="list-elt-title">'.$this->dataLabels[1]['title'].'</div>';
-					$html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[1]['field']]).'</div>';
+                    if ((isset($record['status']) && !empty($record['status'])) ||
+                            (isset($record['relates']) && !empty($record['relates']))) {
 
-				}
+                        $html .= ')';
+                    }
 
-				if($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) &&
-				   !empty($record[$this->dataLabels[2]['field']])) {
+                    $html .= '<hr class="hr-black"/>';
+                    $html .= '</div>';
+                }
+            }
 
-					$html .= '<div class="list-elt-title">'.$this->dataLabels[2]['title'].'</div>';
-					$html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[2]['field']]).'</div>';
+            return $html;
+        }
 
-				}
+        /**
+         * htmlStripTags - Strip / replace tags that cannot be processed by YetiForcePDF
+         *
+         * @access protected
+         * @param  string $html HTML code containing tags
+         * @return string HMTL code
+         */
+        protected function htmlStripTags(string $html): string {
 
-				if($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) &&
-				   !empty($record[$this->dataLabels[3]['field']])) {
+            if (substr($html, 0, 3) === '<p>') {
 
-					$html .= '<div class="list-elt-title">'.$this->dataLabels[3]['title'].'</div>';
-					$html .= '<div class="list-elt-box">'.$this->htmlStripTags($record[$this->dataLabels[3]['field']]).'</div>';
+                $html = substr($html, 3);
+            }
 
-				}
-				$html .= '<hr class="hr-black"/>';
-			}
-		}
-		return $html;
+            if (substr($html, -4) === '</p>') {
 
-	}
+                $html = substr($html, 0, strlen($html) - 4);
+            }
 
-	/**
-	 * htmlListElementsCompact - Typeset data of element box in canvas in short form
-	 *
-	 * @access protected
-	 * @param  array  $recordsAry Array of canvas data records
-	 * @para,  string $box        Identifier of elements/box to display
-	 * @return string HTML code
-	 */
-	protected function htmlListElementsCompact(array $recordsAry, string $box): string
-	{
+            $html = str_replace('<p>', '<br>', str_replace('</p>', '', $html));
+            $html = str_replace('<ul>', '<br>', $html);
+            $html = str_replace('<ol>', '<br>', $html);
+            $html = str_replace('<ul class="tox-checklist" style="list-style-type: none;">', '<br>', $html);
+            $html = str_replace('<li>', $this->htmlIcon('fa-stop', $this->fontSizeSmall) . ' ', $html);
+            $html = str_replace('</li>', '<br>', $html);
+            $html = str_replace('</ul>', '', $html);
+            $html = str_replace('</ol>', '', $html);
 
-		$html = '';
-		foreach($recordsAry as $record) {
+            return $html;
+        }
 
-			$filterStatus = $this->filter['status'] ?? 'all';
-			$filterRelates = $this->filter['relates'] ?? 'all';
-			if($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
-			   ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
+    }
 
-				$html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
-				if(isset($record['description']) && !empty($record['description'])) {
-
-					$html .= '<strong>'.$record['description'].'</strong>';
-
-				}
-
-				if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) &&
-				   isset($record['description']) && !empty($record['description'])) {
-
-					$html .= ' - ';
-
-				}
-
-				if($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
-
-					$html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
-
-				}
-
-				if((isset($record['status']) && !empty($record['status'])) ||
-				   (isset($record['relates']) && !empty($record['relates']))) {
-
-					$html .= ' (';
-
-				}
-
-				if(isset($record['status']) && !empty($record['status'])) {
-
-					$status = $this->htmlListStatus($record['status']);
-
-					if(!empty($status)) {
-
-						$html .= $this->language->__($status);
-
-					}
-
-				}
-
-				if((isset($record['status']) && !empty($record['status'])) &&
-				   (isset($record['relates']) && !empty($record['relates']))) {
-
-					$html .= ', ';
-
-				}
-
-				if(isset($record['relates']) && !empty($record['relates'])) {
-
-					$relates = $this->htmlListRelates($record['relates']);
-
-					if(!empty($relates)) {
-
-						$html .= $this->language->__($relates);
-
-					}
-
-				}
-
-				if((isset($record['status']) && !empty($record['status'])) ||
-				   (isset($record['relates']) && !empty($record['relates']))) {
-
-					$html .= ')';
-
-				}
-
-				$html .= '<hr class="hr-black"/>';
-				$html .= '</div>';
-
-			}
-
-		}
-
-		return $html;
-
-	}
-
-	/**
-	 * htmlStripTags - Strip / replace tags that cannot be processed by YetiForcePDF
-	 *
-	 * @access protected
-	 * @param  string $html HTML code containing tags
-	 * @return string HMTL code
-	 */
-	protected function htmlStripTags(string $html): string
-	{
-
-		if(substr($html, 0, 3) === '<p>') {
-
-			$html = substr($html, 3);
-
-		}
-
-		if(substr($html, -4) === '</p>') {
-
-			$html = substr($html, 0, strlen($html) - 4);
-		}
-
-		$html = str_replace('<p>', '<br>', str_replace('</p>', '', $html));
-		$html = str_replace('<ul>', '<br>', $html);
-		$html = str_replace('<ol>', '<br>', $html);
-		$html = str_replace('<ul class="tox-checklist" style="list-style-type: none;">', '<br>', $html);
-		$html = str_replace('<li>', $this->htmlIcon('fa-stop', $this->fontSizeSmall).' ', $html);
-		$html = str_replace('</li>', '<br>', $html);
-		$html = str_replace('</ul>', '', $html);
-		$html = str_replace('</ol>', '', $html);
-
-		return $html;
-
-	}
-
-}
 }
