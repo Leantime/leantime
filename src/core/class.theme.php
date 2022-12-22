@@ -19,7 +19,7 @@ namespace leantime\core {
         public const CUSTOM_CSS = 'custom';          // Theme style customination file (excluding .css)
         public const CUSTOM_JS = 'custom';           // Theme JavaScript customination file (excluding .js)
 
-        private config $config;
+        private environment $config;
         private appSettings $settings;
         private array|false $iniData;
 

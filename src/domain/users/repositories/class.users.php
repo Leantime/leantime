@@ -405,7 +405,7 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * addUser - add User to db with postback test
+         * addUser - add User to db
          *
          * @access public
          * @param  array $values
@@ -421,7 +421,9 @@ namespace leantime\domain\repositories {
 					        notifications,
 							clientId,
 							password,
-							source
+							source,
+                            pwReset,
+                            status
 						) VALUES (
 							:firstname,
 							:lastname,
@@ -431,7 +433,9 @@ namespace leantime\domain\repositories {
 							1,
 							:clientId,
 							:password,
-							:source
+							:source,
+							:pwReset,
+						    :status
 						)";
 
             $stmn = $this->db->database->prepare($query);
@@ -451,7 +455,8 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':source', '', PDO::PARAM_STR);
             }
 
-
+            $stmn->bindValue(':pwReset', $values['pwReset'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
             $userId = $this->db->database->lastInsertId();

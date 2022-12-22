@@ -7,14 +7,11 @@
 
 namespace leantime\core {
 
-    use JetBrains\PhpStorm\NoReturn;
     use leantime\domain\models\auth\roles;
-    use leantime\domain\repositories;
     use leantime\domain\services;
-    use leantime\core\eventhelpers;
 
-    class template {
-
+    class template
+    {
         use eventhelpers;
 
         /**
@@ -83,7 +80,8 @@ namespace leantime\core {
          *
          * @access public
          */
-        public function __construct() {
+        public function __construct()
+        {
             $this->theme = new theme();
             $this->language = language::getInstance();
             $this->frontcontroller = frontcontroller::getInstance(ROOT);
@@ -95,7 +93,8 @@ namespace leantime\core {
          * @param $name
          * @param $value
          */
-        public function assign($name, $value) {
+        public function assign($name, $value)
+        {
 
             $value = self::dispatch_filter("var.$name", $value);
 
@@ -109,7 +108,8 @@ namespace leantime\core {
          * @param  $type
          * @return string
          */
-        public function setNotification($msg, $type) {
+        public function setNotification($msg, $type)
+        {
 
             $_SESSION['notification'] = $msg;
             $_SESSION['notifcationType'] = $type;
@@ -125,7 +125,8 @@ namespace leantime\core {
          *
          */
 
-        public function getTemplatePath(string $module, string $name): string|false {
+        public function getTemplatePath(string $module, string $name): string|false
+        {
 
             $plugin_path = self::dispatch_filter('relative_plugin_template_path', '', [
                         'module' => $module,
@@ -180,7 +181,8 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template, $layout = "app") {
+        public function display($template, $layout = "app")
+        {
 
             //These variables are available in the template
             $config = \leantime\core\environment::getInstance();
@@ -190,10 +192,12 @@ namespace leantime\core {
 
             $language = $this->language;
 
-            foreach ([
-        'template',
-        "template.$template"
-            ] as $tplfilter) {
+            foreach (
+                [
+                'template',
+                "template.$template"
+                ] as $tplfilter
+            ) {
                 $template = self::dispatch_filter($tplfilter, $template);
             }
 
@@ -202,22 +206,22 @@ namespace leantime\core {
             //Load Layout file
             $layout = htmlspecialchars($layout);
 
-            foreach ([
-        'layout',
-        "layout.$template"
-            ] as $tplfilter) {
+            foreach (
+                [
+                'layout',
+                "layout.$template"
+                ] as $tplfilter
+            ) {
                 $layout = self::dispatch_filter($tplfilter, $layout);
             }
 
             $layoutFilename = $this->theme->getLayoutFilename($layout . '.php', $template);
 
             if ($layoutFilename === false) {
-
                 $layoutFilename = $this->theme->getLayoutFilename('app.php');
             }
 
             if ($layoutFilename === false) {
-
                 throw new \Exception("Cannot find default 'app.php' layout file");
             }
 
@@ -227,10 +231,12 @@ namespace leantime\core {
 
             $layoutContent = ob_get_clean();
 
-            foreach ([
-        'layoutContent',
-        "layoutContent.$template"
-            ] as $tplfilter) {
+            foreach (
+                [
+                'layoutContent',
+                "layoutContent.$template"
+                ] as $tplfilter
+            ) {
                 $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
             }
 
@@ -249,20 +255,24 @@ namespace leantime\core {
 
             $content = ob_get_clean();
 
-            foreach ([
-        'content',
-        "content.$template"
-            ] as $tplfilter) {
+            foreach (
+                [
+                'content',
+                "content.$template"
+                ] as $tplfilter
+            ) {
                 $content = self::dispatch_filter($tplfilter, $content);
             }
 
             //Load template content into layout content
             $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
 
-            foreach ([
-        'render',
-        "render.$template"
-            ] as $filter) {
+            foreach (
+                [
+                'render',
+                "render.$template"
+                ] as $filter
+            ) {
                 $render = self::dispatch_filter($filter, $render);
             }
 
@@ -276,7 +286,8 @@ namespace leantime\core {
          * @param  $jsonContent
          * @return void
          */
-        public function displayJson($jsonContent) {
+        public function displayJson($jsonContent)
+        {
 
             header('Content-Type: application/json; charset=utf-8');
             if ($jsonContent !== false) {
@@ -293,7 +304,8 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template) {
+        public function displayPartial($template)
+        {
 
             $this->display($template, 'blank');
         }
@@ -305,23 +317,22 @@ namespace leantime\core {
          * @param  $name
          * @return array
          */
-        public function get($name) {
+        public function get($name)
+        {
 
             if (!isset($this->vars[$name])) {
-
                 return null;
             }
 
             return $this->vars[$name];
         }
 
-        public function getNotification() {
+        public function getNotification()
+        {
 
             if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-
                 return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
             } else {
-
                 return array('type' => "", 'msg' => "");
             }
         }
@@ -333,7 +344,8 @@ namespace leantime\core {
          * @param  $alias
          * @return void
          */
-        public function displaySubmodule($alias) {
+        public function displaySubmodule($alias)
+        {
 
             $frontController = frontcontroller::getInstance(ROOT);
             $config = \leantime\core\environment::getInstance();
@@ -350,9 +362,9 @@ namespace leantime\core {
             }
 
             $relative_path = self::dispatch_filter(
-                            'submodule_relative_path',
-                            "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
-                            [
+                'submodule_relative_path',
+                "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
+                [
                                 'module' => $submodule['module'],
                                 'submodule' => $submodule['submodule']
                             ]
@@ -365,30 +377,31 @@ namespace leantime\core {
             }
 
             if (file_exists($file)) {
-
                 include $file;
             }
         }
 
-        public function displayNotification() {
+        public function displayNotification()
+        {
 
             $notification = '';
             $note = $this->getNotification();
             $language = $this->language;
 
-            foreach ([
-        'message',
-        "message_{$note['msg']}"
-            ] as $filter) {
+            foreach (
+                [
+                'message',
+                "message_{$note['msg']}"
+                ] as $filter
+            ) {
                 $message = self::dispatch_filter(
-                                $filter,
-                                $language->__($note['msg'], false),
-                                $note
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
                 );
             }
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-
                 $notification = '<script type="text/javascript">
                                   jQuery.jGrowl("' . $message . '", {theme: "' . $note['type'] . '"});
                                 </script>';
@@ -400,25 +413,27 @@ namespace leantime\core {
             return $notification;
         }
 
-        public function displayInlineNotification() {
+        public function displayInlineNotification()
+        {
 
             $notification = '';
             $note = $this->getNotification();
             $language = $this->language;
 
-            foreach ([
-        'message',
-        "message_{$note['msg']}"
-            ] as $filter) {
+            foreach (
+                [
+                'message',
+                "message_{$note['msg']}"
+                ] as $filter
+            ) {
                 $message = self::dispatch_filter(
-                                $filter,
-                                $language->__($note['msg'], false),
-                                $note
+                    $filter,
+                    $language->__($note['msg'], false),
+                    $note
                 );
             }
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-
                 $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "'>
                                     <div class='alert alert-" . $note['type'] . "'>
                                         " . $message . "
@@ -433,13 +448,15 @@ namespace leantime\core {
             return $notification;
         }
 
-        public function redirect($url): void {
+        public function redirect($url): void
+        {
 
             header("Location:" . trim($url));
             exit();
         }
 
-        public function getSubdomain(): string {
+        public function getSubdomain(): string
+        {
 
             preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
 
@@ -450,13 +467,15 @@ namespace leantime\core {
             return $subdomain;
         }
 
-        public function __($index): string {
+        public function __($index): string
+        {
 
             return $this->language->__($index);
         }
 
         //Echos and escapes content
-        public function e($content): void {
+        public function e($content): void
+        {
 
             $content = $this->convertRelativePaths($content);
             $escaped = $this->escape($content);
@@ -464,7 +483,8 @@ namespace leantime\core {
             echo $escaped;
         }
 
-        public function escape($content): string {
+        public function escape($content): string
+        {
 
             if (!is_null($content)) {
                 $content = $this->convertRelativePaths($content);
@@ -474,7 +494,8 @@ namespace leantime\core {
             return '';
         }
 
-        public function escapeMinimal($content): string {
+        public function escapeMinimal($content): string
+        {
 
             $content = $this->convertRelativePaths($content);
             $config = array(
@@ -499,7 +520,8 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedDateString($date): string {
+        public function getFormattedDateString($date): string
+        {
 
             return $this->language->getFormattedDateString($date);
         }
@@ -511,18 +533,21 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedTimeString($date): string {
+        public function getFormattedTimeString($date): string
+        {
 
             return $this->language->getFormattedTimeString($date);
         }
 
-        public function get24HourTimestring($dateTime) {
+        public function get24HourTimestring($dateTime)
+        {
             return $this->language->get24HourTimestring($dateTime);
         }
 
         //Credit goes to Søren Løvborg (https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg)
         //https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
-        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false) {
+        public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false)
+        {
             $printedLength = 0;
             $position = 0;
             $tags = array();
@@ -545,8 +570,9 @@ namespace leantime\core {
 
                 $truncate .= $str;
                 $printedLength += strlen($str);
-                if ($printedLength >= $maxLength)
+                if ($printedLength >= $maxLength) {
                     break;
+                }
 
                 if ($tag[0] == '&' || ord($tag) >= 0x80) {
                     // Pass the entity or UTF-8 multibyte sequence through unchanged.
@@ -577,12 +603,14 @@ namespace leantime\core {
             }
 
             // Print any remaining text.
-            if ($printedLength < $maxLength && $position < strlen($html))
+            if ($printedLength < $maxLength && $position < strlen($html)) {
                 $truncate .= sprintf(substr($html, $position, $maxLength - $printedLength));
+            }
 
             // Close any open tags.
-            while (!empty($tags))
+            while (!empty($tags)) {
                 $truncate .= sprintf('</%s>', array_pop($tags));
+            }
 
             if (strlen($truncate) > $maxLength) {
                 $truncate .= $ending;
@@ -591,7 +619,8 @@ namespace leantime\core {
             return $truncate;
         }
 
-        public function convertRelativePaths($text) {
+        public function convertRelativePaths($text)
+        {
             if (is_null($text)) {
                 return $text;
             }
@@ -599,8 +628,9 @@ namespace leantime\core {
             $base = BASE_URL;
 
             // base url needs trailing /
-            if (substr($base, -1, 1) != "/")
+            if (substr($base, -1, 1) != "/") {
                 $base .= "/";
+            }
 
             // Replace links
             $pattern = "/<a([^>]*) " .
@@ -618,7 +648,8 @@ namespace leantime\core {
             return $text;
         }
 
-        public function getModulePicture() {
+        public function getModulePicture()
+        {
 
             $module = frontcontroller::getModuleName($this->template);
 
@@ -630,18 +661,17 @@ namespace leantime\core {
             return $picture;
         }
 
-        public function displayLink($module, $name, $params = null, $attribute = null) {
+        public function displayLink($module, $name, $params = null, $attribute = null)
+        {
 
             $mod = explode('.', $module);
 
             if (is_array($mod) === true && count($mod) == 2) {
-
                 $action = $mod[1];
                 $module = $mod[0];
 
                 $mod = $module . '/class.' . $action . '.php';
             } else {
-
                 $mod = array();
                 return false;
             }
@@ -651,7 +681,6 @@ namespace leantime\core {
             $url = "/" . $module . "/" . $action . "/";
 
             if (!empty($params)) {
-
                 foreach ($params as $key => $value) {
                     $url .= $value . "/";
                 }
@@ -660,7 +689,6 @@ namespace leantime\core {
             $attr = '';
 
             if ($attribute != null) {
-
                 foreach ($attribute as $key => $value) {
                     $attr .= $key . " = '" . $value . "' ";
                 }
@@ -685,7 +713,8 @@ namespace leantime\core {
          *                 local filenames or AWS URLs
          */
 
-        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string {
+        public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
+        {
             $patchedTextHtml = $this->convertRelativePaths($textHtml);
 
             // TO DO: Replace local download.php
@@ -698,7 +727,8 @@ namespace leantime\core {
          * @param string $hookName
          * @param mixed $payload
          */
-        private function dispatchTplEvent($hookName, $payload = []) {
+        private function dispatchTplEvent($hookName, $payload = [])
+        {
             $this->dispatchTplHook('event', $hookName, $payload);
         }
 
@@ -709,7 +739,8 @@ namespace leantime\core {
          *
          * @return mixed
          */
-        private function dispatchTplFilter($hookName, $payload = [], $available_params = []) {
+        private function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+        {
             return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
         }
 
@@ -721,8 +752,10 @@ namespace leantime\core {
          *
          * @return null|mixed
          */
-        private function dispatchTplHook($type, $hookName, $payload = [], $available_params = []) {
-            if (!is_string($type) || !in_array($type, ['event', 'filter'])
+        private function dispatchTplHook($type, $hookName, $payload = [], $available_params = [])
+        {
+            if (
+                !is_string($type) || !in_array($type, ['event', 'filter'])
             ) {
                 return;
             }
@@ -733,7 +766,6 @@ namespace leantime\core {
 
             self::dispatch_event($hookName, $payload, $this->hookContext);
         }
-
     }
 
 }

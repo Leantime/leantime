@@ -197,7 +197,6 @@ namespace leantime\domain\controllers {
 
                 }
 
-
                 //Save Profile Image
                 if (isset($_POST['profileImage'])) {
                     $tab = '#myProfile';
