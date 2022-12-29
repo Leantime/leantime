@@ -34,10 +34,10 @@ $canvasProgress = $this->get('canvasProgress');
                                     <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
-                                <?=$this->__($board['name']) ?>
-                            </a>
-                        </span>
+                                    <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
+                                        <?=$this->__($board['name']) ?>
+                                    </a>
+                                </span>
                                 <?=$this->__($board['description']) ?>
                                 <div class="clearall"></div>
                                 <?php

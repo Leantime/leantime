@@ -56,116 +56,101 @@ $projects = $this->get('relations');
                 });
             }
 
-
             return false;
         });
-
 
     });
 
 </script>
 
-<div class="pageheader">
+<h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> <?php echo $this->__('headlines.new_user'); ?></h4>
 
-    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
-    <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><h1><?php echo $this->__('headlines.new_user'); ?></h1></h1>
-    </div>
-</div><!--pageheader-->
+<?php echo $this->displayNotification() ?>
 
-<div class="maincontent">
+<form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal">
+    <div class="row">
+        <div class="col-md-7">
 
+                <h4 class="widgettitle title-light"><?php echo $this->__('label.profile_information'); ?></h4>
 
-        <?php echo $this->displayNotification() ?>
-        <form action="" method="post" class="stdform">
+                    <label for="firstname"><?php echo $this->__('label.firstname'); ?></label> <input
+                        type="text" name="firstname" id="firstname"
+                        value="<?php echo $values['firstname'] ?>" /><br />
 
-            <div class="row">
-            <div class="col-md-8">
-                    <div class="maincontentinner">
+                    <label for="lastname"><?php echo $this->__('label.lastname'); ?></label> <input
+                        type="text" name="lastname" id="lastname"
+                        value="<?php echo $values['lastname'] ?>" /><br />
 
-                    <h4 class="widgettitle title-light"><?php echo $this->__('label.profile_information'); ?></h4>
+                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input
+                        type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
 
-                        <label for="firstname"><?php echo $this->__('label.firstname'); ?></label> <input
-                            type="text" name="firstname" id="firstname"
-                            value="<?php echo $values['firstname'] ?>" /><br />
+                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
+                        type="text" name="phone" id="phone"
+                        value="<?php echo $values['phone'] ?>" /><br />
 
-                        <label for="lastname"><?php echo $this->__('label.lastname'); ?></label> <input
-                            type="text" name="lastname" id="lastname"
-                            value="<?php echo $values['lastname'] ?>" /><br />
+                    <label for="role"><?php echo $this->__('label.role'); ?></label>
+                    <select name="role" id="role">
 
-                        <label for="user"><?php echo $this->__('label.email'); ?></label> <input
-                            type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
-
-                        <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
-                            type="text" name="phone" id="phone"
-                            value="<?php echo $values['phone'] ?>" /><br />
-
-                        <label for="role"><?php echo $this->__('label.role'); ?></label>
-                        <select name="role" id="role">
-
-                                <?php foreach($this->get('roles') as $key => $role){ ?>
-                                    <option value="<?php  echo $key; ?>"
-                                        <?php if($key == $values['role']) { ?> selected="selected" <?php
-                                        } ?>>
-                                        <?=$this->__("label.roles.".$role) ?>
-                                       </option>
-                                <?php } ?>
-
-                        </select> <br />
-
-                        <label for="client"><?php echo $this->__('label.client') ?></label>
-                        <select name='client' id="client">
-                            <?php if($login::userIsAtLeast("manager")){?>
-                                <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
+                            <?php foreach($this->get('roles') as $key => $role){ ?>
+                                <option value="<?php  echo $key; ?>"
+                                    <?php if($key == $values['role']) { ?> selected="selected" <?php
+                                    } ?>>
+                                    <?=$this->__("label.roles.".$role) ?>
+                                   </option>
                             <?php } ?>
-                            <?php foreach($this->get('clients') as $client): ?>
-                                <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
-                               endif; ?>><?php $this->e($client['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select><br/>
 
-                        <p class="stdformbutton">
-                            <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
-                        </p>
-                    </div>
-            </div>
-            <div class="col-md-4">
-                <div class="maincontentinner">
-                    <h4 class="widgettitle title-light"><?php echo $this->__('label.project_assignment'); ?></h4>
+                    </select> <br />
 
-                    <div class="scrollableItemList">
-                        <?php
-                        $currentClient = '';
-                        $i = 0;
-                        foreach($this->get('allProjects') as $row){
-
-                            if($currentClient != $row['clientName']){
-                                if($i>0) { echo"</div>"; }
-                                echo "<h3 id='accordion_link_".$i."'>
-                                <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$this->escape($row['clientName'])."</a>
-                                </h3>
-                                <div id='accordion_".$i."' class='simpleAccordionContainer'>";
-                                $currentClient = $row['clientName'];
-                            } ?>
-                                <div class="item">
-                                    <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
-                                    <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { echo "checked='checked';"; } ?>
-                                    /><label for="project_<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?></label>
-                                    <div class="clearall"></div>
-                                </div>
-                            <?php $i++; ?>
+                    <label for="client"><?php echo $this->__('label.client') ?></label>
+                    <select name='client' id="client">
+                        <?php if($login::userIsAtLeast("manager")){?>
+                            <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
                         <?php } ?>
+                        <?php foreach($this->get('clients') as $client): ?>
+                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
+                           endif; ?>><?php $this->e($client['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select><br/>
 
-                    </div>
+                    <p class="stdformbutton">
+                        <input type="hidden" name="save" value="1" />
+                        <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.invite_user'); ?>" class="button" />
+                    </p>
+
+        </div>
+        <div class="col-md-5">
+
+                <h4 class="widgettitle title-light"><?php echo $this->__('label.project_assignment'); ?></h4>
+
+                <div class="scrollableItemList">
+                    <?php
+                    $currentClient = '';
+                    $i = 0;
+                    foreach($this->get('allProjects') as $row){
+
+                        if($currentClient != $row['clientName']){
+                            if($i>0) { echo"</div>"; }
+                            echo "<h3 id='accordion_link_".$i."'>
+                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$this->escape($row['clientName'])."</a>
+                            </h3>
+                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+                            $currentClient = $row['clientName'];
+                        } ?>
+                            <div class="item">
+                                <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
+                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { echo "checked='checked';"; } ?>
+                                /><label for="project_<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?></label>
+                                <div class="clearall"></div>
+                            </div>
+                        <?php $i++; ?>
+                    <?php } ?>
 
                 </div>
-            </div>
-            </div>
-        </form>
 
+
+        </div>
     </div>
-</div>
+</form>
 
 <script>
     function accordionToggle(id) {

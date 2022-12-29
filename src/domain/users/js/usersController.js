@@ -136,6 +136,30 @@ leantime.usersController = (function () {
         jQuery(".userImportModal").nyroModal(userImportModalConfig);
     }
 
+    var initUserEditModal = function () {
+
+        var userEditModal = {
+            sizes: {
+                minW: 900,
+                minH: 250
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                afterShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    jQuery(".userEditModal").nyroModal(userEditModal);
+                },
+                beforeClose: function () {
+
+                    location.reload();
+                },
+            }
+        };
+
+        jQuery(".userEditModal").nyroModal(userEditModal);
+    }
+
     var checkPWStrength = function(pwField) {
 
         let timeout;
@@ -188,6 +212,7 @@ leantime.usersController = (function () {
         saveCroppie: saveCroppie,
         initUserTable:initUserTable,
         _initModals:_initModals,
-        checkPWStrength:checkPWStrength
+        checkPWStrength:checkPWStrength,
+        initUserEditModal:initUserEditModal
     };
 })();

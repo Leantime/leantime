@@ -939,6 +939,12 @@ namespace leantime\domain\services {
         {
             return $this->projectRepository->getProjectUserRelation($id);
         }
+
+        public function patch($id, $params) {
+            return $this->projectRepository->patch($id, $params);
+        }
+
+
     }
 
 }

@@ -78,7 +78,8 @@ namespace leantime\domain\repositories {
             20109,
             20110,
             20111,
-            20112
+            20112,
+            20113
         );
 
         /**
@@ -1165,6 +1166,40 @@ namespace leantime\domain\repositories {
                   INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
                   INDEX `userId,read` (`userId` ASC, `read` DESC)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+            ];
+
+            foreach ($sql as $statement) {
+
+                try {
+
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        /* * *
+         * update_sql_20113 - Create onboarding setting for first time installs
+         *
+         * @access private
+         * @return bool|array    Success of database update or array of errors
+         */
+
+        private function update_sql_20113(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.completedOnboarding', 'true') ON DUPLICATE KEY UPDATE `value` = 'true'"
             ];
 
             foreach ($sql as $statement) {

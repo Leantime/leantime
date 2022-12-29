@@ -46,9 +46,13 @@ namespace leantime\domain\controllers {
 
             //only Admins
             if (auth::userIsAtLeast(roles::$admin)) {
+
+
+
                 $projectrelation = array();
 
                 if (isset($_POST['save'])) {
+
                     $values = array(
                         'firstname' => ($_POST['firstname']),
                         'lastname' => ($_POST['lastname']),
@@ -78,7 +82,6 @@ namespace leantime\domain\controllers {
                                 $this->tpl->setNotification("notification.user_invited_successfully", 'success');
 
 
-                                $this->tpl->redirect(BASE_URL . "/users/showAll");
                             } else {
                                 $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                             }
@@ -93,16 +96,23 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('values', $values);
                 $clients = new repositories\clients();
 
+                if(isset($_GET['preSelectProjectId'])){
+                    $preSelected = explode(",", $_GET['preSelectProjectId']);
+
+                    foreach($preSelected as $item){
+                        $projectrelation[] = (int) $item;
+                    }
+                }
+
                 $this->tpl->assign('clients', $clients->getAll());
                 $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
                 $this->tpl->assign('roles', roles::getRoles());
 
                 $this->tpl->assign('relations', $projectrelation);
 
-
-                $this->tpl->display('users.newUser');
+                $this->tpl->displayPartial('users.newUser');
             } else {
-                $this->tpl->display('errors.error403');
+                $this->tpl->displayPartial('errors.error403');
             }
         }
     }

@@ -86,10 +86,6 @@ namespace leantime\domain\controllers {
 								$changedEmail = 1;
 							}
 
-							if (isset($_POST['password']) && $_POST['password'] != '' && $_POST['password'] == $_POST['password2']) {
-								$values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-							}
-
 							if ($values['user'] !== '') {
 								if ( !isset($_POST['password']) || ($_POST['password'] == $_POST['password2'])) {
 									if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {

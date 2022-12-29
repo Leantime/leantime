@@ -47,7 +47,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive');
+        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
 
         /**
          * @access public

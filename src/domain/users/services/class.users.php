@@ -164,6 +164,19 @@ namespace leantime\domain\services {
         {
             return $this->userRepo->addUser($values);
         }
-    }
 
+        /**
+         * usernameExist - Checks if a given username (email) is already in the db
+         *
+         * TODO: Should accept userModel
+         *
+         * @access public
+         * @param string $username username
+         * @param int $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
+         * @return bool returns true or false
+         */
+        public function usernameExist($username, $notUserId=''){
+            return $this->userRepo->usernameExist($username, $notUserId);
+        }
+    }
 }

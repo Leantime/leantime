@@ -50,7 +50,7 @@
                 <div class="maincontentinner">
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <div class="pull-right">
-                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-user-plus"></i> <?=$this->__('links.add_team_member') ?></a>
+                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-users"></i> <?=$this->__('links.manage_team') ?></a>
                         </div>
                     <?php } ?>
                     <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>

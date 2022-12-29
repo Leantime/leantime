@@ -721,7 +721,8 @@ namespace leantime\domain\repositories {
 				zp_user.firstname,
 				zp_user.lastname,
 				zp_user.profileId,
-				zp_user.role
+				zp_user.role,
+				zp_user.status
 			FROM zp_relationuserproject
 			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
 			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
@@ -847,6 +848,30 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+        }
+
+        public function patch($id,$params)
+        {
+
+            $sql = "UPDATE zp_projects SET ";
+
+            foreach($params as $key=>$value){
+                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            }
+
+            $sql .= "id=:id WHERE id=:id LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            foreach($params as $key=>$value){
+                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            }
+
+            $return = $stmn->execute();
+            $stmn->closeCursor();
+
+            return $return;
         }
 
     }
