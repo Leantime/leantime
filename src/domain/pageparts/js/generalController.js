@@ -359,41 +359,20 @@ leantime.generalController = (function () {
 
     };
 
-    var copyUrl = function (event) {
+    var copyUrl = function (field) {
 
-        event.preventDefault();
+        // Get the text field
+        var copyText = document.getElementById(field);
 
-        var linkToGo = event.target.getAttribute('href');
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
 
-        if (typeof (navigator.clipboard) == 'undefined') {
-            console.log('navigator.clipboard');
-            var textArea = document.createElement("textarea");
-            textArea.value = linkToGo;
-            textArea.style.position = "fixed";  //avoid scrolling to bottom
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
 
-            try {
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
-                jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
-            } catch (err) {
-                console.log('Was not possible to copy te text: ', err);
-            }
-
-            document.body.removeChild(textArea)
-            return;
-        }
-
-        navigator.clipboard.writeText(linkToGo).then(function () {
-            jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
-        }, function (err) {
-            console.log('Was not possible to copy te text: ', err);
-        });
-
-
-
+        // Alert the copied text
+        jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
 
     }
 
