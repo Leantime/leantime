@@ -42,7 +42,7 @@
                     <div class="pull-right dropdownWrapper">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
                         <div class="dropdown-menu padding-md">
-                            <input type="text" class="disabled" id="projectUrl" value="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>" />
+                            <input type="text" id="projectUrl" value="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>" />
                             <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('projectUrl');"><?=$this->__('links.copy_url') ?></button>
                         </div>
                     </div>
