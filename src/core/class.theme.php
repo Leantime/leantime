@@ -6,18 +6,18 @@
 
 namespace leantime\core {
 
-    use leantime\core\eventhelpers;
+    use Exception;
 
-    class theme {
-
+    class theme
+    {
         use eventhelpers;
 
         public const DEFAULT = 'default';            // Name of default theme
         public const DEFAULT_INI = 'theme';          // Theme configuration file (excluding .ini extension)
         public const DEFAULT_CSS = 'theme';          // Theme style file  (excluding .css extension)
         public const DEFAULT_JS = 'theme';           // Theme JavasCript library (excluding .js extension)
-        public const CUSTOM_CSS = 'custom';          // Theme style customination file (excluding .css)
-        public const CUSTOM_JS = 'custom';           // Theme JavaScript customination file (excluding .js)
+        public const CUSTOM_CSS = 'custom';          // Theme style customization file (excluding .css)
+        public const CUSTOM_JS = 'custom';           // Theme JavaScript customization file (excluding .js)
 
         private environment $config;
         private appSettings $settings;
@@ -26,8 +26,9 @@ namespace leantime\core {
         /**
          * __construct - Constructor
          */
-        function __construct() {
-            $this->config = \leantime\core\environment::getInstance();
+        public function __construct()
+        {
+            $this->config = environment::getInstance();
             $this->settings = new appSettings();
             $this->iniData = [];
         }
@@ -38,28 +39,32 @@ namespace leantime\core {
          * @access public
          * @return string Active theme identifier
          */
-        public function getActive(): string {
+        public function getActive(): string
+        {
 
             // Reset .ini data
             $this->iniData = [];
             // Return user specific theme, if active
             if (isset($_SESSION["userdata"]["id"])) {
-
-                if (isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"]))
+                if (isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"])) {
                     return $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"];
+                }
             }
 
             //Return generic theme
-            if (isset($_SESSION['usersettings.theme']))
+            if (isset($_SESSION['usersettings.theme'])) {
                 return $_SESSION['usersettings.theme'];
+            }
 
             //Return saved
-            if ($this->config->keepTheme && isset($_COOKIE['theme']))
+            if ($this->config->keepTheme && isset($_COOKIE['theme'])) {
                 return $_COOKIE['theme'];
+            }
 
             //Return configured
-            if (isset($this->config->defaultTheme) && !empty($this->config->defaultTheme))
+            if (isset($this->config->defaultTheme) && !empty($this->config->defaultTheme)) {
                 return $this->config->defaultTheme;
+            }
 
             //Return default
             return static::DEFAULT;
@@ -71,24 +76,29 @@ namespace leantime\core {
          * Note: After setActive, the language settings need to be reloaded/reset, because languages are theme specific
          *
          * @access public
-         * @param  string $id Active theme identifier
+         * @param string $id Active theme identifier
+         * @throws Exception exception if theme does not exist
          */
-        public function setActive(string $id): void {
+        public function setActive(string $id): void
+        {
+
+            if ($id == '') {
+                $id = 'default';
+            }
 
             if (!is_dir(ROOT . '/theme/' . $id) || !file_exists(ROOT . '/theme/' . $id . '/' . static::DEFAULT_INI . '.ini')) {
-                throw new \Exception("Selected theme '$id' does not exist");
+                throw new Exception("Selected theme '$id' does not exist");
             }
 
             if (isset($_SESSION["userdata"]["id"])) {
-
                 $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"] = $id;
             }
 
             $_SESSION['usersettings.theme'] = $id;
             setcookie(
-                    'theme',
-                    $id,
-                    [
+                'theme',
+                $id,
+                [
                         'expires' => time() + 60 * 60 * 24 * 30,
                         'path' => $this->config->appUrlRoot . '/',
                         'samesite' => 'Strict'
@@ -100,9 +110,10 @@ namespace leantime\core {
          * getAll - Return an array of all themes
          *
          * @access public
-         * @return Return an array of all themes
+         * @return array return an array of all themes
          */
-        public function getAll(): array {
+        public function getAll(): array
+        {
 
             $language = language::getInstance();
             $themeRoot = ROOT . '/theme/';
@@ -111,18 +122,16 @@ namespace leantime\core {
 
             $themeDirs = opendir($themeRoot);
             while (($theme = readdir($themeDirs)) !== false) {
-                if ($theme !== 'sample' && is_dir(ROOT . '/theme/' . $theme) &&
-                        file_exists(ROOT . '/theme/' . $theme . '/' . static::DEFAULT_INI . '.ini')) {
-
+                if (
+                    $theme !== 'sample' && is_dir(ROOT . '/theme/' . $theme) &&
+                        file_exists(ROOT . '/theme/' . $theme . '/' . static::DEFAULT_INI . '.ini')
+                ) {
                     $iniData = parse_ini_file(ROOT . '/theme/' . $theme . '/' . static::DEFAULT_INI . '.ini', true, INI_SCANNER_TYPED);
                     if (isset($iniData['name'][$language->getCurrentLanguage()])) {
-
                         $themeAll[$theme] = $iniData['name'][$language->getCurrentLanguage()];
                     } elseif (isset($iniData['name']['en-US'])) {
-
                         $themeAll[$theme] = $iniData['name']['en-US'];
                     } else {
-
                         $themeAll[$theme] = $language->__("theme.$theme.name");
                     }
                 }
@@ -138,7 +147,8 @@ namespace leantime\core {
          * @access public
          * @return string Root directory of currently active theme
          */
-        public function getDir(): string {
+        public function getDir(): string
+        {
 
             return ROOT . '/theme/' . $this->getActive();
         }
@@ -149,7 +159,8 @@ namespace leantime\core {
          * @access public
          * @return string Root directory of default theme
          */
-        public function getDefaultDir(): string {
+        public function getDefaultDir(): string
+        {
 
             return ROOT . '/theme/' . static::DEFAULT;
         }
@@ -161,7 +172,8 @@ namespace leantime\core {
          * @param  string $filename Filename of layout to look for
          * @return string|false Full filename of layout file or false, if it does not exist
          */
-        public function getLayoutFilename(string $filename): string|false {
+        public function getLayoutFilename(string $filename): string|false
+        {
 
             $theme_layout = $this->getDir() . '/layout/' . $filename;
             $plugin_layout = self::dispatch_filter('filepath', $filename);
@@ -188,7 +200,8 @@ namespace leantime\core {
          * @access public
          * @return string Root URL currently active theme
          */
-        public function getUrl(): string {
+        public function getUrl(): string
+        {
 
             return $this->config->appUrl . '/theme/' . $this->getActive();
         }
@@ -199,7 +212,8 @@ namespace leantime\core {
          * @access public
          * @return string Root URL default theme
          */
-        public function getDefaultUrl(): string {
+        public function getDefaultUrl(): string
+        {
 
             return $this->config->appUrl . '/theme/' . static::DEFAULT;
         }
@@ -210,15 +224,9 @@ namespace leantime\core {
          * @access public
          * @return string|false URL to the css style file of the current theme or false, if it does not exist
          */
-        public function getStyleUrl(): string|false {
-
-            if (file_exists($this->getDir() . '/css/' . static::DEFAULT_CSS . '.min.css')) {
-                return $this->getUrl() . '/css/' . static::DEFAULT_CSS . '.min.css?v=' . $this->settings->appVersion;
-            }
-            if (file_exists($this->getDir() . '/css/' . static::DEFAULT_CSS . '.css')) {
-                return $this->getUrl() . '/css/' . static::DEFAULT_CSS . '.css?v=' . $this->settings->appVersion;
-            }
-            return false;
+        public function getStyleUrl(): string|false
+        {
+            return $this->getAssetPath(static::DEFAULT_CSS, 'css');
         }
 
         /**
@@ -227,16 +235,9 @@ namespace leantime\core {
          * @access public
          * @return string|false URL to the customized part of the css style file of the current theme or false, if it does not exist
          */
-        public function getCustomStyleUrl(): string|false {
-
-            if (file_exists($this->getDir() . '/css/' . static::CUSTOM_CSS . '.min.css')) {
-                return $this->getUrl() . '/css/' . static::CUSTOM_CSS . '.min.css?v=' . $this->settings->appVersion;
-            }
-            if (file_exists($this->getDir() . '/css/' . static::CUSTOM_CSS . '.css')) {
-                return $this->getUrl() . '/css/' . static::CUSTOM_CSS . '.css?v=' . $this->settings->appVersion;
-            }
-
-            return false;
+        public function getCustomStyleUrl(): string|false
+        {
+            return $this->getAssetPath(static::CUSTOM_CSS, 'css');
         }
 
         /**
@@ -245,15 +246,9 @@ namespace leantime\core {
          * @access public
          * @return string|false URL to the JavaScript file of the current theme or false, if it does not exist
          */
-        public function getJsUrl(): string|false {
-
-            if (file_exists($this->getDir() . '/js/' . static::DEFAULT_JS . '.min.js')) {
-                return $this->getUrl() . '/js/' . static::DEFAULT_JS . '.min.js?v=' . $this->settings->appVersion;
-            }
-            if (file_exists($this->getDir() . '/js/' . static::DEFAULT_JS . '.js')) {
-                return $this->getUrl() . '/js/' . static::DEFAULT_JS . '.js?v=' . $this->settings->appVersion;
-            }
-            return false;
+        public function getJsUrl(): string|false
+        {
+            return $this->getAssetPath(static::DEFAULT_JS, 'js');
         }
 
         /**
@@ -262,33 +257,31 @@ namespace leantime\core {
          * @access public
          * @return string|false URL to the customized part of the JavaScript file of the current theme or false, if it does not exist
          */
-        public function getCustomJsUrl(): string|false {
-
-            if (file_exists($this->getDir() . '/js/' . static::CUSTOM_JS . '.min.js')) {
-                return $this->getUrl() . '/js/' . static::CUSTOM_JS . '.min.js?v=' . $this->settings->appVersion;
-            }
-
-            if (file_exists($this->getDir() . '/js/' . static::CUSTOM_JS . '.js')) {
-                return $this->getUrl() . '/js/' . static::CUSTOM_JS . '.js?v=' . $this->settings->appVersion;
-            }
-
-            return false;
+        public function getCustomJsUrl(): string|false
+        {
+            return $this->getAssetPath(static::CUSTOM_JS, 'js');
         }
 
         /**
-         * getJslibUrl - Return URL that allows loading the JavaScript library of the theme
+         * getAssetPath - Get localized name of theme
          *
-         * @access public
-         * @return string|false URL to the JavaScript of the current theme or false, if it does not exist
+         * @access private
+         * @param string $fileName filename of asset without extension
+         * @param string $assetType asset type either js or css
+         * @return string|bool returns file path to asset. false if file does not exist
          */
-        public function getJslibUrl(): string|false {
-
-            if (file_exists($this->getDir() . '/js/' . static::DEFAULT_JSLIB . '.min.js')) {
-                return $this->getUrl() . '/js/' . static::DEFAULT_JSLIB . '.min.js?v=' . $this->settings->appVersion;
+        private function getAssetPath(string $fileName, string $assetType): string|bool
+        {
+            if ($fileName == '' || ($assetType != 'css' && $assetType != 'js')) {
+                return false;
             }
 
-            if (file_exists($this->getDir() . '/js/' . static::DEFAULT_JSLIB . '.js')) {
-                return $this->getUrl() . '/js/' . static::DEFAULT_JSLIB . '.js?v=' . $this->settings->appVersion;
+            if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType)) {
+                return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType . '?v=' . $this->settings->appVersion;
+            }
+
+            if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.' . $assetType)) {
+                return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.' . $assetType . '?v=' . $this->settings->appVersion;
             }
 
             return false;
@@ -300,21 +293,26 @@ namespace leantime\core {
          * @access public
          * @return string Localized name of theme
          */
-        public function getName(): string {
+        public function getName(): string
+        {
 
             // Make sure we get the current language
             $language = language::getInstance();
 
-            if (empty($this->iniData))
-                $this->readIniData();
+            if (empty($this->iniData)) {
+                try {
+                    $this->readIniData();
+                } catch (Exception $e) {
+                    error_log($e);
+                    return $language->__("theme." . $this->getActive() . "name");
+                }
+            }
 
             if (isset($this->iniData['name'][$language->getCurrentLanguage()])) {
-
-                return $iniData['name'][$language->getCurrentLanguage()];
+                return $this->iniData['name'][$language->getCurrentLanguage()];
             }
 
             if (isset($this->iniData['name']['en-US'])) {
-
                 return $this->iniData['name']['en-US'];
             }
 
@@ -327,13 +325,21 @@ namespace leantime\core {
          * @access public
          * @return string Version of theme or empty string
          */
-        public function getVersion(): string {
+        public function getVersion(): string
+        {
 
-            if (empty($this->iniData))
-                $this->readIniData();
+            if (empty($this->iniData)) {
+                try {
+                    $this->readIniData();
+                } catch (Exception $e) {
+                    error_log($e);
+                    return '';
+                }
+            }
 
-            if (isset($this->iniData['general']['version']))
+            if (isset($this->iniData['general']['version'])) {
                 return $this->iniData['general']['version'];
+            }
 
             return '';
         }
@@ -342,35 +348,46 @@ namespace leantime\core {
          * getLogoUrl - Get logo associated with the theme
          *
          * @access public
-         * @return string Logo associated with the theme
+         * @return string|false Logo associated with the theme, false if logo cannot be found
          */
-        public function getLogoUrl(): string|false {
+        public function getLogoUrl(): string|false
+        {
 
-            if (empty($this->iniData))
-                $this->readIniData();
+            if (empty($this->iniData)) {
+                try {
+                    $this->readIniData();
+                } catch (Exception $e) {
+                    error_log($e);
+                    return false;
+                }
+            }
 
-            if (isset($this->iniData['general']['logo']))
+            if (isset($this->iniData['general']['logo'])) {
                 return $this->iniData['general']['logo'];
+            }
 
             return false;
         }
 
-        /*         * *
+        /**
          * readIniData - Read theme.ini configuration data
          *
          * @access private
+         * @throws Exception
          */
-
-        private function readIniData(): void {
+        private function readIniData(): void
+        {
             if (!file_exists(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini')) {
-
-                throw Exception("Configuration file for theme " . $this->getActive() . " not found");
+                throw new Exception("Configuration file for theme " . $this->getActive() . " not found");
             }
-            $this->iniData = parse_ini_file(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini', true, INI_SCANNER_TYPED);
-            if ($this->iniData === false)
+            $this->iniData = parse_ini_file(
+                ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini',
+                true,
+                INI_SCANNER_TYPED
+            );
+            if ($this->iniData === false) {
                 $this->iniData = [];
+            }
         }
-
     }
-
 }
