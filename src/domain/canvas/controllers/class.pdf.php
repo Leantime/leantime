@@ -13,8 +13,8 @@ namespace leantime\domain\controllers\canvas {
     /**
      * Template class for generating PDF reports
      */
-    class pdf extends controller {
-
+    class pdf extends controller
+    {
         /**
          * Constant that must be redefined
          */
@@ -40,7 +40,7 @@ namespace leantime\domain\controllers\canvas {
         private const PDF_HEADER_ROW_HEIGHT = 25;
 
         // Internal variables
-        protected core\config $config;
+        protected \leantime\core\environment $config;
         protected $canvasRepo;
         protected string $paperSize;
         protected array $canvasTypes;
@@ -59,7 +59,8 @@ namespace leantime\domain\controllers\canvas {
          * init
          */
 
-        public function init() {
+        public function init()
+        {
 
             $this->config = \leantime\core\environment::getInstance();
 
@@ -90,14 +91,13 @@ namespace leantime\domain\controllers\canvas {
         /**
          * run - Generate PDF report
          */
-        public function run() {
+        public function run()
+        {
 
             // Retrieve id of canvas to print
             if (isset($_GET['id']) === true) {
-
                 $canvasId = (int) $_GET['id'];
             } elseif (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
-
                 $canvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
             } else {
                 return;
@@ -110,8 +110,9 @@ namespace leantime\domain\controllers\canvas {
 
             // Generate report
             $reportData = $this->reportGenerate($canvasId, $filter);
-            if ($reportData === false)
+            if ($reportData === false) {
                 return;
+            }
 
             // Service report
             clearstatcache();
@@ -131,7 +132,8 @@ namespace leantime\domain\controllers\canvas {
          * @return string|false PDF filename or false if it failed
          */
 
-        public function reportGenerate(int $id, array $filter = [], array $options = []): string|false {
+        public function reportGenerate(int $id, array $filter = [], array $options = []): string|false
+        {
 
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
@@ -151,7 +153,6 @@ namespace leantime\domain\controllers\canvas {
             //$html = $this->tpl->patchDownloadUrlToFilenameOrAwsUrl($html);
 
             try {
-
                 $this->pdfEngine->WriteHTML($html);
             } catch (Exception $exception) {
                 $this->tpl->setNotification($this->language->__('notification.pdf.failed'), 'error');
@@ -175,8 +176,13 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $options       Array of paramters to be overwritten (optional)
          * @return string HTML code
          */
-        public function htmlReport(string $projectTitle, string $moduleTitle, array $recordsAry, array $filter = [],
-                array $options = []): string {
+        public function htmlReport(
+            string $projectTitle,
+            string $moduleTitle,
+            array $recordsAry,
+            array $filter = [],
+            array $options = []
+        ): string {
 
             // Set options
             foreach ($options as $key => $value) {
@@ -189,7 +195,6 @@ namespace leantime\domain\controllers\canvas {
 
             // Layout canvas page
             if ($this->params['canvasShow']) {
-
                 $html .= $this->htmlCanvasOpen(); //div open
                 $html .= $this->htmlStyles(); //styles
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle); //contained div
@@ -207,7 +212,6 @@ namespace leantime\domain\controllers\canvas {
 
 
             if ($this->params['listShow']) {
-
                 $html .= $this->htmlListOpen();
                 $html .= $this->htmlHeader($projectTitle, $moduleTitle);
                 $html .= $this->htmlList($recordsAry);
@@ -227,10 +231,10 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $status Element status key
          * @return string HTML code
          */
-        protected function htmlCanvasStatus(string $status): string {
+        protected function htmlCanvasStatus(string $status): string
+        {
 
             if (isset($this->statusLabels[$status]['color'])) {
-
                 return '<span style="color : ' . $this->statusLabels[$status]['color'] . '">' .
                         $this->htmlIcon($this->statusLabels[$status]['icon']) . '</span>';
             }
@@ -245,10 +249,10 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $status Element status key
          * @return string HTML code
          */
-        protected function htmlListStatus(string $status): string {
+        protected function htmlListStatus(string $status): string
+        {
 
             if (isset($this->statusLabels[$status]['color'])) {
-
                 return '<span style="color : ' . $this->statusLabels[$status]['color'] . '">' . $this->statusLabels[$status]['title'] . '</span>';
             }
 
@@ -262,10 +266,10 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $relates Element relates key
          * @return string HTML code
          */
-        protected function htmlCanvasRelates(string $relates): string {
+        protected function htmlCanvasRelates(string $relates): string
+        {
 
             if (isset($this->relatesLabels[$relates]['color'])) {
-
                 return '<span style="color : ' . $this->relatesLabels[$relates]['color'] . '">' .
                         $this->htmlIcon($this->statusLabels[$relates]['icon']) . '</span>';
             }
@@ -281,10 +285,10 @@ namespace leantime\domain\controllers\canvas {
          * @return string HTML code
          */
 
-        protected function htmlListRelates(string $relates): string {
+        protected function htmlListRelates(string $relates): string
+        {
 
             if (isset($this->relatesLabels[$relates]['color'])) {
-
                 return '<span style="color : ' . $this->relatesLabels[$relates]['color'] . '">' . $this->relatesLabels[$relates]['title'] .
                         '</span>';
             }
@@ -299,7 +303,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlCanvas(array $recordsAry): string {
+        protected function htmlCanvas(array $recordsAry): string
+        {
 
             return 'NOT IMPLEMENTED';
         }
@@ -311,7 +316,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlList(array $recordsAry): string {
+        protected function htmlList(array $recordsAry): string
+        {
 
             return $this->htmlListDetailed($recordsAry);
         }
@@ -323,7 +329,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlListCompact(array $recordsAry): string {
+        protected function htmlListCompact(array $recordsAry): string
+        {
 
             $html = '';
             foreach ($this->canvasTypes as $key => $data) {
@@ -340,7 +347,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  array  $recordsAry Array of canvas data records
          * @return string HTML code
          */
-        protected function htmlListDetailed(array $recordsAry): string {
+        protected function htmlListDetailed(array $recordsAry): string
+        {
 
             $html = '';
             foreach ($this->canvasTypes as $key => $data) {
@@ -354,9 +362,10 @@ namespace leantime\domain\controllers\canvas {
          * htmlInit - Initialize HTML page
          *
          * @access protected
-         * @return string HTML code
+         * @return \Mpdf\Mpdf
          */
-        protected function pdfEngineInit() {
+        protected function pdfEngineInit()
+        {
 
             // Define font sizes
             $this->fontSize = $this->params['fontSize'];
@@ -406,7 +415,8 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlEnd(): string {
+        protected function htmlEnd(): string
+        {
 
             $html = '</div>';
             return $html;
@@ -418,7 +428,8 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlCanvasOpen(): string {
+        protected function htmlCanvasOpen(): string
+        {
 
             $html = '<style>
             @page *{
@@ -439,7 +450,8 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlListOpen(): string {
+        protected function htmlListOpen(): string
+        {
 
             $html = '';
             $html .= '<div style="font-family: \'Roboto\'; font-weight: 400; font-style: normal; font-size: ' . $this->fontSize . 'px">';
@@ -452,7 +464,8 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlPageClose(): string {
+        protected function htmlPageClose(): string
+        {
 
 
             return "</div>";
@@ -466,7 +479,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $moduleTitle Module title
          * @return string HTML code
          */
-        protected function htmlHeader(string $projectTitle, string $moduleTitle): string {
+        protected function htmlHeader(string $projectTitle, string $moduleTitle): string
+        {
 
             $logo = ROOT . "/images/logo.png";
 
@@ -476,7 +490,7 @@ namespace leantime\domain\controllers\canvas {
                     '  <tr>' .
                     '    <td style="width:30%; vertical-align: top;">' .
                     '      <img src="' . $logo . '" ' .
-                    '        style="height: ' . self::PDF_HEADER_ROW_HEIGHT . 'px" /></td>' .
+                    '        style="height: ' . self::PDF_HEADER_ROW_HEIGHT . 'px" alt="Logo"/></td>' .
                     '    <td style="width: 40%; text-align: center; font-size: ' . $this->fontSizeTitle . 'px">' .
                     '      <strong>' . $moduleTitle . '</strong></td>' .
                     '    <td style="width: 30%; text-align: right; vertical-align:top;">' .
@@ -496,7 +510,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $displayer    Optional: Template disclaimer
          * @return string HTML code
          */
-        protected function htmlFooter(string $templateName, string $disclaimer = ''): string {
+        protected function htmlFooter(string $templateName, string $disclaimer = ''): string
+        {
 
             $html = '<div style="padding-top: 0; padding-left: ' . self::PDF_MARGIN . 'px; padding-right: ' . self::PDF_MARGIN . 'px; ' .
                     '  height: ' . self::PDF_FOOTER_HEIGHT . 'px; font-size: ' . $this->fontSizeSmall . 'px;">' .
@@ -521,7 +536,8 @@ namespace leantime\domain\controllers\canvas {
          * @access protected
          * @return string HTML code
          */
-        protected function htmlStyles(): string {
+        protected function htmlStyles(): string
+        {
 
             $html = '<style>' .
                     '  .header { border-collapse: collapse; }' .
@@ -547,7 +563,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  int    $fontSize Optional: Font size, or 0 if not font size adjustment
          * @return string HTML code
          */
-        protected function htmlIcon(string $icon, int $fontSize = 0): string {
+        protected function htmlIcon(string $icon, int $fontSize = 0): string
+        {
 
             $iconCode = match ($icon) {
                 'fa-1' => '&#x0031',
@@ -664,7 +681,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
          * @return string HTML code
          */
-        protected function htmlCanvasTitle(string $text, string $icon = ''): string {
+        protected function htmlCanvasTitle(string $text, string $icon = ''): string
+        {
 
             return (!empty($icon) ? $this->htmlIcon($icon) . ' ' : '') . '<strong>' . $this->language->__($text) . '</strong>';
         }
@@ -677,18 +695,19 @@ namespace leantime\domain\controllers\canvas {
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
-        protected function htmlCanvasElements(array $recordsAry, string $box): string {
+        protected function htmlCanvasElements(array $recordsAry, string $box): string
+        {
 
             $html = '<table class="table" style="width: 100%"><tbody>';
             foreach ($recordsAry as $record) {
-
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
 
-                if ($record['box'] === $box &&
+                if (
+                    $record['box'] === $box &&
                         ($filterStatus == 'all' || (!empty($this->statusLabels) && $filterStatus == $record['status'])) &&
-                        ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))) {
-
+                        ($filterRelates == 'all' || (!empty($this->relatesLabels) && $filterRelates == $record['relates']))
+                ) {
                     $html .= '<tr><td style="width: 14px; font-family:fontawesome" class="canvas-box">' . $this->htmlIcon('fa-stop') . '</td>' .
                             '  <td class="canvas-box"><span style="font-family: \'robotocondensed\';">' . $record['description'] . '</span> ' .
                             (!empty($this->statusLabels) ? $this->htmlCanvasStatus($record['status']) : '') . '</td></tr>';
@@ -708,7 +727,8 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $icon Optional: Icon associated with canvas element (FontAwesome code)
          * @return string HTML code
          */
-        protected function htmlListTitle(string $text, string $icon = ''): string {
+        protected function htmlListTitle(string $text, string $icon = ''): string
+        {
 
             return '<div class="list-title" style="font-size: ' . $this->fontSizeLarge . 'px">' .
                     (!empty($icon) ? $this->htmlIcon($icon) . ' ' : '') . '<strong>' . $this->language->__($text) . '</strong></div>';
@@ -722,61 +742,60 @@ namespace leantime\domain\controllers\canvas {
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
-        protected function htmlListElementsDetailed(array $recordsAry, string $box): string {
+        protected function htmlListElementsDetailed(array $recordsAry, string $box): string
+        {
 
             $html = '';
             foreach ($recordsAry as $record) {
-
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
-                if ($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
-                        ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
-
+                if (
+                    $record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
+                        ($filterRelates == 'all' || $filterRelates == $record['relates'])
+                ) {
                     if (isset($record['description']) && !empty($record['description'])) {
-
                         $html .= '<div class="list-elt-box"><strong>' . $record['description'] . '</strong></div>';
                     }
 
                     if (isset($record['relates']) && !empty($record['relates'])) {
-
                         $relates = $this->htmlListRelates($record['relates']);
 
                         if (!empty($relates)) {
-
                             $html .= '<div class="list-elt-box">' . $this->language->__($this->params['elementRelates']) . ': ' .
                                     '<em>' . $relates . '</em></div>';
                         }
                     }
 
                     if (isset($record['status']) && !empty($record['status'])) {
-
                         $status = $this->htmlListStatus($record['status']);
 
                         if (!empty($status)) {
-
                             $html .= '<div class="list-elt-box">' . $this->language->__($this->params['elementStatus']) . ': ' .
                                     '<em>' . $status . '</em></div>';
                         }
                     }
 
 
-                    if ($this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) &&
-                            !empty($record[$this->dataLabels[1]['field']])) {
-
+                    if (
+                        $this->dataLabels[1]['active'] && isset($record[$this->dataLabels[1]['field']]) &&
+                            !empty($record[$this->dataLabels[1]['field']])
+                    ) {
                         $html .= '<div class="list-elt-title">' . $this->dataLabels[1]['title'] . '</div>';
                         $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[1]['field']]) . '</div>';
                     }
 
-                    if ($this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) &&
-                            !empty($record[$this->dataLabels[2]['field']])) {
-
+                    if (
+                        $this->dataLabels[2]['active'] && isset($record[$this->dataLabels[2]['field']]) &&
+                            !empty($record[$this->dataLabels[2]['field']])
+                    ) {
                         $html .= '<div class="list-elt-title">' . $this->dataLabels[2]['title'] . '</div>';
                         $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[2]['field']]) . '</div>';
                     }
 
-                    if ($this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) &&
-                            !empty($record[$this->dataLabels[3]['field']])) {
-
+                    if (
+                        $this->dataLabels[3]['active'] && isset($record[$this->dataLabels[3]['field']]) &&
+                            !empty($record[$this->dataLabels[3]['field']])
+                    ) {
                         $html .= '<div class="list-elt-title">' . $this->dataLabels[3]['title'] . '</div>';
                         $html .= '<div class="list-elt-box">' . $this->htmlStripTags($record[$this->dataLabels[3]['field']]) . '</div>';
                     }
@@ -794,68 +813,67 @@ namespace leantime\domain\controllers\canvas {
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
-        protected function htmlListElementsCompact(array $recordsAry, string $box): string {
+        protected function htmlListElementsCompact(array $recordsAry, string $box): string
+        {
 
             $html = '';
             foreach ($recordsAry as $record) {
-
                 $filterStatus = $this->filter['status'] ?? 'all';
                 $filterRelates = $this->filter['relates'] ?? 'all';
-                if ($record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
-                        ($filterRelates == 'all' || $filterRelates == $record['relates'])) {
-
+                if (
+                    $record['box'] === $box && ($filterStatus == 'all' || $filterStatus == $record['status']) &&
+                        ($filterRelates == 'all' || $filterRelates == $record['relates'])
+                ) {
                     $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">';
                     if (isset($record['description']) && !empty($record['description'])) {
-
                         $html .= '<strong>' . $record['description'] . '</strong>';
                     }
 
-                    if ($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) &&
-                            isset($record['description']) && !empty($record['description'])) {
-
+                    if (
+                        $this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']]) &&
+                            isset($record['description']) && !empty($record['description'])
+                    ) {
                         $html .= ' - ';
                     }
 
                     if ($this->dataLabels[1]['active'] && !empty($record[$this->dataLabels[1]['field']])) {
-
                         $html .= $this->htmlStripTags($record[$this->dataLabels[1]['field']]);
                     }
 
-                    if ((isset($record['status']) && !empty($record['status'])) ||
-                            (isset($record['relates']) && !empty($record['relates']))) {
-
+                    if (
+                        (isset($record['status']) && !empty($record['status'])) ||
+                            (isset($record['relates']) && !empty($record['relates']))
+                    ) {
                         $html .= ' (';
                     }
 
                     if (isset($record['status']) && !empty($record['status'])) {
-
                         $status = $this->htmlListStatus($record['status']);
 
                         if (!empty($status)) {
-
                             $html .= $this->language->__($status);
                         }
                     }
 
-                    if ((isset($record['status']) && !empty($record['status'])) &&
-                            (isset($record['relates']) && !empty($record['relates']))) {
-
+                    if (
+                        (isset($record['status']) && !empty($record['status'])) &&
+                            (isset($record['relates']) && !empty($record['relates']))
+                    ) {
                         $html .= ', ';
                     }
 
                     if (isset($record['relates']) && !empty($record['relates'])) {
-
                         $relates = $this->htmlListRelates($record['relates']);
 
                         if (!empty($relates)) {
-
                             $html .= $this->language->__($relates);
                         }
                     }
 
-                    if ((isset($record['status']) && !empty($record['status'])) ||
-                            (isset($record['relates']) && !empty($record['relates']))) {
-
+                    if (
+                        (isset($record['status']) && !empty($record['status'])) ||
+                            (isset($record['relates']) && !empty($record['relates']))
+                    ) {
                         $html .= ')';
                     }
 
@@ -874,15 +892,14 @@ namespace leantime\domain\controllers\canvas {
          * @param  string $html HTML code containing tags
          * @return string HMTL code
          */
-        protected function htmlStripTags(string $html): string {
+        protected function htmlStripTags(string $html): string
+        {
 
             if (substr($html, 0, 3) === '<p>') {
-
                 $html = substr($html, 3);
             }
 
             if (substr($html, -4) === '</p>') {
-
                 $html = substr($html, 0, strlen($html) - 4);
             }
 
@@ -897,7 +914,6 @@ namespace leantime\domain\controllers\canvas {
 
             return $html;
         }
-
     }
 
 }

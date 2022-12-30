@@ -22,19 +22,24 @@ namespace leantime\domain\controllers {
 
 			$html = '<table class="canvas" style="width: 100%"><tbody><tr>';
 
-			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_low_pro_high']['title'], $this->canvasTypes['risks_imp_low_pro_high']['icon']).'</td>';
-			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_high_pro_high']['title'], $this->canvasTypes['risks_imp_high_pro_high']['icon']).'</td>';
+			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['minempathy_who']['title'], $this->canvasTypes['minempathy_who']['icon']).'</td>';
+			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['minempathy_struggles']['title'], $this->canvasTypes['minempathy_struggles']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_high').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_high').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'minempathy_who').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'minempathy_struggles').'</td>';
 
 			$html .= '</tr><tr>';
+            $html .= '<td class="canvas-elt-title" style="width: 50%;" colspan="2">'.$this->htmlCanvasTitle($this->canvasTypes['minempathy_where']['title'], $this->canvasTypes['minempathy_where']['icon']).'</td>';
+            $html .= '</tr><tr>';
+            $html .= '<td class="canvas-elt-box" style="height: 295px;" colspan="2">'.$this->htmlCanvasElements($recordsAry, 'minempathy_where').'</td>';
+            $html .= '</tr><tr>';
 
-			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_low_pro_low']['title'], $this->canvasTypes['risks_imp_low_pro_low']['icon']).'</td>';
-			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['risks_imp_high_pro_low']['title'], $this->canvasTypes['risks_imp_high_pro_low']['icon']).'</td>';
+
+			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['minempathy_why']['title'], $this->canvasTypes['minempathy_why']['icon']).'</td>';
+			$html .= '<td class="canvas-elt-title" style="width: 50%;">'.$this->htmlCanvasTitle($this->canvasTypes['minempathy_how']['title'], $this->canvasTypes['minempathy_how']['icon']).'</td>';
 			$html .= '</tr><tr>';
-			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_low_pro_low').'</td>';
-			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'risks_imp_high_pro_low').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'minempathy_why').'</td>';
+			$html .= '<td class="canvas-elt-box" style="height: 295px;">'.$this->htmlCanvasElements($recordsAry, 'minempathy_how').'</td>';
 
 			$html .= '</tr></tbody></table>';
 
