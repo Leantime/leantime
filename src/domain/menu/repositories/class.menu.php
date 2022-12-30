@@ -70,7 +70,7 @@ namespace leantime\domain\repositories {
             $language = core\language::getInstance();
             $config = \leantime\core\environment::getInstance();
 
-            if (isset($config->enableMenuType) && !$config->enableMenuType) {
+            if (!isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
 
                 return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
             }
