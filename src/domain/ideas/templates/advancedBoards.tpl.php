@@ -298,8 +298,6 @@ foreach($this->get('allCanvas') as $canvasRow){
 
     jQuery(document).ready(function () {
 
-        new SlimSelect({ select: '#searchCanvas' });
-
         leantime.ideasController.initBoardControlModal();
         leantime.ideasController.setKanbanHeights();
 

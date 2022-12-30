@@ -37,10 +37,10 @@
 <?php $this->dispatchTplEvent('afterMainScriptTag'); ?>
 
 <!-- theme -->
-<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>
+<?php $jsUrl = $themeCore->getJsUrl(); if ($jsUrl !== false) { ?>
     <script src="<?=$jsUrl ?>"></script>
 <?php } ?>
-<?php $styleUrl = $themeCore->getStyleUrl(); if($styleUrl !== false) { ?>
+<?php $styleUrl = $themeCore->getStyleUrl(); if ($styleUrl !== false) { ?>
     <link rel="stylesheet" id="themeStylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
 <?php } ?>
 
@@ -49,22 +49,24 @@
 <!-- Replace main theme colors -->
 <style>
     :root{
-        <?php if(isset($_SESSION["companysettings.primarycolor"]) && $theme == 'default') {
-        ?> --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>; <?php } ?>
-        <?php if(isset($_SESSION["companysettings.secondarycolor"]) && $theme == 'default') {
-        ?> --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>; <?php } ?>
+        <?php if (isset($_SESSION["companysettings.primarycolor"]) && $theme == 'default') { ?>
+            --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
+        <?php } ?>
+        <?php if (isset($_SESSION["companysettings.secondarycolor"]) && $theme == 'default') { ?>
+            --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
+        <?php } ?>
     }
 </style>
 <?php $this->dispatchTplEvent('afterThemeColors'); ?>
 
 <!-- customize -->
-<?php $jsUrl = $themeCore->getJsUrl(); if($jsUrl !== false) { ?>
+<?php $jsUrl = $themeCore->getJsUrl(); if ($jsUrl !== false) { ?>
     <script src="<?=$jsUrl ?>"></script>
 <?php } ?>
-<?php $customJsUrl = $themeCore->getCustomJsUrl(); if($customJsUrl !== false) { ?>
-    <script src="<?=customJsUrl ?>"></script>
+<?php $customJsUrl = $themeCore->getCustomJsUrl(); if ($customJsUrl !== false) { ?>
+    <script src="<?=$customJsUrl ?>"></script>
 <?php } ?>
-<?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if($styleUrl !== false) { ?>
+<?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if ($styleUrl !== false) { ?>
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
 <?php } ?>
 <?php $this->dispatchTplEvent('afterCustomizeTags'); ?>
