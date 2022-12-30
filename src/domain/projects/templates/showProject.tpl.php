@@ -485,7 +485,7 @@
         </div>
         <div class="remove">
             <br />
-            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
 </div>

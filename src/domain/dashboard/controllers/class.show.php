@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-
         private $dashboardRepo;
         private $projectService;
         private $sprintService;
@@ -30,10 +29,9 @@ namespace leantime\domain\controllers {
             $this->timesheetService = new services\timesheets();
             $this->commentService = new services\comments();
 
-            $_SESSION['lastPage'] = BASE_URL."/dashboard/show";
+            $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
             (new services\reports())->dailyIngestion();
-
         }
 
         /**
@@ -42,9 +40,18 @@ namespace leantime\domain\controllers {
         public function get()
         {
 
-            if(!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
-                core\frontcontroller::redirect(BASE_URL."/dashboard/home");
+            if (!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
+                core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
+
+            $project = $this->projectService->getProject($_SESSION['currentProject']);
+
+            if (isset($project['id']) === false) {
+                core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
+            }
+
+            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
+            $this->tpl->assign('project', $project);
 
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
@@ -55,9 +62,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
 
-            $project = $this->projectService->getProject($_SESSION['currentProject']);
-            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
-            $this->tpl->assign('project', $project);
+
 
             //Milestones
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
@@ -67,16 +72,14 @@ namespace leantime\domain\controllers {
 
             //Delete comment
             if (isset($_GET['delComment']) === true) {
-
                 $commentId = (int)($_GET['delComment']);
 
                 $comments->deleteComment($commentId);
 
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-
             }
 
-            $comment = $comments->getComments('project', $_SESSION['currentProject'],"");
+            $comment = $comments->getComments('project', $_SESSION['currentProject'], "");
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
 
@@ -89,14 +92,12 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
 
             $this->tpl->display('dashboard.show');
-
         }
 
         public function post($params)
         {
 
-            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
-
+            if (services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
                 if (isset($params['quickadd']) == true) {
                     $result = $this->ticketService->quickAddTicket($params);
 
@@ -113,21 +114,16 @@ namespace leantime\domain\controllers {
             // Manage Post comment
             $comments = new repositories\comments();
             if (isset($_POST['comment']) === true) {
-
                 $project = $this->projectService->getProject($_SESSION['currentProject']);
 
-                if($this->commentService->addComment($_POST, "project", $_SESSION['currentProject'], $project)) {
-
+                if ($this->commentService->addComment($_POST, "project", $_SESSION['currentProject'], $project)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                }else {
+                } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                 }
-
             }
 
             $this->tpl->redirect(BASE_URL . "/dashboard/show");
-
-
         }
     }
 }

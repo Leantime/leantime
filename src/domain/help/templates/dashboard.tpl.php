@@ -9,8 +9,8 @@
             <div style='width:300px' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT."/images/svg/undraw_party_re_nmwj.svg"); ?>
             </div>
-
-            <h1 ><?php echo $this->__('headlines.welcome_to_leantime') ?></h1>
+            <br />
+            <h1><?php echo $this->__('headlines.welcome_to_leantime') ?></h1>
             <p><?php echo $this->__('text.glad_youre_here') ?><br /><br /></p>
             <p><?php echo $this->__('text.helpful_resources') ?><br /></p>
             <br />

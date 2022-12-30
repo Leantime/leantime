@@ -222,7 +222,7 @@ namespace leantime\core {
             }
 
             if ($layoutFilename === false) {
-                throw new \Exception("Cannot find default 'app.php' layout file");
+                die("Cannot find default 'app.php' layout file");
             }
 
             ob_start();

@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h3 class="todaysDate" style="padding-bottom:5px;"></h3>
-                            <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?=$currentUser['firstname'] ?></h1>
+                            <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?php $this->e($currentUser['firstname']) ?></h1>
                             <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
                         </div>
                     </div>
@@ -416,7 +416,9 @@
            leantime.helperController.firstLoginModal();
        <?php } ?>
 
-       <?php if($this->get('completedOnboarding') === true && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)){  ?>
+
+       <?php
+       if($this->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)){  ?>
 
             leantime.helperController.showHelperModal("dashboard", 500, 700);
 

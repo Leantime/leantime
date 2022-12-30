@@ -2,4 +2,10 @@
 <ruleset name="PHP_CodeSniffer">
     <description>PHP_CodeSniffer configuration</description>
     <rule ref="PSR12" />
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="140"/>
+            <property name="absoluteLineLimit" value="160"/>
+        </properties>
+    </rule>
 </ruleset>

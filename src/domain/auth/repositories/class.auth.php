@@ -261,7 +261,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param
-         * @return object
+         * @return array|bool
          */
         public function getUserByInviteLink($hash)
         {

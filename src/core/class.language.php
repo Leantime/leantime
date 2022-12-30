@@ -12,8 +12,8 @@ namespace leantime\core {
     use leantime\domain\repositories\setting;
     use leantime\core\eventhelpers;
 
-    class language {
-
+    class language
+    {
         use eventhelpers;
 
         /**
@@ -65,7 +65,8 @@ namespace leantime\core {
          *
          * @return array
          */
-        private function __construct() {
+        private function __construct()
+        {
 
             $this->config = \leantime\core\environment::getInstance();
             $settingsRepo = new setting();
@@ -74,18 +75,13 @@ namespace leantime\core {
 
             //Get list of available languages
             if (isset($_SESSION['cache.langlist'])) {
-
                 $this->langlist = $_SESSION['cache.langlist'];
             } else {
-
                 if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
-
                     $parsedLangList = parse_ini_file(static::CUSTOM_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
                 } elseif (file_exists(static::DEFAULT_LANG_FOLDER . 'languagelist.ini')) {
-
                     $parsedLangList = parse_ini_file(static::DEFAULT_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
                 } else {
-
                     throw new Exception("Language list missing");
                 }
 
@@ -96,18 +92,14 @@ namespace leantime\core {
 
             //Get company language
             if (!isset($_SESSION["companysettings.language"])) {
-
-
                 $language = $settingsRepo->getSetting("companysettings.language");
 
                 if ($language === false) {
-
                     $language = $this->config->language;
                 }
 
                 $_SESSION["companysettings.language"] = $language;
             } else {
-
                 $language = $_SESSION["companysettings.language"];
 
                 $_SESSION["companysettings.language"] = $language;
@@ -115,33 +107,27 @@ namespace leantime\core {
 
             //Get user language
             if (!isset($_SESSION["userdata"]["id"])) {
-
                 // This is a login session, we need to ensure the default language (or the user's browser)
                 if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-
                     $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                 }
             } else {
-
                 // This is not a login session
-                if (!isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"]) ||
-                        empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])) {
-
+                if (
+                    !isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"]) ||
+                        empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
+                ) {
                     // User has a saved language
                     $settingsRepo = new \leantime\domain\repositories\setting();
                     $languageSettings = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".language");
                     if ($languageSettings === false) {
-
                         if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-
                             $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                         }
                     } else {
-
                         $language = $languageSettings;
                     }
                 } else {
-
                     $language = $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"];
                 }
 
@@ -151,10 +137,8 @@ namespace leantime\core {
 
             //Start checking if the user has a language set
             if ($this->isValidLanguage($language)) {
-
                 $this->setLanguage($language);
             } elseif ($this->isValidLanguage($_SESSION['companysettings.language'])) {
-
                 $this->setLanguage($_SESSION['companysettings.language']);
             } else {
                 $this->setLanguage($this->config->language);
@@ -167,10 +151,10 @@ namespace leantime\core {
          * @access public
          * @return object
          */
-        public static function getInstance() {
+        public static function getInstance()
+        {
 
             if (self::$instance === null) {
-
                 self::$instance = new self();
             }
 
@@ -184,21 +168,19 @@ namespace leantime\core {
          * @param  $lang
          * @return array
          */
-        public function setLanguage($lang) {
+        public function setLanguage($lang)
+        {
 
 
             $this->language = $lang;
 
             $_SESSION['usersettings.language'] = $lang;
             if (isset($_SESSION["userdata"]["id"])) {
-
                 $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"] = $lang;
             }
 
             if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-
                 if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-
                     setcookie('language', $lang, ['expires' => time() + 60 * 60 * 24 * 30,
                         'path' => $this->config->appUrlRoot . '/',
                         'samesite' => 'Strict']);
@@ -207,14 +189,11 @@ namespace leantime\core {
 
             $_SESSION['usersettings.language'] = $lang;
             if (isset($_SESSION["userdata"]["id"])) {
-
                 $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"] = $lang;
             }
 
             if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-
                 if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-
                     setcookie('language', $lang, ['expires' => time() + 60 * 60 * 24 * 30,
                         'path' => $this->config->appUrlRoot . '/',
                         'samesite' => 'Strict']);
@@ -231,12 +210,14 @@ namespace leantime\core {
          * @param  $lang
          * @return array
          */
-        public function getCurrentLanguage() {
+        public function getCurrentLanguage()
+        {
 
             return $this->language;
         }
 
-        public function isValidLanguage($langCode) {
+        public function isValidLanguage($langCode)
+        {
 
             return isset($this->langlist[$langCode]);
         }
@@ -247,13 +228,14 @@ namespace leantime\core {
          * @access public
          * @return array
          */
-        public function readIni() {
+        public function readIni()
+        {
 
             if (isset($_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme]) && $this->config->debug == 0) {
                 $this->ini_array = $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme] = self::dispatch_filter(
-                                'language_resources',
-                                $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme],
-                                [
+                    'language_resources',
+                    $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme],
+                    [
                                     'language' => $this->language,
                                     'theme' => $this->theme
                                 ]
@@ -263,7 +245,6 @@ namespace leantime\core {
 
             // Default to english US
             if (!file_exists(ROOT . '/' . static::DEFAULT_LANG_FOLDER . '/en-US.ini')) {
-
                 throw new Exception("Cannot find default english language file en-US.ini");
             }
 
@@ -272,7 +253,6 @@ namespace leantime\core {
 
             // Overwrite with english from theme
             if (file_exists($this->themeCore->getDir() . '/language/en-US.ini')) {
-
                 $ini_overrides = parse_ini_file($this->themeCore->getDir() . '/language/en-US.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -283,7 +263,6 @@ namespace leantime\core {
 
             // Complement english with english customization
             if (file_exists(ROOT . '/' . static::CUSTOM_LANG_FOLDER . 'en-US.ini')) {
-
                 $ini_overrides = parse_ini_file(ROOT . '/' . static::CUSTOM_LANG_FOLDER . 'en-US.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -294,7 +273,6 @@ namespace leantime\core {
 
             // Overwrite english language by non-english language
             if (file_exists(ROOT . '/' . static::DEFAULT_LANG_FOLDER . $this->language . '.ini') && $this->language !== 'en-US') {
-
                 $ini_overrides = parse_ini_file(ROOT . '/' . static::DEFAULT_LANG_FOLDER . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -305,7 +283,6 @@ namespace leantime\core {
 
             // Overwrite english by non-english from theme
             if (file_exists($this->themeCore->getDir() . '/language/' . $this->language . '.ini') && $this->language !== 'en-US') {
-
                 $ini_overrides = parse_ini_file($this->themeCore->getDir() . '/language/' . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -316,7 +293,6 @@ namespace leantime\core {
 
             // Overwrite with non-engish customizations
             if (file_exists(ROOT . '/' . static::CUSTOM_LANG_FOLDER . $this->language . '.ini') && $this->language !== 'en-US') {
-
                 $ini_overrides = parse_ini_file(ROOT . '/' . static::CUSTOM_LANG_FOLDER . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -327,7 +303,6 @@ namespace leantime\core {
 
             // Overwrite english by non-english from theme
             if (file_exists($this->themeCore->getDir() . '/language/' . $this->language . '.ini') && $this->language !== 'en-US') {
-
                 $ini_overrides = parse_ini_file($this->themeCore->getDir() . '/language/' . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -338,7 +313,6 @@ namespace leantime\core {
 
             // Overwrite with non-engish customizations
             if (file_exists(ROOT . '/' . static::CUSTOM_LANG_FOLDER . $this->language . '.ini') && $this->language !== 'en-US') {
-
                 $ini_overrides = parse_ini_file(ROOT . '/' . static::CUSTOM_LANG_FOLDER . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
@@ -350,9 +324,9 @@ namespace leantime\core {
             $this->ini_array = $mainLanguageArray;
 
             $this->ini_array = self::dispatch_filter(
-                            'language_resources',
-                            $this->ini_array,
-                            [
+                'language_resources',
+                $this->ini_array,
+                [
                                 'language' => $this->language,
                                 'theme' => $this->theme
                             ]
@@ -369,16 +343,15 @@ namespace leantime\core {
          * @access public
          * @return array|bool
          */
-        public function getLanguageList() {
+        public function getLanguageList()
+        {
 
             if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
-
                 $this->langlist = parse_ini_file(static::CUSTOM_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
                 return $this->langlist;
             }
 
             if (file_exists(static::DEFAULT_LANG_FOLDER . '/languagelist.ini')) {
-
                 $this->langlist = parse_ini_file(static::DEFAULT_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
                 return $this->langlist;
             }
@@ -392,39 +365,36 @@ namespace leantime\core {
          * @access public
          * @return string
          */
-        public function getBrowserLanguage() {
+        public function getBrowserLanguage()
+        {
 
-            $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            }
 
             if (empty($language)) {
-
                 return $this->language;
             }
 
             $langCode = explode("-", $language);
 
             if (isset($this->langlist[$langCode[0]]) === true) {
-
                 return $langCode[0];
             }
 
             return $this->language;
         }
 
-        public function __(string $index): string {
+        public function __(string $index): string
+        {
 
             if (isset($this->ini_array[$index]) === true) {
-
                 $index = trim($index);
-
                 return (string) $this->ini_array[$index];
             } else {
-
                 if ($this->alert === true) {
-
                     return '<span style="color: red; font-weight:bold;">' . $index . '</span>';
                 } else {
-
                     return $index;
                 }
             }
@@ -437,9 +407,9 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedDateString($date): string {
+        public function getFormattedDateString($date): string
+        {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
                 if (strlen($date) == 10) {
                     $timestamp = date_create_from_format("!Y-m-d", $date);
@@ -462,9 +432,14 @@ namespace leantime\core {
          * @param $date string
          * @return string
          */
-        public function getFormattedTimeString($date) {
-            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
+        public function getFormattedTimeString($date)
+        {
+            if (
+                is_null($date) === false
+                && $date != ""
+                && $date != "1969-12-31 00:00:00"
+                && $date != "0000-00-00 00:00:00"
+            ) {
                 $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
                 if (is_object($timestamp)) {
@@ -475,9 +450,14 @@ namespace leantime\core {
             return "";
         }
 
-        public function get24HourTimestring($date) {
-            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
+        public function get24HourTimestring($date)
+        {
+            if (
+                is_null($date) === false
+                && $date != ""
+                && $date != "1969-12-31 00:00:00"
+                && $date != "0000-00-00 00:00:00"
+            ) {
                 $timePart = explode(" ", $date);
 
                 if (is_array($timePart) && count($timePart) == 2) {
@@ -495,9 +475,14 @@ namespace leantime\core {
          * @param $date string
          * @return string|bool
          */
-        public function getISODateString($date) {
-            if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
+        public function getISODateString($date)
+        {
+            if (
+                is_null($date) === false
+                && $date != ""
+                && $date != "1969-12-31 00:00:00"
+                && $date != "0000-00-00 00:00:00"
+            ) {
                 $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
                 if (is_object($timestamp)) {
@@ -515,10 +500,10 @@ namespace leantime\core {
          * @param $date string
          * @return string|bool
          */
-        public function getISODateTimeString($date, $time) {
+        public function getISODateTimeString($date, $time)
+        {
 
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
                 //Time is coming in as 24hour format with :
@@ -542,9 +527,9 @@ namespace leantime\core {
          * @param $time string
          * @return string|bool
          */
-        public function getISOTimeString($time) {
+        public function getISOTimeString($time)
+        {
             if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
 
                 if (is_object($timestamp)) {
@@ -555,10 +540,10 @@ namespace leantime\core {
             return false;
         }
 
-        public function extractTime($dateTime) {
+        public function extractTime($dateTime)
+        {
 
             if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
-
                 $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);
 
                 if (is_object($timestamp)) {
@@ -568,7 +553,6 @@ namespace leantime\core {
 
             return false;
         }
-
     }
 
 }
