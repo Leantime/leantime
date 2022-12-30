@@ -24,6 +24,7 @@ namespace leantime\domain\controllers {
             $this->usersService = new services\users();
             $this->timesheetsService = new services\timesheets();
             $this->reportsService = new services\reports();
+            $this->settingRepo= new repositories\setting();
 
             $_SESSION['lastPage'] = BASE_URL."/dashboard/home";
         }
@@ -65,7 +66,6 @@ namespace leantime\domain\controllers {
                 $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
             }
 
-
             $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
             $clients = array();
 
@@ -96,6 +96,9 @@ namespace leantime\domain\controllers {
             }
 
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
+
+            $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
+            $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
             $this->tpl->assign("allProjects", $projectResults);
 

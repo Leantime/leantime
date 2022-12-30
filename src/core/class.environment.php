@@ -23,37 +23,40 @@ class environment {
             $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(ROOT . "/../config/config.yaml");
         }
         /* General */
-        $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename);
-        $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language);
-        $this->logoPath = $this->environmentHelper("LEAN_LOGO_PATH", $defaultConfiguration->logoPath);
-        $this->printLogoURL = $this->environmentHelper("LEAN_PRINT_LOGO_URL", $defaultConfiguration->printLogoURL);
-        $this->appUrl = $this->environmentHelper("LEAN_APP_URL", $defaultConfiguration->appUrl);
-        $this->defaultTheme = $this->environmentHelper("LEAN_DEFAULT_THEME", $defaultConfiguration->defaultTheme);
-        $this->primarycolor = $this->environmentHelper("LEAN_PRIMARY_COLOR", $defaultConfiguration->primarycolor);
-        $this->secondarycolor = $this->environmentHelper("LEAN_SECONDARY_COLOR", $defaultConfiguration->secondarycolor);
-        $this->debug = $this->environmentHelper("LEAN_DEBUG", $defaultConfiguration->debug);
-        $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone);
-        $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType);
-        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme);
+        $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename ?? '');
+        $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language ?? '');
+        $this->logoPath = $this->environmentHelper("LEAN_LOGO_PATH", $defaultConfiguration->logoPath ?? '');
+        $this->printLogoURL = $this->environmentHelper("LEAN_PRINT_LOGO_URL", $defaultConfiguration->printLogoURL ?? '');
+        $this->appUrl = $this->environmentHelper("LEAN_APP_URL", $defaultConfiguration->appUrl ?? '');
+        $this->defaultTheme = $this->environmentHelper("LEAN_DEFAULT_THEME", $defaultConfiguration->defaultTheme ?? '');
+        $this->primarycolor = $this->environmentHelper("LEAN_PRIMARY_COLOR", $defaultConfiguration->primarycolor ?? '');
+        $this->secondarycolor = $this->environmentHelper("LEAN_SECONDARY_COLOR", $defaultConfiguration->secondarycolor ?? '');
+        $this->debug = $this->environmentHelper("LEAN_DEBUG", $defaultConfiguration->debug ?? 0);
+        $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone ?? 'America/Los_Angeles');
+        $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType ?? false);
+        $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme ?? true);
+
+        //TODO this variables needs to be removed and generated programmatically.
+        $this->appUrlRoot = $this->environmentHelper("LEAN_APP_URL_ROOT", $defaultConfiguration->appUrlRoot ?? true);
 
         /* Database */
         $this->dbHost = $this->environmentHelper("LEAN_DB_HOST", $defaultConfiguration->dbHost);
         $this->dbUser = $this->environmentHelper("LEAN_DB_USER", $defaultConfiguration->dbUser);
         $this->dbPassword = $this->environmentHelper("LEAN_DB_PASSWORD", $defaultConfiguration->dbPassword);
         $this->dbDatabase = $this->environmentHelper("LEAN_DB_DATABASE", $defaultConfiguration->dbDatabase);
-        $this->dbPort = $this->environmentHelper("LEAN_DB_PORT", $defaultConfiguration->dbPort);
+        $this->dbPort = $this->environmentHelper("LEAN_DB_PORT", $defaultConfiguration->dbPort ?? '3306');
 
         /* Fileupload */
-        $this->userFilePath = $this->environmentHelper("LEAN_USER_FILE_PATH", $defaultConfiguration->userFilePath);
-        $this->useS3 = $this->environmentHelper("LEAN_USE_S3", $defaultConfiguration->useS3, "boolean");
+        $this->userFilePath = $this->environmentHelper("LEAN_USER_FILE_PATH", $defaultConfiguration->userFilePath ?? 'userfiles/');
+        $this->useS3 = $this->environmentHelper("LEAN_USE_S3", $defaultConfiguration->useS3 ?? false, "boolean");
         if ($this->useS3) {
-            $this->s3EndPoint = $this->environmentHelper("LEAN_S3_END_POINT", $defaultConfiguration->s3EndPoint);
-            $this->s3Key = $this->environmentHelper("LEAN_S3_KEY", $defaultConfiguration->s3Key);
-            $this->s3Secret = $this->environmentHelper("LEAN_S3_SECRET", $defaultConfiguration->s3Secret);
-            $this->s3Bucket = $this->environmentHelper("LEAN_S3_BUCKET", $defaultConfiguration->s3Bucket);
-            $this->s3UsePathStyleEndpoint = $this->environmentHelper("LEAN_S3_USE_PATH_STYLE_ENDPOINT", $defaultConfiguration->s3UsePathStyleEndpoint, "boolean");
-            $this->s3Region = $this->environmentHelper("LEAN_S3_REGION", $defaultConfiguration->s3Region);
-            $this->s3FolderName = $this->environmentHelper("LEAN_S3_FOLDER_NAME", $defaultConfiguration->s3FolderName);
+            $this->s3EndPoint = $this->environmentHelper("LEAN_S3_END_POINT", $defaultConfiguration->s3EndPoint ?? '');
+            $this->s3Key = $this->environmentHelper("LEAN_S3_KEY", $defaultConfiguration->s3Key ?? '');
+            $this->s3Secret = $this->environmentHelper("LEAN_S3_SECRET", $defaultConfiguration->s3Secret ?? '');
+            $this->s3Bucket = $this->environmentHelper("LEAN_S3_BUCKET", $defaultConfiguration->s3Bucket ?? '');
+            $this->s3UsePathStyleEndpoint = $this->environmentHelper("LEAN_S3_USE_PATH_STYLE_ENDPOINT", $defaultConfiguration->s3UsePathStyleEndpoint ?? '', "boolean");
+            $this->s3Region = $this->environmentHelper("LEAN_S3_REGION", $defaultConfiguration->s3Region ?? '');
+            $this->s3FolderName = $this->environmentHelper("LEAN_S3_FOLDER_NAME", $defaultConfiguration->s3FolderName ?? '');
         }
 
         /* Sessions */
@@ -61,17 +64,17 @@ class environment {
         $this->sessionExpiration = $this->environmentHelper("LEAN_SESSION_EXPIRATION", $defaultConfiguration->sessionExpiration, "number");
 
         /* Email */
-        $this->email = $this->environmentHelper("LEAN_EMAIL_RETURN", $defaultConfiguration->email);
-        $this->useSMTP = $this->environmentHelper("LEAN_EMAIL_USE_SMTP", $defaultConfiguration->useSMTP, "boolean");
+        $this->email = $this->environmentHelper("LEAN_EMAIL_RETURN", $defaultConfiguration->email ?? '');
+        $this->useSMTP = $this->environmentHelper("LEAN_EMAIL_USE_SMTP", $defaultConfiguration->useSMTP ?? false, "boolean");
         if ($this->useSMTP) {
-            $this->smtpHosts = $this->environmentHelper("LEAN_EMAIL_SMTP_HOSTS", $defaultConfiguration->smtpHosts);
-            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth, "boolean");
-            $this->smtpUsername = $this->environmentHelper("LEAN_EMAIL_SMTP_USERNAME", $defaultConfiguration->smtpUsername);
-            $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword);
-            $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS, "boolean");
-            $this->smtpSecure = $this->environmentHelper("LEAN_EMAIL_SMTP_SECURE", $defaultConfiguration->smtpSecure);
-            $this->smtpPort = $this->environmentHelper("LEAN_EMAIL_SMTP_PORT", $defaultConfiguration->smtpPort);
-            $this->smtpSSLNoverify = $this->environmentHelper("LEAN_EMAIL_SMTP_SSLNOVERIFY", $defaultConfiguration->smtpSSLNoverify, "boolean");
+            $this->smtpHosts = $this->environmentHelper("LEAN_EMAIL_SMTP_HOSTS", $defaultConfiguration->smtpHosts ?? '');
+            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? '', "boolean");
+            $this->smtpUsername = $this->environmentHelper("LEAN_EMAIL_SMTP_USERNAME", $defaultConfiguration->smtpUsername ?? '');
+            $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '' );
+            $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS ?? false, "boolean");
+            $this->smtpSecure = $this->environmentHelper("LEAN_EMAIL_SMTP_SECURE", $defaultConfiguration->smtpSecure ?? '');
+            $this->smtpPort = $this->environmentHelper("LEAN_EMAIL_SMTP_PORT", $defaultConfiguration->smtpPort ?? '');
+            $this->smtpSSLNoverify = $this->environmentHelper("LEAN_EMAIL_SMTP_SSLNOVERIFY", $defaultConfiguration->smtpSSLNoverify ?? false, "boolean");
         }
 
         /* ldap */
@@ -95,9 +98,9 @@ class environment {
             return $_SESSION['mainconfig'][$envVar];
         } else {
             /*
-             * Basically, here, we are doing the fetch order of 
+             * Basically, here, we are doing the fetch order of
              * environment -> .env file -> yaml file -> user default -> leantime default
-             * This allows us to use any one or a combination of those methods to configure leantime. 
+             * This allows us to use any one or a combination of those methods to configure leantime.
              */
             $found = null;
             $found = $this->tryGetFromYaml($envVar, $found);

@@ -1,7 +1,7 @@
 <?php
 
 // Semaphone part is meant to prevent concurrent execution
-// I dropped the idea of using real semaphores because a lot of 
+// I dropped the idea of using real semaphores because a lot of
 // providers don't allow it.
 // TODO : Maybe create a semaphore class with a fallback on file locks
 // TODO : Ensure no locks remain there for long (would block cron)
@@ -22,8 +22,9 @@ if(is_writable("../logs/")) {
 define('RESTRICTED', FALSE);
 define('ROOT', dirname(__FILE__));
 
-include_once '../config/configuration.php';
-include_once '../src/core/class.autoload.php';
+require_once '../src/core/class.autoload.php';
+require_once '../config/configuration.php';
+require_once '../config/appSettings.php';
 
 use leantime\domain\repositories;
 use leantime\domain\services;

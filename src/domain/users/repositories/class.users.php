@@ -47,7 +47,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive');
+        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
 
         /**
          * @access public
@@ -142,7 +142,7 @@ namespace leantime\domain\repositories {
          */
         public function getUserByEmail($email) {
 
-            $sql = "SELECT * FROM `zp_user` WHERE username = :email LIMIT 1";
+            $sql = "SELECT * FROM `zp_user` WHERE username = :email AND status LIKE 'a' LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':email', $email, PDO::PARAM_STR);
@@ -179,11 +179,11 @@ namespace leantime\domain\repositories {
          */
         public function getEmployees() {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 			zp_user.id,
 			zp_user.firstname,
 			zp_user.lastname
-		 FROM zp_user 
+		 FROM zp_user
 		    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
@@ -203,18 +203,18 @@ namespace leantime\domain\repositories {
          */
         public function getAll() {
 
-            $query = "SELECT 
-                      zp_user.id, 
-                      lastname, 
-                      firstname, 
-                      role, 
-                      profileId, 
+            $query = "SELECT
+                      zp_user.id,
+                      lastname,
+                      firstname,
+                      role,
+                      profileId,
                       status,
                       username,
                       twoFAEnabled,
                       clientId,
                       zp_clients.name AS clientName
-					FROM `zp_user` 
+					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					ORDER BY lastname";
 
@@ -235,19 +235,19 @@ namespace leantime\domain\repositories {
          */
         public function getAllClientUsers($clientId) {
 
-            $query = "SELECT 
-                        zp_user.id, 
-                        lastname, 
-                        firstname, 
-                        role, 
-                        profileId, 
+            $query = "SELECT
+                        zp_user.id,
+                        lastname,
+                        firstname,
+                        role,
+                        profileId,
                         status,
                         username,
                         twoFAEnabled,
                         zp_clients.name AS clientName
-					FROM `zp_user` 
+					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-					WHERE clientId = :clientId 
+					WHERE clientId = :clientId
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -299,7 +299,6 @@ namespace leantime\domain\repositories {
 				wage = :wage,
 				clientId = :clientId,
 				password = :password
-				
 			 WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -315,8 +314,9 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+            return $result;
         }
 
         /**
@@ -378,12 +378,12 @@ namespace leantime\domain\repositories {
             }
 
             $query = "UPDATE `zp_user` SET
-				lastname = :lastname, 
-				firstname = :firstname, 
-				username = :username, 
+				lastname = :lastname,
+				firstname = :firstname,
+				username = :username,
 				" . $chgPW . "
 				phone = :phone,
-				notifications = :notifications			 
+				notifications = :notifications
 				WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -405,7 +405,7 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * addUser - add User to db with postback test
+         * addUser - add User to db
          *
          * @access public
          * @param  array $values
@@ -413,15 +413,17 @@ namespace leantime\domain\repositories {
         public function addUser(array $values) {
 
             $query = "INSERT INTO `zp_user` (
-							firstname, 
-							lastname, 
-							phone, 
-							username, 
+							firstname,
+							lastname,
+							phone,
+							username,
 							role,
 					        notifications,
-							clientId, 
+							clientId,
 							password,
-							source
+							source,
+                            pwReset,
+                            status
 						) VALUES (
 							:firstname,
 							:lastname,
@@ -431,7 +433,9 @@ namespace leantime\domain\repositories {
 							1,
 							:clientId,
 							:password,
-							:source
+							:source,
+							:pwReset,
+						    :status
 						)";
 
             $stmn = $this->db->database->prepare($query);
@@ -451,7 +455,8 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':source', '', PDO::PARAM_STR);
             }
 
-
+            $stmn->bindValue(':pwReset', $values['pwReset'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
             $userId = $this->db->database->lastInsertId();
@@ -587,6 +592,7 @@ namespace leantime\domain\repositories {
 
             return $result['profileId'] ?? false;
         }
+
 
     }
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf15459de32df025e56fe7e90efb7984",
+    "content-hash": "c9d015c1e3684bc5bdfbaa7beed886c0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -966,16 +966,16 @@
         },
         {
             "name": "mpdf/mpdf",
-            "version": "v8.1.3",
+            "version": "v8.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpdf/mpdf.git",
-                "reference": "59ba1a9374211174996d8530a855dedfbd5f5681"
+                "reference": "add590e93b7502efafd9839a68cff99f3497b318"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/59ba1a9374211174996d8530a855dedfbd5f5681",
-                "reference": "59ba1a9374211174996d8530a855dedfbd5f5681",
+                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/add590e93b7502efafd9839a68cff99f3497b318",
+                "reference": "add590e93b7502efafd9839a68cff99f3497b318",
                 "shasum": ""
             },
             "require": {
@@ -1039,7 +1039,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2022-12-08T12:55:58+00:00"
+            "time": "2022-12-15T11:24:39+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -1864,23 +1864,23 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.6.0",
+            "version": "4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "ad63bc700e7d021039e30ce464eba384c4a1d40f"
+                "reference": "5ed9ad582647bbc3864ef78db34bdc1afdcf9b49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/ad63bc700e7d021039e30ce464eba384c4a1d40f",
-                "reference": "ad63bc700e7d021039e30ce464eba384c4a1d40f",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/5ed9ad582647bbc3864ef78db34bdc1afdcf9b49",
+                "reference": "5ed9ad582647bbc3864ef78db34bdc1afdcf9b49",
                 "shasum": ""
             },
             "require": {
                 "brick/math": "^0.8.8 || ^0.9 || ^0.10",
                 "ext-json": "*",
                 "php": "^8.0",
-                "ramsey/collection": "^1.0"
+                "ramsey/collection": "^1.2"
             },
             "replace": {
                 "rhumsaa/uuid": "self.version"
@@ -1940,7 +1940,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.6.0"
+                "source": "https://github.com/ramsey/uuid/tree/4.7.0"
             },
             "funding": [
                 {
@@ -1952,7 +1952,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-05T23:03:38+00:00"
+            "time": "2022-12-19T22:30:49+00:00"
         },
         {
             "name": "robthree/twofactorauth",
@@ -3405,65 +3405,6 @@
     ],
     "packages-dev": [
         {
-            "name": "phpstan/phpstan",
-            "version": "1.5.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "bbf68cae24f6dc023c607ea0f87da55dd9d55c2b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/bbf68cae24f6dc023c607ea0f87da55dd9d55c2b",
-                "reference": "bbf68cae24f6dc023c607ea0f87da55dd9d55c2b",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2|^8.0"
-            },
-            "conflict": {
-                "phpstan/phpstan-shim": "*"
-            },
-            "bin": [
-                "phpstan",
-                "phpstan.phar"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHPStan - PHP Static Analysis Tool",
-            "support": {
-                "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.5.4"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/ondrejmirtes",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/phpstan",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpstan",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-04-03T12:39:00+00:00"
-        },
-        {
             "name": "squizlabs/php_codesniffer",
             "version": "3.7.1",
             "source": {
@@ -3533,5 +3474,5 @@
     "platform-overrides": {
         "php": "8.0"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }

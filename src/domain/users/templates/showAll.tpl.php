@@ -19,15 +19,14 @@ $roles = $this->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <?php echo $this->displayLink('users.newUser', "<i class='fa fa-plus'></i> ".$this->__('buttons.add_user'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
-
+                <a href="<?=BASE_URL ?>/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?=$this->__('buttons.add_user') ?> </a>
             </div>
             <div class="col-md-6 align-right">
 
             </div>
         </div>
 
-        <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allUsersTable">
+        <table class="table table-bordered" id="allUsersTable">
             <colgroup>
                 <col class="con1">
                 <col class="con0">
@@ -49,19 +48,29 @@ $roles = $this->get('roles');
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($this->get('allUsers') as $row): ?>
+            <?php foreach ($this->get('allUsers') as $row) { ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                        <?php echo $this->displayLink('users.editUser', sprintf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
+                        <?php echo $this->displayLink('users.editUser', sprintf($this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
                         </td>
                         <td><?php echo $row['username']; ?></td>
                         <td><?=$row['clientName']; ?></td>
-                        <td><?=$this->__("label.roles.".$roles[$row['role']]); ?></td>
-                        <td><?php if(strtolower($row['status']) == 'a') echo $this->__('label.active'); else echo $this->__('label.inactive'); ?></td>
-                        <td><?php if($row['twoFAEnabled']){ echo $this->__('label.yes'); }else{ echo $this->__('label.no'); } ?></td>
+                        <td><?=$this->__("label.roles." . $roles[$row['role']]); ?></td>
+                        <td><?php if (strtolower($row['status']) == 'a') {
+                            echo $this->__('label.active');
+                            } else if (strtolower($row['status']) == 'i') {
+                                echo $this->__('label.invited');
+                            }else{
+                                echo $this->__('label.inactive');
+                            } ?></td>
+                        <td><?php if ($row['twoFAEnabled']) {
+                            echo $this->__('label.yes');
+                            } else {
+                                echo $this->__('label.no');
+                            } ?></td>
                         <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete');?></a></td>
                     </tr>
-            <?php endforeach; ?>
+            <?php } ?>
             </tbody>
         </table>
     </div>
@@ -71,6 +80,8 @@ $roles = $this->get('roles');
     jQuery(document).ready(function() {
             leantime.usersController.initUserTable();
             leantime.usersController._initModals();
+            leantime.usersController.initUserEditModal();
+
         }
     );
 

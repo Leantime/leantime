@@ -18,7 +18,7 @@
         <li class="nav-header border"><?=$this->__("menu.help_support")?></li>
         <li>
             <a href='javascript:void(0);'
-               onclick="leantime.helperController.showHelperModal('<?php echo $this->get('modal'); ?>');">
+               onclick="leantime.helperController.showHelperModal('<?php echo $this->get('modal'); ?>', 300, 500);">
                 <?=$this->__("menu.show_me_around")?>
             </a>
         </li>

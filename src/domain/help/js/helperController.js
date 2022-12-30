@@ -281,11 +281,43 @@ leantime.helperController = (function () {
 
     };
 
+    var firstLoginModal = function() {
+
+        jQuery(document).ready(function(){
+
+            var onboardingModal = {
+                sizes: {
+                    minW: 700,
+                    minH: 250
+                },
+                resizable: true,
+                autoSizable: true,
+                callbacks: {
+                    afterShowCont: function () {
+                        jQuery(".showDialogOnLoad").show();
+                        jQuery(".onboardingModal").nyroModal(onboardingModal);
+                    },
+                    beforeClose: function () {
+
+                        location.reload();
+                    },
+                }
+            };
+
+            jQuery(".onboardingModal").nyroModal(onboardingModal);
+
+            jQuery.nmManual(
+                leantime.appUrl+"/help/firstLogin?step=project", onboardingModal
+            );
+        });
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         showHelperModal: showHelperModal,
         hideAndKeepHidden: hideAndKeepHidden,
         startDashboardTour:startDashboardTour,
-        startKanbanTour: startKanbanTour
+        startKanbanTour: startKanbanTour,
+        firstLoginModal:firstLoginModal
     };
 })();

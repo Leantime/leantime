@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h3 class="todaysDate" style="padding-bottom:5px;"></h3>
-                            <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?=$currentUser['firstname'] ?></h1>
+                            <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?php $this->e($currentUser['firstname']) ?></h1>
                             <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                                 </a>
                                 <a class="titleInsertLink" href="javascript:void(0)" onclick="insertQuickAddForm(<?=$i; ?>, <?=$groupProjectId?>, '<?=$ticketCreationDueDate?>')"><i class="fa fa-plus"></i> <?=$this->__('links.add_todo_no_icon') ?></a>
                             </h5>
-                            <div id="accordion_<?=$i ?> yourToDoContainer" class="simpleAccordionContainer">
+                            <div id="accordion_<?=$i ?>" class="yourToDoContainer simpleAccordionContainer">
                                 <ul class="sortableTicketList" >
 
                                 <?php if(count($ticketGroup['tickets']) == 0){?>
@@ -383,13 +383,17 @@
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
+
+
             if(currentLink.hasClass("fa-angle-right")){
                 currentLink.removeClass("fa-angle-right");
                 currentLink.addClass("fa-angle-down");
                 jQuery('#accordion_'+id).slideDown("fast");
             }else{
+
                 currentLink.removeClass("fa-angle-down");
                 currentLink.addClass("fa-angle-right");
+
                 jQuery('#accordion_'+id).slideUp("fast");
             }
 
@@ -408,7 +412,13 @@
             leantime.generalController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
-       <?php if(isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0){  ?>
+       <?php if($this->get('completedOnboarding') === false) { ?>
+           leantime.helperController.firstLoginModal();
+       <?php } ?>
+
+
+       <?php
+       if($this->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)){  ?>
 
             leantime.helperController.showHelperModal("dashboard", 500, 700);
 

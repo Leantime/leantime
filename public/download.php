@@ -6,10 +6,9 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
-include_once '../src/core/class.autoload.php';
-include_once '../config/configuration.php';
-
-
+require_once '../src/core/class.autoload.php';
+require_once '../config/configuration.php';
+require_once '../config/appSettings.php';
 
 $login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
 $config = \leantime\core\environment::getInstance();
@@ -138,7 +137,7 @@ function getFileFromS3(){
     ]);
 
     try {
-        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
         $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
         $cmd = $s3Client->getCommand('GetObject', [

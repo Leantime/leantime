@@ -90,6 +90,7 @@ namespace leantime\domain\repositories {
          * @var    string userrole (admin, client, employee)
          */
         public $role = '';
+
         public $settings = '';
 
         /**
@@ -121,12 +122,14 @@ namespace leantime\domain\repositories {
          * @var    object
          */
         public $hasher;
+
         private static $instance;
 
         /*
          * How often can a user reset a password before it has to be changed
          */
         public $pwResetLimit = 5;
+
         private $config;
 
         public function __construct() {
@@ -145,7 +148,7 @@ namespace leantime\domain\repositories {
          */
         public function invalidateSession($sessionId) {
 
-            $query = "UPDATE zp_user SET session = '' 
+            $query = "UPDATE zp_user SET session = ''
 				 WHERE session = :sessionid LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -205,15 +208,15 @@ namespace leantime\domain\repositories {
         public function updateUserSession($userId, $sessionid, $time) {
 
             $query = "UPDATE
-					zp_user 
-				SET 
+					zp_user
+				SET
 					lastlogin = NOW(),
 					session = :sessionid,
 					sessionTime = :time,
 					pwReset = NULL,
 					pwResetExpiration = NULL
-				WHERE 
-					id =  :id 
+				WHERE
+					id =  :id
 				LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -237,7 +240,7 @@ namespace leantime\domain\repositories {
          */
         public function validateResetLink($hash) {
 
-            $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink LIMIT 1";
+            $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'a' LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':resetLink', $hash, PDO::PARAM_STR);
@@ -253,15 +256,37 @@ namespace leantime\domain\repositories {
             }
         }
 
+        /**
+         * getUserByInviteLink - gets an invited user by invite code
+         *
+         * @access public
+         * @param
+         * @return array|bool
+         */
+        public function getUserByInviteLink($hash)
+        {
+
+            $query = "SELECT firstname, lastname, id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':resetLink', $hash, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $returnValues = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $returnValues;
+        }
+
         public function setPWResetLink($username, $resetLink): bool {
 
             $query = "UPDATE
-					zp_user 
-				SET 
+					zp_user
+				SET
 					pwReset = :link,
 					pwResetExpiration = :time,
 					pwResetCount = IFNULL(pwResetCount, 0)+1
-				WHERE 
+				WHERE
 					username = :user
 				LIMIT 1";
 
@@ -278,14 +303,14 @@ namespace leantime\domain\repositories {
         public function changePW($password, $hash) {
 
             $query = "UPDATE
-					zp_user 
-				SET 
+					zp_user
+				SET
 					password = :password,
 					pwReset = '',
 					pwResetExpiration = '',
 					lastpwd_change = :time,
 					pwResetCount = 0
-				WHERE 
+				WHERE
 					pwReset = :hash
 				LIMIT 1";
 

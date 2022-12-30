@@ -22,9 +22,14 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 
 ## Any contributions you make will be under the GPL-2.0 Software License
 In short, when you submit code changes, your submissions are understood to be under the same [GPL 2.0 License](https://choosealicense.com/licenses/gpl-2.0/) that covers the project. Feel free to contact the maintainers if that's a concern.
+There are 3 folders that are exempt from this license:
+src/plugins/*
+src/custome/*
+public/themes/*
+Files in these folders can have licenses that are not GPL-2.0. 
 
-## Report bugs using Github's [issues]([https://github.com/briandk/transcriptase-atom/issues](https://github.com/Leantime/leantime/issues))
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
+## Report bugs using Github's [issues]([https://github.com/Leantime/leantime/issues](https://github.com/Leantime/leantime/issues))
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/Leantime/leantime/issues); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
 [This is an example](http://stackoverflow.com/q/12488905/180626) of a bug report, and we have modeled the issue templates after that. Here's [another example from Craig Hockenberry](http://www.openradar.me/11905408), an app developer whom I greatly respect.

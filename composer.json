@@ -31,7 +31,6 @@
         "symfony/yaml": "^5.4"
     },
     "require-dev": {
-        "phpstan/phpstan": "1.5.4",
         "squizlabs/php_codesniffer": "^3.7"
     },
     "extra": {

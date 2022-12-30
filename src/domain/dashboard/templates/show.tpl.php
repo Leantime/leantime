@@ -39,36 +39,17 @@
 
             <div class="col-md-8">
                 <div class="maincontentinner">
-                    <div class="pull-right">
-                        <a onclick="leantime.generalController.copyUrl(event);" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
+                    <div class="pull-right dropdownWrapper">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
+                        <div class="dropdown-menu padding-md">
+                            <input type="text" id="projectUrl" value="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>" />
+                            <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('projectUrl');"><?=$this->__('links.copy_url') ?></button>
+                        </div>
                     </div>
                     <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
                     <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
                     <?=$this->escapeMinimal($project['details']) ?>
                     <br />
-                </div>
-                <div class="maincontentinner">
-                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                        <div class="pull-right">
-                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-user-plus"></i> <?=$this->__('links.add_team_member') ?></a>
-                        </div>
-                    <?php } ?>
-                    <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
-                    <div class="row teamBox">
-                        <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
-
-                            <div class="col-md-3">
-                                <div class="profileBox">
-                                    <div class="commentImage">
-                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
-                                    </div>
-                                    <span class="userName"><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></span>
-                                    <?=$this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>
-                                    <div class="clearall"></div>
-                                </div>
-                            </div>
-                        <?php } ?>
-                    </div>
                 </div>
 
                 <div class="maincontentinner">
@@ -201,6 +182,30 @@
                             <?php
                         } ?>
                     </ul>
+                </div>
+
+                <div class="maincontentinner">
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                        <div class="pull-right">
+                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-users"></i> <?=$this->__('links.manage_team') ?></a>
+                        </div>
+                    <?php } ?>
+                    <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
+                    <div class="row teamBox">
+                        <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
+
+                            <div class="col-md-3">
+                                <div class="profileBox">
+                                    <div class="commentImage">
+                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
+                                    </div>
+                                    <span class="userName"><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></span>
+                                    <?=$this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>
+                                    <div class="clearall"></div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
                 </div>
 
 

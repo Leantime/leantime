@@ -4026,19 +4026,19 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .progress-primary .bar {
-    background: var(--primary-color);
+    background: var(--header-gradient);
 }
 
 .progress-info .bar {
-    background: #71B8EE;
+    background: var(--header-gradient);
 }
 
 .progress-success .bar {
-    background: #86D628;
+    background: var(--header-gradient);
 }
 
 .progress-warnng .bar {
-    background: #FCB904;
+    background: var(--header-gradient);
 }
 
 .progress {
@@ -4082,7 +4082,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .progress-bar-success {
-    background-color: #5cb85c;
+    background: var(--header-gradient);
 }
 
 .progress-striped .progress-bar-success {
@@ -5311,4 +5311,59 @@ a.titleInsertLink:link{
 
 a.titleInsertLink:hover {
     color:var(--primary-color);
+}
+
+#pwStrength {
+    color:#fff;
+    padding:0px 5px;
+    border-radius:var(--box-radius-small);
+    font-size:var(--font-size-xs);
+    width:206px;
+    margin-top:-2px;
+    margin-bottom:10px;
+}
+
+
+.scrollableItemList {
+    width:100%;
+    height:50%;
+    max-height:500px;
+    overflow:auto;
+    padding:10px;
+    padding-top:0px;
+    border:1px solid var(--main-border-color);
+    border-radius: var(--box-radius-small);
+    -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+}
+
+.scrollableItemList .item {
+    clear:both;
+    border-bottom:1px solid var(--main-border-color);
+    padding: 5px 0px;
+}
+
+.scrollableItemList .item input[type=checkbox] {
+    float:left;
+    margin-right:5px;
+}
+
+.scrollableItemList .item label {
+    width:75%;
+}
+
+.scrollableItemList h3 {
+    clear:both;
+    margin-bottom:0px;
+    margin-top:15px;
+}
+
+.scrollableItemList .item label {
+    vertical-align: middle;
+
 }

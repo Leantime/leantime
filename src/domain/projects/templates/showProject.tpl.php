@@ -13,7 +13,7 @@
         </h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -76,7 +76,7 @@
                                             <div class="commentImage">
                                                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
                                             </div>
-                                            <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></label>
+                                            <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?> <?php if($assignedUser['status'] == 'i') {echo "<small>(".$this->__('label.invited').")</small>";} ?></label>
                                             <?php
                                             if(($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
                                                 <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>" />
@@ -179,7 +179,7 @@
                                          <div class="userBox">
 
 
-                                                 <a href="<?=BASE_URL?>/users/newUser" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
+                                                 <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
 
                                              <div class="clearall"></div>
                                          </div>
@@ -485,7 +485,7 @@
         </div>
         <div class="remove">
             <br />
-            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(XXNEWKEYXX)" class="delete"><span class="fa fa-trash"></span></a>
+            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')" class="delete"><span class="fa fa-trash"></span></a>
         </div>
     </div>
 </div>
@@ -502,6 +502,7 @@
         leantime.projectsController.initDuplicateProjectModal();
         leantime.projectsController.initTodoStatusSortable("#todoStatusList");
         leantime.projectsController.initSelectFields();
+        leantime.usersController.initUserEditModal();
 
         <?php
         if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {
