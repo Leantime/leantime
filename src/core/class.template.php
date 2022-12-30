@@ -115,18 +115,22 @@ namespace leantime\core {
             $_SESSION['notifcationType'] = $type;
         }
 
-        /*         * *
+        /***
          * getTemplatePath - Find template in custom and src directories
          *
          * @access public
          * @param  string $module Module template resides in
          * @param  string $name   Template filename name (including tpl.php extension)
-         * @return string Full template path
+         * @return string|bool Full template path or false if file does not exist
          *
          */
 
         public function getTemplatePath(string $module, string $name): string|false
         {
+
+            if ($module == '' || $name == '') {
+                return false;
+            }
 
             $plugin_path = self::dispatch_filter('relative_plugin_template_path', '', [
                         'module' => $module,
@@ -153,6 +157,8 @@ namespace leantime\core {
                 if (file_exists(ROOT . '/../src/domain' . $file) && is_readable(ROOT . '/../src/domain/' . $file)) {
                     return ROOT . '/../src/domain/' . $file;
                 }
+
+                return false;
             }
 
             if (file_exists(ROOT . '/../src/custom' . $plugin_path) && is_readable(ROOT . '/../src/custom' . $plugin_path)) {
@@ -169,9 +175,7 @@ namespace leantime\core {
                 return ROOT . '/../src/domain/' . $plugin_path;
             }
 
-
-
-            throw new \Exception($this->__("notifications.no_template") . ': ' . $module . '/' . $file);
+            return false;
         }
 
         /**
@@ -251,7 +255,12 @@ namespace leantime\core {
 
             ob_start();
 
-            require_once($loadFile);
+            if ($loadFile !== false) {
+                require_once($loadFile);
+            } else {
+                error_log("Tried loading " . $loadFile . ". File not found");
+                $this->frontcontroller::redirect(BASE_URL . "/error/error404");
+            }
 
             $content = ob_get_clean();
 
