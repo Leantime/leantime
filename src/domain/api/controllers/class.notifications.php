@@ -11,6 +11,7 @@ namespace leantime\domain\controllers {
     class notifications extends controller
     {
 
+        public services\notifications $notificationsService;
 
         /**
          * init - initialize private variables
@@ -34,7 +35,7 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            $notifications = $this->notificationsService->getAllNoticfications($params['userId'], $params['read']);
+            $notifications = $this->notificationsService->getAllNotifications($params['userId'], $params['read']);
 
             echo json_encode($notifications);
         }

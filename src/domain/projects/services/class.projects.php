@@ -15,14 +15,13 @@ namespace leantime\domain\services {
 
     class projects
     {
-
         use eventhelpers;
 
-        private $tpl;
-        private $projectRepository;
-        private $ticketRepository;
-        private $settingsRepo;
-        private $language;
+        private core\template $tpl;
+        private repositories\projects $projectRepository;
+        private repositories\tickets $ticketRepository;
+        private repositories\setting $settingsRepo;
+        private core\language $language;
 
         public function __construct()
         {
@@ -35,7 +34,8 @@ namespace leantime\domain\services {
             $this->language = core\language::getInstance();
         }
 
-        public function getProject($id) {
+        public function getProject($id)
+        {
             return $this->projectRepository->getProject($id);
         }
 
@@ -49,7 +49,7 @@ namespace leantime\domain\services {
             //We'll use this as the start date of the project
             $firstTicket = $this->ticketRepository->getFirstTicket($projectId);
 
-            if(is_object($firstTicket) === false) {
+            if (is_object($firstTicket) === false) {
                 return $returnValue;
             }
 
@@ -64,57 +64,56 @@ namespace leantime\domain\services {
 
             $numberOfTotalTickets = $this->ticketRepository->getNumberOfAllTickets($projectId);
 
-            if($numberOfTotalTickets == 0) {
+            if ($numberOfTotalTickets == 0) {
                 $percentNum = 0;
-            }else{
+            } else {
                 $percentNum = ($numberOfClosedTickets / $numberOfTotalTickets) * 100;
             }
 
             $effortOfClosedTickets = $this->ticketRepository->getEffortOfClosedTickets($projectId, $averageStorySize);
             $effortOfTotalTickets = $this->ticketRepository->getEffortOfAllTickets($projectId, $averageStorySize);
 
-            if($effortOfTotalTickets == 0) {
+            if ($effortOfTotalTickets == 0) {
                 $percentEffort = $percentNum; //This needs to be set to percentNum in case users choose to not use efforts
-            }else{
+            } else {
                 $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
             }
 
             $finalPercent = ($percentNum + $percentEffort) / 2;
 
-            if($totalprojectDays > 0) {
+            if ($totalprojectDays > 0) {
                 $dailyPercent = $finalPercent / $totalprojectDays;
-            }else{
+            } else {
                 $dailyPercent = 0;
             }
 
             $percentLeft = 100 - $finalPercent;
 
-            if($dailyPercent == 0) {
+            if ($dailyPercent == 0) {
                 $estDaysLeftInProject = 10000;
-            }else{
+            } else {
                 $estDaysLeftInProject = ceil($percentLeft / $dailyPercent);
             }
 
-            $today->add(new DateInterval('P'.$estDaysLeftInProject.'D'));
+            $today->add(new DateInterval('P' . $estDaysLeftInProject . 'D'));
 
 
             //Fix this
             $currentDate = new DateTime();
             $inFiveYears = intval($currentDate->format("Y")) + 5;
 
-            if(intval($today->format("Y")) >= $inFiveYears) {
-                $completionDate = "Past ".$inFiveYears;
-            }else{
+            if (intval($today->format("Y")) >= $inFiveYears) {
+                $completionDate = "Past " . $inFiveYears;
+            } else {
                 $completionDate = $today->format($this->language->__('language.dateformat'));
             }
 
 
             $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
-            if($numberOfClosedTickets < 10) {
-                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
-            }elseif($finalPercent == 100) {
-                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
-
+            if ($numberOfClosedTickets < 10) {
+                $returnValue['estimatedCompletionDate'] = "<a href='" . BASE_URL . "/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+            } elseif ($finalPercent == 100) {
+                $returnValue['estimatedCompletionDate'] = "<a href='" . BASE_URL . "/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
             }
             return $returnValue;
         }
@@ -126,10 +125,9 @@ namespace leantime\domain\services {
 
             $to = array();
 
-            //Only users that actually want to be notified
+            //Only users that actually want to be notified and are active
             foreach ($users as $user) {
-
-                if ($user["notifications"] != 0) {
+                if ($user["notifications"] != 0 && strtolower($user["status"]) == 'a') {
                     $to[] = $user["username"];
                 }
             }
@@ -146,7 +144,6 @@ namespace leantime\domain\services {
 
             //Only users that actually want to be notified
             foreach ($users as $user) {
-
                 if ($user["notifications"] != 0 && ($user['username'] != $_SESSION['userdata']['mail'])) {
                     $to[] = $user;
                 }
@@ -155,7 +152,8 @@ namespace leantime\domain\services {
             return $to;
         }
 
-        public function notifyProjectUsers($message, $subject, $projectId, $url = false){
+        public function notifyProjectUsers($message, $subject, $projectId, $url = false)
+        {
 
             $projectName = $this->getProjectName($projectId);
 
@@ -163,7 +161,7 @@ namespace leantime\domain\services {
 
             //Email
             $users = $this->getUsersToNotify($projectId);
-            $users = array_filter($users, function($user, $k) {
+            $users = array_filter($users, function ($user, $k) {
                 return $user != $_SESSION['userdata']['mail'];
             }, ARRAY_FILTER_USE_BOTH);
 
@@ -172,21 +170,21 @@ namespace leantime\domain\services {
             $mailer->setSubject($subject);
 
             $emailMessage = $message;
-            if($url !== false){
-                $emailMessage .= " <a href='".$url['link']."'>".$url['text']."</a>";
+            if ($url !== false) {
+                $emailMessage .= " <a href='" . $url['link'] . "'>" . $url['text'] . "</a>";
             }
             $mailer->setHtml($emailMessage);
             //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
-	        // NEW Queuing messaging system
-	        $queue = new repositories\queue();
+            // NEW Queuing messaging system
+            $queue = new repositories\queue();
             $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
 
 
             //Prepare message for chat applications (Slack, Mattermost)
             $prepareChatMessage = $message;
-            if($url !== false){
-                $prepareChatMessage .= " <".$url['link']."|".$url['text'].">";
+            if ($url !== false) {
+                $prepareChatMessage .= " <" . $url['link'] . "|" . $url['text'] . ">";
             }
 
             $attachments = array([
@@ -195,7 +193,7 @@ namespace leantime\domain\services {
                 'color'    => '#1b75bb',
                 'fields'   => array(
                     [
-                        'title' => $this->language->__("headlines.project_with_name")." ".$projectName,
+                        'title' => $this->language->__("headlines.project_with_name") . " " . $projectName,
                         'value' => $prepareChatMessage,
                         'short' => false
                     ]
@@ -203,9 +201,8 @@ namespace leantime\domain\services {
             ]);
 
             //Slack Webhook post
-            $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".slackWebhookURL");
-            if($slackWebhookURL !== "" && $slackWebhookURL !== false){
-
+            $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".slackWebhookURL");
+            if ($slackWebhookURL !== "" && $slackWebhookURL !== false) {
                 $data = array(
                     'text'        => '',
                     'attachments' => $attachments
@@ -218,42 +215,41 @@ namespace leantime\domain\services {
                         'body' => $data_string,
                         'headers' => [ 'Content-Type' => 'application/json' ]
                     ]);
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     error_log($e);
                 }
-
             }
 
             //Discord Webhook post
-            $converter = FALSE;
-            for ($i = 1; 3 >= $i ; $i++) {
-              $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $projectId . '.discordWebhookURL' . $i);
-              if ($discordWebhookURL !== "" && $discordWebhookURL !== FALSE) {
-                if (!$converter) {
-                  $converter = new HtmlConverter();
-                }
-                $timestamp = date('c', strtotime('now'));
-                $fields = [
+            $converter = false;
+            for ($i = 1; 3 >= $i; $i++) {
+                $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $projectId . '.discordWebhookURL' . $i);
+                if ($discordWebhookURL !== "" && $discordWebhookURL !== false) {
+                    if (!$converter) {
+                        $converter = new HtmlConverter();
+                    }
+                    $timestamp = date('c', strtotime('now'));
+                    $fields = [
                   // Additional data to be sent; e.g.:
                   //[
                   //  'name' => $subject,
                   //  'value' => $message,
                   //  'inline' => FALSE
                   //],
-                ];
-                $url_link = (
-                  empty($url['link'])
+                    ];
+                    $url_link = (
+                    empty($url['link'])
                     ? ''
                     : $url['link']
-                );
+                    );
 
-                // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
-                $data_string = json_encode([
-                  'content' => 'Leantime' . ' - ' . $_SESSION['companysettings.sitename'],
-                  'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
-                  'tts' => FALSE,
-                  'embeds' => [
-                    [
+                  // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
+                    $data_string = json_encode([
+                    'content' => 'Leantime' . ' - ' . $_SESSION['companysettings.sitename'],
+                    'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
+                    'tts' => false,
+                    'embeds' => [
+                      [
                       'title' => $subject,
                       'type' => 'rich',
                       'description' => $converter->convert($message),
@@ -269,26 +265,25 @@ namespace leantime\domain\services {
                         'url' => $url_link
                       ],
                       'fields' => $fields,
+                      ]
                     ]
-                  ]
 
-                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-                try {
-                      $httpClient->post($discordWebhookURL, [
+                    try {
+                          $httpClient->post($discordWebhookURL, [
                           'body' => $data_string,
                           'headers' => [ 'Content-Type' => 'application/json' ]
-                      ]);
-                }catch (\Exception $e) {
-                      error_log($e);
+                          ]);
+                    } catch (\Exception $e) {
+                        error_log($e);
+                    }
                 }
-              }
             }
 
           //Mattermost Webhook Post
-            $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".mattermostWebhookURL");
-            if($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
-
+            $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".mattermostWebhookURL");
+            if ($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
                 $data = array(
                     'username' => "Leantime",
                     "icon_url" => '',
@@ -302,27 +297,25 @@ namespace leantime\domain\services {
                     $httpClient->post($mattermostWebhookURL, [
                         'body' => $data_string
                     ]);
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     error_log($e);
                 }
-
             }
 
 
             //Test Zulip
-            $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId. ".zulipHook");
+            $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".zulipHook");
 
-            if($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== ""){
-
+            if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== "") {
                 $zulipWebhook = unserialize($zulipWebhookSerialized);
 
                 $botEmail = $zulipWebhook['zulipEmail'];
                 $botKey = $zulipWebhook['zulipBotKey'];
-                $botURL = $zulipWebhook['zulipURL']."/api/v1/messages";
+                $botURL = $zulipWebhook['zulipURL'] . "/api/v1/messages";
 
-                $prepareChatMessage = "**Project: ".$projectName."** \n\r".$message;
-                if($url !== false){
-                    $prepareChatMessage .= " ".$url['link']."";
+                $prepareChatMessage = "**Project: " . $projectName . "** \n\r" . $message;
+                if ($url !== false) {
+                    $prepareChatMessage .= " " . $url['link'] . "";
                 }
 
                 $data = array(
@@ -337,7 +330,6 @@ namespace leantime\domain\services {
                 $data_string = json_encode($data);
 
                 try {
-
                     $httpClient->post($curlUrl, [
                         'body' => $data_string,
                         'headers' => [ 'Content-Type' => 'application/json' ],
@@ -346,25 +338,21 @@ namespace leantime\domain\services {
                             $botKey
                         ]
                     ]);
-
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     error_log($e);
                 }
-
             }
 
-            core\events::dispatch_event("notifyProjectUsers", array("type"=> "projectUpdate", "module" => "projects", "moduleId"=> $projectId, "message"=>$message, "subject"=>$subject, "users"=>$this->getAllUserInfoToNotify($projectId), "url"=>$url['link']), "domain.services.projects");
-
+            core\events::dispatch_event("notifyProjectUsers", array("type" => "projectUpdate", "module" => "projects", "moduleId" => $projectId, "message" => $message, "subject" => $subject, "users" => $this->getAllUserInfoToNotify($projectId), "url" => $url['link']), "domain.services.projects");
         }
 
         public function getProjectName($projectId)
         {
 
             $project = $this->projectRepository->getProject($projectId);
-            if($project) {
+            if ($project) {
                 return $project["name"];
             }
-
         }
 
         public function getProjectIdAssignedToUser($userId)
@@ -372,12 +360,11 @@ namespace leantime\domain\services {
 
             $projects = $this->projectRepository->getUserProjectRelation($userId);
 
-            if($projects) {
+            if ($projects) {
                 return $projects;
-            }else{
+            } else {
                 return false;
             }
-
         }
 
 
@@ -386,27 +373,25 @@ namespace leantime\domain\services {
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
-            if($projects) {
+            if ($projects) {
                 return $projects;
-            }else{
+            } else {
                 return false;
             }
-
         }
 
-        public function getProjectRole($userId, $projectId) {
+        public function getProjectRole($userId, $projectId)
+        {
 
             $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
-            if(is_array($project)) {
-
-                if(isset($project[0]['projectRole']) && $project[0]['projectRole'] != ''){
+            if (is_array($project)) {
+                if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
                     return $project[0]['projectRole'];
-                }else{
+                } else {
                     return "";
                 }
-
-            }else{
+            } else {
                 return "";
             }
         }
@@ -415,74 +400,62 @@ namespace leantime\domain\services {
         {
             $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
 
-            if($projects) {
+            if ($projects) {
                 return $projects;
-            }else{
+            } else {
                 return false;
             }
-
         }
 
-        public function setCurrentProject () {
+        public function setCurrentProject()
+        {
 
             //If projectId in URL use that as the project
             //$_GET is highest priority. Will overwrite current set session project
             //This comes from emails, shared links etc.
-            if(isset($_GET['projectId']) === true){
-
+            if (isset($_GET['projectId']) === true) {
                 $projectId = filter_var($_GET['projectId'], FILTER_SANITIZE_NUMBER_INT);
 
-                if($this->changeCurrentSessionProject($projectId) === true) {
+                if ($this->changeCurrentSessionProject($projectId) === true) {
                     return;
                 }
-
             }
 
             //Find project if nothing is set
             //Login experience. If nothing is set look for the last set project
             //If there is none (new feature, new user) use the first project in the list.
             //Check that the user is still assigned to the project
-            if(isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '' || $this->isUserAssignedToProject($_SESSION['userdata']['id'], $_SESSION['currentProject']) === false) {
-
+            if (isset($_SESSION['currentProject']) === false || $_SESSION['currentProject'] == '' || $this->isUserAssignedToProject($_SESSION['userdata']['id'], $_SESSION['currentProject']) === false) {
                 $_SESSION['currentProject'] = '';
 
                 //If last project setting is set use that
-                $lastProject = $this->settingsRepo->getSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject");
+                $lastProject = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject");
 
-                if($lastProject !== false && $lastProject != '' && $this->isUserAssignedToProject($_SESSION['userdata']['id'], $lastProject) !== false){
-
-                    if($this->changeCurrentSessionProject($lastProject) === true) {
+                if ($lastProject !== false && $lastProject != '' && $this->isUserAssignedToProject($_SESSION['userdata']['id'], $lastProject) !== false) {
+                    if ($this->changeCurrentSessionProject($lastProject) === true) {
                         return;
                     }
-
-                }else{
-
+                } else {
                     $allProjects = $this->getProjectsAssignedToUser($_SESSION['userdata']['id']);
 
-                    if($allProjects !== false && count($allProjects) > 0) {
-
-                        if($this->changeCurrentSessionProject($allProjects[0]['id']) === true) {
+                    if ($allProjects !== false && count($allProjects) > 0) {
+                        if ($this->changeCurrentSessionProject($allProjects[0]['id']) === true) {
                             return;
                         }
-
                     }
-
                 }
-
             }
-
         }
 
-        public function changeCurrentSessionProject($projectId) {
+        public function changeCurrentSessionProject($projectId)
+        {
 
-            if($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
-
+            if ($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
                 //Get user project role
 
                 $project = $this->getProject($projectId);
 
                 if ($project) {
-
                     $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
 
 
@@ -497,7 +470,7 @@ namespace leantime\domain\services {
                     $_SESSION["currentProjectClient"] = $project['clientName'];
 
                     $_SESSION['userdata']['projectRole'] = '';
-                    if($projectRole != '') {
+                    if ($projectRole != '') {
                         $_SESSION['userdata']['projectRole'] = roles::getRoleString($projectRole);
                     }
 
@@ -523,29 +496,23 @@ namespace leantime\domain\services {
                     $_SESSION['currentCPCanvas'] = "";
                     $_SESSION['currentSMCanvas'] = "";
                     $_SESSION['currentRETROSCanvas'] = "";
-                    $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+                    $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject", $_SESSION["currentProject"]);
 
                     unset($_SESSION["projectsettings"]);
 
                     self::dispatch_event("projects.setCurrentProject");
 
                     return true;
-
                 } else {
-
                     return false;
-
                 }
-
-            }else {
-
+            } else {
                 return false;
-
             }
-
         }
 
-        public function resetCurrentProject () {
+        public function resetCurrentProject()
+        {
 
             $_SESSION["currentProject"] = "";
             $_SESSION["currentProjectClient"] = "";
@@ -554,23 +521,23 @@ namespace leantime\domain\services {
             $_SESSION["currentSprint"] = "";
             $_SESSION['currentIdeaCanvas'] = "";
 
-			$_SESSION['currentSWOTCanvas'] = "";
+            $_SESSION['currentSWOTCanvas'] = "";
             $_SESSION['currentLEANCanvas'] = "";
-			$_SESSION['currentEMCanvas'] = "";
-			$_SESSION['currentINSIGHTSCanvas'] = "";
-			$_SESSION['currentSBCanvas'] = "";
-			$_SESSION['currentRISKSCanvas'] = "";
-			$_SESSION['currentEACanvas'] = "";
-			$_SESSION['currentLBMCanvas'] = "";
-			$_SESSION['currentOBMCanvas'] = "";
-			$_SESSION['currentDBMCanvas'] = "";
-			$_SESSION['currentSQCanvas'] = "";
-			$_SESSION['currentCPCanvas'] = "";
-			$_SESSION['currentSMCanvas'] = "";
+            $_SESSION['currentEMCanvas'] = "";
+            $_SESSION['currentINSIGHTSCanvas'] = "";
+            $_SESSION['currentSBCanvas'] = "";
+            $_SESSION['currentRISKSCanvas'] = "";
+            $_SESSION['currentEACanvas'] = "";
+            $_SESSION['currentLBMCanvas'] = "";
+            $_SESSION['currentOBMCanvas'] = "";
+            $_SESSION['currentDBMCanvas'] = "";
+            $_SESSION['currentSQCanvas'] = "";
+            $_SESSION['currentCPCanvas'] = "";
+            $_SESSION['currentSMCanvas'] = "";
             $_SESSION['currentRETROSCanvas'] = "";
             unset($_SESSION["projectsettings"]);
 
-            $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+            $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject", $_SESSION["currentProject"]);
 
             $this->setCurrentProject();
         }
@@ -579,36 +546,32 @@ namespace leantime\domain\services {
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-            if($users) {
-
+            if ($users) {
                 foreach ($users as &$user) {
-
                     $file = $this->filesRepository->getFile($user['profileId']);
 
-                    $return = BASE_URL.'/images/default-user.png';
+                    $return = BASE_URL . '/images/default-user.png';
                     if ($file) {
-                        $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                        $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                     }
 
                     $user["profilePicture"] = $return;
-
                 }
 
                 return $users;
-
             }
 
             return array();
-
         }
 
-        public function isUserAssignedToProject($userId, $projectId) {
+        public function isUserAssignedToProject($userId, $projectId)
+        {
 
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
-
         }
 
-        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $startDate, bool $assignSameUsers) {
+        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $startDate, bool $assignSameUsers)
+        {
 
             //Ignoring
             //Comments, files, timesheets, personalCalendar Events
@@ -624,15 +587,15 @@ namespace leantime\domain\services {
                 "state" => $projectValues['state'],
                 "hourBudget" => $projectValues['hourBudget'],
                 "dollarBudget" => $projectValues['dollarBudget'],
-				"menuType" => $projectValues['menuType'],
+                "menuType" => $projectValues['menuType'],
                 'psettings' => $projectValues['psettings'],
                 'assignedUsers' => array(),
             );
 
-            if($assignSameUsers == true){
+            if ($assignSameUsers == true) {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-                foreach($projectUsers as $user) {
+                foreach ($projectUsers as $user) {
                     $copyProject['assignedUsers'][] = $user['id'];
                 }
             }
@@ -641,13 +604,12 @@ namespace leantime\domain\services {
             $newProjectId = $this->projectRepository->addProject($copyProject);
 
             //ProjectSettings
-            foreach($projectSettingsKeys as $key) {
-                $setting = $this->settingsRepo->getSetting("projectsettings.".$projectId.".".$key);
+            foreach ($projectSettingsKeys as $key) {
+                $setting = $this->settingsRepo->getSetting("projectsettings." . $projectId . "." . $key);
 
-                if($setting !== false){
-                    $this->settingsRepo->saveSetting("projectsettings.".$newProjectId.".".$key, $setting);
+                if ($setting !== false) {
+                    $this->settingsRepo->saveSetting("projectsettings." . $newProjectId . "." . $key, $setting);
                 }
-
             }
 
             //Duplicate all todos without dependent Ticket set
@@ -656,23 +618,19 @@ namespace leantime\domain\services {
             //Checks the oldest editFrom date and makes this the start date
             $oldestTicket = new DateTime();
 
-            foreach($allTickets as $ticket) {
-                if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00"){
+            foreach ($allTickets as $ticket) {
+                if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
                     $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->editFrom);
-                    if($oldestTicket > $ticketDateTimeObject){
+                    if ($oldestTicket > $ticketDateTimeObject) {
                         $oldestTicket = $ticketDateTimeObject;
-
                     }
-
                 }
 
-                if($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00"){
+                if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
                     $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->dateToFinish);
-                    if($oldestTicket > $ticketDateTimeObject){
+                    if ($oldestTicket > $ticketDateTimeObject) {
                         $oldestTicket = $ticketDateTimeObject;
-
                     }
-
                 }
             }
 
@@ -684,25 +642,24 @@ namespace leantime\domain\services {
             $ticketIdList = array();
 
             //Iterate through root tickets first
-            foreach($allTickets as $ticket) {
-                if ($ticket->dependingTicketId == 0 || $ticket->dependingTicketId == "" || $ticket->dependingTicketId == null){
-
+            foreach ($allTickets as $ticket) {
+                if ($ticket->dependingTicketId == 0 || $ticket->dependingTicketId == "" || $ticket->dependingTicketId == null) {
                     $dateToFinishValue = "";
-                    if( $ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+                    if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
                         $dateToFinish = new DateTime($ticket->dateToFinish);
                         $dateToFinish->add($interval);
                         $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
                     }
 
                     $editFromValue = "";
-                    if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                    if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
                         $editFrom = new DateTime($ticket->editFrom);
                         $editFrom->add($interval);
                         $editFromValue = $editFrom->format('Y-m-d H:i:s');
                     }
 
                     $editToValue = "";
-                    if( $ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                    if ($ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
                         $editTo = new DateTime($ticket->editTo);
                         $editTo->add($interval);
                         $editToValue = $editTo->format('Y-m-d H:i:s');
@@ -734,29 +691,27 @@ namespace leantime\domain\services {
 
                     $ticketIdList[$ticket->id] = $newTicketId;
                 }
-
             }
 
             //Iterate through childObjects
-            foreach($allTickets as $ticket) {
-                if ($ticket->dependingTicketId != "" && $ticket->dependingTicketId > 0){
-
+            foreach ($allTickets as $ticket) {
+                if ($ticket->dependingTicketId != "" && $ticket->dependingTicketId > 0) {
                     $dateToFinishValue = "";
-                    if( $ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+                    if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
                         $dateToFinish = new DateTime($ticket->dateToFinish);
                         $dateToFinish->add($interval);
                         $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
                     }
 
                     $editFromValue = "";
-                    if( $ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                    if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
                         $editFrom = new DateTime($ticket->editFrom);
                         $editFrom->add($interval);
                         $editFromValue = $editFrom->format('Y-m-d H:i:s');
                     }
 
                     $editToValue = "";
-                    if( $ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                    if ($ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
                         $editTo = new DateTime($ticket->editTo);
                         $editTo->add($interval);
                         $editToValue = $editTo->format('Y-m-d H:i:s');
@@ -788,7 +743,6 @@ namespace leantime\domain\services {
 
                     $ticketIdList[$ticket->id] = $newTicketId;
                 }
-
             }
 
 
@@ -799,8 +753,7 @@ namespace leantime\domain\services {
             //LeanCanvas
             $leancanvasRepo = new repositories\leancanvas();
             $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
-            foreach($canvasBoards as $canvas) {
-
+            foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
                     "author" => $_SESSION['userdata']['id'],
@@ -813,11 +766,10 @@ namespace leantime\domain\services {
 
                 $canvasItems = $leancanvasRepo->getCanvasItemsById($canvas['id']);
 
-                if($canvasItems != false && count($canvasItems) >0) {
+                if ($canvasItems != false && count($canvasItems) > 0) {
                     foreach ($canvasItems as $item) {
-
                         $milestoneId = "";
-                        if(isset($ticketIdList[$item['milestoneId']])){
+                        if (isset($ticketIdList[$item['milestoneId']])) {
                             $milestoneId = $ticketIdList[$item['milestoneId']];
                         }
 
@@ -846,8 +798,7 @@ namespace leantime\domain\services {
             //Ideas
             $ideaRepo = new repositories\ideas();
             $canvasBoards = $ideaRepo->getAllCanvas($projectId);
-            foreach($canvasBoards as $canvas) {
-
+            foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
                     "author" => $_SESSION['userdata']['id'],
@@ -860,11 +811,10 @@ namespace leantime\domain\services {
 
                 $canvasItems = $ideaRepo->getCanvasItemsById($canvas['id']);
 
-                if($canvasItems != false && count($canvasItems) >0) {
+                if ($canvasItems != false && count($canvasItems) > 0) {
                     foreach ($canvasItems as $item) {
-
                         $milestoneId = "";
-                        if(isset($ticketIdList[$item['milestoneId']])){
+                        if (isset($ticketIdList[$item['milestoneId']])) {
                             $milestoneId = $ticketIdList[$item['milestoneId']];
                         }
 
@@ -890,8 +840,7 @@ namespace leantime\domain\services {
             //Retros
             $retroRepo = new repositories\retroscanvas();
             $canvasBoards = $retroRepo->getAllCanvas($projectId);
-            foreach($canvasBoards as $canvas) {
-
+            foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
                     "author" => $_SESSION['userdata']['id'],
@@ -904,11 +853,10 @@ namespace leantime\domain\services {
 
                 $canvasItems = $retroRepo->getCanvasItemsById($canvas['id']);
 
-                if($canvasItems != false && count($canvasItems) >0) {
+                if ($canvasItems != false && count($canvasItems) > 0) {
                     foreach ($canvasItems as $item) {
-
                         $milestoneId = "";
-                        if(isset($ticketIdList[$item['milestoneId']])){
+                        if (isset($ticketIdList[$item['milestoneId']])) {
                             $milestoneId = $ticketIdList[$item['milestoneId']];
                         }
 
@@ -932,7 +880,6 @@ namespace leantime\domain\services {
             }
 
             return $newProjectId;
-
         }
 
         public function getProjectUserRelation($id)
@@ -940,11 +887,10 @@ namespace leantime\domain\services {
             return $this->projectRepository->getProjectUserRelation($id);
         }
 
-        public function patch($id, $params) {
+        public function patch($id, $params)
+        {
             return $this->projectRepository->patch($id, $params);
         }
-
-
     }
 
 }

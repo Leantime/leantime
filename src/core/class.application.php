@@ -9,14 +9,13 @@ class application
 {
     use eventhelpers;
 
-    private $config;
-    private $settings;
-    private $login;
-    private $frontController;
-    private $language;
-    private $projectService;
-    private $settingsRepo;
-    private $reportService;
+    private appSettings $settings;
+    private services\auth $auth;
+    private frontcontroller $frontController;
+    private language $language;
+    private services\projects $projectService;
+    private repositories\setting $settingsRepo;
+    private services\reports $reportService;
 
     private $publicActions = array(
         "auth.login",
@@ -25,6 +24,7 @@ class application
         "install",
         "install.update",
         "errors.error404",
+        "errors.error500",
         "api.i18n",
         "calendar.ical"
     );
@@ -65,6 +65,8 @@ class application
 
         self::dispatch_event("beginning", ['application' => $this]);
 
+
+        /*
         //Allow a limited set of actions to be public
         if ($this->auth->logged_in() === true) {
             //Run Cron
@@ -80,44 +82,79 @@ class application
                     && $this->frontController::getCurrentRoute() !== "auth.logout"
                     && $this->frontController::getCurrentRoute() !== "api.i18n"
                 ) {
-                    $redirectURL = "";
-                    if (isset($_GET['redirect'])) {
-                        $redirectURL = "?redirect=" . $_GET['redirect'];
-                    }
 
-                    $this->frontController::redirect(BASE_URL . "/twoFA/verify" . $redirectURL);
+                    $this->redirectWithOrigin("twoFA.verify", $_GET['redirect']);
                 }
             } else {
                 //House keeping when logged in.
                 //Set current/default project
                 $this->projectService->setCurrentProject();
             }
-        } else {
-            if (!in_array(frontController::getCurrentRoute(), $this->publicActions)) {
-                $redirectURL = '';
-                if (strlen($this->settings->getRequestURI()) > 1) {
-                    $redirectURL = "?redirect=" . urlencode($this->settings->getRequestURI());
-                }
+        } elseif (!in_array(frontController::getCurrentRoute(), $this->publicActions)) {
+            $this->redirectWithOrigin("auth.login", $this->settings->getRequestURI());
+        }*/
 
-                if ($this->frontController::getCurrentRoute() !== "auth.login") {
-                    $this->frontController::redirect(BASE_URL . "/auth/login" . $redirectURL);
-                }
+
+        //Dispatch public controllers
+        if (in_array(frontController::getCurrentRoute(), $this->publicActions)) {
+            $this->frontController::dispatch();
+
+        //If user is logged in, make sure twoFA is checked. Otherwise set project and dispatch
+        } elseif ($this->auth->logged_in() === true) {
+            $this->cronExec();
+
+            //Send telemetry if user is opt in and if it hasn't been sent that day
+            $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
+
+            // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
+            if ($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false) {
+                    $this->redirectWithOrigin("twoFA.verify", $_GET['redirect']);
+            } else {
+                $this->projectService->setCurrentProject();
             }
+
+            $this->frontController::dispatch();
+
+        //Not logged in and controller is not public. Redirect to auth
+        } else {
+            $this->redirectWithOrigin("auth.login", $this->settings->getRequestURI());
         }
 
+
+
+
+        //If public route, dispotch
+        //If logged In Route
+            //Check for twoFA
+            //Dispatch
+        //If not logged in redirect to auth
+
+
         //Dispatch controller
-        $this->frontController::dispatch();
+        //$this->frontController::dispatch();
 
         //Wait for telemetry if it was sent
         if ($telemetryResponse !== false) {
             try {
                 $telemetryResponse->wait();
             } catch (\Exception $e) {
-                error_log($e, 0);
+                error_log($e);
             }
         }
 
         self::dispatch_event("end", ['application' => $this]);
+    }
+
+    public function redirectWithOrigin($route, $origin): void
+    {
+        $redirectURL = '';
+        if (strlen($origin) > 1) {
+            $redirectURL = "?redirect=" . urlencode($origin);
+        }
+
+        if ($this->frontController::getCurrentRoute() !== $route) {
+            $this->frontController::redirect(BASE_URL . "/" . str_replace(".", "/", $route) . "" . $redirectURL);
+        }
     }
 
     /**
@@ -125,7 +162,7 @@ class application
      *
      * @return void
      */
-    private function loadHeaders()
+    private function loadHeaders(): void
     {
 
         $headers = self::dispatch_filter('headers', [

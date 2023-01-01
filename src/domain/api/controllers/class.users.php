@@ -11,7 +11,8 @@ namespace leantime\domain\controllers {
     class users extends controller
     {
 
-        private $usersService;
+        private services\users $usersService;
+        private repositories\files $filesRepository;
 
         /**
          * init - initialize private variables
