@@ -29,8 +29,6 @@ abstract class controller {
         $this->tpl = new template();
         $this->language = language::getInstance();
 
-
-
         // initialize
         $this->executeActions($method, $params);
 

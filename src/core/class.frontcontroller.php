@@ -8,40 +8,36 @@
 namespace leantime\core {
 
     use Exception;
-    use leantime\domain\controllers;
-    use leantime\domain\repositories;
-    use leantime\core\eventhelpers;
 
     class frontcontroller
     {
-
         use eventhelpers;
 
         /**
          * @access private
          * @var    string - rootpath (is set in index.php)
          */
-        private $rootPath;
+        private string $rootPath;
 
         /**
          * @access private
-         * @var    object - one instance of this object
+         * @var    frontcontroller|null - one instance of this object
          */
-        private static $instance = null;
+        private static frontcontroller|null $instance = null;
 
         /**
          * @access private
          * @var    string - last action that was fired
          */
-        private static $lastAction;
+        private static string $lastAction;
 
         /**
          * @access public
          * @var    string - fully parsed action
          */
-        private static $fullAction;
+        private static string $fullAction;
 
-        private $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+        private array $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
 
         /**
          * __construct - Set the rootpath of the server
@@ -64,11 +60,8 @@ namespace leantime\core {
         {
 
             if (is_object(self::$instance) === false) {
-
                 if (is_null($rootPath)) {
-
                     throw new Exception('No root path');
-
                 }
 
                 self::$instance = new frontcontroller($rootPath);
@@ -81,42 +74,30 @@ namespace leantime\core {
          * run - executes the action depending on Request or firstAction
          *
          * @access public
-         * @return
+         * @return void
          */
-        public static function dispatch($action = '', $httpResponseCode=200)
+        public static function dispatch($action = '', $httpResponseCode = 200): void
         {
 
             //Set action-name from request
             if (isset($_REQUEST['act'])) {
-
                 self::$fullAction = htmlspecialchars($_REQUEST['act']);
-
             }
 
             //action parameter overrides Request['act']
             if ($action !== '') {
-
                 self::$fullAction = $action;
-
             }
 
             if (self::$fullAction != '') {
-
                 //execute action
                 try {
-
                     self::executeAction(self::$fullAction, array(), $httpResponseCode);
-
                 } catch (Exception $e) {
-
                     echo $e->getMessage();
-
                 }
-
             } else {
-
                 self::dispatch("errors.error404", 404);
-
             }
         }
 
@@ -124,10 +105,10 @@ namespace leantime\core {
          * executeAction - includes the class in includes/modules by the Request
          *
          * @access private
-         * @param  $completeName actionname.filename
-         * @return string|object
+         * @param  string $completeName actionname.filename
+         * @return void
          */
-        private static function executeAction($completeName, $params=array())
+        private static function executeAction($completeName, $params = array()): void
         {
 
             $actionName = self::getActionName($completeName); //actionName is foldername
@@ -135,18 +116,20 @@ namespace leantime\core {
             $controllerNs = "domain";
 
             // initialize plugin service to check
-            if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+            if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
                 $pluginService = new \leantime\domain\services\plugins();
             }
 
             // Check If Route Exists And Fetch Right Route Based On Priority
             $routeExists = false;
-            foreach ([
+            foreach (
+                [
                 'custom/plugins',
                 'custom/domain',
                 'plugins',
                 'domain'
-            ] as $path) {
+                ] as $path
+            ) {
                 $fullpath = ROOT . "/../src/$path/$moduleName/controllers/class.$actionName.php";
 
                 if (!file_exists($fullpath)) {
@@ -156,7 +139,8 @@ namespace leantime\core {
                 $routeExists = true;
 
                 if ($path == 'plugins') {
-                    if (!$_SESSION['isInstalled']
+                    if (
+                        !$_SESSION['isInstalled']
                         || !$_SESSION['isUpdated']
                         || !$pluginService->isPluginEnabled($moduleName)
                     ) {
@@ -178,8 +162,7 @@ namespace leantime\core {
 
             // Execute The Route
             try {
-
-                $classname = "leantime\\".$controllerNs."\\controllers\\".$actionName;
+                $classname = "leantime\\" . $controllerNs . "\\controllers\\" . $actionName;
                 $method = self::getRequestMethod();
                 $params = self::getRequestParams($method);
 
@@ -190,7 +173,7 @@ namespace leantime\core {
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
-                    $action = new $classname;
+                    $action = new $classname();
 
                     if (method_exists($action, $method)) {
                         $action->$method($params);
@@ -199,9 +182,7 @@ namespace leantime\core {
                         $action->run();
                     }
                 }
-
-            } catch (Exception $e){
-
+            } catch (Exception $e) {
                 error_log($e, 0);
 
                 //This will catch most errors in php including db issues
@@ -211,42 +192,33 @@ namespace leantime\core {
             }
 
             self::$lastAction = $completeName;
-
         }
 
         private static function getRequestMethod()
         {
 
-            if(isset($_SERVER['REQUEST_METHOD'])) {
+            if (isset($_SERVER['REQUEST_METHOD'])) {
                 return strtolower($_SERVER['REQUEST_METHOD']);
             }
 
             return false;
-
         }
 
         private static function getRequestParams($method)
         {
 
             switch ($method) {
-            case 'patch':
-                parse_str(file_get_contents("php://input"), $patch_vars);
-                return $patch_vars;
-                    break;
-            case 'post':
-                return $_POST;
-                    break;
-            case 'get':
-                return $_GET;
-                    break;
-            case 'delete':
-                return $_GET;
-                    break;
-            default:
-                throw(new Exception("Unexpected HTTP Method: ".$method));
-                    break;
+                case 'patch':
+                    parse_str(file_get_contents("php://input"), $patch_vars);
+                    return $patch_vars;
+                case 'post':
+                    return $_POST;
+                case 'delete':
+                case 'get':
+                    return $_GET;
+                default:
+                    throw(new Exception("Unexpected HTTP Method: " . $method));
             }
-
         }
 
         /**
@@ -254,9 +226,9 @@ namespace leantime\core {
          *
          * @access public
          * @param  $completeName
-         * @return object
+         * @return void
          */
-        public static function includeAction($completeName, $params=array())
+        public static function includeAction($completeName, $params = array()): void
         {
             self::executeAction($completeName, $params);
         }
@@ -274,14 +246,13 @@ namespace leantime\core {
             $actionParts = explode(".", $completeName);
 
             //If not action name was given, call index controller
-            if(is_array($actionParts) && count($actionParts) == 1){
+            if (is_array($actionParts) && count($actionParts) == 1) {
                 return "index";
-            }elseif(is_array($actionParts) && count($actionParts) == 2){
+            } elseif (is_array($actionParts) && count($actionParts) == 2) {
                 return $actionParts[1];
             }
 
             return "";
-
         }
 
         /**
@@ -296,12 +267,11 @@ namespace leantime\core {
 
             $actionParts = explode(".", $completeName);
 
-            if(is_array($actionParts)){
+            if (is_array($actionParts)) {
                 return $actionParts[0];
             }
 
             return "";
-
         }
 
 
@@ -314,27 +284,26 @@ namespace leantime\core {
         public static function getCurrentRoute()
         {
 
-            if(isset($_REQUEST['act'])) {
+            if (isset($_REQUEST['act'])) {
                 return htmlspecialchars($_REQUEST['act']);
             }
 
             return '';
-
         }
 
         public static function redirect($url, $http_response_code = 303): void
         {
 
-            header("Location:".trim($url),true, $http_response_code);
+            header("Location:" . trim($url), true, $http_response_code);
             exit();
         }
 
-        public static function setResponseCode($responseCode) {
+        public static function setResponseCode($responseCode)
+        {
 
-            if(is_int($responseCode)) {
+            if (is_int($responseCode)) {
                 http_response_code($responseCode);
             }
         }
-
     }
 }

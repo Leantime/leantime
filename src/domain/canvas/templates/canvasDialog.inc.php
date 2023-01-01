@@ -43,7 +43,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
         <label><?=$this->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
+        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" style="width:100%" /><br />
 
         <?php if(!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>

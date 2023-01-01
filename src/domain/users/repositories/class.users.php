@@ -535,12 +535,15 @@ namespace leantime\domain\repositories {
             $value = $stmn->fetch();
             $stmn->closeCursor();
 
-            $files = new files();
-            $file = $files->getFile($value['profileId']);
-
             $return = BASE_URL . '/images/default-user.png';
-            if ($file) {
-                $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+
+            if ($value !== false) {
+                $files = new files();
+                $file = $files->getFile($value['profileId']);
+
+                if ($file) {
+                    $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                }
             }
 
             return $return;

@@ -60,58 +60,48 @@ namespace leantime\domain\controllers {
                 error_log($e);
                 echo "Could not set active theme";
             }
+
+
             // Set logo to use
-            $themeLogoPath = $this->settingsRepo->getSetting("companysettings.$theme.logoPath");
-            if (
-                !isset($_SESSION["companysettings.logoPath"]) ||
-                    ($themeLogoPath !== false && $themeLogoPath !== $_SESSION["companysettings.logoPath"])
-            ) {
-                if ($themeLogoPath !== false) {
-                    if (strpos($themeLogoPath, 'http') === 0) {
-                        $_SESSION["companysettings.$theme.logoPath"] = $themeLogoPath;
-                        $_SESSION["companysettings.logoPath"] = $themeLogoPath;
-                    } else {
-                        $_SESSION["companysettings.$theme.logoPath"] = BASE_URL . $themeLogoPath;
-                        $_SESSION["companysettings.logoPath"] = BASE_URL . $themeLogoPath;
-                    }
-                }
-            }
+            // Logos can be set via uploads
+            // Theme ini
 
-            $themeLogoPath = $this->themeCore->getLogoUrl();
-            if (
-                !isset($_SESSION["companysettings.logoPath"]) ||
-                    ($themeLogoPath !== false && $themeLogoPath !== $_SESSION["companysettings.logoPath"])
-            ) {
-                if ($themeLogoPath !== false) {
-                    if (strpos($themeLogoPath, 'http') === 0) {
-                        $_SESSION["companysettings.$theme.logoPath"] = $themeLogoPath;
-                        $_SESSION["companysettings.logoPath"] = $themeLogoPath;
-                    } else {
-                        $_SESSION["companysettings.$theme.logoPath"] = BASE_URL . $themeLogoPath;
-                        $_SESSION["companysettings.logoPath"] = BASE_URL . $themeLogoPath;
-                    }
-                }
-            }
-            if (!isset($_SESSION["companysettings.logoPath"])) {
-                $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
 
-                if ($logoPath !== false) {
-                    if (strpos($logoPath, 'http') === 0) {
-                        $_SESSION["companysettings.$theme.logoPath"] = $logoPath;
-                        $_SESSION["companysettings.logoPath"] = $logoPath;
-                    } else {
-                        $_SESSION["companysettings.$theme.logoPath"] = BASE_URL . $logoPath;
-                        $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
-                    }
-                } else {
-                    if (strpos($this->config->logoPath, 'http') === 0) {
-                        $_SESSION["companysettings.$theme.logoPath"] = $this->config->logoPath;
-                        $_SESSION["companysettings.logoPath"] = $this->config->logoPath;
-                    } else {
-                        $_SESSION["companysettings.$theme.logoPath"] = BASE_URL . $this->config->logoPath;
-                        $_SESSION["companysettings.logoPath"] = BASE_URL . $this->config->logoPath;
-                    }
+            //All Paths are relative
+            //Priority 1 Theme Logo
+            //Priority 2 company logo
+            //Priority 3 config logo
+            //Priority 4 theme logo
+
+            $themeLogoPathSettings = $this->settingsRepo->getSetting("companysettings.$theme.logoPath");
+            $companyLogoPathSettings = $this->settingsRepo->getSetting("companysettings.logoPath");
+            $companyDefaultLogoConfig = $this->config->logoPath;
+            $themeLogoPathIni = $this->themeCore->getLogoUrl();
+
+            //Session Logo Path needs to be set here
+            //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
+            unset($_SESSION["companysettings.logoPath"]);
+
+            if (isset($_SESSION["companysettings.logoPath"]) === false) {
+                $logoPath = "";
+
+                if ($themeLogoPathIni !== false && file_exists(ROOT . $themeLogoPathIni)) {
+                    $logoPath = BASE_URL . $themeLogoPathIni;
                 }
+
+                if ($companyDefaultLogoConfig !== false && file_exists(ROOT . $companyDefaultLogoConfig)) {
+                    $logoPath = BASE_URL . $companyDefaultLogoConfig;
+                }
+
+                if ($companyLogoPathSettings !== false && file_exists(ROOT . $companyLogoPathSettings)) {
+                    $logoPath = BASE_URL . $companyLogoPathSettings;
+                }
+
+                if ($themeLogoPathSettings !== false && file_exists(ROOT . $themeLogoPathSettings)) {
+                    $logoPath = BASE_URL . $themeLogoPathSettings;
+                }
+
+                $_SESSION["companysettings.logoPath"] = $logoPath;
             }
 
             // Set colors to use

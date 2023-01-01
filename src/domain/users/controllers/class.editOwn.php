@@ -190,6 +190,8 @@ namespace leantime\domain\controllers {
                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$this->userId.".theme", $postTheme);
                     $this->settingsService->settingsRepo->saveSetting("usersettings.".$this->userId.".language", $postLang);
 
+                    unset($_SESSION["companysettings.logoPath"]);
+
                     $this->themeCore->setActive($postTheme);
                     $this->language->setLanguage($postLang);
 

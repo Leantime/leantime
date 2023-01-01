@@ -72,6 +72,7 @@
 </div><!--pageheader-->
 
 <form action="" method="post" class="stdform userEditModal">
+        <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
         <div class="maincontent">
             <div class="row">
                 <div class="col-md-7">

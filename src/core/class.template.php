@@ -60,6 +60,7 @@ namespace leantime\core {
         public $language = '';
         public $template = '';
         public $mainContent = '';
+
         public $picture = array(
             'calendar' => 'fa-calendar',
             'clients' => 'fa-people-group',
@@ -115,7 +116,7 @@ namespace leantime\core {
             $_SESSION['notifcationType'] = $type;
         }
 
-        /***
+        /**
          * getTemplatePath - Find template in custom and src directories
          *
          * @access public
@@ -124,7 +125,6 @@ namespace leantime\core {
          * @return string|bool Full template path or false if file does not exist
          *
          */
-
         public function getTemplatePath(string $module, string $name): string|false
         {
 
@@ -336,7 +336,14 @@ namespace leantime\core {
             return $this->vars[$name];
         }
 
-        public function getNotification()
+        /**
+         * getNotification - pulls notification from the current session
+         *
+         * @access public
+         *
+         * @return array
+         */
+        public function getNotification(): array
         {
 
             if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
@@ -646,8 +653,8 @@ namespace leantime\core {
                     "href=\"([^http|ftp|https|mailto|#][^\"]*)\"/";
             $replace = "<a\${1} href=\"" . $base . "\${2}\"";
             $text = preg_replace($pattern, $replace, $text);
-            // Replace images
 
+            // Replace images
             $pattern = "/<img([^>]*) " .
                     "src=\"([^http|ftp|https][^\"]*)\"/";
             $replace = "<img\${1} src=\"" . $base . "\${2}\"";
