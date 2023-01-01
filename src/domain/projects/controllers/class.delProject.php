@@ -11,9 +11,8 @@ namespace leantime\domain\controllers {
 
     class delProject extends controller
     {
-
-        private $projectRepo;
-        private $projectService;
+        private repositories\projects $projectRepo;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
 
             $this->projectRepo = new repositories\projects();
             $this->projectService = new services\projects();
-
         }
 
         /**
@@ -39,20 +37,15 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             //Only admins
-            if(auth::userIsAtLeast(roles::$manager)) {
-
+            if (auth::userIsAtLeast(roles::$manager)) {
                 if (isset($_GET['id']) === true) {
-
                     $id = (int)($_GET['id']);
 
                     if ($this->projectRepo->hasTickets($id)) {
-
                         $this->tpl->setNotification($this->language->__("notification.project_has_tasks"), "info");
-
                     }
 
                     if (isset($_POST['del']) === true) {
-
                         $this->projectRepo->deleteProject($id);
                         $this->projectRepo->deleteAllUserRelations($id);
 
@@ -61,28 +54,23 @@ namespace leantime\domain\controllers {
 
                         $this->tpl->setNotification($this->language->__("notification.project_deleted"), "success");
                         $this->tpl->redirect(BASE_URL . "/projects/showAll");
-
                     }
 
                     //Assign vars
-                    $this->tpl->assign('project', $this->projectRepo->getProject($id));
+                    $project = $this->projectRepo->getProject($id);
+                    if ($project === false) {
+                        core\frontcontroller::redirect(BASE_URL . "/errors/error404");
+                    }
+
+                    $this->tpl->assign('project', $project);
 
                     $this->tpl->display('projects.delProject');
-
                 } else {
-
                     $this->tpl->display('errors.error403');
-
                 }
-
-            }else{
-
+            } else {
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
-
 }

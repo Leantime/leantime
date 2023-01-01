@@ -40,7 +40,7 @@ namespace leantime\domain\services {
             return $this->userRepo->getAll();
         }
 
-        public function getUser($id)
+        public function getUser($id): array|bool
         {
             return $this->userRepo->getUser($id);
         }
