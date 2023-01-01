@@ -71,9 +71,10 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return array|bool
          */
-        public function getUser($id) {
+        public function getUser($id): array|bool
+        {
 
             $sql = "SELECT * FROM `zp_user` WHERE id = :id LIMIT 1";
 

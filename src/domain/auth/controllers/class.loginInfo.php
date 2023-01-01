@@ -1,26 +1,36 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\repositories;
+    use leantime\domain\services;
 
     class loginInfo extends controller
     {
+        private repositories\users $userRepo;
+        private services\users $userService;
 
-        private $userRepo;
+        private services\auth $authService;
 
         public function init()
         {
             $this->userRepo = new repositories\users();
+            $this->userService = new services\users();
+            $this->authService = services\auth::getInstance();
         }
 
         public function run()
         {
+            $user = $this->userService->getUser($_SESSION['userdata']['id']);
 
-            $profilePicture = $this->userRepo->getProfilePicture($_SESSION['userdata']['id']);
+            if ($user === false) {
+                $this->authService->logout();
+                core\frontcontroller::redirect(BASE_URL . "/auth/login");
+            }
 
-            $user = $this->userRepo->getUser($_SESSION['userdata']['id']);
+            $profilePicture = $this->userService->getProfilePicture($_SESSION['userdata']['id']);
 
             $availableModals = array(
                 "tickets/showAll" => "backlog",
@@ -46,15 +56,15 @@ namespace leantime\domain\controllers {
             $urlParts = explode('/', $requestParams[1]);
             $modal = "";
 
-            if(count($urlParts) > 2) {
-                $urlKey =  $urlParts[1]."/".$urlParts[2];
+            if (count($urlParts) > 2) {
+                $urlKey =  $urlParts[1] . "/" . $urlParts[2];
 
-                if(isset($availableModals[$urlKey])) {
+                if (isset($availableModals[$urlKey])) {
                     $modal = $availableModals[$urlKey];
-                }else{
+                } else {
                     $modal = "notfound";
                 }
-            }else{
+            } else {
                 $modal = "dashboard";
             }
 
@@ -67,7 +77,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("profileId", $user["profileId"]);
 
             $this->tpl->displayPartial("auth.loginInfo");
-
         }
     }
 }
