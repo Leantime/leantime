@@ -39,18 +39,18 @@
             <div class="row">
                 <div class="col-md-5">
                     <?php
-                    $this->dispatchTplEvent('filters.afterLefthandSectionOpen'); 
-                    if($login::userIsAtLeast($roles::$editor)) { 
+                    $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                    if($login::userIsAtLeast($roles::$editor)) {
                     ?>
                     <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
-                    <?php 
+                    <?php
                     }
-                    $this->dispatchTplEvent('filters.beforeLefthandSectionClose'); 
+                    $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     ?>
                 </div>
 
                 <div class="col-md-2 center">
-                <?php 
+                <?php
                     $this->dispatchTplEvent('filters.afterCenterSectionOpen');
                     $this->dispatchTplEvent('filters.beforeCenterSectionClose');
                 ?>
@@ -135,7 +135,7 @@
                                 $milestoneHeadline = $this->__("label.no_milestone");
                             }?>
 
-                            <td data-order="<?=$milestoneHeadline?>">
+                            <td class="dropdown-cell" data-order="<?=$milestoneHeadline?>">
                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show">
                                     <a style="background-color:<?=$this->escape($row->milestoneColor)?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text"><?=$milestoneHeadline?></span>
@@ -156,7 +156,7 @@
                                 </div>
                             </td>
 
-                            <td data-order="<?=$statusLabels[$row->status]["name"]?>">
+                            <td class="dropdown-cell" data-order="<?=$statusLabels[$row->status]["name"]?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
                                     <a class="dropdown-toggle f-left status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
@@ -175,7 +175,7 @@
                                 </div>
                             </td>
 
-                            <td data-order="<?=$row->editorFirstname != "" ?  $this->escape($row->editorFirstname) : $this->__("dropdown.not_assigned")?>">
+                            <td class="dropdown-cell" data-order="<?=$row->editorFirstname != "" ?  $this->escape($row->editorFirstname) : $this->__("dropdown.not_assigned")?>">
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">

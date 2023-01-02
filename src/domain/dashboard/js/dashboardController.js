@@ -348,7 +348,7 @@ leantime.dashboardController = (function () {
                     newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function() {
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"));
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated")});
                     });
 
                 }

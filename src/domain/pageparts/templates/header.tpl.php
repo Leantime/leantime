@@ -49,10 +49,10 @@
 <!-- Replace main theme colors -->
 <style>
     :root{
-        <?php if (isset($_SESSION["companysettings.primarycolor"]) && $theme == 'default') { ?>
+        <?php if (isset($_SESSION["companysettings.primarycolor"])) { ?>
             --accent1: <?=htmlentities($_SESSION["companysettings.primarycolor"]);?>;
         <?php } ?>
-        <?php if (isset($_SESSION["companysettings.secondarycolor"]) && $theme == 'default') { ?>
+        <?php if (isset($_SESSION["companysettings.secondarycolor"])) { ?>
             --accent2: <?=htmlentities($_SESSION["companysettings.secondarycolor"]);?>;
         <?php } ?>
     }

@@ -31,7 +31,7 @@ leantime.timesheetsController = (function () {
                     }
                 ).done(function(msg){
 
-                    jQuery.jGrowl(leantime.i18n.__("short_notifications.timer_started"));
+                    jQuery.growl({message: leantime.i18n.__("short_notifications.timer_started")});
 
                 });
 
@@ -66,9 +66,9 @@ leantime.timesheetsController = (function () {
                     function (hoursLogged) {
 
                         if(hoursLogged == 0) {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.not_enough_time_logged"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.not_enough_time_logged")});
                         }else{
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged)});
                         }
 
                     }

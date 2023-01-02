@@ -5,8 +5,8 @@ namespace leantime\domain\services;
 use leantime\core\environment;
 use leantime\domain\repositories;
 
-class ldap {
-
+class ldap
+{
     private $ldapConnection;
     private $host;
     private $port;
@@ -24,14 +24,12 @@ class ldap {
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
     private $defaultRoleKey;
-    private $bindUser;
-    private $bindPassword;
     private $directoryType = "OL";
 
     /**
-     * @var config
+     * @var environment $config
      */
-    private $config;
+    private environment $config;
 
     /**
      * @var array|bool|int|mixed|string
@@ -43,12 +41,12 @@ class ldap {
      */
     public $autoCreateUser;
 
-    public function __construct($differentConfig = false) {
+    public function __construct($differentConfig = false)
+    {
 
         $this->settingsRepo = new repositories\setting();
 
-        if ($differentConfig == false) {
-
+        if (!$differentConfig) {
             $this->config = \leantime\core\environment::getInstance();
             //Map config vars
             $this->useLdap = $this->config->useLdap;
@@ -65,22 +63,22 @@ class ldap {
             $this->defaultRoleKey = $this->config->ldapDefaultRoleKey;
             $this->port = $this->config->ldapPort;
             $this->userDomain = $this->config->ldapUserDomain;
-            $this->bindUser = $this->config->bindUser;
-            $this->bindPassword = $this->config->bindPassword;
             $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
         }
+
+        return true;
     }
 
-    public function connect() {
+    public function connect()
+    {
 
         if (!$this->config->useLdap) {
             return false;
         }
 
         if (function_exists("ldap_connect")) {
-
             $this->ldapConnection = ldap_connect($this->host, $this->port);
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
@@ -92,16 +90,15 @@ class ldap {
 
             return true;
         } else {
-
             error_log("ldap extension not installed", 0);
             return false;
         }
     }
 
-    public function bind($username = '', $password = '') {
+    public function bind($username = '', $password = '')
+    {
 
         if ($username != '' && $password != '') {
-
             if ($this->directoryType == 'AD') {
                 $usernameDN = $username;
             } else {
@@ -112,10 +109,8 @@ class ldap {
             $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
 
             if ($bind) {
-
                 return true;
             } else {
-
                 if ($this->config->debug == 1) {
                     error_log(ldap_error($this->ldapConnection));
                     ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
@@ -127,12 +122,12 @@ class ldap {
                 return false;
             }
         } else {
-
             return false;
         }
     }
 
-    public function getEmail($username) {
+    public function getEmail($username)
+    {
         if (!is_resource($this->ldapConnection)) {
             error_log("No connection, last error: " . ldap_error($this->ldapConnection));
         }
@@ -152,7 +147,8 @@ class ldap {
         return $mail;
     }
 
-    public function getSingleUser($username) {
+    public function getSingleUser($username)
+    {
 
         if (!is_resource($this->ldapConnection)) {
             error_log("No connection, last error: " . ldap_error($this->ldapConnection));
@@ -175,9 +171,7 @@ class ldap {
         $role = $this->defaultRoleKey;
 
         foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
-
             foreach ($this->ldapLtGroupAssignments as $key => $row) {
-
                 if ($row->ldapRole != "") {
                     if (strpos($grps, $row->ldapRole)) {
                         if ($key > $role) {
@@ -195,7 +189,6 @@ class ldap {
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
         if ($this->config->debug) {
-
             #error_log("Testing the logging", 3, "/SM_DATA/web_projects/public_html/resources/logs/ldap.log");
             error_log("LEANTIME: Testing the logging\n", 3, "/var/log/sites-error.log");
 
@@ -219,7 +212,8 @@ class ldap {
         );
     }
 
-    public function extractLdapFromUsername($username) {
+    public function extractLdapFromUsername($username)
+    {
 
         $getLdap = explode("@", $username);
 
@@ -230,10 +224,10 @@ class ldap {
         }
     }
 
-    public function getAllMembers() {
+    public function getAllMembers()
+    {
 
         if (function_exists("ldap_search")) {
-
             $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname);
 
             $filter = "(cn=*)";
@@ -244,9 +238,7 @@ class ldap {
             $allUsers = array();
 
             foreach ($entries as $key => $row) {
-
                 if (isset($row["dn"])) {
-
                     preg_match('/(?:^|.*,)uid=(.*?)(?:,.*$|$)/', $row["dn"], $usernameArray);
 
                     if (count($usernameArray) > 0) {
@@ -257,13 +249,13 @@ class ldap {
 
             return $allUsers;
         } else {
-
             error_log("ldap extension not installed", 0);
             return false;
         }
     }
 
-    public function upsertUsers($ldapUsers) {
+    public function upsertUsers($ldapUsers)
+    {
 
         $userRepo = new repositories\users();
 
@@ -272,7 +264,6 @@ class ldap {
             $checkUser = $userRepo->getUserByEmail($user['user']);
 
             if (is_array($checkUser)) {
-
                 $userRepo->patchUser($checkUser['id'], array("firstname" => $user["firstname"], "lastname" => $user["lastname"], "role" => $user["role"]));
             } else {
                 //Insert
@@ -293,5 +284,4 @@ class ldap {
 
         return true;
     }
-
 }

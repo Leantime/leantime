@@ -10,6 +10,13 @@ leantime.theme = theme;
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
 leantime.appUrl = appURL;
 
+//Backwards compatibility for some jQuery libs
+jQuery(function() {
+    jQuery.fn.size = function() {
+        return this.length;
+    };
+});
+
 jQuery(document).on('click', function (e) {
     jQuery('[data-toggle="popover"],[data-original-title]').each(function () {
         //the 'is' for buttons that trigger popups

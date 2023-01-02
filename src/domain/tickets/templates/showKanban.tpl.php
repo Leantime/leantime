@@ -101,7 +101,7 @@ if ($numberofColumns > 0) {
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?> (<?=$this->get('numOfFilters') ?>)</a>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
                             <ul class="dropdown-menu">
@@ -123,9 +123,7 @@ if ($numberofColumns > 0) {
             </div>
 
             <div class="clearfix"></div>
-            <div class="filterBar <?php if (!isset($_GET['search'])) {
-                echo "hideOnLoad";
-                                  } ?>">
+            <div class="filterBar hideOnLoad">
                 <div class="row-fluid" style="opacity:0.4">
 
                     <div class="filterBoxLeft">
@@ -221,7 +219,7 @@ if ($numberofColumns > 0) {
             </div>
         </form>
 
-        <div id="sortableTicketKanban" class="sortableTicketList">
+        <div id="sortableTicketKanban" class="sortableTicketList" style="margin-top:10px;">
 
             <div class="row-fluid">
 

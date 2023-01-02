@@ -277,7 +277,7 @@ leantime.ideasController = (function () {
                         function () {
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
 
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated")});
                         }
                     );
 
@@ -315,7 +315,7 @@ leantime.ideasController = (function () {
                         function () {
                             jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(""+statusClass+" dropdown-toggle f-left status ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
 
                         }
                     );

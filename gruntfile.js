@@ -7,12 +7,12 @@ module.exports = function (grunt) {
         uglify: {
             app_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapAppSrc.map"
-                    , sourceMapUrl: "jsSourceMapAppSrc.map",
+                    sourceMap: true,
+                    sourceMapName: "public/js/jsSourceMapAppSrc.map",
+                    sourceMapUrl: "jsSourceMapAppSrc.map",
                     mangle: false
-                }
-                , src: [
+                },
+                src: [
                     "public/js/app/app.js",
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
@@ -21,44 +21,42 @@ module.exports = function (grunt) {
                     "custom/domain/**/*.js",
                     "src/plugin/**/*.js",
                     "custom/plugin/**/*.js"
-                ]
-                , dest: "public/js/compiled-app.min.js"
+                ],
+                dest: "public/js/compiled-app.min.js"
             },
             base_lib_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapBaseLib.map"
-                    , sourceMapUrl: "jsSourceMapBaseLib.map",
+                    sourceMap: true,
+                    sourceMapName: "public/js/jsSourceMapBaseLib.map",
+                    sourceMapUrl: "jsSourceMapBaseLib.map",
                     mangle: false
-                }
-                , src: [
+                },
+                src: [
                     "node_modules/jquery/dist/jquery.js",
-                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
-                    "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
                     "node_modules/moment/moment.js",
                     "node_modules/js-cookie/dist/js.cookie.js",
                     "public/js/libs/bootstrap.min.js",
                     "public/js/libs/bootstrap-timepicker.min.js",
                     "public/js/libs/bootstrap-fileupload.min.js",
-                    "public/js/libs/jquery.jgrowl.js",
+                    "public/js/libs/jquery.growl.js",
                     "public/js/libs/slimselect.min.js",
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
                     "public/js/libs/jquery.tagsinput.min.js"
 
-                ]
-                , dest: "public/js/compiled-base-libs.min.js"
+                ],
+                dest: "public/js/compiled-base-libs.min.js"
             },
             extended_lib_src: {
                 options: {
-                    sourceMap: true
-                    , sourceMapName: "public/js/jsSourceMapExtendedSrc.map"
+                    sourceMap: true,
+                    sourceMapName: "public/js/jsSourceMapExtendedSrc.map"
                     , sourceMapUrl: "jsSourceMapExtendedSrc.map",
                     mangle: false
-                }
-                , src: [
+                },
+                src: [
                     "node_modules/croppie/croppie.js",
                     "node_modules/chart.js/dist/chart.js",
                     "node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",

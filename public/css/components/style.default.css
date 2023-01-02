@@ -484,7 +484,7 @@ h5 { font-size:var(--base-font-size); font-weight:bold;}
 }
 
 .label-default {
-    background: #999999;
+    background: #bbb;
 }
 
 .label-important, .label-warning,

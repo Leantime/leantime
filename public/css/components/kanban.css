@@ -26,7 +26,7 @@
 
 .column .contentInner {
     background:var(--kanban-col-bg);
-    border:1px solid var(--neutral);
+    border:0px solid var(--neutral);
     padding:7px;
     min-height:45px;
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */

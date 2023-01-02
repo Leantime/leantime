@@ -88,7 +88,7 @@ leantime.ticketsController = (function () {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updateRemainingHours(
             id, value, function () {
-                jQuery.jGrowl(leantime.i18n.__("short_notifications.remaining_hours_updated"), {theme: "success"});
+                jQuery.growl({message: leantime.i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
             }
         );
 
@@ -98,7 +98,7 @@ leantime.ticketsController = (function () {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updatePlannedHours(
             id, value, function () {
-                jQuery.jGrowl(leantime.i18n.__("short_notifications.planned_hours_updated"), {theme: "success"});
+                jQuery.growl({message: leantime.i18n.__("short_notifications.planned_hours_updated"), style: "success"});
             }
         );
 
@@ -118,7 +118,7 @@ leantime.ticketsController = (function () {
     };
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle();
+        jQuery(".filterBar").toggle("fast");
 
     };
 
@@ -429,7 +429,7 @@ leantime.ticketsController = (function () {
 
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditFromDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
                         var dateTo = jQuery(".toDateTicket-"+id).val();
@@ -474,7 +474,7 @@ leantime.ticketsController = (function () {
 
                         var newDate = dateTime;
                         leantime.ticketsRepository.updateEditToDates(id, newDate, function() {
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.date_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
                         var dateFrom = jQuery(".fromDateTicket-"+id).val();
@@ -675,7 +675,7 @@ leantime.ticketsController = (function () {
                 ).done(
                     function () {
                         jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.effort_updated"), {theme: "success"});
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
 
                     }
                 );
@@ -726,7 +726,7 @@ leantime.ticketsController = (function () {
                         jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-"+priorityId);
 
 
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.priority_updated"), {theme: "success"});
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
 
                     }
                 );
@@ -767,7 +767,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
                             jQuery("#milestoneDropdownMenuLink"+ticketId).css("backgroundColor", color);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.milestone_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
                         }
                     );
 
@@ -803,7 +803,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
 
                         }
                     );
@@ -821,7 +821,7 @@ leantime.ticketsController = (function () {
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
-                if (dataValue.length == 3) {
+                if (dataValue.length === 3) {
 
                     var ticketId = dataValue[0];
                     var userId = dataValue[1];
@@ -841,7 +841,7 @@ leantime.ticketsController = (function () {
                         function () {
                             jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
                             jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
                     );
 
@@ -873,7 +873,7 @@ leantime.ticketsController = (function () {
                     }
                 ).done(
                     function () {
-                        jQuery.jGrowl(leantime.i18n.__("notifications.subtask_saved"), {theme: "success"});
+                        jQuery.growl({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
                     }
                 );
 
@@ -907,7 +907,7 @@ leantime.ticketsController = (function () {
                     ).done(
                         function () {
                             jQuery("#sprintDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.sprint_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
                         }
                     );
 
@@ -966,7 +966,7 @@ leantime.ticketsController = (function () {
                     newDate = dateTime;
 
                     leantime.ticketsRepository.updateDueDates(id, newDate, function() {
-                        jQuery.jGrowl(leantime.i18n.__("short_notifications.duedate_updated"), {theme: "success"});
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
                     });
 
                 }
