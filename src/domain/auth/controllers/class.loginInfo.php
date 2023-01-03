@@ -73,6 +73,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign("profilePicture", $profilePicture);
             $this->tpl->assign("userName", $user["firstname"]);
+            $this->tpl->assign("userId", $user["id"]);
             $this->tpl->assign("userEmail", $user["username"]);
             $this->tpl->assign("profileId", $user["profileId"]);
 

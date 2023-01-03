@@ -4,7 +4,7 @@
 <div class="userinfo">
     <?php $this->dispatchTplEvent('afterUserinfoMenuOpen'); ?>
     <a href='<?=BASE_URL ?>/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
-        <img src="<?php echo $this->get('profilePicture'); ?>" class="profilePicture"/>
+        <img src="<?=BASE_URL ?>/api/users?profileImage=<?php echo $this->get('userId'); ?>" class="profilePicture"/>
         <i class="fa fa-caret-down" aria-hidden="true"></i>
     </a>
     <ul class="dropdown-menu">

@@ -116,7 +116,7 @@
                             <span class="text">
                                 <?php if($row["authorFirstname"] != "") {
                                     echo "<span id='userImage".$row['id']."'>".
-                                         "<img src='".BASE_URL."/api/users?profileImage=".$row['authorProfileId']."' width='25' ".
+                                         "<img src='".BASE_URL."/api/users?profileImage=".$row['author']."' width='25' ".
                                          "style='vertical-align: middle;'/></span><span id='user".$row['id']."'></span>";
                                 }else{
                                     echo "<span id='userImage".$row['id']."'><img src='".BASE_URL.
@@ -133,7 +133,7 @@
                                      sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]),
                                               $this->escape($user['lastname']))."' data-value='".$row['id']."_".$user['id']."_".
                                      $user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".
-                                     BASE_URL."/api/users?profileImage=".$user['profileId']."' width='25' ".
+                                     BASE_URL."/api/users?profileImage=".$user['id']."' width='25' ".
                                      "style='vertical-align: middle; margin-right:5px;'/>".
                                      sprintf( $this->__("text.full_name"), $this->escape($user["firstname"]),
                                               $this->escape($user['lastname']))."</a>";

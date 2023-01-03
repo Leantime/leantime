@@ -53,6 +53,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/setasign/fpdi" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/overtrue/pinyin" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-string-script-language" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/meyfa/php-svg" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initials" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

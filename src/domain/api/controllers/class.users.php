@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class users extends controller
     {
-
         private services\users $usersService;
         private repositories\files $filesRepository;
 
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
 
             $this->usersService = new services\users();
             $this->filesRepository = new repositories\files();
-
         }
 
 
@@ -37,34 +35,19 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-            if(isset($params["profileImage"])) {
+            if (isset($params["profileImage"])) {
+                //var_dump("asdf");
 
-                if($params["profileImage"] == "currentUser") {
-                    $return = $this->usersService->getProfilePicture($_SESSION['userdata']['id']);
+                $return = $this->usersService->getProfilePicture($params["profileImage"]);
+
+                if(is_string($return)){
+
                     $this->tpl->redirect($return);
-                }else{
-                    $imageId = (int)$params["profileImage"];
+                }else {
+                    header('Content-Type: image/jpeg');
+                    echo $return;
                 }
-
-                $file = $this->filesRepository->getFile($imageId);
-
-                $return = BASE_URL.'/images/default-user.png';
-                if ($file) {
-                    $return = BASE_URL."/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
-                }
-
-                $this->tpl->redirect($return);
-
             }
-
-            if(isset($params["profileImageByUserId"])) {
-
-
-                $return = $this->usersService->getProfilePicture($params["profileImageByUserId"]);
-                $this->tpl->redirect($return);
-
-            }
-
         }
 
         /**
@@ -78,7 +61,6 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-
                 $_FILES['file']['name'] = "userPicture.png";
 
                 $this->usersService->setProfilePicture($_FILES, $_SESSION['userdata']['id']);
@@ -88,8 +70,6 @@ namespace leantime\domain\controllers {
 
                 echo "{status:ok}";
             }
-
-
         }
 
         /**
@@ -102,22 +82,20 @@ namespace leantime\domain\controllers {
         {
             //Special handling for settings
 
-            if(isset($params['patchModalSettings'])) {
-
-                if($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
+            if (isset($params['patchModalSettings'])) {
+                if ($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
                     echo "{status:ok}";
                 }
             }
 
-            if(isset($params['patchViewSettings'])) {
-                if($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
+            if (isset($params['patchViewSettings'])) {
+                if ($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
                     echo "{status:ok}";
                 }
             }
 
-            if(isset($params['patchMenuStateSettings'])) {
-
-                if($this->usersService->updateUserSettings("views", "menuState", $params['value'])) {
+            if (isset($params['patchMenuStateSettings'])) {
+                if ($this->usersService->updateUserSettings("views", "menuState", $params['value'])) {
                     echo "{status:ok}";
                 }
             }
@@ -131,9 +109,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

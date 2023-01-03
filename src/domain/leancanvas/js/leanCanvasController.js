@@ -137,7 +137,7 @@ leantime.leanCanvasController = (function () {
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
+                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+userId);
                             jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
                     );

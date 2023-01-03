@@ -19,7 +19,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 	</a>
         <div id="comment0" class="commentBox">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
@@ -36,7 +36,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 			<?php foreach ($this->get('comments') as $row): ?>
 				<div class="clearall">
                     <div class="commentImage">
-                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
+                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"/>
                     </div>
                     <div class="commentMain">
                         <div class="commentContent">
@@ -85,7 +85,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                 <?php foreach ($comments->getReplies($row['id']) as $comment): ?>
                                     <div>
                                         <div class="commentImage">
-                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['profileId'] ?>"/>
+                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>"/>
                                         </div>
                                         <div class="commentMain">
                                             <div class="commentContent">
@@ -118,7 +118,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <?php endif; ?>
                             <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['profileId'] ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>

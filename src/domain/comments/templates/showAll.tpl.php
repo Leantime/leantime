@@ -39,7 +39,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 		<div>
 			<?php foreach ($this->get('comments') as $row): ?>
 				<div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
-					<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"
+					<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"
 						 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
 					<div class="right"><?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
 							$this->getFormattedTimeString($row['date']) ); ?></div>
@@ -75,7 +75,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 				<?php if ($comments->getReplies($row['id'])) : ?>
 					<?php foreach ($comments->getReplies($row['id']) as $comment): ?>
 						<div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
-							<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['profileId'] ?>"
+							<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>"
 								 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
 							<div>
 								<div class="right">

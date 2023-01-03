@@ -200,7 +200,7 @@ $user = $this->get('user');
         </div>
         <div class="col-md-4">
             <div class="maincontentinner center">
-                <img src='<?php echo $this->get('profilePic') ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                <img src='<?=BASE_URL?>/api/users?profileImage=<?=$user['id']; ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                 <div id="profileImg">
                 </div>
 

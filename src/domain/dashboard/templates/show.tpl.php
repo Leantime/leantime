@@ -197,7 +197,7 @@
                             <div class="col-md-3">
                                 <div class="profileBox">
                                     <div class="commentImage">
-                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
+                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['userId'] ?>"/>
                                     </div>
                                     <span class="userName"><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></span>
                                     <?=$this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>
@@ -329,7 +329,7 @@
                                                         <?php foreach ($comments->getReplies($row['id']) as $comment): ?>
                                                             <div>
                                                                 <div class="commentImage">
-                                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['profileId'] ?>"/>
+                                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>"/>
                                                                 </div>
                                                                 <div class="commentMain">
                                                                     <div class="commentContent">
@@ -362,7 +362,7 @@
                                                     <?php endif; ?>
                                                     <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
                                                         <div class="commentImage">
-                                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['profileId'] ?>"/>
+                                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
                                                         </div>
                                                         <div class="commentReply">
                                                             <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>

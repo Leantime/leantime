@@ -137,7 +137,7 @@ if(is_array($currentLink)) {
 
                 <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
                     <span class="notificationProfileImage">
-                        <img src="<?= BASE_URL ?>/api/users?profileImageByUserId=<?=$notif['authorId'] ?>" />
+                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
                     </span>
                     <span class="notificationTitle"><?=$notif['message'] ?></span>
                     <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
