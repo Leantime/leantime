@@ -117,9 +117,8 @@
                         <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?></a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?> (<?=$this->get('numOfFilters') ?>)</a>
                         <div class="btn-group viewDropDown">
-
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
                             <ul class="dropdown-menu">
                                 <?php foreach ($groupBy as $input) : ?>
@@ -170,9 +169,7 @@
 
             <?php $this->dispatchTplEvent('filters.beforeBar'); ?>
 
-            <div class="filterBar <?php if (!isset($_GET['search'])) {
-                echo "hideOnLoad";
-                                  } ?>">
+            <div class="filterBar hideOnLoad">
 
                 <div class="row-fluid">
 
@@ -317,7 +314,7 @@
                     <th><?= $this->__("label.effort"); ?></th>
                     <th><?= $this->__("label.priority"); ?></th>
                     <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
-                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                    <th style="min-width:80px;" class="sprint-col"><?= $this->__("label.sprint"); ?></th>
                     <th class="tags-col"><?= $this->__("label.tags"); ?></th>
                     <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
                     <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
@@ -333,7 +330,7 @@
                     <tr>
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
-                        <td data-order="<?=$statusLabels[$row['status']]["name"]?>">
+                        <td class="dropdown-cell" data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle f-left status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
@@ -366,7 +363,7 @@
                             $milestoneHeadline = $this->__("label.no_milestone");
                         }?>
 
-                        <td data-order="<?=$milestoneHeadline?>">
+                        <td class="dropdown-cell" data-order="<?=$milestoneHeadline?>">
                             <div class="dropdown ticketDropdown milestoneDropdown colorized show">
                                 <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?=$milestoneHeadline?></span>
@@ -384,7 +381,7 @@
                                 </ul>
                             </div>
                         </td>
-                        <td data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
+                        <td class="dropdown-cell"  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
                             <div class="dropdown ticketDropdown effortDropdown show">
                                 <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
@@ -406,9 +403,9 @@
                                 </ul>
                             </div>
                         </td>
-                        <td data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $this->__("label.priority_unkown"); ?>">
+                        <td class="dropdown-cell"  data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $this->__("label.priority_unkown"); ?>">
                             <div class="dropdown ticketDropdown priorityDropdown show">
-                                <a class="dropdown-toggle f-left  label-default priority" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
                                                             if ($row['priority'] != '' && $row['priority'] > 0) {
                                                                 echo $priorities[$row['priority']];
@@ -422,13 +419,13 @@
                                     <li class="nav-header border"><?=$this->__("dropdown.select_priority")?></li>
                                     <?php foreach ($priorities as $priorityKey => $priorityValue) {
                                         echo"<li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);' data-value='" . $row['id'] . "_" . $priorityKey . "' id='ticketPriorityChange" . $row['id'] . $priorityKey . "'>" . $priorityValue . "</a>";
+                                             <a href='javascript:void(0);' class='priority-bg-" . $priorityKey . "' data-value='" . $row['id'] . "_" . $priorityKey . "' id='ticketPriorityChange" . $row['id'] . $priorityKey . "'>" . $priorityValue . "</a>";
                                         echo"</li>";
                                     }?>
                                 </ul>
                             </div>
                         </td>
-                        <td data-order="<?=$row["editorFirstname"] != "" ?  $this->escape($row["editorFirstname"]) : $this->__("dropdown.not_assigned")?>">
+                        <td class="dropdown-cell"  data-order="<?=$row["editorFirstname"] != "" ?  $this->escape($row["editorFirstname"]) : $this->__("dropdown.not_assigned")?>">
                             <div class="dropdown ticketDropdown userDropdown noBg show ">
                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">
@@ -459,7 +456,7 @@
                             $sprintHeadline = $this->__("label.backlog");
                         }?>
 
-                        <td data-order="<?=$sprintHeadline?>">
+                        <td class="dropdown-cell"  data-order="<?=$sprintHeadline?>">
 
                             <div class="dropdown ticketDropdown sprintDropdown show">
                                 <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

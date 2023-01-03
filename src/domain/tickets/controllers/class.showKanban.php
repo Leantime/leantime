@@ -43,6 +43,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
 
             $this->tpl->assign('searchCriteria', $searchCriteria);
+            $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
 
             $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
 

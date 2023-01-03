@@ -6,7 +6,7 @@ leantime.swotCanvasController = (function () {
 
 		var nbRows = 2;
         var rowHeight = jQuery("html").height()- 320 - 20 * nbRows - 25;
-		
+
         var firstRowHeight = rowHeight / nbRows;
         jQuery("#firstRow div.contentInner").each(function(){
             if(jQuery(this).height() > firstRowHeight){
@@ -21,13 +21,13 @@ leantime.swotCanvasController = (function () {
                 secondRowHeight = jQuery(this).height() + 25;
             }
         });
-		
+
         jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
 
     };
 
 	// --- Internal (not to be changed beyond this point) ---
-	
+
     var closeModal = false;
 
     //Variables
@@ -129,7 +129,7 @@ leantime.swotCanvasController = (function () {
                     ).done(
                         function () {
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
                     );
 
@@ -167,7 +167,7 @@ leantime.swotCanvasController = (function () {
                         function () {
                             jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(statusClass+" dropdown-toggle f-left status ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
 
                         }
                     );
@@ -177,7 +177,7 @@ leantime.swotCanvasController = (function () {
         );
 
     };
-	
+
     var initRelatesDropdown = function () {
 
         jQuery("body").on(
@@ -207,7 +207,7 @@ leantime.swotCanvasController = (function () {
                         function () {
                             jQuery("#relatesDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
                             jQuery("#relatesDropdownMenuLink"+canvasItemId).removeClass().addClass(relatesClass+" dropdown-toggle f-left relates ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.relates_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.relates_updated")});
 
                         }
                     );
@@ -228,5 +228,5 @@ leantime.swotCanvasController = (function () {
         initRelatesDropdown:initRelatesDropdown,
         setRowHeights:setRowHeights
     };
-    
+
 })();

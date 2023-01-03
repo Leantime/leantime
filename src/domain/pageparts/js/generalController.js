@@ -372,7 +372,7 @@ leantime.generalController = (function () {
         navigator.clipboard.writeText(copyText.value);
 
         // Alert the copied text
-        jQuery.jGrowl(leantime.i18n.__("short_notifications.url_copied"), {theme: "success"});
+        jQuery.growl({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
 
     }
 

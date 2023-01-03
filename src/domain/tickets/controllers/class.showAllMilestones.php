@@ -45,6 +45,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
 
             $this->tpl->assign('searchCriteria', $searchCriteria);
+            $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
 
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));

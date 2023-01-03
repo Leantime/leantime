@@ -4,7 +4,7 @@
  * This is a heavily modified fork of nyroModal v2.0.0
  * Including a variety of filters needed for Leantime specific use cases
  *
- * 
+ *
  * Included parts:
  * - anims.fade
  * - filters.title
@@ -39,7 +39,7 @@ jQuery(function($, undefined) {
 
 			modal: false,	// Indicates if it's a modal window or not
 			closeOnEscape: true,	// Indicates if the modal should close on Escape key
-			closeOnClick: true,	// Indicates if a click on the background should close the modal
+			closeOnClick: false,	// Indicates if a click on the background should close the modal
 			useKeyHandler: false,	// Indicates if the modal has to handle key down event
 
 			showCloseButton: true,	// Indicates if the closeButonn should be added
@@ -50,7 +50,7 @@ jQuery(function($, undefined) {
 
 			header: undefined,	// header include in every modal
 			footer: undefined,	// footer include in every modal
-			
+
 			// Specific confirguation for gallery filter
 			galleryLoop: true,	// Indicates if the gallery should loop
 			galleryCounts: true,	// Indicates if the gallery counts should be shown
@@ -219,7 +219,7 @@ jQuery(function($, undefined) {
 				ret._open = false;
 				return ret;
 			},
-			
+
 			// Indicate if an element can be stackable or not, regarding the nonStackable setting
 			isStackable: function(elt) {
 				return !elt.is(this.nonStackable);
@@ -991,11 +991,11 @@ function ucfirst(str) {
 }
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Fade animations
- * 
+ *
  * Depends:
- * 
+ *
  */
 jQuery(function($, undefined) {
 	$.nmAnims({
@@ -1071,11 +1071,11 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Title filter
- * 
+ *
  * Depends:
- * 
+ *
  * Before:
  */
 jQuery(function($, undefined) {
@@ -1103,12 +1103,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Gallery filter
- * 
+ *
  * Depends:
  * - filters.title
- * 
+ *
  * Before: filters.title
  */
 jQuery(function($, undefined) {
@@ -1218,11 +1218,11 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Link filter
- * 
+ *
  * Depends:
- * 
+ *
  * Before: filters.gallery
  */
 jQuery(function($, undefined) {
@@ -1258,12 +1258,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Dom filter
- * 
+ *
  * Depends:
  * - filters.link
- * 
+ *
  * Before: filters.link
 
 jQuery(function($, undefined) {
@@ -1291,12 +1291,12 @@ jQuery(function($, undefined) {
 });  */
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Data filter
- * 
+ *
  * Depends:
  * - filters.link
- * 
+ *
  * Before: filters.dom
  */
 jQuery(function($, undefined) {
@@ -1321,12 +1321,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Image filter
- * 
+ *
  * Depends:
  * - filters.link
- * 
+ *
  * Before: filters.data
  */
 jQuery(function($, undefined) {
@@ -1383,11 +1383,11 @@ jQuery(function($, undefined) {
 
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Form filter
- * 
+ *
  * Depends:
- * 
+ *
  * Before: filters.swf
  */
 jQuery(function($, undefined) {
@@ -1437,11 +1437,11 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Form file filter
- * 
+ *
  * Depends:
- * 
+ *
  * Before: filters.form
  */
 jQuery(function($, undefined) {
@@ -1541,12 +1541,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Iframe filter
- * 
+ *
  * Depends:
  * - filters.link
- * 
+ *
  * Before: filters.formFile
  */
 jQuery(function($, undefined) {
@@ -1582,12 +1582,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Iframe form filter
- * 
+ *
  * Depends:
  * - filters.iframe
- * 
+ *
  * Before: filters.iframe
  */
 jQuery(function($, undefined) {
@@ -1638,12 +1638,12 @@ jQuery(function($, undefined) {
 });
 /*
  * nyroModal v2.0.0
- * 
+ *
  * Embedly filter
- * 
+ *
  * Depends:
  * - filters.link
- * 
+ *
  * Before: filters.iframeForm
  */
 jQuery(function($, undefined) {

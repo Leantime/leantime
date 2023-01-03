@@ -419,7 +419,7 @@ namespace leantime\core {
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
                 $notification = '<script type="text/javascript">
-                                  jQuery.jGrowl("' . $message . '", {theme: "' . $note['type'] . '"});
+                                  jQuery.growl({message: "' . $message . '", style: "' . $note['type'] . '"});
                                 </script>';
 
                 $_SESSION['notification'] = "";

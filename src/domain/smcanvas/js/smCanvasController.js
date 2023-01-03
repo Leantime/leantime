@@ -9,7 +9,7 @@ leantime.smCanvasController = (function () {
     };
 
 	// --- Internal (not to be changed beyond this point) ---
-	
+
     var closeModal = false;
 
     //Variables
@@ -111,7 +111,7 @@ leantime.smCanvasController = (function () {
                     ).done(
                         function () {
                             jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+profileImageId);
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.user_updated"), {theme: "success"});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
                     );
 
@@ -149,7 +149,7 @@ leantime.smCanvasController = (function () {
                         function () {
                             jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
                             jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(statusClass+" dropdown-toggle f-left status ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.status_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
 
                         }
                     );
@@ -159,7 +159,7 @@ leantime.smCanvasController = (function () {
         );
 
     };
-	
+
     var initRelatesDropdown = function () {
 
         jQuery("body").on(
@@ -189,7 +189,7 @@ leantime.smCanvasController = (function () {
                         function () {
                             jQuery("#relatesDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
                             jQuery("#relatesDropdownMenuLink"+canvasItemId).removeClass().addClass(relatesClass+" dropdown-toggle f-left relates ");
-                            jQuery.jGrowl(leantime.i18n.__("short_notifications.relates_updated"));
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.relates_updated")});
 
                         }
                     );
@@ -210,5 +210,5 @@ leantime.smCanvasController = (function () {
         initRelatesDropdown:initRelatesDropdown,
         setRowHeights:setRowHeights
     };
-    
+
 })();

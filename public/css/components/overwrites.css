@@ -218,18 +218,22 @@ div.tagsinput span.tag
 
 .filterBar {
 
-	border:1px solid var(--main-border-color);
+	border:0px solid var(--main-border-color);
 	padding:10px;
 	margin-bottom:5px;
-	background:var(--kanban-col-bg);
 	padding-top:5px;
 	margin-top: 10px;
+    background:var(--primary-background);
     border-radius:var(--box-radius);
+    z-index: 99;
+    position: absolute;
+    right: 10px;
+    box-shadow: var(--large-shadow);
 }
 
 .headtitle {
 	background:var(--kanban-col-bg);
-	border:1px solid var(--main-border-color);
+	border:0px solid var(--main-border-color);
 	border-radius:var(--box-radius);
 }
 
@@ -321,8 +325,9 @@ body .tox .tox-toolbar-overlord{
 }
 
 
-div.jGrowl div.jGrowl-notification,
-div.jGrowl div.jGrowl-closer {
+div.growl,
+div.growl.growl-default,
+div.growl div.growl-closer {
 	background:var(--secondary-background);
 	color:var(--primary-font-color);
 	padding:20px;
@@ -335,22 +340,40 @@ div.jGrowl div.jGrowl-closer {
 
 }
 
-div.jGrowl div.jGrowl-notification div.jGrowl-close {
+div.growl growl-close {
 	color:var(--primary-font-color);
 	font-size:var(--base-font-size);
 }
 
-div.jGrowl div.jGrowl-notification.success {
+div.growl.growl-default,
+div.growl.growl-success{
 	border-left:5px solid #86D628;
 }
 
-div.jGrowl div.jGrowl-notification.info {
+div.growl.growl-notice {
 	border-left:5px solid #71B8EE;
 }
 
-div.jGrowl div.jGrowl-notification.error {
+div.growl.growl-error {
 	border-left:5px solid  #dd0000;
 }
 
+div.growl .growl-title {
+    font-size: 18px;
+    line-height: 24px;
+    display:none;
+}
+
+div.growl .growl-message {
+    font-size: var(--base-font-size);
+    line-height: 18px;
+    font-family: var(--primary-font-family);
+}
+
+div.growl.growl-medium {
+    width: 250px;
+    padding: 20px;
+    margin: 10px;
+}
 
 /* Playing with header */

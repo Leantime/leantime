@@ -77,7 +77,7 @@
 
     --header-action-hover-color:var(--neutral);
     --header-bg-color:var(--primary-color);
-    --header-gradient:linear-gradient(90deg, var(--accent1) 0%,#282830 80%);
+    --header-gradient:linear-gradient(90deg, var(--accent1) 0%, #282830 80%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
     --base-font-size: 14px;
