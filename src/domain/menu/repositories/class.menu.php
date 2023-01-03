@@ -27,7 +27,7 @@ namespace leantime\domain\repositories {
                 50 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
                 60 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
                 70 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
-                80 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.project_path', 'href' => '/strategy/showBoards', 'active' => ['strategy']]
+                80 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['strategy']]
             ]
             ,
             //Display all menu items

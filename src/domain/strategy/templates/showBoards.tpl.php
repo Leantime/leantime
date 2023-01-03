@@ -6,9 +6,9 @@ $canvasProgress = $this->get('canvasProgress');
 
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-map-location"></span></div>
+    <div class="pageicon"><span class="fa-solid fa-compass-drafting"></span></div>
     <div class="pagetitle">
-        <h1><?=$this->__('headlines.project_path') ?></h1>
+        <h1><?=$this->__('headlines.blueprints') ?></h1>
     </div>
 </div>
 
