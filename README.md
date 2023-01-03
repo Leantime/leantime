@@ -1,7 +1,9 @@
 
-<img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/>
+<div align="center">
+<a href="https://leantime.io"><img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/></a>
 
-# Leantime&trade; #
+### Leantime&trade; ###
+Leantime is a lean open source project management system for startups and innovators. <br />It's an alternative to ClickUp, Notion, and Asana.<br />[https://leantime.io](leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
@@ -10,7 +12,8 @@
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
-Leantime is a lean open source project management system for startups and innovators written in PHP, Javascript with MySQL. [https://leantime.io](https://leantime.io)
+
+</div>
 <br /><br />
 
 ## Features: ##
