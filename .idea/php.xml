@@ -67,6 +67,12 @@
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/vendor/brick/math" />
       <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
+      <path value="$PROJECT_DIR$/vendor/overtrue/pinyin" />
+      <path value="$PROJECT_DIR$/vendor/intervention/image" />
+      <path value="$PROJECT_DIR$/vendor/lasserafn/php-string-script-language" />
+      <path value="$PROJECT_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
+      <path value="$PROJECT_DIR$/vendor/meyfa/php-svg" />
+      <path value="$PROJECT_DIR$/vendor/lasserafn/php-initials" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />

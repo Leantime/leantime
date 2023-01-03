@@ -74,7 +74,7 @@
                                                 checked="checked"
                                                 />
                                             <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['profileId'] ?>"/>
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
                                             </div>
                                             <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?> <?php if($assignedUser['status'] == 'i') {echo "<small>(".$this->__('label.invited').")</small>";} ?></label>
                                             <?php
@@ -132,7 +132,7 @@
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
 
                                                 <div class="commentImage">
-                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"/>
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>"/>
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
                                                 <?php if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
