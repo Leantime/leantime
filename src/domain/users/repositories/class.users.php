@@ -565,7 +565,7 @@ namespace leantime\domain\repositories {
 
 
 
-            } elseif ($value['profileId'] == '') {
+            } elseif (isset($value['profileId']) && $value['profileId'] == '') {
 
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar->name($value['firstname'] . " " . $value['lastname'])->background('#81B1A8')->color("#fff")->generate();
