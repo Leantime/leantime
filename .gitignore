@@ -11,8 +11,6 @@ resources/logs/*
 node_modules/*
 vendor/*
 release/*
-logs/*
-target/*
 public/js/compiled-app.min.js
 public/js/compiled-base-libs.min.js
 public/js/compiled-extended-libs.min.js
