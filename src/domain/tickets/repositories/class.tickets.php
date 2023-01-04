@@ -259,8 +259,10 @@ namespace leantime\domain\repositories {
 						project.name as projectName,
 						client.name as clientName,
 						client.name as clientName,
+						t1.id AS authorId,
 						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,
+						t2.id AS editorId,
 						t2.firstname AS editorFirstname,
 						t2.lastname AS editorLastname
 				FROM
@@ -338,6 +340,7 @@ namespace leantime\domain\repositories {
 							zp_projects.name AS projectName,
 							zp_clients.name AS clientName,
 							zp_clients.id AS clientId,
+							t1.id AS authorId,
 							t1.lastname AS authorLastname,
 							t1.firstname AS authorFirstname,
 							t1.profileId AS authorProfileId,

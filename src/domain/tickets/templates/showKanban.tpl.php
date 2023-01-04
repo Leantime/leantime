@@ -408,7 +408,8 @@ if ($numberofColumns > 0) {
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <span class="text">
-                                                        <?php if ($row["editorFirstname"] != "") {
+                                                        <?php
+                                                        if ($row["editorFirstname"] != "") {
                                                             echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['editorId'] . "' width='25' style='vertical-align: middle;'/></span>";
                                                         } else {
                                                             echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span>";

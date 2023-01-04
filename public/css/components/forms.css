@@ -1,3 +1,13 @@
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn.active {
+    background:var(--main-action-hover-bg);
+    color:var(--main-action-hover-color);
+    border-color:var(--main-action-hover-bg);
+    border-radius: var(--element-radius);
+}
+
 input, button, select, textarea {
     font-family:var(--primary-font-family);
 }
@@ -645,3 +655,5 @@ input.secretInput:active {
     font-style: normal;
     margin-right:5px;
 }
+
+

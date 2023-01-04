@@ -536,6 +536,12 @@ namespace leantime\domain\repositories {
         public function getProfilePicture($id)
         {
 
+            $return = BASE_URL . '/images/default-user.png';
+
+            if($id === false) {
+                return $return;
+            }
+
             $sql = "SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
@@ -544,8 +550,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $value = $stmn->fetch();
             $stmn->closeCursor();
-
-            $return = BASE_URL . '/images/default-user.png';
 
 
 
