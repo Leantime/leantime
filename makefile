@@ -41,8 +41,8 @@ build: install-deps build-js
 	mv $(WORKDIR) $(ROOT_DIR)/target/leantime
 
 package:
-	cd target && zip -r -X "Leantime-v$(VERSION)$1.zip" leantime
-	cd target && tar -zcvf "Leantime-v$(VERSION)$1.tar.gz" leantime
+	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
+	cd target && tar -zcvf "Leantime-v$(VERSION)$$1.tar.gz" leantime
 
 clean:
 	rm -rf $(WORKDIR)
