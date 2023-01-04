@@ -112,6 +112,7 @@ $statusLabels = $this->get('statusLabels');
 
     <script type="text/javascript">
         jQuery(document).ready(function(){
+
             leantime.ticketsController.initModals();
 
             <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>

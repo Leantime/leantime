@@ -87,16 +87,16 @@
 
             <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
                 <colgroup>
-                    <col class="con1" width="15%">
+                    <col class="con1" >
                     <col class="con0">
                     <col class="con1">
-                    <col class="con0" width="120px">
+                    <col class="con0" >
                     <col class="con1">
                     <col class="con0">
-                    <col class="con1" width="50px">
-                    <col class="con0" width="50px">
-                    <col class="con1" width="50px">
-                    <col class="con0" width="15%">
+                    <col class="con1" >
+                    <col class="con0" >
+                    <col class="con1" >
+                    <col class="con0" >
 
 
                 </colgroup>
@@ -117,6 +117,7 @@
                     <th><?= $this->__("label.estimated_hours_remaining"); ?></th>
                     <th><?= $this->__("label.booked_hours"); ?></th>
                     <th><?= $this->__("label.progress"); ?></th>
+                    <td></td>
 
                 </tr>
                 <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
@@ -148,7 +149,7 @@
                                         <?php foreach($this->get('milestones') as $milestone){
                                             if($milestone->id != $row->id) {
                                                 echo "<li class='dropdown-item'>
-                                                <a href='javascript:void(0);' data-label='" . $this->escape($milestone->headline) . "' data-value='" . $row->id . "_" . $milestone->id . "_" . $this->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row->id . $milestone->id . "' style='background-color:" . $this->escape($milestone->tags) . "'>" . $this->escape($milestone->headline) . "</a>";
+                                                    <a href='javascript:void(0);' data-label='" . $this->escape($milestone->headline) . "' data-value='" . $row->id . "_" . $milestone->id . "_" . $this->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row->id . $milestone->id . "' style='background-color:" . $this->escape($milestone->tags) . "'>" . $this->escape($milestone->headline) . "</a>";
                                                 echo "</li>";
                                             }
                                         }?>
@@ -219,15 +220,15 @@
                             </td>
 
                             <td data-order="<?=$row->percentDone?>">
-                                <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
-                                <a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
 
-                                <div class="progress" style="width: 100%;">
+                                <div class="progress " style="width: 100%;">
 
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
+                                    <div class="progress-bar progress-bar-success " role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
                                         <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
                                     </div>
                                 </div>
+                            </td>
+                            <td><a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
                             </td>
                             <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>
@@ -244,6 +245,10 @@
 <script type="text/javascript">
 
     <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+
+    jQuery(document).ready(function(){
+        leantime.ticketsController.initModals();
+    });
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
@@ -263,7 +268,7 @@
         leantime.generalController.makeInputReadonly(".maincontentinner");
     <?php } ?>
 
-    leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
+    leantime.ticketsController.initMilestoneTable("<?=$searchCriteria["groupBy"] ?>");
 
     <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 

@@ -400,6 +400,8 @@
     }
 
    jQuery(document).ready(function() {
+       leantime.ticketsController.initModals();
+
        jQuery('.todaysDate').text(moment().format('LLLL'));
 
        <?php if($login::userIsAtLeast($roles::$editor)) { ?>

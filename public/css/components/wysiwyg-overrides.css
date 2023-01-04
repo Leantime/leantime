@@ -1,5 +1,42 @@
 .mce-content-body  {
-    font-size:13px;
+    font-size:var(--base-font-size);
+}
+
+.tox .tox-dialog,
+.tox .tox-dialog .tox-dialog__title,
+.tox .tox-dialog .tox-button{
+    font-family: var(--primary-font-family);
+}
+
+.tox .tox-dialog .tox-button {
+    font-weight:normal;
+    background:var(--main-action-bg);
+    border:0px;
+}
+
+.tox .tox-dialog .tox-button--secondary {
+    background:var(--neutral);
+}
+
+.tox .tox-dialog .tox-button--naked {
+    background:transparent;
+}
+
+.tox .tox-dialog {
+    border:0px;
+}
+
+.tox .tox-form .tox-selectfield select,
+.tox .tox-form .tox-textarea,
+.tox .tox-form .tox-textfield,
+.tox .tox-form .tox-toolbar-textfield,
+.tox .tox-form .tox-label,
+.tox .tox-form .tox-toolbar-label,
+.tox .tox-form :not(svg)
+{
+    font-size:var(--base-font-size);
+    font-family: var(--primary-font-family);
+    color:var(--primary-font-color);
 }
 
 body .tox-tinymce {
@@ -101,17 +138,67 @@ body.mce-content-body {
     margin-bottom:15px;
 }
 
-.mce-content-body table thead td {
-    background:var(--neutral);
+.mce-content-body table {
+    border:1px solid var(--neutral);
+    border-top-left-radius:var(--box-radius);
+    border-top-right-radius:var(--box-radius);
+    border-collapse: initial !important;
+    border-spacing: 0px;
+
 }
 
+
+
+.mce-content-body table thead td,
+.mce-content-body table th,
 .mce-content-body table td {
-    padding:5px;
-    border:1px solid var(--neutral);
+    text-rendering: optimizelegibility;
+    border:0px;
+    border-top:1px solid var(--neutral);
+    box-shadow: 0px 1px 1px var(--neutral);
+    border-right:1px solid var(--neutral);
+    line-height: 17px;
+    border:0px;
+    color: var(--kanban-col-title-color);
+    background:transparent;
+    padding: 5px 10px 3px 10px;
+    vertical-align: middle;
+    min-height: 17px;
+}
+
+.mce-content-body table thead td {
+
+    padding: 7px 10px 5px 10px;
+    font-weight: normal;
+    text-transform:none;
+    font-size: var(--base-font-size);
+    font-weight: normal;
+    background:var(--col-content-bg);
+}
+
+.mce-content-body table tr:hover {
+    box-shadow:var(--regular-shadow);
+}
+
+.mce-content-body table tr:hover td {
+    background:var(--col-content-bg);
+
+}
+
+.mce-content-body thead tr:first-child td:first-child {
+    border-top-left-radius:var(--box-radius);
+}
+
+.mce-content-body thead tr:last-child td:last-child {
+    border-top-right-radius:var(--box-radius);
 }
 
 .mce-content-body  p {
     margin-bottom:15px;
+}
+
+.mce-content-body  th:last-child {
+    border-right:0px;
 }
 
 

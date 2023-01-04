@@ -1,3 +1,8 @@
+.kanbanBoard {
+    margin-top:10px;
+    margin-bottom:40px;
+}
+
 .tilt.right {
     transform: rotate(3deg);
     -moz-transform: rotate(3deg);
@@ -84,31 +89,31 @@
 
 .titleBorderColor1,
 .title-border-label-important {
-    border-bottom:5px solid #b94a48;
+    border-bottom:5px solid var(--red);
 }
 
 .titleBorderColor3,
 .title-border-label-info{
-    border-bottom:5px solid #2d6987;
+    border-bottom:5px solid var(--blue);
 }
 
 .titleBorderColor4,
 .title-border-label-warning{
-    border-bottom:5px solid #f89406;
+    border-bottom:5px solid var(--yellow);
 }
 
 .titleBorderColor2{
-    border-bottom:5px solid #f89406;
+    border-bottom:5px solid var(--yellow);
 }
 
 .titleBorderColor0,
 .title-border-label-success{
-    border-bottom:5px solid #468847;
+    border-bottom:5px solid var(--green)
 }
 
 .titleBorderColor-1,
 .title-border-label-default{
-    border-bottom:5px solid #999999;
+    border-bottom:5px solid var(--grey);
 }
 
 .sortableTicketList li{
@@ -189,48 +194,53 @@
 
 body .maincontent .priority-border-1,
 body .maincontent .commentStatus-red{
-    border-left: 3px solid #B92F2FFF;
+    border-left: 3px solid var(--dark-red)
 }
 
 body .maincontent .priority-border-2 {
-    border-left: 3px solid #EF371DFF;
+    border-left: 3px solid var(--red);
 }
 
 body .maincontent .priority-border-3,
 body .maincontent .commentStatus-yellow{
-    border-left: 3px solid #FFB325FF;
+    border-left: 3px solid var(--yellow)
 }
 
 body .maincontent .priority-border-4,
 body .maincontent .commentStatus-green{
-    border-left: 3px solid #aae268;
+    border-left: 3px solid var(--green);
 }
 
 body .maincontent .priority-border-5 {
     bborder-left: 3px solid #707070;
 }
 
-body .maincontent .priority-bg-1 {
-    background:#B92F2FFF;
-    color:#fff;
+body .maincontent .priority-bg-1,
+body .maincontent .ticketDropdown .priority-bg-1{
+    background:var(--dark-red);
+    color:var(--dark-red-text-color);
 }
 
-body .maincontent .priority-bg-2 {
-    background: #EF371DFF;
-    color:#fff;
+body .maincontent .priority-bg-2,
+body .maincontent .ticketDropdown .priority-bg-2{
+    background: var(--red);
+    color:var(--red-text-color);
 }
 
-body .maincontent .priority-bg-3 {
-    background: #FFB325FF;
-    color:#fff;
+body .maincontent .priority-bg-3,
+body .maincontent .ticketDropdown .priority-bg-3{
+    background: var(--yellow);
+    color:var(--yellow-text-color);
 }
 
-body .maincontent .priority-bg-4 {
-    background:#aae268;
-    color:#fff;
+body .maincontent .priority-bg-4,
+body .maincontent .ticketDropdown .priority-bg-4{
+    background:var(--green);
+    color:var(--green-text-color);
 }
 
-body .maincontent .priority-bg-5 {
+body .maincontent .priority-bg-5,
+body .maincontent .ticketDropdown .priority-bg-5{
     background:#707070;
     color:#fff;
 }
@@ -261,6 +271,7 @@ body .maincontent .priority-bg-5 {
     width:100%;
     display:flex;
     overflow-x:auto;
+    padding-bottom: 130px;
 }
 
 .widgettitle strong {

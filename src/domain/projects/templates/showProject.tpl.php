@@ -403,11 +403,21 @@
                                         <div class="col-md-2">
                                             <label><?=$this->__("label.color") ?></label>
                                             <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
-                                                <option value="label-info" class="label-info" <?=$ticketStatus['class']=='label-info'?'selected="selected"':""; ?>><span class="label-info"><?=$this->__('label.blue'); ?></span></option>
-                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class']=='label-warning'?'selected="selected"':""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
+                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class']=='label-purple'?'selected="selected"':""; ?>><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
+                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class']=='label-pink'?'selected="selected"':""; ?>><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
+                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class']=='label-darker-blue'?'selected="selected"':""; ?>><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
+                                                <option value="label-info" class="label-info" <?=$ticketStatus['class']=='label-info'?'selected="selected"':""; ?>><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
+                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class']=='label-blue'?'selected="selected"':""; ?>><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
+                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class']=='label-dark-green'?'selected="selected"':""; ?>><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
                                                 <option value="label-success" class="label-success" <?=$ticketStatus['class']=='label-success'?'selected="selected"':""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
+                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class']=='label-warning'?'selected="selected"':""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
+                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class']=='label-brown'?'selected="selected"':""; ?>><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
+                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class']=='label-danger'?'selected="selected"':""; ?>><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
                                                 <option value="label-important" class="label-important" <?=$ticketStatus['class']=='label-important'?'selected="selected"':""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
                                                 <option value="label-default" class="label-default" <?=$ticketStatus['class']=='label-default'?'selected="selected"':""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
+
+
+
                                             </select>
                                         </div>
                                         <div class="col-md-2">
@@ -464,10 +474,17 @@
         <div class="col-md-2">
             <label><?=$this->__("label.color") ?></label>
             <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
-                <option value="label-info" class="label-info"><span class="label-info"><?=$this->__('label.blue'); ?></span></option>
+                <option value="label-blue" class="label-blue"><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
+                <option value="label-info" class="label-info"><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
+                <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
                 <option value="label-warning" class="label-warning"><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
                 <option value="label-success" class="label-success"><span class="label-success"><?=$this->__('label.green'); ?></span></option>
+                <option value="label-dark-green" class="label-dark-green"><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
                 <option value="label-important" class="label-important"><span class="label-important"><?=$this->__('label.red'); ?></span></option>
+                <option value="label-danger" class="label-danger"><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
+                <option value="label-pink" class="label-pink"><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
+                <option value="label-purple" class="label-purple"><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
+                <option value="label-brown" class="label-brown"><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
                 <option value="label-default" class="label-default"><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
             </select>
         </div>

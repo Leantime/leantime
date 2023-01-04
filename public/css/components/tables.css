@@ -5,6 +5,7 @@
     border-top: 0;
     color: var(--kanban-col-title-color);
     background:var(--secondary-background);
+
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -27,6 +28,7 @@
 .table-bordered td {
     border-right: 0px solid var(--neutral);
     border-left:0px;
+    box-shadow: 0px 1px 1px var(--neutral);
 }
 
 .table-bordered th:last-child,
@@ -39,7 +41,8 @@
     margin-bottom: 0;
 }
 
-.dataTable th, .dataTable td {
+.dataTable th,
+.dataTable td {
     font-size: var(--base-font-size);
 }
 
@@ -144,6 +147,7 @@
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
     background: var(--col-content-bg);
+
 }
 
 .dataTable thead th.sorting:after {
@@ -168,7 +172,8 @@
 }
 
 .maincontentinner .table {
-    border:0px solid var(--neutral);
+    border:1px solid var(--col-content-bg);
+
 }
 
 .table-bordered {
@@ -230,18 +235,23 @@
 }
 
 .maincontentinner .table td {
-    padding:7px 10px 5px 10px;
+    padding:5px 10px 3px 10px;
     vertical-align: middle;
     min-height:17px;
-border-right:1px solid var(--secondary-background);
+    border-right:1px solid var(--secondary-background);
 }
 
 .maincontentinner .table td input {
     margin-bottom:0px;
 }
 
+.dataTable tr:hover {
+    box-shadow:var(--regular-shadow);
+}
+
 .dataTable tr:hover td {
     background:var(--col-content-bg);
+
 }
 
 .maincontentinner .table td .small-input {
@@ -322,13 +332,22 @@ border-right:1px solid var(--secondary-background);
     padding: 5px 10px;
     border:0px;
     text-align:left;
-    text-decoration: line-through;
+}
 
+.maincontentinner .dt-buttons .dt-button-collection button:before {
+    font-family: "Font Awesome 6 Free";
+    content: "\f0c8";
+    margin-right:5px;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button.active{
     text-decoration: none;
-    color: var(--primary-font-color);
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button.active:before {
+    font-family: "Font Awesome 6 Free";
+    content: " \f14a";
+
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
@@ -424,9 +443,10 @@ border-right:1px solid var(--secondary-background);
     width:100%;
     height:100%;
     border-radius:0px !important;
-    padding: 10px 10px 1px 10px !important;
+    padding: 8px 10px 0px 10px !important;
     line-height:17px;
     font-size:var(--base-font-size);
+    box-shadow:none;
 }
 
 .dataTable td.dropdown-cell .dropdown > a .text {

@@ -314,7 +314,7 @@
                     <th><?= $this->__("label.effort"); ?></th>
                     <th><?= $this->__("label.priority"); ?></th>
                     <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
-                    <th style="min-width:80px;" class="sprint-col"><?= $this->__("label.sprint"); ?></th>
+                    <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
                     <th class="tags-col"><?= $this->__("label.tags"); ?></th>
                     <th class="duedate-col"><?= $this->__("label.due_date"); ?></th>
                     <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
@@ -504,10 +504,10 @@
                             <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">
-                            <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
+                            <input type="text" value="<?=$this->e($row['planHours']); ?>" name="planHours" class="small-input secretInput" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
                         </td>
                         <td data-order="<?=$this->e($row['hourRemaining']); ?>">
-                            <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
+                            <input type="text" value="<?=$this->e($row['hourRemaining']); ?>" name="remainingHours" class="small-input secretInput" onchange="leantime.ticketsController.updateRemainingHours(this, '<?=$row['id']?>');" />
                         </td>
 
                         <td data-order="<?php if ($row['bookedHours'] === null || $row['bookedHours'] == "") {
@@ -535,36 +535,43 @@
 
 <script type="text/javascript">
 
-    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
-
-    leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
-
-
-    leantime.ticketsController.initUserSelectBox();
-    leantime.ticketsController.initStatusSelectBox();
-
-    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-        leantime.ticketsController.initUserDropdown();
-        leantime.ticketsController.initMilestoneDropdown();
-        leantime.ticketsController.initEffortDropdown();
-        leantime.ticketsController.initPriorityDropdown();
-        leantime.ticketsController.initSprintDropdown();
-        leantime.ticketsController.initStatusDropdown();
-    <?php } else { ?>
-    leantime.generalController.makeInputReadonly(".maincontentinner");
-    <?php } ?>
+    jQuery(document).ready(function() {
+        <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
 
+        leantime.ticketsController.initModals();
 
-    leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
 
-    <?php if (isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0) {     ?>
-    leantime.helperController.showHelperModal("backlog");
-        <?php
-    //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
-    } ?>
+        leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
 
-    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
+
+        leantime.ticketsController.initUserSelectBox();
+        leantime.ticketsController.initStatusSelectBox();
+
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+            leantime.ticketsController.initUserDropdown();
+            leantime.ticketsController.initMilestoneDropdown();
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initPriorityDropdown();
+            leantime.ticketsController.initSprintDropdown();
+            leantime.ticketsController.initStatusDropdown();
+        <?php } else { ?>
+        leantime.generalController.makeInputReadonly(".maincontentinner");
+        <?php } ?>
+
+
+
+        leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
+
+        <?php if (isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0) {     ?>
+        leantime.helperController.showHelperModal("backlog");
+            <?php
+        //Only show once per session
+            $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
+        } ?>
+
+        <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
+
+    });
 
 </script>
