@@ -91,13 +91,8 @@ namespace leantime\domain\controllers {
 									if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
 										if ($changedEmail == 1) {
 											if ($this->userRepo->usernameExist($row['username'], $id) === false) {
-												if (password_verify($_POST['password'], $values['password']) && $_POST['password'] != '') {
-													$edit = true;
-												} else {
-													$this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
-												}
+                                                $edit = true;
 											} else {
-
 												$this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
 											}
 										} else {

@@ -3,65 +3,8 @@
     $values = $this->get('values');
     $projects = $this->get('relations');
 ?>
-<script type="text/javascript">
 
-    jQuery(document).ready(function(){
-        // Dual Box Select
-        var db = jQuery('#dualselect').find('.ds_arrow button');    //get arrows of dual select
-        var sel1 = jQuery('#dualselect select#selectOrigin');        //get first select element
-        var sel2 = jQuery('#dualselect select#selectDest');            //get second select element
-        var projects = jQuery('#projects');
-        //sel2.empty(); //empty it first from dom.
-
-        db.click(function(){
-
-            var t = (jQuery(this).hasClass('ds_prev'))? 0 : 1;    // 0 if arrow prev otherwise arrow next
-
-            if(t) {
-
-                sel1.find('option').each(function(){
-
-                    if(jQuery(this).is(':selected')) {
-
-                        jQuery(this).attr('selected',false);
-
-                        sel2.append(jQuery(this).clone());
-
-                        jQuery('#projects').append(jQuery(this));
-
-                        jQuery('#projects option').attr("selected", "selected");
-
-                    }
-
-                });
-
-
-            } else {
-                sel2.find('option').each(function(){
-
-                    if(jQuery(this).is(':selected')) {
-
-                        jQuery(this).attr('selected',false);
-                        index = jQuery(this).index();
-
-                        sel1.append(jQuery(this));
-
-                        jQuery('#projects option:eq('+index+')').remove();
-
-                        jQuery('#projects option').attr("selected", "selected");
-
-                    }
-                });
-            }
-
-
-            return false;
-        });
-
-
-    });
-
-</script>
+<?php echo $this->displayNotification(); ?>
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
