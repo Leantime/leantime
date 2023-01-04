@@ -74,7 +74,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             echo"</div>";
             echo"
             <h4>".$this->__("headlines.no_milestones")."<br/>
-            
+
             <br />
             <a href=\"".BASE_URL."/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">".$this->__("links.add_milestone")."</a></h4></div>";
 
@@ -89,6 +89,9 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
+
+    leantime.ticketsController.initModals();
+
     <?php if(isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0){     ?>
     leantime.helperController.showHelperModal("roadmap");
     <?php
@@ -129,7 +132,7 @@ jQuery(document).ready(function(){
                     custom_class :'',
                     color: '".$mlst->tags."',
                     bgColor: '".$mlst->tags."',
-                   
+
                 },";
             }
             ?>

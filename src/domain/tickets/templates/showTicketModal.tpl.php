@@ -73,7 +73,6 @@
         <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
-        leantime.generalController.initComplexEditor();
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
 

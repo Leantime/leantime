@@ -219,7 +219,7 @@ if ($numberofColumns > 0) {
             </div>
         </form>
 
-        <div id="sortableTicketKanban" class="sortableTicketList" style="margin-top:10px;">
+        <div id="sortableTicketKanban" class="sortableTicketList kanbanBoard">
 
             <div class="row-fluid">
 
@@ -532,6 +532,8 @@ if ($numberofColumns > 0) {
     <?php } ?>
 
     jQuery(document).ready(function(){
+
+        leantime.ticketsController.initModals();
 
         <?php if (isset($_GET['showTicketModal'])) {
             if ($_GET['showTicketModal'] == "") {

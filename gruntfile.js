@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     "node_modules/jquery/dist/jquery.js",
+                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/moment/moment.js",
@@ -80,7 +81,6 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/textcolor/plugin.js",
                     "node_modules/tinymce/plugins/image/plugin.js",
                     "node_modules/tinymce/plugins/lists/plugin.js",
-                    "node_modules/tinymce/plugins/table/plugin.js",
                     "node_modules/tinymce/plugins/save/plugin.js",
                     "node_modules/tinymce/plugins/preview/plugin.js",
                     "node_modules/tinymce/plugins/media/plugin.js",
@@ -102,9 +102,11 @@ module.exports = function (grunt) {
                     "public/js/libs/tinymce-plugins/helper.js",
                     "public/js/libs/tinymce-plugins/checklist/index.js",
                     "public/js/libs/tinymce-plugins/shortlink/index.js",
+                    "public/js/libs/tinymce-plugins/table/plugin.js",
                     "public/js/libs/tinymce-plugins/bettertable/index.js",
                     "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
                     "public/js/libs/tinymce-plugins/embed/index.js",
+
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
                     "public/js/libs/simpleGantt/moment.min.js",

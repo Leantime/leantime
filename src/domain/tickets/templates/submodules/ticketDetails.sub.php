@@ -275,3 +275,7 @@
     </div>
 </div>
 
+<script>
+    leantime.generalController.initComplexEditor();
+</script>
+

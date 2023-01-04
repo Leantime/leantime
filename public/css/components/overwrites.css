@@ -80,7 +80,6 @@ a,a:hover,a:link,a:active,a:focus,
 .optionLink,
 .inlineDropDownContainer .ticketDropDown:hover,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
-input.secretInput,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
 .viewDropDown .dropdown-menu li a.active,
@@ -163,11 +162,6 @@ div.tagsinput span.tag
 .tabs-right > .nav-tabs > li { border-color: var(--main-border-color); }
 .leftmenu .nav-tabs.nav-stacked > li > a { border-color: var(--main-border-color) !important; }
 .leftmenu .nav-tabs.nav-stacked > li.active > a { border-color: var(--main-border-color) !important; }
-
-/* ie fix */
-
-.no-rgba .headmenu > li { border-right: 1px solid #ca5f46; }
-.no-rgba .headmenu > li:first-child { border-left: 1px solid #ca5f46; }
 
 
 @media screen and (max-width: 480px) {
@@ -314,7 +308,7 @@ body .tox .tox-toolbar-overlord{
 	text-align: center;
 	padding: 5px;
 	color: #fff;
-	background: #0866c6;
+	background: var(--primary-color);
 	text-transform: uppercase;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -347,15 +341,15 @@ div.growl growl-close {
 
 div.growl.growl-default,
 div.growl.growl-success{
-	border-left:5px solid #86D628;
+	border-left:5px solid var(--green);
 }
 
 div.growl.growl-notice {
-	border-left:5px solid #71B8EE;
+	border-left:5px solid var(--blue);
 }
 
 div.growl.growl-error {
-	border-left:5px solid  #dd0000;
+	border-left:5px solid var(--dark-red);
 }
 
 div.growl .growl-title {
