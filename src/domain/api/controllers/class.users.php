@@ -43,6 +43,7 @@ namespace leantime\domain\controllers {
                 if(is_string($return)){
 
                     $this->tpl->redirect($return);
+
                 }else {
                     header('Content-Type: image/jpeg');
                     echo $return;

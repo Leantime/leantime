@@ -487,9 +487,7 @@ h5 { font-size:var(--base-font-size); font-weight:bold;}
     border-radius: 3px;
 }
 
-.label-important:hover, .label-warning:hover,
-.label-success:hover, .label-info:hover, .label-inverse:hover,
-.label-default:hover, .label-primary:hover {
+.dropdown [class*="label-"]:hover {
     background: var(--dropdown-link-hover-bg) !important;
     color:var(--dropdown-link-hover-color) !important;
 }
