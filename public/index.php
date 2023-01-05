@@ -3,7 +3,7 @@
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 
-require_once '../src/core/class.autoload.php';
+require_once '../app/core/class.autoload.php';
 require_once '../config/configuration.php';
 require_once '../config/appSettings.php';
 

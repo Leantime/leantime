@@ -2239,7 +2239,7 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
 .uppy-size--md .uppy-Dashboard-Item {
   position: relative;
   display: block;
-  /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
+  /* When changing width: also update `itemsPerRow` values in `app/components/Dashboard.js`. */
   width: calc(33.333% - 15px - 15px);
   height: 215px;
   margin: 5px 15px;
@@ -2247,13 +2247,13 @@ button.uppy-Dashboard-Item-progressIndicator:focus .uppy-Dashboard-Item-progress
   border-bottom: 0;
 }
 .uppy-size--lg .uppy-Dashboard-Item {
-  /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
+  /* When changing width: also update `itemsPerRow` values in `app/components/Dashboard.js`. */
   width: calc(25% - 15px - 15px);
   height: 190px;
   margin: 5px 15px;
 }
 .uppy-size--xl .uppy-Dashboard-Item {
-  /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
+  /* When changing width: also update `itemsPerRow` values in `app/components/Dashboard.js`. */
   width: calc(20% - 15px - 15px);
   height: 210px;
 }
