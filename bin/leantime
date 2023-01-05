@@ -3,7 +3,7 @@
 
 define('ROOT', dirname(__FILE__));
 
-require __DIR__ . '/../src/core/class.autoload.php';
+require __DIR__ . '/../app/core/class.autoload.php';
 
 use leantime\command\migrateCommand;
 use leantime\command\addUserCommand;

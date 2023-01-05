@@ -23,8 +23,8 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 ## Any contributions you make will be under the GPL-2.0 Software License
 In short, when you submit code changes, your submissions are understood to be under the same [GPL 2.0 License](https://choosealicense.com/licenses/gpl-2.0/) that covers the project. Feel free to contact the maintainers if that's a concern.
 There are 3 folders that are exempt from this license:
-src/plugins/*
-src/custome/*
+app/plugins/*
+app/custome/*
 public/themes/*
 Files in these folders can have licenses that are not GPL-2.0. 
 

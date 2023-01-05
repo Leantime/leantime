@@ -11,6 +11,8 @@ resources/logs/*
 node_modules/*
 vendor/*
 release/*
+logs/*
+target/*
 public/js/compiled-app.min.js
 public/js/compiled-base-libs.min.js
 public/js/compiled-extended-libs.min.js
@@ -107,9 +109,9 @@ fabric.properties
 logs/*
 
 # Ignore all customization files
-src/custom/domain/
-src/custom/plugin/
-src/custom/language/
+app/custom/domain/
+app/custom/plugin/
+app/custom/language/
 public/theme/*/css/custom.css
 public/theme/dts/
 nbproject
