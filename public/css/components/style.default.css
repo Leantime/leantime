@@ -897,18 +897,23 @@ a .label-default:after, a .label-primary:after {
 }
 
 .login-alert .alert-danger, .login-alert .alert-error {
-    background-color: var(--red);
-    border-color: var(--dark-red);
-    color: var(--red-text-color);
-    border: 1px;
+    background: var(--secondary-background);
+
+    border-left: 5px solid var(--dark-red);
+    padding: 5px;
+    border-radius: var(--element-radius);
+    box-shadow: var(--large-shadow);
+    color: var(--primary-font-color);
     font-size: var(--base-font-size);
 }
 
 .login-alert .alert-success {
-    background-color: var(--green);
-    border-color: var(--dark-green);
-    color: var(--green-text-color);
-    border: 1px;
+    background: var(--secondary-background);
+    border-left: 5px solid var(--green);
+    padding: 5px;
+    border-radius: var(--element-radius);
+    box-shadow: var(--large-shadow);
+    color: var(--primary-font-color);
     font-size: var(--base-font-size);
 }
 
