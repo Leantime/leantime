@@ -12,7 +12,7 @@ namespace leantime\domain\controllers {
     class newProject extends controller
     {
 
-        private $projectRepo;
+        private repositories\projects $projectRepo;
         private $menuRepo;
         private $userRepo;
         private $clientsRepo;

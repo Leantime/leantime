@@ -488,8 +488,9 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param array|bool $values
+         * @return int|bool returns new project id on success, false on failure.
          */
-        public function addProject($values): array|bool
+        public function addProject($values): int|bool
         {
 
             $query = "INSERT INTO `zp_projects` (
