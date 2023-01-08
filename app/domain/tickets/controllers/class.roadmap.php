@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
 
         private $projectsRepo;
         private $sprintService;
-        private $ticketService;
+        private services\tickets $ticketService;
 
         /**
          * init - initialize private variables
@@ -39,7 +39,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
+            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", true);
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');

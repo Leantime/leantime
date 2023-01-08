@@ -138,10 +138,23 @@ leantime.ticketsController = (function () {
 
                     var gantt_chart = new Gantt(
                         "#gantt", tasks, {
+                            header_height: 55,
+                            column_width: 20,
+                            step: 24,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            bar_height: 40,
+                            static_progress_indicator: true,
+                            bar_corner_radius: 3,
+                            arrow_curve: 5,
+                            padding:20,
+                            view_mode: 'Month',
+                            date_format: leantime.i18n.__("language.momentJSDate"),
+                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            additional_rows: 5,
                             custom_popup_html: function (task) {
                                 // the task object will contain the updated
                                 // dates and progress value
-                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                var end_date = task._end;
                                 return '<div class="details-container"> ' +
                                     '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
@@ -178,7 +191,7 @@ leantime.ticketsController = (function () {
                             custom_popup_html: function (task) {
                                 // the task object will contain the updated
                                 // dates and progress value
-                                var end_date = task._end.format(leantime.i18n.__("language.momentJSDate"));
+                                var end_date = task._end;
                                 return '<div class="details-container"> ' +
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
@@ -1603,6 +1616,7 @@ leantime.ticketsController = (function () {
         initDates:_initDates,
         setUpKanbanColumns:setUpKanbanColumns,
         addCommentTimesheetContent:addCommentTimesheetContent,
-        initMilestoneTable:initMilestoneTable
+        initMilestoneTable:initMilestoneTable,
+        initMilestoneDates:_initMilestoneDates
     };
 })();
