@@ -740,6 +740,7 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
+				zp_user.username,
 				zp_user.firstname,
 				zp_user.lastname,
 				zp_user.profileId,

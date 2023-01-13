@@ -144,7 +144,7 @@ leantime.ticketsController = (function () {
                             view_modes: ['Day', 'Week', 'Month'],
                             bar_height: 40,
                             static_progress_indicator: true,
-                            bar_corner_radius: 3,
+                            bar_corner_radius: 5,
                             arrow_curve: 5,
                             padding:20,
                             view_mode: 'Month',
@@ -152,20 +152,37 @@ leantime.ticketsController = (function () {
                             language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
                             additional_rows: 5,
                             custom_popup_html: function (task) {
+
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-                                return '<div class="details-container"> ' +
-                                    '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
-                                    '' + Math.round(task.progress) + '%</p> ' +
-                                    '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
-                                    '</div>';
+                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
+
+
+
+                                var popUpHTML= '<div class="details-container"> ' +
+                                    '<small>'+ task.type +' #' + task.id +' </small>';
+
+                             if(task.type === 'milestone') {
+                                 popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
+                                     '' + Math.round(task.progress) + '%</p> ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                             }else{
+
+                                 popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                     '<a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+
+                             }
+
+                                 popUpHTML += '</div>';
+
+                                return popUpHTML;
                             },
                             on_click: function (task) {
-
+                                _initModals();
                             },
                             on_date_change: function (task, start, end) {
 
@@ -181,6 +198,10 @@ leantime.ticketsController = (function () {
 
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
                                 _initModals();
+                            },
+                            on_popup_show: function(task) {
+                               console.log("jo");
+                                _initModals();
                             }
                         }
                     );
@@ -188,6 +209,9 @@ leantime.ticketsController = (function () {
                     var gantt_chart = new Gantt(
                         "#gantt", tasks, {
                             readonlyGantt: true,
+                            resizing: false,
+                            progress: false,
+                            is_draggable: false,
                             custom_popup_html: function (task) {
                                 // the task object will contain the updated
                                 // dates and progress value
@@ -196,7 +220,7 @@ leantime.ticketsController = (function () {
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
-                                    '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+                                    '<a class="milestoneModal" href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                     '</div>';
                             },

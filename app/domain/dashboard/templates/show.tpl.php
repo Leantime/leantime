@@ -32,7 +32,6 @@
 
 <div class="maincontent">
 
-
         <?php echo $this->displayNotification(); ?>
 
         <div class="row">
@@ -199,8 +198,23 @@
                                     <div class="commentImage">
                                         <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['userId'] ?>"/>
                                     </div>
-                                    <span class="userName"><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?></span>
-                                    <?=$this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>
+                                    <span class="userName">
+                                        <?php
+                                        if($assignedUser['firstname'] != '' || $assignedUser['lastname'] != '') {
+                                            printf(
+                                                $this->__('text.full_name'),
+                                                $this->escape($assignedUser['firstname']),
+                                                $this->escape($assignedUser['lastname'])
+                                            );
+                                            echo "<br/>".$this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]);
+                                        }else{
+                                            echo $this->escape($assignedUser['username']);
+                                            if($assignedUser['status'] == "i"){
+                                                echo "<br /><small>(".$this->__('label.invited').")</small>";
+                                            }
+                                        }
+                                        ?></span>
+
                                     <div class="clearall"></div>
                                 </div>
                             </div>

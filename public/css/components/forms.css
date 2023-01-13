@@ -11,8 +11,12 @@
 input, button, select, textarea {
     font-family:var(--primary-font-family);
 }
-form label {
+form label{
     padding-top:5px;
+}
+
+form .switchery {
+    margin-top:5px;
 }
 
 tox-edit-area,

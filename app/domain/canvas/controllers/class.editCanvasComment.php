@@ -126,6 +126,7 @@ namespace leantime\domain\controllers\canvas {
                             'data' => $params['data'],
                             'conclusion' => $params['conclusion'],
                             'itemId' => $params['itemId'],
+                            'id' => $params['itemId'],
                             'canvasId' => $currentCanvasId,
                             'milestoneId' => $params['milestoneId'],
                             'dependentMilstone' => ''
@@ -140,12 +141,21 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
 
-                        $subject = $this->language->__('email_notifications.canvas_board_edited');
-                        $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'];
-                        $message = sprintf($this->language->__('email_notifications.canvas_item_update_message'),
-                                           $_SESSION['userdata']['name'],  $canvasItem['description']);
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'],
-                            array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
+
+                        $notification = new models\notifications\notification();
+                        $notification->url = array(
+                            "url" => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'],
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                        );
+                        $notification->entity = $canvasItem;
+                        $notification->module = static::CANVAS_NAME.'canvas';
+                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
+                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->message = sprintf($this->language->__('email_notifications.canvas_item_update_message'),
+                            $_SESSION['userdata']['name'],  $canvasItem['description']);
+
+                        $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$params['itemId']);
 
@@ -174,16 +184,27 @@ namespace leantime\domain\controllers\canvas {
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
 
+                        $canvasItem['id'] = $id;
+
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                         $this->tpl->setNotification($canvasTypes[$params['box']].' successfully created', 'success');
 
-                        $subject = $this->language->__('email_notifications.canvas_board_item_created');
-                        $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'];
-                        $message = sprintf($this->language->__('email_notifications.canvas_item_created_message'),
-                                           $_SESSION['userdata']['name'],  $canvasItem['description']);
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'],
-                            array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
+
+                        $notification = new models\notifications\notification();
+                        $notification->url = array(
+                            "url" => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$params['itemId'],
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                        );
+                        $notification->entity = $canvasItem;
+                        $notification->module = static::CANVAS_NAME.'canvas';
+                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->subject = $this->language->__('email_notifications.canvas_board_item_created');
+                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->message = sprintf($this->language->__('email_notifications.canvas_item_created_message'),
+                            $_SESSION['userdata']['name'],  $canvasItem['description']);
+
+                        $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
@@ -211,12 +232,24 @@ namespace leantime\domain\controllers\canvas {
                 $message = $this->commentsRepo->addComment($values, static::CANVAS_NAME.'canvasitem');
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
 
-                $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                $actual_link = BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$_GET['id'];
-                $message = sprintf($this->language->__('email_notifications.canvas_item__comment_created_message'),
-                                   $_SESSION['userdata']['name']);
-                $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'],
-                    array('link'=>$actual_link, 'text'=> $this->language->__('email_notifications.canvas_item_update_cta')));
+
+
+
+                $notification = new models\notifications\notification();
+                $notification->url = array(
+                    "url" => BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.(int)$_GET['id'],
+                    "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                );
+                $notification->entity = $values;
+                $notification->module = static::CANVAS_NAME.'canvas';
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = sprintf($this->language->__('email_notifications.canvas_item__comment_created_message'),
+                    $_SESSION['userdata']['name']);
+
+                $this->projectService->notifyProjectUsers($notification);
+
 
                 $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas'.'/editCanvasComment/'.$_GET['id']);
 

@@ -8,11 +8,44 @@
     background:var(--secondary-background);
 }
 
-.dropdown-menu > li > a {
+.bigMenu ul li {
+    list-style-type: none;
+}
+
+.dropdown-menu > li > a,
+.bigMenu ul li a{
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0 5px;
     padding: 5px 10px;
+}
+
+.dropdown-menu>.active>a,
+.dropdown-menu>.active>a:hover,
+.dropdown-menu>.active>a:focus {
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
+}
+
+.dropdownTabs {
+    padding:5px;
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    align-content: space-between;
+    border-bottom:1px solid var(--main-border-color);
+}
+
+.dropdownTabs a {
+
+}
+
+.dropdownTabs a:hover {
+    text-decoration: none;
+    color:var(--dropdown-link-hover-color);
 }
 
 
@@ -28,7 +61,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
-.dropdown-submenu:focus > a {
+.dropdown-submenu:focus > a,
+.bigMenu ul li a,
+.bigMenu ul li a:hover,
+.bigMenu ul li a:focus {
     color: var(--dropdown-link-hover-color) !important;
     background:var(--dropdown-link-hover-bg) !important;
 }

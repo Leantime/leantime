@@ -416,7 +416,7 @@ namespace leantime\domain\repositories {
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is you first project to get you started</p>',0,'0',0,NULL, '" . repositories\menu::DEFAULT_MENU . "',NULL);
+                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '" . repositories\menu::DEFAULT_MENU . "',NULL);
 
                 CREATE TABLE `zp_punch_clock` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

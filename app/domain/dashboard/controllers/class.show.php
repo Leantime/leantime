@@ -11,7 +11,7 @@ namespace leantime\domain\controllers {
     class show extends controller
     {
         private $dashboardRepo;
-        private $projectService;
+        private services\projects $projectService;
         private $sprintService;
         private $ticketService;
         private $userService;

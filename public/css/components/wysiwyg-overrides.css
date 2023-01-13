@@ -201,6 +201,15 @@ body.mce-content-body {
     border-right:0px;
 }
 
+.userMention {
+    background: var(--neutral);
+    padding: 2px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--primary-font-color);
+    white-space: nowrap;
+}
+
 
 
 

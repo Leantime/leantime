@@ -26,18 +26,18 @@ namespace leantime\domain\repositories {
 				$orderBy = "ASC";
 			}
 
-            $sql = "SELECT 
-					comment.id, 
-					comment.text, 
-					comment.date, 
-					DATE_FORMAT(comment.date, '%Y,%m,%e') AS timelineDate, 
-					comment.moduleId, 
-					comment.userId, 
+            $sql = "SELECT
+					comment.id,
+					comment.text,
+					comment.date,
+					DATE_FORMAT(comment.date, '%Y,%m,%e') AS timelineDate,
+					comment.moduleId,
+					comment.userId,
 					comment.commentParent,
                     comment.status,
-					user.firstname, 
+					user.firstname,
 					user.lastname,
-					user.profileId 
+					user.profileId
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
@@ -99,11 +99,11 @@ namespace leantime\domain\repositories {
         public function getReplies($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent,
-					user.firstname, user.lastname, user.profileId   
+					user.firstname, user.lastname, user.profileId
 				FROM zp_comment as comment
-				INNER JOIN zp_user as user ON comment.userId = user.id 
+				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE commentParent = :id";
 
             $stmn = $this->db->database->prepare($sql);
@@ -119,9 +119,9 @@ namespace leantime\domain\repositories {
         public function getComment($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status
-					user.firstname, user.lastname  
+					user.firstname, user.lastname
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE comment.id=:id";
@@ -151,9 +151,16 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':status',  $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
+
+            $insertId = $this->db->database->lastInsertId();
+
             $stmn->closeCursor();
 
-            return $result;
+            if($result) {
+                return $insertId;
+            }else{
+                return false;
+            }
         }
 
         public function deleteComment($id)

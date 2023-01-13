@@ -19,7 +19,7 @@ namespace leantime\domain\controllers {
         private $ticketRepo;
         private $ticketService;
         private $commentsRepo;
-        private $projectService;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
@@ -127,7 +127,8 @@ namespace leantime\domain\controllers {
                             "conclusion" => "",
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
-                            "milestoneId" => $params['milestoneId']
+                            "milestoneId" => $params['milestoneId'],
+                            "id" => $params['itemId']
                         );
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
@@ -159,11 +160,23 @@ namespace leantime\domain\controllers {
                         $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId'];
                         $message = sprintf($this->language->__('notification.idea_edited'),
                             $_SESSION["userdata"]["name"], $params['description']);
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'],
-                            array(
-                                "link" => $actual_link,
-                                "text" => $this->language->__('email_notifications.idea_edited_cta')
-                            ));
+
+
+                        $notification = new models\notifications\notification();
+                        $notification->url = array(
+                            "url" => $actual_link,
+                            "text" => $this->language->__('email_notifications.idea_edited_cta')
+                        );
+
+                        $notification->entity = $canvasItem;
+                        $notification->module = "ideas";
+                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->subject = $subject;
+                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->message = $message;
+
+                        $this->projectService->notifyProjectUsers($notification);
+
 
                         $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
 
@@ -191,11 +204,26 @@ namespace leantime\domain\controllers {
                         );
 
                         $id = $this->ideaRepo->addCanvasItem($canvasItem);
+                        $canvasItem["id"] = $id;
 
                         $subject = $this->language->__('email_notifications.idea_created_subject');
                         $actual_link = BASE_URL."/ideas/ideaDialog/".$id;
                         $message = sprintf($this->language->__('email_notifications.idea_created_message'), $_SESSION["userdata"]["name"], $params['description']);
-                        $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__('email_notifications.idea_edited_cta')));
+
+
+                        $notification = new models\notifications\notification();
+                        $notification->url = array(
+                            "url" => $actual_link,
+                            "text" => $this->language->__('email_notifications.idea_created_subject')
+                        );
+                        $notification->entity = $canvasItem;
+                        $notification->module = "ideas";
+                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->subject = $subject;
+                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->message = $message;
+
+                        $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success');
 
@@ -220,12 +248,27 @@ namespace leantime\domain\controllers {
                 );
 
                 $message = $this->commentsRepo->addComment($values, 'idea');
+                $values["id"] = $message;
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), "success");
 
                 $subject = $this->language->__('email_notifications.new_comment_idea_subject');
                 $actual_link = BASE_URL."/ideas/ideaDialog/".(int)$_GET['id'];
                 $message = sprintf($this->language->__('email_notifications.new_comment_idea_message'), $_SESSION["userdata"]["name"]);
-                $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$actual_link, "text"=> $this->language->__('email_notifications.new_comment_idea_cta')));
+
+
+                $notification = new models\notifications\notification();
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__('email_notifications.new_comment_idea_cta')
+                );
+                $notification->entity = $values;
+                $notification->module = "comments";
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $subject;
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = $message;
+
+                $this->projectService->notifyProjectUsers($notification);
 
                 $this->tpl->redirect(BASE_URL."/ideas/ideaDialog/".(int)$_GET['id']);
 

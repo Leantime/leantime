@@ -11,7 +11,7 @@ leantime.generalController = (function () {
                 _initSimpleEditor();
                 initComplexEditor();
 
-                if(jQuery('.login-alert .alert').text() !== ''){
+                if (jQuery('.login-alert .alert').text() !== '') {
                     jQuery('.login-alert').fadeIn();
                 }
             }
@@ -19,8 +19,40 @@ leantime.generalController = (function () {
 
     })();
 
+    var mentionsConfig = {
+        delimiter: '@',
+        delay: 50,
+        source: function (query, process, delimiter) {
+            // Do your ajax call
+            // When using multiple delimiters you can alter the query depending on the delimiter used
+            if (delimiter === '@') {
+                jQuery.getJSON(leantime.appUrl + '/api/users?projectUsersAccess=current', function (data) {
+                    //call process to show the result
+                    let users = [];
+                    for (let i = 0; i < data.length; i++) {
+                        users[i] = {
+                            "name": data[i].firstname + " " + data[i].lastname,
+                            "id":  data[i].id,
+                            "email": data[i].username
+                        };
+                    }
+                    process(users);
+                });
+            }
+        },
+        highlighter: function(text) {
+            //make matched block italic
+            return text.replace(new RegExp('(' + this.query + ')', 'ig'), function ($1, match) {
+                return '<strong>' + match + '</strong>';
+            });
+        },
+        insert: function (item) {
+            return '<a class="userMention" data-tagged-user-id="'+ item.id +'" href="#">' + item.name + '</a>';
+        }
+    };
+
     //Functions
-    var _initPopOvers = function() {
+    var _initPopOvers = function () {
         jQuery('.popoverlink').popover({trigger: 'hover'});
     };
 
@@ -52,10 +84,10 @@ leantime.generalController = (function () {
             {
                 // General options
                 width: "100%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',height:"150",
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 branding: false,
                 statusbar: false,
@@ -63,14 +95,15 @@ leantime.generalController = (function () {
                 paste_data_images: true,
                 menubar:false,
                 relative_urls : true,
-                document_base_url : leantime.appUrl+"/",
+                document_base_url : leantime.appUrl + "/",
                 default_link_target: '_blank',
+                mentions: mentionsConfig,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -100,7 +133,7 @@ leantime.generalController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -126,10 +159,10 @@ leantime.generalController = (function () {
             {
                 // General options
                 width: "100%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css,'+leantime.appUrl+'/css/components/wysiwyg-overrides.css,'+leantime.appUrl+'/css/libs/roboto.css',
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample",
+                plugins : "embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample",
                 branding: false,
                 statusbar: false,
@@ -138,7 +171,7 @@ leantime.generalController = (function () {
                 resizable: true,
                 paste_data_images: true,
                 relative_urls : true,
-                document_base_url: leantime.appUrl+"/",
+                document_base_url: leantime.appUrl + "/",
                 min_height: 400,
                 default_link_target: '_blank',
                 codesample_global_prismjs: true,
@@ -159,12 +192,13 @@ leantime.generalController = (function () {
                     { text: 'C#', value: 'csharp' },
                     { text: 'C++', value: 'cpp' }
                 ],
+                mentions: mentionsConfig,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -194,7 +228,7 @@ leantime.generalController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -218,17 +252,18 @@ leantime.generalController = (function () {
 
     var initFixedToolBarEditor = function () {
 
-       tinymce.init(
+        tinymce.init(
             {
                 // General options
                 inline: true,
                 fixed_toolbar_container: ".externalToolbar",
                 width: "100%",
-                skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl+'/theme/'+leantime.theme+'/css/theme.css,'+leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
+                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample",
+                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table",
                 branding: false,
                 statusbar: true,
@@ -238,13 +273,13 @@ leantime.generalController = (function () {
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,
-
+                mentions: mentionsConfig,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
 
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl+'/api/files');
+                    xhr.open('POST', leantime.appUrl + '/api/files');
 
                     xhr.onload = function () {
                         var json;
@@ -274,7 +309,7 @@ leantime.generalController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl+'/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll&modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -296,7 +331,7 @@ leantime.generalController = (function () {
 
     var makeInputReadonly = function (container) {
 
-        if(typeof container === undefined) {
+        if (typeof container === undefined) {
             container = "body";
         }
 
@@ -312,16 +347,15 @@ leantime.generalController = (function () {
 
         jQuery(container).find(".quickAddLink").hide();
 
-        if(jQuery(container).find(".complexEditor").length) {
-            jQuery(container).find(".complexEditor").each(function(element){
+        if (jQuery(container).find(".complexEditor").length) {
+            jQuery(container).find(".complexEditor").each(function (element) {
 
                 jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
             });
         }
 
-        if(jQuery(container).find(".tinymceSimple").length) {
-
-            jQuery(container).find(".tinymceSimple").each(function(element){
+        if (jQuery(container).find(".tinymceSimple").length) {
+            jQuery(container).find(".tinymceSimple").each(function (element) {
 
                 jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
             });
@@ -374,7 +408,8 @@ leantime.generalController = (function () {
         // Alert the copied text
         jQuery.growl({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
 
-    }
+    };
+
 
     // Make public what you want to have public, everything else is private
     return {
@@ -383,7 +418,7 @@ leantime.generalController = (function () {
         makeInputReadonly:makeInputReadonly,
         enableCommenterForms:enableCommenterForms,
         initFixedToolBarEditor:initFixedToolBarEditor,
-        copyUrl:copyUrl
+        copyUrl:copyUrl,
     };
 
 })();

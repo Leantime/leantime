@@ -24,7 +24,7 @@ namespace leantime\domain\repositories {
         }
 
 
-        public function getAllNotifications($userId, $showNewOnly = false, $limitStart = 0, $limitEnd = 100)
+        public function getAllNotifications($userId, $showNewOnly = false, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
         {
 
             $query = "SELECT
@@ -50,11 +50,23 @@ namespace leantime\domain\repositories {
                 $query .= " AND `read` = '0' ";
             }
 
+            if(is_array($filterOptions) && count($filterOptions) >0){
+                foreach($filterOptions as $key => $value) {
+                    $query .= " AND ".$key." = :".$key." " ;
+                }
+            }
+
             $query.=" ORDER BY datetime DESC
                 LIMIT ".$limitStart.", ".$limitEnd."";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+
+            if(is_array($filterOptions) && count($filterOptions) >0){
+                foreach($filterOptions as $key => $value) {
+                    $stmn->bindValue(':'.$key, $value, PDO::PARAM_STR);
+                }
+            }
 
             $stmn->execute();
 

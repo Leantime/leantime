@@ -3,6 +3,7 @@
 namespace leantime\domain\services {
 
     use leantime\core;
+    use leantime\domain\models\notifications\notification;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
@@ -42,7 +43,11 @@ namespace leantime\domain\services {
                     'status' => $values['status'] ?? ''
                 );
 
-                if($this->commentRepository->addComment($mapper, $module)) {
+                $comment = $this->commentRepository->addComment($mapper, $module);
+
+                if($comment) {
+
+                    $mapper['id'] = $comment;
 
                     $currentUrl = CURRENT_URL;
 
@@ -64,7 +69,21 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>$currentUrl, "text"=> $linkLabel));
+
+                    $notification = new notification();
+                    $notification->url = array(
+                        "url" => $currentUrl,
+                        "text" => $linkLabel
+                    );
+
+                    $notification->entity = $mapper;
+                    $notification->module = "comments";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
 
                     return true;
                 }
