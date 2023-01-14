@@ -213,6 +213,10 @@ namespace leantime\domain\services {
 
                     $ldapUser = $ldap->getSingleUser($username);
 
+                    if($ldapUser === false){
+                        return false;
+                    }
+
                     //If user does not exist create user
                     if ($user == false) {
 

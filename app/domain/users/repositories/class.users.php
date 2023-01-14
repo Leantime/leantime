@@ -551,8 +551,6 @@ namespace leantime\domain\repositories {
             $value = $stmn->fetch();
             $stmn->closeCursor();
 
-
-
             if ($value !== false && $value['profileId'] != '') {
 
                 $files = new files();
@@ -570,6 +568,7 @@ namespace leantime\domain\repositories {
 
 
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
+
 
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar->name($value['firstname'] . " " . $value['lastname'])->background('#81B1A8')->color("#fff")->generate();

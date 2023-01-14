@@ -66,6 +66,16 @@ class ldap
             $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
+
+            if (!is_object($this->ldapLtGroupAssignments)) {
+                error_log("LDAP: Group Assignment array failed to parse. Please check for valid json");
+                return false;
+            }
+
+            if (!is_object($this->ldapKeys)) {
+                error_log("LDAP: Ldap Keys failed to parse. Please check for valid json");
+                return false;
+            }
         }
 
         return true;
@@ -128,7 +138,7 @@ class ldap
 
     public function getEmail($username)
     {
-        if (!is_resource($this->ldapConnection)) {
+        if (!$this->ldapConnection) {
             error_log("No connection, last error: " . ldap_error($this->ldapConnection));
         }
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
@@ -150,7 +160,7 @@ class ldap
     public function getSingleUser($username)
     {
 
-        if (!is_resource($this->ldapConnection)) {
+        if (!$this->ldapConnection) {
             error_log("No connection, last error: " . ldap_error($this->ldapConnection));
         }
 
@@ -161,10 +171,11 @@ class ldap
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
-        if ($entries === false) {
+        if ($entries === false || !isset($entries[0])) {
             error_log(ldap_error($this->ldapConnection));
             ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
             error_log($err);
+            return false;
         }
 
         //Find Role
@@ -189,8 +200,8 @@ class ldap
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
         if ($this->config->debug) {
-            #error_log("Testing the logging", 3, "/SM_DATA/web_projects/public_html/resources/logs/ldap.log");
-            error_log("LEANTIME: Testing the logging\n", 3, "/var/log/sites-error.log");
+
+            error_log("LEANTIME: Testing the logging\n");
 
             //$uname = $this->extractLdapFromUsername($username)."".$this->userDomain;
             //$uname = str_replace("@","AT", $uname);
