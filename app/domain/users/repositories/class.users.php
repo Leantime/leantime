@@ -416,7 +416,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  array $values
          */
-        public function addUser(array $values)
+        public function addUser(array $values): false|string
         {
 
             $query = "INSERT INTO `zp_user` (
