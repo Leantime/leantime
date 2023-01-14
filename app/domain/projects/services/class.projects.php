@@ -65,7 +65,7 @@ namespace leantime\domain\services {
 
 
             //Calculate percent
-            //The magic: Use effort calculation AND number of ticket calculation. Then get the average.
+
             $numberOfClosedTickets = $this->ticketRepository->getNumberOfClosedTickets($projectId);
 
             $numberOfTotalTickets = $this->ticketRepository->getNumberOfAllTickets($projectId);
@@ -85,7 +85,7 @@ namespace leantime\domain\services {
                 $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
             }
 
-            $finalPercent = ($percentNum + $percentEffort) / 2;
+            $finalPercent = $percentEffort;
 
             if ($totalprojectDays > 0) {
                 $dailyPercent = $finalPercent / $totalprojectDays;
