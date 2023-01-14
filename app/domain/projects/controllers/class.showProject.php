@@ -5,6 +5,7 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
+    use leantime\domain\models\notifications\notification;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
@@ -221,7 +222,7 @@ namespace leantime\domain\controllers {
 
                             $actual_link = CURRENT_URL;
 
-                            $notification = new models\notifications\notification();
+                            $notification = new notification();
                             $notification->url = array(
                                 "url" => $actual_link,
                                 "text" => $linkLabel

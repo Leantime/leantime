@@ -100,7 +100,7 @@ namespace leantime\domain\controllers {
 
             if (isset($_GET['module']) && isset($_GET['label'])) {
 
-                $sanitizedString = filter_var($params['newLabel'], FILTER_SANITIZE_STRING);
+                $sanitizedString = htmlentities($params['newLabel']);
 
                 //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {

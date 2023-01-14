@@ -221,23 +221,17 @@ jQuery(document).ready(function(){
         echo $this->displayNotification();
         ?>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.week_view") ?> <?=$this->__("links.view") ?></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$this->__("links.week_view") ?></a></li>
-                            <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$this->__("links.list_view") ?></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
-
-            <div class="headtitle filterBar">
+            <div class="btn-group viewDropDown pull-right">
+                <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.week_view") ?> <?=$this->__("links.view") ?></button>
+                <ul class="dropdown-menu">
+                    <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$this->__("links.week_view") ?></a></li>
+                    <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$this->__("links.list_view") ?></a></li>
+                </ul>
+            </div>
+            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
                     <span><?php echo $this->__('label.week_from')?></span>

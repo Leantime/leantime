@@ -36,12 +36,12 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
 
             <div class="pull-right" style="margin-right:3px;">
                 <div id="tableButtons" style="display:inline-block"></div>
-                <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?></a>
+                <a onclick="jQuery('.headtitle').toggle();" class="btn btn-default "><?=$this->__("links.filter") ?> (1)</a>
             </div>
 
             <div class="clearfix"></div>
 
-            <div class="headtitle filterBar ">
+            <div class="headtitle filterBar" style="display:none;">
 
                 <div class="filterBoxLeft">
                     <label for="dateFrom"><?php echo $this->__('label.date_from'); ?> <?php echo $this->__('label.date_to'); ?></label>
