@@ -164,7 +164,7 @@ $user = $this->get('user');
                                 </div>
                             </div>
                             <input type="hidden" name="saveLook" value="1" />
-                            <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                            <input type="submit" name="save" id="saveTheme" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
                         </form>
                     </div>
 

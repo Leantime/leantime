@@ -50,6 +50,43 @@
 
                     </select> <br />
 
+                    <label for="status"><?php echo $this->__('label.status'); ?></label>
+                    <select name="status" id="status" class="pull-left">
+
+                        <option value="a"
+                            <?php if(strtolower($values['status']) == "a") { ?> selected="selected" <?php
+                            } ?>>
+                            <?=$this->__("label.active") ?>
+                        </option>
+
+                        <option value="i"
+                            <?php if(strtolower($values['status']) == "i") { ?> selected="selected" <?php
+                            } ?>>
+                            <?=$this->__("label.invited") ?>
+                        </option>
+
+                        <option value=""
+                            <?php if(strtolower($values['status']) == "") { ?> selected="selected" <?php
+                            } ?>>
+                            <?=$this->__("label.deactivated") ?>
+                        </option>
+
+
+                    </select>
+                        <?php if($values['status'] == 'i'){?>
+                        <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$this->__("label.inviteLink") ?></a>
+                            <div class="dropdown-menu padding-md noClickProp">
+                                <input type="text" id="inviteURL" value="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>" />
+                                <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('inviteURL');"><?=$this->__('links.copy_url') ?></button>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <div class="clearfix"></div>
+
+
+
+
                     <label for="client"><?php echo $this->__('label.client') ?></label>
                     <select name='client' id="client">
                         <?php if($login::userIsAtLeast("manager")){?>
@@ -102,6 +139,11 @@
 </form>
 
 <script>
+
+    jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
+        e.stopPropagation();
+    });
+
     function accordionToggle(id) {
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");

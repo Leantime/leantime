@@ -538,7 +538,7 @@ namespace leantime\domain\repositories {
 
             $return = BASE_URL . '/images/default-user.png';
 
-            if($id === false) {
+            if ($id === false) {
                 return $return;
             }
 
@@ -552,7 +552,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             if ($value !== false && $value['profileId'] != '') {
-
                 $files = new files();
                 $file = $files->getFile($value['profileId']);
 
@@ -560,18 +559,18 @@ namespace leantime\domain\repositories {
                     $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
                 }
 
-                $filePath = ROOT."/../userfiles/".$file['encName'].".".$file['extension'];
+                $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
                 $type = $file['extension'];
 
-               return $return;
-
-
-
+                return $return;
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
-
-
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
-                $image = $avatar->name($value['firstname'] . " " . $value['lastname'])->background('#81B1A8')->color("#fff")->generate();
+                $image = $avatar
+                    ->name($value['firstname'] . " " . $value['lastname'])
+                    ->font(ROOT . '/fonts/roboto/Roboto-Light.ttf')
+                    ->fontName("Roboto")
+                    ->background('#81B1A8')->color("#fff")
+                    ->generate();
 
                 return $image->encode('jpg', 100);
             }
