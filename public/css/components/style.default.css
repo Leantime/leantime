@@ -3898,3 +3898,13 @@ a.titleInsertLink:hover {
     vertical-align: middle;
 
 }
+
+@media print {
+    .leftpanel {
+        display:none;
+    }
+
+    .header {
+        display:none;
+    }
+}
