@@ -3,6 +3,7 @@
 namespace leantime\domain\services {
 
     use leantime\core;
+    use leantime\domain\models\notifications\notification;
     use leantime\domain\repositories;
     use leantime\domain\services;
 
@@ -48,7 +49,20 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link"=>CURRENT_URL, "text"=> $linkLabel));
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => CURRENT_URL,
+                        "text" => $linkLabel
+                    );
+
+                    $notification->entity = $file;
+                    $notification->module = $module;
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
 
                     return true;
 

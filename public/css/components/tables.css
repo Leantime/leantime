@@ -4,7 +4,7 @@
     font-size: var(--font-size-s);
     border-top: 0;
     color: var(--kanban-col-title-color);
-    background:var(--secondary-background);
+    background:var(--col-content-bg);
 
 }
 
@@ -200,6 +200,11 @@
 
     color: var(--kanban-col-title-color);
     background:var(--secondary-background);
+}
+
+.maincontentinner .table th,
+.maincontentinner .table.table-bordered th {
+    background:var(--col-content-bg);
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -426,12 +431,11 @@
     border:1px solid var(--neutral);
 }
 
-.dataTable td.dropdown-cell {
+.table td.dropdown-cell {
     padding:0px;
-    height: 17px;
 }
 
-.dataTable td.dropdown-cell .dropdown {
+.table td.dropdown-cell .dropdown {
     width:100%;
     height:100%;
     border-radius:0px !important;
@@ -439,26 +443,25 @@
 
 }
 
-.dataTable td.dropdown-cell .dropdown > a {
+.table td.dropdown-cell .dropdown > a {
     width:100%;
     height:100%;
     border-radius:0px !important;
-    padding: 8px 10px 0px 10px !important;
-    line-height:17px;
+    padding: 0px 10px 0px 10px !important;
+    line-height:37px;
     font-size:var(--base-font-size);
     box-shadow:none;
+    display:inline-block;
 }
 
-.dataTable td.dropdown-cell .dropdown > a .text {
-    float:left;
+.table td.dropdown-cell .dropdown > a .text {
 }
-.dataTable td.dropdown-cell .dropdown > a i {
+.table td.dropdown-cell .dropdown > a i {
     float:right;
-    padding-top:2px;
-
+    line-height:37px;
 }
 
-.dataTable td.dropdown-cell .dropdown.ticketDropdown ul {
+.table td.dropdown-cell .dropdown.ticketDropdown ul {
     top:35px;
 }
 

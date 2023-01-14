@@ -450,6 +450,7 @@ namespace leantime\domain\services {
                 core\frontcontroller::redirect(BASE_URL . "/errors/error403");
             }
 
+            return false;
         }
 
         public static function userHasRole(string|array $role, $forceGlobalRoleCheck = false): bool

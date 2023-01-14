@@ -114,6 +114,7 @@ $statusLabels = $this->get('statusLabels');
         jQuery(document).ready(function(){
 
             leantime.ticketsController.initModals();
+            leantime.ticketsController.initMilestoneDates();
 
             <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
 

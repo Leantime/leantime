@@ -221,12 +221,19 @@ namespace leantime\domain\controllers {
 
                             $actual_link = CURRENT_URL;
 
-                            $this->projectService->notifyProjectUsers(
-                                $message,
-                                $subject,
-                                $id,
-                                array("link" => $actual_link, "text" => $linkLabel)
+                            $notification = new models\notifications\notification();
+                            $notification->url = array(
+                                "url" => $actual_link,
+                                "text" => $linkLabel
                             );
+                            $notification->entity = $project;
+                            $notification->module = "projects";
+                            $notification->projectId = $_SESSION['currentProject'];
+                            $notification->subject = $subject;
+                            $notification->authorId = $_SESSION['userdata']['id'];
+                            $notification->message = $message;
+
+                            $this->projectService->notifyProjectUsers($notification);
                         }
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.no_project_name"), 'error');

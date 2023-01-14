@@ -205,6 +205,9 @@
 
             <div id="files">
 
+                <?php $this->displaySubmodule('files-showAll'); ?>
+
+                <?php /*
                 <div class="mediamgr_category">
                             <form action='#files' method='POST' enctype="multipart/form-data" id="fileForm">
 
@@ -269,6 +272,7 @@
 
                 </div><!--mediamgr_content-->
                 <div style='clear:both'>&nbsp;</div>
+ */ ?>
 
             </div><!-- end files -->
 

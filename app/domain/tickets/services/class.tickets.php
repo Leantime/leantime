@@ -343,11 +343,11 @@ namespace leantime\domain\services {
             return $tickets;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "duedate")
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "duedate", $includeTasks = false)
         {
 
             if ($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy);
+                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy, $includeTasks);
             }
 
             return false;
@@ -423,9 +423,28 @@ namespace leantime\domain\services {
             $result = $this->ticketRepository->addTicket($values);
 
             if ($result > 0) {
+
+                $values['id'] = $result;
                 $actual_link = BASE_URL . "/tickets/showTicket/" . $result;
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
+                $subject = $this->language->__("email_notifications.new_todo_subject");
+
                 $this->projectService->notifyProjectUsers($message, $this->language->__("email_notifications.new_todo_subject"), $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
+
+                $notification = new models\notifications\notification();
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.new_todo_cta")
+                );
+                $notification->entity = $values;
+                $notification->module = "tickets";
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $subject;
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = $message;
+
+                $this->projectService->notifyProjectUsers($notification);
+
 
                 return $result;
             } else {
@@ -526,7 +545,19 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $addTicketResponse;
                     $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.new_todo_cta")
+                    );
+                    $notification->entity = $values;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
 
                     return $addTicketResponse;
                 }
@@ -589,7 +620,21 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.todo_update_cta")));
+
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                    );
+                    $notification->entity = $values;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
+
 
                     return true;
                 }
@@ -716,7 +761,20 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.todo_update_cta")));
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                    );
+                    $notification->entity = $ticket;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
+
                 }
             }
 

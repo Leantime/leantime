@@ -201,6 +201,32 @@ body.mce-content-body {
     border-right:0px;
 }
 
+.userMention {
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight:bold;
+    white-space: nowrap;
+}
+
+.userMention img {
+    width: 17px;
+
+    border-radius: 10px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+}
+
+a.userMention {
+    color: var(--primary-color);
+    font-weight:bold;
+}
+
+a.userMention:hover,
+a.userMention:focus {
+    text-decoration: none;
+}
+
 
 
 

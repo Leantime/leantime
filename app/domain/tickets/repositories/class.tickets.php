@@ -687,7 +687,7 @@ namespace leantime\domain\repositories {
 
         }
 
-        public function getAllMilestones($projectId, $includeArchived =false, $sortBy="headline")
+        public function getAllMilestones($projectId, $includeArchived =false, $sortBy="headline", $includeTasks = false)
         {
 
             $query = "SELECT
@@ -753,7 +753,13 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 					WHERE
-						zp_tickets.type = 'milestone' AND zp_tickets.projectId = :projectId";
+						zp_tickets.projectId = :projectId";
+
+                    if($includeTasks === true) {
+                        $query .= " AND zp_tickets.type <> 'subtasks' ";
+                    }else{
+                        $query .= " AND zp_tickets.type = 'milestone' ";
+                    }
 
                     if($includeArchived === false) {
                         $query .= " AND zp_tickets.status > -1 ";

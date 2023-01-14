@@ -129,7 +129,7 @@ foreach($this->get('allCanvas') as $canvasRow){
                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                 <div class="mainIdeaContent">
-                                    <?=$row["data"] ?>
+                                    <?=$this->escapeMinimal($row["data"]) ?>
                                 </div>
 
                                 <div class="clearfix" style="padding-bottom: 8px;"></div>

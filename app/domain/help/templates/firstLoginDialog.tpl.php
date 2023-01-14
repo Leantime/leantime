@@ -83,10 +83,9 @@ if(isset($_GET['step']) && $_GET['step'] == "complete"){?>
                 <br />
                 <input type="submit" value="<?=$this->__('buttons.lets_go') ?>"/>
                 <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?=$this->__('links.skip_for_now') ?></a>
-
             </div>
             <div class="col-md-6">
-                <div class='svgContainer' style="width:300px">
+                <div class='svgContainer' style="width:300px; margin-top:60px;">
                     <?= file_get_contents(ROOT."/images/svg/undraw_children_re_c37f.svg"); ?>
                 </div>
             </div>

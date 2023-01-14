@@ -14,7 +14,6 @@
     "datatables.net-buttons": "^1.7.1",
     "datatables.net-rowgroup": "^1.2.0",
     "datatables.net-rowreorder": "^1.2.8",
-    "font-awesome": "",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "3.6.1",
@@ -29,7 +28,8 @@
     "rangy": "^1.3.0",
     "tether-shepherd": "^1.8.1",
     "tinymce": "5.10.5",
-    "uppy": "^2.13.3"
+    "uppy": "^2.13.3",
+      "tinymce-mention": "^4.0.2"
   },
   "devDependencies": {
     "grunt": "^1.5.3",

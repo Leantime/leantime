@@ -52,7 +52,7 @@ namespace leantime\domain\repositories {
         public function getClient($id)
         {
 
-            $query = "SELECT 
+            $query = "SELECT
                  zp_clients.id,
                  zp_clients.name,
                  zp_clients.street,
@@ -64,10 +64,10 @@ namespace leantime\domain\repositories {
                  zp_clients.internet,
                  zp_clients.email,
               COUNT(zp_projects.clientId) AS numberOfProjects
-					FROM zp_clients 
+					FROM zp_clients
 					LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId
 				WHERE  zp_clients.id = :id
-				GROUP BY 
+				GROUP BY
 						zp_clients.id,
 						zp_clients.name,
 						zp_clients.internet
@@ -108,10 +108,10 @@ namespace leantime\domain\repositories {
 						zp_clients.name,
 						zp_clients.internet,
 						COUNT(zp_projects.clientId) AS numberOfProjects
-					FROM zp_clients 
+					FROM zp_clients
 					LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId
-					
-					GROUP BY 
+
+					GROUP BY
 						zp_clients.id,
 						zp_clients.name,
 						zp_clients.internet
@@ -171,7 +171,15 @@ namespace leantime\domain\repositories {
         public function getClientsUsers($clientId)
         {
 
-            $sql = "SELECT * FROM zp_user WHERE clientId = :clientId";
+            $sql = "SELECT
+                    zp_user.id,
+					zp_user.firstname,
+					zp_user.lastname,
+					zp_user.username,
+					zp_user.notifications,
+					zp_user.profileId,
+                    zp_user.status
+                    FROM zp_user WHERE clientId = :clientId";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
@@ -228,13 +236,13 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE zp_clients SET
-			 	name = :name, 
-			 	street = :street, 
-			 	zip = :zip, 
-			 	city = :city, 
-			 	state = :state, 
-			 	country = :country, 
-			 	phone = :phone, 
+			 	name = :name,
+			 	street = :street,
+			 	zip = :zip,
+			 	city = :city,
+			 	state = :state,
+			 	country = :country,
+			 	phone = :phone,
 			 	internet = :internet,
 			 	email = :email
 			 WHERE id = :id LIMIT 1";

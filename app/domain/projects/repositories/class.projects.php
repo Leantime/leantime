@@ -488,8 +488,9 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param array|bool $values
+         * @return int|bool returns new project id on success, false on failure.
          */
-        public function addProject($values): array|bool
+        public function addProject($values): int|bool
         {
 
             $query = "INSERT INTO `zp_projects` (
@@ -739,6 +740,7 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
+				zp_user.username,
 				zp_user.firstname,
 				zp_user.lastname,
 				zp_user.profileId,

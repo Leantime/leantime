@@ -2,11 +2,12 @@
 
 namespace leantime\core;
 
-class environment {
-
+class environment
+{
     private static $instance = null;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
 
         if (self::$instance === null) {
             self::$instance = new self();
@@ -14,14 +15,19 @@ class environment {
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
+
         $defaultConfiguration = new \leantime\core\config();
+
         $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
         $this->dotenv->safeLoad();
+
         $this->yaml = null;
         if (file_exists(ROOT . "/../config/config.yaml")) {
             $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(ROOT . "/../config/config.yaml");
         }
+
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename ?? 'Leantime');
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language ?? 'en-US');
@@ -70,7 +76,7 @@ class environment {
             $this->smtpHosts = $this->environmentHelper("LEAN_EMAIL_SMTP_HOSTS", $defaultConfiguration->smtpHosts ?? '');
             $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? '', "boolean");
             $this->smtpUsername = $this->environmentHelper("LEAN_EMAIL_SMTP_USERNAME", $defaultConfiguration->smtpUsername ?? '');
-            $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '' );
+            $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '');
             $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS ?? false, "boolean");
             $this->smtpSecure = $this->environmentHelper("LEAN_EMAIL_SMTP_SECURE", $defaultConfiguration->smtpSecure ?? '');
             $this->smtpPort = $this->environmentHelper("LEAN_EMAIL_SMTP_PORT", $defaultConfiguration->smtpPort ?? '');
@@ -92,7 +98,8 @@ class environment {
         }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string") {
+    private function environmentHelper($envVar, $default, $dataType = "string")
+    {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
@@ -125,14 +132,16 @@ class environment {
         }
     }
 
-    private function tryGetFromEnvironment($envVar, $currentValue) {
+    private function tryGetFromEnvironment($envVar, $currentValue)
+    {
         if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
-        return isset($_ENV[$envVar]) ? $_ENV[$envVar] : null;
+        return $_ENV[$envVar] ?? null;
     }
 
-    private function tryGetFromYaml($envVar, $currentValue) {
+    private function tryGetFromYaml($envVar, $currentValue)
+    {
         if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
@@ -143,5 +152,4 @@ class environment {
             return null;
         }
     }
-
 }

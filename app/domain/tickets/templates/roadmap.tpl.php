@@ -34,6 +34,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
+
                     <div class="btn-group dropRight">
 
                         <?php
@@ -61,6 +62,15 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
                             <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
                         </ul>
                     </div>
+
+                    <div class="pull-left btn-group" style="margin-right:10px;">
+                        <form action="" method="get" id="searchForm">
+                            <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
+                            <input type="hidden" name="submitIncludeTasks" value="1" />
+                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if($this->get('includeTasks') === true) echo "checked='checked'" ?>/>
+                        </form>
+                    </div>
+
                 </div>
 
             </div>
@@ -80,7 +90,7 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 
         }
         ?>
-        <div class="gantt-container" style="height:100%; overflow: auto;">
+        <div class="gantt-wrapper">
             <svg id="gantt"></svg>
         </div>
 
@@ -88,9 +98,12 @@ if(isset($_SESSION['userdata']['settings']['views']['roadmap'])){
 </div>
 
 <script type="text/javascript">
-jQuery(document).ready(function(){
+
+    jQuery(document).ready(function(){
 
     leantime.ticketsController.initModals();
+
+
 
     <?php if(isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0){     ?>
     leantime.helperController.showHelperModal("roadmap");
@@ -124,19 +137,24 @@ jQuery(document).ready(function(){
 
                 echo"{
                     id :'".$mlst->id."',
-                    name :".json_encode("".$mlst->headline." (".$mlst->percentDone."% Done)").",
+                    name :".json_encode("".$this->__('label.'.strtolower($mlst->type)).": ".$mlst->headline." (".$mlst->percentDone."% Done)").",
                     start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31')? $mlst->editFrom :  date('Y-m-d'))."',
-                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time())))."',
+                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time())))."',
                     progress :'".$mlst->percentDone."',
                     dependencies :'".($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '')."',
                     custom_class :'',
-                    color: '".$mlst->tags."',
-                    bgColor: '".$mlst->tags."',
+                    type: '".strtolower($mlst->type)."',
+                    bg_color: '".$mlst->tags."',
+                    thumbnail: '".BASE_URL."/api/users?profileImage=".$mlst->editorId."'
 
                 },";
             }
             ?>
         ];
+
+
+
+
 
         <?php if($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);

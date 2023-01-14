@@ -37,7 +37,7 @@
 	position: relative;
 	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
 	background: var(--secondary-background);
-	border-radius:5px;
+	border-radius:20px;
 	margin-bottom:50px;
 }
 .nyroModalCont iframe {

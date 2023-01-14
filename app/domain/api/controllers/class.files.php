@@ -47,6 +47,13 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
+            //FileUpload
+            if(isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
+                $module = htmlentities($_GET['module']);
+                $id = (int) $_GET['moduleId'];
+                return $this->fileRepo->upload($_FILES, $module, $id);
+            }
+
             //Updatind User Image
             if (isset($_FILES['file'])) {
 

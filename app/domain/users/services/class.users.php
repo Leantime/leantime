@@ -11,12 +11,16 @@ namespace leantime\domain\services {
         private repositories\users $userRepo;
         private core\template $tpl;
         private core\language $language;
+        private repositories\projects $projectRepository;
+        private repositories\clients $clientRepo;
 
         public function __construct()
         {
             $this->tpl = new core\template();
             $this->userRepo = new repositories\users();
             $this->language = core\language::getInstance();
+            $this->projectRepository = new repositories\projects();
+            $this->clientRepo = new repositories\clients();
         }
 
         //GET
@@ -177,6 +181,57 @@ namespace leantime\domain\services {
          */
         public function usernameExist($username, $notUserId=''){
             return $this->userRepo->usernameExist($username, $notUserId);
+        }
+
+        /**
+         * getUsersWithProjectAccess - gets all users who can access a project
+         *
+         * TODO: Should return usermodel
+         *
+         * @access public
+         * @param int $currentUser user who is trying to access the project
+         * @param int $projectId project id
+         * @return array returns array of users
+         */
+        public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
+        {
+            $users = array();
+
+            if($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {
+                $project = $this->projectRepository->getProject($projectId);
+
+                if($project['psettings'] == 'all') {
+                    return $this->getAll();
+                }
+
+                if($project['psettings'] == 'clients') {
+
+                   $clientUsers = $this->clientRepo->getClientsUsers($project['clientId']);
+                   $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
+                   $users = $clientUsers;
+
+                   foreach($projectUsers as $user) {
+                       $column = array_column($users, 'id');
+                       $search = array_search($user['id'], $column);
+                       if(array_search($user['id'], $column) === false)  {
+                            $users[] = $user;
+                       }
+                   }
+
+                   return $users;
+                }
+
+                if($project['psettings'] == 'restricted') {
+
+                    $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+                    return $users;
+                }
+
+            }
+
+            return [];
+
         }
     }
 }

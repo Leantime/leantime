@@ -3,8 +3,6 @@ var leantime = leantime || {};
 leantime.ticketsRepository = (function () {
 
     // Variables (underscore for private variables)
-    var publicThing = "not secret";
-    var _privateThing = "secret";
 
     //Constructor
     (function () {
@@ -22,8 +20,8 @@ leantime.ticketsRepository = (function () {
                 data:
                 {
                     id : id,
-                    editFrom:start.format("YYYY-MM-DD"),
-                    editTo:end.format("YYYY-MM-DD")
+                    editFrom:start,
+                    editTo:end
                 }
             }
         ).done(

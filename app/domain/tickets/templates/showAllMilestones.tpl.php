@@ -138,7 +138,7 @@
 
                             <td class="dropdown-cell" data-order="<?=$milestoneHeadline?>">
                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                    <a style="background-color:<?=$this->escape($row->milestoneColor)?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a style="background-color:<?=$this->escape($row->milestoneColor)?>" class="dropdown-toggle label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text"><?=$milestoneHeadline?></span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
@@ -159,7 +159,7 @@
 
                             <td class="dropdown-cell" data-order="<?=$statusLabels[$row->status]["name"]?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle f-left status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
                                             <?php echo $statusLabels[$row->status]["name"]; ?>
                                         </span>
@@ -178,7 +178,7 @@
 
                             <td class="dropdown-cell" data-order="<?=$row->editorFirstname != "" ?  $this->escape($row->editorFirstname) : $this->__("dropdown.not_assigned")?>">
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
-                                    <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if($row->editorFirstname != ""){
                                                                         echo "<span id='userImage".$row->id."'><img src='".BASE_URL."/api/users?profileImage=".$row->editorId."' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user".$row->id."'> ". $this->escape($row->editorFirstname). "</span>";
