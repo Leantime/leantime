@@ -57,7 +57,7 @@
 
         <div class="row">
 
-            <?php if(count($allProjects) == 0) {
+            <?php if(is_array($allProjects) && count($allProjects) == 0) {
 
             echo "<div class='col-md-12'><br /><br /><div class='center'>";
                 echo"<div style='width:30%' class='svgContainer'>";
@@ -76,17 +76,53 @@
                     <div class="col-md-12">
                         <h5 class="subtitle">
                             <?php $this->e($project['clientName'])?> \\
-                            <?php $this->e($project['name'])?>
+                            <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?php $this->e($project['name'])?></a>
                         </h5>
 
-                        <div id="canvas-holder" style="width:100%; height:250px;">
-                            <canvas id="chart-area-<?=$project['id']?>" ></canvas>
+                        <?php if($project['lastUpdate'] !== false){?>
+                        <div class="lastStatus">
+                            <div class="commentContent statusUpdate commentStatus-<?=$this->escape($project['lastUpdate']['status']); ?>">
+                                <h3 class="">
+                                    <?php printf( $this->__('text.report_written_on'), $this->getFormattedDateString($project['lastUpdate']['date']),
+                                        $this->getFormattedTimeString($project['lastUpdate']['date']) ); ?>
+
+                                </h3>
+
+                                <div class="text" id="commentText-<?=$project['lastUpdate']['id']?>"><?php echo $this->escapeMinimal($project['lastUpdate']['text']); ?></div>
+
+                            </div>
+
+                            <div class="commentLinks">
+                                <small class="right">
+                                    <?php printf( $this->__('text.written_on_by'), $this->getFormattedDateString($project['lastUpdate']['date']),
+                                        $this->getFormattedTimeString($project['lastUpdate']['date']), $this->escape($project['lastUpdate']['firstname']), $this->escape($project['lastUpdate']['lastname']) ); ?>
+                                </small>
+
+                            </div>
+
+                        </div>
+                            <div class="clearall"></div>
+                            <br />
+                        <?php } ?>
+
+                        <br />
+
+                        <div class="row">
+
+                            <div class="col-md-7">
+                                <h5 class="subtitle" style="font-size:14px;"><?=$this->__("subtitles.project_progress") ?></h5>
+                            </div>
+                            <div class="col-md-5" style="text-align:right">
+                                <?=sprintf($this->__("text.percent_complete"), round($project['progress']['percent']))?>
+                            </div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?=round($project['progress']['percent']); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=round($project['progress']['percent']); ?>%">
+                                <span class="sr-only"><?=round($project['progress']['percent']); ?>% Complete</span>
+                            </div>
                         </div>
                         <br />
-                        <div class="center">
-                        <a class="btn btn-default" href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?=$this->__("links.open_project") ?></a>
-                        </div>
-                        <br />
+
                     </div>
                 </div>
                 <div class="row">
@@ -210,14 +246,3 @@
 </div>
 
 
-<script type="text/javascript">
-
-   jQuery(document).ready(function() {
-
-       <?php foreach($allProjects as $project) { ?>
-        leantime.dashboardController.initProgressChart("chart-area-<?=$project['id']?>", <?php echo round($project['progress']['percent']); ?>, <?php echo round((100 - $project['progress']['percent'])); ?>);
-       <?php }?>
-
-   });
-
-</script>
