@@ -488,7 +488,7 @@ namespace leantime\domain\services {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                 foreach ($projectUsers as $user) {
-                    $copyProject['assignedUsers'][] = $user['id'];
+                    $copyProject['assignedUsers'][] = array("id" =>$user['id'], "projectRole" =>$user['projectRole']);
                 }
             }
 

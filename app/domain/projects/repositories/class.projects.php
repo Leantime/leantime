@@ -340,7 +340,8 @@ namespace leantime\domain\repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
-                    zp_user.status
+                    zp_user.status,
+                    zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
@@ -500,13 +501,15 @@ namespace leantime\domain\repositories {
             $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
 
             //Add users to relation
-            /* if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
 
-              foreach ($values['assignedUsers'] as $userId) {
-              $this->addProjectRelation($userId, $projectId);
+              foreach ($values['assignedUsers'] as $user) {
+                  if(is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
+                      $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                  }
               }
 
-              } */
+              }
 
             return $projectId;
         }
