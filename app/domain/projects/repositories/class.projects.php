@@ -458,30 +458,6 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        /**
-         * getOpenTickets - get all open tickets related to a project
-         *
-         * @access public
-         * @param  $id
-         * @return array
-         */
-        public function getOpenTickets($id): array|bool
-        {
-
-            $query = "SELECT
-                        COUNT(zp_tickets.status) AS openTickets
-                    FROM zp_tickets
-                    WHERE zp_tickets.projectId = :id AND zp_tickets.status > 0";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $values;
-        }
 
         /**
          * addProject - add a project to a client

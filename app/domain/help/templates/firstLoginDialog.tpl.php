@@ -113,7 +113,7 @@ function skipOnboarding() {
     jQuery("form.step1 #projectName").val('<?=$_SESSION["currentProjectName"]?>');
     jQuery("form.step1").submit();
     jQuery.nmTop().close();
-    
+
 }
 </script>
 

@@ -429,8 +429,6 @@ namespace leantime\domain\services {
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
                 $subject = $this->language->__("email_notifications.new_todo_subject");
 
-                $this->projectService->notifyProjectUsers($message, $this->language->__("email_notifications.new_todo_subject"), $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
-
                 $notification = new models\notifications\notification();
                 $notification->url = array(
                     "url" => $actual_link,
