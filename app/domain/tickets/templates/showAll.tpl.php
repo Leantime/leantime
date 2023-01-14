@@ -371,7 +371,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
                                     <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                    <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
                                     <?php foreach ($this->get('milestones') as $milestone) {
                                         echo"<li class='dropdown-item'>

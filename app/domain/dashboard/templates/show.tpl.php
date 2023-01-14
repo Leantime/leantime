@@ -144,7 +144,7 @@
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
                                                         <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                                        <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id']."_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
                                                         <?php foreach($this->get('milestones') as $milestone){
                                                             echo"<li class='dropdown-item'>
@@ -196,7 +196,7 @@
                             <div class="col-md-3">
                                 <div class="profileBox">
                                     <div class="commentImage">
-                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $assignedUser['userId'] ?>"/>
+                                        <img src="<?=BASE_URL ?>/api/users?profileImage=<?= $assignedUser['userId'] ?>"/>
                                     </div>
                                     <span class="userName">
                                         <?php
@@ -320,7 +320,7 @@
                                                         <?php } ?>
                                                     </h3>
 
-                                                    <div class="text" id="commentText-<?=$row['id']?>"><?php echo ($row['text']); ?></div>
+                                                    <div class="text" id="commentText-<?=$row['id']?>"><?php echo $this->escapeMinimal($row['text']); ?></div>
 
 
                                                 </div>
@@ -352,7 +352,7 @@
                                                                                 $this->getFormattedTimeString($comment['date']) ); ?>
                                                                         </div>
                                                                         <span class="name"><?php printf( $this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
-                                                                        <div class="text"><?php echo ($comment['text']); ?></div>
+                                                                        <div class="text"><?php echo $this->escapeMinimal($comment['text']); ?></div>
                                                                     </div>
 
                                                                     <div class="commentLinks">

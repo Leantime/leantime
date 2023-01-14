@@ -64,6 +64,11 @@ namespace leantime\domain\controllers {
                         'status' => '',
                         'clientId' => ($_POST['client'])
                     );
+                    if(isset($_POST['projects']) && is_array($_POST['projects'])) {
+                        foreach ($_POST['projects'] as $project) {
+                            $projectrelation[] = $project;
+                        }
+                    }
 
                     if ($values['user'] !== '') {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
@@ -77,6 +82,8 @@ namespace leantime\domain\controllers {
                                     } else {
                                         $this->projectsRepo->deleteAllProjectRelations($userId);
                                     }
+
+
                                 }
 
                                 $this->tpl->setNotification("notification.user_invited_successfully", 'success');

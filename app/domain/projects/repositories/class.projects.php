@@ -340,7 +340,8 @@ namespace leantime\domain\repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
-                    zp_user.status
+                    zp_user.status,
+                    zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
@@ -458,30 +459,6 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        /**
-         * getOpenTickets - get all open tickets related to a project
-         *
-         * @access public
-         * @param  $id
-         * @return array
-         */
-        public function getOpenTickets($id): array|bool
-        {
-
-            $query = "SELECT
-                        COUNT(zp_tickets.status) AS openTickets
-                    FROM zp_tickets
-                    WHERE zp_tickets.projectId = :id AND zp_tickets.status > 0";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $values;
-        }
 
         /**
          * addProject - add a project to a client
@@ -524,13 +501,15 @@ namespace leantime\domain\repositories {
             $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
 
             //Add users to relation
-            /* if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+            if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
 
-              foreach ($values['assignedUsers'] as $userId) {
-              $this->addProjectRelation($userId, $projectId);
+              foreach ($values['assignedUsers'] as $user) {
+                  if(is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
+                      $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                  }
               }
 
-              } */
+              }
 
             return $projectId;
         }

@@ -62,7 +62,7 @@ $user = $this->get('user');
                                 <div class="form-group">
                                     <label for="phone" class="span3"><?php echo $this->__('label.phone'); ?></label>
                                     <span class='field span6'>
-                                        <input type="text" name="phone" class="input" id="phone" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>
+                                        <input type="text" name="phone" class="input" id="phone" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                value="<?php $this->e($values['phone']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -81,6 +81,9 @@ $user = $this->get('user');
                         <h4 class="widgettitle title-light">
                             <?=$this->__('headlines.change_password'); ?>
                         </h4>
+                        <?php if($_SESSION['userdata']['isLdap']){
+                            echo "<strong>".$this->__("text.account_managed_ldap")."</strong><br /><br />";
+                        } ?>
                         <form method="post">
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <div class="row-fluid">
@@ -107,13 +110,17 @@ $user = $this->get('user');
                                     <span class='field span6'>
                                         <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                id="confirmPassword"/><br/>
+                                        <?php if(!$_SESSION['userdata']['isLdap']){?>
                                         <small><?=$this->__('label.passwordRequirements') ?></small>
+                                        <?php } ?>
                                     </span>
 
                                 </div>
                             </div>
+                            <?php if(!$_SESSION['userdata']['isLdap']){?>
                             <input type="hidden" name="savepw" value="1" />
                             <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                            <?php }?>
                         </form>
                         <br /><br />
                         <h4 class="widgettitle title-light">
@@ -157,7 +164,7 @@ $user = $this->get('user');
                                 </div>
                             </div>
                             <input type="hidden" name="saveLook" value="1" />
-                            <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
+                            <input type="submit" name="save" id="saveTheme" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
                         </form>
                     </div>
 

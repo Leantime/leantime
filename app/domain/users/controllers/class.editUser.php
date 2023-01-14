@@ -12,7 +12,7 @@ namespace leantime\domain\controllers {
 	{
 
         private $projectsRepo;
-        private $userRepo;
+        private repositories\users $userRepo;
         private $clientsRepo;
 
 		/**
@@ -59,7 +59,8 @@ namespace leantime\domain\controllers {
 						'hours' => $row['hours'],
 						'wage' => $row['wage'],
 						'clientId' => $row['clientId'],
-                        'source' =>  $row['source']
+                        'source' =>  $row['source'],
+                        'pwReset' => $row['pwReset']
 					);
 
 					if (isset($_POST['save'])) {
@@ -77,7 +78,8 @@ namespace leantime\domain\controllers {
 								'wage' => ($_POST['wage'] ?? $row['wage']),
 								'clientId' => ($_POST['client'] ?? $row['clientId']),
 								'password' => ($row['password']),
-                                'source' =>  $row['source']
+                                'source' =>  $row['source'],
+                                'pwReset' => $row['pwReset']
 							);
 
 							$changedEmail = 0;

@@ -224,6 +224,35 @@ namespace leantime\domain\repositories {
             return $this->statusList;
         }
 
+        public function getStatusListGroupedByType($projectId){
+
+            $statusByType = array(
+                "DONE" => array(),
+                "INPROGRESS" => array(),
+                "NEW" => array()
+            );
+            $states = $this->getStateLabels($projectId);
+
+            foreach($states as $key=>$value) {
+
+                $statusByType[$value["statusType"]][] = $key;
+
+            }
+
+            $doneQuery = "IN(" . implode(",", $statusByType["DONE"]) .")";
+            $inProgressQuery = "IN(" . implode(",", $statusByType["INPROGRESS"]) .")";
+            $newQuery = "IN(" . implode(",", $statusByType["NEW"]) .")";
+            $openTodos = "IN(" . implode(",", array_merge($statusByType["NEW"], $statusByType["INPROGRESS"])) .")";
+
+            $statusByTypeQuery = array(
+                "DONE" => $doneQuery,
+                "INPROGRESS" => $inProgressQuery,
+                "NEW" => $newQuery,
+                "ALLOPEN" => $openTodos
+            );
+            return $statusByTypeQuery;
+        }
+
         /**
          * getAll - get all Tickets, depending on userrole
          *
@@ -690,6 +719,9 @@ namespace leantime\domain\repositories {
         public function getAllMilestones($projectId, $includeArchived =false, $sortBy="headline", $includeTasks = false)
         {
 
+            $statusGroups = $this->getStatusListGroupedByType($projectId);
+
+
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
@@ -736,7 +768,7 @@ namespace leantime\domain\repositories {
                             THEN
                               ROUND(
                                 (
-                                  SUM(CASE WHEN progressSub.status < 1 THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
+                                  SUM(CASE WHEN progressSub.status ".$statusGroups["DONE"]." THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
                                   SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
                                 ) *100)
                             ELSE
@@ -931,13 +963,15 @@ namespace leantime\domain\repositories {
         public function getNumberOfClosedTickets($projectId)
         {
 
+            $statusGroups = $this->getStatusListGroupedByType($projectId);
+
             $query = "SELECT
 						COUNT(zp_tickets.id) AS allTickets
 					FROM
 						zp_tickets
 					WHERE
 						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
-						AND zp_tickets.status < 1
+						AND zp_tickets.status ".$statusGroups["DONE"]."
                     ORDER BY
 					    zp_tickets.date ASC
 					LIMIT 1";
@@ -957,13 +991,15 @@ namespace leantime\domain\repositories {
         public function getEffortOfClosedTickets($projectId, $averageStorySize)
         {
 
+            $statusGroups = $this->getStatusListGroupedByType($projectId);
+
             $query = "SELECT
 						SUM(CASE when zp_tickets.storypoints <> '' then zp_tickets.storypoints else :avgStorySize end) AS allEffort
 					FROM
 						zp_tickets
 					WHERE
 						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
-						AND zp_tickets.status < 1
+						AND zp_tickets.status ". $statusGroups["DONE"] ."
                     ORDER BY
 					    zp_tickets.date ASC
 					LIMIT 1";

@@ -20,9 +20,10 @@ if(isset($_GET['step']) && $_GET['step'] == "complete"){?>
             <p><?=$this->__('text.first_login_intro') ?></p>
             <br />
             <label><?=$this->__('label.name_your_first_project') ?></label>
-            <input type="text" name="projectname" value="" placeholder=""/><br />
+            <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
 
             <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
+            <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$this->__('links.skip_for_now') ?></a>
         </div>
         <div class="col-md-6">
             <div class='svgContainer' style="width:300px">
@@ -82,7 +83,7 @@ if(isset($_GET['step']) && $_GET['step'] == "complete"){?>
                 <input type="email" name="email3" value="" placeholder="<?=$this->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
                 <br />
                 <input type="submit" value="<?=$this->__('buttons.lets_go') ?>"/>
-                <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?=$this->__('links.skip_for_now') ?></a>
+                <a href="javascript:void(0);"  onclick="jQuery.nmTop().close();"><?=$this->__('links.skip_for_now') ?></a>
             </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px; margin-top:60px;">
@@ -101,8 +102,19 @@ jQuery(document).ready(function(){
         var themeName = jQuery("#theme option:selected").val();
         var url = "<?php echo BASE_URL; ?>/theme/"+themeName+"/css/theme.css";
         jQuery("#themeStylesheet").attr("href", url);
-    })
-})
+    });
+
+
+
+});
+
+function skipOnboarding() {
+
+    jQuery("form.step1 #projectName").val('<?=$_SESSION["currentProjectName"]?>');
+    jQuery("form.step1").submit();
+    jQuery.nmTop().close();
+
+}
 </script>
 
 
