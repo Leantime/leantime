@@ -433,6 +433,7 @@
 
 .table td.dropdown-cell {
     padding:0px;
+    font-weight: 400;
 }
 
 .table td.dropdown-cell .dropdown {

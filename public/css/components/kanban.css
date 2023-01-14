@@ -212,7 +212,7 @@ body .maincontent .commentStatus-green{
 }
 
 body .maincontent .priority-border-5 {
-    bborder-left: 3px solid #707070;
+    border-left: 3px solid var(--dark-grey);
 }
 
 body .maincontent .priority-bg-1,
@@ -241,10 +241,9 @@ body .maincontent .ticketDropdown .priority-bg-4{
 
 body .maincontent .priority-bg-5,
 body .maincontent .ticketDropdown .priority-bg-5{
-    background:#707070;
-    color:#fff;
+    background:var(--dark-grey);
+    color:var(--dark-grey-text-color);
 }
-
 
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
