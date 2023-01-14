@@ -460,8 +460,10 @@ namespace leantime\domain\services {
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
         }
 
-        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $startDate, bool $assignSameUsers)
+        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers)
         {
+
+            $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
 
             //Ignoring
             //Comments, files, timesheets, personalCalendar Events
@@ -640,6 +642,7 @@ namespace leantime\domain\services {
             //Duplicate Canvas boards
             $canvasIdList = array();
 
+
             //LeanCanvas
             $leancanvasRepo = new repositories\leancanvas();
             $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
@@ -723,48 +726,6 @@ namespace leantime\domain\services {
                         );
 
                         $ideaRepo->addCanvasItem($canvasItemValues);
-                    }
-                }
-            }
-
-            //Retros
-            $retroRepo = new repositories\retroscanvas();
-            $canvasBoards = $retroRepo->getAllCanvas($projectId);
-            foreach ($canvasBoards as $canvas) {
-                $canvasValues = array(
-                    "title" => $canvas['title'],
-                    "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId
-
-                );
-
-                $newCanvasId = $retroRepo->addCanvas($canvasValues);
-                $canvasIdList[$canvas['id']] = $newCanvasId;
-
-                $canvasItems = $retroRepo->getCanvasItemsById($canvas['id']);
-
-                if ($canvasItems != false && count($canvasItems) > 0) {
-                    foreach ($canvasItems as $item) {
-                        $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneId']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneId']];
-                        }
-
-                        $canvasItemValues = array(
-                            "description" => $item['description'],
-                            "assumptions" => $item['assumptions'],
-                            "data" => $item['data'],
-                            "conclusion" => $item['conclusion'],
-                            "box" => $item['box'],
-                            "author" => $item['author'],
-
-                            "canvasId" => $newCanvasId,
-                            "sortindex" => $item['sortindex'],
-                            "status" => $item['status'],
-                            "milestoneId" => $milestoneId
-                        );
-
-                        $retroRepo->addCanvasItem($canvasItemValues);
                     }
                 }
             }
