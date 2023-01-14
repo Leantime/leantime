@@ -660,4 +660,55 @@ input.secretInput:active {
     margin-right:5px;
 }
 
+.uppy-Webcam-footer {
+    width:400px;
+}
 
+.uploadWrapper .extra {
+    height: 400px;
+    width: 100%;
+    display: flex;
+    z-index:10000;
+    display:none;
+}
+
+.extra .uppy-Root{
+    flex-grow: 1;
+}
+
+.uppy-Webcam-videoContainer,
+.uppy-ScreenCapture-videoContainer {
+    background:var(--col-content-bg);
+}
+
+.uppy-Webcam-button svg,
+.uppy-ScreenCapture-button svg{
+    width:20px;
+    height:20px;
+}
+
+.uppy-Webcam-button,
+.uppy-ScreenCapture-button--video {
+    background:var(--main-action-bg);
+}
+
+.uppy-FileInput-container {
+    text-align:center;
+}
+
+.uppy-FileInput-btn {
+    background:var(--main-action-bg);
+    color:var(--main-action-color);
+    border:1px solid var(--main-action-bg);
+    font-size: var(--base-font-size);
+    font-family: var(--primary-font-family);
+    padding:3px 12px;
+    line-height: 21px;
+    border-radius: var(--element-radius);
+    vertical-align: top;
+}
+
+.uppy-FileInput-btn:hover {
+    background:var(--main-action-hover-bg);
+    color:var(--main-action-hover-color);
+}

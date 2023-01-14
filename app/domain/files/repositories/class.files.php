@@ -58,9 +58,9 @@ namespace leantime\domain\repositories {
         public function getFile($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					file.id, file.extension, file.realName, file.encName, file.date, file.module, file.moduleId,
-					user.firstname, user.lastname 
+					user.firstname, user.lastname
 				FROM zp_file as file
 				INNER JOIN zp_user as user ON file.userId = user.id
 				WHERE file.id=:id";
@@ -78,9 +78,9 @@ namespace leantime\domain\repositories {
         public function getFiles($userId = 0)
         {
 
-            $sql = "SELECT 
-					file.id, file.moduleId, file.extension, file.realName, file.encName, file.date, file.module, 
-					user.firstname, user.lastname  
+            $sql = "SELECT
+					file.id, file.moduleId, file.extension, file.realName, file.encName, file.date, file.module,
+					user.firstname, user.lastname
 				FROM zp_file as file
 				INNER JOIN zp_user as user ON file.userId = user.id ";
 
@@ -142,20 +142,20 @@ namespace leantime\domain\repositories {
         public function getFilesByModule($module = '', $moduleId = null, $userId = 0)
         {
 
-            $sql = "SELECT 
-					file.id, 
-					file.extension, 
-					file.realName, 
-					file.encName, 
-					file.date, 
-					DATE_FORMAT(file.date,  '%Y,%m,%e') AS timelineDate, 
-					file.module, 
+            $sql = "SELECT
+					file.id,
+					file.extension,
+					file.realName,
+					file.encName,
+					file.date,
+					DATE_FORMAT(file.date,  '%Y,%m,%e') AS timelineDate,
+					file.module,
 					file.moduleId,
-					user.firstname, 
+					user.firstname,
 					user.lastname,
 					user.id AS userId
 				FROM zp_file as file
-				
+
 				INNER JOIN zp_user as user ON file.userId = user.id ";
 
             if ($module!='') {
@@ -220,6 +220,14 @@ namespace leantime\domain\repositories {
 
         public function upload($file,$module,$moduleId)
         {
+
+            //Clean module mess
+            if($module == "projects"){
+                $module = "project";
+            }
+            if($module == "tickets"){
+                $module = "ticket";
+            }
 
             $upload = new core\fileupload();
 

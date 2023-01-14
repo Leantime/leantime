@@ -202,12 +202,29 @@ body.mce-content-body {
 }
 
 .userMention {
-    background: var(--neutral);
-    padding: 2px 10px;
     border-radius: 10px;
     text-decoration: none;
-    color: var(--primary-font-color);
+    color: var(--primary-color);
+    font-weight:bold;
     white-space: nowrap;
+}
+
+.userMention img {
+    width: 17px;
+
+    border-radius: 10px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+}
+
+a.userMention {
+    color: var(--primary-color);
+    font-weight:bold;
+}
+
+a.userMention:hover,
+a.userMention:focus {
+    text-decoration: none;
 }
 
 

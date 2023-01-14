@@ -1,6 +1,8 @@
 <?php
 /** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
+$module = \leantime\core\frontcontroller::getModuleName('');
+$moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">
 
@@ -8,43 +10,26 @@
 
     <div class="uploadWrapper">
 
-        <div class="DashboardContainer"></div>
+        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">Cancel</a>
+        <div class="extra" style="margin-top:5px;"></div>
+        <div style="">
+            <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
+            <div class="dropdownWrapper" style="display:inline-block;">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">Record</button>
+                <ul class="dropdown-menu" style="left:0; right:auto; text-align:left;">
+                    <li><a href="javascript:void(0);" id="webcamClick"> Webcam</a></li>
+                    <li><a href="javascript:void(0);" id="screencaptureLink"">Screen Capture</a></li>
+                </ul>
+            </div>
 
-        <script type="module">
+        </div>
 
-            var uppy = new Uppy.Uppy();
-
-            uppy.use(Uppy.Dashboard, {
-                target: '.DashboardContainer',
-                inline: true,
-                height:500,
-                width:'100%'
-            });
-
-            uppy.use(Uppy.DragDrop, { target: '#fileManager' });
-            uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
-
-            uppy.use(Uppy.Webcam, { target: Uppy.Dashboard });
-            uppy.use(Uppy.Audio, { target: Uppy.Dashboard, showRecordingLength: true });
-            uppy.use(Uppy.ScreenCapture, { target: Uppy.Dashboard });
-            uppy.use(Uppy.Form, { target: '#upload-form' });
-            uppy.use(Uppy.ImageEditor, { target: Uppy.Dashboard });
-                // Allow dropping files on any element or the whole document
-                // Optimize images
-            uppy.use(Uppy.Compressor);
-                // Upload
-
-
-        </script>
+        <!-- Progress bar #1 -->
+        <div class="input-progress"></div>
+        <hr />
 
         <form id="upload-form"></form>
 
-
-        <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
-
-
-
-        </form>
     </div>
 
     <div class='mediamgr'>
@@ -152,4 +137,78 @@
 
         });
     </script>
+
+
+<script>
+
+    const uppy = new Uppy.Uppy({ debug: false, autoProceed: true });
+
+
+    uppy.use(Uppy.DropTarget, { target: '#fileManager' });
+
+    uppy.use(Uppy.FileInput, { target: '.file-upload-input', pretty: true })
+    uppy.use(Uppy.XHRUpload, {
+        endpoint: '<?=BASE_URL ?>/api/files?module=<?=$module?>&moduleId=<?=$moduleId?>',
+        formData: true,
+        fieldName: 'file',
+    });
+    uppy.use(Uppy.StatusBar, {
+        target: '.input-progress',
+        hideUploadButton: true,
+        hideAfterFinish: false,
+    });
+
+    //uppy.use(Uppy.Webcam, { target: '.extra' });
+    //uppy.use(Uppy.ProgressBar, { target: '.input-progress', hideAfterFinish: true });
+
+    //uppy.use(Uppy.Audio, { target: '.extra', showRecordingLength: true });
+    //uppy.use(Uppy.ScreenCapture, { target: '.extra' });
+
+    uppy.use(Uppy.Form, { target: '#upload-form' });
+    //uppy.use(Uppy.ImageEditor, { target: '.extra' });
+    // Allow dropping files on any element or the whole document
+    // Optimize images
+    uppy.use(Uppy.Compressor);
+    // Upload
+
+    uppy.on('upload-success', (file, response) => {
+        window.location.reload();
+        // do something with file and response
+    });
+
+
+
+    jQuery("#webcamClick").click(function(){
+        jQuery(".uploadWrapper .extra").css("display", "flex");
+        uppy.use(Uppy.Webcam, { target: '.extra' });
+        jQuery("#cancelLink").show();
+    });
+
+    jQuery("#screencaptureLink").click(function(){
+        jQuery(".uploadWrapper .extra").css("display", "flex");
+        uppy.use(Uppy.ScreenCapture, { target: '.extra' });
+        jQuery("#cancelLink").show();
+    });
+
+
+
+    jQuery("#cancelLink").click(function(){
+        const instance = uppy.getPlugin('Webcam');
+        if(instance) {
+            uppy.removePlugin(instance);
+        }
+
+        const instance2 = uppy.getPlugin('ScreenCapture');
+        if(instance2) {
+            uppy.removePlugin(instance2);
+        }
+
+        jQuery("#cancelLink").hide();
+
+        jQuery(".uploadWrapper .extra").css("display", "none");
+
+
+    });
+
+</script>
 

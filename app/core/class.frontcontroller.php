@@ -265,6 +265,10 @@ namespace leantime\core {
         public static function getModuleName($completeName)
         {
 
+            if($completeName == '') {
+                $completeName = self::getCurrentRoute();
+            }
+
             $actionParts = explode(".", $completeName);
 
             if (is_array($actionParts)) {

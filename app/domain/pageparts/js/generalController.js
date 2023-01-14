@@ -47,7 +47,7 @@ leantime.generalController = (function () {
             });
         },
         insert: function (item) {
-            return '<a class="userMention" data-tagged-user-id="'+ item.id +'" href="#">' + item.name + '</a>';
+            return '<a class="userMention" data-tagged-user-id="'+ item.id +'" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage='+ item.id +'" alt="' + item.name + ' Image"/>' + item.name + '</a>';
         }
     };
 
