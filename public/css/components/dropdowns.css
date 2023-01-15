@@ -462,3 +462,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     right:0px;
     left:auto;
 }
+
+.dropdown-menu .scroll-wrapper {
+    height:700px;
+    overflow:scroll;
+}

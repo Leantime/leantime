@@ -1074,7 +1074,8 @@ a .label-default:after, a .label-primary:after {
 
 .notificationDropdown .dropdown-menu li {
     padding:10px;
-    margin-bottom:1px
+    margin-bottom:1px;
+    list-style-type:none;
 }
 
 .notificationDropdown .dropdown-menu li:hover {

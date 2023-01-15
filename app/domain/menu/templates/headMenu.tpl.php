@@ -145,53 +145,55 @@ if(is_array($currentLink)) {
                 <a href="javascript:void(0);" onclick="jQuery('#mentionsList').hide(); jQuery('#notificationsList').show();">Notifications</a>
                 <a href="javascript:void(0);" onclick="jQuery('#mentionsList').show(); jQuery('#notificationsList').hide();">Mentions</a>
             </div>
+            <div class="scroll-wrapper">
 
-
-            <ul id="notificationsList">
-                <?php
-                if($totalNotificationCount === 0){?>
-                    <p style="padding:10px"><?=$this->__('text.no_notifications') ?></p>
-                <?php }
-                ?>
-            <?php foreach($notifications as $notif) {
-
-                if($notif['type'] !== 'mention') {?>
-
-                <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
-                    <span class="notificationProfileImage">
-                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
-                    </span>
-                    <span class="notificationTitle"><?=$notif['message'] ?></span>
-                    <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
-                </li>
-
-
-            <?php }
-            } ?>
-            </ul>
-
-            <ul id="mentionsList" style="display:none;">
-                <?php
-                if($totalMentionCount === 0){?>
+                <ul id="notificationsList">
+                    <?php
+                    if($totalNotificationCount === 0){?>
                         <p style="padding:10px"><?=$this->__('text.no_notifications') ?></p>
-                    <?php } ?>
+                    <?php }
+                    ?>
                 <?php foreach($notifications as $notif) {
 
-                    if($notif['type'] === 'mention') {?>
+                    if($notif['type'] !== 'mention') {?>
 
-                        <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
+                    <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
                         <span class="notificationProfileImage">
                             <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
                         </span>
-                            <span class="notificationTitle"><?=$notif['message'] ?></span>
-                            <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
-                        </li>
+                        <span class="notificationTitle"><?=$notif['message'] ?></span>
+                        <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
+                    </li>
 
 
-                    <?php }
+                <?php }
                 } ?>
+                </ul>
 
-            </ul>
+                <ul id="mentionsList" style="display:none;">
+                    <?php
+                    if($totalMentionCount === 0){?>
+                            <p style="padding:10px"><?=$this->__('text.no_notifications') ?></p>
+                        <?php } ?>
+                    <?php foreach($notifications as $notif) {
+
+                        if($notif['type'] === 'mention') {?>
+
+                            <li <?php if($notif['read'] == 0) echo" class='new' "; ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
+                            <span class="notificationProfileImage">
+                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
+                            </span>
+                                <span class="notificationTitle"><?=$notif['message'] ?></span>
+                                <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
+                            </li>
+
+
+                        <?php }
+                    } ?>
+
+                </ul>
+
+            </div>
         </div>
     </li>
     <?php $this->dispatchTplEvent('beforeHeadMenuClose'); ?>
