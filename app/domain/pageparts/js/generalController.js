@@ -21,7 +21,7 @@ leantime.generalController = (function () {
 
     var mentionsConfig = {
         delimiter: '@',
-        delay: 50,
+        delay: 20,
         source: function (query, process, delimiter) {
             // Do your ajax call
             // When using multiple delimiters you can alter the query depending on the delimiter used
@@ -98,6 +98,7 @@ leantime.generalController = (function () {
                 relative_urls : true,
                 document_base_url : leantime.appUrl + "/",
                 default_link_target: '_blank',
+
                 mentions: mentionsConfig,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
@@ -159,6 +160,20 @@ leantime.generalController = (function () {
                             confettiElement[0].addEventListener("click", function(){
                                 confetti.start();
                             });
+                        }
+
+                        if (editor.getContent() === ''){
+                            editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                        }
+
+                    });
+
+
+                    //and remove it on focus
+                    editor.on('focus',function(){
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        if(placeholder){
+                            placeholder.remove();
                         }
 
                     });
@@ -267,6 +282,20 @@ leantime.generalController = (function () {
                             confettiElement[0].addEventListener("click", function(){
                                 confetti.start();
                             });
+                        }
+
+                        if (editor.getContent() === ''){
+                            editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                        }
+
+                    });
+
+
+                    //and remove it on focus
+                    editor.on('focus',function(){
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        if(placeholder){
+                            placeholder.remove();
                         }
 
                     });

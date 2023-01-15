@@ -1,11 +1,35 @@
 tinymce.PluginManager.add('slashcommands', function (editor) {
     var insertActions = [
         {
-            text: 'Confetti',
-            icon: '🎉',
+            text: 'Text',
+            icon: 'p',
             action: function () {
-                editor.execCommand('mceInsertContent', false, '<a class="confetti">🎉 Congrats</a>');
-                confetti.start();
+                editor.execCommand('mceInsertContent', false, '<p>Text</p>')
+                editor.selection.select(editor.selection.getNode());
+            }
+        },
+        {
+            text: 'Heading 1',
+            icon: 'h1',
+            action: function () {
+                editor.execCommand('mceInsertContent', false, '<h1>Heading 1</h1>')
+                editor.selection.select(editor.selection.getNode());
+            }
+        },
+        {
+            text: 'Heading 2',
+            icon: 'h2',
+            action: function () {
+                editor.execCommand('mceInsertContent', false, '<h2>Heading 2</h2>');
+                editor.selection.select(editor.selection.getNode());
+            }
+        },
+        {
+            text: 'Heading 3',
+            icon: 'h3',
+            action: function () {
+                editor.execCommand('mceInsertContent', false, '<h3>Heading 3</h3>');
+                editor.selection.select(editor.selection.getNode());
             }
         },
         {
@@ -17,7 +41,26 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             action: function () {
                 editor.execCommand('insertChecklist', false);
             }
+        },
+        {
+            text: 'Bulleted list',
+            icon: 'unordered-list',
+            action: function () {
+                editor.execCommand('InsertUnorderedList', false);
+            }
+        },
+        {
+            type: 'separator'
+        },
+        {
+            text: 'Confetti',
+            icon: '🎉',
+            action: function () {
+                editor.execCommand('mceInsertContent', false, '<a class="confetti">🎉 Congrats</a>');
+                confetti.start();
+            }
         }
+
     ];
 
     // Register the slash commands autocompleter

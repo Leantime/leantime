@@ -23,8 +23,8 @@
 
                     initialValues = {
                         url: selection.getNode().firstChild.getAttribute("src"),
-                        width: selection.getNode().firstChild.getAttribute("width"),
-                        height: selection.getNode().firstChild.getAttribute("height")
+                        width: "100vw",
+                        height: "50vh"
 
                     }
                 }
@@ -48,21 +48,6 @@
                                 name: 'url',
                                 label: 'Url'
                             },
-
-                        {
-                            type: 'input',
-                            size: 10,
-                            name: 'width',
-                            label: 'Width',
-                            value: '100'
-                        },
-                        {
-                            type: 'input',
-                            size: 10,
-                            name: 'height',
-                            label: 'Height',
-                            value: '100'
-                        },
                         ]
                     },
                     buttons: [ // A list of footer buttons
@@ -75,31 +60,8 @@
                     onSubmit: function(e) {
 
                         var url = e.getData().url;
-                        var width = e.getData().width;
-                        var height = e.getData().height;
-                        var classAttr = e.getData().class;
-                        var idAttr = e.getData().id;
-                        var iframe = e.getData().embedcode;
 
-                        if (url.trim() == "" && iframe.trim() !== "" ) {
-                            var regEx = /(src|width|height)=["']([^"']*)["']/gi;
-
-                            iframe.replace(regEx, function(all, type, value) {
-                                switch (type) {
-                                    case 'src':
-                                        url = value;
-                                        break;
-                                    case 'width':
-                                        width = value;
-                                        break;
-                                    case 'height':
-                                        height = value;
-                                        break;
-                                }
-                            });
-                        }
-
-                        var code = '<iframe src="'+url+'" width="'+width+'" height="'+height+'" class="autoresizeIframe"></iframe>';
+                        var code = '<iframe src="'+url+'" style="display:block; width:99%; height:700px;"  class="autoresizeIframe"></iframe>';
 
                         editor.insertContent(code);
 

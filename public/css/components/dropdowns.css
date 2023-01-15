@@ -163,10 +163,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown.noBg >a:hover {
     color:#000;
 }
-[class*="label-"] {
-    border-radius:var(--box-radius);
-}
-
 
 .maincontentinner .ticketDropdown ul li a[class*="label-"],
 .nyroModalCont .ticketDropdown ul li a[class*="label-"] {
