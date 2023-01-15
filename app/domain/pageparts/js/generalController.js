@@ -39,6 +39,7 @@ leantime.generalController = (function () {
                     process(users);
                 });
             }
+
         },
         highlighter: function(text) {
             //make matched block italic
@@ -87,7 +88,7 @@ leantime.generalController = (function () {
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention",
+                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention,slashcommands",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 branding: false,
                 statusbar: false,
@@ -148,6 +149,19 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.load.css("zIndex", "1000010");
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
+                },
+                setup: function(editor) {
+                    editor.on('init', function (e) {
+
+                        var confettiElement = editor.getDoc().getElementsByClassName("confetti");
+
+                        if(confettiElement && confettiElement.length>0){
+                            confettiElement[0].addEventListener("click", function(){
+                                confetti.start();
+                            });
+                        }
+
+                    });
                 }
             }
         );
@@ -162,12 +176,12 @@ leantime.generalController = (function () {
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
+                plugins : "embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention,slashcommands",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample",
                 branding: false,
                 statusbar: false,
                 convert_urls: true,
-                menubar:true,
+                menubar:false,
                 resizable: true,
                 paste_data_images: true,
                 relative_urls : true,
@@ -243,6 +257,19 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.load.css("zIndex", "1000010");
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
+                },
+                setup: function(editor) {
+                    editor.on('init', function (e) {
+
+                        var confettiElement = editor.getDoc().getElementsByClassName("confetti");
+
+                        if(confettiElement && confettiElement.length>0){
+                            confettiElement[0].addEventListener("click", function(){
+                                confetti.start();
+                            });
+                        }
+
+                    });
                 }
             }
         );

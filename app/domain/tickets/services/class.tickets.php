@@ -876,21 +876,21 @@ namespace leantime\domain\services {
                 return [];
             }
 
-            $baseUrl = BASE_URL . '/tickets';
+            $baseUrl = BASE_URL;
 
             return [
                 [
-                    'url' => "$baseUrl/newTicket",
+                    'url' => "$baseUrl/tickets/newTicket",
                     'text' => 'links.add_todo',
                     'class' => 'ticketModal'
                 ],
                 [
-                    'url' => "$baseUrl/editMilestone",
+                    'url' => "$baseUrl/tickets/editMilestone",
                     'text' => 'links.add_milestone',
                     'class' => 'milestoneModal'
                 ],
                 [
-                    'url' => "$baseUrl/editSprit",
+                    'url' => "$baseUrl/sprints/editSprint",
                     'text' => 'links.add_sprint',
                     'class' => 'sprintModal'
                 ]

@@ -9,9 +9,9 @@ namespace leantime\domain\controllers {
     class showAll extends controller
     {
 
-        private $projectService;
-        private $ticketService;
-        private $sprintService;
+        private services\projects $projectService;
+        private services\tickets $ticketService;
+        private services\sprints $sprintService;
         private $timesheetService;
 
         public function init()

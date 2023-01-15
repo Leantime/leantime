@@ -163,11 +163,13 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown.noBg >a:hover {
     color:#000;
 }
-
+[class*="label-"] {
+    border-radius:var(--box-radius);
+}
 
 
 .maincontentinner .ticketDropdown ul li a[class*="label-"],
-.nyroModalCont .ticketDropdown ul li a[class*="label-"]{
+.nyroModalCont .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
     border-radius: 0px;
@@ -204,7 +206,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .chzn-results li.label-danger,
 .maincontentinner .ticketDropdown a.label-danger,
-.nyroModalCont .ticketDropdown a.label-danger{
+.nyroModalCont .ticketDropdown a.label-danger,
+.label-danger{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }

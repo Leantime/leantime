@@ -45,7 +45,8 @@ module.exports = function (grunt) {
                     "public/js/libs/slimselect.min.js",
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
-                    "public/js/libs/jquery.tagsinput.min.js"
+                    "public/js/libs/jquery.tagsinput.min.js",
+                    "public/js/libs/confetti/js/confetti.js"
 
                 ],
                 dest: "public/js/compiled-base-libs.min.js"
@@ -97,6 +98,7 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/tinymce/plugins/codesample/plugin.js",
                     "node_modules/tinymce-mention/mention/plugin.js",
+
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "node_modules/jstree/dist/jstree.js",
                     "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
@@ -108,6 +110,7 @@ module.exports = function (grunt) {
                     "public/js/libs/tinymce-plugins/bettertable/index.js",
                     "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
                     "public/js/libs/tinymce-plugins/embed/index.js",
+                    "public/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
 
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",

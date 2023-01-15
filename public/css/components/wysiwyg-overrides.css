@@ -227,6 +227,12 @@ a.userMention:focus {
     text-decoration: none;
 }
 
+a.confetti {
+    cursor:pointer;
+    color:var(--primary-color);
+    font-weight:bold;
+}
+
 
 
 
