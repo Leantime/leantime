@@ -2093,9 +2093,9 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 .listfile > li {
     display: inline-block;
     margin: 5px 10px 5px 0;
-    border: 1px solid #ddd;
+    border: 1px solid var(--main-border-color);
     padding: 10px;
-    background: #fcfcfc;
+    background: var(--secondary-background);
 }
 
 .listfile > li:hover {

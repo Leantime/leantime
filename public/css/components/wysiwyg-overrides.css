@@ -15,7 +15,8 @@
 }
 
 .tox .tox-dialog .tox-button--secondary {
-    background:var(--neutral);
+    background:var(--col-title-bg);
+    color:var(--kanban-col-title-color);
 }
 
 .tox .tox-dialog .tox-button--naked {
@@ -238,6 +239,40 @@ a.confetti {
 
 }
 
+.tox .tox-dialog,
+.tox .tox-dialog__header,
+.tox .tox-selectfield select,
+.tox .tox-textarea,
+.tox .tox-textfield,
+.tox .tox-toolbar-textfield,
+.tox .tox-dialog__footer{
+    background-color:var(--secondary-background) !important;
+    color:var(--primary-font-color) !important;
+    border-color:var(--main-border-color) !important;
+}
+
+.tox .tox-dialog__body-nav-item--active {
+    color:var(--primary-color) !important;
+}
+
+.tox .tox-dialog__body-nav-item,
+.tox .tox-dropzone p,
+.tox .tox-button--naked{
+    color:var(--primary-font-color) !important;
+}
+
+.tox .tox-button--naked:hover:not(:disabled) {
+    color:var(--primary-font-color) !important;
+    background-color:var(--primary-background) !important;
+}
+
+.tox .tox-dialog__footer {
+    border-top: 1px solid var(--main-border-color);
+}
+
+.tox-dropzone {
+    background:var(--primary-background) !important;
+}
 
 
 

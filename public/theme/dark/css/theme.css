@@ -90,8 +90,8 @@
 
     --main-border-color:#333333;
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%);
-    --regular-shadow: 0px 2px 3px rgba(0 0 0 / 20%);
-    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
+    --regular-shadow: 0px 2px 6px rgba(0 0 0 / 40%);
+    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 30%);
     --box-radius-large:10px;
     --box-radius: 5px;
     --box-radius-small:3px;
