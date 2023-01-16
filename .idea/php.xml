@@ -72,7 +72,6 @@
       <path value="$PROJECT_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
       <path value="$PROJECT_DIR$/vendor/lasserafn/php-string-script-language" />
       <path value="$PROJECT_DIR$/vendor/lasserafn/php-initials" />
-      <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
