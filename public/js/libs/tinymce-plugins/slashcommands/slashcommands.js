@@ -56,7 +56,7 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             text: 'Confetti',
             icon: '🎉',
             action: function () {
-                editor.execCommand('mceInsertContent', false, '<a class="confetti">🎉 Congrats</a>');
+                editor.execCommand('mceInsertContent', false, '<a class="confetti">🎉 Confetti <span class="mirrorElement">🎉</span></a>&nbsp;');
                 confetti.start();
             }
         }

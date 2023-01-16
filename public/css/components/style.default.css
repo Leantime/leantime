@@ -1103,6 +1103,11 @@ a .label-default:after, a .label-primary:after {
     font-style: italic;
 }
 
+.notificationDropdown .notifcationTabs.active{
+    font-weight:bold;
+
+}
+
 
 
 .userloggedinfo ul li,
@@ -3908,4 +3913,31 @@ a.titleInsertLink:hover {
     .header {
         display:none;
     }
+}
+
+
+.mirrorElement {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+    display: Inline-block;
+}
+
+.projectBox {
+    border:1px solid var(--main-border-color);
+    border-radius:var(--box-radius);
+    box-shadow:var(--regular-shadow);
+    padding:10px;
+    margin-bottom:30px;
+}
+
+.projectBox small {
+    color:var(--kanban-col-title-color);
+}
+
+.projectBox .lastStatus [class*="commentStatus-"]{
+    padding-left:10px;
 }
