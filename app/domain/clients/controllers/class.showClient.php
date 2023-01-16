@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
     class showClient extends controller
     {
 
-        private $clientRepo;
+        private repositories\clients $clientRepo;
 
         /**
          * init - initialize private variables

@@ -178,6 +178,7 @@ namespace leantime\domain\repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
+					zp_user.phone,
                     zp_user.status
                     FROM zp_user WHERE clientId = :clientId";
 

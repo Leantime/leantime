@@ -1103,6 +1103,11 @@ a .label-default:after, a .label-primary:after {
     font-style: italic;
 }
 
+.notificationDropdown .notifcationTabs.active{
+    font-weight:bold;
+
+}
+
 
 
 .userloggedinfo ul li,

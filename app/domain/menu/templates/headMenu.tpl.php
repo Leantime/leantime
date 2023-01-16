@@ -21,16 +21,38 @@ if(is_array($currentLink)) {
             <?=$this->__("menu.home")?>
         </a>
     </li>
+    <li>
+        <a href='<?=BASE_URL ?>/projects/showMy' <?php if($module == 'projects' && $action=='showMy') echo"class='active'"; ?>>
+            <?=$this->__("menu.my_portfolio")?>
+        </a>
+    </li>
     <?php if($login::userIsAtLeast($roles::$editor, true)) { ?>
+        <?php if($this->get('onTheClock') !== false){
+
+            echo "<li class='timerHeadMenu' id='timerHeadMenu'>";
+            echo"<a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
+                    ".sprintf($this->__('text.timer_on_todo'), $this->get('onTheClock')['totalTime'], substr($this->escape($this->get('onTheClock')['headline']), 0, 10))."
+                </a>";
+
+            ?>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href='<?=BASE_URL ?>/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
+                        <?=$this->__("links.view_todo")?>
+                    </a>
+                </li>
+                <li>
+                    <a href='javascript:void(0);' class="punchOut" data-value="<?php $this->e($this->get('onTheClock')['id']); ?>">
+                        <?=$this->__("links.stop_timer")?>
+                    </a>
+                </li>
+            </ul>
+            </li>
+
+        <?php } ?>
         <li>
             <a href='<?=BASE_URL ?>/timesheets/showMy/' <?php if($module == 'timesheets' && $action=='showMy') echo"class='active'"; ?>>
                 <?=$this->__("menu.my_timesheets")?>
-            </a>
-        </li>
-
-        <li>
-            <a href='<?=BASE_URL ?>/projects/showMy' <?php if($module == 'projects' && $action=='showMy') echo"class='active'"; ?>>
-                <?=$this->__("menu.my_portfolio")?>
             </a>
         </li>
 
@@ -40,87 +62,10 @@ if(is_array($currentLink)) {
             </a>
         </li>
 
-        <?php if($this->get('onTheClock') !== false){
 
-            echo "<li class='timerHeadMenu' id='timerHeadMenu'>";
-                echo"<a href='javascript:void(0);' class='dropdown-toggle' data-toggle='dropdown'>
-                    ".sprintf($this->__('text.timer_on_todo'), $this->get('onTheClock')['totalTime'], substr($this->escape($this->get('onTheClock')['headline']), 0, 10))."
-                </a>";
-
-                ?>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href='<?=BASE_URL ?>/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
-                            <?=$this->__("links.view_todo")?>
-                        </a>
-                    </li>
-                    <li>
-                        <a href='javascript:void(0);' class="punchOut" data-value="<?php $this->e($this->get('onTheClock')['id']); ?>">
-                            <?=$this->__("links.stop_timer")?>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-        <?php } ?>
 
     <?php } ?>
-    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-    <li class="appsDropdown">
-        <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
-            <img src="<?=BASE_URL ?>/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
-                &nbsp;<i class="fas fa-caret-down"></i>
-        </a>
-        <ul class="dropdown-menu" >
 
-
-
-                        <li class="nav-header"><?=$this->__("header.management")?></li>
-                        <li>
-                            <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.all_timesheets") ?></a>
-                        </li>
-
-
-                        <li <?php if($module == 'projects') echo" class='active' "; ?>>
-                            <a href='<?=BASE_URL ?>/projects/showAll/'>
-                                <?=$this->__("menu.all_projects")?>
-                            </a>
-                        </li>
-
-                        <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
-                            <li <?php if($module == 'clients') echo" class='active' "; ?>>
-                                <a href='<?=BASE_URL ?>/clients/showAll/'>
-                                    <?=$this->__("menu.all_clients")?>
-                                </a>
-                            </li>
-                            <li <?php if($module == 'users') echo" class='active' "; ?>>
-                                <a href='<?=BASE_URL ?>/users/showAll/'>
-                                    <?=$this->__("menu.all_users")?>
-                                </a>
-                            </li>
-
-                            <?php if ($login::userIsAtLeast($roles::$owner)) { ?>
-
-                                <li class="nav-header border"><?=$this->__("label.administration")?></li>
-
-                                <li <?php if($module == 'plugins') echo" class='active' "; ?>>
-                                    <a href='<?=BASE_URL ?>/plugins/show/'>
-                                        <?=$this->__("menu.plugins")?>
-                                    </a>
-                                </li>
-
-                                <li <?php if($module == 'setting') echo" class='active' "; ?>>
-                                    <a href='<?=BASE_URL ?>/setting/editCompanySettings/'>
-                                        <?=$this->__("menu.company_settings")?>
-                                    </a>
-                                </li>
-                            <?php } ?>
-
-                        <?php } ?>
-                    </ul>
-
-    </li>
-    <?php } ?>
     <li class="notificationDropdown">
         <?php
             $notifications = $this->get('notifications');
@@ -128,11 +73,20 @@ if(is_array($currentLink)) {
 
             $totalNotificationCount = 0;
             $totalMentionCount=0;
+            $totalNewMentions = 0;
+            $totalNewNotifications = 0;
+
             foreach($notifications as $notif) {
                 if($notif['type'] == 'mention') {
                     $totalMentionCount++;
+                    if($notif['read'] == 0) {
+                        $totalNewMentions++;
+                    }
                 }else{
                     $totalNotificationCount++;
+                    if($notif['read'] == 0) {
+                        $totalNewNotifications++;
+                    }
                 }
             }
             ?>
@@ -142,12 +96,12 @@ if(is_array($currentLink)) {
         </a>
         <div class="dropdown-menu" id="notificationsDropdown">
             <div class="dropdownTabs">
-                <a href="javascript:void(0);" onclick="jQuery('#mentionsList').hide(); jQuery('#notificationsList').show();">Notifications</a>
-                <a href="javascript:void(0);" onclick="jQuery('#mentionsList').show(); jQuery('#notificationsList').hide();">Mentions</a>
+                <a href="javascript:void(0);" class="notifcationTabs active" id="notificationsListLink" onclick="toggleNotificationTabs('notifications')" >Notifications (<?=$totalNewNotifications?>)</a>
+                <a href="javascript:void(0);" class="notifcationTabs" id="mentionsListLink" onclick="toggleNotificationTabs('mentions')">Mentions (<?=$totalNewMentions?>)</a>
             </div>
             <div class="scroll-wrapper">
 
-                <ul id="notificationsList">
+                <ul id="notificationsList" class="notifcationViewLists">
                     <?php
                     if($totalNotificationCount === 0){?>
                         <p style="padding:10px"><?=$this->__('text.no_notifications') ?></p>
@@ -170,7 +124,7 @@ if(is_array($currentLink)) {
                 } ?>
                 </ul>
 
-                <ul id="mentionsList" style="display:none;">
+                <ul id="mentionsList" style="display:none;" class="notifcationViewLists">
                     <?php
                     if($totalMentionCount === 0){?>
                             <p style="padding:10px"><?=$this->__('text.no_notifications') ?></p>
@@ -196,13 +150,88 @@ if(is_array($currentLink)) {
             </div>
         </div>
     </li>
+
+    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+        <li class="appsDropdown">
+            <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
+                <img src="<?=BASE_URL ?>/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
+
+            </a>
+            <ul class="dropdown-menu" >
+
+
+
+                <li class="nav-header"><?=$this->__("header.management")?></li>
+                <li>
+                    <a href="<?=BASE_URL ?>/timesheets/showAll"><?=$this->__("menu.all_timesheets") ?></a>
+                </li>
+
+
+                <li <?php if($module == 'projects') echo" class='active' "; ?>>
+                    <a href='<?=BASE_URL ?>/projects/showAll/'>
+                        <?=$this->__("menu.all_projects")?>
+                    </a>
+                </li>
+
+                <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                    <li <?php if($module == 'clients') echo" class='active' "; ?>>
+                        <a href='<?=BASE_URL ?>/clients/showAll/'>
+                            <?=$this->__("menu.all_clients")?>
+                        </a>
+                    </li>
+                    <li <?php if($module == 'users') echo" class='active' "; ?>>
+                        <a href='<?=BASE_URL ?>/users/showAll/'>
+                            <?=$this->__("menu.all_users")?>
+                        </a>
+                    </li>
+
+                    <?php if ($login::userIsAtLeast($roles::$owner)) { ?>
+
+                        <li class="nav-header border"><?=$this->__("label.administration")?></li>
+
+                        <li <?php if($module == 'plugins') echo" class='active' "; ?>>
+                            <a href='<?=BASE_URL ?>/plugins/show/'>
+                                <?=$this->__("menu.plugins")?>
+                            </a>
+                        </li>
+
+                        <li <?php if($module == 'setting') echo" class='active' "; ?>>
+                            <a href='<?=BASE_URL ?>/setting/editCompanySettings/'>
+                                <?=$this->__("menu.company_settings")?>
+                            </a>
+                        </li>
+                    <?php } ?>
+
+                <?php } ?>
+            </ul>
+
+        </li>
+    <?php } ?>
+    <li>
+        <div class="userloggedinfo">
+            <?php echo $this->frontcontroller->includeAction('auth.loginInfo'); ?>
+        </div>
+    </li>
+
     <?php $this->dispatchTplEvent('beforeHeadMenuClose'); ?>
 </ul>
 <?php $this->dispatchTplEvent('afterHeadMenu'); ?>
 
 
 <script>
+    function toggleNotificationTabs(active) {
+
+            jQuery(".notifcationTabs").removeClass("active");
+            jQuery('#'+active+'ListLink').addClass("active");
+            jQuery('.notifcationViewLists').hide();
+            jQuery('#'+active+'List').show();
+
+
+    }
+
     jQuery(document).ready(function(){
+
+
 
         jQuery(".notificationDropdown .dropdown-menu").on("click", function(e) {
             e.stopPropagation();

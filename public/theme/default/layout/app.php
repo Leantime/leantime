@@ -32,11 +32,6 @@
 
         <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
 
-
-            <div class="userloggedinfo">
-                <?php echo $this->frontcontroller->includeAction('auth.loginInfo'); ?>
-            </div>
-
             <?php echo $this->frontcontroller->includeAction('menu.headMenu'); ?>
 
         </div>
