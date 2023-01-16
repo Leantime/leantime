@@ -30,7 +30,7 @@ namespace leantime\domain\controllers {
         {
 
             $clientId = "";
-            if (isset($_GET['client']) === true) {
+            if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];
             }
 

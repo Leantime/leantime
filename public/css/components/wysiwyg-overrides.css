@@ -108,7 +108,7 @@ body .tox .tox-mbtn--active {
 }
 
 body.mce-content-body {
-    padding:10px 30px;
+    padding:10px 15px;
 }
 
 .mce-content-body {
@@ -275,5 +275,13 @@ a.confetti {
 }
 
 
-
+.mirrorElement {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+    display: Inline-block;
+}
 

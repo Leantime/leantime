@@ -24,7 +24,6 @@ jQuery(document).on('click', function (e) {
         if (!jQuery(this).is(e.target) && jQuery(this).has(e.target).length === 0 && jQuery('.popover').has(e.target).length === 0) {
             ((jQuery(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false;  // fix for BS 3.3.6
         }
-
     });
 });
 
@@ -55,6 +54,13 @@ jQuery(document).on('focusin', function(e) {
 
 //Set moment locale early in app creation
 moment.locale(leantime.i18n.__("language.code"));
+
+
+jQuery(document).ready(function(){
+    jQuery(".confetti").click(function(){
+        confetti.start();
+    });
+});
 
 
 
