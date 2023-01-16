@@ -49,7 +49,7 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $notification = new models\notifications\notification();
+                    $notification = new notification();
                     $notification->url = array(
                         "url" => CURRENT_URL,
                         "text" => $linkLabel

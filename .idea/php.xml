@@ -49,7 +49,6 @@
       <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
       <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
-      <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/vendor/endroid/qr-code" />
       <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
       <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
@@ -69,10 +68,11 @@
       <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
       <path value="$PROJECT_DIR$/vendor/overtrue/pinyin" />
       <path value="$PROJECT_DIR$/vendor/intervention/image" />
-      <path value="$PROJECT_DIR$/vendor/lasserafn/php-string-script-language" />
-      <path value="$PROJECT_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
       <path value="$PROJECT_DIR$/vendor/meyfa/php-svg" />
+      <path value="$PROJECT_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
+      <path value="$PROJECT_DIR$/vendor/lasserafn/php-string-script-language" />
       <path value="$PROJECT_DIR$/vendor/lasserafn/php-initials" />
+      <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
