@@ -382,7 +382,7 @@ if ($numberofColumns > 0) {
                                             </div>
                                             <?php } ?>
 
-                                            <?php if ($row['priority'] != '' && $row['priority'] > 0) { ?>
+
                                                 <div class="dropdown ticketDropdown priorityDropdown show">
                                                 <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <span class="text"><?php
@@ -403,7 +403,7 @@ if ($numberofColumns > 0) {
                                                     }?>
                                                 </ul>
                                             </div>
-                                            <?php } ?>
+
 
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

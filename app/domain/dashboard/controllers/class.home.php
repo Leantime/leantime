@@ -12,7 +12,7 @@ namespace leantime\domain\controllers {
     {
 
         private $projectsService;
-        private $ticketsService;
+        private services\tickets $ticketsService;
         private $usersService;
         private $timesheetsService;
         private $reportsService;

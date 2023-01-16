@@ -408,7 +408,7 @@ namespace leantime\domain\services {
                 'planHours' => '',
                 'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : "",
                 'acceptanceCriteria' => '',
-                'priority' => 3,
+                'priority' => '',
                 'tags' => '',
                 'editFrom' => '',
                 'editTo' => '',

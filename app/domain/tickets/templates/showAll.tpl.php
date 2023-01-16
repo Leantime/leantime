@@ -291,7 +291,7 @@
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1">
+                <col class="con1" style="max-width:200px;">
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
@@ -308,7 +308,7 @@
             <thead>
                 <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
-                    <th><?= $this->__("label.title"); ?></th>
+                    <th style="max-width: 350px;"><?= $this->__("label.title"); ?></th>
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                     <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                     <th><?= $this->__("label.effort"); ?></th>
