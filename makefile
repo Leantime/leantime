@@ -39,13 +39,13 @@ build: install-deps build-js
 	rm -rf $(TARGET_DIR)/public/userfiles/*
 
 	#Removing unneeded items for release
-	rm -R $(TARGET_DIR)/public/images/Screenshots
+	rm -rf $(TARGET_DIR)/public/images/Screenshots
 
 	#removing js directories
-	find  $(TARGET_DIR)/app/domain/ -maxdepth 2 -name "js" -exec rm -r {} \;
+	find  $(TARGET_DIR)/app/domain/ -maxdepth 2 -name "js" -exec rm -rf {} \;
 
     #removing uncompiled js files
-	find $(TARGET_DIR)/public/js/ -mindepth 1 ! -name "*compiled*" -exec rm -f -r {} \;
+	find $(TARGET_DIR)/public/js/ -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
 package:
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
