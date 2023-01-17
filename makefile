@@ -21,7 +21,7 @@ build: install-deps build-js
 	cp  ./nginx*.conf $(TARGET_DIR)
 	cp  ./updateLeantime.sh $(TARGET_DIR)
 
-	rm $(TARGET_DIR)/config/configuration.php
+	rm -f $(TARGET_DIR)/config/configuration.php
 	#Remove font for QR code generator (not needed if no label is used)
 	rm -f $(TARGET_DIR)/vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
