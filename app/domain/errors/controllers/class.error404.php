@@ -7,15 +7,12 @@ namespace leantime\domain\controllers {
 
     class error404 extends controller
     {
-
         public function run()
         {
 
             core\frontcontroller::setResponseCode(404);
             $this->tpl->display('errors.error404');
-
         }
-
     }
 
 }

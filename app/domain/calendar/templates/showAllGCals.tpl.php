@@ -72,7 +72,7 @@ defined('RESTRICTED') or die('Restricted access');
 
                 <tbody>
 
-                <?php foreach($this->get('allCalendars') as $row) { ?>
+                <?php foreach ($this->get('allCalendars') as $row) { ?>
                     <tr>
                         <td><?php echo $this->displayLink('calendar.editGCal', $row['id'], array('id' => $row['id'])) ?></td>
                         <td><?php echo $this->displayLink('calendar.editGCal', $row['name'], array('id' => $row['id'])) ?></a></td>

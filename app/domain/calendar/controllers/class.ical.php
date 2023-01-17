@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class ical extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -40,8 +38,8 @@ namespace leantime\domain\controllers {
 
             $idParts = explode("_", $calId);
 
-            if(count($idParts) != 2) {
-                $this->tpl->redirect(BASE_URL."/errors/404");
+            if (count($idParts) != 2) {
+                $this->tpl->redirect(BASE_URL . "/errors/404");
             }
 
             $calendar = $this->calendarRepo->getCalendarBySecretHash($idParts[1], $idParts[0]);
@@ -51,9 +49,7 @@ namespace leantime\domain\controllers {
             header('Content-type: text/calendar; charset=utf-8');
             header('Content-disposition: attachment;filename="leantime.ics"');
             $this->tpl->display("calendar.ical", "blank");
-
         }
-
     }
 
 }

@@ -42,7 +42,8 @@ leantime.settingController = (function () {
                     );
 
                 _uploadResult.croppie(
-                    'bind', {
+                    'bind',
+                    {
                         url: e.currentTarget.result
                     }
                 );
@@ -63,9 +64,10 @@ leantime.settingController = (function () {
 
         jQuery('#save-logo').addClass('running');
 
-        jQuery('#logoImg').attr('src', leantime.appUrl+'/images/loaders/loader28.gif');
+        jQuery('#logoImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
         _uploadResult.croppie(
-            'result', {
+            'result',
+            {
                 type: "blob",
                 circle: false,
                 size: "original",

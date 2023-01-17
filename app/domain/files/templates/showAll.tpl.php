@@ -11,7 +11,9 @@
             <div class='mediamgr_left'>
                 <div class="mediamgr_category">
 
-                    <form action='<?=BASE_URL ?>/files/showAll<?php if(isset($_GET['modalPopUp'])) { echo"&modalPopUp=true"; }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+                    <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
+                        echo"&modalPopUp=true";
+                                  }?>' method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -21,10 +23,10 @@
                                         <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
-									<span class="fileupload-new">Select file</span>
-									<span class='fileupload-exists'>Change</span>
-									<input type='file' name='file' />
-								</span>
+                                    <span class="fileupload-new">Select file</span>
+                                    <span class='fileupload-exists'>Change</span>
+                                    <input type='file' name='file' />
+                                </span>
 
                                     <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
                                 </div>
@@ -40,7 +42,7 @@
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                        <?php foreach($this->get('files') as $file): ?>
+                        <?php foreach ($this->get('files') as $file) : ?>
                             <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -60,12 +62,12 @@
                                     </ul>
                                 </div>
                                 <a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                    <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))):  ?>
+                                    <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                         <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                                    <?php else: ?>
+                                    <?php else : ?>
                                         <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
                                     <?php endif; ?>
-                                    <span class="filename"><?php echo substr($file['realName'], 0, 10)."(...).".$file['extension'] ?></span>
+                                    <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                                 </a>
                             </li>
                         <?php endforeach; ?>
@@ -110,8 +112,7 @@
 
         //jQuery("#medialist a").colorbox();
 
-        <?php if(isset($_GET['modalPopUp'])) { ?>
-
+        <?php if (isset($_GET['modalPopUp'])) { ?>
         jQuery('#medialist a.imageLink').on("click", function(event){
 
             event.preventDefault();

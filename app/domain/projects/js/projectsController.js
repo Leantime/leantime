@@ -80,7 +80,7 @@ leantime.projectsController = (function () {
 
     var initProjectTable = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
 
@@ -120,19 +120,19 @@ leantime.projectsController = (function () {
     };
 
     var initTodoStatusSortable = function (element) {
-        var sortCounter=1;
+        var sortCounter = 1;
 
-        jQuery(element).find("input.sorter").each(function(index){
+        jQuery(element).find("input.sorter").each(function (index) {
 
             jQuery(this).val(sortCounter);
             sortCounter++;
         });
 
         jQuery(element).sortable({
-            stop: function( event, ui ) {
+            stop: function ( event, ui ) {
 
-                sortCounter=1;
-                jQuery(element).find("input.sorter").each(function(index){
+                sortCounter = 1;
+                jQuery(element).find("input.sorter").each(function (index) {
                     jQuery(this).val(sortCounter);
                     sortCounter++;
                 });
@@ -141,61 +141,61 @@ leantime.projectsController = (function () {
 
     };
 
-    var initSelectFields = function() {
+    var initSelectFields = function () {
 
-        jQuery(document).ready(function(){
+        jQuery(document).ready(function () {
 
-            jQuery("#todosettings select.colorChosen").on('chosen:ready', function(e, chosen){
+            jQuery("#todosettings select.colorChosen").on('chosen:ready', function (e, chosen) {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#"+id+"_chzn a span").removeClass();
-                jQuery("#"+id+"_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chzn a span").removeClass();
+                jQuery("#" + id + "_chzn a span").addClass(params.selected);
 
             }).chosen({
                 disable_search_threshold: 10
             });
 
-            jQuery("#todosettings select.colorChosen").on('change', function(evt, params){
+            jQuery("#todosettings select.colorChosen").on('change', function (evt, params) {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#"+id+"_chzn a span").removeClass();
-                jQuery("#"+id+"_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chzn a span").removeClass();
+                jQuery("#" + id + "_chzn a span").addClass(params.selected);
 
             });
         });
     };
 
-    var removeStatus = function(id) {
+    var removeStatus = function (id) {
 
-        jQuery("#todostatus-"+id).parent().remove();
+        jQuery("#todostatus-" + id).parent().remove();
 
     };
 
-    var addToDoStatus = function(id) {
+    var addToDoStatus = function (id) {
 
         var highestKey = -1;
 
-        jQuery("#todosettings ul .statusList").each(function(){
+        jQuery("#todosettings ul .statusList").each(function () {
 
             var keyInt = jQuery(this).find('.labelKey').val();
 
-            if(keyInt >= highestKey) {
+            if (keyInt >= highestKey) {
                 highestKey = keyInt;
             }
 
         });
 
-        var newKey = parseInt(highestKey)+1;
+        var newKey = parseInt(highestKey) + 1;
 
         var statusCopy = jQuery(".newStatusTpl").clone();
 
-        statusCopy.html(function(i, oldHTML) {
+        statusCopy.html(function (i, oldHTML) {
             return updatedContent = oldHTML.replaceAll('XXNEWKEYXX', newKey);
         });
 
-        jQuery('#todoStatusList').append("<li>"+statusCopy.html()+"</li>");
+        jQuery('#todoStatusList').append("<li>" + statusCopy.html() + "</li>");
 
         jQuery("#todosettings select.colorChosen").chosen("destroy");
         leantime.projectsController.initSelectFields();

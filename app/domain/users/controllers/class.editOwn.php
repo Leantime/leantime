@@ -9,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class editOwn extends controller
     {
-
         private $userId;
         /**
          * init - initialize private variables
@@ -27,21 +26,21 @@ namespace leantime\domain\controllers {
             $this->userService = new \leantime\domain\services\users();
 
             $this->userId = $_SESSION['userdata']['id'];
-
         }
 
 
-        public function get() {
+        public function get()
+        {
 
             $row = $this->userRepo->getUser($this->userId);
 
-            $userLang = $this->settingsService->settingsRepo->getSetting("usersettings.".$this->userId.".language");
+            $userLang = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".language");
 
-            if($userLang == false){
+            if ($userLang == false) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
-            $userTheme = $this->settingsService->settingsRepo->getSetting("usersettings.".$this->userId.".theme");
+            $userTheme = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".theme");
 
             //Build values array
             $values = array(
@@ -52,11 +51,10 @@ namespace leantime\domain\controllers {
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
-                'messagesfrequency' => $this->settingsRepo->getSetting("usersettings.".$row['id'].".messageFrequency"),
+                'messagesfrequency' => $this->settingsRepo->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
             );
 
-            if($values['messagesfrequency'] == false)
-            {
+            if ($values['messagesfrequency'] == false) {
                 $values['messagesfrequency'] = $this->settingsRepo->getSetting("companysettings.messageFrequency");
             }
 
@@ -74,22 +72,19 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('user', $row);
 
             $this->tpl->display('users.editOwn');
-
-
         }
 
-        public function post() {
+        public function post()
+        {
 
             //Save Profile Info
             $tab = '';
 
-            if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
+            if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 //profile Info
                 if (isset($_POST['profileInfo'])) {
-
                     $tab = '#myProfile';
 
                     $values = array(
@@ -112,29 +107,25 @@ namespace leantime\domain\controllers {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                             if ($changedEmail == 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
-
                                     $this->userRepo->editOwn($values, $this->userId);
                                     $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
-
-                                }else{
+                                } else {
                                     $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                                 }
-                            }else{
+                            } else {
                                 $this->userRepo->editOwn($values, $this->userId);
                                 $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
                             }
-                        }else{
+                        } else {
                             $this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
                         }
-                    }else{
+                    } else {
                         $this->tpl->setNotification($this->language->__("notification.enter_email"), 'error');
                     }
-
                 }
 
                 //Save Password
                 if (isset($_POST['savepw'])) {
-
                     $tab = '#security';
 
                     $values = array(
@@ -147,8 +138,7 @@ namespace leantime\domain\controllers {
                         'twoFAEnabled' => $row['twoFAEnabled']
                     );
 
-                    if(password_verify($_POST['currentPassword'], $values['password'])) {
-
+                    if (password_verify($_POST['currentPassword'], $values['password'])) {
                         if ($_POST['newPassword'] == $_POST['confirmPassword']) {
                             if ($this->userService->checkPasswordStrength($_POST['newPassword'])) {
                                 $values['password'] = password_hash($_POST['newPassword'], PASSWORD_DEFAULT);
@@ -169,8 +159,7 @@ namespace leantime\domain\controllers {
                                 'error'
                             );
                         }
-
-                    }else{
+                    } else {
                         $this->tpl->setNotification(
                             $this->language->__("notification.previous_password_incorrect"),
                             'error'
@@ -181,14 +170,13 @@ namespace leantime\domain\controllers {
 
                 //Save Look & Feel
                 if (isset($_POST['saveLook'])) {
-
                     $tab = '#look';
 
                     $postLang = htmlentities($_POST['language']);
                     $postTheme = htmlentities($_POST['theme']);
 
-                    $this->settingsService->settingsRepo->saveSetting("usersettings.".$this->userId.".theme", $postTheme);
-                    $this->settingsService->settingsRepo->saveSetting("usersettings.".$this->userId.".language", $postLang);
+                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
+                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".language", $postLang);
 
                     unset($_SESSION["companysettings.logoPath"]);
 
@@ -196,7 +184,6 @@ namespace leantime\domain\controllers {
                     $this->language->setLanguage($postLang);
 
                     $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
-
                 }
 
                 //Save Profile Image
@@ -207,7 +194,6 @@ namespace leantime\domain\controllers {
 
                 //Save Notifications
                 if (isset($_POST['savenotifications'])) {
-
                     $tab = '#notifications';
 
                     $values = array(
@@ -229,21 +215,16 @@ namespace leantime\domain\controllers {
                     $this->userRepo->editOwn($values, $this->userId);
 
                     // Storing option messagefrequency
-                    $this->settingsRepo->saveSetting("usersettings.".$this->userId.".messageFrequency", (int) $_POST['messagesfrequency']);
+                    $this->settingsRepo->saveSetting("usersettings." . $this->userId . ".messageFrequency", (int) $_POST['messagesfrequency']);
 
                     $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
-
-
                 }
-
-            }else{
-
+            } else {
                 $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
-
             }
 
             //Redirect
-            core\frontcontroller::redirect(BASE_URL."/users/editOwn".$tab);
+            core\frontcontroller::redirect(BASE_URL . "/users/editOwn" . $tab);
         }
 
         /**
@@ -401,7 +382,5 @@ namespace leantime\domain\controllers {
 
         }
          * */
-
     }
 }
-

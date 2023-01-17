@@ -1,10 +1,12 @@
 <?php
+
 /**
  * delCanvas.inc template - Generic template for deleting canvas
  *
  * Required variables:
  * - $canvasName     Name of current canvas
  */
+
 defined('RESTRICTED') or die('Restricted access');
 
 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -13,7 +15,7 @@ $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 <div class="pageheader">
     <div class="pageicon"><span class="fas fa-trash-can"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']; ?></h5>
+        <h5><?php echo $_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']; ?></h5>
         <h1><?=$this->__("headline.delete_board") ?></h1>
     </div>
 </div><!--pageheader-->

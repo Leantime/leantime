@@ -41,7 +41,7 @@ leantime.clientsController = (function () {
 
     var initClientTable = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
 

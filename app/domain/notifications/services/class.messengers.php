@@ -137,14 +137,13 @@ class messengers
         $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".zulipHook");
 
         if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== "") {
-
             $zulipWebhook = unserialize($zulipWebhookSerialized);
 
             $botEmail = $zulipWebhook['zulipEmail'];
             $botKey = $zulipWebhook['zulipBotKey'];
             $botURL = $zulipWebhook['zulipURL'] . "/api/v1/messages";
 
-            $prepareChatMessage = "**Project: " .$this->projectName . "** \n\r" . $notification->message;
+            $prepareChatMessage = "**Project: " . $this->projectName . "** \n\r" . $notification->message;
             if ($notification->url !== false) {
                 $prepareChatMessage .= " " . $notification->url['url'] . "";
             }
@@ -196,8 +195,6 @@ class messengers
         for ($i = 1; 3 >= $i; $i++) {
             $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $notification->projectId . '.discordWebhookURL' . $i);
             if ($discordWebhookURL !== "" && $discordWebhookURL !== false) {
-
-
                 if (!$converter) {
                     $converter = new HtmlConverter();
                 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -6,14 +7,13 @@ namespace leantime\domain\repositories {
 
     class read
     {
-
         public function __construct()
         {
 
             $this->db = core\db::getInstance();
         }
 
-        public function markAsRead($module,$moduleId,$userId)
+        public function markAsRead($module, $moduleId, $userId)
         {
 
             $sql = 'INSERT INTO zp_read (module,moduleId,userId) VALUES (:module,:moduleId,:userId)';
@@ -25,10 +25,9 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
-        public function isRead($module,$moduleId,$userId)
+        public function isRead($module, $moduleId, $userId)
         {
 
             $sql = "SELECT * FROM zp_read 
@@ -50,6 +49,5 @@ namespace leantime\domain\repositories {
 
             return $return;
         }
-
     }
 }

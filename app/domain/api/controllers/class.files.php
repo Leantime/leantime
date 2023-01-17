@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class files extends controller
     {
-
         private $usersService;
 
         /**
@@ -23,7 +22,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->fileRepo = new repositories\files();
-
         }
 
 
@@ -35,7 +33,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -48,7 +45,7 @@ namespace leantime\domain\controllers {
         {
 
             //FileUpload
-            if(isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
+            if (isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
                 $module = htmlentities($_GET['module']);
                 $id = (int) $_GET['moduleId'];
                 return $this->fileRepo->upload($_FILES, $module, $id);
@@ -56,16 +53,12 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-
                 $_FILES['file']['name'] = "pastedImage.png";
 
                 $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
 
-                echo BASE_URL."/download.php?module=private&encName=".$file['encName']."&ext=".$file['extension']."&realName=".$file['realName']."";
-
+                echo BASE_URL . "/download.php?module=private&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'] . "";
             }
-
-
         }
 
         /**
@@ -78,9 +71,8 @@ namespace leantime\domain\controllers {
         {
             //Special handling for settings
 
-            if(isset($params['patchModalSettings'])) {
-
-                if($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
+            if (isset($params['patchModalSettings'])) {
+                if ($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
                     echo "{status:ok}";
                 }
             }
@@ -94,9 +86,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

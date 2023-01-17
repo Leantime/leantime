@@ -8,7 +8,7 @@ $redirectUrl = $this->get("redirectUrl");
     </div>
 </div>
 <div class="regcontent">
-    <form id="login" action="<?php echo BASE_URL."/twoFA/verify" ?>" method="post">
+    <form id="login" action="<?php echo BASE_URL . "/twoFA/verify" ?>" method="post">
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl ?>"/>
 
         <?php echo $this->displayInlineNotification(); ?>

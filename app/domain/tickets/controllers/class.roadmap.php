@@ -47,9 +47,7 @@ namespace leantime\domain\controllers {
             if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
                 $includeTasks = true;
                 $_SESSION["usersettings.showMilestoneTasks"] = true;
-
-            }else if (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
-
+            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
                 $includeTasks = false;
                 $_SESSION["usersettings.showMilestoneTasks"] = false;
             }

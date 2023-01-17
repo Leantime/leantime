@@ -1,7 +1,9 @@
 <?php
+
   /**
    * AJAX class - Save menu state in a persistent way
    */
+
 namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
@@ -9,7 +11,6 @@ namespace leantime\domain\controllers {
 
     class submenu extends controller
     {
-
         private $menu;
 
         /**
@@ -22,7 +23,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->menu = new repositories\menu();
-
         }
 
 
@@ -34,7 +34,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -45,9 +44,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
-
         }
 
         /**
@@ -59,9 +55,8 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
 
-			$this->menu->setSubmenuState($params['submenu'] , $params['state']);
-			echo "{status:ok}";
-
+            $this->menu->setSubmenuState($params['submenu'], $params['state']);
+            echo "{status:ok}";
         }
 
         /**
@@ -72,9 +67,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

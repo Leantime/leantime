@@ -7,7 +7,8 @@ namespace leantime\plugins\models\motivationalQuotes {
         public $author;
         public $quote;
 
-        public function __construct($quote ="", $author = "") {
+        public function __construct($quote = "", $author = "")
+        {
             $this->author = $author;
             $this->quote = $quote;
         }

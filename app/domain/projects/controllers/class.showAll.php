@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-
         private $projectRepo;
         private $menuRepo;
 
@@ -20,11 +19,11 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init() {
+        public function init()
+        {
 
             $this->projectRepo = new repositories\projects();
             $this->menuRepo = new repositories\menu();
-
         }
 
         /**
@@ -39,16 +38,15 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
             if (auth::userIsAtLeast(roles::$manager)) {
-
-                if(!isset($_SESSION['showClosedProjects'])){
+                if (!isset($_SESSION['showClosedProjects'])) {
                     $_SESSION['showClosedProjects'] = false;
                 }
 
-                if(isset($_POST['hideClosedProjects'])) {
+                if (isset($_POST['hideClosedProjects'])) {
                     $_SESSION['showClosedProjects'] = false;
                 }
 
-                if(isset($_POST['showClosedProjects'])) {
+                if (isset($_POST['showClosedProjects'])) {
                     $_SESSION['showClosedProjects'] = true;
                 }
 
@@ -59,15 +57,10 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('showClosedProjects', $_SESSION['showClosedProjects']);
 
                 $this->tpl->display('projects.showAll');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 
 }

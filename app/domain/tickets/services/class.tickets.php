@@ -207,9 +207,7 @@ namespace leantime\domain\services {
             $count = 0;
             foreach ($searchCriteria as $key => $value) {
                 if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy") {
-
                     if ($value != '') {
-
                         $count++;
                     }
                 }
@@ -423,7 +421,6 @@ namespace leantime\domain\services {
             $result = $this->ticketRepository->addTicket($values);
 
             if ($result > 0) {
-
                 $values['id'] = $result;
                 $actual_link = BASE_URL . "/tickets/showTicket/" . $result;
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
@@ -772,7 +769,6 @@ namespace leantime\domain\services {
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
-
                 }
             }
 

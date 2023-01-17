@@ -10,7 +10,6 @@ namespace leantime\domain\services {
 
     class timesheets
     {
-
         private $timesheetsRepo;
 
 
@@ -19,7 +18,6 @@ namespace leantime\domain\services {
 
             $this->timesheetsRepo = new repositories\timesheets();
             $this->language = core\language::getInstance();
-
         }
 
         /*
@@ -42,7 +40,8 @@ namespace leantime\domain\services {
             return $this->timesheetsRepo->punchOut($ticketId);
         }
 
-        public function logTime($ticketId, $params){
+        public function logTime($ticketId, $params)
+        {
 
             $values = array(
                 'userId' => $_SESSION['userdata']['id'],
@@ -76,22 +75,17 @@ namespace leantime\domain\services {
             }
 
             if ($values['kind'] != '') {
-
                 if ($values['date'] != '') {
-
                     if ($values['hours'] != '' && $values['hours'] > 0) {
-
                         $this->timesheetsRepo->addTime($values);
 
                         return true;
-
                     } else {
                         return array("msg" => "notifications.time_logged_error_no_hours", "type" => "error");
                     }
                 } else {
                     return array("msg" => "time_logged_error_no_date", "type" => "error");
                 }
-
             } else {
                 return array("msg" => "time_logged_error_no_kind", "type" => "error");
             }
@@ -101,7 +95,6 @@ namespace leantime\domain\services {
         {
 
             return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
-
         }
 
         public function getSumLoggedHoursForTicket($ticketId)
@@ -117,22 +110,21 @@ namespace leantime\domain\services {
             }
 
             return $allHours;
-
         }
 
-        public function getRemainingHours($ticket) {
+        public function getRemainingHours($ticket)
+        {
 
             $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
             $planHours = $ticket->planHours;
 
             $remaining = $planHours - $totalHoursLogged;
 
-            if($remaining < 0){
+            if ($remaining < 0) {
                 $remaining = 0;
             }
 
             return $remaining;
-
         }
 
         public function getUsersTicketHours($ticketId, $userId)
@@ -145,9 +137,9 @@ namespace leantime\domain\services {
             return $this->timesheetsRepo->kind;
         }
 
-        public function getAll($projectId=-1, $kind='all', $dateFrom='0000-01-01 00:00:00', $dateTo='9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1'){
+        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1')
+        {
             return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid);
         }
-
     }
 }

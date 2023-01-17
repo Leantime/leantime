@@ -13,7 +13,7 @@ leantime.calendarController = (function () {
     })();
 
     //Functions
-    var initCalendar = function(userEvents) {
+    var initCalendar = function (userEvents) {
 
         var date = new Date();
         var d = date.getDate();
@@ -59,10 +59,11 @@ leantime.calendarController = (function () {
                 week: leantime.i18n.__("buttons.week"),
                 day: leantime.i18n.__("buttons.day")
             },
-            select: function(start, end, allDay) {
+            select: function (start, end, allDay) {
                 var title = prompt(leantime.i18n.__("label.event_title"));
                 if (title) {
-                    calendar.fullCalendar('renderEvent',
+                    calendar.fullCalendar(
+                        'renderEvent',
                         {
                             title: title,
                             start: start,
@@ -87,7 +88,8 @@ leantime.calendarController = (function () {
         };
         jQuery.datepicker.setDefaults(
             { beforeShow: function (i) {
-                if (jQuery(i).attr('readonly')) { return false; } } }
+                if (jQuery(i).attr('readonly')) {
+                    return false; } } }
         );
 
         var dateFormat = leantime.i18n.__("language.jsdateformat"),
@@ -112,7 +114,8 @@ leantime.calendarController = (function () {
                     }
                 )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
                         to.datepicker("option", "minDate", getDate(this));
                     }
                 ),
@@ -134,26 +137,27 @@ leantime.calendarController = (function () {
                     weekHeader: leantime.i18n.__("language.weekHeader"),
                     firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
-                )
+            )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
                         from.
 
                         datepicker("option", "maxDate", getDate(this));
                     }
                 );
 
-                function getDate( element )
-                {
-                    var date;
-                    try {
-                        date = jQuery.datepicker.parseDate(dateFormat, element.value);
-                    } catch( error ) {
-                        date = null;
-                        console.log(error);
-                    }
-                    return date;
-                }
+        function getDate( element )
+        {
+            var date;
+            try {
+                date = jQuery.datepicker.parseDate(dateFormat, element.value);
+            } catch ( error ) {
+                date = null;
+                console.log(error);
+            }
+            return date;
+        }
     }
 
     var initExportModal = function () {

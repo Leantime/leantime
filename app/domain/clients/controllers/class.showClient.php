@@ -5,7 +5,6 @@
  *
  */
 
-
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -17,7 +16,6 @@ namespace leantime\domain\controllers {
 
     class showClient extends controller
     {
-
         private repositories\clients $clientRepo;
 
         /**
@@ -34,10 +32,9 @@ namespace leantime\domain\controllers {
             $this->commentService = new services\comments();
             $this->fileService = new services\files();
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL."/clients/showAll";
+            if (!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = BASE_URL . "/clients/showAll";
             }
-
         }
 
         /**
@@ -72,7 +69,6 @@ namespace leantime\domain\controllers {
             );
 
             if (empty($row) === false && auth::userIsAtLeast(roles::$admin)) {
-
                 $file = new repositories\files();
                 $project = new repositories\projects();
 
@@ -81,44 +77,37 @@ namespace leantime\domain\controllers {
                 }
 
                 if (isset($_POST['upload'])) {
-
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
                         $return = $file->upload($_FILES, 'client', $id);
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
-
-                    }else{
+                    } else {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
                 }
 
                 //Delete File
                 if (isset($_GET['delFile']) === true) {
-
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
-                    if($result === true) {
+                    if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL."/clients/showClient/".$id."#files");
-                    }else {
+                        $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
+                    } else {
                         $this->tpl->setNotification($result["msg"], "success");
                     }
-
                 }
 
 
                 //Add comment
                 if (isset($_POST['comment']) === true) {
-
-                    if($this->commentService->addComment($_POST, "client", $id, $row)) {
-
+                    if ($this->commentService->addComment($_POST, "client", $id, $row)) {
                         $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                    }else {
+                    } else {
                         $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                     }
                 }
 
                 if (isset($_POST['save']) === true) {
-
                     $clientValues = array(
                         'id' => $row['id'],
                         'name' => $_POST['name'],
@@ -133,13 +122,10 @@ namespace leantime\domain\controllers {
                     );
 
                     if ($clientValues['name'] !== '') {
-
                         $this->clientRepo->editClient($clientValues, $id);
 
                         $this->tpl->setNotification($this->language->__("notification.client_saved_successfully"), 'success');
-
                     } else {
-
                         $this->tpl->setNotification($this->language->__("notification.client_name_not_specified"), 'error');
                     }
                 }
@@ -154,14 +140,9 @@ namespace leantime\domain\controllers {
 
 
                 $this->tpl->display('clients.showClient');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 }

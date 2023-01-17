@@ -41,14 +41,14 @@ leantime.generalController = (function () {
             }
 
         },
-        highlighter: function(text) {
+        highlighter: function (text) {
             //make matched block italic
             return text.replace(new RegExp('(' + this.query + ')', 'ig'), function ($1, match) {
                 return '<strong>' + match + '</strong>';
             });
         },
         insert: function (item) {
-            return '<a class="userMention" data-tagged-user-id="'+ item.id +'" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage='+ item.id +'" alt="' + item.name + ' Image"/>' + item.name + '</a>';
+            return '<a class="userMention" data-tagged-user-id="' + item.id + '" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage=' + item.id + '" alt="' + item.name + ' Image"/>' + item.name + '</a>';
         }
     };
 
@@ -151,18 +151,18 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
                 },
-                setup: function(editor) {
+                setup: function (editor) {
                     editor.on('init', function (e) {
 
                         var confettiElement = editor.getDoc().getElementsByClassName("confetti");
 
-                        if(confettiElement && confettiElement.length>0){
-                            confettiElement[0].addEventListener("click", function(){
+                        if (confettiElement && confettiElement.length > 0) {
+                            confettiElement[0].addEventListener("click", function () {
                                 confetti.start();
                             });
                         }
 
-                        if (editor.getContent() === ''){
+                        if (editor.getContent() === '') {
                             editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
@@ -170,9 +170,9 @@ leantime.generalController = (function () {
 
 
                     //and remove it on focus
-                    editor.on('focus',function(){
+                    editor.on('focus',function () {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if(placeholder){
+                        if (placeholder) {
                             placeholder.remove();
                         }
 
@@ -273,18 +273,18 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
                 },
-                setup: function(editor) {
+                setup: function (editor) {
                     editor.on('init', function (e) {
 
                         var confettiElement = editor.getDoc().getElementsByClassName("confetti");
 
-                        if(confettiElement && confettiElement.length>0){
-                            confettiElement[0].addEventListener("click", function(){
+                        if (confettiElement && confettiElement.length > 0) {
+                            confettiElement[0].addEventListener("click", function () {
                                 confetti.start();
                             });
                         }
 
-                        if (editor.getContent() === ''){
+                        if (editor.getContent() === '') {
                             editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
@@ -292,9 +292,9 @@ leantime.generalController = (function () {
 
 
                     //and remove it on focus
-                    editor.on('focus',function(){
+                    editor.on('focus',function () {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if(placeholder){
+                        if (placeholder) {
                             placeholder.remove();
                         }
 

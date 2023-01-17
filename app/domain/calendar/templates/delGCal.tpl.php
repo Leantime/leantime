@@ -5,8 +5,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 <h1>Kalender löschen</h1>
 
-<?php if($this->get('msg') === '') { ?>
-
+<?php if ($this->get('msg') === '') { ?>
 <form method="post" accept-charset="utf-8">
 <fieldset><legend><?php echo $this->__('CONFIRM_DELETE'); ?></legend>
 <p>Soll der Kalender wirklich gelöscht werden?<br />
@@ -15,8 +14,7 @@ defined('RESTRICTED') or die('Restricted access');
     class="button"></fieldset>
 </form>
 
-<?php }else{ ?>
-
+<?php } else { ?>
 <span class="info"><?php echo $this->get('msg'); ?></span>
 
 <?php } ?>

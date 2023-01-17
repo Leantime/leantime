@@ -8,7 +8,6 @@ use leantime\core\plugins;
 
 class events
 {
-
     /**
      * Registry of all events added to a hook
      *
@@ -79,7 +78,8 @@ class events
      *
      * @return mixed
      */
-    public static function dispatch_filter($filtername, $payload='', $available_params = [], $context = '') {
+    public static function dispatch_filter($filtername, $payload = '', $available_params = [], $context = '')
+    {
 
         $filtername = "$context.$filtername";
 
@@ -107,32 +107,31 @@ class events
      *
      * @return void
      */
-    public static function discover_listeners() {
+    public static function discover_listeners()
+    {
 
-        $modules = glob(ROOT."/../app/domain" . '/*' , GLOB_ONLYDIR);
-        foreach($modules as $module){
-            if(file_exists($module."/events/register.php")) {
-                include $module."/events/register.php";
+        $modules = glob(ROOT . "/../app/domain" . '/*', GLOB_ONLYDIR);
+        foreach ($modules as $module) {
+            if (file_exists($module . "/events/register.php")) {
+                include $module . "/events/register.php";
             }
         }
 
-        $pluginPath = ROOT."/../app/plugins/";
+        $pluginPath = ROOT . "/../app/plugins/";
 
         $enabledPlugins = [];
-        if($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+        if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
             $pluginService = new \leantime\domain\services\plugins();
             $enabledPlugins = $pluginService->getEnabledPlugins();
         }
 
         //var_dump($enabledPlugins); exit;
 
-        foreach($enabledPlugins as $plugin){
-
-            if(file_exists($pluginPath.$plugin->foldername."/register.php")) {
-                include $pluginPath.$plugin->foldername . "/register.php";
+        foreach ($enabledPlugins as $plugin) {
+            if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
+                include $pluginPath . $plugin->foldername . "/register.php";
             }
         }
-
     }
 
     /**
@@ -148,10 +147,10 @@ class events
      */
     public static function add_event_listener($eventName, $handler, $priority = 10)
     {
-        if ( ! key_exists($eventName, self::$eventRegistry) ) {
+        if (! key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];
         }
-        self::$eventRegistry[$eventName][] = array("handler"=> $handler, "priority" => $priority);
+        self::$eventRegistry[$eventName][] = array("handler" => $handler, "priority" => $priority);
     }
 
     /**
@@ -167,10 +166,10 @@ class events
      */
     public static function add_filter_listener($filtername, $handler, $priority = 10)
     {
-        if ( ! key_exists($filtername, self::$filterRegistry) ) {
+        if (! key_exists($filtername, self::$filterRegistry)) {
             self::$filterRegistry[$filtername] = [];
         }
-        self::$filterRegistry[$filtername][] = array("handler"=> $handler, "priority" => $priority);
+        self::$filterRegistry[$filtername][] = array("handler" => $handler, "priority" => $priority);
     }
 
     /**
@@ -222,7 +221,7 @@ class events
 
         if ($type == 'filters') {
             usort(self::$filterRegistry[$hookName], $sorter);
-        } else if ($type == 'events') {
+        } elseif ($type == 'events') {
             usort(self::$eventRegistry[$hookName], $sorter);
         }
     }
@@ -314,14 +313,16 @@ class events
                 continue;
             }
 
-            if (in_array(true, [
+            if (
+                in_array(true, [
                 // function name as string
                 is_string($handler) && function_exists($handler),
                 // class instance with method name
                 is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
                 // class name with method name
                 is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1])
-            ])) {
+                ])
+            ) {
                 if ($isEvent) {
                     call_user_func_array($handler, [$payload]);
                     continue;

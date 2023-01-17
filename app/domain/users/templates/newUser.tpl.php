@@ -91,11 +91,12 @@ $projects = $this->get('relations');
                     <label for="role"><?php echo $this->__('label.role'); ?></label>
                     <select name="role" id="role">
 
-                            <?php foreach($this->get('roles') as $key => $role){ ?>
+                            <?php foreach ($this->get('roles') as $key => $role) { ?>
                                 <option value="<?php  echo $key; ?>"
-                                    <?php if($key == $values['role']) { ?> selected="selected" <?php
+                                    <?php if ($key == $values['role']) {
+                                        ?> selected="selected" <?php
                                     } ?>>
-                                    <?=$this->__("label.roles.".$role) ?>
+                                    <?=$this->__("label.roles." . $role) ?>
                                    </option>
                             <?php } ?>
 
@@ -103,12 +104,13 @@ $projects = $this->get('relations');
 
                     <label for="client"><?php echo $this->__('label.client') ?></label>
                     <select name='client' id="client">
-                        <?php if($login::userIsAtLeast("manager")){?>
+                        <?php if ($login::userIsAtLeast("manager")) {?>
                             <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
                         <?php } ?>
-                        <?php foreach($this->get('clients') as $client): ?>
-                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) : ?>selected="selected"<?php
-                           endif; ?>><?php $this->e($client['name']) ?></option>
+                        <?php foreach ($this->get('clients') as $client) : ?>
+                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                                ?>selected="selected"<?php
+                                           endif; ?>><?php $this->e($client['name']) ?></option>
                         <?php endforeach; ?>
                     </select><br/>
 
@@ -126,19 +128,22 @@ $projects = $this->get('relations');
                     <?php
                     $currentClient = '';
                     $i = 0;
-                    foreach($this->get('allProjects') as $row){
-
-                        if($currentClient != $row['clientName']){
-                            if($i>0) { echo"</div>"; }
-                            echo "<h3 id='accordion_link_".$i."'>
-                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$this->escape($row['clientName'])."</a>
+                    foreach ($this->get('allProjects') as $row) {
+                        if ($currentClient != $row['clientName']) {
+                            if ($i > 0) {
+                                echo"</div>";
+                            }
+                            echo "<h3 id='accordion_link_" . $i . "'>
+                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $this->escape($row['clientName']) . "</a>
                             </h3>
-                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                             $currentClient = $row['clientName'];
                         } ?>
                             <div class="item">
                                 <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
-                                <?php if(is_array($projects) === true && in_array($row['id'], $projects) === true) { echo "checked='checked';"; } ?>
+                                <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
+                                    echo "checked='checked';";
+                                } ?>
                                 /><label for="project_<?php echo $row['id'] ?>"><?php $this->e($row['name']); ?></label>
                                 <div class="clearall"></div>
                             </div>

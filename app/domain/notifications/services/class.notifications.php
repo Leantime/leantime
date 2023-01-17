@@ -72,7 +72,6 @@ namespace leantime\domain\services {
                     );
 
                     if ($userMentions === false || (is_array($userMentions) && count($userMentions) == 0)) {
-
                         $notification = array(
                             "userId" => $taggedUser,
                             "read" => '0',

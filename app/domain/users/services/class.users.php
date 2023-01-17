@@ -179,7 +179,8 @@ namespace leantime\domain\services {
          * @param int $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
          * @return bool returns true or false
          */
-        public function usernameExist($username, $notUserId=''){
+        public function usernameExist($username, $notUserId = '')
+        {
             return $this->userRepo->usernameExist($username, $notUserId);
         }
 
@@ -197,41 +198,37 @@ namespace leantime\domain\services {
         {
             $users = array();
 
-            if($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {
+            if ($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {
                 $project = $this->projectRepository->getProject($projectId);
 
-                if($project['psettings'] == 'all') {
+                if ($project['psettings'] == 'all') {
                     return $this->getAll();
                 }
 
-                if($project['psettings'] == 'clients') {
+                if ($project['psettings'] == 'clients') {
+                    $clientUsers = $this->clientRepo->getClientsUsers($project['clientId']);
+                    $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
+                    $users = $clientUsers;
 
-                   $clientUsers = $this->clientRepo->getClientsUsers($project['clientId']);
-                   $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
-                   $users = $clientUsers;
-
-                   foreach($projectUsers as $user) {
-                       $column = array_column($users, 'id');
-                       $search = array_search($user['id'], $column);
-                       if(array_search($user['id'], $column) === false)  {
+                    foreach ($projectUsers as $user) {
+                        $column = array_column($users, 'id');
+                        $search = array_search($user['id'], $column);
+                        if (array_search($user['id'], $column) === false) {
                             $users[] = $user;
-                       }
-                   }
-
-                   return $users;
-                }
-
-                if($project['psettings'] == 'restricted') {
-
-                    $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+                        }
+                    }
 
                     return $users;
                 }
 
+                if ($project['psettings'] == 'restricted') {
+                    $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+                    return $users;
+                }
             }
 
             return [];
-
         }
     }
 }

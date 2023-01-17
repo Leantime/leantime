@@ -9,8 +9,6 @@ namespace leantime\domain\repositories {
 
     class plugins
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -20,7 +18,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
 
@@ -42,7 +39,7 @@ namespace leantime\domain\repositories {
 
                 FROM zp_plugins";
 
-            if($enabledOnly) {
+            if ($enabledOnly) {
                 $query .= " WHERE enabled = true";
             }
 
@@ -57,10 +54,10 @@ namespace leantime\domain\repositories {
             }
 
             return $allPlugins;
-
         }
 
-        public function addPlugin(\leantime\domain\models\plugins $plugin){
+        public function addPlugin(\leantime\domain\models\plugins $plugin)
+        {
 
             $sql = "INSERT INTO zp_plugins (
                     name,
@@ -98,10 +95,10 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $id;
-
         }
 
-        public function enablePlugin(int $id){
+        public function enablePlugin(int $id)
+        {
 
             $sql = "UPDATE zp_plugins
                    SET enabled = 1
@@ -116,10 +113,10 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
-        public function disablePlugin(int $id){
+        public function disablePlugin(int $id)
+        {
 
             $sql = "UPDATE zp_plugins
                    SET enabled = 0
@@ -134,10 +131,10 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
-        public function removePlugin(int $id){
+        public function removePlugin(int $id)
+        {
 
             $sql = "DELETE FROM zp_plugins
                 WHERE id = :id LIMIT 1
@@ -151,11 +148,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
-
-
-
     }
 
 }

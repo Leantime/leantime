@@ -1,10 +1,12 @@
 <?php
+
 /**
  * delCanvasItem.inc template - Generic template for deleting canvas item
  *
  * Required variables:
  * - $canvasName   Name of current canvas
  */
+
 defined('RESTRICTED') or die('Restricted access');
 
 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);

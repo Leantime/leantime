@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\core;
 
 use leantime\core\eventhelpers;
@@ -13,7 +14,6 @@ use Exception;
  */
 class fileupload
 {
-
     use eventhelpers;
 
     /**
@@ -104,15 +104,12 @@ class fileupload
                     ]
                 ]
             );
-
         } else {
             //Can discuss whether we want to allow local uploads again at some point...
             return false;
-
         }
 
         return false;
-
     }
 
     /**
@@ -190,7 +187,6 @@ class fileupload
         $this->real_name = $this->file_name;
 
         if ($name != '') {
-
             if (isset($this->path_parts['extension'])) {
                 $this->file_name = $name . '.' . $this->path_parts['extension'];
             } else {
@@ -198,13 +194,9 @@ class fileupload
             }
 
             return true;
-
         } else {
-
             return false;
-
         }
-
     }
 
     /**
@@ -220,22 +212,19 @@ class fileupload
             //S3 upload
             return $this->uplodToS3();
         } else {
-
             //Local upload
             return $this->uploadLocal();
         }
-
     }
 
     public function uploadPublic()
     {
 
         if ($this->config->useS3 == true) {
-
             try {
                 // Upload data.
 
-                if($this->file_tmp_name == null || $this->file_tmp_name == ''){
+                if ($this->file_tmp_name == null || $this->file_tmp_name == '') {
                     return false;
                 }
 
@@ -248,32 +237,22 @@ class fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
-
             } catch (S3Exception $e) {
-
                 error_log($e, 0);
                 return false;
-
             }
-
         } else {
-
             try {
-
                 if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
                     return "/userfiles/" . $this->file_name;
                 }
-
             } catch (Exception $e) {
-
                 error_log($e, 0);
                 return false;
             }
-
         }
 
         return false;
-
     }
 
     private function uplodToS3()
@@ -289,35 +268,24 @@ class fileupload
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
-
         } catch (S3Exception $e) {
-
             error_log($e, 0);
             return false;
-
         }
-
     }
 
     private function uploadLocal()
     {
 
         try {
-
             if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath() . "/" . $this->file_name)) {
                 return true;
             }
-
         } catch (Exception $e) {
-
             error_log($e, 0);
             return false;
         }
 
         return false;
-
     }
-
-
 }
-

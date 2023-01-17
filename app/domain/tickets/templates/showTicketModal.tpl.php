@@ -1,8 +1,8 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-	$ticket = $this->get('ticket');
-	$projectData = $this->get('projectData');
+    $ticket = $this->get('ticket');
+    $projectData = $this->get('projectData');
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
 ?>
@@ -27,7 +27,7 @@
         <li><a href="#subtasks"><span class="fa fa-tasks"></span> <?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
         <li><a href="#comments"><span class="fa fa-comments"></span> <?php echo $this->__("tabs.discussion") ?> (<?php echo $this->get('numComments'); ?>)</a></li>
         <li><a href="#files"><span class="fa fa-file"></span> <?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
-        <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+        <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
             <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $this->__("tabs.time_tracking") ?></a></li>
         <?php } ?>
     </ul>
@@ -42,7 +42,7 @@
         <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $this->assign('formUrl', "".BASE_URL."/tickets/showTicket/".$ticket->id."#comments");
+            $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "#comments");
 
             $this->displaySubmodule('comments-generalComment') ;
             ?>
@@ -57,7 +57,7 @@
         <?php $this->displaySubmodule('tickets-attachments') ?>
     </div>
 
-    <?php if($login::userIsAtLeast($roles::$editor)) {  ?>
+    <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
         <div id="timesheet">
             <?php $this->displaySubmodule('tickets-timesheet') ?>
         </div>
@@ -68,14 +68,13 @@
 <script type="text/javascript">
 
     jQuery(function(){
-        <?php if(isset($_GET['closeModal'])){ ?>
+        <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
 
-        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
-
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
             leantime.ticketsController.initDates();
@@ -85,13 +84,12 @@
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
 
-        <?php }else{ ?>
-
+        <?php } else { ?>
             leantime.generalController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
-        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
             leantime.generalController.enableCommenterForms();
         <?php }?>
 

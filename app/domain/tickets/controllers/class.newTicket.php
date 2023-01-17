@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class newTicket extends controller
     {
-
         private $projectService;
         private $ticketService;
         private $sprintService;
@@ -33,19 +32,20 @@ namespace leantime\domain\controllers {
             $this->timesheetService = new services\timesheets();
             $this->userService = new services\users();
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL."/tickets/showKanban/";
+            if (!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban/";
             }
         }
 
 
-        public function get () {
+        public function get()
+        {
 
             $ticket = new models\tickets(
                 array(
-                    "userLastname"=>$_SESSION['userdata']["name"],
-                    "status"=>3,
-                    "projectId"=>$_SESSION['currentProject'],
+                    "userLastname" => $_SESSION['userdata']["name"],
+                    "status" => 3,
+                    "projectId" => $_SESSION['currentProject'],
                     "sprint" => $_SESSION['currentSprint'] ?? ''
                 )
             );
@@ -71,37 +71,29 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
             $this->tpl->displayPartial('tickets.newTicketModal');
-
-
         }
 
-        public function post ($params) {
+        public function post($params)
+        {
 
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-
                 $result = $this->ticketService->addTicket($params);
 
-                if(is_array($result) === false) {
-
+                if (is_array($result) === false) {
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
-                    if(isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
-
-                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result."?closeModal=1");
-
-                    }else {
-
-                        $this->tpl->redirect(BASE_URL."/tickets/showTicket/".$result);
+                    if (isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
+                        $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
+                    } else {
+                        $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result);
                     }
-
-                }else {
-
+                } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
 
                     $ticket = new models\tickets($params);
                     $ticket->userLastname = $_SESSION['userdata']["name"];
 
-                    $this->tpl->assign('ticket',$ticket);
+                    $this->tpl->assign('ticket', $ticket);
                     $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                     $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                     $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
@@ -120,13 +112,9 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
                     $this->tpl->displayPartial('tickets.newTicketModal');
-
                 }
-
             }
-
         }
-
     }
 
 }
