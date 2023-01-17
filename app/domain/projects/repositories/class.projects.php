@@ -667,7 +667,8 @@ namespace leantime\domain\repositories {
             $user = $userRepo->getUser($userId);
 
             //admins owners and managers can access everything
-            if (roles::getRoles()[$user['role']] == roles::$admin || roles::getRoles()[$user['role']] == roles::$owner || roles::getRoles()[$user['role']] == roles::$manager) {
+            if (in_array(roles::getRoleString($user['role']), array(roles::$admin, roles::$owner, roles::$manager)))
+            {
                 return true;
             }
 
@@ -748,7 +749,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return bool
          */
         public function editUserProjectRelations($id, $projects)
         {
@@ -786,6 +787,8 @@ namespace leantime\domain\repositories {
                     }
                 }
             }
+
+            return true;
         }
 
         public function deleteProjectRelation($userId, $projectId)
