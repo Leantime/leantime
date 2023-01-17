@@ -8,11 +8,8 @@ namespace leantime\plugins\controllers {
 
     class settings extends controller
     {
-
         public function init()
         {
-
-
         }
 
         /**
@@ -21,15 +18,11 @@ namespace leantime\plugins\controllers {
         public function get()
         {
 
-           $this->tpl->display("motivationalQuotes.settings");
+            $this->tpl->display("motivationalQuotes.settings");
         }
 
         public function post($params)
         {
-
-
-
         }
-
     }
 }

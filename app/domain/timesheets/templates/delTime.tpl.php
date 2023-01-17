@@ -3,7 +3,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 ?>
 
-<h4 class="widgettitle title-light"><?php printf("".$this->__('headlines.delete_time').""); ?></h4>
+<h4 class="widgettitle title-light"><?php printf("" . $this->__('headlines.delete_time') . ""); ?></h4>
 
 <form method="post" action="<?=BASE_URL ?>/timesheets/delTime/<?php echo $this->get('id') ?>">
     <p><?=$this->__("text.confirm_delete_timesheet") ?></p><br />

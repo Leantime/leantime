@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class importGCal extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -46,7 +44,6 @@ namespace leantime\domain\controllers {
             );
 
             if (isset($_POST['save']) === true) {
-
                 $values = array(
                     'url' => ($_POST['url']),
                     'name' => ($_POST['name']),
@@ -56,16 +53,12 @@ namespace leantime\domain\controllers {
                 $this->calendarRepo->addGUrl($values);
 
                 $msgKey = 'Kalender hinzugefügt';
-
             }
 
             $this->tpl->assign('values', $values);
             $this->tpl->assign('info', $msgKey);
 
             $this->tpl->display('calendar.importGCal');
-
         }
-
     }
 }
-

@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class logout extends controller
     {
-
         private $fileRepo;
         private $authService;
 
@@ -26,7 +25,6 @@ namespace leantime\domain\controllers {
             $this->fileRepo = new repositories\files();
 
             $this->authService = services\auth::getInstance();
-
         }
 
 
@@ -41,10 +39,8 @@ namespace leantime\domain\controllers {
 
             $this->authService->logout();
 
-            core\frontcontroller::redirect(BASE_URL."/");
-
+            core\frontcontroller::redirect(BASE_URL . "/");
         }
-
     }
 
 }

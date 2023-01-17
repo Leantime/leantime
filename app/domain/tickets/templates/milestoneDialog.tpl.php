@@ -31,7 +31,7 @@ $statusLabels = $this->get('statusLabels');
         <select id="status-select" name="status" class="span11"
                 data-placeholder="<?php echo $statusLabels[$currentMilestone->status]["name"]; ?>">
 
-            <?php  foreach($statusLabels as $key=>$label){?>
+            <?php  foreach ($statusLabels as $key => $label) {?>
                 <option value="<?php echo $key; ?>"
                     <?php if ($currentMilestone->status == $key) {
                         echo "selected='selected'";
@@ -44,14 +44,14 @@ $statusLabels = $this->get('statusLabels');
         <select name="dependentMilestone"  class="span11">
             <option value=""><?=$this->__("label.no_dependency"); ?></option>
             <?php foreach ($this->get('milestones') as $milestoneRow) {
-                if($milestoneRow->id !== $currentMilestone->id) {
+                if ($milestoneRow->id !== $currentMilestone->id) {
                     echo "<option value='" . $milestoneRow->id . "'";
 
-                    if ($currentMilestone->dependingTicketId == $milestoneRow->id) { echo " selected='selected' ";
+                    if ($currentMilestone->dependingTicketId == $milestoneRow->id) {
+                        echo " selected='selected' ";
                     }
 
                     echo ">" . $this->escape($milestoneRow->headline) . " </option>";
-
                 }
             }
             ?>
@@ -63,10 +63,10 @@ $statusLabels = $this->get('statusLabels');
                 name="editorId" class="user-select span11">
             <option value=""><?=$this->__("dropdown.not_assigned"); ?></option>
             <?php foreach ($this->get('users') as $userRow) { ?>
-
                 <?php echo "<option value='" . $userRow["id"] . "'";
 
-                if ($currentMilestone->editorId == $userRow["id"]) { echo " selected='selected' ";
+                if ($currentMilestone->editorId == $userRow["id"]) {
+                    echo " selected='selected' ";
                 }
 
                 echo ">" . $this->escape($userRow["firstname"]) . " " . $this->escape($userRow["lastname"]) . "</option>"; ?>
@@ -88,10 +88,9 @@ $statusLabels = $this->get('statusLabels');
                 <input type="submit" value="<?=$this->__("buttons.save"); ?>" class="btn btn-primary"/>
             </div>
             <div class="col-md-6 align-right padding-top-sm">
-                <?php if (isset($currentMilestone->id) && $currentMilestone->id != ''
-
-
-                ) { ?>
+                <?php if (
+                isset($currentMilestone->id) && $currentMilestone->id != ''
+) { ?>
                     <a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>
@@ -100,15 +99,15 @@ $statusLabels = $this->get('statusLabels');
     </form>
 
         <?php
-            if(isset($currentMilestone->id) && $currentMilestone->id !== '') {
-        ?>
+        if (isset($currentMilestone->id) && $currentMilestone->id !== '') {
+            ?>
         <br />
         <input type="hidden" name="comment" value="1" />
 
-        <?php
-        $this->assign("formUrl", "/tickets/editMilestone/".$currentMilestone->id."");
-        $this->displaySubmodule('comments-generalComment');?>
-    <?php } ?>
+            <?php
+            $this->assign("formUrl", "/tickets/editMilestone/" . $currentMilestone->id . "");
+            $this->displaySubmodule('comments-generalComment');?>
+        <?php } ?>
 
     <script type="text/javascript">
         jQuery(document).ready(function(){
@@ -116,13 +115,12 @@ $statusLabels = $this->get('statusLabels');
             leantime.ticketsController.initModals();
             leantime.ticketsController.initMilestoneDates();
 
-            <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
-
+            <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
                 leantime.generalController.makeInputReadonly(".nyroModalCont");
 
             <?php } ?>
 
-            <?php if($login::userHasRole([$roles::$commenter])) { ?>
+            <?php if ($login::userHasRole([$roles::$commenter])) { ?>
                 leantime.generalController.enableCommenterForms();
             <?php }?>
 

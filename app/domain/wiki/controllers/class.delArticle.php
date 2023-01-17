@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class delArticle extends controller
     {
-
         private $wikiRepo;
 
         /**
@@ -22,7 +21,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->wikiRepo = new repositories\wiki();
-
         }
 
         /**
@@ -40,19 +38,15 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['del']) && isset($id)) {
-
                 $this->wikiRepo->delArticle($id);
 
                 $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success");
 
-                $this->tpl->redirect(BASE_URL."/wiki/show");
-
+                $this->tpl->redirect(BASE_URL . "/wiki/show");
             }
 
             $this->tpl->displayPartial('wiki.delArticle');
-
         }
-
     }
 
 }

@@ -1,7 +1,9 @@
 <?php
+
 /**
  * canvas class - Generic canvas API controller
  */
+
 namespace leantime\domain\controllers\api {
 
     use leantime\core;
@@ -12,7 +14,6 @@ namespace leantime\domain\controllers\api {
 
     class canvas extends controller
     {
-
         /**
          * Constant that must be redefined
          */
@@ -30,9 +31,8 @@ namespace leantime\domain\controllers\api {
         {
 
             $this->projects = new repositories\projects();
-            $canvasRepoName = "leantime\\domain\\repositories\\".static::CANVAS_NAME.'canvas';
+            $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
-
         }
 
 
@@ -44,7 +44,6 @@ namespace leantime\domain\controllers\api {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -55,7 +54,6 @@ namespace leantime\domain\controllers\api {
          */
         public function post($params)
         {
-
         }
 
         /**
@@ -68,9 +66,9 @@ namespace leantime\domain\controllers\api {
         {
             $results = $this->canvasRepo->patchCanvasItem($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -83,9 +81,7 @@ namespace leantime\domain\controllers\api {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

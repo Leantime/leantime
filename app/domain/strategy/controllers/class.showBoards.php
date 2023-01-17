@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -8,7 +9,6 @@ namespace leantime\domain\controllers {
 
     class showBoards extends controller
     {
-
         private $projectService;
         private $ticketService;
         private $menuRepo;
@@ -22,7 +22,6 @@ namespace leantime\domain\controllers {
             $this->menuRepo = new repositories\menu();
             $this->projectRepo = new repositories\projects();
             $this->canvasService = new services\canvas();
-
         }
 
         public function run()
@@ -143,8 +142,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('otherBoards', $others);
 
             $this->tpl->display('strategy.showBoards');
-
         }
-
     }
 }

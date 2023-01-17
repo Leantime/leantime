@@ -11,8 +11,8 @@ namespace leantime\domain\repositories {
     use leantime\domain\services;
     use leantime\domain\models\auth\roles;
 
-    class menu {
-
+    class menu
+    {
         // Default menu
         public const DEFAULT_MENU = 'default';
 
@@ -65,20 +65,19 @@ namespace leantime\domain\repositories {
          * @access public
          * @return array  Array of supported menu types
          */
-        public function getMenuTypes(): array {
+        public function getMenuTypes(): array
+        {
 
             $language = core\language::getInstance();
             $config = \leantime\core\environment::getInstance();
 
             if (!isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
-
                 return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
             }
 
             $menuTypes = [];
 
             foreach ($this->menuStructures as $key => $menu) {
-
                 $menuTypes[$key] = $language->__("label.menu_type.$key");
             }
 
@@ -92,7 +91,8 @@ namespace leantime\domain\repositories {
          * @param  string $submenu Submenu identifier
          * @param  string $state   New state (open / closed)
          */
-        public function setSubmenuState(string $submenu, string $state): void {
+        public function setSubmenuState(string $submenu, string $state): void
+        {
 
             $_SESSION['submenuToggle'][$submenu] = $state;
         }
@@ -104,37 +104,31 @@ namespace leantime\domain\repositories {
          * @param  string $menuType Menu type to return
          * @return array  Array of menu structrue
          */
-        public function getMenuStructure(string $menuType = ''): array {
+        public function getMenuStructure(string $menuType = ''): array
+        {
 
             $language = core\language::getInstance();
 
             if (!isset($this->menuStructures[$menuType]) || empty($menuType)) {
-
                 $menuType = self::DEFAULT_MENU;
             }
 
             $menuStructure = $this->menuStructures[$menuType];
 
             foreach ($menuStructure as $key => $element) {
-
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 
                 switch ($element['type']) {
-
                     case 'header':
-
                         break;
 
                     case 'item':
-
                         //TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
                         $this->processMenuItem($element, $menuStructure[$key]);
                         break;
 
                     case 'submenu':
-
                         if (isset($element['submenuFunction'])) {
-
                             if (method_exists($this, $this->{$element['submenuFunction']})) {
                                 $menuStructure[$key]['submenu'] = $this->{$element['submenuFunction']}();
                             }
@@ -142,10 +136,8 @@ namespace leantime\domain\repositories {
 
                         // Update menu toggle
                         if ($element['visual'] == 'always') {
-
                             $menuStructure[$key]['visual'] = 'open';
                         } else {
-
                             $submenuState = $_SESSION['submenuToggle'][$element['id']] ?? $element['visual'];
                             $_SESSION['submenuToggle'][$element['id']] = $submenuState;
                         }
@@ -153,7 +145,6 @@ namespace leantime\domain\repositories {
 
                         // Parse submenu
                         foreach ($element['submenu'] as $subkey => $subelement) {
-
                             $menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
 
                             switch ($subelement['type']) {
@@ -161,7 +152,6 @@ namespace leantime\domain\repositories {
                                     break;
 
                                 case 'item':
-
                                     $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey][$key]);
                                     break;
 
@@ -180,28 +170,25 @@ namespace leantime\domain\repositories {
             return $menuStructure;
         }
 
-        public function processMenuItem($element, &$structure) {
+        public function processMenuItem($element, &$structure)
+        {
 
             //ModuleManager Check
             if (false) {
-
                 $structure['type'] = 'disabled';
                 return;
             }
 
             // Update security
             if (isset($element['role'])) {
-
                 $accessGranted = services\auth::userIsAtLeast($element['role'], true);
 
                 if (!$accessGranted) {
-
                     $structure['type'] = 'disabled';
                 }
             }
 
             if (isset($element['hrefFunction'])) {
-
                 if (method_exists($this, $element['hrefFunction'])) {
                     $structure['href'] = $this->{$element['hrefFunction']}();
                 }
@@ -210,7 +197,8 @@ namespace leantime\domain\repositories {
             return;
         }
 
-        public function getTicketMenu() {
+        public function getTicketMenu()
+        {
 
             $ticketService = new services\tickets();
 
@@ -218,7 +206,6 @@ namespace leantime\domain\repositories {
             $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
-
     }
 
 }

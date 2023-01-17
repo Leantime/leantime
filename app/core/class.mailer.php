@@ -15,8 +15,8 @@ namespace leantime\core {
     use phpmailerException;
     use leantime\core\eventhelpers;
 
-    class mailer {
-
+    class mailer
+    {
         use eventhelpers;
 
         /**
@@ -58,7 +58,8 @@ namespace leantime\core {
          * @access public
          * @return void
          */
-        public function __construct() {
+        public function __construct()
+        {
 
             $config = \leantime\core\environment::getInstance();
 
@@ -74,9 +75,7 @@ namespace leantime\core {
             $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
             //Use SMTP or php mail().
             if ($config->useSMTP === true) {
-
                 if ($config->debug) {
-
                     $this->mailAgent->SMTPDebug = 2;                                  // Enable verbose debug output
                     $this->mailAgent->Debugoutput = function ($str, $level) {
 
@@ -112,7 +111,6 @@ namespace leantime\core {
                     ];
                 }
             } else {
-
                 $this->mailAgent->isMail();
             }
 
@@ -131,7 +129,8 @@ namespace leantime\core {
          * @param $context
          * @return void
          */
-        public function setContext($context) {
+        public function setContext($context)
+        {
 
             $this->context = $context;
         }
@@ -144,7 +143,8 @@ namespace leantime\core {
          * @param  $text
          * @return void
          */
-        public function setText($text) {
+        public function setText($text)
+        {
 
             $this->text = $text;
         }
@@ -157,7 +157,8 @@ namespace leantime\core {
          * @param  $html
          * @return void
          */
-        public function setHtml($html) {
+        public function setHtml($html)
+        {
 
             $this->html = $html;
         }
@@ -169,12 +170,14 @@ namespace leantime\core {
          * @param  $subject
          * @return void
          */
-        public function setSubject($subject) {
+        public function setSubject($subject)
+        {
 
             $this->subject = $subject;
         }
 
-        private function dispatchMailerHook($type, $hookname, $payload, $additional_params = []) {
+        private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
+        {
 
             if ($type !== 'filter' && $type !== 'event') {
                 return false;
@@ -209,7 +212,8 @@ namespace leantime\core {
          * @return void
          * @throws phpmailerException
          */
-        public function sendMail(array $to, $from) {
+        public function sendMail(array $to, $from)
+        {
 
             $this->dispatchMailerHook('event', 'beforeSendMail', []);
 
@@ -267,10 +271,10 @@ namespace leantime\core {
 		</table>';
 
             $bodyTemplate = $this->dispatchMailerHook(
-                    'filter',
-                    'bodyTemplate',
-                    $bodyTemplate,
-                    [
+                'filter',
+                'bodyTemplate',
+                $bodyTemplate,
+                [
                         [
                             'companyColor' => $this->companyColor,
                             'logoUrl' => $inlineLogoContent,
@@ -284,15 +288,14 @@ namespace leantime\core {
             $this->mailAgent->Body = $bodyTemplate;
 
             $altBody = $this->dispatchMailerHook(
-                    'filter',
-                    'altBody',
-                    $this->text
+                'filter',
+                'altBody',
+                $this->text
             );
 
             $this->mailAgent->AltBody = $altBody;
 
             if (is_array($to)) {
-
                 $to = array_unique($to);
 
                 foreach ($to as $recip) {
@@ -310,7 +313,6 @@ namespace leantime\core {
 
             $this->dispatchMailerHook('event', 'afterSendMail', $to);
         }
-
     }
 
 }

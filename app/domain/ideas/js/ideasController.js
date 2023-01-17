@@ -11,9 +11,9 @@ leantime.ideasController = (function () {
         resizable: true,
         autoSizable: true,
         callbacks: {
-            beforeShowCont: function() {
+            beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
-                if(closeModal == true){
+                if (closeModal == true) {
                     closeModal = false;
                     location.reload();
                 }
@@ -27,8 +27,8 @@ leantime.ideasController = (function () {
                         // General options
                         width: "100%",
                         height:"400px",
-                        skin_url: leantime.appUrl+'/css/libs/tinymceSkin/oxide',
-                        content_css: leantime.appUrl+'/css/libs/tinymceSkin/oxide/content.css',
+                        skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
+                        content_css: leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css',
                         content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                         plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
                         toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
@@ -43,7 +43,7 @@ leantime.ideasController = (function () {
 
                             xhr = new XMLHttpRequest();
                             xhr.withCredentials = false;
-                            xhr.open('POST', leantime.appUrl+'/api/files');
+                            xhr.open('POST', leantime.appUrl + '/api/files');
 
                             xhr.onload = function () {
                                 var json;
@@ -66,14 +66,14 @@ leantime.ideasController = (function () {
                             window.filePickerCallback = callback;
 
                             var shortOptions = {
-                                    afterShowCont: function () {
+                                afterShowCont: function () {
                                     jQuery(".fileModal").nyroModal({callbacks:shortOptions});
 
                                 }
                             };
 
                             jQuery.nmManual(
-                                leantime.appUrl+'/files/showAll&modalPopUp=true',
+                                leantime.appUrl + '/files/showAll&modalPopUp=true',
                                 {
                                     stack: true,
                                     callbacks: shortOptions,
@@ -147,7 +147,8 @@ leantime.ideasController = (function () {
             },
         });
 
-        function tilt_direction(item) {
+        function tilt_direction(item)
+        {
             var left_pos = item.position().left,
                 move_handler = function (e) {
                     if (e.pageX >= left_pos) {
@@ -163,22 +164,23 @@ leantime.ideasController = (function () {
             item.data("move_handler", move_handler);
         }
         // bind drag events to Packery
-        $grid.packery( 'bindUIDraggableEvents', $items );
+        $grid.packery('bindUIDraggableEvents', $items);
 
-        function orderItems() {
+        function orderItems()
+        {
             var ideaSort = [];
 
             var itemElems = $grid.packery('getItemElements');
-            jQuery( itemElems ).each( function( i, itemElem ) {
+            jQuery(itemElems).each(function ( i, itemElem ) {
                 var sortIndex = i + 1;
-                var ideaId = jQuery( itemElem ).attr("data-value");
+                var ideaId = jQuery(itemElem).attr("data-value");
                 ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
             });
 
             // POST to server using $.post or $.ajax
             jQuery.ajax({
                 type: 'POST',
-                url: leantime.appUrl+'/api/ideas',
+                url: leantime.appUrl + '/api/ideas',
                 data: {
                     action:"ideaSort",
                     payload: ideaSort
@@ -188,7 +190,7 @@ leantime.ideasController = (function () {
         }
 
 
-        $grid.on( 'dragItemPositioned',orderItems);
+        $grid.on('dragItemPositioned',orderItems);
     };
 
     var initBoardControlModal = function () {
@@ -227,38 +229,38 @@ leantime.ideasController = (function () {
 
 
     var toggleMilestoneSelectors = function (trigger) {
-        if(trigger == 'existing') {
+        if (trigger == 'existing') {
             jQuery('#newMilestone, #milestoneSelectors').hide('fast');
             jQuery('#existingMilestone').show();
             _initModals();
-
         }
-        if(trigger == 'new') {
+        if (trigger == 'new') {
             jQuery('#newMilestone').show();
             jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
             _initModals();
         }
 
-        if(trigger == 'hide') {
+        if (trigger == 'hide') {
             jQuery('#newMilestone, #existingMilestone').hide('fast');
             jQuery('#milestoneSelectors').show('fast');
         }
     };
 
-    var setCloseModal = function() {
+    var setCloseModal = function () {
         closeModal = true;
     };
 
     var initUserDropdown = function () {
 
         jQuery("body").on(
-            "click", ".userDropdown .dropdown-menu a", function () {
+            "click",
+            ".userDropdown .dropdown-menu a",
+            function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 3) {
-
                     var canvasId = dataValue[0];
                     var userId = dataValue[1];
                     var profileImageId = dataValue[2];
@@ -266,21 +268,20 @@ leantime.ideasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/ideas',
+                            url: leantime.appUrl + '/api/ideas',
                             data:
                                 {
                                     id : canvasId,
                                     author:userId
-                                }
+                            }
                         }
                     ).done(
                         function () {
-                            jQuery("#userDropdownMenuLink"+canvasId+" span.text span#userImage"+canvasId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+userId);
+                            jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
 
                             jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated")});
                         }
                     );
-
                 }
             }
         );
@@ -289,13 +290,14 @@ leantime.ideasController = (function () {
     var initStatusDropdown = function () {
 
         jQuery("body").on(
-            "click", ".statusDropdown .dropdown-menu a", function () {
+            "click",
+            ".statusDropdown .dropdown-menu a",
+            function () {
 
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
                 if (dataValue.length == 3) {
-
                     var canvasItemId = dataValue[0];
                     var status = dataValue[1];
                     var statusClass = dataValue[2];
@@ -304,22 +306,21 @@ leantime.ideasController = (function () {
                     jQuery.ajax(
                         {
                             type: 'PATCH',
-                            url: leantime.appUrl+'/api/ideas',
+                            url: leantime.appUrl + '/api/ideas',
                             data:
                                 {
                                     id : canvasItemId,
                                     box:status
-                                }
+                            }
                         }
                     ).done(
                         function () {
-                            jQuery("#statusDropdownMenuLink"+canvasItemId+" span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink"+canvasItemId).removeClass().addClass(""+statusClass+" dropdown-toggle f-left status ");
+                            jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
+                            jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("" + statusClass + " dropdown-toggle f-left status ");
                             jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
 
                         }
                     );
-
                 }
             }
         );
@@ -331,7 +332,7 @@ leantime.ideasController = (function () {
 
         var maxHeight = 0;
 
-        var height = jQuery("html").height()-320;
+        var height = jQuery("html").height() - 320;
         jQuery("#sortableIdeaKanban .column .contentInner").css("height", height);
 
     };
@@ -370,9 +371,8 @@ leantime.ideasController = (function () {
                     payload: {}
                 };
 
-                for(var i=0; i<statusList.length; i++) {
-
-                    if(jQuery(".contentInner.status_"+statusList[i]).length) {
+                for (var i = 0; i < statusList.length; i++) {
+                    if (jQuery(".contentInner.status_" + statusList[i]).length) {
                         statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
                     }
                 }
@@ -380,14 +380,15 @@ leantime.ideasController = (function () {
                 // POST to server using $.post or $.ajax
                 jQuery.ajax({
                     type: 'POST',
-                    url: leantime.appUrl+'/api/ideas',
+                    url: leantime.appUrl + '/api/ideas',
                     data:statusPostData
                 });
 
             }
         });
 
-        function tilt_direction(item) {
+        function tilt_direction(item)
+        {
             var left_pos = item.position().left,
                 move_handler = function (e) {
                     if (e.pageX >= left_pos) {

@@ -2,7 +2,7 @@ leantime.dashboardController = (function () {
 
     // Variables (underscore for private variables)
 
-    if(leantime.theme == "dark") {
+    if (leantime.theme == "dark") {
         var chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
@@ -12,7 +12,7 @@ leantime.dashboardController = (function () {
             purple: 'rgb(153, 102, 255)',
             grey: 'rgb(56, 56, 56)'
         };
-    }else{
+    } else {
         var chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
@@ -34,12 +34,13 @@ leantime.dashboardController = (function () {
             function () {
                 _initDueDateTimePickers();
 
-            });
+            }
+        );
     })();
 
     //Functions
 
-    var prepareHiddenDueDate = function() {
+    var prepareHiddenDueDate = function () {
 
         var thisFriday = moment().startOf('week').add(5, 'days');
         jQuery("#dateToFinish").val(thisFriday.format("YYYY-MM-DD"));
@@ -65,8 +66,8 @@ leantime.dashboardController = (function () {
                     label: leantime.i18n.__("label.project_done")
                 }],
                 labels: [
-                            complete+'% Done',
-                            incomplete+'% Open'
+                            complete + '% Done',
+                            incomplete + '% Open'
                         ]
             },
             options: {
@@ -178,7 +179,7 @@ leantime.dashboardController = (function () {
 
     var initChartButtonClick = function (id, label, plannedData, actualData, chart) {
 
-        jQuery("#"+id).click(
+        jQuery("#" + id).click(
             function (event) {
 
                 chart.data.datasets[0].data = plannedData;
@@ -213,7 +214,7 @@ leantime.dashboardController = (function () {
                         fill: true,
                         lineTension: 0,
                         pointRadius:0,
-                    },
+                },
                     {
                         label: leantime.i18n.__("label.progress_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.yellow,
@@ -223,7 +224,7 @@ leantime.dashboardController = (function () {
                         lineTension: 0,
                         pointRadius:0,
 
-                    },
+                },
                     {
                         label: leantime.i18n.__("label.new_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.red,
@@ -233,7 +234,7 @@ leantime.dashboardController = (function () {
                         lineTension: 0,
                         pointRadius:0,
 
-                    },
+                },
 
                 ]
             },
@@ -300,7 +301,7 @@ leantime.dashboardController = (function () {
 
     var initBacklogChartButtonClick = function (id, actualData, label, chart) {
 
-        jQuery("#"+id).click(
+        jQuery("#" + id).click(
             function (event) {
 
                 chart.data.datasets[0].data = actualData['done']['data'];
@@ -334,11 +335,11 @@ leantime.dashboardController = (function () {
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
-                onClose: function(date) {
+                onClose: function (date) {
 
                     var newDate = "";
 
-                    if(date == "") {
+                    if (date == "") {
                         jQuery(this).val(leantime.i18n.__("text.anytime"));
                     }
 
@@ -347,7 +348,7 @@ leantime.dashboardController = (function () {
                     var id = jQuery(this).attr("data-id");
                     newDate = dateTime;
 
-                    leantime.ticketsRepository.updateDueDates(id, newDate, function() {
+                    leantime.ticketsRepository.updateDueDates(id, newDate, function () {
                         jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated")});
                     });
 

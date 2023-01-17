@@ -1,7 +1,9 @@
 <?php
+
 /**
  * canvas class - Generic / Tempalate of canvas repository class
  */
+
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -9,7 +11,6 @@ namespace leantime\domain\repositories {
 
     class canvas
     {
-
         /**
          * Constant that must be redefined
          */
@@ -65,7 +66,7 @@ namespace leantime\domain\repositories {
             'relates_none'        => [ 'icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true ],
             'relates_customers'   => [ 'icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true ],
             'relates_offerings'   => [ 'icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true ],
-            'relates_capabilities'=> [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true ],
+            'relates_capabilities' => [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true ],
             'relates_financials'  => [ 'icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true ],
             'relates_markets'     => [ 'icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true ],
             'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true ],
@@ -100,7 +101,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         /**
          * __construct - get db connection
@@ -113,7 +114,6 @@ namespace leantime\domain\repositories {
 
             $this->db = core\db::getInstance();
             $this->language = core\language::getInstance();
-
         }
 
         /**
@@ -126,7 +126,6 @@ namespace leantime\domain\repositories {
         {
 
             return $this->icon;
-
         }
 
         /**
@@ -138,9 +137,10 @@ namespace leantime\domain\repositories {
         public function getDisclaimer(): string
         {
 
-            if(empty($this->disclaimer)) return '';
+            if (empty($this->disclaimer)) {
+                return '';
+            }
             return $this->language->__($this->disclaimer);
-
         }
 
         /**
@@ -153,18 +153,13 @@ namespace leantime\domain\repositories {
         {
 
             $canvasTypes = $this->canvasTypes;
-            foreach($canvasTypes as $key => $data) {
-
-                if(isset($data['title'])) {
-
+            foreach ($canvasTypes as $key => $data) {
+                if (isset($data['title'])) {
                     $canvasTypes[$key]['title'] = $this->language->__($data['title']);
-
                 }
-
             }
 
             return $canvasTypes;
-
         }
 
         /**
@@ -178,18 +173,13 @@ namespace leantime\domain\repositories {
 
             $statusLabels = $this->statusLabels;
 
-            foreach($statusLabels as $key => $data) {
-
-                if(isset($data['title'])) {
-
+            foreach ($statusLabels as $key => $data) {
+                if (isset($data['title'])) {
                     $statusLabels[$key]['title'] = $this->language->__($data['title']);
-
                 }
-
             }
 
             return $statusLabels;
-
         }
 
         /**
@@ -202,18 +192,13 @@ namespace leantime\domain\repositories {
         {
 
             $relatesLabels = $this->relatesLabels;
-            foreach($relatesLabels as $key => $data) {
-
-                if(isset($data['title'])) {
-
+            foreach ($relatesLabels as $key => $data) {
+                if (isset($data['title'])) {
                     $relatesLabels[$key]['title'] = $this->language->__($data['title']);
-
                 }
-
             }
 
             return $relatesLabels;
-
         }
 
         /**
@@ -226,18 +211,13 @@ namespace leantime\domain\repositories {
         {
 
             $dataLabels = $this->dataLabels;
-            foreach($dataLabels as $key => $data) {
-
-                if(isset($data['title'])) {
-
+            foreach ($dataLabels as $key => $data) {
+                if (isset($data['title'])) {
                     $dataLabels[$key]['title'] = $this->language->__($data['title']);
-
                 }
-
             }
 
             return $dataLabels;
-
         }
 
 
@@ -255,7 +235,7 @@ namespace leantime\domain\repositories {
                 FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
-                WHERE type = '".static::CANVAS_NAME."canvas' AND projectId = :projectId
+                WHERE type = '" . static::CANVAS_NAME . "canvas' AND projectId = :projectId
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
@@ -266,7 +246,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getSingleCanvas($canvasId)
@@ -283,7 +262,7 @@ namespace leantime\domain\repositories {
                 FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
-                WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
+                WHERE type = '" . static::CANVAS_NAME . "canvas' AND zp_canvas.id = :canvasId
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
@@ -294,7 +273,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function deleteCanvas($id)
@@ -313,7 +291,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
 
         public function addCanvas($values)
@@ -329,7 +306,7 @@ namespace leantime\domain\repositories {
                         :title,
                         :author,
                         NOW(),
-                        '".static::CANVAS_NAME."canvas',
+                        '" . static::CANVAS_NAME . "canvas',
                         :projectId
                 )";
 
@@ -345,7 +322,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $this->db->database->lastInsertId();
-
         }
 
         public function updateCanvas($values)
@@ -365,7 +341,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $result;
-
         }
 
         public function editCanvasItem($values)
@@ -394,7 +369,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
 
@@ -404,8 +378,8 @@ namespace leantime\domain\repositories {
 
             $sql = "UPDATE zp_canvas_items SET ";
 
-            foreach($params as $key => $value){
-                $sql .= "".core\db::sanitizeToColumnString($key)."=:".core\db::sanitizeToColumnString($key).", ";
+            foreach ($params as $key => $value) {
+                $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
             $sql .= "id=:id WHERE id=:whereId LIMIT 1";
@@ -414,15 +388,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':whereId', $id, PDO::PARAM_STR);
 
-            foreach($params as $key=>$value){
-                $stmn->bindValue(':'.core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
             $stmn->closeCursor();
 
             return $return;
-
         }
 
         public function getCanvasItemsById($id)
@@ -476,7 +449,7 @@ namespace leantime\domain\repositories {
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
                 LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
                 LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
-                LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = '".static::CANVAS_NAME."canvasitem'
+                LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = '" . static::CANVAS_NAME . "canvasitem'
                 WHERE zp_canvas_items.canvasId = :id
                 GROUP BY zp_canvas_items.id
                 ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
@@ -489,7 +462,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getSingleCanvasItem($id)
@@ -547,7 +519,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function addCanvasItem($values)
@@ -592,7 +563,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId']??"", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -623,15 +594,15 @@ namespace leantime\domain\repositories {
                 FROM
                 zp_canvas_items
                 LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
-                WHERE canvasBoard.type = '".static::CANVAS_NAME."canvas'  ";
+                WHERE canvasBoard.type = '" . static::CANVAS_NAME . "canvas'  ";
 
-            if(!is_null($projectId)){
-                $sql.=" AND canvasBoard.projectId = :projectId";
+            if (!is_null($projectId)) {
+                $sql .= " AND canvasBoard.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -639,15 +610,14 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['canvasCount']) === true) {
+            if (isset($values['canvasCount']) === true) {
                 return $values['canvasCount'];
             }
 
             return 0;
-
         }
 
-        public function getNumberOfBoards($projectId=null)
+        public function getNumberOfBoards($projectId = null)
         {
 
             $sql = "SELECT
@@ -656,13 +626,13 @@ namespace leantime\domain\repositories {
                     zp_canvas
                 ";
 
-            if(!is_null($projectId)){
-                $sql.=" WHERE canvasBoard.projectId = :projectId and canvasBoard.type = '".static::CANVAS_NAME."canvas' ";
+            if (!is_null($projectId)) {
+                $sql .= " WHERE canvasBoard.projectId = :projectId and canvasBoard.type = '" . static::CANVAS_NAME . "canvas' ";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if(!is_null($projectId)){
+            if (!is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -670,12 +640,11 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['boardCount'])) {
+            if (isset($values['boardCount'])) {
                 return $values['boardCount'];
             }
 
             return 0;
-
         }
         /**
          * existCanvas - return if a canvas exists with a given title in the specified project
@@ -688,9 +657,9 @@ namespace leantime\domain\repositories {
         public function existCanvas(int $projectId, string $canvasTitle): bool
         {
 
-            $sql = "SELECT COUNT(id) as nbCanvas ".
-                "FROM zp_canvas ".
-                "WHERE projectId = :projectId AND title = :canvasTitle AND type = '".static::CANVAS_NAME."canvas'";
+            $sql = "SELECT COUNT(id) as nbCanvas " .
+                "FROM zp_canvas " .
+                "WHERE projectId = :projectId AND title = :canvasTitle AND type = '" . static::CANVAS_NAME . "canvas'";
             $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
@@ -701,7 +670,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return isset($values['nbCanvas']) && $values['nbCanvas'] > 0;
-
         }
 
         /***
@@ -718,13 +686,13 @@ namespace leantime\domain\repositories {
         {
 
             // Create new canvas
-            $values = ["title" => $canvasTitle, "author" => $authorId, "projectId" => $projectId, "type" => static::CANVAS_NAME."canvas"];
+            $values = ["title" => $canvasTitle, "author" => $authorId, "projectId" => $projectId, "type" => static::CANVAS_NAME . "canvas"];
             $newCanvasId = $this->addCanvas($values);
 
             // Copy elements from existing canvas to new canvas
-            $sql = "INSERT INTO ".
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) ".
-              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' ".
+            $sql = "INSERT INTO " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
+              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $canvasId";
             $stmn = $this->db->database->prepare($sql);
 
@@ -732,7 +700,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $newCanvasId;
-
         }
 
         /***
@@ -747,9 +714,9 @@ namespace leantime\domain\repositories {
         {
 
             // Copy elements from merge canvas into current canvas
-            $sql = "INSERT INTO ".
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) ".
-              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' ".
+            $sql = "INSERT INTO " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
+              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $mergeId";
             $stmn = $this->db->database->prepare($sql);
 
@@ -757,7 +724,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return true;
-
         }
 
         /***
@@ -768,7 +734,8 @@ namespace leantime\domain\repositories {
          * @param  array  $boards    List of board types to pull
          * @return bool Status of merge
          */
-        public function getCanvasProgressCount(int $projectId, array $boards) {
+        public function getCanvasProgressCount(int $projectId, array $boards)
+        {
 
             $sql = "SELECT
                     zp_canvas.id AS canvasId,
@@ -781,19 +748,18 @@ namespace leantime\domain\repositories {
 
                 ";
 
-                if($projectId != '' && count($boards) >0){
-                    $sql .= " WHERE 1=1 ";
-                }
+            if ($projectId != '' && count($boards) > 0) {
+                $sql .= " WHERE 1=1 ";
+            }
 
-                if($projectId != ''){
-                    $sql .= "AND projectId = :projectId ";
-                }
+            if ($projectId != '') {
+                $sql .= "AND projectId = :projectId ";
+            }
 
-                if(count($boards) >0){
-
-                    $boardString = implode("','", $boards);
-                    $sql .= "AND type IN ('".$boardString."') ";
-                }
+            if (count($boards) > 0) {
+                $boardString = implode("','", $boards);
+                $sql .= "AND type IN ('" . $boardString . "') ";
+            }
 
 
 
@@ -806,7 +772,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
 
-            if($projectId != '') {
+            if ($projectId != '') {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
             }
 
@@ -826,7 +792,8 @@ namespace leantime\domain\repositories {
          * @param  array    $boards    List of board types to pull
          * @return array    array of canvas boards sorted by last update date
          */
-        public function getLastUpdatedCanvas(int $projectId, array $boards) {
+        public function getLastUpdatedCanvas(int $projectId, array $boards)
+        {
 
             $sql = "SELECT
                     zp_canvas.id AS id,
@@ -839,18 +806,17 @@ namespace leantime\domain\repositories {
 
                 ";
 
-            if($projectId != '' && count($boards) >0){
+            if ($projectId != '' && count($boards) > 0) {
                 $sql .= " WHERE 1=1 ";
             }
 
-            if($projectId != ''){
+            if ($projectId != '') {
                 $sql .= "AND projectId = :projectId ";
             }
 
-            if(count($boards) >0){
-
+            if (count($boards) > 0) {
                 $boardString = implode("','", $boards);
-                $sql .= "AND type IN ('".$boardString."') ";
+                $sql .= "AND type IN ('" . $boardString . "') ";
             }
 
             $sql .= "
@@ -862,7 +828,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
 
-            if($projectId != '') {
+            if ($projectId != '') {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
             }
 
@@ -872,8 +838,5 @@ namespace leantime\domain\repositories {
 
             return $values;
         }
-
-
-
     }
 }

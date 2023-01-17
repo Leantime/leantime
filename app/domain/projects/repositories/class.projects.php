@@ -502,14 +502,12 @@ namespace leantime\domain\repositories {
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-
-              foreach ($values['assignedUsers'] as $user) {
-                  if(is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
-                      $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
-                  }
-              }
-
-              }
+                foreach ($values['assignedUsers'] as $user) {
+                    if (is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
+                        $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                    }
+                }
+            }
 
             return $projectId;
         }

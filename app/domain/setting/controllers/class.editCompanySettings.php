@@ -12,8 +12,8 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-    class editCompanySettings extends controller {
-
+    class editCompanySettings extends controller
+    {
         private $config;
         private $settingsRepo;
 
@@ -23,7 +23,8 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init() {
+        public function init()
+        {
 
 
             auth::authOrRedirect([roles::$owner, roles::$admin]);
@@ -38,11 +39,11 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function get($params) {
+        public function get($params)
+        {
 
 
             if (auth::userIsAtLeast(roles::$owner)) {
-
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "primarycolor" => $_SESSION["companysettings.primarycolor"],
@@ -55,7 +56,6 @@ namespace leantime\domain\controllers {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
                 if ($logoPath !== false) {
-
                     if (strpos($logoPath, 'http') === 0) {
                         $companySettings["logo"] = $logoPath;
                     } else {
@@ -105,7 +105,6 @@ namespace leantime\domain\controllers {
 
                 $this->tpl->display('setting.editCompanySettings');
             } else {
-
                 $this->tpl->display('error.error403');
             }
         }
@@ -116,10 +115,10 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function post($params) {
+        public function post($params)
+        {
             //If ID is set its an update
             if (isset($params['name']) && $params['name'] != "" && isset($params['primarycolor']) && $params['primarycolor'] != "" && isset($params['language']) && $params['language'] != "") {
-
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
@@ -142,10 +141,8 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 if (isset($_POST['telemetryActive'])) {
-
                     $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
                 } else {
-
                     //When opting out, delete all telemetry related settings including UUID
                     $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
                     $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
@@ -164,8 +161,8 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function put($params) {
-            
+        public function put($params)
+        {
         }
 
         /**
@@ -174,10 +171,9 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function delete($params) {
-            
+        public function delete($params)
+        {
         }
-
     }
 
 }

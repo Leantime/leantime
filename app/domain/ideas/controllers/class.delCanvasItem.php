@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class delCanvasItem extends controller
     {
-
         private $ideasRepo;
 
         /**
@@ -38,19 +37,15 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['del']) && isset($id)) {
-
                 $this->ideasRepo->delCanvasItem($id);
 
                 $this->tpl->setNotification($this->language->__("notification.idea_board_item_deleted"), "success");
 
-                $this->tpl->redirect(BASE_URL."/ideas/showBoards");
-
+                $this->tpl->redirect(BASE_URL . "/ideas/showBoards");
             }
 
             $this->tpl->displayPartial('ideas.delCanvasItem');
-
         }
-
     }
 
 }

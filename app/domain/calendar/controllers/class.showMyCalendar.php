@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class showMyCalendar extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -40,7 +38,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
             //$this->tpl->assign('gCalLink', $this->calendarRepo->getMyGoogleCalendars());
 
-            $_SESSION['lastPage'] = BASE_URL."/calendar/showMyCalendar/";
+            $_SESSION['lastPage'] = BASE_URL . "/calendar/showMyCalendar/";
 
             //ToDO: This should come from the ticket repo...
             //$this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());
@@ -48,9 +46,7 @@ namespace leantime\domain\controllers {
             //$this->tpl->assign('dates', $this->calendarRepo->getAllDates($dateFrom, $dateTo));
 
             $this->tpl->display('calendar.showMyCalendar');
-
         }
-
     }
 
 }

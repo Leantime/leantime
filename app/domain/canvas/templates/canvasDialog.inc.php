@@ -1,10 +1,12 @@
 <?php
+
 /**
  * canvasDialog.inc template - Generic template for comments
  *
  * Required variables:
  * - $canvasName   Name of current canvas
  */
+
 defined('RESTRICTED') or die('Restricted access');
 
 $canvasItem = $this->get('canvasItem');
@@ -45,58 +47,58 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <label><?=$this->__("label.description") ?></label>
         <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" style="width:100%" /><br />
 
-        <?php if(!empty($statusLabels)) { ?>
+        <?php if (!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>
             <select name="status" style="width: 50%" id="statusCanvas">
             </select><br /><br />
-        <?php }else{ ?>
+        <?php } else { ?>
             <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
         <?php } ?>
 
-        <?php if(!empty($relatesLabels)) { ?>
+        <?php if (!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
             </select><br />
-        <?php }else{ ?>
+        <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
         <?php } ?>
 
-        <?php if($dataLabels[1]['active']) { ?>
+        <?php if ($dataLabels[1]['active']) { ?>
           <label><?=$this->__($dataLabels[1]['title']) ?></label>
-            <?php if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int'){ ?>
+            <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
-            <?php }else if(isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string'){ ?>
+            <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
                 <input type="text" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
-            <?php }else{ ?>
+            <?php } else { ?>
                 <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
             <?php } ?>
-        <?php }else{ ?>
+        <?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
         <?php } ?>
 
-        <?php if($dataLabels[2]['active']) { ?>
+        <?php if ($dataLabels[2]['active']) { ?>
           <label><?=$this->__($dataLabels[2]['title']) ?></label>
-            <?php if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int'){ ?>
+            <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php }else if(isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string'){ ?>
+            <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
                 <input type="text" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
-            <?php }else{ ?>
+            <?php } else { ?>
                 <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
             <?php } ?>
-        <?php }else{ ?>
+        <?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
         <?php } ?>
 
-        <?php if($dataLabels[3]['active']) { ?>
+        <?php if ($dataLabels[3]['active']) { ?>
           <label><?=$this->__($dataLabels[3]['title']) ?></label>
-            <?php if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int'){ ?>
+            <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php }else if(isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string'){ ?>
+            <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
                 <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php }else{ ?>
+            <?php } else { ?>
                 <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
             <?php } ?>
-        <?php }else{ ?>
+        <?php } else { ?>
             <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
         <?php } ?>
 
@@ -104,29 +106,29 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
-        <?php if($id != '') {?>
+        <?php if ($id != '') {?>
             <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
         <?php } ?>
 
-        <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
             <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
         <?php } ?>
 
-        <?php if($id !== '') { ?>
+        <?php if ($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
 
             <ul class="sortableTicketList" style="width: 100%">
 
-            <?php if($canvasItem['milestoneId'] == '') {?>
+            <?php if ($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">
-                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
                                 <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
-                            <?php if(count($this->get('milestones')) > 0) { ?>
+                                <?php if (count($this->get('milestones')) > 0) { ?>
                                     | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
                                 <?php } ?>
                              </div>
@@ -146,15 +148,16 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                             <div class="col-md-12">
                                 <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                     <option value=""></option>
-                                        <?php foreach($this->get('milestones') as $milestoneRow) { ?>
+                                        <?php foreach ($this->get('milestones') as $milestoneRow) { ?>
+                                            <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                            <?php echo"<option value='".$milestoneRow->id."'";
+                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                                echo" selected='selected' ";
+                                            }
 
-                                            if(isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) { echo" selected='selected' "; }
-
-                                            echo">".$milestoneRow->headline."</option>"; ?>
-                                        <?php
-                                    }     ?>
+                                            echo">" . $milestoneRow->headline . "</option>"; ?>
+                                            <?php
+                                        }     ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
@@ -165,14 +168,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 </li>
                 <?php
-
-            }else{
-
-                if($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
+            } else {
+                if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
                     $date = $this->__("text.no_date_defined");
-                }else{
+                } else {
                     $date = new DateTime($canvasItem['milestoneEditTo']);
-                    $date= $date->format($this->__("language.dateformat"));
+                    $date = $date->format($this->__("language.dateformat"));
                 }
 
                 ?>
@@ -217,12 +218,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     </form>
 
-    <?php if($id !== '') { ?>
+    <?php if ($id !== '') { ?>
         <br />
         <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/".$id."");
+        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
         $this->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>
@@ -230,47 +231,46 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        <?php if(!empty($statusLabels)) { ?>
+        <?php if (!empty($statusLabels)) { ?>
             new SlimSelect({
                 select: '#statusCanvas',
-				showSearch: false,
-				valuesUseText: false,
-				data: [
-					<?php foreach($statusLabels as $key => $data) { ?>
-				        <?php if($data['active']) { ?>
-							{ innerHTML: '<?php echo "<i class=\"fas fa-fw ".$data["icon"]."\"></i>&nbsp;".$data['title']; ?>',
-							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
+                showSearch: false,
+                valuesUseText: false,
+                data: [
+                    <?php foreach ($statusLabels as $key => $data) { ?>
+                        <?php if ($data['active']) { ?>
+                            { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
+                              text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
                         <?php } ?>
-				    <?php } ?>
-				]
-			});
-		<?php } ?>
+                    <?php } ?>
+                ]
+            });
+        <?php } ?>
 
-        <?php if(!empty($relatesLabels)) { ?>
+        <?php if (!empty($relatesLabels)) { ?>
             new SlimSelect({
                 select: '#relatesCanvas',
-				showSearch: false,
-				valuesUseText: false,
-				data: [
-					<?php foreach($relatesLabels as $key => $data) { ?>
-				        <?php if($data['active']) { ?>
-							{ innerHTML: '<?php echo "<i class=\"fas fa-fw ".$data["icon"]."\"></i>&nbsp;".$data['title']; ?>',
-							  text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
+                showSearch: false,
+                valuesUseText: false,
+                data: [
+                    <?php foreach ($relatesLabels as $key => $data) { ?>
+                        <?php if ($data['active']) { ?>
+                            { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
+                              text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
                         <?php } ?>
-				    <?php } ?>
-				]
-			});
-		<?php } ?>
+                    <?php } ?>
+                ]
+            });
+        <?php } ?>
 
         leantime.generalController.initSimpleEditor();
 
-        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
-
+        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
             leantime.generalController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
-        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
             leantime.generalController.enableCommenterForms();
         <?php }?>
 

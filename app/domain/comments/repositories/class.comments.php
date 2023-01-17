@@ -8,7 +8,6 @@ namespace leantime\domain\repositories {
 
     class comments
     {
-
         private $db;
 
         public function __construct()
@@ -17,14 +16,13 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
-        public function getComments($module,$moduleId,$parent = 0,$orderByState="0")
+        public function getComments($module, $moduleId, $parent = 0, $orderByState = "0")
         {
-			$orderBy = "DESC";
+            $orderBy = "DESC";
 
-        	if ($orderByState == 1)
-			{
-				$orderBy = "ASC";
-			}
+            if ($orderByState == 1) {
+                $orderBy = "ASC";
+            }
 
             $sql = "SELECT
 					comment.id,
@@ -41,7 +39,7 @@ namespace leantime\domain\repositories {
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
-				ORDER BY comment.date ".$orderBy;
+				ORDER BY comment.date " . $orderBy;
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
@@ -61,27 +59,26 @@ namespace leantime\domain\repositories {
             $sql = "SELECT count(id) as count
 				FROM zp_comment as comment";
 
-            if($module != null || $moduleId != null){
-                $sql.=" WHERE ";
-                if($module != null) {
-                    $sql.="module = :module AND ";
+            if ($module != null || $moduleId != null) {
+                $sql .= " WHERE ";
+                if ($module != null) {
+                    $sql .= "module = :module AND ";
                 }
 
-                if($moduleId != null) {
-                    $sql.="moduleId = :moduleId AND ";
+                if ($moduleId != null) {
+                    $sql .= "moduleId = :moduleId AND ";
                 }
 
-                $sql.= "1=1";
-
+                $sql .= "1=1";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if($module != null) {
+            if ($module != null) {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
 
-            if($moduleId != null) {
+            if ($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 
@@ -89,9 +86,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['count'])) {
+            if (isset($values['count'])) {
                 return $values['count'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -148,7 +145,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-            $stmn->bindValue(':status',  $values['status'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
 
@@ -156,9 +153,9 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            if($result) {
+            if ($result) {
                 return $insertId;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -189,6 +186,5 @@ namespace leantime\domain\repositories {
 
             return $result;
         }
-
     }
 }

@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
 
     class showMy extends controller
     {
-
         private $timesheetsRepo;
         private $projects;
         private $tickets;
@@ -29,7 +28,6 @@ namespace leantime\domain\controllers {
             $this->projects = new repositories\projects();
             $this->tickets = new repositories\tickets();
             $this->userRepo = new repositories\users();
-
         }
 
         /**
@@ -49,12 +47,9 @@ namespace leantime\domain\controllers {
             $kind = 'all';
 
             if (isset($_POST['search']) === true) {
-
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-
                         $dateFrom = $this->language->getISODateString($_POST['startDate']);
-
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
@@ -62,12 +57,9 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['saveTimeSheet']) === true) {
-
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-
                         $dateFrom = $this->language->getISODateString($_POST['startDate']);
-
                     } catch (Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
@@ -87,7 +79,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $this->tpl->assign('allTimesheets', $myTimesheets);
             $this->tpl->display('timesheets.showMy');
-
         }
 
         public function saveTimeSheet($postData)
@@ -98,13 +89,11 @@ namespace leantime\domain\controllers {
             $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
 
             foreach ($postData as $key => $dateEntry) {
-
                 //Receiving a string of
                 //TICKET ID | New or existing timesheetID | Current Date | Type of booked hours
                 $tempData = explode("|", $key);
 
                 if (count($tempData) == 4) {
-
                     $ticketId = $tempData[0];
                     $isCurrentTimesheetEntry = $tempData[1];
                     $currentDate = $tempData[2];
@@ -114,7 +103,7 @@ namespace leantime\domain\controllers {
                     if ($ticketId == "new") {
                         $ticketId = $postData["ticketId"];
                         $kind = $postData["kindId"];
-                    }else{
+                    } else {
                         $kind = $tempData[3];
                     }
 
@@ -129,22 +118,15 @@ namespace leantime\domain\controllers {
                     );
 
                     if ($isCurrentTimesheetEntry == "new") {
-
                         if ($values["hours"] > 0) {
-
                             $this->timesheetsRepo->simpleInsert($values);
                         }
-
                     } else {
-
                         $this->timesheetsRepo->UpdateHours($values);
-
                     }
                 }
             }
         }
-
-
     }
 
 }

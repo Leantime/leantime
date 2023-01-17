@@ -4,13 +4,13 @@ namespace leantime\core;
 
 use PDO;
 
-abstract class repository {
-
+abstract class repository
+{
     use eventhelpers;
 
     protected function dbcall(array $args)
     {
-        return new class($args, $this) {
+        return new class ($args, $this) {
             /**
              * @var array
              * @access private

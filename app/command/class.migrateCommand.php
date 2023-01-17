@@ -12,12 +12,13 @@ use Exception;
 use leantime\domain\repositories\users;
 use array_values;
 
-class migrateCommand extends Command {
-
+class migrateCommand extends Command
+{
     protected static $defaultName = 'db:migrate';
     protected static $defaultDescription = 'Runs any Pending Database Migrations';
 
-    protected function configure() {
+    protected function configure()
+    {
         parent::configure();
         $this->addOption('silent', null, InputOption::VALUE_OPTIONAL, "Silently Handle Migrations. DOES NOT CREATE ADMIN ACCOUNT IF NEEDED", "false");
     }
@@ -29,7 +30,8 @@ class migrateCommand extends Command {
      * @param  OutputInterface $output
      * @return int 0 if everything went fine, or an exit code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         define('BASE_URL', "");
         define('CURRENT_URL', "");
 
@@ -74,5 +76,4 @@ class migrateCommand extends Command {
         $io->text("Database Successfully Migrated");
         return Command::SUCCESS;
     }
-
 }

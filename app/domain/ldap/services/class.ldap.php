@@ -200,7 +200,6 @@ class ldap
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
         if ($this->config->debug) {
-
             error_log("LEANTIME: Testing the logging\n");
 
             //$uname = $this->extractLdapFromUsername($username)."".$this->userDomain;

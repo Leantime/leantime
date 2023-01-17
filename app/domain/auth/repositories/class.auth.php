@@ -11,8 +11,8 @@ namespace leantime\domain\repositories {
     use leantime\core;
     use RobThree\Auth\TwoFactorAuth;
 
-    class auth {
-
+    class auth
+    {
         /**
          * @access private
          * @var    int user id from DB
@@ -132,7 +132,8 @@ namespace leantime\domain\repositories {
 
         private $config;
 
-        public function __construct() {
+        public function __construct()
+        {
 
             $this->db = core\db::getInstance();
             $this->config = \leantime\core\environment::getInstance();
@@ -146,7 +147,8 @@ namespace leantime\domain\repositories {
          * @access private
          * @return bool
          */
-        public function invalidateSession($sessionId) {
+        public function invalidateSession($sessionId)
+        {
 
             $query = "UPDATE zp_user SET session = ''
 				 WHERE session = :sessionid LIMIT 1";
@@ -166,7 +168,8 @@ namespace leantime\domain\repositories {
          * @access private
          * @return void
          */
-        private function invalidateExpiredUserSessions(): bool {
+        private function invalidateExpiredUserSessions(): bool
+        {
 
             $query = "UPDATE zp_user SET session = '' WHERE (" . time() . " - sessionTime) > " . $this->config->sessionExpiration . " ";
 
@@ -185,12 +188,12 @@ namespace leantime\domain\repositories {
          * @param  $password
          * @return bool
          */
-        public function getUserByLogin($username, $password): array|bool {
+        public function getUserByLogin($username, $password): array|bool
+        {
 
             $user = $this->userRepo->getUserByEmail($username);
 
             if ($user !== false && password_verify($password, $user['password'])) {
-
                 return $user;
             }
 
@@ -205,7 +208,8 @@ namespace leantime\domain\repositories {
          * @param  $time
          * @return
          */
-        public function updateUserSession($userId, $sessionid, $time) {
+        public function updateUserSession($userId, $sessionid, $time)
+        {
 
             $query = "UPDATE
 					zp_user
@@ -238,7 +242,8 @@ namespace leantime\domain\repositories {
          * @param
          * @return bool
          */
-        public function validateResetLink($hash) {
+        public function validateResetLink($hash)
+        {
 
             $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'a' LIMIT 1";
 
@@ -278,7 +283,8 @@ namespace leantime\domain\repositories {
             return $returnValues;
         }
 
-        public function setPWResetLink($username, $resetLink): bool {
+        public function setPWResetLink($username, $resetLink): bool
+        {
 
             $query = "UPDATE
 					zp_user
@@ -300,7 +306,8 @@ namespace leantime\domain\repositories {
             return $result;
         }
 
-        public function changePW($password, $hash) {
+        public function changePW($password, $hash)
+        {
 
             $query = "UPDATE
 					zp_user
@@ -323,7 +330,6 @@ namespace leantime\domain\repositories {
 
             return $result;
         }
-
     }
 
 }

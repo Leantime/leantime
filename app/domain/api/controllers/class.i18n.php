@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class i18n extends controller
     {
-
         /**
          *
          *
@@ -30,7 +29,7 @@ namespace leantime\domain\controllers {
             echo "var leantime = leantime || {};
                 var leantime = {
                     i18n: {
-                        dictionary: ".$result.",
+                        dictionary: " . $result . ",
                         __: function(index){ return leantime.i18n.dictionary[index];  }
                     }
                 };";
@@ -44,9 +43,7 @@ namespace leantime\domain\controllers {
                 };
             ";
 */
-
         }
-
     }
 
 }

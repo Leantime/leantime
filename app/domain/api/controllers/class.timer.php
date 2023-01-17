@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class timer extends controller
     {
-
         private $timesheetService;
 
         /**
@@ -21,7 +20,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->timesheetService = new services\timesheets();
-
         }
 
 
@@ -34,7 +32,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
 
@@ -59,10 +56,10 @@ namespace leantime\domain\controllers {
                 $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
                 $hoursBooked = $this->timesheetService->punchOut($ticketId);
 
-                if($hoursBooked) {
+                if ($hoursBooked) {
                     echo $hoursBooked;
                     return;
-                }else{
+                } else {
                     return "{status:failure}";
                 }
                 return;
@@ -70,9 +67,7 @@ namespace leantime\domain\controllers {
 
             echo "{status:failure}";
             return;
-
         }
-
     }
 
 }

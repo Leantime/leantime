@@ -21,10 +21,10 @@ echo $this->displayNotification();
     ?>
 
     <?php
-    if($url != false){
+    if ($url != false) {
         echo $this->__('text.you_ical_url');
-        echo "<br /><input type='text' value='".$url."' style='width:100%;'/>";
-    }else{
+        echo "<br /><input type='text' value='" . $url . "' style='width:100%;'/>";
+    } else {
         echo $this->__('text.no_url');
     }
     ?>
@@ -38,7 +38,7 @@ echo $this->displayNotification();
 
         </div>
         <div class="col-md-6 align-right">
-            <?php  if($url != false){ ?>
+            <?php  if ($url != false) { ?>
                  <a href="<?=BASE_URL ?>/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> <?=$this->__('links.remove_access') ?></a>
             <?php } ?>
         </div>

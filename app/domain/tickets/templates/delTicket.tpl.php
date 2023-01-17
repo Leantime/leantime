@@ -7,7 +7,7 @@
 
     <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $_SESSION['currentProjectClient']." // ". $_SESSION['currentProjectName']; ?></h5>
+        <h5><?php echo $_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']; ?></h5>
         <h1><?php echo $this->__('headline.delete_ticket'); ?>: <?= $this->e($ticket->headline);?></h1>
     </div>
 </div><!--pageheader-->
