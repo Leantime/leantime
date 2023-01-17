@@ -1,0 +1,27 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: configure
+      run: ./configure
+
+    - name: Install dependencies
+      run: make build
+
+    - name: Run packaging
+      run: make package
+
+    - name: Run distcheck
+      run: make clean
