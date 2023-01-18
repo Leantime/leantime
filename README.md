@@ -28,6 +28,7 @@ Leantime is a lean open source project management system for startups and innova
 * Retrospectives
 * Project dashboards
 * Project reports
+* Wikis with the ability to embed documents
 * Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
