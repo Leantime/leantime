@@ -34,6 +34,7 @@ Leantime is a lean open source project management system for startups and innova
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Adjust color scheme and logo
 * Available in 19 languages
 
 
