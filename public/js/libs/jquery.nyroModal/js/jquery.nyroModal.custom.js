@@ -39,7 +39,7 @@ jQuery(function($, undefined) {
 
             modal: false,	// Indicates if it's a modal window or not
             closeOnEscape: true,	// Indicates if the modal should close on Escape key
-            closeOnClick: true,	// Indicates if a click on the background should close the modal
+            closeOnClick: false,	// Indicates if a click on the background should close the modal
             useKeyHandler: false,	// Indicates if the modal has to handle key down event
 
             showCloseButton: true,	// Indicates if the closeButonn should be added
