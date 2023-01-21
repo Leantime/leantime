@@ -21,8 +21,7 @@ spl_autoload_register(__NAMESPACE__ . "\\leantimeAutoloader", true, true);
  *
  * @return void
  */
-function leantimeAutoloader($class) {
-
+function leantimeAutoloader(string $class): void {
     $parts = getLeantimeClassPath($class);
     $path = $parts['path'];
     $class = $parts['class'];

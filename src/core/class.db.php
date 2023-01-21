@@ -47,7 +47,7 @@ class db
     public $database='';
     /**
      * @access private
-     * @var    pdo object
+     * @var    PDO
      */
     private static $instance=null;
 
@@ -114,8 +114,9 @@ class db
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      *
-     * @param $name string
-     * @param $count int
+     * @param  string $name
+     * @param  int    $count
+     *
      * @return string
      */
     public static function arrayToPdoBindingString($name, $count)
@@ -136,7 +137,8 @@ class db
      * Used for patch statements with variable column keys values
      *
      *
-     * @param $name string
+     * @param  string $string
+     *
      * @return string
      */
     public static function sanitizeToColumnString($string) {

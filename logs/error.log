@@ -1,0 +1,1 @@
+[23-Dec-2022 10:27:32 America/Los_Angeles] PHP Fatal error:  Trait "leantime\base\eventhelpers" not found in /Users/josephroberts/localdev/leantime/src/core/class.twig.php on line 16
