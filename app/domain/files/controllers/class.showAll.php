@@ -44,11 +44,10 @@ class showAll extends controller
             }
         }
 
-        $this->tpl->assign('folders', $this->filesRepo->getFolders($currentModule));
         $this->tpl->assign('currentModule', $currentModule);
         $this->tpl->assign('modules', $this->filesRepo->getModules($_SESSION['userdata']['id']));
         $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-        $this->tpl->assign('files', $this->filesRepo->getFilesByModule($currentModule, null, $_SESSION['userdata']['id']));
+        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", $_SESSION['currentProject'], $_SESSION['userdata']['id']));
         $this->tpl->displayPartial('files.showAll');
     }
 }
