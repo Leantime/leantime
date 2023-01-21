@@ -75,7 +75,7 @@ class addUserCommand extends Command
         }
         $user = array(
             "user" => $email,
-            "password" => password_hash($password, PASSWORD_BCRYPT),
+            "password" => password_hash($password, PASSWORD_DEFAULT),
             "role" => array_search($role, roles::getRoles()),
             "clientId" => $clientId,
             "firstname" => $firstName,
