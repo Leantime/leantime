@@ -39,7 +39,7 @@ class ApiSession
             }
         }
 
-        if (empty($creds) || !empty(array_diff($requiredCreds, $creds))) {
+        if (empty($creds) || !empty(array_diff($requiredCreds, array_keys($creds)))) {
             return false;
         }
 
