@@ -302,13 +302,6 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
         <?php } ?>
 
-        <?php if (isset($_SESSION['userdata']['settings']["modals"]["ideaBoard"]) === false || $_SESSION['userdata']['settings']["modals"]["ideaBoard"] == 0) {     ?>
-            leantime.helperController.showHelperModal("ideaBoard");
-            <?php
-        //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["ideaBoard"] = 1;
-        } ?>
-
         <?php if (isset($_GET['showIdeaModal'])) {
             if ($_GET['showIdeaModal'] == "") {
                 $modalUrl = "&type=idea";

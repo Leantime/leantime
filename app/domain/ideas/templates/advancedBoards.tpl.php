@@ -308,12 +308,6 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
         <?php } ?>
 
-        <?php if (isset($_SESSION['userdata']['settings']["modals"]["advancedBoards"]) === false || $_SESSION['userdata']['settings']["modals"]["advancedBoards"] == 0) {     ?>
-        leantime.helperController.showHelperModal("advancedBoards");
-            <?php
-        //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["advancedBoards"] = 1;
-        } ?>
 
     });
 

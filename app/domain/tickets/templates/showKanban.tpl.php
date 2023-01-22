@@ -289,6 +289,7 @@ if ($numberofColumns > 0) {
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -522,15 +523,6 @@ if ($numberofColumns > 0) {
     <?php } ?>
 
     leantime.ticketsController.setUpKanbanColumns();
-
-    <?php if (isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0) { ?>
-        leantime.helperController.showHelperModal("kanban");
-        <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
-        ?>
-
-    <?php } ?>
 
     jQuery(document).ready(function(){
 

@@ -18,7 +18,6 @@ class migrateCommand extends Command
 {
     protected static $defaultName = 'db:migrate';
 
-    protected static $alias
     protected static $defaultDescription = 'Runs any Pending Database Migrations';
 
     protected function configure()
@@ -109,7 +108,7 @@ class migrateCommand extends Command
             $io->error($ex);
             return Command::FAILURE;
         }
-        
+
         $io->success("Database Successfully Migrated");
         return Command::SUCCESS;
     }

@@ -18,7 +18,7 @@ $project = $this->get('values');
     </div>
 
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -43,13 +43,6 @@ $project = $this->get('values');
     jQuery(document).ready(function() {
             leantime.projectsController.initProjectTabs();
             leantime.projectsController.initProjectsEditor();
-
-            <?php if ((isset($_SESSION['userdata']['settings']["modals"]["newProject"]) === false || $_SESSION['userdata']['settings']["modals"]["newProject"] == 0) && $_SESSION['currentProject'] != '') {     ?>
-            leantime.helperController.showHelperModal("newProject");
-                <?php
-            //Only show once per session
-                $_SESSION['userdata']['settings']["modals"]["newProject"] = 1;
-            } ?>
 
         }
     );

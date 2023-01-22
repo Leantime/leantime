@@ -69,7 +69,7 @@ namespace leantime\domain\services {
 
                     $notification = new notification();
                     $notification->url = array(
-                        "url" => $currentUrl,
+                        "url" => $currentUrl."&projectId=".$_SESSION['currentProject'],
                         "text" => $linkLabel
                     );
 

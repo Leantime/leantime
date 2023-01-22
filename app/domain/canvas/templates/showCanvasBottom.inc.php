@@ -62,17 +62,6 @@
 
         <?php } ?>
 
-        <?php if (
-        isset($_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"]) === false ||
-            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] == 0
-) { ?>
-            leantime.helperController.showHelperModal("<?=$canvasName ?>Canvas");
-
-            <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] = 1;
-        } ?>
-
 
         <?php if (isset($_GET['showModal'])) {
             if ($_GET['showModal'] == "") {
