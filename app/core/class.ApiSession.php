@@ -49,7 +49,7 @@ class ApiSession
      *
      * @param string $baseUri
      * @param GuzzleHttp\HandlerStack $stack
-     * @param array $requestDefualts
+     * @param array $requestDefualts (optional)
      *
      * @return GuzzleHttp\Client
      */
