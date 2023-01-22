@@ -154,10 +154,15 @@ class ApiSession
             'token',
             'token_secret'
         ];
+        $optionalCreds = [
+            'private_key_file',
+            'private_key_passphrase',
+            'signature_method'
+        ];
 
-        if (!self::checkCreds($requiredCreds, $creds)) {
+        if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
             throw new Error(
-                "oAuth1 credentials must match exactly: ['consumer_key' => ..., 'consumer_secret' => ..., 'token' => ..., 'token_secret' => ...]"
+                "oAuth1 credentials were incorrectly provided"
             );
         }
 
@@ -167,6 +172,7 @@ class ApiSession
 
         return new Client([
             'base_uri' => $baseUri,
+            'auth' => 'oauth',
             'handler' => $stack,
             ...$requestDefaults
         ]);
