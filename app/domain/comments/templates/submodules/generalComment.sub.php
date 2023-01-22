@@ -53,7 +53,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                             </a>
 
                                             <ul class="dropdown-menu">
-                                                <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                <?php if (($row['userId'] == $_SESSION['userdata']['id']) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
                                                         <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
                                                     </a></li>

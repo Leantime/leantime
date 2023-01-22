@@ -76,7 +76,12 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
             if (services\auth::userIsAtLeast(roles::$editor)) {
-                $results = $this->ticketsApiService->patchTicket($params['id'], $params);
+                $results = false;
+                if (isset($params['id'])) {
+                    $results = $this->ticketsApiService->patchTicket($params['id'], $params);
+                } else {
+                    echo "{status:failure, message: 'ID not set'}";
+                }
 
                 if ($results === true) {
                     echo "{status:ok}";

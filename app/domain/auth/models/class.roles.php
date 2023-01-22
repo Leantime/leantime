@@ -31,7 +31,7 @@ namespace leantime\domain\models\auth {
 
         public static function getRoleString($key)
         {
-            return self::getFilteredRoles()[$key] ?? '';
+            return self::getFilteredRoles()[$key] ?? false;
         }
 
         public static function getRoles()

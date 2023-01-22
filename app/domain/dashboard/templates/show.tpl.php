@@ -485,7 +485,7 @@
 
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                        <strong><a href="<?=BASE_URL ?>/tickets/showKanban?search=true&milestone=<?php echo $row->id;?>"><?php $this->e($row->headline); ?></a></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
