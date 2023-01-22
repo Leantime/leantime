@@ -34,7 +34,6 @@ namespace leantime\core {
          */
         public function loadSettings($timezone, $debug = 0)
         {
-
             if ($timezone != '') {
                 date_default_timezone_set($timezone);
             } else {
@@ -64,7 +63,6 @@ namespace leantime\core {
 
         public function getBaseURL()
         {
-
             if (
                 (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
                 || $_SERVER['SERVER_PORT'] == 443
@@ -81,7 +79,6 @@ namespace leantime\core {
 
         public function getFullURL()
         {
-
             return $this->getBaseURL() . rtrim($this->getRequestURI(), "/");
         }
 
