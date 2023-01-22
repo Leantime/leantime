@@ -46,23 +46,6 @@ class ApiSession
         return true;
     }
 
-    private static function prepareDefaults(
-        array $requiredDefaults,
-        array $requestedDefaults
-    ): array {
-        return array_map(
-            function ($key, $value) use ($requestedDefaults) {
-                if (isset($requestedDefaults[$key])) {
-                    return array_merge($requestDefaults, [$key => $value]);
-                }
-
-                return [$key => $value];
-            },
-            array_keys($requiredDefaults),
-            $requiredDefaults
-        );
-    }
-
     /**
      * Creates a Guzzle Client with an oAuth2 connection
      *
