@@ -46,6 +46,23 @@ class ApiSession
         return true;
     }
 
+    private static function prepareDefaults(
+        array $requiredDefaults,
+        array $requestedDefaults
+    ): array {
+        return array_map(
+            function ($key, $value) use ($requestedDefaults) {
+                if (isset($requestedDefaults[$key])) {
+                    return array_merge($requestDefaults, [$key => $value]);
+                }
+
+                return [$key => $value];
+            },
+            array_keys($requiredDefaults),
+            $requiredDefaults
+        );
+    }
+
     /**
      * Creates a Guzzle Client with an oAuth2 connection
      *
@@ -62,12 +79,16 @@ class ApiSession
         HandlerStack $stack,
         array $requestDefaults = []
     ): Client {
-        return new Client([
-            'base_uri' => $baseUri,
-            'handler' => $stack,
-            'auth' => 'oauth',
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive(
+                $requestedDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'handler' => $stack,
+                    'auth' => 'oauth'
+                ]
+            )
+        );
     }
 
     /**
@@ -170,12 +191,16 @@ class ApiSession
         $middleware = new Oauth1($creds);
         $stack->push($middleware);
 
-        return new Client([
-            'base_uri' => $baseUri,
-            'auth' => 'oauth',
-            'handler' => $stack,
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive(
+                $requestDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'auth' => 'oauth',
+                    'handler' => $stack
+                ]
+            )
+        );
     }
 
     /**
@@ -205,11 +230,15 @@ class ApiSession
             );
         }
 
-        return new Client([
-            'base_uri' => $baseUri,
-            'auth' => $creds,
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive(
+                $requestDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'auth' => $creds
+                ]
+            )
+        );
     }
 
     /**
@@ -240,11 +269,15 @@ class ApiSession
             );
         }
 
-        return new Client([
-            'base_uri' => $baseUri,
-            'auth' => $creds,
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive([
+                $requestDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'auth' => $creds
+                ]
+            ])
+        );
     }
 
     /**
@@ -275,11 +308,15 @@ class ApiSession
             );
         }
 
-        return new Client([
-            'base_uri' => $baseUri,
-            'auth' => $creds,
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive(
+                $requestDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'auth' => $creds
+                ]
+            )
+        );
     }
 
     /**
@@ -304,10 +341,14 @@ class ApiSession
             );
         }
 
-        return new Client([
-            'base_uri' => $baseUri,
-            'headers' => ['Authorization' => "Bearer $token"],
-            ...$requestDefaults
-        ]);
+        return new Client(
+            array_merge_recursive(
+                $requestDefaults,
+                [
+                    'base_uri' => $baseUri,
+                    'headers' => ['Authorization' => "Bearer $token"]
+                ]
+            )
+        );
     }
 }
