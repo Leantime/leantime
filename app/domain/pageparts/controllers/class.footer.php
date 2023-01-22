@@ -7,14 +7,12 @@ namespace leantime\domain\controllers {
 
     class footer extends controller
     {
-
         private $settings;
 
         public function init()
         {
 
             $this->settings = new core\appSettings();
-
         }
 
         public function run()
@@ -22,9 +20,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign("version", $this->settings->appVersion);
             $this->tpl->displayPartial('pageparts.footer');
-
         }
-
     }
 
 }

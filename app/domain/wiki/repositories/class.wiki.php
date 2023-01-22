@@ -8,8 +8,6 @@ namespace leantime\domain\repositories {
 
     class wiki
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -67,9 +65,9 @@ namespace leantime\domain\repositories {
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 
-            if($id>0) {
+            if ($id > 0) {
                 $query .= " AND zp_canvas_items.id = :id";
-            }else if($id==-1) {
+            } elseif ($id == -1) {
                 $query .= " AND featured = 1";
             }
 
@@ -77,7 +75,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            if($id>0) {
+            if ($id > 0) {
                 $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             }
 
@@ -144,7 +142,8 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllWikiHeadlines($canvasId, $userId) {
+        public function getAllWikiHeadlines($canvasId, $userId)
+        {
             $query = "SELECT
 					
                     id,
@@ -175,7 +174,8 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function createWiki($wiki) {
+        public function createWiki($wiki)
+        {
 
             $query = "INSERT INTO zp_canvas 
                     (title, 
@@ -193,7 +193,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $wiki->projectId, PDO::PARAM_STR);
             $stmn->bindValue(':author', $wiki->author, PDO::PARAM_STR);
-            $stmn->bindValue(':created',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':created', date("Y-m-d"), PDO::PARAM_STR);
 
             $execution = $stmn->execute();
 
@@ -203,7 +203,8 @@ namespace leantime\domain\repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateWiki($wiki, $wikiId){
+        public function updateWiki($wiki, $wikiId)
+        {
 
             $query = "UPDATE zp_canvas
                      
@@ -223,7 +224,8 @@ namespace leantime\domain\repositories {
             return $execution;
         }
 
-        public function createArticle(article $article) {
+        public function createArticle(article $article)
+        {
 
             $query = "INSERT INTO zp_canvas_items 
                     (title, 
@@ -263,8 +265,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
             $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
             $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':created',date("Y-m-d"), PDO::PARAM_STR);
-            $stmn->bindValue(':modified',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':created', date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d"), PDO::PARAM_STR);
             $stmn->bindValue(':sortIndex', "10", PDO::PARAM_STR);
 
             $execution = $stmn->execute();
@@ -274,7 +276,8 @@ namespace leantime\domain\repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateArticle(article $article) {
+        public function updateArticle(article $article)
+        {
 
             $query = "UPDATE zp_canvas_items 
                      
@@ -297,7 +300,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
             $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
             $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':modified',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d"), PDO::PARAM_STR);
             $stmn->bindValue(':id', $article->id, PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $article->milestoneId, PDO::PARAM_STR);
 
@@ -306,7 +309,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $execution;
-
         }
 
         public function delArticle($id)
@@ -338,8 +340,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
-
     }
 }

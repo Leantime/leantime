@@ -12,19 +12,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 use leantime\domain\models\auth\roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class addUserCommand extends Command {
-
+class addUserCommand extends Command
+{
     protected static $defaultName = 'user:add';
     protected static $defaultDescription = 'Add a new User';
 
-    protected function configure() {
+    protected function configure()
+    {
         parent::configure();
         $this->addOption('email', null, InputOption::VALUE_REQUIRED, "User's Email")
                 ->addOption('password', null, InputOption::VALUE_REQUIRED, "User's Password")
-                ->addOption('role', null, InputOption::VALUE_REQUIRED, "User's Role",
-                        function (CompletionInput $input) {
-                            return array_values(roles::getRoles());
-                        })
+                ->addOption(
+                    'role',
+                    null,
+                    InputOption::VALUE_REQUIRED,
+                    "User's Role",
+                    function (CompletionInput $input) {
+                        return array_values(roles::getRoles());
+                    }
+                )
                 ->addOption('client-id', null, InputOption::VALUE_OPTIONAL, "Id of The Client to Assign the User To", null)
                 ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", "")
                 ->addOption('last-name', null, InputOption::VALUE_OPTIONAL, "User's Last Name", "")
@@ -38,7 +44,8 @@ class addUserCommand extends Command {
      * @param  OutputInterface $output
      * @return int 0 if everything went fine, or an exit code.
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         define('BASE_URL', "");
         define('CURRENT_URL', "");
         $io = new SymfonyStyle($input, $output);
@@ -92,5 +99,4 @@ class addUserCommand extends Command {
         }
         return Command::SUCCESS;
     }
-
 }

@@ -9,8 +9,6 @@ namespace leantime\domain\repositories {
 
     class notifications
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -20,7 +18,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
 
@@ -46,39 +43,39 @@ namespace leantime\domain\repositories {
                 WHERE userId = :userId";
 
 
-            if($showNewOnly === true) {
+            if ($showNewOnly === true) {
                 $query .= " AND `read` = '0' ";
             }
 
-            if(is_array($filterOptions) && count($filterOptions) >0){
-                foreach($filterOptions as $key => $value) {
-                    $query .= " AND ".$key." = :".$key." " ;
+            if (is_array($filterOptions) && count($filterOptions) > 0) {
+                foreach ($filterOptions as $key => $value) {
+                    $query .= " AND " . $key . " = :" . $key . " " ;
                 }
             }
 
-            $query.=" ORDER BY datetime DESC
-                LIMIT ".$limitStart.", ".$limitEnd."";
+            $query .= " ORDER BY datetime DESC
+                LIMIT " . $limitStart . ", " . $limitEnd . "";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
-            if(is_array($filterOptions) && count($filterOptions) >0){
-                foreach($filterOptions as $key => $value) {
-                    $stmn->bindValue(':'.$key, $value, PDO::PARAM_STR);
+            if (is_array($filterOptions) && count($filterOptions) > 0) {
+                foreach ($filterOptions as $key => $value) {
+                    $stmn->bindValue(':' . $key, $value, PDO::PARAM_STR);
                 }
             }
 
             $stmn->execute();
 
-            $userNotifications= $stmn->fetchAll();
+            $userNotifications = $stmn->fetchAll();
 
             return $userNotifications;
-
         }
 
-        public function addNotifications(array $notifications){
+        public function addNotifications(array $notifications)
+        {
 
-            if(count($notifications) == 0){
+            if (count($notifications) == 0) {
                 return;
             }
 
@@ -94,17 +91,17 @@ namespace leantime\domain\repositories {
                     `authorId`
             ) VALUES ";
 
-            foreach($notifications as $key => $notif) {
+            foreach ($notifications as $key => $notif) {
                 $sql .= "(
-                    :userId".$key.",
-                    :read".$key.",
-                    :type".$key.",
-                    :module".$key.",
-                    :moduleId".$key.",
-                    :message".$key.",
-                    :datetime".$key.",
-                    :url".$key.",
-                    :authorId".$key."
+                    :userId" . $key . ",
+                    :read" . $key . ",
+                    :type" . $key . ",
+                    :module" . $key . ",
+                    :moduleId" . $key . ",
+                    :message" . $key . ",
+                    :datetime" . $key . ",
+                    :url" . $key . ",
+                    :authorId" . $key . "
                 ),";
             }
 
@@ -112,16 +109,16 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
 
-            foreach($notifications as $key => $notif) {
-                $stmn->bindValue(':userId'.$key, $notif['userId'], PDO::PARAM_INT);
-                $stmn->bindValue(':read'.$key, 0, PDO::PARAM_INT);
-                $stmn->bindValue(':type'.$key, $notif['type'], PDO::PARAM_STR);
-                $stmn->bindValue(':module'.$key, $notif['module'], PDO::PARAM_STR);
-                $stmn->bindValue(':moduleId'.$key, $notif['moduleId'], PDO::PARAM_INT);
-                $stmn->bindValue(':message'.$key, $notif['message'], PDO::PARAM_STR);
-                $stmn->bindValue(':datetime'.$key, $notif['datetime'], PDO::PARAM_STR);
-                $stmn->bindValue(':url'.$key, $notif['url'], PDO::PARAM_STR);
-                $stmn->bindValue(':authorId'.$key, $notif['authorId'], PDO::PARAM_INT);
+            foreach ($notifications as $key => $notif) {
+                $stmn->bindValue(':userId' . $key, $notif['userId'], PDO::PARAM_INT);
+                $stmn->bindValue(':read' . $key, 0, PDO::PARAM_INT);
+                $stmn->bindValue(':type' . $key, $notif['type'], PDO::PARAM_STR);
+                $stmn->bindValue(':module' . $key, $notif['module'], PDO::PARAM_STR);
+                $stmn->bindValue(':moduleId' . $key, $notif['moduleId'], PDO::PARAM_INT);
+                $stmn->bindValue(':message' . $key, $notif['message'], PDO::PARAM_STR);
+                $stmn->bindValue(':datetime' . $key, $notif['datetime'], PDO::PARAM_STR);
+                $stmn->bindValue(':url' . $key, $notif['url'], PDO::PARAM_STR);
+                $stmn->bindValue(':authorId' . $key, $notif['authorId'], PDO::PARAM_INT);
             }
 
 
@@ -130,10 +127,10 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $results;
-
         }
 
-        public function markNotificationRead($id) {
+        public function markNotificationRead($id)
+        {
 
             $sql = "UPDATE zp_notifications SET `read` = 1 WHERE id = :id";
 
@@ -147,8 +144,6 @@ namespace leantime\domain\repositories {
 
             return $results;
         }
-
-
     }
 
 }

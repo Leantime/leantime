@@ -463,6 +463,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     left:auto;
 }
 
+
+.dropdown-menu>.active>a,
+.dropdown-menu>.active>a:hover,
+.dropdown-menu>.active>a:focus {
+    background:var(--main-menu-link-active-bg);
+    color:var(--main-menu-link-active-color);
+}
+
 .dropdown-menu .scroll-wrapper {
     height:700px;
     overflow:scroll;

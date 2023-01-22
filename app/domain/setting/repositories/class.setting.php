@@ -7,7 +7,6 @@ namespace leantime\domain\repositories {
 
     class setting
     {
-
         private $db;
 
         public $applications = array(
@@ -24,12 +23,11 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         public function getSetting($type)
         {
-            if($this->checkIfInstalled() === false){
+            if ($this->checkIfInstalled() === false) {
                 return false;
             }
 
@@ -41,30 +39,27 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
-                try {
+            try {
+                $stmn->execute();
+                $values = $stmn->fetch();
+                $stmn->closeCursor();
+            } catch (\Exception $e) {
+                error_log($e);
+                return false;
+            }
 
-                    $stmn->execute();
-                    $values = $stmn->fetch();
-                    $stmn->closeCursor();
-
-                }catch(\Exception $e){
-                    error_log($e);
-                    return false;
-                }
-
-                if($values !== false && isset($values['value'])) {
-                    return $values['value'];
-                }
+            if ($values !== false && isset($values['value'])) {
+                return $values['value'];
+            }
 
                 //TODO: This needs to return null or throw an exception if the setting doesn't exist.
                 return false;
-
         }
 
         public function saveSetting($type, $value)
         {
 
-            if($this->checkIfInstalled() === false){
+            if ($this->checkIfInstalled() === false) {
                 return false;
             }
 
@@ -81,7 +76,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $return;
-
         }
 
         public function deleteSetting($type)
@@ -94,8 +88,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
-
         }
 
         /**
@@ -107,20 +99,18 @@ namespace leantime\domain\repositories {
         public function checkIfInstalled()
         {
 
-            if(isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true){
+            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true) {
                 return true;
             }
 
             try {
-
-
                 $stmn = $this->db->database->prepare("SHOW TABLES LIKE 'zp_user'");
 
                 $stmn->execute();
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                if( !count( $values )) {
+                if (!count($values)) {
                     $_SESSION['isInstalled'] = false;
                     return false;
                 }
@@ -133,14 +123,11 @@ namespace leantime\domain\repositories {
 
                 $_SESSION['isInstalled'] = true;
                 return true;
-
             } catch (\Exception $e) {
                 error_log($e);
                 $_SESSION['isInstalled'] = false;
                 return false;
-
             }
         }
-
     }
 }

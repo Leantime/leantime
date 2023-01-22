@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class delSprint extends controller
     {
-
         private $sprintRepo;
 
         /**
@@ -22,7 +21,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->sprintRepo = new repositories\sprints();
-
         }
 
         /**
@@ -36,39 +34,31 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             //Only admins
-            if(auth::userIsAtLeast(roles::$editor)) {
-
+            if (auth::userIsAtLeast(roles::$editor)) {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                 }
 
                 if (isset($_POST['del'])) {
-
                     $this->sprintRepo->delSprint($id);
 
                     $this->tpl->setNotification($this->language->__('notifications.sprint_deleted_successfully'), "success");
 
                     $_SESSION["currentSprint"] = "";
 
-                    if(isset($_SESSION['lastPage'])) {
+                    if (isset($_SESSION['lastPage'])) {
                         $this->tpl->redirect($_SESSION['lastPage']);
-                    }else{
-                        $this->tpl->redirect(BASE_URL."/tickets/showKanban");
+                    } else {
+                        $this->tpl->redirect(BASE_URL . "/tickets/showKanban");
                     }
-
                 }
 
                 $this->tpl->assign('id', $id);
                 $this->tpl->displayPartial('sprints.delSprint');
-
             } else {
-
                 $this->tpl->displayPartial('errors.error403');
-
             }
-
         }
-
     }
 
 }

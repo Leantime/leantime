@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class editSprint extends controller
     {
-
         private $sprintService;
 
         /**
@@ -29,7 +28,6 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             $this->sprintService = new services\sprints();
-
         }
 
         /**
@@ -49,7 +47,6 @@ namespace leantime\domain\controllers {
                 $endDate = $endDate->add(new DateInterval("P13D"));
                 $sprint->startDate = $startDate->format($this->language->__("language.dateformat"));
                 $sprint->endDate = $endDate->format($this->language->__("language.dateformat"));
-
             }
 
             $this->tpl->assign('sprint', $sprint);
@@ -66,42 +63,29 @@ namespace leantime\domain\controllers {
         {
             //If ID is set its an update
 
-            if($params['startDate'] == '' || $params['endDate'] == '') {
+            if ($params['startDate'] == '' || $params['endDate'] == '') {
                 $this->tpl->setNotification("First day and last day are required", "error");
 
                 $this->tpl->assign('sprint', (object) $params);
                 $this->tpl->displayPartial('sprints.sprintdialog');
 
                 return;
-
             }
 
-            if(isset($_GET['id']) && $_GET['id'] > 0) {
-
+            if (isset($_GET['id']) && $_GET['id'] > 0) {
                 $params['id'] = (int)$_GET['id'];
 
                 if ($this->sprintService->editSprint($params) == true) {
-
                     $this->tpl->setNotification("Sprint edited successfully", "success");
-
                 } else {
-
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
-
                 }
-
-            }else{
-
+            } else {
                 if ($this->sprintService->addSprint($params) == true) {
-
-                    $this->tpl->setNotification("Sprint created successfully. <br /> Go to the <a href='".BASE_URL."/tickets/showAll'>Backlog</a> to add To-Dos", "success");
-
+                    $this->tpl->setNotification("Sprint created successfully. <br /> Go to the <a href='" . BASE_URL . "/tickets/showAll'>Backlog</a> to add To-Dos", "success");
                 } else {
-
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
-
                 }
-
             }
             $this->tpl->assign('sprint', (object) $params);
             $this->tpl->displayPartial('sprints.sprintdialog');
@@ -115,7 +99,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -126,9 +109,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

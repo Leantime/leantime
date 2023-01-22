@@ -1,6 +1,6 @@
 <?php
 
-defined( 'RESTRICTED' ) or die( 'Restricted access' );
+defined('RESTRICTED') or die('Restricted access');
 ?>
 
 
@@ -54,11 +54,12 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     <label for="kind"><?php echo $this->__("label.type")?></label>
                     <select id="kind" name="kind" onchange="submit();">
                         <option value="all"><?php echo $this->__("label.all_types"); ?></option>
-                        <?php foreach($this->get('kind') as $key => $row){
-                            echo'<option value="'.$key.'"';
-                            if($key == $this->get('actKind')) echo ' selected="selected"';
-                            echo'>'.$this->__($row).'</option>';
-
+                        <?php foreach ($this->get('kind') as $key => $row) {
+                            echo'<option value="' . $key . '"';
+                            if ($key == $this->get('actKind')) {
+                                echo ' selected="selected"';
+                            }
+                            echo'>' . $this->__($row) . '</option>';
                         }
                         ?>
 
@@ -111,10 +112,10 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                 $sum = 0;
                 $billableSum = 0;
 
-                foreach($this->get('allTimesheets') as $row) {
+                foreach ($this->get('allTimesheets') as $row) {
                     $sum = $sum + $row['hours'];?>
                     <tr>
-                        <td data-order="<?=$this->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a></td>
+                        <td data-order="<?=$this->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $this->__('label.edit'); ?> </a></td>
                         <td data-order="<?php echo $this->getFormattedDateString($row['workDate']); ?>">
                             <?php echo $this->getFormattedDateString($row['workDate']); ?>
                         </td>
@@ -125,25 +126,34 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                         <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
                         <td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
-                        <td><?php sprintf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>
+                        <td><?php sprintf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>
                         <td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
                         <td><?php $this->e($row['description']); ?></td>
-                        <td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
-                        <?php }else{
+                        <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
+                            echo $this->getFormattedDateString($row['invoicedEmplDate']);
+                                        }?>"><?php if ($row['invoicedEmpl'] == '1') {
+    ?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
+                                        <?php } else {
+                                            echo $this->__("label.pending");
+                                        } ?></td>
+                        <td data-order="<?php if ($row['invoicedComp'] == '1') {
+                            echo $this->getFormattedDateString($row['invoicedCompDate']);
+                                        }?>">
+                            <?php if ($row['invoicedComp'] == '1') {
+                                ?> <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
+                            <?php } else {
                                 echo $this->__("label.pending");
                             } ?></td>
-                        <td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
-                            <?php if($row['invoicedComp'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
-                        <?php }else{
-                                echo $this->__("label.pending");
-                            } ?></td>
-                        <td data-order="<?php if($row['paid'] == '1'){ echo $this->getFormattedDateString($row['paidDate']); }?>">
-                            <?php if($row['paid'] == '1'){?> <?php echo $this->getFormattedDateString($row['paidDate']); ?>
-                            <?php }else{
+                        <td data-order="<?php if ($row['paid'] == '1') {
+                            echo $this->getFormattedDateString($row['paidDate']);
+                                        }?>">
+                            <?php if ($row['paid'] == '1') {
+                                ?> <?php echo $this->getFormattedDateString($row['paidDate']); ?>
+                            <?php } else {
                                 echo $this->__("label.pending");
                             } ?></td>
                     </tr>
-                    <?php } ?>
+                <?php } ?>
                 </tbody>
                 <tfoot>
                     <tr>

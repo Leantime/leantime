@@ -7,12 +7,11 @@ namespace leantime\domain\repositories {
 
     class calendar
     {
-
         /**
          * @access public
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         private $language;
 
@@ -26,7 +25,6 @@ namespace leantime\domain\repositories {
 
             $this->db = core\db::getInstance();
             $this->language = core\language::getInstance();
-
         }
 
         public function getAllDates($dateFrom, $dateTo)
@@ -42,7 +40,6 @@ namespace leantime\domain\repositories {
             $allDates = $stmn->fetchAll();
 
             return $allDates;
-
         }
 
         public function getCalendar($id)
@@ -50,14 +47,14 @@ namespace leantime\domain\repositories {
 
             /*
            $userTickets = "SELECT
-					tickets.dateToFinish,
-					tickets.headline,
-					tickets.id,
-					tickets.projectId,
-					tickets.editFrom,
-					tickets.editTo
-				FROM zp_tickets AS tickets
-				WHERE (tickets.editorId = :userId OR tickets.userId = :userId) AND tickets.type <> 'Milestone' AND tickets.type <> 'Subtask'";
+                    tickets.dateToFinish,
+                    tickets.headline,
+                    tickets.id,
+                    tickets.projectId,
+                    tickets.editFrom,
+                    tickets.editTo
+                FROM zp_tickets AS tickets
+                WHERE (tickets.editorId = :userId OR tickets.userId = :userId) AND tickets.type <> 'Milestone' AND tickets.type <> 'Subtask'";
 
             $stmn = $this->db->database->prepare($userTickets);
             $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
@@ -70,15 +67,15 @@ namespace leantime\domain\repositories {
             $ticketService = new \leantime\domain\services\tickets();
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater('', "");
 
-            if(!empty($ticketArray)) {
-				if(isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
-					$tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
-				}elseif(isset($ticketArray["thisWeek"]["tickets"])){
-					$tickets = $ticketArray["thisWeek"]["tickets"];
-				}elseif($ticketArray["later"]["tickets"]) {
-					$tickets = $ticketArray["later"]["tickets"];
-				}
-            }else{
+            if (!empty($ticketArray)) {
+                if (isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
+                    $tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
+                } elseif (isset($ticketArray["thisWeek"]["tickets"])) {
+                    $tickets = $ticketArray["thisWeek"]["tickets"];
+                } elseif ($ticketArray["later"]["tickets"]) {
+                    $tickets = $ticketArray["later"]["tickets"];
+                }
+            } else {
                 $tickets = array();
             }
 
@@ -125,12 +122,11 @@ namespace leantime\domain\repositories {
             if (count($tickets)) {
                 foreach ($tickets as $ticket) {
                     $context = "";
-                    if($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-
+                    if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
                         $context = $this->language->__("label.due_todo");
-                    }else{
+                    } else {
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                         $context =  $this->language->__("label.planned_edit");
@@ -139,7 +135,7 @@ namespace leantime\domain\repositories {
 
 
                     $newValues[] = array(
-                        'title'  => $context.$ticket['headline'],
+                        'title'  => $context . $ticket['headline'],
                         'allDay' => false,
                         'dateFrom' => array(
                             'y' => date('Y', $dateFrom),
@@ -167,7 +163,8 @@ namespace leantime\domain\repositories {
             return $newValues;
         }
 
-        public function getCalendarBySecretHash($userHash, $calHash) {
+        public function getCalendarBySecretHash($userHash, $calHash)
+        {
 
             //get user
 
@@ -175,20 +172,19 @@ namespace leantime\domain\repositories {
             $user = $userRepo->getUserBySha($userHash);
 
 
-            if(!isset($user['id'])) {
+            if (!isset($user['id'])) {
                 return false;
             }
 
             //Check if setting exists
             $settingService = new \leantime\domain\repositories\setting();
-            $hash = $settingService->getSetting("usersettings.".$user['id'].".icalSecret");
+            $hash = $settingService->getSetting("usersettings." . $user['id'] . ".icalSecret");
 
-            if($hash!== false && $calHash == $hash){
+            if ($hash !== false && $calHash == $hash) {
                 return $this->getCalendar($user['id']);
-            }else{
+            } else {
                 return false;
             }
-
         }
 
         public function getCalendarEventsForToday($id)
@@ -255,22 +251,20 @@ namespace leantime\domain\repositories {
 
             if (count($tickets)) {
                 foreach ($tickets as $ticket) {
-
-                    if($ticket['dateToFinish'] != "0000-00-00 00:00:00") {
-
+                    if ($ticket['dateToFinish'] != "0000-00-00 00:00:00") {
                         $current = strtotime(date("Y-m-d"));
                         $date    = strtotime(date("Y-m-d", strtotime($ticket['dateToFinish'])));
 
                         $datediff = $date - $current;
-                        $difference = floor($datediff/(60*60*24));
-                    }else{
+                        $difference = floor($datediff / (60 * 60 * 24));
+                    } else {
                         $difference = 1;
                     }
 
-                    if($difference==0) {
+                    if ($difference == 0) {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
-                    }else{
+                    } else {
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                     }
@@ -349,7 +343,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function getEvent($id)
@@ -365,7 +358,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function editEvent($values, $id)
@@ -405,7 +397,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $value;
-
         }
 
         public function getMyGoogleCalendars()
@@ -421,7 +412,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getGCal($id)
@@ -438,7 +428,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function editGUrl($values, $id)
@@ -459,7 +448,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function deleteGCal($id)
@@ -474,7 +462,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         public function addGUrl($values)
@@ -493,8 +480,6 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
-
     }
 }

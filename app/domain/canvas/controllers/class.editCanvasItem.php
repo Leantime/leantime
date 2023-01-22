@@ -177,7 +177,7 @@ namespace leantime\domain\controllers\canvas {
                             "text" => $this->language->__('email_notifications.canvas_item_update_cta')
                         );
                         $notification->entity = $canvasItem;
-                        $notification->module = static::CANVAS_NAME.'canvas';
+                        $notification->module = static::CANVAS_NAME . 'canvas';
                         $notification->projectId = $_SESSION['currentProject'];
                         $notification->subject = $subject;
                         $notification->authorId = $_SESSION['userdata']['id'];
@@ -225,7 +225,7 @@ namespace leantime\domain\controllers\canvas {
                         );
 
                         $notification->entity = $canvasItem;
-                        $notification->module = static::CANVAS_NAME.'canvas';
+                        $notification->module = static::CANVAS_NAME . 'canvas';
                         $notification->projectId = $_SESSION['currentProject'];
                         $notification->subject = $subject;
                         $notification->authorId = $_SESSION['userdata']['id'];
@@ -268,7 +268,7 @@ namespace leantime\domain\controllers\canvas {
                     "text" => $this->language->__('email_notifications.canvas_item_update_cta')
                 );
                 $notification->entity = $values;
-                $notification->module = static::CANVAS_NAME.'canvas';
+                $notification->module = static::CANVAS_NAME . 'canvas';
                 $notification->projectId = $_SESSION['currentProject'];
                 $notification->subject = $subject;
                 $notification->authorId = $_SESSION['userdata']['id'];

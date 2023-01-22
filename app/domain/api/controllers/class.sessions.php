@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class sessions extends controller
     {
-
         private $usersService;
 
         /**
@@ -23,7 +22,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->usersService = new services\users();
-
         }
 
 
@@ -36,7 +34,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -47,10 +44,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
-
-
         }
 
         /**
@@ -63,13 +56,11 @@ namespace leantime\domain\controllers {
         {
             //Special handling for settings
 
-            if(isset($params['tourActive'])) {
-
+            if (isset($params['tourActive'])) {
                 $_SESSION['tourActive'] = filter_var($params['tourActive'], FILTER_SANITIZE_NUMBER_INT);
             }
 
-            if(isset($params['menuState'])) {
-
+            if (isset($params['menuState'])) {
                 $_SESSION['menuState'] = htmlentities($params['menuState']);
             }
         }
@@ -82,9 +73,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

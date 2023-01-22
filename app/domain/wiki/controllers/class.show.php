@@ -11,12 +11,11 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-
-        public function init() {
+        public function init()
+        {
 
             $this->wikiService = new services\wiki();
             $this->commentService = new services\comments();
-
         }
 
         public function get($params)
@@ -26,26 +25,22 @@ namespace leantime\domain\controllers {
 
             //Option 1: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {
-
                 unset($_SESSION['lastArticle']);
                 $_SESSION['currentWiki'] = (int)$_GET['setWiki'];
 
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
 
-                if(is_array($wikiHeadlines) && count($wikiHeadlines)>0) {
-
+                if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                     $currentArticle = $this->wikiService->getArticle(
                         $wikiHeadlines[0]->id,
                         $_SESSION['currentProject']
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-
-                }else{
+                } else {
                     $currentArticle = false;
                 }
-
-            }else if(isset($params['id'])) {
+            } elseif (isset($params['id'])) {
                 $currentArticle = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
 
                 if ($currentArticle && $currentArticle->id != null) {
@@ -59,32 +54,26 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
-
-            }else if(isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0){
-
+            } elseif (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0) {
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
 
-                if(is_array($wikiHeadlines) && count($wikiHeadlines)>0) {
-
+                if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                     $currentArticle = $this->wikiService->getArticle(
                         $wikiHeadlines[0]->id,
                         $_SESSION['currentProject']
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-
-                }else{
+                } else {
                     $currentArticle = false;
                 }
 
 
                 //Last Article is set
-            }else if(isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
-
+            } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
 
-                if($currentArticle) {
-
+                if ($currentArticle) {
                     $_SESSION['currentWiki'] = $currentArticle->canvasId;
 
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
@@ -96,61 +85,56 @@ namespace leantime\domain\controllers {
                 }
 
             //Nothing is set
-            }else {
-
-                if(is_array($wikis) && count($wikis)>0){
+            } else {
+                if (is_array($wikis) && count($wikis) > 0) {
                     $_SESSION['currentWiki'] = $wikis[0]->id;
-                }else{
+                } else {
                     $_SESSION['currentWiki'] = '';
                 }
 
-                if($_SESSION['currentWiki'] != '') {
+                if ($_SESSION['currentWiki'] != '') {
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
                         $_SESSION['currentWiki'],
                         $_SESSION['userdata']['id']
                     );
-                }else{
+                } else {
                     $wikiHeadlines = array();
                 }
 
-                if(is_array($wikiHeadlines) && count($wikiHeadlines) >0) {
+                if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                     $currentArticle = $this->wikiService->getArticle(
                         $wikiHeadlines[0]->id,
                         $_SESSION['currentProject']
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-                }else{
-
+                } else {
                     $currentArticle = false;
                     $_SESSION['lastArticle'] = '';
                 }
-
             }
 
-            if(isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] != ''){
+            if (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] != '') {
                 $currentWiki = $this->wikiService->getWiki($_SESSION['currentWiki']);
-            }else{
+            } else {
                 $currentWiki = false;
             }
 
             //Delete comment
             if (isset($_GET['delComment']) === true) {
-
                 $commentId = (int)($_GET['delComment']);
 
                 $this->commentService->deleteComment($commentId);
 
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-
             }
 
 
-            if(isset($params['id'])) {
+            if (isset($params['id'])) {
                 $comment = $this->commentService->getComments('article', $_GET['id'], 0);
-            }else if(isset($currentArticle->id)){
+            } elseif (isset($currentArticle->id)) {
                 $comment = $this->commentService->getComments('article', $currentArticle->id, 0);
-            }else{
+            } else {
                 $comment = array();
             }
 
@@ -167,19 +151,16 @@ namespace leantime\domain\controllers {
 
 
             $this->tpl->display("wiki.show");
-
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
-                $currentArticle= $this->wikiService->getArticle($id, $_SESSION['currentProject']);
+                $currentArticle = $this->wikiService->getArticle($id, $_SESSION['currentProject']);
 
                 if (isset($_POST['comment']) === true) {
-
                     if ($this->commentService->addComment($_POST, "article", $id, $currentArticle)) {
                         $this->tpl->setNotification(
                             $this->language->__("notifications.comment_create_success"),
@@ -190,18 +171,11 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                $this->tpl->redirect(BASE_URL."/wiki/show/".$id);
-
+                $this->tpl->redirect(BASE_URL . "/wiki/show/" . $id);
             }
 
-            $this->tpl->redirect(BASE_URL."/wiki/show/");
-
-
-
+            $this->tpl->redirect(BASE_URL . "/wiki/show/");
         }
-
     }
 
 }
-
-

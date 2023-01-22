@@ -9,7 +9,6 @@ namespace leantime\domain\services {
 
     class files
     {
-
         private $fileRepository;
         private $projectService;
         private $language;
@@ -21,7 +20,6 @@ namespace leantime\domain\services {
             $this->fileRepository = new repositories\files();
             $this->projectService = new services\projects();
             $this->language = core\language::getInstance();
-
         }
 
         public function getFilesByModule($module = '', $entityId = null, $userId = null)
@@ -30,13 +28,12 @@ namespace leantime\domain\services {
         }
 
 
-        public function uploadFile($file, $module, $entityId, $entity) {
+        public function uploadFile($file, $module, $entityId, $entity)
+        {
 
             if (isset($file['file'])) {
-
-                if($this->fileRepository->upload($file, $module, $entityId)){
-
-                    switch($module) {
+                if ($this->fileRepository->upload($file, $module, $entityId)) {
+                    switch ($module) {
                         case "ticket":
                             $subject = sprintf($this->language->__("email_notifications.new_file_todo_subject"), $entity->id, $entity->headline);
                             $message = sprintf($this->language->__("email_notifications.new_file_todo_subject"), $_SESSION["userdata"]["name"], $entity->headline);
@@ -49,7 +46,7 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $notification = new models\notifications\notification();
+                    $notification = new notification();
                     $notification->url = array(
                         "url" => CURRENT_URL,
                         "text" => $linkLabel
@@ -65,23 +62,19 @@ namespace leantime\domain\services {
                     $this->projectService->notifyProjectUsers($notification);
 
                     return true;
-
-                }else{
-
+                } else {
                     return false;
-
                 }
             }
 
             return false;
         }
 
-        public function deleteFile($fileId) {
+        public function deleteFile($fileId)
+        {
 
-           return $this->fileRepository->deleteFile($fileId);
-
+            return $this->fileRepository->deleteFile($fileId);
         }
-
     }
 
 }

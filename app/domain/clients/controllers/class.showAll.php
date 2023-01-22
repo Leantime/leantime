@@ -16,7 +16,6 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-
         private $clientRepo;
 
         /**
@@ -28,7 +27,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->clientRepo = new repositories\clients();
-
         }
 
         /**
@@ -47,8 +45,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('allClients', $this->clientRepo->getAll());
             $this->tpl->display('clients.showAll');
-
         }
-
     }
 }

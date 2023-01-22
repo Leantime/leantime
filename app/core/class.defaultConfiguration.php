@@ -2,7 +2,8 @@
 
 namespace leantime\core;
 
-class config {
+class config
+{
     /* General */
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
@@ -118,5 +119,4 @@ class config {
           }
         }';
     public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
-
 }

@@ -41,7 +41,8 @@ leantime.usersController = (function () {
                     );
 
                 _uploadResult.croppie(
-                    'bind', {
+                    'bind',
+                    {
                         url: e.currentTarget.result
                     }
                 );
@@ -62,9 +63,10 @@ leantime.usersController = (function () {
 
         jQuery('#save-picture').addClass('running');
 
-        jQuery('#profileImg').attr('src', leantime.appUrl+'/images/loaders/loader28.gif');
+        jQuery('#profileImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
         _uploadResult.croppie(
-            'result', {
+            'result',
+            {
                 type: "blob",
                 circle: true
             }
@@ -77,7 +79,7 @@ leantime.usersController = (function () {
 
     var initUserTable = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
 
@@ -160,7 +162,7 @@ leantime.usersController = (function () {
         jQuery(".userEditModal").nyroModal(userEditModal);
     }
 
-    var checkPWStrength = function(pwField) {
+    var checkPWStrength = function (pwField) {
 
         let timeout;
 
@@ -174,7 +176,8 @@ leantime.usersController = (function () {
         let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})')
         let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))')
 
-        function StrengthChecker(PasswordParameter) {
+        function StrengthChecker(PasswordParameter)
+        {
             if (strongPassword.test(PasswordParameter)) {
                 strengthBadge.style.backgroundColor = "#468847";
                 strengthBadge.textContent = leantime.i18n.__('label.strong');
@@ -191,14 +194,14 @@ leantime.usersController = (function () {
 
             //The badge is hidden by default, so we show it
 
-            strengthBadge.style.display= 'block';
+            strengthBadge.style.display = 'block';
             clearTimeout(timeout);
 
             timeout = setTimeout(() => StrengthChecker(password.value), 500);
 
-            if(password.value.length !== 0){
+            if (password.value.length !== 0) {
                 strengthBadge.style.display != 'block'
-            } else{
+            } else {
                 strengthBadge.style.display = 'none'
             }
         });

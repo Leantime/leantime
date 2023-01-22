@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class notifications extends controller
     {
-
         public services\notifications $notificationsService;
 
         /**
@@ -23,7 +22,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->notificationsService = new services\notifications();
-
         }
 
 
@@ -48,9 +46,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
-
         }
 
         /**
@@ -61,11 +56,10 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-            if(isset($params['action']) && $params['action'] == "read"){
+            if (isset($params['action']) && $params['action'] == "read") {
                 $notificationService = new services\notifications();
                 $notificationService->markNotificationRead($params['id']);
             }
-
         }
 
         /**
@@ -76,9 +70,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

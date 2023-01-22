@@ -31,44 +31,47 @@ $menuTypes = $this->get('menuTypes');
                         <div class="span6">
                             <select name="clientId" id="clientId">
 
-                            <?php foreach($this->get('clients') as $row){ ?>
+                            <?php foreach ($this->get('clients') as $row) { ?>
                                 <option value="<?php echo $row['id']; ?>"
-                                    <?php if($project['clientId'] == $row['id']) { ?> selected=selected
+                                    <?php if ($project['clientId'] == $row['id']) {
+                                        ?> selected=selected
                                     <?php } ?>><?php $this->e($row['name']); ?></option>
                             <?php } ?>
 
                             </select>
-                            <?php if($login::userIsAtLeast("manager")) { ?>
+                            <?php if ($login::userIsAtLeast("manager")) { ?>
                             <a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
                             <?php } ?>
                         </div>
                     </div>
-					<?php if($config->enableMenuType) {?>
+                    <?php if ($config->enableMenuType) {?>
                         <div class="form-group">
 
                             <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
                             <div class="span6">
                                 <select name="menuType" id="menuType">
-						    		<?php foreach($menuTypes as $key => $menu) { ?>
+                                    <?php foreach ($menuTypes as $key => $menu) { ?>
                                        <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
-							      <?php } ?>
+                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
-					<?php } else { ?>
-		                <input type="hidden" name="menuType" id="menuType"
-							   value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
-					<?php } ?>
+                    <?php } else { ?>
+                        <input type="hidden" name="menuType" id="menuType"
+                               value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
+                    <?php } ?>
                     <div class="form-group">
 
                         <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
                         <div class="span6">
                             <select name="projectState" id="projectState">
-                                <option value="0" <?php if($project['state'] == 0) { ?> selected=selected
-                                <?php } ?>><?php echo $this->__('label.open'); ?></option>
+                                <option value="0" <?php if ($project['state'] == 0) {
+                                    ?> selected=selected
+                                                  <?php } ?>><?php echo $this->__('label.open'); ?></option>
 
-                                <option value="-1" <?php if($project['state'] == -1) { ?> selected=selected
-                               <?php } ?>><?php echo $this->__('label.closed'); ?></option>
+                                <option value="-1" <?php if ($project['state'] == -1) {
+                                    ?> selected=selected
+                                                   <?php } ?>><?php echo $this->__('label.closed'); ?></option>
 
                             </select>
                         </div>

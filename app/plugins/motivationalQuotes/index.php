@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MotivationalQuotes
  *
@@ -6,6 +7,3 @@
  * Example plugin to show basic plugin structure.
  *
  */
-
-
-

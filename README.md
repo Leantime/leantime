@@ -12,6 +12,8 @@ Leantime is a lean open source project management system for startups and innova
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
+  ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
+
 
 </div>
 <br /><br />
@@ -26,21 +28,24 @@ Leantime is a lean open source project management system for startups and innova
 * Retrospectives
 * Project dashboards
 * Project reports
+* Wikis with the ability to embed documents
 * Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Adjust color scheme and logo
 * Available in 19 languages
 
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")    | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+| ![alt text](public/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 |---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/ToDoView.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/images/Screenshots/Calendar.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/images/Screenshots/Confetti.png "Confetti")                                                                     |
 
 ### System Requirements ###
 

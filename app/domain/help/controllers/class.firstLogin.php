@@ -71,8 +71,6 @@ namespace leantime\domain\controllers {
                     } catch (Exception $e) {
                         error_log($e);
                     }
-
-
                 }
                 $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
             }

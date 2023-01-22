@@ -32,7 +32,7 @@ $ticket = $this->get('ticket');
 <div class="mediamgr_content">
 
     <ul id='medialist' class='listfile'>
-    <?php foreach($this->get('files') as $file): ?>
+    <?php foreach ($this->get('files') as $file) : ?>
         <li class="<?php echo $file['moduleId'] ?>">
             <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -55,11 +55,11 @@ $ticket = $this->get('ticket');
               <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank">
                   <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                       <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                    <?php else: ?>
+                  <?php else : ?>
                       <div style="font-size:50px; margin-bottom:10px;">
                         <span class="fa fa-file"></span>
                       </div>
-                    <?php endif; ?>
+                  <?php endif; ?>
                 <span class="filename"><?php echo $file['realName'] ?></span>
               </a>
 
@@ -72,10 +72,10 @@ $ticket = $this->get('ticket');
 
 
 
-<?php if(count($this->get('files')) == 0){ ?>
+<?php if (count($this->get('files')) == 0) { ?>
     <div class="text-center">
         <div style='width:33%' class='svgContainer'>
-            <?php echo file_get_contents(ROOT."/images/svg/undraw_image__folder_re_hgp7.svg"); ?>
+            <?php echo file_get_contents(ROOT . "/images/svg/undraw_image__folder_re_hgp7.svg"); ?>
             <?php echo $this->__('text.no_files') ?>
         </div>
     </div>

@@ -1,32 +1,33 @@
 <?php
+
 /**
  * Repository
  */
+
 namespace leantime\domain\repositories {
 
     class leancanvas extends \leantime\domain\repositories\canvas
     {
-        
         /**
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = 'lean';
 
-		/***
-		 * icon - Icon associated with canvas (must be extended)
-		 *
-		 * @access public
-		 * @var    string Fontawesome icone
-		 */
-		protected string $icon = 'fa-flask';
-        
-		/***
-		 * disclaimer - Disclaimer
-		 *
-		 * @access protected
-		 * @var    string Disclaimer (including href)
-		 */
-		protected string $disclaimer = 'text.lean.disclaimer';
+        /***
+         * icon - Icon associated with canvas (must be extended)
+         *
+         * @access public
+         * @var    string Fontawesome icone
+         */
+        protected string $icon = 'fa-flask';
+
+        /***
+         * disclaimer - Disclaimer
+         *
+         * @access protected
+         * @var    string Disclaimer (including href)
+         */
+        protected string $disclaimer = 'text.lean.disclaimer';
 
         /**
          * canvasTypes - Must be extended
@@ -47,15 +48,14 @@ namespace leantime\domain\repositories {
             'earlyadopters'    => [ 'icon' => 'fa-chart-pie', 'title' => 'box.lean.earlyadopters' ],
             'cost'             => [ 'icon' => 'fa-file-invoice-dollar', 'title' => 'box.lean.cost' ],
             'revenue'          => [ 'icon' => 'fa-sack-dollar', 'title' => 'box.lean.revenue' ]
-		];
-		
-		/**
-		 * relatesLabels - Relates to label
-		 *
+        ];
+
+        /**
+         * relatesLabels - Relates to label
+         *
          * @acces public
          * @var   array
-		 */
-		protected array $relatesLabels = [ ];
-
-	}
+         */
+        protected array $relatesLabels = [ ];
+    }
 }

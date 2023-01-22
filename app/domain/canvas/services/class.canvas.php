@@ -7,7 +7,6 @@ namespace leantime\domain\services {
 
     class canvas
     {
-
         /**
          * import - Import canvas from XML file
          *
@@ -26,13 +25,17 @@ namespace leantime\domain\services {
 
             // Read file
             $canvasData = file_get_contents($filename);
-            if($canvasData === false) return false;
+            if ($canvasData === false) {
+                return false;
+            }
 
             // Convert read data into XML DOM structure
             $old_error_reporting = error_reporting(error_reporting() & ~E_WARNING);
             $status = $dom->loadXML($canvasData);
             error_reporting($old_error_reporting);
-            if($status === false) return false;
+            if ($status === false) {
+                return false;
+            }
 
             // Decode XMP data
             $canvasAry = [ 'projectId' => $projectId, 'author' => $authorId ];
@@ -40,64 +43,94 @@ namespace leantime\domain\services {
 
             // - Canvas
             $canvasNodeList = $dom->getElementsByTagName('canvas');
-            if($canvasNodeList->count() !== 1) return false;
+            if ($canvasNodeList->count() !== 1) {
+                return false;
+            }
             $importedCanvasName = $canvasNodeList->item(0)->getAttribute('key');
 
             // - Canvas / Title
             $titleNodeList = $canvasNodeList->item(0)->getElementsByTagName('title');
-            if($titleNodeList->count() !== 1) return false;
+            if ($titleNodeList->count() !== 1) {
+                return false;
+            }
             $canvasAry['title'] = $titleNodeList->item(0)->nodeValue;
 
             // - Canvas / Data
             $dataNodeList = $canvasNodeList->item(0)->getElementsByTagName('content');
-            if($dataNodeList->count() !== 1) return false;
+            if ($dataNodeList->count() !== 1) {
+                return false;
+            }
 
             // - Data / Element*
             $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
 
-            foreach($elementNodeList as $elementNode) {
-
-                if(!$elementNode->hasAttribute('key')) return false;
+            foreach ($elementNodeList as $elementNode) {
+                if (!$elementNode->hasAttribute('key')) {
+                    return false;
+                }
                 $elementKey = $elementNode->getAttribute('key');
 
                 $itemNodeList = $elementNode->getElementsByTagName('item');
-                foreach($itemNodeList as $itemName) {
-
+                foreach ($itemNodeList as $itemName) {
                     $authorNodeList = $itemName->getElementsByTagName('author');
-                    if($authorNodeList->count() !== 1) return false;
-                    if(!$authorNodeList->item(0)->hasAttribute('firstname')) return false;
+                    if ($authorNodeList->count() !== 1) {
+                        return false;
+                    }
+                    if (!$authorNodeList->item(0)->hasAttribute('firstname')) {
+                        return false;
+                    }
                     $authorFirstname = $authorNodeList->item(0)->getAttribute('firstname');
-                    if(!$authorNodeList->item(0)->hasAttribute('lastname')) return false;
+                    if (!$authorNodeList->item(0)->hasAttribute('lastname')) {
+                        return false;
+                    }
                     $authorLastname = $authorNodeList->item(0)->getAttribute('lastname');
                     $author = $users->getUserIdByName($authorFirstname, $authorLastname);
-                    if($author === false) $author = $authorId;
+                    if ($author === false) {
+                        $author = $authorId;
+                    }
 
                     $descriptionNodeList = $itemName->getElementsByTagName('description');
-                    if($descriptionNodeList->count() !== 1) return false;
+                    if ($descriptionNodeList->count() !== 1) {
+                        return false;
+                    }
                     $description = $descriptionNodeList->item(0)->nodeValue;
 
                     $statusNodeList = $itemName->getElementsByTagName('status');
-                    if($statusNodeList->count() !== 1) return false;
-                    if(!$statusNodeList->item(0)->hasAttribute('key')) return false;
+                    if ($statusNodeList->count() !== 1) {
+                        return false;
+                    }
+                    if (!$statusNodeList->item(0)->hasAttribute('key')) {
+                        return false;
+                    }
                     $status = $statusNodeList->item(0)->getAttribute('key');
 
                     $relatesNodeList = $itemName->getElementsByTagName('relates');
-                    if($relatesNodeList->count() !== 1) return false;
-                    if(!$relatesNodeList->item(0)->hasAttribute('key')) return false;
+                    if ($relatesNodeList->count() !== 1) {
+                        return false;
+                    }
+                    if (!$relatesNodeList->item(0)->hasAttribute('key')) {
+                        return false;
+                    }
                     $relates = $relatesNodeList->item(0)->getAttribute('key');
 
                     $assumptionsNodeList = $itemName->getElementsByTagName('assumptions');
-                    if($assumptionsNodeList->count() !== 1) return false;
+                    if ($assumptionsNodeList->count() !== 1) {
+                        return false;
+                    }
                     $assumptions = empty($assumptionsNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($assumptionsNodeList->item(0)->firstChild);
 
                     $dataNodeList = $itemName->getElementsByTagName('data');
-                    if($dataNodeList->count() !== 1) return false;
+                    if ($dataNodeList->count() !== 1) {
+                        return false;
+                    }
                     $data = empty($dataNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($dataNodeList->item(0)->firstChild);
 
                     $conclusionNodeList = $itemName->getElementsByTagName('conclusion');
-                    if($conclusionNodeList->count() !== 1) return false;
+                    if ($conclusionNodeList->count() !== 1) {
+                        return false;
+                    }
                     $conclusion = empty($conclusionNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($conclusionNodeList->item(0)->firstChild);
 
@@ -111,28 +144,31 @@ namespace leantime\domain\services {
                                       'relates' => $relates,
                                       'milestoneId' => '' ];
                 }
-
             }
 
             // Check if canvas is consistently named
-            if($canvasName !== $importedCanvasName) return false;
+            if ($canvasName !== $importedCanvasName) {
+                return false;
+            }
 
             $canvasRepoName = "\\leantime\\domain\\repositories\\$canvasName";
             $canvasRepo = new $canvasRepoName();
 
             // Check if canvas already exists?
             $canvasAry['title'] .= ' [imported]';
-            if($canvasRepo->existCanvas($projectId, $canvasAry['title'])) return false;
+            if ($canvasRepo->existCanvas($projectId, $canvasAry['title'])) {
+                return false;
+            }
 
             // Save new canvas and return id
             $canvasId = $canvasRepo->addCanvas($canvasAry);
-            if($canvasId === false) return false;
+            if ($canvasId === false) {
+                return false;
+            }
 
-            foreach($recordsAry as $record) {
-
+            foreach ($recordsAry as $record) {
                 $record['canvasId'] = $canvasId;
                 $canvasRepo->addCanvasItem($record);
-
             }
 
             return $canvasId;
@@ -146,57 +182,51 @@ namespace leantime\domain\services {
          * @param  array    $boards Array of project board types
          * @return array List of boards with a progress percentage
          */
-        public function getBoardProgress($projectId = '', $boards = array()) :array {
+        public function getBoardProgress($projectId = '', $boards = array()): array
+        {
 
             $canvasRepo = new repositories\canvas();
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
             $results = array();
 
-            foreach($values as $row) {
-
-                if(!isset($results[$row['canvasType']])) {
+            foreach ($values as $row) {
+                if (!isset($results[$row['canvasType']])) {
                     $results[$row['canvasType']] = array();
                 }
 
-                if(!isset($results[$row['canvasType']][$row['canvasId']])) {
-
-                    $classname = 'leantime\\domain\\repositories\\'.$row['canvasType'];
+                if (!isset($results[$row['canvasType']][$row['canvasId']])) {
+                    $classname = 'leantime\\domain\\repositories\\' . $row['canvasType'];
 
 
                     $canvasTypeRepo = new $classname();
                     $results[$row['canvasType']][$row['canvasId']] = array();
 
-                    foreach($canvasTypeRepo->getCanvasTypes() as $type => $box){
+                    foreach ($canvasTypeRepo->getCanvasTypes() as $type => $box) {
                         $results[$row['canvasType']][$row['canvasId']][$type] = 0;
                     }
-
                 }
 
-                if($row['box'] != '' && $row['boxItems'] > 0 ){
+                if ($row['box'] != '' && $row['boxItems'] > 0) {
                     $results[$row['canvasType']][$row['canvasId']][$row['box']]++;
                 }
-
             }
 
             $progressResults = array();
 
             //Once the count is done calculate progress per canvastype Id
-            foreach($results as $key => &$canvas) {
-
-                $classname = 'leantime\\domain\\repositories\\'.$key;
+            foreach ($results as $key => &$canvas) {
+                $classname = 'leantime\\domain\\repositories\\' . $key;
                 $canvasTypeRepo = new $classname();
 
                 $numOfBoxes = count($canvasTypeRepo->getCanvasTypes());
 
-                if(!isset($progressResults[$key]))
-                {
+                if (!isset($progressResults[$key])) {
                     $progressResults[$key] = '';
                 }
 
                 $maxProgress = 0;
-                foreach($canvas as $canvasId => $singleCanvas) {
-
+                foreach ($canvas as $canvasId => $singleCanvas) {
                     $numOfBoxesFilled = 0;
                     foreach ($singleCanvas as $box) {
                         if ($box > 0) {
@@ -204,17 +234,15 @@ namespace leantime\domain\services {
                         }
                     }
                     $progress = $numOfBoxesFilled / $numOfBoxes;
-                    if($progress > $maxProgress){
+                    if ($progress > $maxProgress) {
                         $maxProgress = $progress;
                     }
                 }
 
                 $progressResults[$key] = $maxProgress;
-
             }
 
             return $progressResults;
-
         }
 
 
@@ -230,9 +258,7 @@ namespace leantime\domain\services {
         {
             $canvasRepo = new repositories\canvas();
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
-
         }
-
     }
 
 }

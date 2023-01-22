@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class showAllGCals extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -42,9 +40,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
 
             $this->tpl->display('calendar.showAllGCals');
-
         }
-
     }
 }
-

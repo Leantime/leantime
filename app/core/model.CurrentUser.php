@@ -2,8 +2,8 @@
 
 namespace core\models;
 
-class CurrentUser {
-
+class CurrentUser
+{
     public int $id;
     public string $firstname;
     public string $lastname;
@@ -16,5 +16,4 @@ class CurrentUser {
     public int $profileId;
     public array $settings;
     public bool $isLdap;
-
 }

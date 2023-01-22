@@ -12,41 +12,38 @@ namespace leantime\domain\controllers {
 
     class wikiModal extends controller
     {
-
-        public function init() {
+        public function init()
+        {
 
             $this->wikiService = new services\wiki();
-
         }
 
-        public function get($params) {
+        public function get($params)
+        {
 
             $wiki = new wiki();
-            if(isset($_GET["id"])){
+            if (isset($_GET["id"])) {
                 $wiki = $this->wikiService->getWiki($_GET["id"]);
             }
 
 
             $this->tpl->assign("wiki", $wiki);
             $this->tpl->displayPartial("wiki.wikiDialog");
-
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             $wiki = new wiki();
 
-            if(isset($_GET["id"])){
-
+            if (isset($_GET["id"])) {
                 $id = (int) $_GET["id"];
                 //Update
                 $wiki->title = $params['title'];
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification("notification.wiki_updated_successfully", "success");
-                $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id);
-
-            }else{
+                $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id);
+            } else {
             //New
                 $wiki->title = $params['title'];
                 $wiki->projectId = $_SESSION['currentProject'];
@@ -56,19 +53,12 @@ namespace leantime\domain\controllers {
 
                 //$_SESSION['currentWiki'] = $id;
 
-                if($id){
+                if ($id) {
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success");
-                    $this->tpl->redirect(BASE_URL."/wiki/wikiModal/".$id."?closeModal=1");
+                    $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id . "?closeModal=1");
                 }
-
-
-
             }
-
         }
-
     }
 
 }
-
-

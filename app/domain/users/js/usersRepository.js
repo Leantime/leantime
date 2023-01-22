@@ -17,7 +17,7 @@ leantime.usersRepository = (function () {
         jQuery.ajax(
             {
                 type: 'POST',
-                url: leantime.appUrl+'/api/users',
+                url: leantime.appUrl + '/api/users',
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -39,7 +39,7 @@ leantime.usersRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/users',
+                url: leantime.appUrl + '/api/users',
                 data:
                 {
                     patchViewSettings : module,

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * canvasComment.inc template - Generic template for comments
  *
  * Required variables:
  * - $canvasName   Name of current canvas
  */
+
 defined('RESTRICTED') or die('Restricted access');
 
 $canvasItem = $this->get('canvasItem');
@@ -34,12 +36,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     <h5 style="padding-left: 40px"><strong><?php $this->e($canvasItem['description']) ?></strong></h5>
 
-    <?php if($id !== '') { ?>
+    <?php if ($id !== '') { ?>
     <br />
     <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasComment/".$id."");
+        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasComment/" . $id . "");
         $this->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>
@@ -49,13 +51,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         leantime.generalController.initSimpleEditor();
 
-        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
-
+        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
             leantime.generalController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
-        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
             leantime.generalController.enableCommenterForms();
         <?php }?>
 

@@ -1,14 +1,14 @@
 <?php
+
 /**
  * Strategy Brief - Controller
  */
+
 namespace leantime\domain\controllers {
 
     class showCanvas extends \leantime\domain\controllers\canvas\showCanvas
     {
-		
-	    protected const CANVAS_NAME = 'sb';
-
+        protected const CANVAS_NAME = 'sb';
     }
 
 }

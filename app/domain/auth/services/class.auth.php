@@ -141,7 +141,6 @@ namespace leantime\domain\services {
             $this->userRepo = new repositories\users();
 
             $this->session = $sessionid;
-
         }
 
         public static function getInstance($sessionid = "")
@@ -213,13 +212,12 @@ namespace leantime\domain\services {
 
                     $ldapUser = $ldap->getSingleUser($username);
 
-                    if($ldapUser === false){
+                    if ($ldapUser === false) {
                         return false;
                     }
 
                     //If user does not exist create user
                     if ($user == false) {
-
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
@@ -234,9 +232,9 @@ namespace leantime\domain\services {
 
                         $userId = $this->userRepo->addUser($userArray);
 
-                        if($userId !== false) {
+                        if ($userId !== false) {
                             $user = $this->userRepo->getUserByEmail($usernameWDomain);
-                        }else{
+                        } else {
                             error_log("Ldap user creation failed.");
                             return false;
                         }
@@ -252,18 +250,14 @@ namespace leantime\domain\services {
                     }
 
                     if ($user !== false && is_array($user)) {
-
                         $this->setUserSession($user, true);
 
                         $this->authRepo->updateUserSession($user['id'], $this->session, time());
 
                         return true;
-
-                    }else{
-
+                    } else {
                         error_log("Could not retrieve user by email");
                         return false;
-
                     }
                 }
 
@@ -291,7 +285,7 @@ namespace leantime\domain\services {
 
         private function setUserSession($user, $isLdap = false)
         {
-            if(!$user || !is_array($user)){
+            if (!$user || !is_array($user)) {
                 return false;
             }
 

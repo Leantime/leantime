@@ -18,11 +18,11 @@ leantime.menuRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/sessions',
+                url: leantime.appUrl + '/api/sessions',
                 data:
                     {
                         menuState : menuStateValue
-                    }
+                }
             }
         ).done(
             function () {

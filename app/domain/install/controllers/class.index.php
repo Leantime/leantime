@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class index extends controller
     {
-
         private $usersService;
         private $redirectUrl;
 
@@ -25,9 +24,8 @@ namespace leantime\domain\controllers {
             $this->installRepo = new repositories\install();
 
             if ($this->installRepo->checkIfInstalled()) {
-               core\frontcontroller::redirect(BASE_URL);
+                core\frontcontroller::redirect(BASE_URL);
             }
-
         }
 
         /**
@@ -40,20 +38,19 @@ namespace leantime\domain\controllers {
         {
 
             $this->tpl->display("install.new", "entry");
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             $values = array(
-                'email'			=>"",
-                'password'		=>"",
-                'firstname'		=>"",
-                'lastname'		=>""
+                'email'         => "",
+                'password'      => "",
+                'firstname'     => "",
+                'lastname'      => ""
             );
 
-            if(isset($_POST['install'])) {
-
+            if (isset($_POST['install'])) {
                 $values = array(
                     'email' => ($params['email']),
                     'password' => $params['password'],
@@ -75,16 +72,16 @@ namespace leantime\domain\controllers {
                                 $this->tpl->setNotification("notification.enter_lastname", "error");
                             } else {
                                 if (isset($params['company']) == false || $params['company'] == '') {
-                                    $this->tpl->setNotification("notification.enter_company", "error");;
+                                    $this->tpl->setNotification("notification.enter_company", "error");
+                                    ;
                                 } else {
                                     $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-                                    if($this->installRepo->setupDB($values)) {
-                                        $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"),BASE_URL), "success");
-                                    }else{
+                                    if ($this->installRepo->setupDB($values)) {
+                                        $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"), BASE_URL), "success");
+                                    } else {
                                         $this->tpl->setNotification($this->language->__('notification.error_installing'), "error");
                                     }
-
                                 }
                             }
                         }
@@ -92,7 +89,7 @@ namespace leantime\domain\controllers {
                 }
             }
 
-            core\frontcontroller::redirect( BASE_URL."/install");
+            core\frontcontroller::redirect(BASE_URL . "/install");
         }
     }
 }

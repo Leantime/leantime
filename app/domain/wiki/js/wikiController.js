@@ -6,7 +6,7 @@ leantime.wikiController = (function () {
     })();
 
     //Functions
-    var initTree = function(id, selectedId) {
+    var initTree = function (id, selectedId) {
 
         jQuery(id).jstree({
             "core": {
@@ -26,15 +26,16 @@ leantime.wikiController = (function () {
             },
             "plugins" : ["wholerow", "types", "state"]
         }).bind("loaded.jstree", function (e, data) {
-            jQuery(id).jstree("select_node", "treenode_"+selectedId+"", true);
+            jQuery(id).jstree("select_node", "treenode_" + selectedId + "", true);
         });
 
         jQuery(id).on('activate_node.jstree', function (e, data) {
 
             jQuery(id).jstree("save_state");
 
-            if (data == undefined || data.node == undefined || data.node.id == undefined)
+            if (data == undefined || data.node == undefined || data.node.id == undefined) {
                 return;
+            }
 
             window.location.href = data.node.a_attr.href;
         });
@@ -43,7 +44,7 @@ leantime.wikiController = (function () {
 
     }
 
-    var wikiModal = function() {
+    var wikiModal = function () {
 
         var wikiModalConfig = {
             sizes: {
@@ -68,7 +69,7 @@ leantime.wikiController = (function () {
 
     }
 
-    var articleModal = function() {
+    var articleModal = function () {
 
         var articleModalConfig = {
             sizes: {
@@ -78,7 +79,7 @@ leantime.wikiController = (function () {
             resizable: true,
             autoSizable: true,
             callbacks: {
-                beforePostSubmit: function() {
+                beforePostSubmit: function () {
                     jQuery('textarea.complexEditor').tinymce().save();
                     jQuery('textarea.complexEditor').tinymce().remove();
                 },

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Generates an JSON-RPC 2.0 API
  */
@@ -9,7 +10,6 @@ use leantime\core\controller;
 
 class jsonrpc extends controller
 {
-
     /**
      * init - initialize private variables or events to happen before route execution
      *

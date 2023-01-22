@@ -36,15 +36,13 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if(isset($params['assignedProjectUsersAssigned'])) {
-
+            if (isset($params['assignedProjectUsersAssigned'])) {
             }
 
-            if(isset($params['projectUsersAccess'])) {
-
-                if($params['projectUsersAccess'] == 'current'){
+            if (isset($params['projectUsersAccess'])) {
+                if ($params['projectUsersAccess'] == 'current') {
                     $projectId = $_SESSION['currentProject'];
-                }else{
+                } else {
                     $projectId = $params['projectUsersAccess'];
                 }
 
@@ -60,11 +58,9 @@ namespace leantime\domain\controllers {
 
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
-                if(is_string($return)){
-
+                if (is_string($return)) {
                     $this->tpl->redirect($return);
-
-                }else {
+                } else {
                     header('Content-Type: image/jpeg');
                     echo $return;
                 }

@@ -7,7 +7,8 @@
 <?php echo $this->displayNotification();
 
 $id = "";
-if(isset($currentWiki->id)) {$id = $currentWiki->id;
+if (isset($currentWiki->id)) {
+    $id = $currentWiki->id;
 }
 ?>
 
@@ -34,7 +35,7 @@ if(isset($currentWiki->id)) {$id = $currentWiki->id;
 <script>
     jQuery(document).ready(function(){
 
-        <?php if(isset($_GET['closeModal'])){ ?>
+        <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
 

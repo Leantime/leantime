@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
 
     class showBoards extends controller
     {
-
         private $ideaRepo;
         private $projectService;
 
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
 
             $this->ideaRepo = new repositories\ideas();
             $this->projectService = new services\projects();
-
         }
 
         /**
@@ -38,9 +36,9 @@ namespace leantime\domain\controllers {
 
             $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-            if(isset($_SESSION['currentIdeaCanvas'])) {
+            if (isset($_SESSION['currentIdeaCanvas'])) {
                 $currentCanvasId = $_SESSION['currentIdeaCanvas'];
-            }else{
+            } else {
                 $currentCanvasId = -1;
                 $_SESSION['currentIdeaCanvas'] = "";
             }
@@ -62,9 +60,7 @@ namespace leantime\domain\controllers {
 
             //Add Canvas
             if (isset($_POST["newCanvas"]) === true) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
                     $currentCanvasId = $this->ideaRepo->addCanvas($values);
                     $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
@@ -87,32 +83,23 @@ namespace leantime\domain\controllers {
 
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $this->tpl->redirect(BASE_URL."/ideas/showBoards/");
-
+                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
-
             }
 
             //Edit Canvas
             if (isset($_POST["editCanvas"]) === true && $currentCanvasId > 0) {
-
                 if (isset($_POST['canvastitle']) === true) {
-
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
                     $this->tpl->setNotification($this->language->__("notification.board_edited"), "success");
-                    $this->tpl->redirect(BASE_URL."/ideas/showBoards/");
-
-
+                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
-
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
-
                 }
-
             }
 
             $this->tpl->assign('currentCanvas', $currentCanvasId);
@@ -126,9 +113,6 @@ namespace leantime\domain\controllers {
                 $this->tpl->display('ideas.showBoards');
             }
         }
-
     }
 
 }
-
-

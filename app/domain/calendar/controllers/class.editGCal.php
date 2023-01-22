@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class editGCal extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -40,7 +38,6 @@ namespace leantime\domain\controllers {
             $msgKey = '';
 
             if (isset($_GET['id']) === true) {
-
                 $id = ($_GET['id']);
 
                 $row = $this->calendarRepo->getGCal($id);
@@ -52,7 +49,6 @@ namespace leantime\domain\controllers {
                 );
 
                 if (isset($_POST['save']) === true) {
-
                     $values = array(
                         'url' => ($_POST['url']),
                         'name' => ($_POST['name']),
@@ -62,23 +58,15 @@ namespace leantime\domain\controllers {
                     $this->calendarRepo->editGUrl($values, $id);
 
                     $msgKey = 'Kalender bearbeitet';
-
-
                 }
 
                 $this->tpl->assign('values', $values);
                 $this->tpl->assign('info', $msgKey);
 
                 $this->tpl->display('calendar.editGCal');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 }
-

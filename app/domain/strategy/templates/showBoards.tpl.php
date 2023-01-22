@@ -26,15 +26,14 @@ $canvasProgress = $this->get('canvasProgress');
                 </h5>
                 <p style="padding-left:19px;"><?=$this->__('description.level1_validate') ?></p>
                 <div id="accordion_lvl1" class="row teamBox" style="padding-left:19px; padding-right:19px;">
-                    <?php foreach($this->get('level1Boards') as $board){?>
-
+                    <?php foreach ($this->get('level1Boards') as $board) {?>
                         <div class="col-md-6">
                             <div class="profileBox">
                                 <div class="commentImage icon">
                                     <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                                    <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
+                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
                                         <?=$this->__($board['name']) ?>
                                     </a>
                                 </span>
@@ -42,7 +41,7 @@ $canvasProgress = $this->get('canvasProgress');
                                 <div class="clearall"></div>
                                 <?php
                                 $percentDone = 0;
-                                if(isset($canvasProgress[$board['module']])) {
+                                if (isset($canvasProgress[$board['module']])) {
                                     $percentDone = round($canvasProgress[$board['module']] * 100);
                                 }
                                 ?>
@@ -68,15 +67,14 @@ $canvasProgress = $this->get('canvasProgress');
                 </h5>
                 <p style="padding-left:19px;"><?=$this->__('description.level2_define') ?></p>
                 <div id="accordion_lvl2" class="row teamBox" style="padding-left:19px; padding-right:19px;">
-                    <?php foreach($this->get('level2Boards') as $board){?>
-
+                    <?php foreach ($this->get('level2Boards') as $board) {?>
                         <div class="col-md-6">
                             <div class="profileBox">
                                 <div class="commentImage icon">
                                     <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
+                            <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
                                 <?=$this->__($board['name']) ?>
                             </a>
                         </span>
@@ -85,7 +83,7 @@ $canvasProgress = $this->get('canvasProgress');
 
                                 <?php
                                 $percentDone = 0;
-                                if(isset($canvasProgress[$board['module']])) {
+                                if (isset($canvasProgress[$board['module']])) {
                                     $percentDone = round($canvasProgress[$board['module']] * 100);
                                 }
                                 ?>
@@ -112,15 +110,14 @@ $canvasProgress = $this->get('canvasProgress');
                 </h5>
                 <p style="padding-left:19px;"><?=$this->__('description.level3_plan') ?></p>
                 <div id="accordion_lvl3" class="row teamBox" style="padding-left:19px; padding-right:19px;">
-                    <?php foreach($this->get('level3Boards') as $board){?>
-
+                    <?php foreach ($this->get('level3Boards') as $board) {?>
                         <div class="col-md-6">
                             <div class="profileBox">
                                 <div class="commentImage icon">
                                     <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
+                            <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
                                 <?=$this->__($board['name']) ?>
                             </a>
                         </span>
@@ -129,7 +126,7 @@ $canvasProgress = $this->get('canvasProgress');
 
                                 <?php
                                 $percentDone = 0;
-                                if(isset($canvasProgress[$board['module']])) {
+                                if (isset($canvasProgress[$board['module']])) {
                                     $percentDone = round($canvasProgress[$board['module']] * 100);
                                 }
                                 ?>
@@ -155,15 +152,14 @@ $canvasProgress = $this->get('canvasProgress');
                 </h5>
                 <p style="padding-left:19px;"><?=$this->__('description.other_tools') ?></p>
                 <div id="accordion_other" class="row teamBox" style="display:none; padding-left:19px;">
-                    <?php foreach($this->get('otherBoards') as $board){?>
-
+                    <?php foreach ($this->get('otherBoards') as $board) {?>
                         <div class="col-md-4">
                             <div class="profileBox">
                                 <div class="commentImage icon">
                                     <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="<?=BASE_URL.'/'.$board['module']."/showCanvas" ?>">
+                            <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
                                 <?=$this->__($board['name']) ?>
                             </a>
                         </span>
@@ -172,7 +168,7 @@ $canvasProgress = $this->get('canvasProgress');
 
                                 <?php
                                 $percentDone = 0;
-                                if(isset($canvasProgress[$board['module']])) {
+                                if (isset($canvasProgress[$board['module']])) {
                                     $percentDone = round($canvasProgress[$board['module']] * 100);
                                 }
                                 ?>
@@ -197,13 +193,13 @@ $canvasProgress = $this->get('canvasProgress');
             <div class="maincontentinner">
                 <h5 class="subtitle"><?=$this->__('headlines.recent_updates') ?></h5>
 
-                <?php if($this->get('recentlyUpdatedCanvas') !== false && count($this->get('recentlyUpdatedCanvas'))>0){ ?>
+                <?php if ($this->get('recentlyUpdatedCanvas') !== false && count($this->get('recentlyUpdatedCanvas')) > 0) { ?>
                 <ul class="sortableTicketList" id="lastUpdatedCanvasList" >
-                    <?php foreach($this->get('recentlyUpdatedCanvas') as $canvas) { ?>
+                    <?php foreach ($this->get('recentlyUpdatedCanvas') as $canvas) { ?>
                         <li style="margin-bottom:10px;">
 
                                 <div class="col-md-12 ticketBox fixed" style="padding:10px; margin-bottom:0px;">
-                                    <small><?=$this->__("label.".$canvas['type'])?></small><br />
+                                    <small><?=$this->__("label." . $canvas['type'])?></small><br />
                                     <h3>
                                         <a href="<?=BASE_URL?>/<?=$canvas['type'] ?>/showCanvas/<?=$canvas['id']?>">
                                             <?php $this->e($canvas['title'])?>
@@ -215,19 +211,18 @@ $canvasProgress = $this->get('canvasProgress');
                         </li>
                     <?php } ?>
                 </ul>
-                <?php }else{
+                <?php } else {
                     echo "<br /><br /><div class='center'>";
 
                         echo "<div style='width:30%' class='svgContainer'>";
-                            echo file_get_contents(ROOT."/images/svg/undraw_design_data_khdb.svg");
+                            echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
                             echo "</div>";
 
-                        echo"<h4>".$this->__("headlines.so_empty")."</h4>";
-                        echo "<br />".$this->__("text.no_canvas");
+                        echo"<h4>" . $this->__("headlines.so_empty") . "</h4>";
+                        echo "<br />" . $this->__("text.no_canvas");
 
 
                         echo"</div>";
-
                 } ?>
             </div>
         </div>

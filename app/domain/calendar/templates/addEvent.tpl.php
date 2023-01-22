@@ -53,7 +53,7 @@
 
                 <label for="allDay"><?php echo $this->__('label.all_day') ?></label>
                 <input type="checkbox" id="allDay" name="allDay"
-                <?php if($values['allDay'] === 'true') {
+                <?php if ($values['allDay'] === 'true') {
                     echo 'checked="checked" ';
                 }?>
                 /><br />
