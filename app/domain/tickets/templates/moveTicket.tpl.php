@@ -12,8 +12,15 @@
 
     <form method="post" action="<?=BASE_URL?>/tickets/moveTicket/<?=$ticket->id ?>" class="formModal">
         <h3>#<?=$ticket->id ?> - <?=$this->escape($ticket->headline); ?></h3> <br />
-        <p><?php echo $this->__('text.moving'); ?><br />
-           </p><br />
+        <p>
+            <?php if($ticket->type == "milestone"){?>
+                <?php echo $this->__('text.moving_milestones'); ?>
+            <?php }else{ ?>
+                <?php echo $this->__('text.moving'); ?>
+            <?php } ?>
+
+            <br /><br />
+        </p>
 
         <select id="projectSelector" name="projectId">
         <?php

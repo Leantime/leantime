@@ -1348,6 +1348,7 @@ leantime.ticketsController = (function () {
                         { "visible": false, "targets": 7 },
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
+                        { "target": "no-sort", "orderable": false},
                     ]
 
             });
@@ -1534,7 +1535,7 @@ leantime.ticketsController = (function () {
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
-
+                    { "target": "no-sort", "orderable": false},
                 ]
 
             });

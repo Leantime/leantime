@@ -51,8 +51,11 @@ namespace leantime\domain\controllers {
             }
 
             if(!empty($ticketId) && !empty($projectId)){
-                $this->ticketService->patchTicket($ticketId, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => ""]);
-                $this->tpl->setNotification($this->language->__("text.ticket_moved"), "success");
+                if($this->ticketService->moveTicket($ticketId, $projectId)) {
+                    $this->tpl->setNotification($this->language->__("text.ticket_moved"), "success");
+                }else{
+                    $this->tpl->setNotification($this->language->__("text.move_problem"), "error");
+                }
             }
 
             core\frontcontroller::redirect(BASE_URL."/tickets/moveTicket/".$ticketId."?closeModal=true");
