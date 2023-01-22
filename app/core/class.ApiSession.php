@@ -18,6 +18,8 @@ class ApiSession
     /**
      * Checks passed credentials to see if they are properly provided
      *
+     * @see https://github.com/kamermans/guzzle-oauth2-subscriber#middleware-guzzle-6
+     *
      * @param array $requiredCreds
      * @param array $creds
      * @param array $optionalCreds (optional)
@@ -46,6 +48,8 @@ class ApiSession
 
     /**
      * Creates a Guzzle Client with an oAuth2 connection
+     *
+     * @see https://github.com/kamermans/guzzle-oauth2-subscriber#client-credentials-example
      *
      * @param string $baseUri
      * @param GuzzleHttp\HandlerStack $stack
