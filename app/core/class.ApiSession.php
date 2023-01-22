@@ -86,7 +86,7 @@ class ApiSession
     ): HandlerStack {
         $middleware_params = [];
 
-        if ($customGrantType !== null) {
+        if ($customGrantType == null) {
             $requiredCreds = [
                 'client_id',
                 'client_secret'
