@@ -135,6 +135,8 @@ class ApiSession
     /**
      * Creates a Guzzle Client with an oAuth1 connection
      *
+     * @see https://github.com/guzzle/oauth-subscriber#using-the-subscriber
+     *
      * @param string $baseUri
      * @param array $creds
      * @param array $requestDefaults (optional)
