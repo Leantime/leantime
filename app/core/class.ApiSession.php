@@ -80,7 +80,7 @@ class ApiSession
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber
      *
      * @param string $baseUri
-     * @param array $creds Just pass an empty array if you supply customGrantType.
+     * @param array $creds Just pass an empty array if you supply $customGrantType.
      * @param bool $usesRefresh (optional)
      * @param kamermans\OAuth2\GrantType\GrantTypeInterface $customGrantType (optional)
      *
