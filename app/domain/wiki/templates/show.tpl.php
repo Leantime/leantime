@@ -154,7 +154,14 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                             <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div class="right">
                                     <a class="articleModal btn btn-default" href="<?=BASE_URL?>/wiki/articleDialog/<?=$currentArticle->id; ?>"><?=$this->__('links.edit_article');?></a>
-                                    <a class="btn btn-default" onclick="leantime.generalController.copyUrl(event);" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><?=$this->__('links.copy_url');?></a>
+                                    <div class="dropdownWrapper pull-right" style="margin-left:10px;">
+                                        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><i class="fa fa-link"></i></a>
+                                        <div class="dropdown-menu padding-md">
+                                            <input type="text" id="wikiURL" value="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>" />
+                                            <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('wikiURL');"><?=$this->__('links.copy_url') ?></button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             <?php } ?>
 
