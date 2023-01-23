@@ -391,22 +391,22 @@ namespace leantime\domain\repositories {
 
 						  AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
 
-            if ($searchCriteria["currentProject"]  != "") {
+            if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
 
-            if ($searchCriteria["users"]  != "") {
+            if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
                 $editorIdIn = core\db::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
                 $query .= " AND zp_tickets.editorId IN(" . $editorIdIn . ")";
             }
 
-            if ($searchCriteria["milestone"]  != "") {
+            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
                 $query .= " AND zp_tickets.dependingTicketId = :milestoneId";
             }
 
 
-            if ($searchCriteria["status"]  != "") {
+            if (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
                 $statusArray = explode(",", $searchCriteria['status']);
 
                 if (array_search("not_done", $statusArray) !== false) {
@@ -431,24 +431,24 @@ namespace leantime\domain\repositories {
                 $query .= " AND zp_tickets.status <> -1";
             }
 
-            if ($searchCriteria["type"]  != "") {
+            if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
                 $query .= " AND LOWER(zp_tickets.type) = LOWER(:searchType) ";
             }
 
-            if ($searchCriteria["priority"]  != "") {
+            if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
                 $query .= " AND LOWER(zp_tickets.priority) = LOWER(:searchPriority) ";
             }
 
-            if ($searchCriteria["term"]  != "") {
+            if (isset($searchCriteria["term"]) && $searchCriteria["term"]  != "") {
                 $query .= " AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)";
             }
 
-            if ($searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
                 $sprintIn = core\db::arrayToPdoBindingString("sprint", count(explode(",", $searchCriteria["sprint"])));
                 $query .= " AND zp_tickets.sprint IN(" . $sprintIn . ")";
             }
 
-            if ($searchCriteria["sprint"]  == "backlog") {
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  == "backlog") {
                 $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
             }
 

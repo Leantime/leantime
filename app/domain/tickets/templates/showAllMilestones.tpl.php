@@ -117,7 +117,7 @@
                     <th><?= $this->__("label.estimated_hours_remaining"); ?></th>
                     <th><?= $this->__("label.booked_hours"); ?></th>
                     <th><?= $this->__("label.progress"); ?></th>
-                    <td></td>
+                    <th class="no-sort"></th>
 
                 </tr>
                 <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
@@ -228,7 +228,28 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><a style="float:right;" href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a>
+                            <td>
+                                 <?php if ($login::userIsAtLeast($roles::$editor)) {
+
+
+                                    ?>
+                                    <div class="inlineDropDownContainer">
+
+                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
+                                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_milestone"); ?></a></li>
+                                            <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row->id; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_milestone"); ?></a></li>
+                                            <li><a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $row->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                                            <li class="nav-header border"></li>
+                                            <li><a href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$this->__("links.view_todos")?></a></li>
+                                        </ul>
+                                    </div>
+                                <?php } ?>
+
+
                             </td>
                             <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>

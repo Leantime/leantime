@@ -54,7 +54,7 @@
     </div>
 
     <div id="files">
-        <?php $this->displaySubmodule('tickets-attachments') ?>
+        <?php $this->displaySubmodule('files-showAll') ?>
     </div>
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>

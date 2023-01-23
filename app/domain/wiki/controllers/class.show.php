@@ -120,6 +120,7 @@ namespace leantime\domain\controllers {
                 $currentWiki = false;
             }
 
+
             //Delete comment
             if (isset($_GET['delComment']) === true) {
                 $commentId = (int)($_GET['delComment']);

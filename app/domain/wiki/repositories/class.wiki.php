@@ -46,22 +46,22 @@ namespace leantime\domain\repositories {
                     SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
                     SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
                     COUNT(progressTickets.id) AS allTickets,
-                    CASE WHEN 
-                      COUNT(progressTickets.id) > 0 
-                    THEN 
+                    CASE WHEN
+                      COUNT(progressTickets.id) > 0
+                    THEN
                       ROUND(
                         (
-                          SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+                          SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
                           SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                        ) *100) 
-                    ELSE 
-                      0 
+                        ) *100)
+                    ELSE
+                      0
                     END AS percentDone
 
-				FROM zp_canvas_items 
+				FROM zp_canvas_items
 				LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
 				LEFT JOIN zp_user ON zp_canvas_items.author = zp_user.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask' 
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 
@@ -91,14 +91,14 @@ namespace leantime\domain\repositories {
         public function getAllProjectWikis($projectId)
         {
             $query = "SELECT
-					
+
                     zp_canvas.id,
                     zp_canvas.title,
                     zp_canvas.author,
                     zp_canvas.created
-                
-				FROM zp_canvas 
-			
+
+				FROM zp_canvas
+
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas.type = 'wiki'";
 
 
@@ -118,14 +118,15 @@ namespace leantime\domain\repositories {
         public function getWiki($id)
         {
             $query = "SELECT
-					
+
                     zp_canvas.id,
                     zp_canvas.title,
                     zp_canvas.author,
-                    zp_canvas.created
-                
-				FROM zp_canvas 
-			
+                    zp_canvas.created,
+                    zp_canvas.projectId
+
+				FROM zp_canvas
+
 				WHERE zp_canvas.id = :id AND zp_canvas.type = 'wiki'";
 
 
@@ -145,17 +146,17 @@ namespace leantime\domain\repositories {
         public function getAllWikiHeadlines($canvasId, $userId)
         {
             $query = "SELECT
-					
+
                     id,
                     title,
                     parent,
                     sortindex,
                     status,
                     data
-                    
-				FROM zp_canvas_items 
-			
-				WHERE canvasId = :canvasId 
+
+				FROM zp_canvas_items
+
+				WHERE canvasId = :canvasId
 				  AND box = 'article' AND (status = 'published' OR (status = 'draft' AND author = :authorId) )
 				ORDER BY parent DESC, sortindex DESC";
 
@@ -177,15 +178,15 @@ namespace leantime\domain\repositories {
         public function createWiki($wiki)
         {
 
-            $query = "INSERT INTO zp_canvas 
-                    (title, 
-                     projectId, 
+            $query = "INSERT INTO zp_canvas
+                    (title,
+                     projectId,
                      author,
                      created,
-                     type) VALUES 
-                     (:title, 
-                      :projectId, 
-                      :author, 
+                     type) VALUES
+                     (:title,
+                      :projectId,
+                      :author,
                       :created,
                       'wiki')";
 
@@ -207,8 +208,8 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE zp_canvas
-                     
-                        SET 
+
+                        SET
                      title = :title
 
                         WHERE id = :id LIMIT 1";
@@ -227,9 +228,9 @@ namespace leantime\domain\repositories {
         public function createArticle(article $article)
         {
 
-            $query = "INSERT INTO zp_canvas_items 
-                    (title, 
-                     description, 
+            $query = "INSERT INTO zp_canvas_items
+                    (title,
+                     description,
                      data,
                      box,
                      author,
@@ -240,10 +241,10 @@ namespace leantime\domain\repositories {
                      created,
                      modified,
                      sortIndex
-                     ) VALUES 
+                     ) VALUES
                      (
-                     :title, 
-                     :description, 
+                     :title,
+                     :description,
                      :data,
                      'article',
                      :author,
@@ -279,15 +280,15 @@ namespace leantime\domain\repositories {
         public function updateArticle(article $article)
         {
 
-            $query = "UPDATE zp_canvas_items 
-                     
-                        SET 
+            $query = "UPDATE zp_canvas_items
+
+                        SET
                      title = :title,
-                     description = :description, 
+                     description = :description,
                      data = :data,
                      parent = :parent,
                      tags = :tags,
-                     status = :status, 
+                     status = :status,
                      modified = :modified,
                      milestoneId = :milestoneId
 

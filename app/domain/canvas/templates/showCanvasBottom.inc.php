@@ -18,16 +18,16 @@
     <?php } else {
         echo "<br /><br /><div class='center'>";
 
-        echo "<div style='width:30%' class='svgContainer'>";
+        echo "<div class='svgContainer'>";
         echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
         echo "</div>";
 
-        echo"<h4>" . $this->__("headlines.$canvasName.analysis") . "</h4>";
+        echo"<h3>" . $this->__("headlines.$canvasName.analysis") . "</h3>";
         echo "<br />" . $this->__("text.$canvasName.helper_content");
 
         if ($login::userIsAtLeast($roles::$editor)) {
-            echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'><i class='fa fa-plus'></i> " .
-                 "Create a new <strong>" . $this->__("headline.$canvasName.board") . "</strong></a>.";
+            echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
+                 " . $this->__("links.icon.create_new_board") . "</a>.";
         }
         echo"</div>";
     }
@@ -61,17 +61,6 @@
             leantime.generalController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
-
-        <?php if (
-        isset($_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"]) === false ||
-            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] == 0
-) { ?>
-            leantime.helperController.showHelperModal("<?=$canvasName ?>Canvas");
-
-            <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']['modals']["<?=$canvasName ?>Canvas"] = 1;
-        } ?>
 
 
         <?php if (isset($_GET['showModal'])) {

@@ -110,15 +110,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
     leantime.ticketsController.initModals();
 
-
-
-    <?php if (isset($_SESSION['userdata']['settings']["modals"]["roadmap"]) === false || $_SESSION['userdata']['settings']["modals"]["roadmap"] == 0) {     ?>
-    leantime.helperController.showHelperModal("roadmap");
-        <?php
-    //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["roadmap"] = 1;
-    } ?>
-
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {
             $modalUrl = "";

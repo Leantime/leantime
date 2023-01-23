@@ -520,15 +520,6 @@
         leantime.projectsController.initSelectFields();
         leantime.usersController.initUserEditModal();
 
-        <?php
-        if (isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {
-            ?>
-            leantime.helperController.showHelperModal("projectSuccess");
-
-            <?php
-            $_SESSION['tourActive'] = false;
-        }
-        ?>
     });
 
 </script>

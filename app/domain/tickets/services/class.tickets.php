@@ -645,6 +645,40 @@ namespace leantime\domain\services {
             return $this->ticketRepository->patchTicket($id, $params);
         }
 
+        /**
+         * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
+         *
+         * @param int $id
+         * @param int $projectId
+         * @return bool
+         */
+        public function moveTicket(int $id, int $projectId): bool
+        {
+
+            $ticket = $this->getTicket($id);
+
+            if($ticket) {
+
+                //If milestone, move child todos
+                if($ticket->type == "milestone"){
+                    $milestoneTickets = $this->getAll(array("milestone"=>$ticket->id));
+                    //Update child todos
+                    foreach($milestoneTickets as $childTicket) {
+                        $this->patchTicket($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
+
+                    }
+                }
+
+                //Update ticket
+                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => ""]);
+
+
+            }
+
+            return false;
+
+        }
+
         public function quickUpdateMilestone($params)
         {
 

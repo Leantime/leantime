@@ -1112,6 +1112,13 @@ leantime.ticketsController = (function () {
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
             var height = jQuery("html").height() - 250;
+
+            jQuery("#sortableTicketKanban .column .contentInner").each(function(){
+               if(jQuery(this).height() > height){
+                   height = jQuery(this).height();
+               }
+            });
+            height = height + 50;
             jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
@@ -1348,6 +1355,7 @@ leantime.ticketsController = (function () {
                         { "visible": false, "targets": 7 },
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
+                        { "target": "no-sort", "orderable": false},
                     ]
 
             });
@@ -1534,7 +1542,7 @@ leantime.ticketsController = (function () {
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
-
+                    { "target": "no-sort", "orderable": false},
                 ]
 
             });

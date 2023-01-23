@@ -2,6 +2,8 @@
 /** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 $module = \leantime\core\frontcontroller::getModuleName('');
+$action = \leantime\core\frontcontroller::getActionName('');
+$maxSize = \leantime\core\fileupload::getMaximumFileUploadSize();
 $moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">
@@ -10,23 +12,19 @@ $moduleId = $_GET['id'] ?? '';
 
     <div class="uploadWrapper">
 
-        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">Cancel</a>
+        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $this->__("links.cancel"); ?></a>
         <div class="extra" style="margin-top:5px;"></div>
-        <div style="">
+        <div class="fileUploadDrop">
+            <p><i><?=$this->__("text.drop_files"); ?></i></p>
             <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
-            <div class="dropdownWrapper" style="display:inline-block;">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">Record</button>
-                <ul class="dropdown-menu" style="left:0; right:auto; text-align:left;">
-                    <li><a href="javascript:void(0);" id="webcamClick"> Webcam</a></li>
-                    <li><a href="javascript:void(0);" id="screencaptureLink"">Screen Capture</a></li>
-                </ul>
-            </div>
-
+            <a href="javascript:void(0);" id="webcamClick"><?=$this->__("label.webcam"); ?></a>
+            <a href="javascript:void(0);" id="screencaptureLink"><?=$this->__("label.screen_recording"); ?></a>
         </div>
 
         <!-- Progress bar #1 -->
         <div class="input-progress"></div>
-        <hr />
+
+        <div class="input-error"></div>
 
         <form id="upload-form"></form>
 
@@ -38,7 +36,7 @@ $moduleId = $_GET['id'] ?? '';
 
             <ul id='medialist' class='listfile'>
                 <?php foreach ($this->get('files') as $file) {?>
-                    <li class="<?php echo $file['moduleId'] ?>">
+                    <li class="file-module-<?php echo $file['moduleId'] ?>">
                         <div class="inlineDropDownContainer dropright" style="float:right;">
 
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
@@ -60,7 +58,7 @@ $moduleId = $_GET['id'] ?? '';
                             <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                             <?php else : ?>
-                                <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
+                                <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/doc.png' />
                             <?php endif; ?>
                             <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                         </a>
@@ -95,6 +93,8 @@ $moduleId = $_GET['id'] ?? '';
 
     <script type="text/javascript">
         jQuery(document).ready(function(){
+
+            jQuery(".imageLink").nyroModal();
 
             //Replaces data-rel attribute to rel.
             //We use data-rel because of w3c validation issue
@@ -141,17 +141,31 @@ $moduleId = $_GET['id'] ?? '';
 
 <script>
 
-    const uppy = new Uppy.Uppy({ debug: false, autoProceed: true });
-
+    const uppy = new Uppy.Uppy({
+            debug: false,
+            autoProceed: true,
+            restrictions: {
+                maxFileSize: <?=$maxSize?>
+            }
+    });
 
     uppy.use(Uppy.DropTarget, { target: '#fileManager' });
 
-    uppy.use(Uppy.FileInput, { target: '.file-upload-input', pretty: true })
+    uppy.use(Uppy.FileInput, {
+            target: '.file-upload-input',
+        pretty: true,
+        locale: {
+                strings: {
+                    chooseFiles: ' Browse',
+                }
+        }
+    });
     uppy.use(Uppy.XHRUpload, {
         endpoint: '<?=BASE_URL ?>/api/files?module=<?=$module?>&moduleId=<?=$moduleId?>',
         formData: true,
         fieldName: 'file',
     });
+
     uppy.use(Uppy.StatusBar, {
         target: '.input-progress',
         hideUploadButton: true,
@@ -169,14 +183,67 @@ $moduleId = $_GET['id'] ?? '';
     // Allow dropping files on any element or the whole document
     // Optimize images
     uppy.use(Uppy.Compressor);
-    // Upload
 
-    uppy.on('upload-success', (file, response) => {
-        window.location.reload();
-        // do something with file and response
+    /*
+    uppy.use(Uppy.ThumbnailGenerator, {
+        id: 'ThumbnailGenerator',
+        thumbnailWidth: 200,
+        thumbnailHeight: 200,
+        thumbnailType: 'image/jpeg',
+        waitForThumbnailsBeforeUpload: false,
     });
 
+    uppy.on('thumbnail:generated', (file, preview) => {
+        const img = document.createElement('img')
+        img.src = preview;
+        img.width = 100;
+        document.body.appendChild(img);
 
+    });*/
+
+    // Upload
+    uppy.on("restriction-failed", (file, error) => {
+
+        jQuery(".input-error").html("<span class='label-important'>"+error+"</span>");
+        return false
+    });
+
+    uppy.on('upload-success', (file, response) => {
+
+        jQuery(".input-error").text('');
+
+        response = response.body;
+
+        if(response.hasOwnProperty("moduleId")){
+        /*
+        //window.location.hash = "files";
+        //window.location.reload();*/
+
+            let html = '<li class="file-module-'+response.moduleId+'">' +
+                            '<div class="inlineDropDownContainer dropright" style="float:right;">' +
+                                '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
+                                    '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
+                                '</a>' +
+                                '<ul class="dropdown-menu">' +
+                                    '<li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>' +
+                                    '<li><a target="_blank" href="<?=BASE_URL ?>/download.php?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $this->__("links.download")); ?></a></li>'+
+                                    <?php
+                                    if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        '<li><a href="<?=BASE_URL ?>/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $this->__("links.delete")); ?></a></li>'+
+                                    <?php  } ?>
+                                '</ul>'+
+                            '</div>'+
+                            '<a class="imageLink" href="<?=BASE_URL?>/download.php?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
+                                '<img style="max-height: 50px; max-width: 70px;" src="<?=BASE_URL ?>/download.php?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
+
+                                '<span class="filename">'+response.realName+'.</span>'+
+                            '</a>'+
+                        '</li>';
+
+                 jQuery("#medialist").append(html);
+        }
+
+    });
 
     jQuery("#webcamClick").click(function(){
         jQuery(".uploadWrapper .extra").css("display", "flex");
@@ -186,7 +253,22 @@ $moduleId = $_GET['id'] ?? '';
 
     jQuery("#screencaptureLink").click(function(){
         jQuery(".uploadWrapper .extra").css("display", "flex");
-        uppy.use(Uppy.ScreenCapture, { target: '.extra' });
+        uppy.use(Uppy.ScreenCapture,
+            {
+                displayMediaConstraints: {
+                    video: {
+                        width: 1280,
+                        height: 720,
+                        frameRate: {
+                            ideal: 3,
+                            max: 5,
+                        },
+                        cursor: 'motion',
+                        displaySurface: 'window',
+                    },
+                },
+                target: '.extra'
+            });
         jQuery("#cancelLink").show();
     });
 

@@ -14,6 +14,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     "public/js/app/app.js",
+                    "public/js/app/core/modals.js",
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
                     "public/js/app/core/wysiwyg.js",

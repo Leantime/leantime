@@ -68,11 +68,11 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                         echo"<div  style='width:30%' class='svgContainer'>";
                         echo file_get_contents(ROOT . "/images/svg/undraw_book_reading_re_fu2c.svg");
                         echo"</div>";
-                        echo"<br /><h4>" . $this->__("headlines.no_articles_yet") . "</h4>";
+                        echo"<br /><h3>" . $this->__("headlines.no_articles_yet") . "</h3><br />";
 
 
                             echo "" . $this->__("text.create_new_wiki") . "<br /><br />
-                                            <a href='" . BASE_URL . "/wiki/wikiModal/' class='wikiModal inlineEdit btn btn-primary'>" . $this->__("link.new_wiki") . "</a><br/><br/>";
+                                            <a href='" . BASE_URL . "/wiki/wikiModal/' class='wikiModal inlineEdit btn btn-primary'>" . $this->__("links.icon.create_new_board") . "</a><br/><br/>";
                         echo"</div>";
                         ?>
                     </div>
@@ -154,7 +154,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                             <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div class="right">
                                     <a class="articleModal btn btn-default" href="<?=BASE_URL?>/wiki/articleDialog/<?=$currentArticle->id; ?>"><?=$this->__('links.edit_article');?></a>
-                                    <a class="btn btn-default" onclick="leantime.generalController.copyUrl(event);" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>"><?=$this->__('links.copy_url');?></a>
+                                    <a class="btn btn-default" onclick="leantime.generalController.copyUrl(event);" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><?=$this->__('links.copy_url');?></a>
                                 </div>
                             <?php } ?>
 
@@ -234,7 +234,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                         echo"<div  style='width:30%' class='svgContainer'>";
                                             echo file_get_contents(ROOT . "/images/svg/undraw_book_reading_re_fu2c.svg");
                                             echo"</div>";
-                                        echo"<br /><h4>" . $this->__("headlines.no_articles_yet") . "</h4>";
+                                        echo"<br /><h3>" . $this->__("headlines.no_articles_yet") . "</h3>";
 
                                             echo "" . $this->__("text.create_new_content") . "<br /><br />
                                             <a href='" . BASE_URL . "/wiki/articleDialog/' class='articleModal inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $this->__("link.create_article") . "</a><br/><br/>";
