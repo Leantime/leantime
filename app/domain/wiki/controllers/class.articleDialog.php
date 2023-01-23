@@ -31,11 +31,14 @@ namespace leantime\domain\controllers {
 
             //Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
-                $milestoneId = (int)($params['removeMilestone']);
 
-                $this->articleService->patchArticle($params['id'], array("milestoneId" => ''));
+                $article->milestoneId = "";
+                $results = $this->wikiService->updateArticle($article);
 
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                if ($results) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                }
+                
             }
 
             if ($_SESSION['currentWiki'] != '') {
