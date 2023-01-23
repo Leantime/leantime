@@ -1230,7 +1230,7 @@ namespace leantime\domain\repositories {
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
-            
+
             if (count($errors) > 0) {
 
                 return $errors;

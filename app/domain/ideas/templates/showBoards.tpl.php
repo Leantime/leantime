@@ -33,7 +33,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             //
             <?php if (count($allCanvas) > 0) {?>
                 <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" style="max-width:200px;">
+                <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                     <?php $this->e($canvasTitle); ?>&nbsp;<i class="fa fa-caret-down"></i>
                 </a>
 
