@@ -14,9 +14,9 @@ namespace leantime\core {
          * @access private
          * @var string - 1 debugmodus
          */
-        public $debug = 1;
+        public $debug = 0;
 
-        public $appVersion = "2.3.5";
+        public $appVersion = "2.3.6";
 
         public $dbVersion = "2.1.14";
 
