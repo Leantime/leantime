@@ -205,7 +205,6 @@ namespace leantime\domain\services {
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
-                    //$usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
                     $usernameWDomain = $ldap->getEmail($username);
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
