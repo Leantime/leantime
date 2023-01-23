@@ -29,7 +29,7 @@
 
 .nav li + .nav-header {
     margin-top: 0px;
-    background: #555;
+    background: var(--secondary-background);
 }
 
 .nav li + .nav-header small {
@@ -373,7 +373,6 @@
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
-    background-image: url(../images/droparrow.png);
     background-repeat: no-repeat;
     background-position: right 19px;
 }

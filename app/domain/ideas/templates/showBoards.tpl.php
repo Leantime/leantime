@@ -217,11 +217,11 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                     <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
                 </div>
 
-                <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>
+                <h3><?php echo $this->__("headlines.have_an_idea") ?></h3><br />
                 <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                 <a href="javascript:void(0)"
-                   class="addCanvasLink btn btn-primary"><?php echo $this->__("buttons.start_new_idea_board") ?></a>
+                   class="addCanvasLink btn btn-primary"><?php echo $this->__("links.icon.create_new_board") ?></a>
                 <?php } ?>
             </div>
 

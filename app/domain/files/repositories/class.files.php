@@ -248,6 +248,7 @@ namespace leantime\domain\repositories {
                         'extension' => $ext,
                         'moduleId'     => $moduleId,
                         'userId'     => $_SESSION['userdata']['id'],
+                        'module'    => $module,
                         'fileId' => ''
                     );
 
@@ -259,6 +260,8 @@ namespace leantime\domain\repositories {
                     } else {
                         $return = false;
                     }
+                }else{
+                    return $upload->error;
                 }
             }
 

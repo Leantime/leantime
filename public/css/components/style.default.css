@@ -1923,6 +1923,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 .listfile > li a {
     display: block;
+    text-align:center;
 }
 
 .listfile > li a:hover {
@@ -3429,6 +3430,8 @@ body .widgettitle .editHeadline:hover {
 
 .svgContainer {
     margin:auto;
+    max-width:200px;
+    margin-bottom:20px;
 }
 
 .svgContainer svg {

@@ -712,3 +712,54 @@ input.secretInput:active {
     background:var(--main-action-hover-bg);
     color:var(--main-action-hover-color);
 }
+
+.fileUploadDrop {
+    border:2px dotted var(--main-border-color);
+    border-radius: var(--box-radius);
+    text-align:center;
+    padding:10px 10px 0px 10px;
+}
+
+.fileUploadDrop p {
+    padding-bottom:10px;
+}
+
+.uppy-FileInput-btn {
+    padding:0px;
+    border:0px;
+    color:var(--primary-color);
+    background:transparent;
+    margin-right:15px;
+    margin-left:15px;
+}
+
+.uppy-FileInput-btn:before {
+    font-family:"Font Awesome 6 Free";
+    content: "\f07c";
+}
+
+.uppy-FileInput-btn:hover,
+.fileUploadDrop a:hover {
+    background:transparent;
+    color:var(--primary-font-color);
+    text-decoration: none;
+}
+
+.fileUploadDrop a {
+    padding-right:15px;
+}
+
+.uppy-is-drag-over:after {
+    background-color: var(--primary-color);
+    opacity:0.6;
+    border: 4px dashed var(--secondary-background);
+    bottom: 7px;
+    border-radius:var(--box-radius);
+    content: "";
+    left: 7px;
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    z-index: 10000;
+}
+
