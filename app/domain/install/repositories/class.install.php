@@ -79,7 +79,8 @@ namespace leantime\domain\repositories {
             20110,
             20111,
             20112,
-            20113
+            20113,
+            20114
         );
 
         /**
@@ -411,6 +412,11 @@ namespace leantime\domain\repositories {
                   `active` int(11) DEFAULT NULL,
 				  `menuType` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
+                   `type` VARCHAR(45) NULL,
+                   `start` DATETIME NULL,
+                   `end` DATETIME NULL,
+                    `created` DATETIME NULL,
+                    `modified` DATETIME NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1200,6 +1206,40 @@ namespace leantime\domain\repositories {
                 return true;
             }
         }
+
+
+        public function update_sql_20114(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `type` VARCHAR(45) NULL,
+                ADD COLUMN `start` DATETIME NULL,
+                ADD COLUMN `end` DATETIME NULL,
+                ADD COLUMN `created` DATETIME NULL,
+                ADD COLUMN `modified` DATETIME NULL"
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+            
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+
     }
 
 }
