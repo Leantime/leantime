@@ -221,7 +221,7 @@ namespace leantime\domain\services {
                     return $users;
                 }
 
-                if ($project['psettings'] == 'restricted') {
+                if ($project['psettings'] == 'restricted' || $project['psettings'] == '') {
                     $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                     return $users;
