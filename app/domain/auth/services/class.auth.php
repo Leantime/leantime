@@ -282,7 +282,7 @@ namespace leantime\domain\services {
             }
         }
 
-        private function setUserSession($user, $isLdap = false)
+        public function setUserSession($user, $isLdap = false)
         {
             if (!$user || !is_array($user)) {
                 return false;

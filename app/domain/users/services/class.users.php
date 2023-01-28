@@ -9,14 +9,12 @@ namespace leantime\domain\services {
     class users
     {
         private repositories\users $userRepo;
-        private core\template $tpl;
         private core\language $language;
         private repositories\projects $projectRepository;
         private repositories\clients $clientRepo;
 
         public function __construct()
         {
-            $this->tpl = new core\template();
             $this->userRepo = new repositories\users();
             $this->language = core\language::getInstance();
             $this->projectRepository = new repositories\projects();

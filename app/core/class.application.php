@@ -17,6 +17,8 @@ class application
     private repositories\setting $settingsRepo;
     private services\reports $reportService;
 
+    private IncomingRequest $incomingRequest;
+
     private $publicActions = array(
         "auth.login",
         "auth.resetPw",
@@ -32,17 +34,18 @@ class application
     /**
      * constructor
      */
-    public function __construct()
+    public function __construct(IncomingRequest $incomingRequest)
     {
 
         //Set Session
         $session = session::getInstance();
         $this->auth = services\auth::getInstance($session->getSID());
         $this->settings = new appSettings();
-        $this->frontController = frontcontroller::getInstance(ROOT);
+        $this->frontController = frontcontroller::getInstance(ROOT, $incomingRequest);
         $this->projectService = new services\projects();
         $this->settingsRepo = new repositories\setting();
         $this->reportService = new services\reports();
+        $this->incomingRequest = $incomingRequest;
     }
 
     /**
@@ -65,41 +68,38 @@ class application
 
         self::dispatch_event("beginning", ['application' => $this]);
 
+        //Filter to add additional public pages that don't require a login
+        $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions);
 
-        /*
-        //Allow a limited set of actions to be public
-        if ($this->auth->logged_in() === true) {
-            //Run Cron
-            $this->cronExec();
-
-            //Send telemetry if user is opt in and if it hasn't been sent that day
-            $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
-
-            // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
-            if ($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false) {
-                if (
-                    $this->frontController::getCurrentRoute() !== "twoFA.verify"
-                    && $this->frontController::getCurrentRoute() !== "auth.logout"
-                    && $this->frontController::getCurrentRoute() !== "api.i18n"
-                ) {
-
-                    $this->redirectWithOrigin("twoFA.verify", $_GET['redirect']);
-                }
-            } else {
-                //House keeping when logged in.
-                //Set current/default project
-                $this->projectService->setCurrentProject();
-            }
-        } elseif (!in_array(frontController::getCurrentRoute(), $this->publicActions)) {
-            $this->redirectWithOrigin("auth.login", $this->settings->getRequestURI());
-        }*/
 
 
         //Dispatch public controllers
         if (in_array(frontController::getCurrentRoute(), $this->publicActions)) {
+
             $this->frontController::dispatch();
 
-        //If user is logged in, make sure twoFA is checked. Otherwise set project and dispatch
+        } elseif ($this->incomingRequest->hasAPIKey()) {
+
+            //Request is API request
+            $apiKey = $this->incomingRequest->getAPIKey();
+            $this->apiService = new services\Api();
+            $apiUser = $this->apiService->getAPIKeyUser($apiKey);
+
+            if ($apiUser === false) {
+                echo json_encode("{error:Not a valid API Key}");
+                exit();
+            }
+
+            $this->auth->setUserSession($apiUser);
+            $this->projectService->setCurrentProject();
+
+            if(str_starts_with(frontController::getCurrentRoute(), "api.jsonRPC")){
+                $this->frontController::dispatch();
+            }else{
+                echo "{success}";
+            }
+
+
         } elseif ($this->auth->logged_in() === true) {
             $this->cronExec();
 
@@ -108,7 +108,7 @@ class application
 
             // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
             if ($_SESSION['userdata']['twoFAEnabled'] && $_SESSION['userdata']['twoFAVerified'] === false) {
-                    $this->redirectWithOrigin("twoFA.verify", $_GET['redirect']);
+                    $this->redirectWithOrigin("twoFA.verify", $_GET['redirect'] ?? '');
             } else {
                 $this->projectService->setCurrentProject();
             }
@@ -117,21 +117,8 @@ class application
 
         //Not logged in and controller is not public. Redirect to auth
         } else {
-            $this->redirectWithOrigin("auth.login", $this->settings->getRequestURI());
+            $this->redirectWithOrigin("auth.login", $this->incomingRequest->getRequestURI());
         }
-
-
-
-
-        //If public route, dispotch
-        //If logged In Route
-            //Check for twoFA
-            //Dispatch
-        //If not logged in redirect to auth
-
-
-        //Dispatch controller
-        //$this->frontController::dispatch();
 
         //Wait for telemetry if it was sent
         if ($telemetryResponse !== false) {

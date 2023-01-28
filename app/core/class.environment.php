@@ -41,6 +41,8 @@ class environment
         $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone ?? 'America/Los_Angeles');
         $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType ?? false);
         $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme ?? true);
+        $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", $defaultConfiguration->logPath ?? APP_ROOT.'/logs/error.log');
+
 
         //TODO this variables needs to be removed and generated programmatically.
         $this->appUrlRoot = $this->environmentHelper("LEAN_APP_URL_ROOT", $defaultConfiguration->appUrlRoot ?? '');

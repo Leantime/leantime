@@ -85,7 +85,7 @@ namespace leantime\core {
         {
             $this->theme = new theme();
             $this->language = language::getInstance();
-            $this->frontcontroller = frontcontroller::getInstance(ROOT);
+            $this->frontcontroller = frontcontroller::getInstance();
         }
 
         /**
