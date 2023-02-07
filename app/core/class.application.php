@@ -91,6 +91,7 @@ class application
             }
 
             $this->auth->setUserSession($apiUser);
+
             $this->projectService->setCurrentProject();
 
             if(str_starts_with(frontController::getCurrentRoute(), "api.jsonRPC")){

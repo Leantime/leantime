@@ -177,6 +177,13 @@ leantime.generalController = (function () {
                         }
 
                     });
+
+                    editor.on("save", function(){
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        if (placeholder) {
+                            placeholder.remove();
+                        }
+                    });
                 }
             }
         );
@@ -298,6 +305,13 @@ leantime.generalController = (function () {
                             placeholder.remove();
                         }
 
+                    });
+
+                    editor.on("save", function(){
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        if (placeholder) {
+                            placeholder.remove();
+                        }
                     });
                 }
             }

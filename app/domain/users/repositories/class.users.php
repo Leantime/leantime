@@ -224,9 +224,35 @@ namespace leantime\domain\repositories {
                       zp_clients.name AS clientName
 					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
+					WHERE source <> 'api'
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getAllBySource($source)
+        {
+
+            $query = "SELECT
+                      zp_user.id,
+                      lastname,
+                      firstname,
+                      role,
+                      profileId,
+                      status,
+                      username
+					FROM `zp_user`
+                    WHERE source = :source
+					ORDER BY lastname";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':source', $source, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -430,7 +456,8 @@ namespace leantime\domain\repositories {
 							password,
 							source,
                             pwReset,
-                            status
+                            status,
+                            createdOn
 						) VALUES (
 							:firstname,
 							:lastname,
@@ -442,7 +469,8 @@ namespace leantime\domain\repositories {
 							:password,
 							:source,
 							:pwReset,
-						    :status
+						    :status,
+						    NOW()
 						)";
 
             $stmn = $this->db->database->prepare($query);

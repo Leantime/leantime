@@ -35,7 +35,7 @@
 }
 .nyroModalCont {
 	position: relative;
-	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
+	/*box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);*/
 	background: var(--secondary-background);
 	border-radius:20px;
 	margin-bottom:50px;
@@ -75,7 +75,7 @@
 	position: absolute;
 	width: 100px;
 	height: 100px;
-	background: var(--secondary-background) url(../../js/libs/jquery.nyroModal/img/ajaxLoader.gif) no-repeat center;
+	background: transparent url(../../images/svg/loading-animation.svg) no-repeat center;
 	padding: 0;
 	background-size: 100px 100px;
 }

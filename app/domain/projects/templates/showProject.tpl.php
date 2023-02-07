@@ -493,6 +493,7 @@
                 <option value="NEW"><?=$this->__('status.new'); ?></option>
                 <option value="INPROGRESS"><?=$this->__('status.in_progress'); ?></option>
                 <option value="DONE"><?=$this->__('status.done'); ?></option>
+                <option value="NONE"><?=$this->__('status.dont_report'); ?></option>
             </select>
         </div>
         <div class="col-md-2">

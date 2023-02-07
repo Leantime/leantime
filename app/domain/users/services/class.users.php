@@ -52,6 +52,10 @@ namespace leantime\domain\services {
             return $this->userRepo->getUserByEmail($email);
         }
 
+        public function getAllBySource($source){
+            return $this->userRepo->getAllBySource($source);
+        }
+
 
         //POST
         public function setProfilePicture($photo, $id)
@@ -166,6 +170,7 @@ namespace leantime\domain\services {
         {
             return $this->userRepo->addUser($values);
         }
+
 
         /**
          * usernameExist - Checks if a given username (email) is already in the db

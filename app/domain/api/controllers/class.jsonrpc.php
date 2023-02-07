@@ -29,6 +29,12 @@ class jsonrpc extends controller
      */
     public function post(array $params): void
     {
+        //params['params'] could be array (single value) or json object
+        if(isset($params['params'])){
+            if(!is_array($params['params'])){
+                $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
+            }
+        }
         /**
          * batch requests
          *
@@ -57,11 +63,28 @@ class jsonrpc extends controller
      */
     public function get(array $params): void
     {
-        if (!isset($params['q'])) {
-            $this->returnInvalidRequest("you must encode your request body in JSON and place it in a \"q\" query parameter when using GET");
+        if (!isset($params['method'])) {
+            $this->returnInvalidRequest("Method name required");
         }
 
-        $params = json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
+
+        //Decode Get params
+        //https://www.jsonrpc.org/historical/json-rpc-over-http.html#get
+        if(isset($params['params'])){
+            $paramsDecoded = base64_decode(urldecode($params['params']));
+        }else{
+            $paramsDecoded = array();
+        }
+
+        $params= array(
+            "method" => $params['method'],
+            "params" => $paramsDecoded,
+            "id" => $params["id"] ?? null,
+            "jsonrpc" => $params["jsonrpc"] ?? ''
+        );
+
+        $params["params"] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
+        //$params = json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
 
         // check if decode failed
         if ($params == null) {
