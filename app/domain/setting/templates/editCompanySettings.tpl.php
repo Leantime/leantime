@@ -231,6 +231,7 @@ $companySettings = $this->get('companySettings');
                                     </div>
                                     <a href="<?=BASE_URL?>/setting/editCompanySettings/#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
                                     lt_<?=$apiKey["username"] ?>***
+                                    | <?=$this->__("labels.created_on")?>: <?=$this->getFormattedDateString($apiKey["createdOn"]) ?> | <?=$this->__("labels.last_used")?>: <?= $this->getFormattedDateString($apiKey["lastlogin"]) ?>
 
                                 </div>
                             </li>

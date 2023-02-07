@@ -246,7 +246,9 @@ namespace leantime\domain\repositories {
                       role,
                       profileId,
                       status,
-                      username
+                      username,
+                      lastlogin,
+                      createdOn
 					FROM `zp_user`
                     WHERE source = :source
 					ORDER BY lastname";
