@@ -1153,12 +1153,12 @@ a .label-default:after, a .label-primary:after {
     line-height:38px;
     border-bottom:2px solid transparent;
     border-top:0px solid #fff;
-    padding:0px 20px;
+    padding:0px 15px;
     color:var(--main-action-bg);
+    font-weight:bold;
 }
 
 body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
-    background:var(--main-menu-link-hover-bg);
     border-bottom:2px solid var(--main-action-bg);
     color:var(--main-menu-link-hover-color);
 }
@@ -3442,7 +3442,7 @@ body .widgettitle .editHeadline:hover {
 .loading {
     width:100%;
     text-align:center;
-    background:url(../../images/ajaxLoader.gif) center center no-repeat;
+    background:url(../../images/svg/loading-animation.svg) center center no-repeat;
     min-height:31px;
     background-size:31px 31px;
     display:none;

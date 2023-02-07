@@ -217,6 +217,7 @@ namespace leantime\domain\repositories {
         public function getStatusListGroupedByType($projectId)
         {
 
+            //Ignoring status type NONE by design
             $statusByType = array(
                 "DONE" => array(),
                 "INPROGRESS" => array(),

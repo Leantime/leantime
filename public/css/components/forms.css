@@ -152,6 +152,7 @@ a.btn-default,
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
+    font-weight:bold;
     padding: 3px 12px;
     line-height:21px;
     background: var(--secondary-action-bg);
@@ -183,7 +184,7 @@ body input[type='submit'].btn-default .caret,
 .btn-group .btn .caret,
 .btn-group>.btn:last-child .caret,
 .btn-group>.dropdown-toggle .caret {
-    border-top-color:var(--secondary-action-hover-color);
+    border-top-color:var(--primary-font-color);
 }
 
 body .btn-default:hover .caret,
@@ -221,6 +222,7 @@ input[type='submit'],
     border-radius:var(--element-radius);
     outline:0;
     font-size: var(--base-font-size);
+    font-weight:bold;
     padding: 3px 12px;
     line-height:21px;
     box-shadow:none;
@@ -241,6 +243,13 @@ body a.btn.btn-primary:hover{
     background: var(--main-action-hover-bg);
     color:var(--main-action-hover-color);
     border:1px solid var(--main-action-hover-bg);
+}
+
+body .btn-primary .caret,
+body input[type='submit'].btn-primary .caret,
+.btn-group .btn-primary .caret,
+.btn-group>.btn-primary:last-child .caret {
+    border-top-color:var(--main-action-hover-color);
 }
 
 .btn-primary[disabled] {

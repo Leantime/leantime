@@ -127,7 +127,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
                                 </div>
                                 <div class="commentReply">
-                                    <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>
+                                    <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-primary"/>
                                 </div>
                                 <div class="clearall"></div>
                             </div>
