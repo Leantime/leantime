@@ -24,7 +24,11 @@ jQuery(function($, undefined) {
 
     var $w, $d, $b, baseHref, _nmObj, _internal, _animations, _filters;
     $.curCSS = function (element, attrib, val) {
-        $(element).css(attrib, val);
+        if(val === true) {
+            $(element).css(attrib);
+        }else{
+            $(element).css(attrib, val);
+        }
     };
 
     $w = $(window),
@@ -148,15 +152,22 @@ jQuery(function($, undefined) {
             // Will call size function
             // @param recalc boolean: Indicate if the size should be recalaculated (useful when content has changed)
             resize: function(recalc) {
+
                 if (recalc) {
                     this.elts.hidden.append(this.elts.cont.children().first().clone());
+
                     this.sizes.initW = this.sizes.w = this.elts.hidden.width();
                     this.sizes.initH = this.sizes.h = this.elts.hidden.height();
+
                     this.elts.hidden.empty();
                 } else {
                     this.sizes.w = this.sizes.initW;
                     this.sizes.h = this.sizes.initH;
                 }
+
+
+                this.elts.hidden.empty();
+
                 this._unreposition();
                 this.size();
                 this._callAnim('resize', $.proxy(function() {
@@ -191,15 +202,12 @@ jQuery(function($, undefined) {
                     if (this.sizes.h > maxHeight || this.sizes.w > maxWidth) {
                         // We're gonna resize the modal as it will goes outside the view port
                         this.sizes.h = Math.min(this.sizes.h, (maxHeight));
-                        this.sizes.w = Math.min(this.sizes.w, (maxWidth-20));
+                        this.sizes.w = Math.min(this.sizes.w, (maxWidth));
                     }
 
                 }
 
                 this._callFilters('size');
-
-
-
 
             },
 
@@ -282,7 +290,7 @@ jQuery(function($, undefined) {
                 if (!this.elts.cont)
                     this.elts.cont = $('<div />').hide().appendTo(this.elts.bg);
                 if (!this.elts.hidden)
-                    this.elts.hidden = $('<div />').hide().appendTo(this.elts.all);
+                    this.elts.hidden = $('<div />').hide().appendTo(this.elts.bg);
                 this.elts.hidden.empty();
                 if (!this.elts.load)
                     this.elts.load = $('<div />').hide().appendTo(this.elts.all);
@@ -322,14 +330,17 @@ jQuery(function($, undefined) {
                         return;
                     }
                 }
+
                 this.elts.hidden
                     .append(this._filterScripts(html))
                     .prepend(this.header)
                     .append(this.footer)
                     .wrapInner('<div class="nyroModal'+ucfirst(this.loadFilter)+'" />');
 
+
                 // Store the size of the element
-                this.sizes.initW = this.sizes.w = this.elts.hidden.width();
+                //75 is the margin around the content
+                this.sizes.initW = this.sizes.w = this.elts.hidden.width()+75;
                 this.sizes.initH = this.sizes.h = this.elts.hidden.height();
                 var outer = this.getInternal()._getOuter(this.elts.cont);
                 this.sizes.hMargin = outer.h.total;
@@ -732,31 +743,35 @@ jQuery(function($, undefined) {
                 opens.trigger('nmResize');
             },
             _calculateFullSize: function() {
+
+
                 this.fullSize = {
                     w: $d.width(),
                     h: $d.height(),
                     wW: $w.width(),
                     wH: $w.height()
                 };
+
                 this.fullSize.viewW = Math.min(this.fullSize.w, this.fullSize.wW);
                 this.fullSize.viewH = Math.min(this.fullSize.h, this.fullSize.wH);
             },
             _getCurCSS: function(elm, name) {
                 var ret = parseInt($.curCSS(elm, name, true));
+
                 return isNaN(ret) ? 0 : ret;
             },
             _getOuter: function(elm) {
                 elm = elm.get(0);
                 var ret = {
                     h: {
-                        margin: this._getCurCSS(elm, 'marginTop') + this._getCurCSS(elm, 'marginBottom'),
-                        border: this._getCurCSS(elm, 'borderTopWidth') + this._getCurCSS(elm, 'borderBottomWidth'),
-                        padding: this._getCurCSS(elm, 'paddingTop') + this._getCurCSS(elm, 'paddingBottom')
+                        margin: this._getCurCSS(elm, 'margin-top') + this._getCurCSS(elm, 'margin-bottom'),
+                        border: this._getCurCSS(elm, 'border-top-width') + this._getCurCSS(elm, 'border-bottom-width'),
+                        padding: this._getCurCSS(elm, 'padding-top') + this._getCurCSS(elm, 'padding-bottom')
                     },
                     w: {
-                        margin: this._getCurCSS(elm, 'marginLeft') + this._getCurCSS(elm, 'marginRight'),
-                        border: this._getCurCSS(elm, 'borderLeftWidth') + this._getCurCSS(elm, 'borderRightWidth'),
-                        padding: this._getCurCSS(elm, 'paddingLeft') + this._getCurCSS(elm, 'paddingRight')
+                        margin: this._getCurCSS(elm, 'margin-left') + this._getCurCSS(elm, 'margin-right'),
+                        border: this._getCurCSS(elm, 'border-left-width') + this._getCurCSS(elm, 'border-right-width'),
+                        padding: this._getCurCSS(elm, 'padding-left') + this._getCurCSS(elm, 'padding-right')
                     }
                 };
 
@@ -1001,22 +1016,22 @@ jQuery(function($, undefined) {
     $.nmAnims({
         fade: {
             showBg: function(nm, clb) {
-                nm.elts.bg.fadeTo(250, 1, clb);
+                nm.elts.bg.fadeTo(10, 1, clb);
             },
             hideBg: function(nm, clb) {
-                nm.elts.bg.fadeOut(clb);
+                nm.elts.bg.fadeOut(10, clb);
             },
             showLoad: function(nm, clb) {
-                nm.elts.load.fadeIn(clb);
+                nm.elts.load.fadeIn(10, clb);
             },
             hideLoad: function(nm, clb) {
-                nm.elts.load.fadeOut(clb);
+                nm.elts.load.fadeOut(10, clb);
             },
             showCont: function(nm, clb) {
-                nm.elts.cont.fadeIn(clb);
+                nm.elts.cont.fadeIn(10, clb);
             },
             hideCont: function(nm, clb) {
-                nm.elts.cont.css('overflow', 'hidden').fadeOut(clb);
+                nm.elts.cont.css('overflow', 'hidden').fadeOut(10, clb);
             },
             showTrans: function(nm, clb) {
                 nm.elts.load

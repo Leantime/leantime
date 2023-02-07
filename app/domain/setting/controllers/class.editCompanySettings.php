@@ -16,6 +16,7 @@ namespace leantime\domain\controllers {
     {
         private $config;
         private $settingsRepo;
+        private services\API $APIService;
 
         /**
          * constructor - initialize private variables
@@ -31,6 +32,7 @@ namespace leantime\domain\controllers {
 
             $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
+            $this->APIService = new services\API();
         }
 
         /**
@@ -99,7 +101,10 @@ namespace leantime\domain\controllers {
                     $companySettings["messageFrequency"] = $messageFrequency;
                 }
 
+                $apiKeys = $this->APIService->getAPIKeys();
 
+
+                $this->tpl->assign("apiKeys", $apiKeys);
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
 
@@ -117,15 +122,11 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-            //If ID is set its an update
-            if (isset($params['name']) && $params['name'] != "" && isset($params['primarycolor']) && $params['primarycolor'] != "" && isset($params['language']) && $params['language'] != "") {
-                $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
-                $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
+            //Look & feel updates
+            if (isset($params['primarycolor']) && $params['primarycolor'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
                 $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
-
-                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
                 //Check if main color is still in the system
                 //if so remove. This call should be removed in a few versions.
@@ -137,6 +138,20 @@ namespace leantime\domain\controllers {
 
                 $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
                 $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
+
+                $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
+
+            }
+
+            //Main Details
+            if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
+
+                $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
+                $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
+
+
+                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
+
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 

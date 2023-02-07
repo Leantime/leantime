@@ -251,8 +251,6 @@ namespace leantime\domain\services {
                     if ($user !== false && is_array($user)) {
                         $this->setUserSession($user, true);
 
-                        $this->authRepo->updateUserSession($user['id'], $this->session, time());
-
                         return true;
                     } else {
                         error_log("Could not retrieve user by email");
@@ -273,8 +271,6 @@ namespace leantime\domain\services {
 
             if ($user !== false && is_array($user)) {
                 $this->setUserSession($user);
-
-                $this->authRepo->updateUserSession($user['id'], $this->session, time());
 
                 return true;
             } else {
@@ -312,6 +308,8 @@ namespace leantime\domain\services {
                         'twoFASecret' => $this->twoFASecret,
                         'isLdap' => $isLdap
             ]);
+
+            $this->authRepo->updateUserSession($this->userId, $this->session, time());
         }
 
         /**
@@ -342,6 +340,7 @@ namespace leantime\domain\services {
         {
 
             $this->authRepo->invalidateSession($this->session);
+
             core\session::destroySession();
 
             if (isset($_SESSION)) {
