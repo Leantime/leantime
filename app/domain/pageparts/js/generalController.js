@@ -48,7 +48,7 @@ leantime.generalController = (function () {
             });
         },
         insert: function (item) {
-            return '<a class="userMention" data-tagged-user-id="' + item.id + '" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage=' + item.id + '" alt="' + item.name + ' Image"/>' + item.name + '</a>';
+            return '<a class="userMention" data-tagged-user-id="' + item.id + '" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage=' + item.id + '" alt="' + item.name + ' Image"/>' + item.name.trim() + '</a>&nbsp;';
         }
     };
 
@@ -178,7 +178,7 @@ leantime.generalController = (function () {
 
                     });
 
-                    editor.on("save", function(){
+                    editor.on("submit", function(){
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
@@ -307,7 +307,7 @@ leantime.generalController = (function () {
 
                     });
 
-                    editor.on("save", function(){
+                    editor.on("submit", function(){
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
