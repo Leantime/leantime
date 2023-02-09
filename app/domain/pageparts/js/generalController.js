@@ -174,6 +174,7 @@ leantime.generalController = (function () {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
+                            editor.setContent("<p></p>");
                         }
 
                     });
@@ -303,6 +304,7 @@ leantime.generalController = (function () {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
+                            editor.setContent("<p></p>");
                         }
 
                     });

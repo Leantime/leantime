@@ -161,7 +161,12 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            if($userId == ''){
+                $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            }else{
+                $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            }
+
             if ($clientId != "") {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }

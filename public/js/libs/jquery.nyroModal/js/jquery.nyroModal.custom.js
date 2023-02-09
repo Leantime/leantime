@@ -831,7 +831,7 @@ jQuery(function($, undefined) {
         _animations = {
             basic: {
                 showBg: function(nm, clb) {
-                    nm.elts.bg.css().show();
+                    nm.elts.bg.show();
                     clb();
                 },
                 hideBg: function(nm, clb) {
@@ -1002,7 +1002,7 @@ function ucfirst(str) {
     // *     returns 1: 'Kevin van zonneveld'
     str += '';
     var f = str.charAt(0).toUpperCase();
-    return f + str.substr(1);
+    return f + str.substring(1);
 }
 /*
  * nyroModal v2.0.0
@@ -1012,20 +1012,22 @@ function ucfirst(str) {
  * Depends:
  *
  */
+
+/*
 jQuery(function($, undefined) {
     $.nmAnims({
         fade: {
             showBg: function(nm, clb) {
-                nm.elts.bg.fadeTo(10, 1, clb);
+                nm.elts.bg.show(clb);
             },
             hideBg: function(nm, clb) {
-                nm.elts.bg.fadeOut(10, clb);
+                nm.elts.bg.hide(clb);
             },
             showLoad: function(nm, clb) {
-                nm.elts.load.fadeIn(10, clb);
+                nm.elts.load.show(clb);
             },
             hideLoad: function(nm, clb) {
-                nm.elts.load.fadeOut(10, clb);
+                nm.elts.load.hide(10, clb);
             },
             showCont: function(nm, clb) {
                 nm.elts.cont.fadeIn(10, clb);
@@ -1084,6 +1086,8 @@ jQuery(function($, undefined) {
     // Define fade aniamtions as default
     $.nmObj({anim: {def: 'fade'}});
 });
+*/
+
 /*
  * nyroModal v2.0.0
  *

@@ -41,8 +41,7 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
 
 
 
-.loginpanelinner,
-.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
+.loginpanelinner {
 	background-color: var(--primary-color) !important;
 	color:var(--main-action-color);
 }
@@ -274,10 +273,6 @@ body .widgettitle.title-light {
 
 div.tagsinput {
 	border:1px solid var(--main-border-color);
-}
-
-.gantt-container a:hover {
-    text-decoration:underline !important;
 }
 
 

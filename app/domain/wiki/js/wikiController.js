@@ -81,11 +81,10 @@ leantime.wikiController = (function () {
             callbacks: {
                 beforePostSubmit: function () {
                     jQuery('textarea.complexEditor').tinymce().save();
-
+                    jQuery('textarea.complexEditor').tinymce().remove();
                 },
                 afterShowCont: function () {
-                    jQuery('textarea.complexEditor').tinymce().save();
-                    jQuery('textarea.complexEditor').tinymce().remove();
+
                     leantime.generalController.initComplexEditor();
                     jQuery(".formModal").nyroModal(articleModalConfig);
 

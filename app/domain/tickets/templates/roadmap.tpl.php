@@ -133,7 +133,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 echo"{
                     id :'" . $mlst->id . "',
                     name :" . json_encode("" . $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline . " (" . $mlst->percentDone . "% Done)") . ",
-                    start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d')) . "',
+                    start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
                     end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
                     progress :'" . $mlst->percentDone . "',
                     dependencies :'" . ($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '') . "',
