@@ -113,6 +113,8 @@ class application
             } else {
                 $this->projectService->setCurrentProject();
             }
+            
+            self::dispatch_event("logged_in", ['application' => $this]);
 
             $this->frontController::dispatch();
 
