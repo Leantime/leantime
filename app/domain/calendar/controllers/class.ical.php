@@ -15,7 +15,7 @@ namespace leantime\domain\controllers {
 
     class ical extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables

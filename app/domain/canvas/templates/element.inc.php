@@ -154,7 +154,7 @@
                             }?>
                         </ul>
                     </div>
-                    <div class="pull-right">
+                    <div class="pull-right" style="margin-right:10px;">
                         <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
                            class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
                             <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''

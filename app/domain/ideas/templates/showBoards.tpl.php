@@ -109,8 +109,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                         </a>
                                 <?php } ?>
 
-                                    <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
-                               <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                         &nbsp;&nbsp;&nbsp;
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
@@ -149,6 +148,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                     </ul>
                                 </div>
 
+
                                 <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
@@ -170,6 +170,16 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                         }?>
                                     </ul>
                                 </div>
+
+                                <div class="pull-right" style="margin-right:10px;">
+
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"]; ?>"
+                                       class="ideaModal" data="item_<?=$row['id'] ?>"
+                                        <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>>
+                                        <span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
+
+                                </div>
+
                             </div>
                         </div>
 

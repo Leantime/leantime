@@ -378,8 +378,10 @@ a, a:hover, a:link, a:active, a:focus {
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+body a:hover {
+    text-decoration: none;
+    color:var(--primary-font-color);
+    transition: color 0.25s;
 }
 
 label, input, textarea, select, button {
@@ -393,7 +395,7 @@ h1, h2, h3, h4, h5 {
 
 h1 { font-size:var(--font-size-xxl);}
 h2 { font-size:var(--font-size-xl);}
-h3 { font-size:var(--font-size-l);}
+h3 { font-size:var(--font-size-xl); font-weight:bold;}
 h4 { font-size:var(--base-font-size); font-weight:bold;}
 h5 { font-size:var(--base-font-size); font-weight:bold;}
 

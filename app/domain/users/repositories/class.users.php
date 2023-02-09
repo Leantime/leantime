@@ -593,16 +593,16 @@ namespace leantime\domain\repositories {
                 $type = $file['extension'];
 
                 return $return;
+
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name($value['firstname'] . " " . $value['lastname'])
-                    ->font(ROOT . '/fonts/roboto/Roboto-Light.ttf')
-                    ->fontName("Roboto")
-                    ->background('#81B1A8')->color("#fff")
-                    ->generate();
 
-                return $image->encode('jpg', 100);
+                    ->background('#81B1A8')->color("#fff")
+                    ->generateSvg();
+
+                return $image;
             }
 
             return $return;

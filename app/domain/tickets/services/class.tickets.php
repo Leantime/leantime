@@ -144,7 +144,9 @@ namespace leantime\domain\services {
                 "milestone" => "",
                 "orderBy" => "sortIndex",
                 "groupBy" => "",
-                "priority" => ""
+                "priority" => "",
+                "currentUser" => $_SESSION['userdata']["id"] ?? '',
+                "currentClient" => $_SESSION['userdata']["clientId"] ?? '',
             );
 
             if (isset($_SESSION["currentProject"]) === true) {
@@ -181,6 +183,14 @@ namespace leantime\domain\services {
 
             if (isset($searchParams["priority"]) === true) {
                 $searchCriteria["priority"] = $searchParams["priority"];
+            }
+
+            if (isset($searchParams["currentUser"]) === true) {
+                $searchCriteria["currentUser"] = $searchParams["currentUser"];
+            }
+
+            if (isset($searchParams["currentClient"]) === true) {
+                $searchCriteria["currentClient"] = $searchParams["currentClient"];
             }
 
             if (isset($searchParams["sprint"]) === true) {
@@ -247,7 +257,7 @@ namespace leantime\domain\services {
         public function getOpenUserTicketsThisWeekAndLater($userId, $projectId)
         {
 
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint" => ""));
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser"=> $userId, "users" => $userId, "status" => "not_done", "sprint" => ""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);

@@ -161,7 +161,12 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            if($userId == ''){
+                $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            }else{
+                $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            }
+
             if ($clientId != "") {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
@@ -344,7 +349,7 @@ namespace leantime\domain\repositories {
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
+				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL AND zp_user.source <> 'api'
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);

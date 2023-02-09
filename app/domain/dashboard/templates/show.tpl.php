@@ -73,7 +73,7 @@
                                 <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                     <div class="row">
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                            <link rel="prefetch" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" as="document" crossorigin="use-credentials">
+                                            <link rel="preload" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" as="fetch" crossorigin="">
                                             <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                             <?php if ($login::userIsAtLeast($roles::$editor)) {

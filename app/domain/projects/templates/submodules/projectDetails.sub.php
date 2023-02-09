@@ -14,76 +14,22 @@ $menuTypes = $this->get('menuTypes');
         <div class="span8">
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span><?=$this->__('label.general'); ?></h4>
 
                     <div class="form-group">
 
-                        <label  class="span4 control-label" for="name"><?=$this->__('label.name'); ?></label>
-                        <div class="span6">
-                            <input type="text" name="name" id="name" class="input-large" value="<?php $this->e($project['name']) ?>" />
+                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $this->e($project['name']) ?>" placeholder="<?=$this->__('input.placeholders.enter_title_of_project')?>"/>
 
-                        </div>
                     </div>
 
-                    <div class="form-group">
 
-                        <label  class="span4 control-label" for="clientId"><?=$this->__('label.client_product'); ?></label>
-                        <div class="span6">
-                            <select name="clientId" id="clientId">
-
-                            <?php foreach ($this->get('clients') as $row) { ?>
-                                <option value="<?php echo $row['id']; ?>"
-                                    <?php if ($project['clientId'] == $row['id']) {
-                                        ?> selected=selected
-                                    <?php } ?>><?php $this->e($row['name']); ?></option>
-                            <?php } ?>
-
-                            </select>
-                            <?php if ($login::userIsAtLeast("manager")) { ?>
-                            <a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
-                            <?php } ?>
-                        </div>
-                    </div>
-                    <?php if ($config->enableMenuType) {?>
-                        <div class="form-group">
-
-                            <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
-                            <div class="span6">
-                                <select name="menuType" id="menuType">
-                                    <?php foreach ($menuTypes as $key => $menu) { ?>
-                                       <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-                    <?php } else { ?>
-                        <input type="hidden" name="menuType" id="menuType"
-                               value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
-                    <?php } ?>
-                    <div class="form-group">
-
-                        <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
-                        <div class="span6">
-                            <select name="projectState" id="projectState">
-                                <option value="0" <?php if ($project['state'] == 0) {
-                                    ?> selected=selected
-                                                  <?php } ?>><?php echo $this->__('label.open'); ?></option>
-
-                                <option value="-1" <?php if ($project['state'] == -1) {
-                                    ?> selected=selected
-                                                   <?php } ?>><?php echo $this->__('label.closed'); ?></option>
-
-                            </select>
-                        </div>
-                    </div>
 
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 class="widgettitle title-light">
-                        <span class="fa fa-asterisk"></span><?php echo $this->__('label.description'); ?>
-                    </h4>
+                    <p>
+                        <?php echo $this->__('label.accomplish'); ?><br />
+                    </p>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
 
                 </div>
@@ -91,7 +37,71 @@ $menuTypes = $this->get('menuTypes');
         </div>
         <div class="span4">
 
-            <div class="row-fluid">
+            <div class="row-fluid marginBottom">
+                <div class="span12 ">
+                    <h4 class="widgettitle title-light"><span
+                            class="fa fa-building"></span><?php echo $this->__('label.client_product'); ?></h4>
+                    <select name="clientId" id="clientId">
+
+                        <?php foreach ($this->get('clients') as $row) { ?>
+                            <option value="<?php echo $row['id']; ?>"
+                                <?php if ($project['clientId'] == $row['id']) {
+                                    ?> selected=selected
+                                <?php } ?>><?php $this->e($row['name']); ?></option>
+                        <?php } ?>
+
+                    </select>
+                    <?php if ($login::userIsAtLeast("manager")) { ?>
+                        <br /><a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$this->__('label.client_not_listed'); ?></a>
+                    <?php } ?>
+
+
+                </div>
+            </div>
+
+
+            <div class="row-fluid marginBottom">
+                <div class="span12">
+                    <h4 class="widgettitle title-light"><span
+                            class="fa fa-wrench"></span><?php echo $this->__('label.settings'); ?></h4>
+
+            <?php if ($config->enableMenuType) {?>
+                <div class="form-group">
+
+                    <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
+                    <div class="span6">
+                        <select name="menuType" id="menuType">
+                            <?php foreach ($menuTypes as $key => $menu) { ?>
+                                <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+            <?php } else { ?>
+                <input type="hidden" name="menuType" id="menuType"
+                       value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
+            <?php } ?>
+            <div class="form-group">
+
+                <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
+                <div class="span6">
+                    <select name="projectState" id="projectState">
+                        <option value="0" <?php if ($project['state'] == 0) {
+                            ?> selected=selected
+                        <?php } ?>><?php echo $this->__('label.open'); ?></option>
+
+                        <option value="-1" <?php if ($project['state'] == -1) {
+                            ?> selected=selected
+                        <?php } ?>><?php echo $this->__('label.closed'); ?></option>
+
+                    </select>
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <div class="row-fluid marginBottom">
                 <div class="span12 ">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-lock-open"></span><?php echo $this->__('labels.defaultaccess'); ?></h4>
@@ -108,7 +118,7 @@ $menuTypes = $this->get('menuTypes');
             </div>
 
             <div class="row-fluid">
-                <div class="span12 padding-top">
+                <div class="span12 ">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-money-bill-alt"></span><?php echo $this->__('label.budgets'); ?></h4>
                     <div class="form-group">

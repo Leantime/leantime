@@ -159,7 +159,7 @@ namespace leantime\core {
             }
 
             if (!$routeExists) {
-                self::dispatch("errors.error404", 404);
+                self::redirect(BASE_URL."/errors/error404", 404);
                 return;
             }
 
@@ -185,11 +185,11 @@ namespace leantime\core {
                         $action->run();
                     }
                 }
-            } catch (Exception $e) {
-                error_log($e, 0);
 
-                //This will catch most errors in php including db issues
-                self::dispatch("errors.error500");
+            } catch (Exception $e) {
+
+                error_log($e, 0);
+                self::redirect(BASE_URL."/errors/error500", 500);
 
                 return;
             }
@@ -220,7 +220,8 @@ namespace leantime\core {
                 case 'get':
                     return $_GET;
                 default:
-                    throw(new Exception("Unexpected HTTP Method: " . $method));
+                    error_log("Unexpected HTTP Method: ".$method);
+                    return $_REQUEST;
             }
         }
 
