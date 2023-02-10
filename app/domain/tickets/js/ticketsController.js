@@ -1598,7 +1598,9 @@ leantime.ticketsController = (function () {
     };
 
     var initTagsInput = function ( ) {
-        jQuery("#tags").tagsInput();
+        jQuery("#tags").tagsInput({
+            'autocomplete_url': leantime.appUrl + '/api/tags',
+        });
     };
 
     var addCommentTimesheetContent = function (commentId, taskId) {

@@ -52,7 +52,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                     $lastClient = "";
                     $i = 0;
                     foreach ($this->get('allCanvas') as $canvasRow) {
-                        echo "<li><a href='" . BASE_URL . "/ideas/showBoards/" . $canvasRow["id"] . "'>" . $canvasRow["title"] . "</a></li>";
+                        echo "<li><a href='" . BASE_URL . "/ideas/showBoards/" . $canvasRow["id"] . "'>" . $this->escape($canvasRow["title"]) . "</a></li>";
                     }
                     ?>
                 </ul>

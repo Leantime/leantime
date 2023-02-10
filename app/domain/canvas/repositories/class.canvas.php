@@ -838,5 +838,37 @@ namespace leantime\domain\repositories {
 
             return $values;
         }
+
+
+
+        /***
+         * getTags - gets the list of tags across all canvas items in a given project
+         *
+         * @access public
+         * @param  int      $projectId   Project od
+         * @return array    array of canvas boards sorted by last update date
+         */
+        public function getTags(int $projectId)
+        {
+
+            $sql = "SELECT
+                    zp_canvas_items.tags
+                FROM
+                    zp_canvas_items
+                    LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
+                    WHERE zp_canvas.projectId = :projectId
+                ";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
     }
 }
