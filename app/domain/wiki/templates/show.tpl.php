@@ -19,7 +19,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                 echo "  ";
             }
                 echo '
-               <li data-jstree=\'{"icon":"' . $headline->data . '"}\' id="treenode_' . $headline->id . '">&nbsp;<a href="' . BASE_URL . '/wiki/show/' . $headline->id . '">' . $headline->title . '';
+               <li data-jstree=\'{"icon":"' . $headline->data . '"}\' id="treenode_' . $headline->id . '">&nbsp;<a href="' . BASE_URL . '/wiki/show/' . $headline->id . '">' . $tplObject->escape($headline->title) . '';
             if ($headline->status == "draft") {
                 echo" <em>" . $tplObject->__('label.draft_parenth') . "</em> ";
             }
@@ -104,7 +104,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     <li class='nav-header border'></li>
                                     <?php foreach ($wikis as $wiki) {?>
                                     <li>
-                                       <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$wiki->title?></a>
+                                       <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$this->escape($wiki->title)?></a>
                                     </li>
                                     <?php } ?>
 
@@ -168,7 +168,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                             <h1 class="articleHeadline">
                                 <i class="<?=$currentArticle->data ?>"></i>
-                                <?=$currentArticle->title?>
+                                <?=$this->escape($currentArticle->title)?>
                             </h1>
                             <div class="articleMeta">
                                 <?=sprintf($this->__('labels.createdBy_on'), $currentArticle->firstname, $currentArticle->lastname, $this->getFormattedDateString($currentArticle->created), $this->getFormattedDateString($currentArticle->modified)); ?>

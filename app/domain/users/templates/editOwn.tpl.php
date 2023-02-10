@@ -251,7 +251,7 @@ $user = $this->get('user');
                             <span class="btn btn-file">
                                         <span class="fileupload-new"><?php echo $this->__('buttons.select_file') ?></span>
                                         <span class='fileupload-exists'><?php echo $this->__('buttons.change') ?></span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)"/>
+                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
                                     </span>
 
                             <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?php echo $this->__('buttons.remove') ?></a>

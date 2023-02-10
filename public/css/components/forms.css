@@ -772,3 +772,27 @@ input.secretInput:active {
     z-index: 10000;
 }
 
+.ui-autocomplete {
+    z-index:99999;
+    margin-top: 0;
+    border-radius: var(--box-radius);
+    border:0px;
+    box-shadow: var(--regular-shadow);
+    background:var(--secondary-background);
+    max-width:200px;
+}
+
+.ui-autocomplete li {
+    list-style-type: none;
+}
+
+.ui-autocomplete li div {
+    padding: 10px 20px;
+}
+
+
+.ui-autocomplete li .ui-state-active {
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
+}
+

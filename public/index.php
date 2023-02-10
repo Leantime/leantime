@@ -7,7 +7,6 @@ define('APP_ROOT', dirname(__FILE__, 2));
 require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT . '/config/appSettings.php';
 
-
 $config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);

@@ -93,7 +93,7 @@ namespace leantime\domain\controllers {
             //If ID is set its an update
 
             if (isset($_GET['module']) && isset($_GET['label'])) {
-                $sanitizedString = htmlentities($params['newLabel']);
+                $sanitizedString = strip_tags($params['newLabel']);
 
                 //Move to settings service
                 if ($_GET['module'] == "ticketlabels") {

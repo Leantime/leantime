@@ -592,6 +592,27 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
+        public function getTags($projectId)
+        {
+
+            $query = "SELECT
+						zp_tickets.tags
+					FROM
+						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+					WHERE
+						zp_tickets.projectId = :projectId AND zp_tickets.type <> 'milestone'";
+
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
         /**
          * getTicket - get a specific Ticket depending on the role
          *
