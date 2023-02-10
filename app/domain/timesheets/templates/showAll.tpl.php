@@ -98,7 +98,7 @@ defined('RESTRICTED') or die('Restricted access');
             <td>
                 <label for="projects"><?php echo $this->__('label.project'); ?></label>
                 <select name="project">
-                    <option value=""><?php echo strip_tags($this->__("menu.all_projects")) ?></option>
+                    <option value="-1"><?php echo strip_tags($this->__("menu.all_projects")) ?></option>
                     <?php foreach ($this->get('allProjects') as $project) {?>
                         <option value="<?=$project['id'] ?>"
                             <?php if ($this->get('projectFilter') == $project['id']) {
