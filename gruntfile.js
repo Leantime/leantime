@@ -120,7 +120,7 @@ module.exports = function (grunt) {
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-                    "public/js/libs/prism/js/prism.js",
+
 
                     "public/js/libs/uppy/uppy.js",
 
