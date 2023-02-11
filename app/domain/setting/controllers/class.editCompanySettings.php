@@ -16,7 +16,7 @@ namespace leantime\domain\controllers {
     {
         private $config;
         private $settingsRepo;
-        private services\API $APIService;
+        private services\api $APIService;
 
         /**
          * constructor - initialize private variables
@@ -32,7 +32,7 @@ namespace leantime\domain\controllers {
 
             $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
-            $this->APIService = new services\API();
+            $this->APIService = new services\api();
         }
 
         /**

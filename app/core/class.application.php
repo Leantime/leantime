@@ -82,7 +82,7 @@ class application
 
             //Request is API request
             $apiKey = $this->incomingRequest->getAPIKey();
-            $this->apiService = new services\Api();
+            $this->apiService = new services\api();
             $apiUser = $this->apiService->getAPIKeyUser($apiKey);
 
             if ($apiUser === false) {
@@ -113,7 +113,7 @@ class application
             } else {
                 $this->projectService->setCurrentProject();
             }
-            
+
             self::dispatch_event("logged_in", ['application' => $this]);
 
             $this->frontController::dispatch();
