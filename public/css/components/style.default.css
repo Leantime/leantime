@@ -3764,3 +3764,7 @@ a.titleInsertLink:hover {
     position:sticky;
     top:60px
 }
+
+h3.todaysDate {
+    font-weight:normal;
+}
