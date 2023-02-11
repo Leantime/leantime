@@ -15,7 +15,7 @@ function showQuote($payload)
     $randomQuote = $motivationalQuotesSvc->getRandomQuote();
     echo"<br />";
 
-    echo "<h3 style='font-style: italic;'><i class='fa-solid fa-quote-left'></i> " . $randomQuote->quote . "</h3>";
+    echo "<h3 style='font-style: italic; font-weight:normal;'><i class='fa-solid fa-quote-left'></i> " . $randomQuote->quote . "</h3>";
     echo "<small>- " . $randomQuote->author . "</small>";
 }
 

@@ -371,7 +371,7 @@
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle {
     margin-top:0px;
-    border-top:1px dashed var(--main-border-color);
+    border-top:0px dashed var(--main-border-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle:first-child {
@@ -780,4 +780,8 @@
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
     text-decoration: none;
+}
+
+.submenuCaret {
+
 }

@@ -58,9 +58,9 @@ Leantime is a lean open source project management system for startups and innova
 * Download latest release package
 * Create an empty MySQL database
 * Upload entire directory to your server 
-* Point your domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
-* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Point your domain root to the `public/` directory
+* Rename `config/.env.sample` to `config/.env`
+* Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
@@ -82,7 +82,7 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ./node_modules/grunt/bin/grunt Build-All
 ```
 * Point your local domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
+* Rename `config/.env.sample` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
@@ -90,7 +90,7 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ### Installation via Docker ###
 
 We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
-To run the image enter your MySQL credentials and execute
+To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
 docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
