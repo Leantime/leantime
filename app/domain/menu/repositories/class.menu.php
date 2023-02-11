@@ -21,34 +21,28 @@ namespace leantime\domain\repositories {
             'default' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
 
-                10 => ['type' => 'submenu', 'id' => 'materialize', 'title' => 'Materialize', 'visual' => 'open',
+                10 => ['type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
                     'submenu' => [
                          15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
                          60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
 
-                    ]],
-
-                20 => ['type' => 'submenu', 'id' => 'explore', 'title' => 'Plan', 'visual' => 'open',
-                    'submenu' => [
                         20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
 
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas', 'active' => ['showCanvas']],
 
                     ]],
 
-                30 => ['type' => 'submenu', 'id' => 'understand', 'title' => 'Focus', 'visual' => 'open',
+                30 => ['type' => 'submenu', 'id' => 'understand', 'title' => 'menu.think', 'visual' => 'open',
+
                     'submenu' => [
 
                         30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards', 'active' => ['showBoards']],
                         50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
 
-                    ]],
 
-                40 => ['type' => 'submenu', 'id' => 'monitor', 'title' => 'Monitor', 'visual' => 'closed',
-                    'submenu' => [
+
                         70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
-
-                       80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
+                        80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
                 ]],
             ],
             //Display all menu items
