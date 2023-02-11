@@ -180,7 +180,7 @@ $elementName = 'goal';
                                             </ul>
                                         </div>
 
-                                        <div class="right">
+                                        <div class="right" style="margin-right:10px;">
                                             <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
                                                class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
                                                     <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
@@ -227,9 +227,19 @@ $elementName = 'goal';
             </div>
         </div>
 
-        <?php if (count($canvasItems) == 0) { ?>
-            <?=$this->__('text.no_goals_yet') ?>
-        <?php } ?>
+        <?php if (count($canvasItems) == 0) {
+            echo "<br /><br /><div class='center'>";
+
+                echo "<div class='svgContainer'>";
+                    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
+                    echo "</div>";
+
+                echo"<h3>" . $this->__("headlines.goal.analysis") . "</h3>";
+                echo "<br />" . $this->__("text.goal.helper_content");
+
+
+                echo"</div>";
+         } ?>
 
 
         <div class="clearfix"></div>

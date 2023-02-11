@@ -96,7 +96,7 @@ if (is_array($currentLink)) {
             }
         }
         ?>
-        <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
+        <a href='javascript:void(0);' class="dropdown-toggle profileHandler notificationHandler" data-toggle="dropdown">
             <span class="fa-solid fa-bell"></span>
             <?php if ($notificationCount > 0) {
                 echo "<span class='notificationCounter'>" . $notificationCount . "</span>";
@@ -120,11 +120,13 @@ if (is_array($currentLink)) {
                     <li <?php if ($notif['read'] == 0) {
                         echo" class='new' ";
                         } ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
+                        <a href="<?=$notif['url'] ?>">
                         <span class="notificationProfileImage">
                             <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
                         </span>
                         <span class="notificationTitle"><?=$notif['message'] ?></span>
                         <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
+                        </a>
                     </li>
 
 
@@ -142,12 +144,14 @@ if (is_array($currentLink)) {
                             <li <?php if ($notif['read'] == 0) {
                                 echo" class='new' ";
                                 } ?> data-url="<?=$notif['url'] ?>" data-id="<?=$notif['id'] ?>">
-                            <span class="notificationProfileImage">
-                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
-                            </span>
-                                <span class="notificationTitle"><?=$notif['message'] ?></span>
-                                <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
-                            </li>
+                                <a href="<?=$notif['url'] ?>">
+                                    <span class="notificationProfileImage">
+                                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$notif['authorId'] ?>" />
+                                    </span>
+                                        <span class="notificationTitle"><?=$notif['message'] ?></span>
+                                        <span class="notificationDate"><?=$this->getFormattedDateString($notif['datetime']) ?> <?=$this->getFormattedTimeString($notif['datetime']) ?></span>
+                                    </li>
+                                </a>
 
 
                         <?php }
@@ -249,6 +253,25 @@ if (is_array($currentLink)) {
     jQuery(document).ready(function(){
 
 
+        jQuery(".notificationHandler").on("click", function() {
+            jQuery.ajax(
+                {
+                    type: 'PATCH',
+                    url: leantime.appUrl+'/api/notifications',
+                    data:
+                        {
+                            id : "all",
+                            action: "read"
+                        }
+                }
+            ).done(
+                function () {
+                    jQuery(".notifcationViewLists li.new").removeClass("new");
+                    jQuery(".notificationCounter").fadeOut();
+                }
+            );
+        });
+
 
         jQuery(".notificationDropdown .dropdown-menu").on("click", function(e) {
             e.stopPropagation();
@@ -259,21 +282,7 @@ if (is_array($currentLink)) {
            var url = jQuery(this).attr("data-url");
            var id = jQuery(this).attr("data-id");
 
-            jQuery.ajax(
-                {
-                    type: 'PATCH',
-                    url: leantime.appUrl+'/api/notifications',
-                    data:
-                        {
-                            id : id,
-                            action: "read"
-                        }
-                }
-            ).done(
-                function () {
-                   window.location.href = url;
-                }
-            );
+           window.location.href = url;
         });
     });
 </script>

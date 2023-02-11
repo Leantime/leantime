@@ -19,28 +19,47 @@ namespace leantime\domain\repositories {
         // Menu structures
         private array $menuStructures = [
             'default' => [
-                10 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
-                15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards'],
-                40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas'],
-                50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
+                5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
 
-                60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
-                70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
-                80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
-            ]
-            ,
+                10 => ['type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
+                    'submenu' => [
+                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
+                         60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
+
+                        20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
+
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas', 'active' => ['showCanvas']],
+
+                    ]],
+
+                30 => ['type' => 'submenu', 'id' => 'understand', 'title' => 'menu.think', 'visual' => 'open',
+
+                    'submenu' => [
+
+                        30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards', 'active' => ['showBoards']],
+                        50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
+
+
+
+                        70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
+                        80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
+                ]],
+            ],
             //Display all menu items
             'full_menu' => [
-                11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
-                21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                50 => ['type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'open',
+                10 => ['type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
+                    'submenu' => [
+                        11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
+                        21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
+                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas']
+                    ]],
+
+                50 => ['type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
                     'submenu' => [
                         51 => ['type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas'],
                         52 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards']]],
-                60 => ['type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'open',
+                60 => ['type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'closed',
                     'submenu' => [
                         61 => ['type' => 'header', 'title' => 'menu.dts.observe'],
                         62 => ['type' => 'item', 'module' => 'sbcanvas', 'title' => 'menu.sbcanvas', 'href' => '/sbcanvas/showCanvas'],
@@ -59,6 +78,15 @@ namespace leantime\domain\repositories {
                         82 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
                         83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor']]]]
         ];
+
+        public function __construct(){
+
+            if(isset($_SESSION['submenuToggle']) === false){
+                $setting = new setting();
+                $_SESSION['submenuToggle'] = unserialize($setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle"));
+            }
+
+        }
 
         /**
          * getMenuTypes - Return an array of a currently supported menu types
@@ -96,6 +124,8 @@ namespace leantime\domain\repositories {
         {
 
             $_SESSION['submenuToggle'][$submenu] = $state;
+            $setting = new setting();
+            $setting->saveSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle", serialize($_SESSION['submenuToggle']));
         }
 
         /**
@@ -121,6 +151,9 @@ namespace leantime\domain\repositories {
 
                 switch ($element['type']) {
                     case 'header':
+                        break;
+
+                    case 'separator':
                         break;
 
                     case 'item':
@@ -153,7 +186,7 @@ namespace leantime\domain\repositories {
                                     break;
 
                                 case 'item':
-                                    $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey][$key]);
+                                    $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey]);
                                     break;
 
                                 default:
@@ -167,6 +200,8 @@ namespace leantime\domain\repositories {
                         die("Cannot proceed due to invalid menu element: '" . $element['type'] . "'");
                 }
             }
+
+            //TODO: Add menu filter here!
 
             return $menuStructure;
         }

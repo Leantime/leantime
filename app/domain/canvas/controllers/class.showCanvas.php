@@ -41,6 +41,19 @@ namespace leantime\domain\controllers\canvas {
 
             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
+            //Create default canvas.
+            if($allCanvas == false || count($allCanvas) == 0){
+
+                $values = [
+                    'title' => $this->language->__("label.board"),
+                    'author' => $_SESSION['userdata']['id'],
+                    'projectId' => $_SESSION['currentProject']
+                ];
+                $currentCanvasId = $this->canvasRepo->addCanvas($values);
+                $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+
+            }
+
             if (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
                 $currentCanvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
             } else {

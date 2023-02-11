@@ -158,8 +158,11 @@ class application
         $headers = self::dispatch_filter('headers', [
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
-            'X-Content-Type-Options' => 'nosniff'
+            'X-Content-Type-Options' => 'nosniff',
+            'Access-Control-Allow-Origin' => BASE_URL
         ]);
+
+
 
         foreach ($headers as $key => $value) {
             header("${key}: ${value}");

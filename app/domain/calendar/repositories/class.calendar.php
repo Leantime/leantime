@@ -42,7 +42,7 @@ namespace leantime\domain\repositories {
             return $allDates;
         }
 
-        public function getCalendar($id)
+        public function getCalendar($userId)
         {
 
             /*
@@ -65,7 +65,7 @@ namespace leantime\domain\repositories {
             */
 
             $ticketService = new \leantime\domain\services\tickets();
-            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater('', "");
+            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "");
 
             if (!empty($ticketArray)) {
                 if (isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
@@ -83,7 +83,7 @@ namespace leantime\domain\repositories {
             $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
             $stmn->execute();
             $values = $stmn->fetchAll();

@@ -19,7 +19,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    string Fontawesome icone
          */
-        protected string $icon = 'fa-building';
+        protected string $icon = 'fa-object-group';
 
         /***
          * disclaimer - Disclaimer

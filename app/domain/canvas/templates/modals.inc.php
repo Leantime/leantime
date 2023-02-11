@@ -88,7 +88,7 @@
                         $canvasTitle = $canvasRow["title"];
                         echo " selected='selected' ";
                     }
-                    echo ">" . $canvasRow["title"] . "</option>";
+                    echo ">" .$this->escape($canvasRow["title"]) . "</option>";
                 }
           } ?>
           </select>
@@ -107,7 +107,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function() { new SlimSelect({ select: '#mergeCanvasSelect' }); });
 </script>
-      
+
 <div class="modal fade bs-example-modal-lg" id="importCanvas">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

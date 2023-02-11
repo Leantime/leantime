@@ -10,5 +10,6 @@
 
 <?php $this->dispatchTplEvent('beforeBodyClose'); ?>
 
+<script src="<?=BASE_URL?>/js/libs/prism/prism.js"> </script>
 </body>
 </html>

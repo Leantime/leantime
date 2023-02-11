@@ -70,6 +70,9 @@ if (is_array($currentLink)) {
                 <?php if ($menuItem['type'] == 'header') { ?>
                     <li><a href="javascript:void(0);"><strong><?=$this->__($menuItem['title']) ?></strong></a></li>
                 <?php } ?>
+                <?php if ($menuItem['type'] == 'separator') { ?>
+                    <li class="separator"></li>
+                <?php } ?>
                 <?php if ($menuItem['type'] == 'item') { ?>
                      <li <?php if (($module == $menuItem['module']) &&  (!isset($menuItem['active']) || in_array($action, $menuItem['active']))) {
                             echo " class='active'";
@@ -78,17 +81,17 @@ if (is_array($currentLink)) {
                      </li>
                 <?php } ?>
                 <?php if ($menuItem['type'] == 'submenu') { ?>
-                    <li><a href="javascript:<?php echo $menuItem['visual'] == 'always' ? 'void(0)' : 'leantime.menuController.toggleSubmenu(\'' . $menuItem['id'] . '\')'; ?>;"><strong><?=$this->__($menuItem['title']) ?></strong> <i class="fa fa-angle-<?php echo $menuItem['visual'] == 'closed' ? 'up' : 'down'; ?>" id="submenu-icon-<?=$menuItem['id'] ?>"></i></a></li>
-                    <ul style="display: <?php echo $menuItem['visual'] == 'closed' ? 'none' : 'block'; ?>;" id="submenu-<?=$menuItem['id'] ?>">
+                    <li class="submenuToggle"><a href="javascript:<?php echo $menuItem['visual'] == 'always' ? 'void(0)' : 'leantime.menuController.toggleSubmenu(\'' . $menuItem['id'] . '\')'; ?>;"><i class="submenuCaret fa fa-angle-<?php echo $menuItem['visual'] == 'closed' ? 'right' : 'down'; ?>" id="submenu-icon-<?=$menuItem['id'] ?>"></i>  <strong><?=$this->__($menuItem['title']) ?></strong> </a></li>
+                    <ul style="display: <?php echo $menuItem['visual'] == 'closed' ? 'none' : 'block'; ?>;" id="submenu-<?=$menuItem['id'] ?>" class="submenu">
                     <?php foreach ($menuItem['submenu'] as $subkey => $submenuItem) { ?>
                         <?php if ($submenuItem['type'] == 'header') { ?>
-                            <li><a href="javascript:void(0);" style="font-size: small; padding-top: 5px; padding-bottom: 5px"><strong><?=$this->__($submenuItem['title']) ?></strong></a></li>
+                            <li class="title"><a href="javascript:void(0);"><strong><?=$this->__($submenuItem['title']) ?></strong></a></li>
                         <?php } ?>
                         <?php if ($submenuItem['type'] == 'item') { ?>
                              <li <?php if ($module == $submenuItem['module'] && (!isset($submenuItem['active']) || in_array($action, $submenuItem['active']))) {
                                     echo " class='active'";
                                  } ?>>
-                                 <a href="<?=BASE_URL . $submenuItem['href'] ?>" style="font-size: small; padding-top: 5px; padding-bottom: 5px"><?=$this->__($submenuItem['title']) ?></a>
+                                 <a href="<?=BASE_URL . $submenuItem['href'] ?>"><?=$this->__($submenuItem['title']) ?></a>
                              </li>
                         <?php } ?>
                     <?php } ?>

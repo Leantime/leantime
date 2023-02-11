@@ -12,6 +12,7 @@
     font-weight:normal;
     background:var(--main-action-bg);
     border:0px;
+    font-weight: bold;
 }
 
 .tox .tox-dialog .tox-button--secondary {
@@ -283,5 +284,23 @@ a.confetti {
     -ms-transform: scale(-1, 1);
     transform: scale(-1, 1);
     display: Inline-block;
+}
+
+.tox .tox-form .tox-collection__item-icon {
+    font-size:var(--font-size-xxl);
+}
+
+body .tox .tox-dialog-wrap__backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+    background: #f5f6f7;
 }
 

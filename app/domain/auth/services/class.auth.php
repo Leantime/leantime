@@ -194,6 +194,8 @@ namespace leantime\domain\services {
         public function login($username, $password)
         {
 
+            self::dispatch_event("beforeLoginCheck", ['username' => $username, 'password' => $password]);
+
             //different identity providers can live here
             //they all need to
             ////A: ensure the user is in leantime (with a valid role) and if not create the user
@@ -272,10 +274,15 @@ namespace leantime\domain\services {
             if ($user !== false && is_array($user)) {
                 $this->setUserSession($user);
 
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
                 return true;
+
             } else {
+
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
                 return false;
             }
+
         }
 
         public function setUserSession($user, $isLdap = false)

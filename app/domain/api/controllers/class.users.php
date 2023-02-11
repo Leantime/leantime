@@ -58,11 +58,12 @@ namespace leantime\domain\controllers {
 
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
+
                 if (is_string($return)) {
                     $this->tpl->redirect($return);
-                } else {
-                    header('Content-Type: image/jpeg');
-                    echo $return;
+                } else if(is_object($return)){
+                    header('Content-type: image/svg+xml');
+                    echo $return->toXMLString();
                 }
             }
         }

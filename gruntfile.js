@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     "node_modules/jquery/dist/jquery.js",
-                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
+                    "node_modules/jquery-migrate/dist/jquery-migrate.min.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/moment/moment.js",
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/tinymce/plugins/codesample/plugin.js",
-                    "node_modules/tinymce-mention/mention/plugin.js",
+
 
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "node_modules/jstree/dist/jstree.js",
@@ -112,6 +112,7 @@ module.exports = function (grunt) {
                     "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
                     "public/js/libs/tinymce-plugins/embed/index.js",
                     "public/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
+                    "public/js/libs/tinymce-plugins/mention/plugin.js",
 
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
@@ -119,7 +120,7 @@ module.exports = function (grunt) {
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-                    "public/js/libs/prism/js/prism.js",
+
 
                     "public/js/libs/uppy/uppy.js",
 

@@ -58,7 +58,7 @@ namespace leantime\domain\controllers {
         {
             if (isset($params['action']) && $params['action'] == "read") {
                 $notificationService = new services\notifications();
-                $notificationService->markNotificationRead($params['id']);
+                $notificationService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
             }
         }
 

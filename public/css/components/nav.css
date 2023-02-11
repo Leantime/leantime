@@ -154,10 +154,9 @@
     display:block;
     font-weight:normal;
     font-size: var(--font-size-l);
-    padding:0px 10px;
+    padding:0px 15px;
     line-height:59px;
     height:60px;
-    border-bottom:1px solid var(--main-menu-border-color);
     color:var(--project-selector-color);
     background:var(--project-selector-bg);
 }
@@ -310,10 +309,8 @@
 
 .leftpanel .leftmenu .nav-tabs ul.projectselector li.active a {
     background-image:none;
-    color:#fff;
+    color:var(--main-menu-link-active-color);
 }
-
-
 
 .project-selector .dropdown-menu .openToggle,
 .project-selector .dropdown-menu .closeToggle{
@@ -368,9 +365,38 @@
     display: none;
 }
 
-.leftmenu .nav-tabs.nav-stacked > li.dropdown ul li {
-
+.leftmenu .nav-tabs.nav-stacked > li.dropdown ul.submenu li a{
+    padding-left:25px;
 }
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle {
+    margin-top:0px;
+    border-top:0px dashed var(--main-border-color);
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle:first-child {
+    margin-top:0px;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a{
+    font-size: var(--font-size-s);
+    text-transform: uppercase;
+    padding: 10px 5px 10px 10px;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    padding: 15px 5px 5px 25px;
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a:hover {
+    background:transparent;
+    border-color:transparent;
+    color:var(--main-menu-link-color);
+    cursor:default;
+}
+
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
     background-repeat: no-repeat;
@@ -431,6 +457,17 @@
     border-color: var(--primary-color);
     background: var(--primary-color);
     color: #fff;
+}
+
+.nav-tabs li.separator {
+    border-bottom:1px dashed var(--main-border-color);
+    border-bottom-style: wave;
+    height:5px;
+    margin-bottom:5px;
+}
+
+.nav-tabs li .submenuCaret {
+    width:15px;
 }
 
 
@@ -497,6 +534,7 @@
 .headmenu > li > a.active,
 .headmenu > li > a:hover {
     text-decoration: none;
+    color: #fff;
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -742,4 +780,8 @@
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
     text-decoration: none;
+}
+
+.submenuCaret {
+
 }

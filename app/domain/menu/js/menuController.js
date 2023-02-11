@@ -23,13 +23,13 @@ leantime.menuController = (function () {
 
         if (submenuDisplay == 'none') {
             jQuery('#submenu-' + submenuName).css('display', 'block');
-            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-up');
+            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-right');
             jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-down');
             submenuState = 'open';
         } else {
             jQuery('#submenu-' + submenuName).css('display', 'none');
             jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-down');
-            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-up');
+            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-right');
             submenuState = 'closed';
         }
 

@@ -144,6 +144,22 @@ namespace leantime\domain\repositories {
 
             return $results;
         }
+
+        public function markAllNotificationRead($userId)
+        {
+
+            $sql = "UPDATE zp_notifications SET `read` = 1 WHERE userId = :id";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
+
+            $results = $stmn->execute();
+
+            $stmn->closeCursor();
+
+            return $results;
+        }
     }
 
 }

@@ -470,8 +470,20 @@ namespace leantime\domain\repositories {
             }
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
-            $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
+
+            if(isset($searchCriteria["currentUser"])){
+                $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
+            }else{
+                $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            }
+
+            if(isset($searchCriteria["currentClient"])){
+                $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
+            }else{
+                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
+            }
+
+
 
             if ($searchCriteria["currentProject"] != "") {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
@@ -575,6 +587,27 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, '\leantime\domain\models\tickets');
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getTags($projectId)
+        {
+
+            $query = "SELECT
+						zp_tickets.tags
+					FROM
+						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+					WHERE
+						zp_tickets.projectId = :projectId AND zp_tickets.type <> 'milestone'";
+
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
             return $values;
@@ -778,9 +811,9 @@ namespace leantime\domain\repositories {
 						zp_tickets.id, progressTickets.dependingTicketId";
 
             if ($sortBy == "date") {
-                $query .= "	ORDER BY zp_tickets.editFrom ASC";
+                $query .= "	ORDER BY TO_DAYS(IF(zp_tickets.editFrom <> '0000-00-00 00:00:00', zp_tickets.editFrom, NOW())) ASC, zp_tickets.dependingTicketId ASC";
             } elseif ($sortBy == "duedate") {
-                $query .= "	ORDER BY zp_tickets.editTo ASC";
+                $query .= "	ORDER BY TO_DAYS(zp_tickets.editTo) ASC";
             } elseif ($sortBy == "headline") {
                 $query .= "	ORDER BY zp_tickets.headline ASC";
             }

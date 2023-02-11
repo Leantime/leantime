@@ -41,8 +41,7 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
 
 
 
-.loginpanelinner,
-.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
+.loginpanelinner {
 	background-color: var(--primary-color) !important;
 	color:var(--main-action-color);
 }
@@ -276,10 +275,6 @@ div.tagsinput {
 	border:1px solid var(--main-border-color);
 }
 
-.gantt-container a:hover {
-    text-decoration:underline !important;
-}
-
 
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord{
@@ -371,3 +366,8 @@ div.growl.growl-medium {
 }
 
 /* Playing with header */
+
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+    background: #f5f6f7;
+}
