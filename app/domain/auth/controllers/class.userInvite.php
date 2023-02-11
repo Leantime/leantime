@@ -7,6 +7,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use \leantime\core\eventhelpers;
 
     class userInvite extends controller
     {
@@ -88,6 +89,8 @@ namespace leantime\domain\controllers {
                                     $this->language->__('notifications.you_are_active'),
                                     "success"
                                 );
+
+                                self::dispatch_event("userSignupSuccess", ['user' => $user]);
 
                                 core\frontcontroller::redirect(BASE_URL . "/auth/login");
                             } else {

@@ -697,6 +697,10 @@ min-width: 1200px
         margin-left: 0 !important;
 
     }
+
+    .stickyColumn {
+        position:relative;
+    }
 }
 
 @media (min-width: 576px) and (max-width:1200px) {
@@ -1263,6 +1267,9 @@ min-width: 1200px
         margin-left: 0 !important;
     }
 
+    .stickyColumn {
+        position:relative;
+    }
 
 }
 
