@@ -3759,3 +3759,8 @@ a.titleInsertLink:hover {
 .projectBox .lastStatus [class*="commentStatus-"]{
     padding-left:10px;
 }
+
+.stickyColumn {
+    position:sticky;
+    top:60px
+}

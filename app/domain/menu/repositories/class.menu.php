@@ -40,7 +40,6 @@ namespace leantime\domain\repositories {
                     'submenu' => [
 
                         30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards', 'active' => ['showBoards']],
-                        40 => ['type' => 'item', 'module' => 'valuecanvas', 'title' => 'menu.project_value_canvas', 'href' => '/valuecanvas/showCanvas', 'active' => ['showCanvas']],
                         50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
 
                     ]],
