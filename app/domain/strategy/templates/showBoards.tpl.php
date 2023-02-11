@@ -126,7 +126,9 @@ $canvasProgress = $this->get('canvasProgress');
                 <div id="accordion_other" class="row teamBox" style="display:none; padding-left:19px;">
 
 
-                    <?php foreach ($this->get('otherBoards') as $board) {?>
+                    <?php foreach ($this->get('otherBoards') as $board) {
+                        if(!isset($board["visible"]) || $board["visible"] === 1) {
+                        ?>
                         <div class="col-md-3">
                             <div class="profileBox" style="min-height: 125px;">
                                 <div class="commentImage icon">
@@ -143,7 +145,8 @@ $canvasProgress = $this->get('canvasProgress');
 
                             </div>
                         </div>
-                    <?php } ?>
+                    <?php }
+                    } ?>
                 </div>
 
 

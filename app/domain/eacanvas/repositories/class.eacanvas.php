@@ -19,7 +19,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    string Fontawesome icone
          */
-        protected string $icon = 'fa-tree';
+        protected string $icon = 'fa-seedling';
 
         /**
          * canvasTypes - Must be extended

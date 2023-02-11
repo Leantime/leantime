@@ -111,25 +111,25 @@ namespace leantime\domain\controllers {
                 array('module' => 'eacanvas',       'name' => 'label.eacanvas', 'description' => 'description.eacanvas', 'icon' => 'fa-solid fa-seedling',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "lbmcanvas" =>
                 //Lightweight Business Model<i class=""></i>
-                array('module' => 'lbmcanvas',      'name' => 'label.lbmcanvas', 'description' => 'description.lbmcanvas', 'icon' => 'fa-solid fa-building',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'lbmcanvas',      'name' => 'label.lbmcanvas', 'description' => 'description.lbmcanvas', 'icon' => 'fa-solid fa-building',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "dbmcanvas" =>
                 //Detailed Business Model<i class=""></i>
-                array('module' => 'dbmcanvas',      'name' => 'label.dbmcanvas', 'description' => 'description.dbmcanvas', 'icon' => 'fa-solid fa-city',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'dbmcanvas',      'name' => 'label.dbmcanvas', 'description' => 'description.dbmcanvas', 'icon' => 'fa-solid fa-city',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "sqcanvas" =>
                 //Strategy Questions
-                array('module' => 'sqcanvas',       'name' => 'label.sqcanvas', 'description' => 'description.sqcanvas', 'icon' => 'fa fa-chess',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'sqcanvas',       'name' => 'label.sqcanvas', 'description' => 'description.sqcanvas', 'icon' => 'fa fa-chess',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "insightscanvas" =>
                 //Ethnographics<i class=""></i>
                 array('module' => 'insightscanvas', 'name' => 'label.insightscanvas', 'description' => 'description.insightscanvas',      'icon' => 'fa-solid fa-arrows-down-to-people',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "cpcanvas" =>
                 //Competitive Canvas (Jobs to be done V2)<i class=""></i>
-                array('module' => 'cpcanvas',       'name' => 'label.cpcanvas', 'description' => 'description.cpcanvas', 'icon' => 'fa-solid fa-list-check',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'cpcanvas',       'name' => 'label.cpcanvas', 'description' => 'description.cpcanvas', 'icon' => 'fa-solid fa-list-check',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "smcanvas" =>
                 //Strategy Messaging / Positioning<i class=""></i>
-                array('module' => 'smcanvas',       'name' => 'label.smcanvas', 'description' => 'description.smcanvas', 'icon' => 'fa-solid fa-comments-dollar',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'smcanvas',       'name' => 'label.smcanvas', 'description' => 'description.smcanvas', 'icon' => 'fa-solid fa-comments-dollar',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
                 "emcanvas" =>
                 //Full empathy Map<i class=""></i>
-                array('module' => 'emcanvas',       'name' => 'label.emcanvas', 'description' => 'description.emcanvas', 'icon' => 'fa-solid fa-hand-holding-heart',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                array("visible"=>"0", 'module' => 'emcanvas',       'name' => 'label.emcanvas', 'description' => 'description.emcanvas', 'icon' => 'fa-solid fa-hand-holding-heart',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
 
             ];
 

@@ -5,6 +5,7 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
+    use leantime\domain\models\wiki;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
@@ -22,6 +23,17 @@ namespace leantime\domain\controllers {
         {
 
             $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
+            if($wikis == false || count($wikis) == 0){
+
+                $wiki = new wiki();
+                $wiki->title = $this->language->__("label.default");
+                $wiki->projectId = $_SESSION['currentProject'];
+                $wiki->author = $_SESSION['userdata']['id'];
+
+                $id = $this->wikiService->createWiki($wiki);
+                $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
+
+            }
 
             //Option 1: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {

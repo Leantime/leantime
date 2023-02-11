@@ -216,7 +216,15 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
             </div>
             <?php if (count($this->get('canvasItems')) == 0) { ?>
-                <?=$this->__('text.no_ideas_yet') ?>
+                <div class='center'>
+                    <div style='width:30%' class='svgContainer'>
+                        <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
+                    </div>
+
+                    <h3><?php echo $this->__("headlines.have_an_idea") ?></h3><br />
+                    <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
+                    <?php  if ($login::userIsAtLeast($roles::$editor)) { ?><?php } ?>
+                </div>
             <?php } ?>
             <div class="clearfix"></div>
 
