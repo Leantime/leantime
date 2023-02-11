@@ -10,7 +10,7 @@ namespace leantime\domain\services;
     use Ramsey\Uuid\Uuid;
     use RobThree\Auth\TwoFactorAuth;
 
-    class Api
+    class api
     {
         use eventhelpers;
 
@@ -21,7 +21,7 @@ namespace leantime\domain\services;
          */
         public function __construct()
         {
-            $this->apiRepository = new repositories\Api();
+            $this->apiRepository = new repositories\api();
             $this->userRepo = new repositories\users();
         }
 

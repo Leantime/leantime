@@ -11,7 +11,7 @@ namespace leantime\domain\repositories {
     use leantime\core;
     use RobThree\Auth\TwoFactorAuth;
 
-    class Api
+    class api
     {
         /**
          * @access private
