@@ -7,6 +7,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use leantime\core\eventhelpers;
 
     class login extends controller
     {
@@ -71,6 +72,8 @@ namespace leantime\domain\controllers {
                 $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
                 $username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
                 $password = $_POST['password'];
+
+                self::dispatch_event("beforeAuthServiceCall", ['post' => $_POST]);
 
                 //If login successful redirect to the correct url to avoid post on reload
                 if ($this->authService->login($username, $password) === true) {
