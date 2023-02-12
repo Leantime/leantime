@@ -4,5 +4,5 @@
  * Comments
  */
 
-$canvasName = 'lean';
+$canvasName = 'value';
 require($this->getTemplatePath('canvas', 'canvasComment.inc.php'));

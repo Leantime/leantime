@@ -4,5 +4,5 @@
  * Delete Item
  */
 
-$canvasName = 'lean';
+$canvasName = 'value';
 require($this->getTemplatePath('canvas', 'delCanvasItem.inc.php'));
