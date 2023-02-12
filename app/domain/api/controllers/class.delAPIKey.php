@@ -6,12 +6,12 @@ namespace leantime\domain\controllers {
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
-    use leantime\domain\services\Api;
+    use leantime\domain\services\api;
     use leantime\domain\services\auth;
 
     class delAPIKey extends controller
     {
-        private Api $APIService;
+        private api $APIService;
         /**
          * init - initialize private variables
          *
@@ -20,7 +20,7 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->APIService = new Api();
+            $this->APIService = new api();
             $this->userRepo = new repositories\users();
         }
 

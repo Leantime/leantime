@@ -23,7 +23,7 @@ namespace leantime\domain\controllers {
             $this->userRepo = new repositories\users();
             $this->projectsRepo = new repositories\projects();
             $this->userService = new services\users();
-            $this->APIService = new services\Api();
+            $this->APIService = new services\api();
         }
 
         /**
