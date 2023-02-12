@@ -30,7 +30,7 @@ $canvasProgress = $this->get('canvasProgress');
                             <span class="userName">
                                     <small><?=$this->__($board['name']) ?> (<?=$board['count']?>)</small><br />
 
-                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/".$board['lastCanvasid']?>">
+                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/".$board['lastCanvasId']?>">
                                         <?=$this->escape($board['lastTitle']) ?>
                                     </a><br />
                                 <small><?=$this->__('label.last_updated')?> <?=$this->getFormattedDateString($board['lastUpdate'])?> <?=$this->getFormattedTimeString($board['lastUpdate'])?></p>

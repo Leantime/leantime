@@ -216,7 +216,7 @@ namespace leantime\domain\services {
         {
             $count = 0;
             foreach ($searchCriteria as $key => $value) {
-                if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy") {
+                if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy" && $key != "currentUser" &&  $key != "currentClient") {
                     if ($value != '') {
                         $count++;
                     }
