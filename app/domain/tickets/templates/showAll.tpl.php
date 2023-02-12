@@ -331,7 +331,7 @@
                 <?php foreach ($allTickets as $rowNum => $row) {?>
                     <tr>
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><link rel="preload" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>" as="fetch" crossorigin="">
+                        <td data-order="<?=$this->e($row['headline']); ?>">
                             <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td class="dropdown-cell" data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
