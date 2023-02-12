@@ -7,7 +7,7 @@
 }
 
 #ideaMason .ticketBox:hover {
-    background:#f9f9f9;
+    background:var(--kanban-card-hover);
 }
 
 .packery-drop-placeholder {

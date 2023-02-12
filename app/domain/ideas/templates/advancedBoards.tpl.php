@@ -129,7 +129,6 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                                         </a>
                                                 <?php } ?>
 
-                                                 <a href="javascript:void(0);" class="ideaCanvasModal" <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>><span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
                                                  <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                                         &nbsp;&nbsp;&nbsp;
                                                         <ul class="dropdown-menu">
@@ -145,7 +144,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
 
                                                 <div class="mainIdeaContent">
-                                                    <?php echo($row["data"]); ?>
+                                                    <?=$this->escapeMinimal($row["data"]) ?>
                                                 </div>
 
                                                 <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -154,7 +153,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                                     <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text">
                                                                         <?php if ($row["authorFirstname"] != "") {
-                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['id'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
+                                                                            echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['author'] . "' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         } else {
                                                                             echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span><span id='user" . $row['id'] . "'></span>";
                                                                         }?>
@@ -166,12 +165,21 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
                                                         <?php foreach ($this->get('users') as $user) {
                                                             echo"<li class='dropdown-item'>
-                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' >
-                                                                    <img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
+                                                                    <a href='javascript:void(0);' data-label='" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf($this->__("text.full_name"), $this->escape($user["firstname"]), $this->escape($user['lastname'])) . "</a>";
                                                             echo"</li>";
                                                         }?>
                                                     </ul>
                                                 </div>
+
+                                                <div class="pull-right" style="margin-right:10px;">
+
+                                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $row["id"]; ?>"
+                                                       class="ideaModal" data="item_<?=$row['id'] ?>"
+                                                        <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>>
+                                                        <span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
+
+                                                </div>
+
                                             </div>
                                         </div>
 
