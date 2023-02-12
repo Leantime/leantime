@@ -82,7 +82,7 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ./node_modules/grunt/bin/grunt Build-All
 ```
 * Point your local domain to the `public/` directory
-* Rename `config/.env.sample` to `config/.env`
+* Rename `config/configuration.sample.php` to `config/configuration.php`
 * Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
