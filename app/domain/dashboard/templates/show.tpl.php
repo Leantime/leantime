@@ -8,6 +8,7 @@
     $statusLabels = $this->get('statusLabels');
     $project = $this->get('project');
     $tickets = $this->get('tickets');
+    
 ?>
 
 <?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
