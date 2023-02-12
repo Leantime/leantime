@@ -11,7 +11,7 @@ namespace leantime\core {
     class appSettings
     {
 
-        public $appVersion = "2.3.9";
+        public $appVersion = "2.3.10";
 
         public $dbVersion = "2.1.14";
 
@@ -60,7 +60,7 @@ namespace leantime\core {
             }
 
         }
-        
+
         public function getRequestURI($baseURL = "")
         {
 
