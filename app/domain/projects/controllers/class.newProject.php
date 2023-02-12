@@ -134,7 +134,7 @@ namespace leantime\domain\controllers {
                 }
 
 
-                $this->tpl->assign('values', $values);
+                $this->tpl->assign('project', $values);
             }
 
             $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
