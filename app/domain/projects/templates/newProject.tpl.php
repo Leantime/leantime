@@ -1,7 +1,7 @@
 
 <?php
  defined('RESTRICTED') or die('Restricted access');
-$project = $this->get('values');
+$project = $this->get('project');
 
 ?>
 
