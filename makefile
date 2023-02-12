@@ -14,6 +14,7 @@ build: install-deps build-js
 	mkdir -p $(TARGET_DIR)/config
 	cp ./config/appSettings.php $(TARGET_DIR)/config
 	cp ./config/configuration.sample.php $(TARGET_DIR)/config
+	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
 	touch $(TARGET_DIR)/logs/.gitkeep
 	cp -R ./public $(TARGET_DIR)
