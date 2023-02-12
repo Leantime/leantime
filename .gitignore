@@ -15,10 +15,12 @@ logs/*
 target/*
 public/js/compiled-app.min.js
 public/js/compiled-base-libs.min.js
+public/js/compiled-footer.min.js
 public/js/compiled-extended-libs.min.js
 public/js/jsSourceMapAPP.map
 public/js/jsSourceMapAppSrc.map
 public/js/jsSourceMapBaseLib.map
+public/js/jsSourceMapFooterSrc.map
 public/js/jsSourceMapExtendedSrc.map
 public/css/main.css
 public/css/main.css.map

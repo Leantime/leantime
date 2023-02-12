@@ -5,6 +5,19 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-exec');
     grunt.initConfig({
         uglify: {
+            footer_scripts: {
+                options: {
+                    sourceMap: true,
+                    sourceMapName: "public/js/jsSourceMapFooterSrc.map",
+                    sourceMapUrl: "jsSourceMapFooterSrc.map",
+                    mangle: false
+                },
+                src: [
+                    "public/js/libs/prism/prism.js",
+
+                ],
+                dest: "public/js/compiled-footer.min.js"
+            },
             app_src: {
                 options: {
                     sourceMap: true,
@@ -174,7 +187,7 @@ module.exports = function (grunt) {
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
 
-    grunt.registerTask("Build-App-Src", ["uglify:app_src", "jshint"]);
+    grunt.registerTask("Build-App-Src", ["uglify:app_src", "uglify:footer_scripts", "jshint"]);
     grunt.registerTask("Build-Base-Lib", ["uglify:base_lib_src"]);
     grunt.registerTask("Build-Extended-Src", ["uglify:extended_lib_src"]);
     grunt.registerTask("Build-Less-Dev", ["less:dev"]);
