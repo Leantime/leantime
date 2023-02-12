@@ -349,7 +349,8 @@ namespace leantime\domain\repositories {
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL AND zp_user.source <> 'api'
+				WHERE zp_relationuserproject.projectId = :projectId AND
+                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);

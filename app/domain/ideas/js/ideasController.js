@@ -342,9 +342,9 @@ leantime.ideasController = (function () {
         jQuery("#sortableIdeaKanban").disableSelection();
 
         jQuery(".ticketBox").hover(function () {
-            jQuery(this).css("background", "#f9f9f9");
+            jQuery(this).css("background", "var(--kanban-card-bg)");
         }, function () {
-            jQuery(this).css("background", "#ffffff");
+            jQuery(this).css("background", "var(--kanban-card-hover)");
         });
 
         jQuery("#sortableIdeaKanban .contentInner").sortable({

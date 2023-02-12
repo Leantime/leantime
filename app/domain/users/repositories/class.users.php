@@ -224,7 +224,7 @@ namespace leantime\domain\repositories {
                       zp_clients.name AS clientName
 					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-					WHERE source <> 'api'
+					WHERE !(source <=> 'api')
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -250,7 +250,7 @@ namespace leantime\domain\repositories {
                       lastlogin,
                       createdOn
 					FROM `zp_user`
-                    WHERE source = :source
+                    WHERE source <=> :source
 					ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);

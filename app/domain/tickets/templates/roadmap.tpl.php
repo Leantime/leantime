@@ -135,6 +135,12 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 if($mlst->type == "milestone"){
                     $headline .= " (" . $mlst->percentDone . "% Done)";
                 }
+
+                $color = "#8D99A6";
+                if($mlst->type == "milestone"){
+                    $color = $mlst->tags;
+                }
+
                 echo"{
                     id :'" . $mlst->id . "',
                     name :" . json_encode($headline) .",
@@ -144,7 +150,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     dependencies :'" . ($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '') . "',
                     custom_class :'',
                     type: '" . strtolower($mlst->type) . "',
-                    bg_color: '" . $mlst->tags . "',
+                    bg_color: '" . $color . "',
                     thumbnail: '" . BASE_URL . "/api/users?profileImage=" . $mlst->editorId . "'
 
                 },";

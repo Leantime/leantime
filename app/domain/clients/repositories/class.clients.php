@@ -178,7 +178,7 @@ namespace leantime\domain\repositories {
 					zp_user.phone,
                     zp_user.status
                     FROM zp_user WHERE clientId = :clientId
-                    AND source <> 'api' ";
+                    AND !(source <=> 'api') ";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);

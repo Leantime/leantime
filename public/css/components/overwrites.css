@@ -369,5 +369,20 @@ div.growl.growl-medium {
 
 
 :not(pre)>code[class*=language-], pre[class*=language-] {
-    background: #f5f6f7;
+    background: var(--kanban-col-bg);
+}
+
+code[class*=language-], pre[class*=language-] {
+    text-shadow:0px 1px var(--secondary-background);
+}
+
+
+element.style {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+body hr {
+    margin: 20px 0;
+    border: 0;
+    border-bottom: 1px solid var(--main-border-color);
 }
