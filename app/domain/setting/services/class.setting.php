@@ -43,7 +43,7 @@ namespace leantime\domain\services {
             }
         }
 
-        public function saveSettin($key, $value){
+        public function saveSetting($key, $value){
             return $this->settingsRepo->saveSetting($key, $value);
         }
 
