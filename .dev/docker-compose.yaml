@@ -11,6 +11,10 @@ services:
       - "8080:8080"
     volumes:
      - "../:/var/www/html"
+     - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
+     - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - leantime
   db:
