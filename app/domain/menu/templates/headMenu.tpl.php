@@ -18,14 +18,14 @@ if (is_array($currentLink)) {
     <li>
         <a href='<?=BASE_URL ?>/dashboard/home' <?php if ($module == 'dashboard' && $action == 'home') {
             echo"class='active'";
-                 } ?>>
+                 } ?> data-tippy-content="<?=$this->__("popover.home") ?>">
             <?=$this->__("menu.home")?>
         </a>
     </li>
     <li>
         <a href='<?=BASE_URL ?>/projects/showMy' <?php if ($module == 'projects' && $action == 'showMy') {
             echo"class='active'";
-                 } ?>>
+                 } ?> data-tippy-content="<?=$this->__("popover.my_portfolio") ?>">
             <?=$this->__("menu.my_portfolio")?>
         </a>
     </li>
@@ -55,7 +55,7 @@ if (is_array($currentLink)) {
         <li>
             <a href='<?=BASE_URL ?>/timesheets/showMy/' <?php if ($module == 'timesheets' && $action == 'showMy') {
                 echo"class='active'";
-                     } ?>>
+                     } ?> data-tippy-content="<?=$this->__("popover.my_timesheets") ?>">
                 <?=$this->__("menu.my_timesheets")?>
             </a>
         </li>
@@ -63,7 +63,7 @@ if (is_array($currentLink)) {
         <li>
             <a href='<?=BASE_URL ?>/calendar/showMyCalendar' <?php if ($module == 'calendar' && $action == 'showMyCalendar') {
                 echo"class='active'";
-                     } ?>>
+                     } ?> data-tippy-content="<?=$this->__("popover.my_calendar") ?>">
                 <?=$this->__("menu.my_calendar")?>
             </a>
         </li>
@@ -96,7 +96,7 @@ if (is_array($currentLink)) {
             }
         }
         ?>
-        <a href='javascript:void(0);' class="dropdown-toggle profileHandler notificationHandler" data-toggle="dropdown">
+        <a href='javascript:void(0);' class="dropdown-toggle profileHandler notificationHandler" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.notifications") ?>">
             <span class="fa-solid fa-bell"></span>
             <?php if ($notificationCount > 0) {
                 echo "<span class='notificationCounter'>" . $notificationCount . "</span>";
@@ -165,7 +165,7 @@ if (is_array($currentLink)) {
 
     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
         <li class="appsDropdown">
-            <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" >
+            <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.company") ?>">
                 <img src="<?=BASE_URL ?>/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
 
             </a>

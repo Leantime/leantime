@@ -181,6 +181,10 @@ namespace leantime\domain\services {
                 $searchCriteria["groupBy"] = $searchParams["groupBy"];
             }
 
+            if (isset($searchParams["orderBy"]) === true) {
+                $searchCriteria["orderBy"] = $searchParams["orderBy"];
+            }
+
             if (isset($searchParams["priority"]) === true) {
                 $searchCriteria["priority"] = $searchParams["priority"];
             }
@@ -886,6 +890,11 @@ namespace leantime\domain\services {
                     'id' => 'groupByStatusLink',
                     'status' => 'status',
                     'label' => 'todo_status'
+                ],
+                [
+                    'id' => 'groupByPriorityLink',
+                    'status' => 'priority',
+                    'label' => 'priority'
                 ],
                 [
                     'id' => 'groupByMilestoneLink',

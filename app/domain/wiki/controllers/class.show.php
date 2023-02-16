@@ -66,6 +66,25 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
+
+
+            } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
+                $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
+
+                if ($currentArticle) {
+                    $_SESSION['currentWiki'] = $currentArticle->canvasId;
+
+                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
+                        $_SESSION['currentWiki'],
+                        $_SESSION['userdata']['id']
+                    );
+
+                    $_SESSION['lastArticle'] = $currentArticle->id;
+                    $this->tpl->redirect(BASE_URL . "/wiki/show/".$currentArticle->id);
+                }
+
+
+
             } elseif (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0) {
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
 
@@ -82,19 +101,7 @@ namespace leantime\domain\controllers {
 
 
                 //Last Article is set
-            } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
-                $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
 
-                if ($currentArticle) {
-                    $_SESSION['currentWiki'] = $currentArticle->canvasId;
-
-                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        $_SESSION['currentWiki'],
-                        $_SESSION['userdata']['id']
-                    );
-
-                    $_SESSION['lastArticle'] = $currentArticle->id;
-                }
 
             //Nothing is set
             } else {

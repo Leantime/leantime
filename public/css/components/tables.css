@@ -466,3 +466,60 @@
     top:35px;
 }
 
+.listStyleTable td {
+
+}
+
+.maincontentinner .table.listStyleTable {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable td {
+    padding:5px 10px 5px 10px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell {
+    padding:0px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell .dropdown > a {
+    padding:0px 10px 0px 10px !important;
+
+}
+
+.maincontentinner .table.listStyleTable .dtrg-group td {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable tr:hover {
+    box-shadow: none;
+}
+
+
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
+    border-radius: 15px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+}
+
+.maincontentinner .dataTables_wrapper .center .dataTables_paginate {
+    left: auto;
+    right: auto;
+
+    text-align: center;
+    width: 100%;
+}
+
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .f-left {
+    float:none !important;
+}
+
+.maincontentinner .table.listStyleTable .dtrg-start:first-child td{
+    padding-top:0px
+}

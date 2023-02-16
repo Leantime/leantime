@@ -63,6 +63,8 @@ jQuery(document).ready(function(){
     jQuery(".confetti").click(function(){
         confetti.start();
     });
+
+    tippy('[data-tippy-content]');
 });
 
 
