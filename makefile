@@ -31,5 +31,5 @@ clean:
 run-dev: 
 	cd .dev && docker-compose up --build
 
-.PHONY: install-deps build-js build package clean
+.PHONY: install-deps build-js build package clean run-dev
 
