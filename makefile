@@ -28,4 +28,8 @@ package:
 clean:
 	rm -rf $(TARGET_DIR)
 
+run-dev: 
+	cd .dev && docker-compose up --build
+
 .PHONY: install-deps build-js build package clean
+
