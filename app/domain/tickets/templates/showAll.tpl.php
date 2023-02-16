@@ -331,7 +331,8 @@
                 <?php foreach ($allTickets as $rowNum => $row) {?>
                     <tr>
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$this->e($row['headline']); ?>">
+                            <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td class="dropdown-cell" data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -502,7 +503,7 @@
                             $date = $date->format($this->__("language.dateformat"));
                         }
                         ?>
-                        <td data-order="<?=$date?>" >
+                        <td data-order="<?=$row['dateToFinish'] ?>" >
                             <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">

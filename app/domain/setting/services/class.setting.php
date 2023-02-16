@@ -16,10 +16,6 @@ namespace leantime\domain\services {
             $this->settingsRepo = new repositories\setting();
         }
 
-        //GET
-
-
-        //POST
         public function setLogo($file)
         {
 
@@ -45,6 +41,14 @@ namespace leantime\domain\services {
                     return true;
                 }
             }
+        }
+
+        public function saveSetting($key, $value){
+            return $this->settingsRepo->saveSetting($key, $value);
+        }
+
+        public function getSetting($key){
+            return $this->settingsRepo->getSetting($key);
         }
     }
 

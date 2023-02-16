@@ -163,15 +163,14 @@ leantime.generalController = (function () {
                         }
 
                         if (editor.getContent() === '') {
-                            editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                            editor.setContent("<p id='tinyPlaceholder-"+editor.id+"'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
                     });
 
-
                     //and remove it on focus
                     editor.on('focus',function () {
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
                         if (placeholder) {
                             placeholder.remove();
                             editor.setContent("<p></p>");
@@ -179,11 +178,18 @@ leantime.generalController = (function () {
 
                     });
 
-                    editor.on("submit", function(){
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                    editor.on("submit", function(e){
+
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
+
+
                         if (placeholder) {
                             placeholder.remove();
+                            editor.save();
+
+
                         }
+
                     });
                 }
             }
@@ -300,7 +306,7 @@ leantime.generalController = (function () {
 
 
                     //and remove it on focus
-                    editor.on('focus',function () {
+                    editor.on('focus',function (editor) {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
@@ -309,10 +315,14 @@ leantime.generalController = (function () {
 
                     });
 
+
+
                     editor.on("submit", function(){
+
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
                         if (placeholder) {
                             placeholder.remove();
+                            editor.save();
                         }
                     });
                 }

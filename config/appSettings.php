@@ -11,7 +11,7 @@ namespace leantime\core {
     class appSettings
     {
 
-        public $appVersion = "2.3.10";
+        public $appVersion = "2.3.11";
 
         public $dbVersion = "2.1.14";
 

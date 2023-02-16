@@ -48,7 +48,17 @@ namespace leantime\domain\controllers\canvas {
                 $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $allCanvas[0]['id'] ?? -1;
 
                 $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success');
-                $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+
+                $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+
+                //Create default canvas.
+                if($allCanvas == false || count($allCanvas) == 0) {
+                    $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
+                }else{
+                    $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+                }
+
+
             }
 
             $this->tpl->display(static::CANVAS_NAME . 'canvas.delCanvas');

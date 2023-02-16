@@ -313,7 +313,6 @@ if ($numberofColumns > 0) {
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label." . strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
                                                 <div class="kanbanCardContent">
-
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
 
                                                     <div class="kanbanContent" style="margin-bottom: 20px">

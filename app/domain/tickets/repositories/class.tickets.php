@@ -234,6 +234,11 @@ namespace leantime\domain\repositories {
             $newQuery = "IN(" . implode(",", $statusByType["NEW"]) . ")";
             $openTodos = "IN(" . implode(",", array_merge($statusByType["NEW"], $statusByType["INPROGRESS"])) . ")";
 
+            if($doneQuery == "IN()") $doneQuery="IN(FALSE)";
+            if($inProgressQuery == "IN()") $inProgressQuery="IN(FALSE)";
+            if($newQuery == "IN()") $newQuery="IN(FALSE)";
+            if($openTodos == "IN()") $openTodos="IN(FALSE)";
+
             $statusByTypeQuery = array(
                 "DONE" => $doneQuery,
                 "INPROGRESS" => $inProgressQuery,
