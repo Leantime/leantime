@@ -1,4 +1,5 @@
 <?php
+
 /**
  * export class - Template - Export canvas as XML file
  */
@@ -14,12 +15,11 @@ namespace leantime\domain\controllers\canvas {
      */
     class export extends controller
     {
-
         /**
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = '??';
-		protected const CANVAS_TYPE = 'canvas';
+        protected const CANVAS_TYPE = 'canvas';
 
 
         // Internal variables
@@ -40,14 +40,13 @@ namespace leantime\domain\controllers\canvas {
 
             $this->config = \leantime\core\environment::getInstance();
             $this->language = core\language::getInstance();
-            $canvasRepoName = "\\leantime\\domain\\repositories\\".static::CANVAS_NAME.static::CANVAS_TYPE;
+            $canvasRepoName = "\\leantime\\domain\\repositories\\" . static::CANVAS_NAME . static::CANVAS_TYPE;
             $this->canvasRepo = new $canvasRepoName();
 
             $this->canvasTypes = $this->canvasRepo->getCanvasTypes();
             $this->statusLabels = $this->canvasRepo->getStatusLabels();
             $this->relatesLabels = $this->canvasRepo->getRelatesLabels();
             $this->dataLabels = $this->canvasRepo->getDataLabels();
-
         }
 
         /**
@@ -57,17 +56,11 @@ namespace leantime\domain\controllers\canvas {
         {
 
             // Retrieve id of canvas to print
-            if(isset($_GET['id']) === true) {
-
+            if (isset($_GET['id']) === true) {
                 $canvasId = (int)$_GET['id'];
-
-            }
-            elseif(isset($_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'])) {
-
-                $canvasId = $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'];
-
-            }
-            else{
+            } elseif (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
+                $canvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+            } else {
                 return;
             }
 
@@ -77,10 +70,9 @@ namespace leantime\domain\controllers\canvas {
             // Service report
             clearstatcache();
             header("Content-type: application/xml");
-            header('Content-Disposition: attachment; filename="'.static::CANVAS_NAME.static::CANVAS_TYPE.'-'.$canvasId.'.xml"');
+            header('Content-Disposition: attachment; filename="' . static::CANVAS_NAME . static::CANVAS_TYPE . '-' . $canvasId . '.xml"');
             header('Cache-Control: no-cache');
             echo $exportData;
-
         }
 
         /***
@@ -103,10 +95,9 @@ namespace leantime\domain\controllers\canvas {
             !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
 
             // Generate XML data
-            $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'.PHP_EOL.PHP_EOL;
-            $xml .= $this->xmlExport(static::CANVAS_NAME.static::CANVAS_TYPE, $canvasAry[0]['title'], $recordsAry);
+            $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>' . PHP_EOL . PHP_EOL;
+            $xml .= $this->xmlExport(static::CANVAS_NAME . static::CANVAS_TYPE, $canvasAry[0]['title'], $recordsAry);
             return $xml;
-
         }
 
         /**
@@ -123,41 +114,37 @@ namespace leantime\domain\controllers\canvas {
         {
             $is = str_repeat(' ', 4 * $indent);
             $tab = str_repeat(' ', 4);
-            $xml = $is.'<canvas key="'.$canvasKey.'">'.PHP_EOL;
-            $xml .= $is.$tab.'<title>'.$canvasTitle.'</title>'.PHP_EOL;
-            $xml .= $is.$tab.'<content>'.PHP_EOL;
+            $xml = $is . '<canvas key="' . $canvasKey . '">' . PHP_EOL;
+            $xml .= $is . $tab . '<title>' . $canvasTitle . '</title>' . PHP_EOL;
+            $xml .= $is . $tab . '<content>' . PHP_EOL;
 
-            foreach($this->canvasTypes as $key => $data) {
-                $xml .= $is.$tab.$tab.'<element key="'.$key.'">'.PHP_EOL;
+            foreach ($this->canvasTypes as $key => $data) {
+                $xml .= $is . $tab . $tab . '<element key="' . $key . '">' . PHP_EOL;
 
-                foreach($recordsAry as $record) {
+                foreach ($recordsAry as $record) {
+                    if ($record['box'] === $key) {
+                        $xml .= $is . $tab . $tab . $tab . '<item>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<created>' . (isset($record['created']) ? $record['created'] : '') . '</created>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<modified>' . (isset($record['modified']) ? $record['modified'] : '') . '</modified>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<author id="' . $record['author'] . '" firstname="' . (isset($record['authorFirstname']) ? $record['authorFirstname'] : '') . '" ' .
+                             'lastname="' . (isset($record['authorLastname']) ? $record['authorLastname'] : '') . '"/>' . PHP_EOL;
 
-                    if($record['box'] === $key) {
-
-                        $xml .= $is.$tab.$tab.$tab.'<item>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<created>'.(isset($record['created']) ? $record['created'] : '').'</created>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<modified>'.(isset($record['modified']) ? $record['modified'] : '').'</modified>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<author id="'.$record['author'].'" firstname="'.(isset($record['authorFirstname']) ? $record['authorFirstname'] : '').'" '.
-                             'lastname="'.(isset($record['authorLastname']) ? $record['authorLastname'] : '').'"/>'.PHP_EOL;
-
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<description>'.(isset($record['description']) ? $record['description'] : '').'</description>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<status key="'.(isset($record['status']) ? $record['status'] : '').'" />'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<relates key="'.(isset($record['relates']) ? $record['relates'] : '').'" />'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<assumptions>'.(isset($record['assumptions']) ? $record['assumptions'] : '').'</assumptions>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<data>'.(isset($record['data']) ? $record['data'] : '').'</data>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.$tab.'<conclusion>'.(isset($record['conclusion']) ? $record['conclusion'] : '').'</conclusion>'.PHP_EOL;
-                        $xml .= $is.$tab.$tab.$tab.'</item>'.PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<description>' . (isset($record['description']) ? $record['description'] : '') . '</description>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<status key="' . (isset($record['status']) ? $record['status'] : '') . '" />' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<relates key="' . (isset($record['relates']) ? $record['relates'] : '') . '" />' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<assumptions>' . (isset($record['assumptions']) ? $record['assumptions'] : '') . '</assumptions>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<data>' . (isset($record['data']) ? $record['data'] : '') . '</data>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<conclusion>' . (isset($record['conclusion']) ? $record['conclusion'] : '') . '</conclusion>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . '</item>' . PHP_EOL;
                     }
-
                 }
 
-                $xml .= $is.$tab.$tab.'</element>'.PHP_EOL;
+                $xml .= $is . $tab . $tab . '</element>' . PHP_EOL;
             }
-            $xml .= $is.$tab.'</content>'.PHP_EOL;
-            $xml .= $is.'</canvas>'.PHP_EOL;
+            $xml .= $is . $tab . '</content>' . PHP_EOL;
+            $xml .= $is . '</canvas>' . PHP_EOL;
 
             return $xml;
         }
-
     }
 }

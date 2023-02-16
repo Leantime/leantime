@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class newClient extends controller
     {
-
         private $clientRepo;
         private $user;
 
@@ -29,7 +28,6 @@ namespace leantime\domain\controllers {
 
             $this->clientRepo = new repositories\clients();
             $this->user = new repositories\users();
-
         }
 
         /**
@@ -43,8 +41,7 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin], true);
 
             //Only admins
-            if(auth::userIsAtLeast(roles::$admin)) {
-
+            if (auth::userIsAtLeast(roles::$admin)) {
                 $values = array(
                     'name' => '',
                     'street' => '',
@@ -58,7 +55,6 @@ namespace leantime\domain\controllers {
                 );
 
                 if (isset($_POST['save']) === true) {
-
                     $values = array(
                         'name' => ($_POST['name']),
                         'street' => ($_POST['street']),
@@ -73,33 +69,23 @@ namespace leantime\domain\controllers {
 
                     if ($values['name'] !== '') {
                         if ($this->clientRepo->isClient($values) !== true) {
-
                             $id = $this->clientRepo->addClient($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success');
-                            $this->tpl->redirect(BASE_URL."/clients/showClient/".$id);
-
+                            $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id);
                         } else {
-
                             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
                         }
                     } else {
-
                         $this->tpl->setNotification($this->language->__('notification.client_name_not_specified'), 'error');
                     }
-
                 }
 
                 $this->tpl->assign('values', $values);
                 $this->tpl->display('clients.newClient');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 
 }

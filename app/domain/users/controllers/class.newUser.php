@@ -46,13 +46,9 @@ namespace leantime\domain\controllers {
 
             //only Admins
             if (auth::userIsAtLeast(roles::$admin)) {
-
-
-
                 $projectrelation = array();
 
                 if (isset($_POST['save'])) {
-
                     $values = array(
                         'firstname' => ($_POST['firstname']),
                         'lastname' => ($_POST['lastname']),
@@ -64,6 +60,11 @@ namespace leantime\domain\controllers {
                         'status' => '',
                         'clientId' => ($_POST['client'])
                     );
+                    if (isset($_POST['projects']) && is_array($_POST['projects'])) {
+                        foreach ($_POST['projects'] as $project) {
+                            $projectrelation[] = $project;
+                        }
+                    }
 
                     if ($values['user'] !== '') {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
@@ -80,8 +81,6 @@ namespace leantime\domain\controllers {
                                 }
 
                                 $this->tpl->setNotification("notification.user_invited_successfully", 'success');
-
-
                             } else {
                                 $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                             }
@@ -96,10 +95,10 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('values', $values);
                 $clients = new repositories\clients();
 
-                if(isset($_GET['preSelectProjectId'])){
+                if (isset($_GET['preSelectProjectId'])) {
                     $preSelected = explode(",", $_GET['preSelectProjectId']);
 
-                    foreach($preSelected as $item){
+                    foreach ($preSelected as $item) {
                         $projectrelation[] = (int) $item;
                     }
                 }

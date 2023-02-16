@@ -8,7 +8,6 @@ namespace leantime\domain\repositories {
 
     class comments
     {
-
         private $db;
 
         public function __construct()
@@ -17,31 +16,30 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
-        public function getComments($module,$moduleId,$parent = 0,$orderByState="0")
+        public function getComments($module, $moduleId, $parent = 0, $orderByState = "0")
         {
-			$orderBy = "DESC";
+            $orderBy = "DESC";
 
-        	if ($orderByState == 1)
-			{
-				$orderBy = "ASC";
-			}
+            if ($orderByState == 1) {
+                $orderBy = "ASC";
+            }
 
-            $sql = "SELECT 
-					comment.id, 
-					comment.text, 
-					comment.date, 
-					DATE_FORMAT(comment.date, '%Y,%m,%e') AS timelineDate, 
-					comment.moduleId, 
-					comment.userId, 
+            $sql = "SELECT
+					comment.id,
+					comment.text,
+					comment.date,
+					DATE_FORMAT(comment.date, '%Y,%m,%e') AS timelineDate,
+					comment.moduleId,
+					comment.userId,
 					comment.commentParent,
                     comment.status,
-					user.firstname, 
+					user.firstname,
 					user.lastname,
-					user.profileId 
+					user.profileId
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
-				ORDER BY comment.date ".$orderBy;
+				ORDER BY comment.date " . $orderBy;
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
@@ -61,27 +59,26 @@ namespace leantime\domain\repositories {
             $sql = "SELECT count(id) as count
 				FROM zp_comment as comment";
 
-            if($module != null || $moduleId != null){
-                $sql.=" WHERE ";
-                if($module != null) {
-                    $sql.="module = :module AND ";
+            if ($module != null || $moduleId != null) {
+                $sql .= " WHERE ";
+                if ($module != null) {
+                    $sql .= "module = :module AND ";
                 }
 
-                if($moduleId != null) {
-                    $sql.="moduleId = :moduleId AND ";
+                if ($moduleId != null) {
+                    $sql .= "moduleId = :moduleId AND ";
                 }
 
-                $sql.= "1=1";
-
+                $sql .= "1=1";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if($module != null) {
+            if ($module != null) {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
 
-            if($moduleId != null) {
+            if ($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 
@@ -89,9 +86,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['count'])) {
+            if (isset($values['count'])) {
                 return $values['count'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -99,11 +96,11 @@ namespace leantime\domain\repositories {
         public function getReplies($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent,
-					user.firstname, user.lastname, user.profileId   
+					user.firstname, user.lastname, user.profileId
 				FROM zp_comment as comment
-				INNER JOIN zp_user as user ON comment.userId = user.id 
+				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE commentParent = :id";
 
             $stmn = $this->db->database->prepare($sql);
@@ -119,9 +116,9 @@ namespace leantime\domain\repositories {
         public function getComment($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status
-					user.firstname, user.lastname  
+					user.firstname, user.lastname
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE comment.id=:id";
@@ -148,12 +145,19 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-            $stmn->bindValue(':status',  $values['status'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
+
+            $insertId = $this->db->database->lastInsertId();
+
             $stmn->closeCursor();
 
-            return $result;
+            if ($result) {
+                return $insertId;
+            } else {
+                return false;
+            }
         }
 
         public function deleteComment($id)
@@ -182,6 +186,5 @@ namespace leantime\domain\repositories {
 
             return $result;
         }
-
     }
 }

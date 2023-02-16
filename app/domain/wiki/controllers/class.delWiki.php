@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -11,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class delWiki extends controller
     {
-
         private $wikiRepo;
 
         /**
@@ -23,7 +21,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->wikiRepo = new repositories\wiki();
-
         }
 
         /**
@@ -41,18 +38,14 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['del']) && isset($id)) {
-
                 $this->wikiRepo->delWiki($id);
 
                 unset($_SESSION['currentIdeaCanvas']);
                 $this->tpl->setNotification($this->language->__("notification.wiki_deleted"), "success");
-                $this->tpl->redirect(BASE_URL."/wiki/show");
-
+                $this->tpl->redirect(BASE_URL . "/wiki/show");
             }
 
             $this->tpl->displayPartial('wiki.delWiki');
-
         }
-
     }
 }

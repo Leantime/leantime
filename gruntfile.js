@@ -5,6 +5,19 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-exec');
     grunt.initConfig({
         uglify: {
+            footer_scripts: {
+                options: {
+                    sourceMap: true,
+                    sourceMapName: "public/js/jsSourceMapFooterSrc.map",
+                    sourceMapUrl: "jsSourceMapFooterSrc.map",
+                    mangle: false
+                },
+                src: [
+                    "public/js/libs/prism/prism.js",
+
+                ],
+                dest: "public/js/compiled-footer.min.js"
+            },
             app_src: {
                 options: {
                     sourceMap: true,
@@ -14,6 +27,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     "public/js/app/app.js",
+                    "public/js/app/core/modals.js",
                     "public/js/app/core/custom.js",
                     "public/js/app/core/tableHandling.js",
                     "public/js/app/core/wysiwyg.js",
@@ -33,7 +47,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     "node_modules/jquery/dist/jquery.js",
-                    "node_modules/jquery-migrate/dist/jquery-migrate.js",
+                    "node_modules/jquery-migrate/dist/jquery-migrate.min.js",
                     "node_modules/jquery-ui-dist/jquery-ui.js",
                     "node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
                     "node_modules/moment/moment.js",
@@ -45,7 +59,8 @@ module.exports = function (grunt) {
                     "public/js/libs/slimselect.min.js",
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
-                    "public/js/libs/jquery.tagsinput.min.js"
+                    "public/js/libs/jquery.tagsinput.min.js",
+                    "public/js/libs/confetti/js/confetti.js"
 
                 ],
                 dest: "public/js/compiled-base-libs.min.js"
@@ -96,9 +111,12 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/tinymce/plugins/codesample/plugin.js",
+
+
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "node_modules/jstree/dist/jstree.js",
                     "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
+
                     "public/js/libs/tinymce-plugins/helper.js",
                     "public/js/libs/tinymce-plugins/checklist/index.js",
                     "public/js/libs/tinymce-plugins/shortlink/index.js",
@@ -106,6 +124,8 @@ module.exports = function (grunt) {
                     "public/js/libs/tinymce-plugins/bettertable/index.js",
                     "public/js/libs/tinymce-plugins/collapsibleheaders/index.js",
                     "public/js/libs/tinymce-plugins/embed/index.js",
+                    "public/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
+                    "public/js/libs/tinymce-plugins/mention/plugin.js",
 
                     "public/js/libs/fullcalendar.min.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
@@ -113,7 +133,9 @@ module.exports = function (grunt) {
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-                    "public/js/libs/prism/js/prism.js",
+
+
+                    "public/js/libs/uppy/uppy.js",
 
 
                 ]
@@ -165,7 +187,7 @@ module.exports = function (grunt) {
     });
     grunt.registerTask("Build-All", ["less:dev", "uglify", "jshint"]);
 
-    grunt.registerTask("Build-App-Src", ["uglify:app_src", "jshint"]);
+    grunt.registerTask("Build-App-Src", ["uglify:app_src", "uglify:footer_scripts", "jshint"]);
     grunt.registerTask("Build-Base-Lib", ["uglify:base_lib_src"]);
     grunt.registerTask("Build-Extended-Src", ["uglify:extended_lib_src"]);
     grunt.registerTask("Build-Less-Dev", ["less:dev"]);

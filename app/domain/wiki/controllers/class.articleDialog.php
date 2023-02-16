@@ -12,52 +12,53 @@ namespace leantime\domain\controllers {
 
     class articleDialog extends controller
     {
-
-        public function init() {
+        public function init()
+        {
 
             $this->wikiService = new services\wiki();
             $this->ticketService = new services\tickets();
-
         }
 
-        public function get($params) {
+        public function get($params)
+        {
 
             $article = new wiki\article();
             $article->data = "far fa-file-alt";
 
-            if(isset($params['id'])){
+            if (isset($params['id'])) {
                 $article = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
             }
 
             //Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
-                $milestoneId = (int)($params['removeMilestone']);
 
-                $this->articleService->patchArticle($params['id'], array("milestoneId" => ''));
+                $article->milestoneId = "";
+                $results = $this->wikiService->updateArticle($article);
 
-                $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                if ($results) {
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                }
+                
             }
 
-            if($_SESSION['currentWiki'] != '') {
+            if ($_SESSION['currentWiki'] != '') {
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
-            }else{
+            } else {
                 $wikiHeadlines = array();
             }
 
-            $this->tpl->assign("milestones",  $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+            $this->tpl->assign("milestones", $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
             $this->tpl->displayPartial("wiki.articleDialog");
-
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
             $article = new wiki\article();
 
-            if(isset($_GET["id"])){
-
+            if (isset($_GET["id"])) {
                 $id = $_GET["id"];
                 $article = $this->wikiService->getArticle($id, $_SESSION['currentProject']);
 
@@ -71,7 +72,6 @@ namespace leantime\domain\controllers {
                 $article->milestoneId = $params['milestoneId'] ?? '';
 
                 if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
-
                     $params['headline'] = $params['newMilestone'];
                     $params['tags'] = "#ccc";
                     $params['editFrom'] = date("Y-m-d");
@@ -88,17 +88,16 @@ namespace leantime\domain\controllers {
 
                 $results = $this->wikiService->updateArticle($article);
 
-                if($results){
+                if ($results) {
                     $this->tpl->setNotification("notification.article_updated_successfully", "success");
                 }
 
-                if(isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL."/wiki/articleDialog/".$id."?closeModal=1");
-                }else {
-                    $this->tpl->redirect(BASE_URL."/wiki/articleDialog/".$id);
+                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
+                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+                } else {
+                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
                 }
-
-            }else{
+            } else {
                 //New
                 $article->title = $params['title'];
                 $article->author = $_SESSION['userdata']['id'];
@@ -111,24 +110,17 @@ namespace leantime\domain\controllers {
 
                 $id = $this->wikiService->createArticle($article);
 
-                if($id){
+                if ($id) {
                     $this->tpl->setNotification("notification.article_created_successfully", "success");
                 }
 
-                if(isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL."/wiki/articleDialog/".$id."?closeModal=1");
-                }else {
-                    $this->tpl->redirect(BASE_URL."/wiki/articleDialog/".$id);
+                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
+                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+                } else {
+                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
                 }
-
-
-
             }
-
         }
-
     }
 
 }
-
-

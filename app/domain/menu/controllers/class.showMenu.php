@@ -12,7 +12,6 @@ use leantime\core\controller;
 
 class showMenu extends controller
 {
-
     /**
      * run - display template and edit data
      *
@@ -22,8 +21,5 @@ class showMenu extends controller
     {
 
         $this->tpl->displayPartial('menu.showMenu');
-
     }
-
 }
-

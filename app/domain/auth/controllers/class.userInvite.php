@@ -7,10 +7,10 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
+    use \leantime\core\eventhelpers;
 
     class userInvite extends controller
     {
-
         private $fileRepo;
         private $authService;
         private $usersService;
@@ -28,7 +28,6 @@ namespace leantime\domain\controllers {
 
             $this->authService = services\auth::getInstance();
             $this->usersService = new services\users();
-
         }
 
 
@@ -42,17 +41,14 @@ namespace leantime\domain\controllers {
         {
 
 
-            if(isset($_GET["id"]) === true) {
-
+            if (isset($_GET["id"]) === true) {
                 $user = $this->authService->getUserByInviteLink($_GET["id"]);
 
-                if($user) {
-
+                if ($user) {
                     $this->tpl->assign("user", $user);
                     $this->tpl->display('auth.userInvite', 'entry');
-
-                }else{
-                    core\frontcontroller::redirect(BASE_URL."/auth/login");
+                } else {
+                    core\frontcontroller::redirect(BASE_URL . "/auth/login");
                 }
             }
         }
@@ -66,26 +62,20 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($_POST["saveAccount"])) {
-
+            if (isset($_POST["saveAccount"])) {
                 $userInvite = $this->authService->getUserByInviteLink($_GET["id"]);
 
-                if(isset($_POST['password']) === true && isset($_POST['password2']) === true) {
-
-                    if(strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
-
+                if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
+                    if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
                         $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
 
-                        core\frontcontroller::redirect(BASE_URL."/auth/userInvite/".$_GET['id']);
-
-                    }else{
-
+                        core\frontcontroller::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
+                    } else {
                         if ($this->usersService->checkPasswordStrength($_POST['password'])) {
-
-                            if(isset($userInvite['id'])) {
+                            if (isset($userInvite['id'])) {
                                 $user = $this->usersService->getUser($userInvite['id']);
-                            }else{
-                                core\frontcontroller::redirect(BASE_URL."/auth/login");
+                            } else {
+                                core\frontcontroller::redirect(BASE_URL . "/auth/login");
                             }
 
                             $user["firstname"] = $_POST["firstname"];
@@ -94,42 +84,36 @@ namespace leantime\domain\controllers {
                             $user["user"] =  $user["username"];
                             $user["password"] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-                            if($this->usersService->editUser($user, $user["id"])){
-
+                            if ($this->usersService->editUser($user, $user["id"])) {
                                 $this->tpl->setNotification(
                                     $this->language->__('notifications.you_are_active'),
-                                    "success");
+                                    "success"
+                                );
 
-                                core\frontcontroller::redirect(BASE_URL."/auth/login");
+                                self::dispatch_event("userSignupSuccess", ['user' => $user]);
 
-                            }else{
-
+                                core\frontcontroller::redirect(BASE_URL . "/auth/login");
+                            } else {
                                 $this->tpl->setNotification(
                                     $this->language->__('notifications.problem_updating_user'),
-                                    "error");
+                                    "error"
+                                );
 
-                                core\frontcontroller::redirect(BASE_URL."/auth/userInvite/".$_GET['id']);
-
+                                core\frontcontroller::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
                             }
-
-                        }else{
-
+                        } else {
                             $this->tpl->setNotification(
                                 $this->language->__("notification.password_not_strong_enough"),
                                 'error'
                             );
 
-                            core\frontcontroller::redirect(BASE_URL."/auth/userInvite/".$_GET['id']);
-
+                            core\frontcontroller::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
                         }
-
                     }
-
                 }
             }
 
-            core\frontcontroller::redirect(BASE_URL."/auth/userInvite/");
-
+            core\frontcontroller::redirect(BASE_URL . "/auth/userInvite/");
         }
     }
 

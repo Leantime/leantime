@@ -1,5 +1,5 @@
 <?php
-    defined( 'RESTRICTED' ) or die( 'Restricted access' );
+    defined('RESTRICTED') or die('Restricted access');
 ?>
 
 <?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
@@ -20,8 +20,8 @@
         <?php echo $this->displayNotification() ?>
 
         <?php
-        if($login::userIsAtLeast('manager')){
-        echo $this->displayLink('clients.newClient', "<i class='fa fa-plus'></i> ".$this->__('link.new_client'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
+        if ($login::userIsAtLeast('manager')) {
+            echo $this->displayLink('clients.newClient', "<i class='fa fa-plus'></i> " . $this->__('link.new_client'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
         <?php } ?>
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
@@ -40,7 +40,7 @@
             </thead>
             <tbody>
 
-            <?php foreach($this->get('allClients') as $row) { ?>
+            <?php foreach ($this->get('allClients') as $row) { ?>
                 <tr>
                     <td><?php echo $row['id']; ?></td>
                     <td>
@@ -65,12 +65,6 @@
 
         leantime.clientsController.initClientTable();
 
-        <?php if(isset($_SESSION['userdata']['settings']["modals"]["showClients"]) === false || $_SESSION['userdata']['settings']["modals"]["showClients"] == 0) {     ?>
-        leantime.helperController.showHelperModal("showClients");
-        <?php
-        //Only show once per session
-        $_SESSION['userdata']['settings']["modals"]["showClients"] = 1;
-        } ?>
 
     });
 

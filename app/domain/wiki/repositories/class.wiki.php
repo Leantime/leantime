@@ -8,8 +8,6 @@ namespace leantime\domain\repositories {
 
     class wiki
     {
-
-
         /**
          * __construct - get database connection
          *
@@ -48,28 +46,28 @@ namespace leantime\domain\repositories {
                     SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
                     SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
                     COUNT(progressTickets.id) AS allTickets,
-                    CASE WHEN 
-                      COUNT(progressTickets.id) > 0 
-                    THEN 
+                    CASE WHEN
+                      COUNT(progressTickets.id) > 0
+                    THEN
                       ROUND(
                         (
-                          SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) / 
+                          SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
                           SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                        ) *100) 
-                    ELSE 
-                      0 
+                        ) *100)
+                    ELSE
+                      0
                     END AS percentDone
 
-				FROM zp_canvas_items 
+				FROM zp_canvas_items
 				LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
 				LEFT JOIN zp_user ON zp_canvas_items.author = zp_user.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask' 
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 
-            if($id>0) {
+            if ($id > 0) {
                 $query .= " AND zp_canvas_items.id = :id";
-            }else if($id==-1) {
+            } elseif ($id == -1) {
                 $query .= " AND featured = 1";
             }
 
@@ -77,7 +75,7 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            if($id>0) {
+            if ($id > 0) {
                 $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             }
 
@@ -93,14 +91,14 @@ namespace leantime\domain\repositories {
         public function getAllProjectWikis($projectId)
         {
             $query = "SELECT
-					
+
                     zp_canvas.id,
                     zp_canvas.title,
                     zp_canvas.author,
                     zp_canvas.created
-                
-				FROM zp_canvas 
-			
+
+				FROM zp_canvas
+
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas.type = 'wiki'";
 
 
@@ -120,14 +118,15 @@ namespace leantime\domain\repositories {
         public function getWiki($id)
         {
             $query = "SELECT
-					
+
                     zp_canvas.id,
                     zp_canvas.title,
                     zp_canvas.author,
-                    zp_canvas.created
-                
-				FROM zp_canvas 
-			
+                    zp_canvas.created,
+                    zp_canvas.projectId
+
+				FROM zp_canvas
+
 				WHERE zp_canvas.id = :id AND zp_canvas.type = 'wiki'";
 
 
@@ -144,19 +143,20 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllWikiHeadlines($canvasId, $userId) {
+        public function getAllWikiHeadlines($canvasId, $userId)
+        {
             $query = "SELECT
-					
+
                     id,
                     title,
                     parent,
                     sortindex,
                     status,
                     data
-                    
-				FROM zp_canvas_items 
-			
-				WHERE canvasId = :canvasId 
+
+				FROM zp_canvas_items
+
+				WHERE canvasId = :canvasId
 				  AND box = 'article' AND (status = 'published' OR (status = 'draft' AND author = :authorId) )
 				ORDER BY parent DESC, sortindex DESC";
 
@@ -175,17 +175,18 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function createWiki($wiki) {
+        public function createWiki($wiki)
+        {
 
-            $query = "INSERT INTO zp_canvas 
-                    (title, 
-                     projectId, 
+            $query = "INSERT INTO zp_canvas
+                    (title,
+                     projectId,
                      author,
                      created,
-                     type) VALUES 
-                     (:title, 
-                      :projectId, 
-                      :author, 
+                     type) VALUES
+                     (:title,
+                      :projectId,
+                      :author,
                       :created,
                       'wiki')";
 
@@ -193,7 +194,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $wiki->projectId, PDO::PARAM_STR);
             $stmn->bindValue(':author', $wiki->author, PDO::PARAM_STR);
-            $stmn->bindValue(':created',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':created', date("Y-m-d"), PDO::PARAM_STR);
 
             $execution = $stmn->execute();
 
@@ -203,11 +204,12 @@ namespace leantime\domain\repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateWiki($wiki, $wikiId){
+        public function updateWiki($wiki, $wikiId)
+        {
 
             $query = "UPDATE zp_canvas
-                     
-                        SET 
+
+                        SET
                      title = :title
 
                         WHERE id = :id LIMIT 1";
@@ -223,11 +225,12 @@ namespace leantime\domain\repositories {
             return $execution;
         }
 
-        public function createArticle(article $article) {
+        public function createArticle(article $article)
+        {
 
-            $query = "INSERT INTO zp_canvas_items 
-                    (title, 
-                     description, 
+            $query = "INSERT INTO zp_canvas_items
+                    (title,
+                     description,
                      data,
                      box,
                      author,
@@ -238,10 +241,10 @@ namespace leantime\domain\repositories {
                      created,
                      modified,
                      sortIndex
-                     ) VALUES 
+                     ) VALUES
                      (
-                     :title, 
-                     :description, 
+                     :title,
+                     :description,
                      :data,
                      'article',
                      :author,
@@ -263,8 +266,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
             $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
             $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':created',date("Y-m-d"), PDO::PARAM_STR);
-            $stmn->bindValue(':modified',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':created', date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d"), PDO::PARAM_STR);
             $stmn->bindValue(':sortIndex', "10", PDO::PARAM_STR);
 
             $execution = $stmn->execute();
@@ -274,17 +277,18 @@ namespace leantime\domain\repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateArticle(article $article) {
+        public function updateArticle(article $article)
+        {
 
-            $query = "UPDATE zp_canvas_items 
-                     
-                        SET 
+            $query = "UPDATE zp_canvas_items
+
+                        SET
                      title = :title,
-                     description = :description, 
+                     description = :description,
                      data = :data,
                      parent = :parent,
                      tags = :tags,
-                     status = :status, 
+                     status = :status,
                      modified = :modified,
                      milestoneId = :milestoneId
 
@@ -297,7 +301,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
             $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
             $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':modified',date("Y-m-d"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d"), PDO::PARAM_STR);
             $stmn->bindValue(':id', $article->id, PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $article->milestoneId, PDO::PARAM_STR);
 
@@ -306,7 +310,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $execution;
-
         }
 
         public function delArticle($id)
@@ -338,8 +341,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
-
         }
-
     }
 }

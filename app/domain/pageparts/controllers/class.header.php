@@ -80,28 +80,42 @@ namespace leantime\domain\controllers {
 
             //Session Logo Path needs to be set here
             //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
-            unset($_SESSION["companysettings.logoPath"]);
-
             if (isset($_SESSION["companysettings.logoPath"]) === false) {
                 $logoPath = "";
 
-                if ($themeLogoPathIni !== false && file_exists(ROOT . $themeLogoPathIni)) {
-                    $logoPath = BASE_URL . $themeLogoPathIni;
+                if (
+                    $themeLogoPathIni !== false
+                    && (file_exists(ROOT . $themeLogoPathIni) || str_starts_with($themeLogoPathIni, "http"))
+                ) {
+                    $logoPath = $themeLogoPathIni;
                 }
 
-                if ($companyDefaultLogoConfig !== false && file_exists(ROOT . $companyDefaultLogoConfig)) {
-                    $logoPath = BASE_URL . $companyDefaultLogoConfig;
+                if (
+                    $companyDefaultLogoConfig !== false
+                    && (file_exists(ROOT . $companyDefaultLogoConfig) || str_starts_with($companyDefaultLogoConfig, "http"))
+                ) {
+                    $logoPath = $companyDefaultLogoConfig;
                 }
 
-                if ($companyLogoPathSettings !== false && file_exists(ROOT . $companyLogoPathSettings)) {
-                    $logoPath = BASE_URL . $companyLogoPathSettings;
+                if (
+                    $companyLogoPathSettings !== false
+                    && (file_exists(ROOT . $companyLogoPathSettings) || str_starts_with($companyLogoPathSettings, "http"))
+                ) {
+                    $logoPath = $companyLogoPathSettings;
                 }
 
-                if ($themeLogoPathSettings !== false && file_exists(ROOT . $themeLogoPathSettings)) {
-                    $logoPath = BASE_URL . $themeLogoPathSettings;
+                if (
+                    $themeLogoPathSettings !== false
+                    && (file_exists(ROOT . $themeLogoPathSettings) || str_starts_with($themeLogoPathSettings, "http"))
+                ) {
+                    $logoPath = $themeLogoPathSettings;
                 }
 
-                $_SESSION["companysettings.logoPath"] = $logoPath;
+                if (str_starts_with($logoPath, "http")) {
+                    $_SESSION["companysettings.logoPath"] = $logoPath;
+                } else {
+                    $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
+                }
             }
 
             // Set colors to use

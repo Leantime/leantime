@@ -11,14 +11,14 @@ namespace leantime\domain\controllers {
 
     class showMyList extends controller
     {
-
-        public function init() {
+        public function init()
+        {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
             $this->timesheetService = new services\timesheets();
 
-            $_SESSION['lastPage'] = BASE_URL."/timesheets/showMyList";
+            $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
         }
 
         /**
@@ -38,34 +38,25 @@ namespace leantime\domain\controllers {
             $kind = 'all';
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
-
                 $kind = ($_POST['kind']);
-
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
                 $dateFrom =  $this->language->getISODateString($_POST['dateFrom']);
-
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
                 $dateTo =  $this->language->getISODateString($_POST['dateTo']);
-
             }
 
             $this->tpl->assign('dateFrom', $dateFrom);
             $this->tpl->assign('dateTo', $dateTo);
             $this->tpl->assign('actKind', $kind);
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
-            $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0, "-1" ,0));
+            $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0, "-1", 0));
 
             $this->tpl->display('timesheets.showMyList');
-
-
         }
-
     }
 
 }

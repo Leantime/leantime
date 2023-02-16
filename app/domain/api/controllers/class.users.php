@@ -35,18 +35,35 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+            if (isset($params['assignedProjectUsersAssigned'])) {
+            }
+
+            if (isset($params['projectUsersAccess'])) {
+                if ($params['projectUsersAccess'] == 'current') {
+                    $projectId = $_SESSION['currentProject'];
+                } else {
+                    $projectId = $params['projectUsersAccess'];
+                }
+
+                $users = $this->usersService->getUsersWithProjectAccess($_SESSION['userdata']['id'], $projectId);
+
+                $this->tpl->displayJson(json_encode($users));
+
+                return;
+            }
+
             if (isset($params["profileImage"])) {
                 //var_dump("asdf");
 
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
-                if(is_string($return)){
 
+                if (is_string($return)) {
                     $this->tpl->redirect($return);
-
-                }else {
-                    header('Content-Type: image/jpeg');
-                    echo $return;
+                } else if(is_object($return)){
+                    header('Content-type: image/svg+xml');
+                    echo $return->toXMLString();
                 }
             }
         }

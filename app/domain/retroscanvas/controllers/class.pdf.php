@@ -1,15 +1,17 @@
 <?php
+
 /**
  * HTML code for PDF report
  */
-namespace leantime\domain\controllers {
-  
-	use leantime\domain\repositories;
-	
-    class pdf extends \leantime\domain\controllers\canvas\pdf {
 
-		protected const CANVAS_NAME = 'retros';
-        
+namespace leantime\domain\controllers {
+
+    use leantime\domain\repositories;
+
+    class pdf extends \leantime\domain\controllers\canvas\pdf
+    {
+        protected const CANVAS_NAME = 'retros';
+
         /***
          * reportGenerate - Generate report for module
          *
@@ -22,10 +24,7 @@ namespace leantime\domain\controllers {
         {
 
             $options = [ 'canvasShow' => false ];
-			return parent::reportGenerate($id, $filter, $options);
-
+            return parent::reportGenerate($id, $filter, $options);
         }
-    
     }
 }
-?>

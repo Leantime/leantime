@@ -161,7 +161,12 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            if($userId == ''){
+                $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            }else{
+                $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            }
+
             if ($clientId != "") {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
@@ -340,10 +345,12 @@ namespace leantime\domain\repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
-                    zp_user.status
+                    zp_user.status,
+                    zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
+				WHERE zp_relationuserproject.projectId = :projectId AND
+                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -458,38 +465,15 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        /**
-         * getOpenTickets - get all open tickets related to a project
-         *
-         * @access public
-         * @param  $id
-         * @return array
-         */
-        public function getOpenTickets($id): array|bool
-        {
-
-            $query = "SELECT
-                        COUNT(zp_tickets.status) AS openTickets
-                    FROM zp_tickets
-                    WHERE zp_tickets.projectId = :id AND zp_tickets.status > 0";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return $values;
-        }
 
         /**
          * addProject - add a project to a client
          *
          * @access public
          * @param array|bool $values
+         * @return int|bool returns new project id on success, false on failure.
          */
-        public function addProject($values): array|bool
+        public function addProject($values): int|bool
         {
 
             $query = "INSERT INTO `zp_projects` (
@@ -523,13 +507,13 @@ namespace leantime\domain\repositories {
             $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
 
             //Add users to relation
-            /* if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-
-              foreach ($values['assignedUsers'] as $userId) {
-              $this->addProjectRelation($userId, $projectId);
-              }
-
-              } */
+            if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
+                foreach ($values['assignedUsers'] as $user) {
+                    if (is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
+                        $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                    }
+                }
+            }
 
             return $projectId;
         }
@@ -689,7 +673,8 @@ namespace leantime\domain\repositories {
             $user = $userRepo->getUser($userId);
 
             //admins owners and managers can access everything
-            if (roles::getRoles()[$user['role']] == roles::$admin || roles::getRoles()[$user['role']] == roles::$owner || roles::getRoles()[$user['role']] == roles::$manager) {
+            if (in_array(roles::getRoleString($user['role']), array(roles::$admin, roles::$owner, roles::$manager)))
+            {
                 return true;
             }
 
@@ -739,6 +724,7 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
+				zp_user.username,
 				zp_user.firstname,
 				zp_user.lastname,
 				zp_user.profileId,
@@ -769,7 +755,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return bool
          */
         public function editUserProjectRelations($id, $projects)
         {
@@ -807,6 +793,8 @@ namespace leantime\domain\repositories {
                     }
                 }
             }
+
+            return true;
         }
 
         public function deleteProjectRelation($userId, $projectId)

@@ -32,8 +32,8 @@
     --main-action-hover-bg: var(--accent1-hover);
     --main-action-hover-color: var(--accent1-color);
 
-    --secondary-action-bg: var(--accent2);
-    --secondary-action-color: var(--accent2-color);
+    --secondary-action-bg: var(--primary-background);
+    --secondary-action-color: var(--primary-font-color);
     --secondary-action-hover-bg: var(--accent2-hover);
     --secondary-action-hover-color: var(--accent2-color);
 
@@ -87,13 +87,11 @@
     --kanban-card-hover: var(--primary-background);
 
 
-    /* Status Colors */
-
     --dark-red:#D61B0A;
     --dark-red-text-color:#fff;
 
     --red: #F76C5E;
-    --red-text-color: #fff;
+    --red-text-color: #000;
 
     --green: #32965D;
     --green-text-color: #fff;
@@ -102,28 +100,31 @@
     --dark-green-text-color:#fff;
 
     --yellow: #FDB833;
-    --yellow-text-color: #fff;
+    --yellow-text-color: #000;
 
     --blue: #1B75BB;
     --blue-text-color: #fff;
 
     --dark-blue:#124F7D;
-    --dark-blue-text: #fff;
+    --dark-blue-text-color: #fff;
 
     --darker-blue:#082236;
-    --darker-blue-text: #fff;
+    --darker-blue-text-color: #fff;
 
     --purple:#5F0F40;
     --purple-text-color:#fff;
 
     --pink: #F26CA7;
-    --pink-text-color:#fff;
+    --pink-text-color:#000;
 
     --brown: #4C212A;
     --brown-text-color: #fff;
 
     --grey: #b0b0b0;
-    --grey-text-color:#fff;
+    --grey-text-color:#000;
+
+    --dark-grey: #707070;
+    --dark-grey-text-color: #fff;
 
 
 

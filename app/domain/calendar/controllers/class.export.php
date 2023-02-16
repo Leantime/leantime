@@ -14,15 +14,16 @@ namespace leantime\domain\controllers {
     use leantime\domain\services\auth;
     use Ramsey\Uuid\Uuid;
 
-    class export extends controller {
-
+    class export extends controller
+    {
         private $config;
         private $settingsRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init() {
+        public function init()
+        {
 
             $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
@@ -33,10 +34,10 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function run() {
+        public function run()
+        {
 
             if (isset($_GET['remove'])) {
-
                 $this->settingsRepo->deleteSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
 
                 $this->tpl->setNotification("notifications.ical_removed_success", "success");
@@ -44,7 +45,6 @@ namespace leantime\domain\controllers {
 
             //Add Post handling
             if (isset($_POST['generateUrl'])) {
-
                 $uuid = Uuid::uuid4();
                 $icalHash = $uuid->toString();
 
@@ -71,7 +71,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->displayPartial("calendar.export");
         }
-
     }
 
 }

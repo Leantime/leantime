@@ -9,7 +9,7 @@
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
         <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><?php echo sprintf($this->__('headline.project'),$this->escape($project['name'])); ?>
+        <h1><?php echo sprintf($this->__('headline.project'), $this->escape($project['name'])); ?>
         </h1>
     </div>
 </div><!--pageheader-->
@@ -65,9 +65,7 @@
                             </div>
 
                              <div class="row">
-                                <?php foreach($project['assignedUsers'] as $userId => $assignedUser){?>
-
-
+                                <?php foreach ($project['assignedUsers'] as $userId => $assignedUser) {?>
                                     <div class="col-md-4">
                                         <div class="userBox">
                                             <input type='checkbox' name='editorId[]' id="user-<?php echo $userId ?>" value='<?php echo $userId ?>'
@@ -76,35 +74,36 @@
                                             <div class="commentImage">
                                                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
                                             </div>
-                                            <label for="user-<?php echo $userId ?>" ><?php printf( $this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?> <?php if($assignedUser['status'] == 'i') {echo "<small>(".$this->__('label.invited').")</small>";} ?></label>
+                                            <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?> <?php if ($assignedUser['status'] == 'i') {
+                                                echo "<small>(" . $this->__('label.invited') . ")</small>";
+                                                             } ?></label>
                                             <?php
-                                            if(($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
-                                                <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$assignedUser['role']]) ?>" />
-                                            <?php }else{ ?>
-
+                                            if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
+                                                <input type="text" readonly disabled value="<?php echo $this->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
+                                            <?php } else { ?>
                                                 <select name="userProjectRole-<?php echo $userId ?>">
                                                     <option value="inherit">Inherit</option>
                                                     <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+                                                    ><?php echo $this->__("label.roles." . $roles::$readonly) ?></option>
 
                                                     <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                    ><?php echo $this->__("label.roles." . $roles::$commenter) ?></option>
                                                     <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
-                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
+                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                    ><?php echo $this->__("label.roles." . $roles::$editor) ?></option>
                                                     <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
-                                                        <?php if($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
+                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                    ><?php echo $this->__("label.roles." . $roles::$manager) ?></option>
                                                 </select>
                                             <?php } ?>
                                             <div class="clearall"></div>
@@ -124,9 +123,8 @@
                             </div>
 
                              <div class="row">
-                                <?php foreach($this->get('availableUsers') as $row){ ?>
-                                    <?php if(!isset($project['assignedUsers'][$row['id']])) { ?>
-
+                                <?php foreach ($this->get('availableUsers') as $row) { ?>
+                                    <?php if (!isset($project['assignedUsers'][$row['id']])) { ?>
                                         <div class="col-md-4">
                                             <div class="userBox">
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
@@ -134,34 +132,33 @@
                                                 <div class="commentImage">
                                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>"/>
                                                 </div>
-                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
-                                                <?php if($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
-                                                    <input type="text" readonly disabled value="<?php echo $this->__("label.roles.".$roles::getRoles()[$row['role']]) ?>" />
-                                                <?php }else{ ?>
-
+                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
+                                                <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
+                                                    <input type="text" readonly disabled value="<?php echo $this->__("label.roles." . $roles::getRoles()[$row['role']]) ?>" />
+                                                <?php } else { ?>
                                                     <select name="userProjectRole-<?php echo $row['id'] ?>">
                                                         <option value="inherit">Inherit</option>
                                                         <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                        <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                        <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                            ><?php echo $this->__("label.roles.".$roles::$readonly) ?></option>
+                                                            ><?php echo $this->__("label.roles." . $roles::$readonly) ?></option>
 
                                                         <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles.".$roles::$commenter) ?></option>
+                                                        ><?php echo $this->__("label.roles." . $roles::$commenter) ?></option>
                                                         <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
-                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
+                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles.".$roles::$editor) ?></option>
+                                                        ><?php echo $this->__("label.roles." . $roles::$editor) ?></option>
                                                         <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
-                                                            <?php if(isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
+                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles.".$roles::$manager) ?></option>
+                                                        ><?php echo $this->__("label.roles." . $roles::$manager) ?></option>
                                                     </select>
                                                 <?php } ?>
                                                 <div class="clearall"></div>
@@ -171,8 +168,7 @@
 
 
 
-                                <?php }
-
+                                    <?php }
                                 } ?>
                                  <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
                                      <div class="col-md-4">
@@ -205,6 +201,9 @@
 
             <div id="files">
 
+                <?php $this->displaySubmodule('files-showAll'); ?>
+
+                <?php /*
                 <div class="mediamgr_category">
                             <form action='#files' method='POST' enctype="multipart/form-data" id="fileForm">
 
@@ -269,6 +268,7 @@
 
                 </div><!--mediamgr_content-->
                 <div style='clear:both'>&nbsp;</div>
+ */ ?>
 
             </div><!-- end files -->
 
@@ -277,7 +277,7 @@
                 <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', BASE_URL."/projects/showProject/".$project['id']."");
+                    $this->assign('formUrl', BASE_URL . "/projects/showProject/" . $project['id'] . "");
                     $this->displaySubmodule('comments-generalComment') ;
                     ?>
                 </form>
@@ -368,7 +368,7 @@
                     <div class="col-md-4">
                         <strong><?= $this->__('label.webhook_url'); ?></strong><br/>
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <?php for ($i = 1; 3 >= $i ; $i++): ?>
+                            <?php for ($i = 1; 3 >= $i; $i++) : ?>
                             <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $this->__('input.placeholders.discord_url'); ?>" value="<?php echo $this->get('discordWebhookURL' . $i); ?>"/><br/>
                             <?php endfor; ?>
                             <input type="submit" value="<?= $this->__('buttons.save'); ?>" name="discordSave"/>
@@ -381,8 +381,7 @@
             <div id="todosettings">
                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
                     <ul class="sortableTicketList" id="todoStatusList">
-                        <?php foreach($this->get('todoStatus') as $key => $ticketStatus) { ?>
-
+                        <?php foreach ($this->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
                                 <div class="ticketBox">
                                     <div class="row statusList" id="todostatus-<?=$key?>">
@@ -403,18 +402,18 @@
                                         <div class="col-md-2">
                                             <label><?=$this->__("label.color") ?></label>
                                             <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
-                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class']=='label-purple'?'selected="selected"':""; ?>><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
-                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class']=='label-pink'?'selected="selected"':""; ?>><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
-                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class']=='label-darker-blue'?'selected="selected"':""; ?>><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
-                                                <option value="label-info" class="label-info" <?=$ticketStatus['class']=='label-info'?'selected="selected"':""; ?>><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
-                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class']=='label-blue'?'selected="selected"':""; ?>><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
-                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class']=='label-dark-green'?'selected="selected"':""; ?>><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
-                                                <option value="label-success" class="label-success" <?=$ticketStatus['class']=='label-success'?'selected="selected"':""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
-                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class']=='label-warning'?'selected="selected"':""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
-                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class']=='label-brown'?'selected="selected"':""; ?>><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
-                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class']=='label-danger'?'selected="selected"':""; ?>><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
-                                                <option value="label-important" class="label-important" <?=$ticketStatus['class']=='label-important'?'selected="selected"':""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
-                                                <option value="label-default" class="label-default" <?=$ticketStatus['class']=='label-default'?'selected="selected"':""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
+                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : ""; ?>><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
+                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : ""; ?>><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
+                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : ""; ?>><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
+                                                <option value="label-info" class="label-info" <?=$ticketStatus['class'] == 'label-info' ? 'selected="selected"' : ""; ?>><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
+                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class'] == 'label-blue' ? 'selected="selected"' : ""; ?>><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
+                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class'] == 'label-dark-green' ? 'selected="selected"' : ""; ?>><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
+                                                <option value="label-success" class="label-success" <?=$ticketStatus['class'] == 'label-success' ? 'selected="selected"' : ""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
+                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class'] == 'label-warning' ? 'selected="selected"' : ""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
+                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class'] == 'label-brown' ? 'selected="selected"' : ""; ?>><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
+                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class'] == 'label-danger' ? 'selected="selected"' : ""; ?>><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
+                                                <option value="label-important" class="label-important" <?=$ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
+                                                <option value="label-default" class="label-default" <?=$ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
 
 
 
@@ -423,14 +422,14 @@
                                         <div class="col-md-2">
                                             <label><?=$this->__("label.reportType") ?></label>
                                             <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
-                                                <option value="NEW" <?=($ticketStatus['statusType']=='NEW')?'selected="selected"':""; ?>><?=$this->__('status.new'); ?></option>
-                                                <option value="INPROGRESS" <?=($ticketStatus['statusType']=='INPROGRESS')?'selected="selected"':""; ?>><?=$this->__('status.in_progress'); ?></option>
-                                                <option value="DONE" <?=($ticketStatus['statusType']=='DONE')?'selected="selected"':""; ?>><?=$this->__('status.done'); ?></option>
+                                                <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$this->__('status.new'); ?></option>
+                                                <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$this->__('status.in_progress'); ?></option>
+                                                <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$this->__('status.done'); ?></option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label for=""><?=$this->__('label.showInKanban'); ?></label>
-                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol']==true)?'checked="checked"':""; ?>/>
+                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol'] == true) ? 'checked="checked"' : ""; ?>/>
                                         </div>
                                         <div class="remove">
                                             <br />
@@ -494,6 +493,7 @@
                 <option value="NEW"><?=$this->__('status.new'); ?></option>
                 <option value="INPROGRESS"><?=$this->__('status.in_progress'); ?></option>
                 <option value="DONE"><?=$this->__('status.done'); ?></option>
+                <option value="NONE"><?=$this->__('status.dont_report'); ?></option>
             </select>
         </div>
         <div class="col-md-2">
@@ -511,7 +511,7 @@
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
-        <?php if(isset($_GET['integrationSuccess'])) {?>
+        <?php if (isset($_GET['integrationSuccess'])) {?>
             window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
         <?php } ?>
 
@@ -521,15 +521,6 @@
         leantime.projectsController.initSelectFields();
         leantime.usersController.initUserEditModal();
 
-        <?php
-        if(isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {
-        ?>
-            leantime.helperController.showHelperModal("projectSuccess");
-
-        <?php
-            $_SESSION['tourActive'] = false;
-        }
-        ?>
     });
 
 </script>

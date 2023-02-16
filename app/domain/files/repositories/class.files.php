@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -6,10 +7,9 @@ namespace leantime\domain\repositories {
 
     class files
     {
+        private $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
 
-        private $adminModules = array('project'=>'Projects','ticket'=>'Tickets','client'=>'Clients','lead' => 'Lead','private'=>'General'); // 'user'=>'Users',
-
-        private $userModules = array('project'=>'Projects','ticket'=>'Tickets','private'=>'General');
+        private $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
 
         public function __construct()
         {
@@ -30,7 +30,7 @@ namespace leantime\domain\repositories {
             return $modules;
         }
 
-        public function addFile($values,$module)
+        public function addFile($values, $module)
         {
 
 
@@ -52,15 +52,14 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $this->db->database->lastInsertId();
-
         }
 
         public function getFile($id)
         {
 
-            $sql = "SELECT 
+            $sql = "SELECT
 					file.id, file.extension, file.realName, file.encName, file.date, file.module, file.moduleId,
-					user.firstname, user.lastname 
+					user.firstname, user.lastname
 				FROM zp_file as file
 				INNER JOIN zp_user as user ON file.userId = user.id
 				WHERE file.id=:id";
@@ -78,14 +77,14 @@ namespace leantime\domain\repositories {
         public function getFiles($userId = 0)
         {
 
-            $sql = "SELECT 
-					file.id, file.moduleId, file.extension, file.realName, file.encName, file.date, file.module, 
-					user.firstname, user.lastname  
+            $sql = "SELECT
+					file.id, file.moduleId, file.extension, file.realName, file.encName, file.date, file.module,
+					user.firstname, user.lastname
 				FROM zp_file as file
 				INNER JOIN zp_user as user ON file.userId = user.id ";
 
             if ($userId && $userId > 0) {
-                $sql .= " WHERE file.userId = ".$userId;
+                $sql .= " WHERE file.userId = " . $userId;
             }
 
             $sql .= " ORDER BY file.module, file.moduleId";
@@ -104,28 +103,28 @@ namespace leantime\domain\repositories {
             $folders = array();
             $files = $this->getFiles($_SESSION['userdata']['id'], true);
 
-            switch($module) {
-            case 'ticket':
-                $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                break;
-            case 'client':
-                $sql = "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1";
-                break;
-            case 'project':
-                $sql = "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1";
-                break;
-            case 'lead':
-                $sql = "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1";
-                break;
-            default:
-                $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                break;
+            switch ($module) {
+                case 'ticket':
+                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
+                    break;
+                case 'client':
+                    $sql = "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1";
+                    break;
+                case 'project':
+                    $sql = "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1";
+                    break;
+                case 'lead':
+                    $sql = "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1";
+                    break;
+                default:
+                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
+                    break;
             }
 
             $stmn = $this->db->database->prepare($sql);
 
             $ids = array();
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $stmn->bindValue(':moduleId', $file['moduleId'], PDO::PARAM_STR);
                 $stmn->execute();
                 if (!isset($ids[$file['moduleId']])) {
@@ -142,42 +141,42 @@ namespace leantime\domain\repositories {
         public function getFilesByModule($module = '', $moduleId = null, $userId = 0)
         {
 
-            $sql = "SELECT 
-					file.id, 
-					file.extension, 
-					file.realName, 
-					file.encName, 
-					file.date, 
-					DATE_FORMAT(file.date,  '%Y,%m,%e') AS timelineDate, 
-					file.module, 
+            $sql = "SELECT
+					file.id,
+					file.extension,
+					file.realName,
+					file.encName,
+					file.date,
+					DATE_FORMAT(file.date,  '%Y,%m,%e') AS timelineDate,
+					file.module,
 					file.moduleId,
-					user.firstname, 
+					user.firstname,
 					user.lastname,
 					user.id AS userId
 				FROM zp_file as file
-				
+
 				INNER JOIN zp_user as user ON file.userId = user.id ";
 
-            if ($module!='') {
+            if ($module != '') {
                 $sql .= " WHERE file.module=:module ";
             } else {
                 $sql .= " WHERE file.module <> '' ";
             }
 
-            if ($moduleId!=null) {
+            if ($moduleId != null) {
                 $sql .= " AND moduleId=:moduleId";
             }
 
-            if($userId && $userId > 0) {
-                $sql .= " AND userId=".$userId;
+            if ($userId && $userId > 0) {
+                $sql .= " AND userId=" . $userId;
             }
 
             $stmn = $this->db->database->prepare($sql);
-            if ($module!='') {
+            if ($module != '') {
                 $stmn->bindValue(':module', $module, PDO::PARAM_STR);
             }
 
-            if ($moduleId!=null) {
+            if ($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 
@@ -201,8 +200,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             if (isset($values['encName']) && isset($values['extension'])) {
-
-	            $file = ROOT . '/../userfiles/'.$values['encName'].'.'.$values['extension'];
+                $file = ROOT . '/../userfiles/' . $values['encName'] . '.' . $values['extension'];
                 if (file_exists($file)) {
                     unlink($file);
                 }
@@ -215,11 +213,18 @@ namespace leantime\domain\repositories {
 
             return $stmn->execute();
             $stmn->closeCursor();
-
         }
 
-        public function upload($file,$module,$moduleId)
+        public function upload($file, $module, $moduleId)
         {
+
+            //Clean module mess
+            if ($module == "projects") {
+                $module = "project";
+            }
+            if ($module == "tickets") {
+                $module = "ticket";
+            }
 
             $upload = new core\fileupload();
 
@@ -231,44 +236,43 @@ namespace leantime\domain\repositories {
             $return = false;
 
             if ($upload->error == '') {
-
                 //Just something unique to avoid collision in s3 (each customer has their own folder)
-                $newname = md5($_SESSION['userdata']['id'].time());
+                $newname = md5($_SESSION['userdata']['id'] . time());
 
                 $upload->renameFile($newname);
 
-                if ($upload->upload()===true) {
-
+                if ($upload->upload() === true) {
                     $values = array(
                         'encName'     => $newname,
-                        'realName'     => str_replace('.'.$ext, '', $file['file']['name']),
+                        'realName'     => str_replace('.' . $ext, '', $file['file']['name']),
                         'extension' => $ext,
                         'moduleId'     => $moduleId,
                         'userId'     => $_SESSION['userdata']['id'],
+                        'module'    => $module,
                         'fileId' => ''
                     );
 
                     $fileAddResults = $this->addFile($values, $module);
 
-                    if($fileAddResults) {
+                    if ($fileAddResults) {
                         $values['fileId'] = $fileAddResults;
                         $return = $values;
-                    }else{
+                    } else {
                         $return = false;
                     }
-
+                }else{
+                    return $upload->error;
                 }
             }
 
             return $return;
         }
 
-        public function uploadCloud($name, $url, $module, $moduleId){
+        public function uploadCloud($name, $url, $module, $moduleId)
+        {
 
            //Add cloud stuff ehre.
-
         }
-
     }
 
 }

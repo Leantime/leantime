@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class addEvent extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -46,7 +44,6 @@ namespace leantime\domain\controllers {
             );
 
             if (isset($_POST['save']) === true) {
-
                 if (isset($_POST['allDay']) === true) {
                     $allDay = 'true';
                 } else {
@@ -71,15 +68,11 @@ namespace leantime\domain\controllers {
                 );
 
                 if ($values['description'] !== '') {
-
                     $this->calendarRepo->addEvent($values);
 
                     $this->tpl->setNotification('notification.event_created_successfully', 'success');
-
                 } else {
-
                     $this->tpl->setNotification('notification.please_enter_title', 'error');
-
                 }
 
                 $this->tpl->assign('values', $values);
@@ -87,8 +80,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('values', $values);
             $this->tpl->display('calendar.addEvent');
-
         }
-
     }
 }

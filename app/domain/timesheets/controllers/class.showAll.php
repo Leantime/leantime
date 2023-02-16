@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-
         private $projects;
         private $timesheetsRepo;
 
@@ -24,7 +23,6 @@ namespace leantime\domain\controllers {
 
             $this->projects = new repositories\projects();
             $this->timesheetsRepo = new repositories\timesheets();
-
         }
 
         /**
@@ -37,13 +35,12 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
-            $_SESSION['lastPage'] = BASE_URL."/timesheets/showAll";
+            $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
 
             //Only admins and employees
 
 
             if (isset($_POST['saveInvoice']) === true) {
-
                 $invEmpl = '';
                 $invComp = '';
                 $paid = '';
@@ -61,8 +58,6 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
-
-
             }
 
 
@@ -80,31 +75,22 @@ namespace leantime\domain\controllers {
             $userId = 'all';
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
-
                 $kind = strip_tags($_POST['kind']);
-
             }
 
             if (isset($_POST['userId']) && $_POST['userId'] != '') {
-
                 $userId = strip_tags($_POST['userId']);
-
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-
                 $dateFrom = $this->language->getISODateString($_POST['dateFrom']);
-
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-
                 $dateTo = $this->language->getISODateString($_POST['dateTo']);
-
             }
 
             if (isset($_POST['invEmpl']) === true) {
-
                 $invEmplCheck = $_POST['invEmpl'];
 
                 if ($invEmplCheck == 'on') {
@@ -112,13 +98,11 @@ namespace leantime\domain\controllers {
                 } else {
                     $invEmplCheck = '0';
                 }
-
             } else {
                 $invEmplCheck = '0';
             }
 
             if (isset($_POST['invComp']) === true) {
-
                 $invCompCheck = ($_POST['invComp']);
 
                 if ($invCompCheck == 'on') {
@@ -126,13 +110,11 @@ namespace leantime\domain\controllers {
                 } else {
                     $invCompCheck = '0';
                 }
-
             } else {
                 $invCompCheck = '0';
             }
 
             if (isset($_POST['paid']) === true) {
-
                 $paidCheck = ($_POST['paid']);
 
                 if ($paidCheck == 'on') {
@@ -140,16 +122,13 @@ namespace leantime\domain\controllers {
                 } else {
                     $paidCheck = '0';
                 }
-
             } else {
                 $paidCheck = '0';
             }
 
             $projectFilter = $_SESSION['currentProject'];
             if (isset($_POST['project']) && $_POST['project'] != '') {
-
                 $projectFilter = strip_tags($_POST['project']);
-
             }
 
             if (isset($_POST['export'])) {
@@ -183,10 +162,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allTimesheets', $this->timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck));
 
             $this->tpl->display('timesheets.showAll');
-
-
         }
-
     }
 
 }

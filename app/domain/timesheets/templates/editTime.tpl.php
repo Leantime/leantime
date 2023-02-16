@@ -63,11 +63,12 @@ $values = $this->get('values');
 <select name="projects" id="projects" class="project-select">
     <option value="all"><?php echo $this->__('headline.all_projects'); ?></option>
 
-    <?php foreach($this->get('allProjects') as $row) {
-        echo'<option value="'.$row['id'].'"';
-        if($row['id'] == $values['project']) { echo' selected="selected" ';
+    <?php foreach ($this->get('allProjects') as $row) {
+        echo'<option value="' . $row['id'] . '"';
+        if ($row['id'] == $values['project']) {
+            echo' selected="selected" ';
         }
-        echo'>'.$row['name'].'</option>';
+        echo'>' . $row['name'] . '</option>';
     }
 
     ?>
@@ -77,11 +78,12 @@ $values = $this->get('values');
 <label for="tickets"><?php echo $this->__('label.ticket')?></label>
 <select name="tickets" id="tickets" class="ticket-select">
 
-    <?php foreach($this->get('allTickets') as $row) {
-        echo'<option class="project_'.$row['projectId'].'" data-value="'.$row["projectId"].'" value="'.$row['id'].'"';
-        if($row['id'] == $values['ticket']) { echo' selected="selected" ';
+    <?php foreach ($this->get('allTickets') as $row) {
+        echo'<option class="project_' . $row['projectId'] . '" data-value="' . $row["projectId"] . '" value="' . $row['id'] . '"';
+        if ($row['id'] == $values['ticket']) {
+            echo' selected="selected" ';
         }
-        echo'>'.$row['headline'].'</option>';
+        echo'>' . $row['headline'] . '</option>';
     } ?>
 
 </select> <br />
@@ -89,12 +91,12 @@ $values = $this->get('values');
     <label for="kind"><?php echo $this->__('label.kind')?></label> <select id="kind"
     name="kind">
     <?php
-    foreach($this->get('kind') as $key => $row){
-        echo'<option value="'.$key.'"';
-        if($key == $values['kind']) { echo ' selected="selected"';
+    foreach ($this->get('kind') as $key => $row) {
+        echo'<option value="' . $key . '"';
+        if ($key == $values['kind']) {
+            echo ' selected="selected"';
         }
-        echo'>'.$this->__($row).'</option>';
-
+        echo'>' . $this->__($row) . '</option>';
     }
     ?>
 
@@ -112,7 +114,6 @@ $values = $this->get('values');
 
 
     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-
         <input style="float:left; margin-right:5px;"
                 type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
             <?php if (isset($values['invoicedEmpl']) === true && $values['invoicedEmpl'] == '1') {
@@ -160,7 +161,7 @@ $values = $this->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <?php echo $this->displayLink('timesheets.delTime', $this->__('links.delete'), array('id' => $_GET['id']), array('class'=>'delete editTimeModal pull-right')); ?>
+        <?php echo $this->displayLink('timesheets.delTime', $this->__('links.delete'), array('id' => $_GET['id']), array('class' => 'delete editTimeModal pull-right')); ?>
 
         <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="save" class="button" />
     </p>

@@ -11,14 +11,12 @@ namespace leantime\domain\controllers {
 
     class edit extends controller
     {
-
         private $userRepo;
 
         public function init()
         {
 
             $this->userRepo = new repositories\users();
-
         }
 
         public function run()
@@ -29,12 +27,11 @@ namespace leantime\domain\controllers {
             $user = $this->userRepo->getUser($userId);
 
             $mp = new TwoFAQRCode();
-            $tfa = new TwoFactorAuth('Leantime',6, 30, 'sha1', $mp);
+            $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', $mp);
             $secret = $user['twoFASecret'];
 
             if (isset($_POST['disable'])) {
-                if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
+                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                     $this->userRepo->patchUser($userId, [
                         "twoFAEnabled" => 0,
                         "twoFASecret" => null
@@ -45,8 +42,7 @@ namespace leantime\domain\controllers {
                     $secret = null;
 
                     $this->tpl->assign("twoFAEnabled", false);
-
-                }else{
+                } else {
                     $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                 }
             }
@@ -102,16 +98,18 @@ namespace leantime\domain\controllers {
     }
 
     // TODO: lets find a place for this
-    class TwoFAQRCode implements IQRCodeProvider {
-        public function getMimeType() {
+    class TwoFAQRCode implements IQRCodeProvider
+    {
+        public function getMimeType()
+        {
             return 'image/png';
         }
 
-        public function getQRCodeImage($qrtext, $size) {
+        public function getQRCodeImage($qrtext, $size)
+        {
             $qrCode = new QrCode($qrtext);
             $qrCode->setSize($size);
             return $qrCode->writeString();
         }
     }
 }
-

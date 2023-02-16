@@ -11,8 +11,7 @@ namespace leantime\domain\controllers {
 
     class newProject extends controller
     {
-
-        private $projectRepo;
+        private repositories\projects $projectRepo;
         private $menuRepo;
         private $userRepo;
         private $clientsRepo;
@@ -33,7 +32,6 @@ namespace leantime\domain\controllers {
             $this->clientsRepo = new repositories\clients();
             $this->queueRepo = new repositories\queue();
             $this->projectService = new services\projects();
-
         }
 
         /**
@@ -46,8 +44,8 @@ namespace leantime\domain\controllers {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
-            if(!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL."/projects/showAll";
+            if (!isset($_SESSION['lastPage'])) {
+                $_SESSION['lastPage'] = BASE_URL . "/projects/showAll";
             }
 
             $msgKey = '';
@@ -60,12 +58,11 @@ namespace leantime\domain\controllers {
                 'assignedUsers' => array($_SESSION['userdata']['id']),
                 'dollarBudget' => '',
                 'state' => '',
-				'menuType' => repositories\menu::DEFAULT_MENU,
+                'menuType' => repositories\menu::DEFAULT_MENU,
                 'psettings' => ''
             );
 
             if (isset($_POST['save']) === true) {
-
                 if (!isset($_POST['hourBudget']) || $_POST['hourBudget'] == '' || $_POST['hourBudget'] == null) {
                     $hourBudget = '0';
                 } else {
@@ -95,15 +92,10 @@ namespace leantime\domain\controllers {
                 );
 
                 if ($values['name'] === '') {
-
                     $this->tpl->setNotification($this->language->__("notification.no_project_name"), 'error');
-
                 } elseif ($values['clientId'] === '') {
-
                     $this->tpl->setNotification($this->language->__("notification.no_client"), 'error');
-
                 } else {
-
                     $projectName = $values['name'];
                     $id = $this->projectRepo->addProject($values);
                     $this->projectService->changeCurrentSessionProject($id);
@@ -112,53 +104,47 @@ namespace leantime\domain\controllers {
 
                     $mailer->setContext('project_created');
                     $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
-                    $actual_link = BASE_URL."/projects/showProject/" . $id . "";
+                    $actual_link = BASE_URL . "/projects/showProject/" . $id . "";
                     $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
                     $mailer->setHtml($message);
 
                     $to = array();
 
                     foreach ($users as $user) {
-
                         if ($user["notifications"] != 0) {
                             $to[] = $user["username"];
                         }
                     }
 
                     //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-					// NEW Queuing messaging system
+                    // NEW Queuing messaging system
                     $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
 
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-					if($values['menuType'] == 'dts') {
-						$this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/lbmcanvas/showCanvas/'), 'success');
+                    if ($values['menuType'] == 'dts') {
+                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/lbmcanvas/showCanvas/'), 'success');
                     } else {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success');
-					}
+                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success');
+                    }
 
-                    $this->tpl->redirect(BASE_URL."/projects/showProject/". $id);
-
+                    $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
                 }
 
 
-                $this->tpl->assign('values', $values);
-
+                $this->tpl->assign('project', $values);
             }
 
             $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
             $this->tpl->assign('project', $values);
-			$this->tpl->assign('availableUsers', $this->userRepo->getAll());
-			$this->tpl->assign('clients', $this->clientsRepo->getAll());
+            $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+            $this->tpl->assign('clients', $this->clientsRepo->getAll());
             $this->tpl->assign('info', $msgKey);
 
             $this->tpl->display('projects.newProject');
-
-
         }
-
     }
 
 }

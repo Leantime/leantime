@@ -291,7 +291,7 @@
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1">
+                <col class="con1" style="max-width:200px;">
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
@@ -303,12 +303,13 @@
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
+                <col class="con1">
             </colgroup>
             <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
             <thead>
                 <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
-                    <th><?= $this->__("label.title"); ?></th>
+                    <th style="max-width: 350px;"><?= $this->__("label.title"); ?></th>
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                     <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                     <th><?= $this->__("label.effort"); ?></th>
@@ -320,6 +321,7 @@
                     <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
                     <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
                     <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
+                    <th class="no-sort"></th>
                 </tr>
                 <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
             </thead>
@@ -329,10 +331,11 @@
                 <?php foreach ($allTickets as $rowNum => $row) {?>
                     <tr>
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$this->e($row['headline']); ?>">
+                            <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td class="dropdown-cell" data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                <a class="dropdown-toggle f-left status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
                                         <?php
                                         if (isset($statusLabels[$row['status']])) {
@@ -365,13 +368,13 @@
 
                         <td class="dropdown-cell" data-order="<?=$milestoneHeadline?>">
                             <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?=$milestoneHeadline?></span>
                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
                                     <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                    <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
                                     <?php foreach ($this->get('milestones') as $milestone) {
                                         echo"<li class='dropdown-item'>
@@ -383,7 +386,7 @@
                         </td>
                         <td class="dropdown-cell"  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
                             <div class="dropdown ticketDropdown effortDropdown show">
-                                <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
                                                             if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
                                                                 echo $efforts[$row['storypoints']];
@@ -405,7 +408,7 @@
                         </td>
                         <td class="dropdown-cell"  data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $this->__("label.priority_unkown"); ?>">
                             <div class="dropdown ticketDropdown priorityDropdown show">
-                                <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
                                                             if ($row['priority'] != '' && $row['priority'] > 0) {
                                                                 echo $priorities[$row['priority']];
@@ -427,7 +430,7 @@
                         </td>
                         <td class="dropdown-cell"  data-order="<?=$row["editorFirstname"] != "" ?  $this->escape($row["editorFirstname"]) : $this->__("dropdown.not_assigned")?>">
                             <div class="dropdown ticketDropdown userDropdown noBg show ">
-                                <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">
                                                                 <?php if ($row["editorFirstname"] != "") {
                                                                     echo "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row['editorId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row['id'] . "'>" . $this->escape($row["editorFirstname"]) . "</span>";
@@ -459,7 +462,7 @@
                         <td class="dropdown-cell"  data-order="<?=$sprintHeadline?>">
 
                             <div class="dropdown ticketDropdown sprintDropdown show">
-                                <a class="dropdown-toggle f-left  label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text"><?=$sprintHeadline?></span>
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </a>
@@ -500,7 +503,7 @@
                             $date = $date->format($this->__("language.dateformat"));
                         }
                         ?>
-                        <td data-order="<?=$date?>" >
+                        <td data-order="<?=$row['dateToFinish'] ?>" >
                             <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">
@@ -521,6 +524,42 @@
                             } else {
                                 echo $row['bookedHours'];
                             }?>
+                        </td>
+                        <td>
+                            <?php if ($login::userIsAtLeast($roles::$editor)) {
+                                $clockedIn = $this->get("onTheClock");
+
+                                ?>
+                                <div class="inlineDropDownContainer">
+
+                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                        <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
+                                        <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
+                                            <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
+                                                echo"style='display:none;'";
+                                            }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                            <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
+                                                echo"style='display:none;'";
+                                            }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
+                                                    echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
+                                                } else {
+                                                    echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
+                                                }?></a>
+                                            <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
+                                                echo"style='display:none;'";
+                                            }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            <?php } ?>
+
                         </td>
                         <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                     </tr>
@@ -562,13 +601,6 @@
 
 
         leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
-
-        <?php if (isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0) {     ?>
-        leantime.helperController.showHelperModal("backlog");
-            <?php
-        //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
-        } ?>
 
         <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 

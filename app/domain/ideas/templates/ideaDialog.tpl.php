@@ -22,9 +22,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <h4 class="widgettitle title-light"><i
                 class="fa fa-columns"></i>
         <?php
-        if($canvasItem['description'] == "") {
+        if ($canvasItem['description'] == "") {
                 echo $this->__("headlines.ideas");
-        }else{
+        } else {
             $this->e($canvasItem['description']);
         } ?>
     </h4>
@@ -69,7 +69,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <h4><?php echo $this->__("headlines.no_milestone_attached") ?></h4>
                         <?php echo $this->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
-                            <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
                                 <a href="javascript:void(0);"
                                    onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
@@ -119,9 +119,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         </div>
                     </li>
                     <?php
-
                 } else {
-
                     if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
                         $date = $this->__("text.no_date_defined");
                     } else {
@@ -182,7 +180,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
         <?php
-            $this->assign("formUrl", BASE_URL."/ideas/ideaDialog/" . $id . "");
+            $this->assign("formUrl", BASE_URL . "/ideas/ideaDialog/" . $id . "");
 
             $this->displaySubmodule('comments-generalComment'); ?>
     <?php } ?>
@@ -194,13 +192,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         leantime.generalController.initSimpleEditor();
 
-        <?php if(!$login::userIsAtLeast($roles::$editor)) { ?>
-
+        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
         leantime.generalController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
-        <?php if($login::userHasRole([$roles::$commenter])) { ?>
+        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
         leantime.generalController.enableCommenterForms();
         <?php }?>
 

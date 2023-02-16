@@ -95,7 +95,46 @@
     --box-radius-small:0px;
     --element-radius: 0px;
 
+    /* Status Colors */
 
+    --dark-red:#D61B0A;
+    --dark-red-text-color:#fff;
+
+    --red: #F76C5E;
+    --red-text-color: #fff;
+
+    --green: #32965D;
+    --green-text-color: #fff;
+
+    --dark-green: #1F5C39;
+    --dark-green-text-color:#fff;
+
+    --yellow: #FDB833;
+    --yellow-text-color: #fff;
+
+    --blue: #1B75BB;
+    --blue-text-color: #fff;
+
+    --dark-blue:#124F7D;
+    --dark-blue-text-color: #fff;
+
+    --darker-blue:#082236;
+    --darker-blue-text-color: #fff;
+
+    --purple:#5F0F40;
+    --purple-text-color:#fff;
+
+    --pink: #F26CA7;
+    --pink-text-color:#fff;
+
+    --brown: #4C212A;
+    --brown-text-color: #fff;
+
+    --grey: #b0b0b0;
+    --grey-text-color:#fff;
+
+    --dark-grey: #707070;
+    --dark-grey-text-color: #fff;
 
 }
 

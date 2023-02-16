@@ -6,12 +6,14 @@
 
 <?php
 
-if(!isset($_GET['closeModal'])) {
+if (!isset($_GET['closeModal'])) {
     echo $this->displayNotification();
 }
 
 $id = "";
-if(isset($currentArticle->id)) {$id = $currentArticle->id;}
+if (isset($currentArticle->id)) {
+    $id = $currentArticle->id;
+}
 
 ?>
 
@@ -26,8 +28,8 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
                 <label>Parent</label>
                 <select name="parent" style="width:100%;">
                     <option value="0">None</option>
-                    <?php foreach($wikiHeadlines as $parent){?>
-                        <?php if($id != $parent->id){?>
+                    <?php foreach ($wikiHeadlines as $parent) {?>
+                        <?php if ($id != $parent->id) {?>
                             <option value="<?=$parent->id ?>"
                                     <?=($parent->id == $currentArticle->parent) ? "selected='selected'" : '' ?> ><?php $this->e($parent->title) ?></option>
                         <?php } ?>
@@ -36,25 +38,23 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
 
                 <label><?=$this->__('label.status') ?></label>
                 <select name="status" style="width:100%;">
-                    <option value="draft" <?=$currentArticle->status=='draft' ? "selected='selected'" : "" ?>><?=$this->__('label.draft') ?></option>
-                    <option value="published" <?=$currentArticle->status=='published' ? "selected='selected'" : "" ?>><?=$this->__('label.published') ?></option>
+                    <option value="draft" <?=$currentArticle->status == 'draft' ? "selected='selected'" : "" ?>><?=$this->__('label.draft') ?></option>
+                    <option value="published" <?=$currentArticle->status == 'published' ? "selected='selected'" : "" ?>><?=$this->__('label.published') ?></option>
                 </select>
             </div>
 
-            <?php if($id !== '') { ?>
+            <?php if ($id !== '') { ?>
                 <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
 
                 <ul class="sortableTicketList" style="width:99%">
                     <?php
-                    if($currentArticle->milestoneId == '') {
-
-
+                    if ($currentArticle->milestoneId == '') {
                         ?>
                         <li class="ui-state-default center" id="milestone_0">
                             <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                             <?=$this->__("text.use_milestone_to_track_leancanvas") ?><br />
                             <div class="row" id="milestoneSelectors">
-                                <?php if($login::userIsAtLeast($roles::$editor)) { ?>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="col-md-12">
                                         <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
                                         | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
@@ -78,15 +78,16 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
                                 <div class="col-md-12">
                                     <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                         <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                        <?php foreach($this->get('milestones') as $milestoneRow){
+                                        <?php foreach ($this->get('milestones') as $milestoneRow) {
                                             ?>
 
-                                            <?php echo"<option value='".$milestoneRow->id."'";
+                                            <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                            if(isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) { echo" selected='selected' ";
+                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                                echo" selected='selected' ";
                                             }
 
-                                            echo">".$milestoneRow->headline."</option>"; ?>
+                                            echo">" . $milestoneRow->headline . "</option>"; ?>
                                             <?php
                                         }     ?>
                                     </select>
@@ -101,14 +102,12 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
 
                         </li>
                         <?php
-
-                    }else{
-
-                        if($currentArticle->milestoneEditTo == "0000-00-00 00:00:00") {
+                    } else {
+                        if ($currentArticle->milestoneEditTo == "0000-00-00 00:00:00") {
                             $date = $this->__("text.no_date_defined");
-                        }else {
+                        } else {
                             $date = new DateTime($currentArticle->milestoneEditTo);
-                            $date= $date->format($this->__("language.dateformat"));
+                            $date = $date->format($this->__("language.dateformat"));
                         }
 
                         ?>
@@ -121,7 +120,7 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
                                         <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
                                     </div>
                                     <div class="col-md-4 align-right">
-                                        <a href="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="canvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                        <a href="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete formModal"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -210,7 +209,7 @@ if(isset($currentArticle->id)) {$id = $currentArticle->id;}
 
     jQuery(document).ready(function(){
 
-        <?php if(isset($_GET['closeModal'])){ ?>
+        <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
 

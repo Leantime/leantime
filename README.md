@@ -3,7 +3,7 @@
 <a href="https://leantime.io"><img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/></a>
 
 ### Leantime&trade; ###
-Leantime is a lean open source project management system for startups and innovators. <br />It's an alternative to ClickUp, Notion, and Asana.<br />[https://leantime.io](leantime.io)<br />
+Leantime is a lean open source project management system for startups and innovators. <br />It's an alternative to ClickUp, Notion, and Asana.<br />[https://leantime.io](https://leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
@@ -11,6 +11,8 @@ Leantime is a lean open source project management system for startups and innova
 [![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
+
+  ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
 
 
 </div>
@@ -26,21 +28,24 @@ Leantime is a lean open source project management system for startups and innova
 * Retrospectives
 * Project dashboards
 * Project reports
+* Wikis with the ability to embed documents
 * Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Adjust color scheme and logo
 * Available in 19 languages
 
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")    | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+| ![alt text](public/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 |---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/ToDoView.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/images/Screenshots/Calendar.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/images/Screenshots/Confetti.png "Confetti")                                                                     |
 
 ### System Requirements ###
 
@@ -53,9 +58,9 @@ Leantime is a lean open source project management system for startups and innova
 * Download latest release package
 * Create an empty MySQL database
 * Upload entire directory to your server 
-* Point your domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
-* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Point your domain root to the `public/` directory
+* Rename `config/.env.sample` to `config/.env`
+* Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
@@ -85,7 +90,7 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ### Installation via Docker ###
 
 We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
-To run the image enter your MySQL credentials and execute
+To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
 docker run -d --restart unless-stopped -p 80:80 --network leantime-net \

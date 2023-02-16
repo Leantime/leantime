@@ -10,10 +10,9 @@ namespace leantime\domain\controllers {
 
     class roadmap extends controller
     {
-
         private $projectsRepo;
         private $sprintService;
-        private $ticketService;
+        private services\tickets $ticketService;
 
         /**
          * init - initialize private variables
@@ -27,7 +26,6 @@ namespace leantime\domain\controllers {
             $this->projectsRepo = new repositories\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
-
         }
 
         /**
@@ -39,11 +37,26 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
+            if (isset($_SESSION["usersettings.showMilestoneTasks"]) && $_SESSION["usersettings.showMilestoneTasks"] === true) {
+                $includeTasks = true;
+            } else {
+                $includeTasks = false;
+                $_SESSION["usersettings.showMilestoneTasks"] = false;
+            }
 
+            if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
+                $includeTasks = true;
+                $_SESSION["usersettings.showMilestoneTasks"] = true;
+            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
+                $includeTasks = false;
+                $_SESSION["usersettings.showMilestoneTasks"] = false;
+            }
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", $includeTasks);
+
+            $this->tpl->assign("includeTasks", $includeTasks);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
-
         }
 
         /**
@@ -59,7 +72,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
-
         }
 
         /**
@@ -70,7 +82,6 @@ namespace leantime\domain\controllers {
          */
         public function put($params)
         {
-
         }
 
         /**
@@ -81,9 +92,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

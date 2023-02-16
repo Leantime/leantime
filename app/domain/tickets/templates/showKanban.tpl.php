@@ -289,6 +289,7 @@ if ($numberofColumns > 0) {
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
                                                             <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                             <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                             <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
@@ -312,7 +313,6 @@ if ($numberofColumns > 0) {
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label." . strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
                                                 <div class="kanbanCardContent">
-
                                                     <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
 
                                                     <div class="kanbanContent" style="margin-bottom: 20px">
@@ -348,7 +348,7 @@ if ($numberofColumns > 0) {
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
                                                         <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                                        <li class='dropdown-item'><a style='background-color:#1b75bb' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#1b75bb"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                                        <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
 
                                                         <?php foreach ($this->get('milestones') as $milestone) {
                                                             echo"<li class='dropdown-item'>
@@ -382,7 +382,7 @@ if ($numberofColumns > 0) {
                                             </div>
                                             <?php } ?>
 
-                                            <?php if ($row['priority'] != '' && $row['priority'] > 0) { ?>
+
                                                 <div class="dropdown ticketDropdown priorityDropdown show">
                                                 <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <span class="text"><?php
@@ -403,7 +403,7 @@ if ($numberofColumns > 0) {
                                                     }?>
                                                 </ul>
                                             </div>
-                                            <?php } ?>
+
 
                                             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                 <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -522,15 +522,6 @@ if ($numberofColumns > 0) {
     <?php } ?>
 
     leantime.ticketsController.setUpKanbanColumns();
-
-    <?php if (isset($_SESSION['userdata']['settings']["modals"]["kanban"]) === false || $_SESSION['userdata']['settings']["modals"]["kanban"] == 0) { ?>
-        leantime.helperController.showHelperModal("kanban");
-        <?php
-            //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["kanban"] = 1;
-        ?>
-
-    <?php } ?>
 
     jQuery(document).ready(function(){
 

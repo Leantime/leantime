@@ -7,7 +7,8 @@
 <?php echo $this->displayNotification();
 
 $id = "";
-if(isset($currentSprint->id)) {$id = $currentSprint->id;
+if (isset($currentSprint->id)) {
+    $id = $currentSprint->id;
 }
 ?>
 

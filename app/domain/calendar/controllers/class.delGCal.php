@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class delGCal extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -38,32 +36,24 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
 
                 $msgKey = '';
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-
                     $this->calendarRepo->deleteGCal($id);
 
                     $msgKey = 'Kalender gelöscht';
-
                 }
 
                 //Assign variables
 
                 $this->tpl->assign('msg', $msgKey);
                 $this->tpl->display('calendar.delGCal');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 }

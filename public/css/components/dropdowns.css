@@ -8,11 +8,44 @@
     background:var(--secondary-background);
 }
 
-.dropdown-menu > li > a {
+.bigMenu ul li {
+    list-style-type: none;
+}
+
+.dropdown-menu > li > a,
+.bigMenu ul li a{
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0 5px;
     padding: 5px 10px;
+}
+
+.dropdown-menu>.active>a,
+.dropdown-menu>.active>a:hover,
+.dropdown-menu>.active>a:focus {
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
+}
+
+.dropdownTabs {
+    padding:5px;
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    align-content: space-between;
+    border-bottom:1px solid var(--main-border-color);
+}
+
+.dropdownTabs a {
+
+}
+
+.dropdownTabs a:hover {
+    text-decoration: none;
+    color:var(--dropdown-link-hover-color);
 }
 
 
@@ -28,7 +61,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
-.dropdown-submenu:focus > a {
+.dropdown-submenu:focus > a,
+.bigMenu ul li a,
+.bigMenu ul li a:hover,
+.bigMenu ul li a:focus {
     color: var(--dropdown-link-hover-color) !important;
     background:var(--dropdown-link-hover-bg) !important;
 }
@@ -128,10 +164,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:#000;
 }
 
-
-
 .maincontentinner .ticketDropdown ul li a[class*="label-"],
-.nyroModalCont .ticketDropdown ul li a[class*="label-"]{
+.nyroModalCont .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
     border-radius: 0px;
@@ -149,108 +183,133 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown a.label-warning,
 .nyroModalCont .ticketDropdown a.label-warning{
     background:var(--yellow);
+    color:var(--yellow-text-color);
 }
 
 .chzn-results li.label-info,
 .maincontentinner .ticketDropdown a.label-info,
 .nyroModalCont .ticketDropdown a.label-info{
     background:var(--dark-blue);
+    color:var(--dark-blue-text-color);
 }
 
 .chzn-results li.label-important,
 .maincontentinner .ticketDropdown a.label-important,
 .nyroModalCont .ticketDropdown a.label-important{
     background:var(--red);
+    color:var(--red-text-color);
 }
 
 .chzn-results li.label-danger,
 .maincontentinner .ticketDropdown a.label-danger,
-.nyroModalCont .ticketDropdown a.label-danger{
+.nyroModalCont .ticketDropdown a.label-danger,
+.label-danger{
     background:var(--dark-red);
+    color:var(--dark-red-text-color);
 }
 
 .chzn-results li.label-success,
 .maincontentinner .ticketDropdown a.label-success,
 .nyroModalCont .ticketDropdown a.label-success{
     background:var(--green);
+    color:var(--green-text-color);
 }
 
 .chzn-results li.label-default,
 .maincontentinner .ticketDropdown a.label-default,
 .nyroModalCont .ticketDropdown a.label-default{
     background: var(--grey);
+    color:var(--grey-text-color);
+}
+
+.chzn-results li.label-default.milestone,
+.maincontentinner .ticketDropdown a.label-default.milestone,
+.nyroModalCont .ticketDropdown a.label-default.milestone {
+    color:var(--blue-text-color);
 }
 
 .chzn-results li.label-purple,
 .maincontentinner .ticketDropdown a.label-purple,
 .nyroModalCont .ticketDropdown a.label-purple{
     background:var(--purple);
+    color:var(--purple-text-color);
 }
 
 .chzn-results li.label-pink,
 .maincontentinner .ticketDropdown a.label-pink,
 .nyroModalCont .ticketDropdown a.label-pink{
     background:var(--pink);
+    color:var(--pink-text-color);
 }
 
 .chzn-results li.label-brown,
 .maincontentinner .ticketDropdown a.label-brown,
 .nyroModalCont .ticketDropdown a.label-brown{
     background:var(--brown);
+    color:var(--brown-text-color);
 }
 
 .chzn-results li.label-blue,
 .maincontentinner .ticketDropdown a.label-blue,
 .nyroModalCont .ticketDropdown a.label-blue{
     background:var(--blue);
+    color:var(--blue-text-color);
 }
 
 .chzn-results li.label-dark-blue,
 .maincontentinner .ticketDropdown a.label-dark-blue,
 .nyroModalCont .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
+    color:var(--dark-blue-text-color);
 }
 
 .chzn-results li.label-darker-blue,
 .maincontentinner .ticketDropdown a.label-darker-blue,
 .nyroModalCont .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
+    color:var(--darker-blue-text-color);
 }
 
 .chzn-results li.label-green,
 .maincontentinner .ticketDropdown a.label-green,
 .nyroModalCont .ticketDropdown a.label-green{
     background:var(--green);
+    color:var(--green-text-color);
 }
 
 .chzn-results li.label-dark-green,
 .maincontentinner .ticketDropdown a.label-dark-green,
 .nyroModalCont .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
+    color:var(--dark-green-text-color);
 }
 
 .chzn-results li.label-red,
 .maincontentinner .ticketDropdown a.label-red,
 .nyroModalCont .ticketDropdown a.label-red{
     background:var(--red);
+    color:var(--red-text-color);
 }
 
 .chzn-results li.label-dark-red,
 .maincontentinner .ticketDropdown a.label-dark-red,
 .nyroModalCont .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
+    color:var(--dark-red-text-color);
 }
 
 .chzn-results li.label-grey,
 .maincontentinner .ticketDropdown a.label-grey,
 .nyroModalCont .ticketDropdown a.label-grey{
     background:var(--grey);
+    color:var(--grey-text-color);
 }
 
 .maincontentinner .ticketDropdown a.label-default.effort,
 .nyroModalCont .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
+
 }
 
 
@@ -408,4 +467,17 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .editCanvasDropdown {
     right:0px;
     left:auto;
+}
+
+
+.dropdown-menu>.active>a,
+.dropdown-menu>.active>a:hover,
+.dropdown-menu>.active>a:focus {
+    background:var(--main-menu-link-active-bg);
+    color:var(--main-menu-link-active-color);
+}
+
+.dropdown-menu .scroll-wrapper {
+    height:700px;
+    overflow:scroll;
 }

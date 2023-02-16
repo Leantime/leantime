@@ -12,10 +12,11 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-    class editCompanySettings extends controller {
-
+    class editCompanySettings extends controller
+    {
         private $config;
         private $settingsRepo;
+        private services\api $APIService;
 
         /**
          * constructor - initialize private variables
@@ -23,13 +24,15 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init() {
+        public function init()
+        {
 
 
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
             $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
+            $this->APIService = new services\api();
         }
 
         /**
@@ -38,11 +41,11 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function get($params) {
+        public function get($params)
+        {
 
 
             if (auth::userIsAtLeast(roles::$owner)) {
-
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "primarycolor" => $_SESSION["companysettings.primarycolor"],
@@ -55,7 +58,6 @@ namespace leantime\domain\controllers {
 
                 $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
                 if ($logoPath !== false) {
-
                     if (strpos($logoPath, 'http') === 0) {
                         $companySettings["logo"] = $logoPath;
                     } else {
@@ -99,13 +101,15 @@ namespace leantime\domain\controllers {
                     $companySettings["messageFrequency"] = $messageFrequency;
                 }
 
+                $apiKeys = $this->APIService->getAPIKeys();
 
+
+                $this->tpl->assign("apiKeys", $apiKeys);
                 $this->tpl->assign("languageList", $this->language->getLanguageList());
                 $this->tpl->assign("companySettings", $companySettings);
 
                 $this->tpl->display('setting.editCompanySettings');
             } else {
-
                 $this->tpl->display('error.error403');
             }
         }
@@ -116,17 +120,13 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function post($params) {
-            //If ID is set its an update
-            if (isset($params['name']) && $params['name'] != "" && isset($params['primarycolor']) && $params['primarycolor'] != "" && isset($params['language']) && $params['language'] != "") {
+        public function post($params)
+        {
 
-                $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
-                $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
-
+            //Look & feel updates
+            if (isset($params['primarycolor']) && $params['primarycolor'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
                 $this->settingsRepo->saveSetting("companysettings.secondarycolor", htmlentities(addslashes($params['secondarycolor'])));
-
-                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
                 //Check if main color is still in the system
                 //if so remove. This call should be removed in a few versions.
@@ -138,14 +138,26 @@ namespace leantime\domain\controllers {
 
                 $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
                 $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
+
+                $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
+
+            }
+
+            //Main Details
+            if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
+
+                $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
+                $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
+
+
+                $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
+
                 $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 if (isset($_POST['telemetryActive'])) {
-
                     $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
                 } else {
-
                     //When opting out, delete all telemetry related settings including UUID
                     $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
                     $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
@@ -164,8 +176,8 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function put($params) {
-            
+        public function put($params)
+        {
         }
 
         /**
@@ -174,10 +186,9 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function delete($params) {
-            
+        public function delete($params)
+        {
         }
-
     }
 
 }

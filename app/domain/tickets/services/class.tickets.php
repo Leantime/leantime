@@ -144,7 +144,9 @@ namespace leantime\domain\services {
                 "milestone" => "",
                 "orderBy" => "sortIndex",
                 "groupBy" => "",
-                "priority" => ""
+                "priority" => "",
+                "currentUser" => $_SESSION['userdata']["id"] ?? '',
+                "currentClient" => $_SESSION['userdata']["clientId"] ?? '',
             );
 
             if (isset($_SESSION["currentProject"]) === true) {
@@ -183,6 +185,14 @@ namespace leantime\domain\services {
                 $searchCriteria["priority"] = $searchParams["priority"];
             }
 
+            if (isset($searchParams["currentUser"]) === true) {
+                $searchCriteria["currentUser"] = $searchParams["currentUser"];
+            }
+
+            if (isset($searchParams["currentClient"]) === true) {
+                $searchCriteria["currentClient"] = $searchParams["currentClient"];
+            }
+
             if (isset($searchParams["sprint"]) === true) {
                 $searchCriteria["sprint"] = $searchParams["sprint"];
                 $_SESSION["currentSprint"] = $searchCriteria["sprint"];
@@ -206,10 +216,8 @@ namespace leantime\domain\services {
         {
             $count = 0;
             foreach ($searchCriteria as $key => $value) {
-                if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy") {
-
+                if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy" && $key != "currentUser" &&  $key != "currentClient") {
                     if ($value != '') {
-
                         $count++;
                     }
                 }
@@ -249,7 +257,7 @@ namespace leantime\domain\services {
         public function getOpenUserTicketsThisWeekAndLater($userId, $projectId)
         {
 
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "not_done", "sprint" => ""));
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser"=> $userId, "users" => $userId, "status" => "not_done", "sprint" => ""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
@@ -343,11 +351,11 @@ namespace leantime\domain\services {
             return $tickets;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "duedate")
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "duedate", $includeTasks = false)
         {
 
             if ($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy);
+                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy, $includeTasks);
             }
 
             return false;
@@ -408,7 +416,7 @@ namespace leantime\domain\services {
                 'planHours' => '',
                 'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : "",
                 'acceptanceCriteria' => '',
-                'priority' => 3,
+                'priority' => '',
                 'tags' => '',
                 'editFrom' => '',
                 'editTo' => '',
@@ -423,9 +431,25 @@ namespace leantime\domain\services {
             $result = $this->ticketRepository->addTicket($values);
 
             if ($result > 0) {
+                $values['id'] = $result;
                 $actual_link = BASE_URL . "/tickets/showTicket/" . $result;
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
-                $this->projectService->notifyProjectUsers($message, $this->language->__("email_notifications.new_todo_subject"), $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
+                $subject = $this->language->__("email_notifications.new_todo_subject");
+
+                $notification = new models\notifications\notification();
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.new_todo_cta")
+                );
+                $notification->entity = $values;
+                $notification->module = "tickets";
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $subject;
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = $message;
+
+                $this->projectService->notifyProjectUsers($notification);
+
 
                 return $result;
             } else {
@@ -526,7 +550,19 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $addTicketResponse;
                     $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.new_todo_cta")));
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.new_todo_cta")
+                    );
+                    $notification->entity = $values;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
 
                     return $addTicketResponse;
                 }
@@ -589,7 +625,21 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.todo_update_cta")));
+
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                    );
+                    $notification->entity = $values;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
+
 
                     return true;
                 }
@@ -603,6 +653,40 @@ namespace leantime\domain\services {
             unset($params["id"]);
 
             return $this->ticketRepository->patchTicket($id, $params);
+        }
+
+        /**
+         * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
+         *
+         * @param int $id
+         * @param int $projectId
+         * @return bool
+         */
+        public function moveTicket(int $id, int $projectId): bool
+        {
+
+            $ticket = $this->getTicket($id);
+
+            if($ticket) {
+
+                //If milestone, move child todos
+                if($ticket->type == "milestone"){
+                    $milestoneTickets = $this->getAll(array("milestone"=>$ticket->id));
+                    //Update child todos
+                    foreach($milestoneTickets as $childTicket) {
+                        $this->patchTicket($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
+
+                    }
+                }
+
+                //Update ticket
+                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => ""]);
+
+
+            }
+
+            return false;
+
         }
 
         public function quickUpdateMilestone($params)
@@ -716,7 +800,19 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
 
-                    $this->projectService->notifyProjectUsers($message, $subject, $_SESSION['currentProject'], array("link" => $actual_link, "text" => $this->language->__("email_notifications.todo_update_cta")));
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                    );
+                    $notification->entity = $ticket;
+                    $notification->module = "tickets";
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
                 }
             }
 
@@ -820,21 +916,21 @@ namespace leantime\domain\services {
                 return [];
             }
 
-            $baseUrl = BASE_URL . '/tickets';
+            $baseUrl = BASE_URL;
 
             return [
                 [
-                    'url' => "$baseUrl/newTicket",
+                    'url' => "$baseUrl/tickets/newTicket",
                     'text' => 'links.add_todo',
                     'class' => 'ticketModal'
                 ],
                 [
-                    'url' => "$baseUrl/editMilestone",
+                    'url' => "$baseUrl/tickets/editMilestone",
                     'text' => 'links.add_milestone',
                     'class' => 'milestoneModal'
                 ],
                 [
-                    'url' => "$baseUrl/editSprit",
+                    'url' => "$baseUrl/sprints/editSprint",
                     'text' => 'links.add_sprint',
                     'class' => 'sprintModal'
                 ]

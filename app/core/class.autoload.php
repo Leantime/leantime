@@ -21,7 +21,8 @@ spl_autoload_register(__NAMESPACE__ . "\\leantimeAutoloader", true, true);
  *
  * @return void
  */
-function leantimeAutoloader($class) {
+function leantimeAutoloader($class)
+{
 
     $parts = getLeantimeClassPath($class);
     $path = $parts['path'];
@@ -31,11 +32,11 @@ function leantimeAutoloader($class) {
     if (!empty($path)) {
         foreach (['class', 'trait'] as $prefix) {
             if ($class == "appSettings") {
-                require_once( ROOT . "/../config/appSettings.php");
+                require_once(ROOT . "/../config/appSettings.php");
                 break;
             } elseif ($class == "config") {
                 if (file_exists(ROOT . "/../config/configuration.php")) {
-                    require_once( ROOT . "/../config/configuration.php");
+                    require_once(ROOT . "/../config/configuration.php");
                 } else {
                     require_once(ROOT . "/../app/core/class.defaultConfiguration.php");
                 }
@@ -53,7 +54,8 @@ function leantimeAutoloader($class) {
 
 require_once '../vendor/autoload.php';
 
-function getLeantimeClassPath($class) {
+function getLeantimeClassPath($class)
+{
     $mvcFolder = $module = $path = "";
 
     $classArray = explode('\\', $class);

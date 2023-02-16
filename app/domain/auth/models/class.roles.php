@@ -6,7 +6,6 @@ namespace leantime\domain\models\auth {
 
     class roles
     {
-
         use eventhelpers;
 
         public static $readonly = 'readonly';
@@ -30,14 +29,15 @@ namespace leantime\domain\models\auth {
             return self::dispatch_filter('available_roles', self::$roleKeys);
         }
 
-        public static function getRoleString($key) {
-            return self::getFilteredRoles()[$key] ?? '';
+        public static function getRoleString($key)
+        {
+            return self::getFilteredRoles()[$key] ?? false;
         }
 
-        public static function getRoles(){
+        public static function getRoles()
+        {
             return self::getFilteredRoles();
         }
-
     }
 
 }

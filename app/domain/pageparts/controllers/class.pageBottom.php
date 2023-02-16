@@ -8,23 +8,19 @@ namespace leantime\domain\controllers {
 
     class pageBottom extends controller
     {
-
         private $settings;
 
         public function init()
         {
 
             $this->settings = new core\appSettings();
-
         }
 
         public function run()
         {
 
             $this->tpl->displayPartial('pageparts.pageBottom');
-
         }
-
     }
 
 }

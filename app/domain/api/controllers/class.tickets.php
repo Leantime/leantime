@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
 
     class tickets extends controller
     {
-
         private $projects;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
 
             $this->projects = new repositories\projects();
             $this->ticketsApiService = new services\tickets();
-
         }
 
 
@@ -37,7 +35,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -49,7 +46,7 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(services\auth::userIsAtLeast(roles::$editor)) {
+            if (services\auth::userIsAtLeast(roles::$editor)) {
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {
@@ -65,10 +62,9 @@ namespace leantime\domain\controllers {
                 } else {
                     echo "{status:failure}";
                 }
-            }else{
+            } else {
                 echo "{status:failure}";
             }
-
         }
 
         /**
@@ -80,16 +76,19 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
             if (services\auth::userIsAtLeast(roles::$editor)) {
-
-                $results = $this->ticketsApiService->patchTicket($params['id'], $params);
+                $results = false;
+                if (isset($params['id'])) {
+                    $results = $this->ticketsApiService->patchTicket($params['id'], $params);
+                } else {
+                    echo "{status:failure, message: 'ID not set'}";
+                }
 
                 if ($results === true) {
                     echo "{status:ok}";
                 } else {
                     echo "{status:failure}";
                 }
-
-            }else {
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -102,9 +101,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

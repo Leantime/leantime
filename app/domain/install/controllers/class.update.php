@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class update extends controller
     {
-
         private $installRepo;
         private $settingsRepo;
         private $appSettings;
@@ -27,7 +26,6 @@ namespace leantime\domain\controllers {
             $this->installRepo = new repositories\install();
             $this->settingsRepo = new repositories\setting();
             $this->appSettings = new core\appSettings();
-
         }
 
 
@@ -40,42 +38,34 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
             $dbVersion = $this->settingsRepo->getSetting("db-version");
-            if ($this->appSettings->dbVersion == $dbVersion){
-                core\frontcontroller::redirect(BASE_URL."/auth/login");
+            if ($this->appSettings->dbVersion == $dbVersion) {
+                core\frontcontroller::redirect(BASE_URL . "/auth/login");
             }
 
             $this->tpl->display("install.update", "entry");
-
         }
 
-        public function post($params) {
+        public function post($params)
+        {
 
 
-            if(isset($_POST['updateDB'])) {
-
+            if (isset($_POST['updateDB'])) {
                 $success = $this->installRepo->updateDB();
 
-                if(is_array($success) === true) {
-
-                    foreach($success as $errorMessage) {
-
+                if (is_array($success) === true) {
+                    foreach ($success as $errorMessage) {
                         $this->tpl->setNotification($errorMessage, "error");
 
-                        core\frontcontroller::redirect(BASE_URL."/install/update");
+                        core\frontcontroller::redirect(BASE_URL . "/install/update");
                     }
                 }
 
-                if($success === true){
-
-                    $this->tpl->setNotification(sprintf($this->language->__("text.update_was_successful"),BASE_URL), "success");
+                if ($success === true) {
+                    $this->tpl->setNotification(sprintf($this->language->__("text.update_was_successful"), BASE_URL), "success");
                     core\frontcontroller::redirect(BASE_URL);
-
                 }
-
             }
-
         }
-
     }
 
 }

@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class delTime extends controller
     {
-
         private $timesheetsRepo;
 
         /**
@@ -22,7 +21,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->timesheetsRepo = new repositories\timesheets();
-
         }
 
         /**
@@ -38,36 +36,26 @@ namespace leantime\domain\controllers {
             $msgKey = '';
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-
                     $this->timesheetsRepo->deleteTime($id);
 
-                   $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
+                    $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
 
-                    if(isset($_SESSION['lastPage'])) {
+                    if (isset($_SESSION['lastPage'])) {
                         $this->tpl->redirect($_SESSION['lastPage']);
-                    }else{
-                        $this->tpl->redirect(BASE_URL."/timsheets/showMyList");
+                    } else {
+                        $this->tpl->redirect(BASE_URL . "/timsheets/showMyList");
                     }
-
                 }
 
                 $this->tpl->assign("id", $id);
                 $this->tpl->displayPartial('timesheets.delTime');
-
             } else {
-
                 $this->tpl->displayPartial('errors.error403');
-
             }
-
-
         }
-
     }
 }
-

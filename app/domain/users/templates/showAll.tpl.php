@@ -53,15 +53,15 @@ $roles = $this->get('roles');
                         <td style="padding:6px 10px;">
                         <?php echo $this->displayLink('users.editUser', sprintf($this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
                         </td>
-                        <td><?php echo $row['username']; ?></td>
-                        <td><?=$row['clientName']; ?></td>
+                        <td><a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=$this->escape($row['username']); ?></a></td>
+                        <td><?=$this->escape($row['clientName']); ?></td>
                         <td><?=$this->__("label.roles." . $roles[$row['role']]); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
                             echo $this->__('label.active');
-                            } else if (strtolower($row['status']) == 'i') {
+                            } elseif (strtolower($row['status']) == 'i') {
                                 echo $this->__('label.invited');
-                            }else{
-                                echo $this->__('label.inactive');
+                            } else {
+                                echo $this->__('label.deactivated');
                             } ?></td>
                         <td><?php if ($row['twoFAEnabled']) {
                             echo $this->__('label.yes');

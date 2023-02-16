@@ -141,7 +141,6 @@ namespace leantime\domain\services {
             $this->userRepo = new repositories\users();
 
             $this->session = $sessionid;
-
         }
 
         public static function getInstance($sessionid = "")
@@ -195,6 +194,8 @@ namespace leantime\domain\services {
         public function login($username, $password)
         {
 
+            self::dispatch_event("beforeLoginCheck", ['username' => $username, 'password' => $password]);
+
             //different identity providers can live here
             //they all need to
             ////A: ensure the user is in leantime (with a valid role) and if not create the user
@@ -206,12 +207,15 @@ namespace leantime\domain\services {
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
-                    //$usernameWDomain = $ldap->extractLdapFromUsername($username)."".$ldap->userDomain;
                     $usernameWDomain = $ldap->getEmail($username);
                     //Get user
                     $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
                     $ldapUser = $ldap->getSingleUser($username);
+
+                    if ($ldapUser === false) {
+                        return false;
+                    }
 
                     //If user does not exist create user
                     if ($user == false) {
@@ -223,13 +227,19 @@ namespace leantime\domain\services {
                             'role' => $ldapUser['role'],
                             'password' => '',
                             'clientId' => '',
-                            'source' => 'ldap'
+                            'source' => 'ldap',
+                            'status' => 'a'
                         );
 
-                        $this->userRepo->addUser($userArray);
+                        $userId = $this->userRepo->addUser($userArray);
 
-                        $user = $this->userRepo->getUserByEmail($usernameWDomain);
-                        //ldap login successful however the user doesn't exist in the db, admin needs to sync or allow autocreate
+                        if ($userId !== false) {
+                            $user = $this->userRepo->getUserByEmail($usernameWDomain);
+                        } else {
+                            error_log("Ldap user creation failed.");
+                            return false;
+                        }
+
                         //TODO: create a better login response. This will return that the username or password was not correct
                     } else {
                         $user['firstname'] = $ldapUser['firstname'];
@@ -240,12 +250,14 @@ namespace leantime\domain\services {
                         $this->userRepo->editUser($user, $user['id']);
                     }
 
-                    //TODO: if user exists in ldap, do an auto update of name
-                    $this->setUserSession($user, true);
+                    if ($user !== false && is_array($user)) {
+                        $this->setUserSession($user, true);
 
-                    $this->authRepo->updateUserSession($user['id'], $this->session, time());
-
-                    return true;
+                        return true;
+                    } else {
+                        error_log("Could not retrieve user by email");
+                        return false;
+                    }
                 }
 
                 //Don't return false, to allow the standard login provider to check the db for contractors or clients not in ldap
@@ -262,18 +274,24 @@ namespace leantime\domain\services {
             if ($user !== false && is_array($user)) {
                 $this->setUserSession($user);
 
-                $this->authRepo->updateUserSession($user['id'], $this->session, time());
-
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
                 return true;
+
             } else {
+
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
                 return false;
             }
+
         }
 
-        private function setUserSession($user, $isLdap = false)
+        public function setUserSession($user, $isLdap = false)
         {
+            if (!$user || !is_array($user)) {
+                return false;
+            }
 
-            $this->name = strip_tags($user['firstname']);
+            $this->name = htmlentities($user['firstname']);
             $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
             $this->userId = $user['id'];
             $this->settings = $user['settings'] ? unserialize($user['settings']) : array();
@@ -297,6 +315,8 @@ namespace leantime\domain\services {
                         'twoFASecret' => $this->twoFASecret,
                         'isLdap' => $isLdap
             ]);
+
+            $this->authRepo->updateUserSession($this->userId, $this->session, time());
         }
 
         /**
@@ -327,6 +347,7 @@ namespace leantime\domain\services {
         {
 
             $this->authRepo->invalidateSession($this->session);
+
             core\session::destroySession();
 
             if (isset($_SESSION)) {
@@ -450,6 +471,7 @@ namespace leantime\domain\services {
                 core\frontcontroller::redirect(BASE_URL . "/errors/error403");
             }
 
+            return false;
         }
 
         public static function userHasRole(string|array $role, $forceGlobalRoleCheck = false): bool

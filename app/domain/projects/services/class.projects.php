@@ -5,11 +5,13 @@ namespace leantime\domain\services {
     use GuzzleHttp\Exception\RequestException;
     use leantime\core;
     use leantime\core\eventhelpers;
+    use leantime\domain\models\notification;
     use leantime\domain\repositories;
     use DateTime;
     use DateInterval;
     use League\HTMLToMarkdown\HtmlConverter;
     use GuzzleHttp\Client;
+    use leantime\domain\services\notifications\messengers;
     use Psr\Http\Message\ResponseInterface;
     use leantime\domain\models\auth\roles;
 
@@ -22,6 +24,8 @@ namespace leantime\domain\services {
         private repositories\tickets $ticketRepository;
         private repositories\setting $settingsRepo;
         private core\language $language;
+        private messengers $messengerService;
+        private notifications $notificationService;
 
         public function __construct()
         {
@@ -32,6 +36,8 @@ namespace leantime\domain\services {
             $this->settingsRepo = new repositories\setting();
             $this->filesRepository = new repositories\files();
             $this->language = core\language::getInstance();
+            $this->messengerService = new messengers();
+            $this->notificationService = new notifications();
         }
 
         public function getProject($id)
@@ -59,7 +65,7 @@ namespace leantime\domain\services {
 
 
             //Calculate percent
-            //The magic: Use effort calculation AND number of ticket calculation. Then get the average.
+
             $numberOfClosedTickets = $this->ticketRepository->getNumberOfClosedTickets($projectId);
 
             $numberOfTotalTickets = $this->ticketRepository->getNumberOfAllTickets($projectId);
@@ -79,7 +85,7 @@ namespace leantime\domain\services {
                 $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
             }
 
-            $finalPercent = ($percentNum + $percentEffort) / 2;
+            $finalPercent = $percentEffort;
 
             if ($totalprojectDays > 0) {
                 $dailyPercent = $finalPercent / $totalprojectDays;
@@ -152,198 +158,92 @@ namespace leantime\domain\services {
             return $to;
         }
 
-        public function notifyProjectUsers($message, $subject, $projectId, $url = false)
+        //TODO Split and move to notifications
+        public function notifyProjectUsers(\leantime\domain\models\notifications\notification $notification)
         {
 
-            $projectName = $this->getProjectName($projectId);
-
-            $httpClient = new Client();
-
             //Email
-            $users = $this->getUsersToNotify($projectId);
-            $users = array_filter($users, function ($user, $k) {
-                return $user != $_SESSION['userdata']['mail'];
+            $users = $this->getUsersToNotify($notification->projectId);
+            $projectName = $this->getProjectName($notification->projectId);
+
+            $users = array_filter($users, function ($user) use ($notification) {
+                return $user != $notification->authorId;
             }, ARRAY_FILTER_USE_BOTH);
 
+            /*
             $mailer = new core\mailer();
             $mailer->setContext('notify_project_users');
-            $mailer->setSubject($subject);
+            $mailer->setSubject($notification->subject);
 
-            $emailMessage = $message;
-            if ($url !== false) {
-                $emailMessage .= " <a href='" . $url['link'] . "'>" . $url['text'] . "</a>";
-            }
+
             $mailer->setHtml($emailMessage);
             //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+            */
+
+            $emailMessage = $notification->message;
+            if ($notification->url !== false) {
+                $emailMessage .= " <a href='" . $notification->url['url'] . "'>" . $notification->url['text'] . "</a>";
+            }
 
             // NEW Queuing messaging system
             $queue = new repositories\queue();
-            $queue->queueMessageToUsers($users, $emailMessage, $subject, $projectId);
+            $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
 
+            //Send to messengers
+            $this->messengerService->sendNotificationToMessengers($notification, $projectName);
 
-            //Prepare message for chat applications (Slack, Mattermost)
-            $prepareChatMessage = $message;
-            if ($url !== false) {
-                $prepareChatMessage .= " <" . $url['link'] . "|" . $url['text'] . ">";
-            }
+            //Notify users about mentions
+            //Fields that should be parsed for mentions
+            $mentionFields = array(
+                "comments" => array("text"),
+                "projects" => array("details"),
+                "tickets" => array("description"),
+                "canvas" => array("description", "data", "conclusion", "assumptions")
+            );
 
-            $attachments = array([
-                'fallback' => $subject,
-                'pretext'  => $subject,
-                'color'    => '#1b75bb',
-                'fields'   => array(
-                    [
-                        'title' => $this->language->__("headlines.project_with_name") . " " . $projectName,
-                        'value' => $prepareChatMessage,
-                        'short' => false
-                    ]
-                )
-            ]);
+            $contentToCheck = '';
+            //Find entity ID & content
+            //Todo once all entities are models this if statement can be reduced
+            if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity["id"])) {
+                $entityId = $notification->entity["id"];
 
-            //Slack Webhook post
-            $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".slackWebhookURL");
-            if ($slackWebhookURL !== "" && $slackWebhookURL !== false) {
-                $data = array(
-                    'text'        => '',
-                    'attachments' => $attachments
-                );
+                if (isset($mentionFields[$notification->module])) {
+                    $fields = $mentionFields[$notification->module];
 
-                $data_string = json_encode($data);
-
-                try {
-                    $httpClient->post($slackWebhookURL, [
-                        'body' => $data_string,
-                        'headers' => [ 'Content-Type' => 'application/json' ]
-                    ]);
-                } catch (\Exception $e) {
-                    error_log($e);
-                }
-            }
-
-            //Discord Webhook post
-            $converter = false;
-            for ($i = 1; 3 >= $i; $i++) {
-                $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $projectId . '.discordWebhookURL' . $i);
-                if ($discordWebhookURL !== "" && $discordWebhookURL !== false) {
-                    if (!$converter) {
-                        $converter = new HtmlConverter();
-                    }
-                    $timestamp = date('c', strtotime('now'));
-                    $fields = [
-                  // Additional data to be sent; e.g.:
-                  //[
-                  //  'name' => $subject,
-                  //  'value' => $message,
-                  //  'inline' => FALSE
-                  //],
-                    ];
-                    $url_link = (
-                    empty($url['link'])
-                    ? ''
-                    : $url['link']
-                    );
-
-                  // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
-                    $data_string = json_encode([
-                    'content' => 'Leantime' . ' - ' . $_SESSION['companysettings.sitename'],
-                    'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
-                    'tts' => false,
-                    'embeds' => [
-                      [
-                      'title' => $subject,
-                      'type' => 'rich',
-                      'description' => $converter->convert($message),
-                      'url' => $url_link,
-                      'timestamp' => $timestamp,
-                      'color' => hexdec('1b75bb'),
-                      'footer' => [
-                        'text' => 'Leantime',
-                        'icon_url' => $url_link,
-                      ],
-                      'author' => [
-                        'name' =>  $projectName,
-                        'url' => $url_link
-                      ],
-                      'fields' => $fields,
-                      ]
-                    ]
-
-                    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-                    try {
-                          $httpClient->post($discordWebhookURL, [
-                          'body' => $data_string,
-                          'headers' => [ 'Content-Type' => 'application/json' ]
-                          ]);
-                    } catch (\Exception $e) {
-                        error_log($e);
+                    foreach ($fields as $field) {
+                        if (isset($notification->entity[$field])) {
+                            $contentToCheck .= $notification->entity[$field];
+                        }
                     }
                 }
+            } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+                $entityId = $notification->entity->id;
+
+                if (isset($mentionFields[$notification->module])) {
+                    $fields = $mentionFields[$notification->module];
+
+                    foreach ($fields as $field) {
+                        if (isset($notification->entity->$field)) {
+                            $contentToCheck .= $notification->entity->$field;
+                        }
+                    }
+                }
+            } else {
+                //Entity id not set use project id
+                $entityId = $notification->projectId;
             }
 
-          //Mattermost Webhook Post
-            $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".mattermostWebhookURL");
-            if ($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
-                $data = array(
-                    'username' => "Leantime",
-                    "icon_url" => '',
-                    'text' => '',
-                    'attachments' => $attachments
+            if ($contentToCheck != '') {
+                $this->notificationService->processMentions(
+                    $contentToCheck,
+                    $notification->module,
+                    $entityId,
+                    $notification->authorId,
+                    $notification->url["url"]
                 );
-
-                $data_string = json_encode($data);
-
-                try {
-                    $httpClient->post($mattermostWebhookURL, [
-                        'body' => $data_string
-                    ]);
-                } catch (\Exception $e) {
-                    error_log($e);
-                }
             }
 
-
-            //Test Zulip
-            $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".zulipHook");
-
-            if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== "") {
-                $zulipWebhook = unserialize($zulipWebhookSerialized);
-
-                $botEmail = $zulipWebhook['zulipEmail'];
-                $botKey = $zulipWebhook['zulipBotKey'];
-                $botURL = $zulipWebhook['zulipURL'] . "/api/v1/messages";
-
-                $prepareChatMessage = "**Project: " . $projectName . "** \n\r" . $message;
-                if ($url !== false) {
-                    $prepareChatMessage .= " " . $url['link'] . "";
-                }
-
-                $data = array(
-                    "type" => "stream",
-                    "to" => $zulipWebhook['zulipStream'],
-                    "topic" => $zulipWebhook['zulipTopic'],
-                    'content' => $prepareChatMessage
-                );
-
-                $curlUrl = $botURL . '?' . http_build_query($data);
-
-                $data_string = json_encode($data);
-
-                try {
-                    $httpClient->post($curlUrl, [
-                        'body' => $data_string,
-                        'headers' => [ 'Content-Type' => 'application/json' ],
-                        'auth' => [
-                            $botEmail,
-                            $botKey
-                        ]
-                    ]);
-                } catch (\Exception $e) {
-                    error_log($e);
-                }
-            }
-
-            core\events::dispatch_event("notifyProjectUsers", array("type" => "projectUpdate", "module" => "projects", "moduleId" => $projectId, "message" => $message, "subject" => $subject, "users" => $this->getAllUserInfoToNotify($projectId), "url" => $url['link']), "domain.services.projects");
+            core\events::dispatch_event("notifyProjectUsers", array("type" => "projectUpdate", "module" => $notification->module, "moduleId" => $entityId, "message" => $notification->message, "subject" => $notification->subject, "users" => $this->getAllUserInfoToNotify($notification->projectId), "url" => $notification->url['url']), "domain.services.projects");
         }
 
         public function getProjectName($projectId)
@@ -547,17 +447,6 @@ namespace leantime\domain\services {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
             if ($users) {
-                foreach ($users as &$user) {
-                    $file = $this->filesRepository->getFile($user['profileId']);
-
-                    $return = BASE_URL . '/images/default-user.png';
-                    if ($file) {
-                        $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
-                    }
-
-                    $user["profilePicture"] = $return;
-                }
-
                 return $users;
             }
 
@@ -570,8 +459,10 @@ namespace leantime\domain\services {
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
         }
 
-        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $startDate, bool $assignSameUsers)
+        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers)
         {
+
+            $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
 
             //Ignoring
             //Comments, files, timesheets, personalCalendar Events
@@ -596,11 +487,11 @@ namespace leantime\domain\services {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                 foreach ($projectUsers as $user) {
-                    $copyProject['assignedUsers'][] = $user['id'];
+                    $copyProject['assignedUsers'][] = array("id" => $user['id'], "projectRole" => $user['projectRole']);
                 }
             }
 
-            $projectSettingsKeys = array("researchlabels", "retrolabels", "ticketlabels", "idealabels");
+            $projectSettingsKeys = array("retrolabels", "ticketlabels", "idealabels");
             $newProjectId = $this->projectRepository->addProject($copyProject);
 
             //ProjectSettings
@@ -750,6 +641,7 @@ namespace leantime\domain\services {
             //Duplicate Canvas boards
             $canvasIdList = array();
 
+
             //LeanCanvas
             $leancanvasRepo = new repositories\leancanvas();
             $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
@@ -833,48 +725,6 @@ namespace leantime\domain\services {
                         );
 
                         $ideaRepo->addCanvasItem($canvasItemValues);
-                    }
-                }
-            }
-
-            //Retros
-            $retroRepo = new repositories\retroscanvas();
-            $canvasBoards = $retroRepo->getAllCanvas($projectId);
-            foreach ($canvasBoards as $canvas) {
-                $canvasValues = array(
-                    "title" => $canvas['title'],
-                    "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId
-
-                );
-
-                $newCanvasId = $retroRepo->addCanvas($canvasValues);
-                $canvasIdList[$canvas['id']] = $newCanvasId;
-
-                $canvasItems = $retroRepo->getCanvasItemsById($canvas['id']);
-
-                if ($canvasItems != false && count($canvasItems) > 0) {
-                    foreach ($canvasItems as $item) {
-                        $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneId']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneId']];
-                        }
-
-                        $canvasItemValues = array(
-                            "description" => $item['description'],
-                            "assumptions" => $item['assumptions'],
-                            "data" => $item['data'],
-                            "conclusion" => $item['conclusion'],
-                            "box" => $item['box'],
-                            "author" => $item['author'],
-
-                            "canvasId" => $newCanvasId,
-                            "sortindex" => $item['sortindex'],
-                            "status" => $item['status'],
-                            "milestoneId" => $milestoneId
-                        );
-
-                        $retroRepo->addCanvasItem($canvasItemValues);
                     }
                 }
             }

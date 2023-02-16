@@ -39,12 +39,16 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
+            $settingsRepo = new \leantime\domain\repositories\setting();
+
             if (isset($_POST['step']) && $_POST['step'] == 1) {
                 if (isset($_POST['projectname'])) {
                     $projectService = new projects();
                     $projectService->patch($_SESSION['currentProject'], array("name" => $_POST['projectname']));
                     $projectService->changeCurrentSessionProject($_SESSION['currentProject']);
                 }
+
+                $settingsRepo->saveSetting("companysettings.completedOnboarding", true);
 
                 $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=2");
             }
@@ -53,7 +57,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['theme'])) {
                     $postTheme = htmlentities($_POST['theme']);
 
-                    $settingsRepo = new \leantime\domain\repositories\setting();
+
                     $themeCore = new theme();
 
                     //Only save if it is actually available.
@@ -67,8 +71,6 @@ namespace leantime\domain\controllers {
                     } catch (Exception $e) {
                         error_log($e);
                     }
-
-                    $settingsRepo->saveSetting("companysettings.completedOnboarding", true);
                 }
                 $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
             }

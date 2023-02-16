@@ -8,14 +8,15 @@ namespace leantime\domain\services {
     use leantime\domain\repositories;
     use Ramsey\Uuid\Uuid;
 
-    class reports {
-
+    class reports
+    {
         private $projectRepository;
         private $sprintRepository;
         private $ticketRepository;
         private $reportRepository;
 
-        public function __construct() {
+        public function __construct()
+        {
 
             $this->tpl = new core\template();
             $this->projectRepository = new repositories\projects();
@@ -26,10 +27,10 @@ namespace leantime\domain\services {
             $this->ticketRepository = new repositories\tickets();
         }
 
-        public function dailyIngestion() {
+        public function dailyIngestion()
+        {
 
             if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
-
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
@@ -38,7 +39,6 @@ namespace leantime\domain\services {
                 //If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
 
                 if (count($lastEntries) == 0) {
-
                     $currentSprint = $this->sprintRepository->getCurrentSprint($_SESSION['currentProject']);
 
                     if ($currentSprint !== false) {
@@ -63,15 +63,18 @@ namespace leantime\domain\services {
             }
         }
 
-        public function getFullReport($projectId) {
+        public function getFullReport($projectId)
+        {
             return $this->reportRepository->getFullReport($projectId);
         }
 
-        public function getRealtimeReport($projectId, $sprintId) {
+        public function getRealtimeReport($projectId, $sprintId)
+        {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
         }
 
-        public function getAnonymousTelemetry() {
+        public function getAnonymousTelemetry()
+        {
 
             //Get anonymous company guid
             $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
@@ -159,7 +162,8 @@ namespace leantime\domain\services {
             return $telemetry;
         }
 
-        public function sendAnonymousTelemetry(): bool|PromiseInterface {
+        public function sendAnonymousTelemetry(): bool|PromiseInterface
+        {
 
             if (isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
                 return false;
@@ -169,7 +173,6 @@ namespace leantime\domain\services {
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
-
                 $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
@@ -191,13 +194,12 @@ namespace leantime\domain\services {
                                     'timeout' => 5
                                 ])->then(function ($response) use ($today) {
 
-                            $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
-                            $_SESSION['skipTelemetry'] = true;
-                        });
+                                    $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
+                                    $_SESSION['skipTelemetry'] = true;
+                                });
 
                         return $promise;
                     } catch (\Exception $e) {
-
                         error_log($e);
 
                         $_SESSION['skipTelemetry'] = true;
@@ -209,7 +211,6 @@ namespace leantime\domain\services {
             $_SESSION['skipTelemetry'] = true;
             return false;
         }
-
     }
 
 }

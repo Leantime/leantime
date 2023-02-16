@@ -12,10 +12,12 @@
     font-weight:normal;
     background:var(--main-action-bg);
     border:0px;
+    font-weight: bold;
 }
 
 .tox .tox-dialog .tox-button--secondary {
-    background:var(--neutral);
+    background:var(--col-title-bg);
+    color:var(--kanban-col-title-color);
 }
 
 .tox .tox-dialog .tox-button--naked {
@@ -107,7 +109,7 @@ body .tox .tox-mbtn--active {
 }
 
 body.mce-content-body {
-    padding:10px 30px;
+    padding:10px 15px;
 }
 
 .mce-content-body {
@@ -201,7 +203,104 @@ body.mce-content-body {
     border-right:0px;
 }
 
+.userMention {
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight:bold;
+    white-space: nowrap;
+}
+
+.userMention img {
+    width: 17px;
+
+    border-radius: 10px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+}
+
+a.userMention {
+    color: var(--primary-color);
+    font-weight:bold;
+}
+
+a.userMention:hover,
+a.userMention:focus {
+    text-decoration: none;
+}
+
+a.confetti {
+    cursor:pointer;
+    color:var(--primary-color);
+    font-weight:bold;
+}
+
+#tinyPlaceholder {
+    opacity:0.7;
+
+}
+
+.tox .tox-dialog,
+.tox .tox-dialog__header,
+.tox .tox-selectfield select,
+.tox .tox-textarea,
+.tox .tox-textfield,
+.tox .tox-toolbar-textfield,
+.tox .tox-dialog__footer{
+    background-color:var(--secondary-background) !important;
+    color:var(--primary-font-color) !important;
+    border-color:var(--main-border-color) !important;
+}
+
+.tox .tox-dialog__body-nav-item--active {
+    color:var(--primary-color) !important;
+}
+
+.tox .tox-dialog__body-nav-item,
+.tox .tox-dropzone p,
+.tox .tox-button--naked{
+    color:var(--primary-font-color) !important;
+}
+
+.tox .tox-button--naked:hover:not(:disabled) {
+    color:var(--primary-font-color) !important;
+    background-color:var(--primary-background) !important;
+}
+
+.tox .tox-dialog__footer {
+    border-top: 1px solid var(--main-border-color);
+}
+
+.tox-dropzone {
+    background:var(--primary-background) !important;
+}
 
 
+.mirrorElement {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+    display: Inline-block;
+}
 
+.tox .tox-form .tox-collection__item-icon {
+    font-size:var(--font-size-xxl);
+}
+
+body .tox .tox-dialog-wrap__backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+    background: #f5f6f7;
+}
 

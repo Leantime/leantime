@@ -11,8 +11,12 @@
 input, button, select, textarea {
     font-family:var(--primary-font-family);
 }
-form label {
+form label{
     padding-top:5px;
+}
+
+form .switchery {
+    margin-top:5px;
 }
 
 tox-edit-area,
@@ -148,6 +152,7 @@ a.btn-default,
 {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
+    font-weight:bold;
     padding: 3px 12px;
     line-height:21px;
     background: var(--secondary-action-bg);
@@ -179,7 +184,7 @@ body input[type='submit'].btn-default .caret,
 .btn-group .btn .caret,
 .btn-group>.btn:last-child .caret,
 .btn-group>.dropdown-toggle .caret {
-    border-top-color:var(--secondary-action-hover-color);
+    border-top-color:var(--primary-font-color);
 }
 
 body .btn-default:hover .caret,
@@ -217,6 +222,7 @@ input[type='submit'],
     border-radius:var(--element-radius);
     outline:0;
     font-size: var(--base-font-size);
+    font-weight:bold;
     padding: 3px 12px;
     line-height:21px;
     box-shadow:none;
@@ -237,6 +243,13 @@ body a.btn.btn-primary:hover{
     background: var(--main-action-hover-bg);
     color:var(--main-action-hover-color);
     border:1px solid var(--main-action-hover-bg);
+}
+
+body .btn-primary .caret,
+body input[type='submit'].btn-primary .caret,
+.btn-group .btn-primary .caret,
+.btn-group>.btn-primary:last-child .caret {
+    border-top-color:var(--main-action-hover-color);
 }
 
 .btn-primary[disabled] {
@@ -656,4 +669,130 @@ input.secretInput:active {
     margin-right:5px;
 }
 
+.uppy-Webcam-footer {
+    width:400px;
+}
+
+.uploadWrapper .extra {
+    height: 400px;
+    width: 100%;
+    display: flex;
+    z-index:10000;
+    display:none;
+}
+
+.extra .uppy-Root{
+    flex-grow: 1;
+}
+
+.uppy-Webcam-videoContainer,
+.uppy-ScreenCapture-videoContainer {
+    background:var(--col-content-bg);
+}
+
+.uppy-Webcam-button svg,
+.uppy-ScreenCapture-button svg{
+    width:20px;
+    height:20px;
+}
+
+.uppy-Webcam-button,
+.uppy-ScreenCapture-button--video {
+    background:var(--main-action-bg);
+}
+
+.uppy-FileInput-container {
+    text-align:center;
+}
+
+.uppy-FileInput-btn {
+    background:var(--main-action-bg);
+    color:var(--main-action-color);
+    border:1px solid var(--main-action-bg);
+    font-size: var(--base-font-size);
+    font-family: var(--primary-font-family);
+    padding:3px 12px;
+    line-height: 21px;
+    border-radius: var(--element-radius);
+    vertical-align: top;
+}
+
+.uppy-FileInput-btn:hover {
+    background:var(--main-action-hover-bg);
+    color:var(--main-action-hover-color);
+}
+
+.fileUploadDrop {
+    border:2px dotted var(--main-border-color);
+    border-radius: var(--box-radius);
+    text-align:center;
+    padding:10px 10px 0px 10px;
+}
+
+.fileUploadDrop p {
+    padding-bottom:10px;
+}
+
+.uppy-FileInput-btn {
+    padding:0px;
+    border:0px;
+    color:var(--primary-color);
+    background:transparent;
+    margin-right:15px;
+    margin-left:15px;
+}
+
+.uppy-FileInput-btn:before {
+    font-family:"Font Awesome 6 Free";
+    content: "\f07c";
+}
+
+.uppy-FileInput-btn:hover,
+.fileUploadDrop a:hover {
+    background:transparent;
+    color:var(--primary-font-color);
+    text-decoration: none;
+}
+
+.fileUploadDrop a {
+    padding-right:15px;
+}
+
+.uppy-is-drag-over:after {
+    background-color: var(--primary-color);
+    opacity:0.6;
+    border: 4px dashed var(--secondary-background);
+    bottom: 7px;
+    border-radius:var(--box-radius);
+    content: "";
+    left: 7px;
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    z-index: 10000;
+}
+
+.ui-autocomplete {
+    z-index:99999;
+    margin-top: 0;
+    border-radius: var(--box-radius);
+    border:0px;
+    box-shadow: var(--regular-shadow);
+    background:var(--secondary-background);
+    max-width:200px;
+}
+
+.ui-autocomplete li {
+    list-style-type: none;
+}
+
+.ui-autocomplete li div {
+    padding: 10px 20px;
+}
+
+
+.ui-autocomplete li .ui-state-active {
+    color: var(--dropdown-link-hover-color);
+    background:var(--dropdown-link-hover-bg);
+}
 

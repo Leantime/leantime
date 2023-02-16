@@ -19,7 +19,7 @@
         <li>
             <a href='javascript:void(0);'
                onclick="leantime.helperController.showHelperModal('<?php echo $this->get('modal'); ?>', 300, 500);">
-                <?=$this->__("menu.show_me_around")?>
+                <?=$this->__("menu.what_is_this_page")?>
             </a>
         </li>
         <li>

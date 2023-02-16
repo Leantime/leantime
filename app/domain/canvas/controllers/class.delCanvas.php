@@ -1,7 +1,9 @@
 <?php
+
 /**
  * delCanvas class - Generic canvas controller / Delete Canvas
  */
+
 namespace leantime\domain\controllers\canvas {
 
     use leantime\core;
@@ -12,7 +14,6 @@ namespace leantime\domain\controllers\canvas {
 
     class delCanvas extends controller
     {
-
         /**
          * Constant that must be redefined
          */
@@ -25,7 +26,7 @@ namespace leantime\domain\controllers\canvas {
          */
         public function init()
         {
-            $canvasRepoName = "leantime\\domain\\repositories\\".static::CANVAS_NAME.'canvas';
+            $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
         }
 
@@ -39,22 +40,28 @@ namespace leantime\domain\controllers\canvas {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            if(isset($_POST['del']) && isset($_GET['id'])) {
-
+            if (isset($_POST['del']) && isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
                 $this->canvasRepo->deleteCanvas($id);
 
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
-                $_SESSION['current'.strtoupper(static::CANVAS_NAME).'Canvas'] = $allCanvas[0]['id'] ?? -1;
+                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $allCanvas[0]['id'] ?? -1;
 
                 $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success');
-                $this->tpl->redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
+
+                $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+
+                //Create default canvas.
+                if($allCanvas == false || count($allCanvas) == 0) {
+                    $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
+                }else{
+                    $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+                }
+
 
             }
 
-            $this->tpl->display(static::CANVAS_NAME.'canvas.delCanvas');
-
+            $this->tpl->display(static::CANVAS_NAME . 'canvas.delCanvas');
         }
-
     }
 }

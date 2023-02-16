@@ -29,10 +29,10 @@
     --col-content-bg: #333333;
     --col-hover-bg: #222222;
 
-    --kanban-col-bg: #242424;
+    --kanban-col-bg: #333333;
     --kanban-col-title-bg:  #1d1d1d;
     --kanban-col-title-color:var(--primary-font-color);
-    --kanban-card-bg: #333333;
+    --kanban-card-bg: #242424;
     --kanban-card-hover: #1d1d1d;
 
 
@@ -49,8 +49,8 @@
     --main-action-hover-bg: var(--accent1-hover);
     --main-action-hover-color: var(--accent1-color);
 
-    --secondary-action-bg: var(--accent2);
-    --secondary-action-color: var(--accent2-color);
+    --secondary-action-bg: var(--primary-background);
+    --secondary-action-color: var(--primary-font-color);
     --secondary-action-hover-bg: var(--accent2-hover);
     --secondary-action-hover-color: var(--accent2-color);
 
@@ -90,8 +90,8 @@
 
     --main-border-color:#333333;
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%);
-    --regular-shadow: 0px 2px 3px rgba(0 0 0 / 20%);
-    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
+    --regular-shadow: 0px 2px 6px rgba(0 0 0 / 40%);
+    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 30%);
     --box-radius-large:10px;
     --box-radius: 5px;
     --box-radius-small:3px;
@@ -100,12 +100,13 @@
 
 
     /* Status Colors */
+    /* Status Colors */
 
     --dark-red:#D61B0A;
     --dark-red-text-color:#fff;
 
     --red: #F76C5E;
-    --red-text-color: #fff;
+    --red-text-color: #000;
 
     --green: #32965D;
     --green-text-color: #fff;
@@ -114,29 +115,31 @@
     --dark-green-text-color:#fff;
 
     --yellow: #FDB833;
-    --yellow-text-color: #fff;
+    --yellow-text-color: #000;
 
     --blue: #1B75BB;
     --blue-text-color: #fff;
 
     --dark-blue:#124F7D;
-    --dark-blue-text: #fff;
+    --dark-blue-text-color: #fff;
 
     --darker-blue:#082236;
-    --darker-blue-text: #fff;
+    --darker-blue-text-color: #fff;
 
     --purple:#5F0F40;
     --purple-text-color:#fff;
 
     --pink: #F26CA7;
-    --pink-text-color:#fff;
+    --pink-text-color:#000;
 
     --brown: #4C212A;
     --brown-text-color: #fff;
 
     --grey: #b0b0b0;
-    --grey-text-color:#fff;
+    --grey-text-color:#000;
 
+    --dark-grey: #707070;
+    --dark-grey-text-color: #fff;
 
 
 
@@ -413,3 +416,5 @@ body .ticketDropdown ul::after {
 .articleBody table td {
     border:1px solid var(--neutral);
 }
+
+

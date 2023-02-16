@@ -3,8 +3,6 @@ var leantime = leantime || {};
 leantime.ticketsRepository = (function () {
 
     // Variables (underscore for private variables)
-    var publicThing = "not secret";
-    var _privateThing = "secret";
 
     //Constructor
     (function () {
@@ -18,12 +16,12 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                 {
                     id : id,
-                    editFrom:start.format("YYYY-MM-DD"),
-                    editTo:end.format("YYYY-MM-DD")
+                    editFrom:start,
+                    editTo:end
                 }
             }
         ).done(
@@ -40,7 +38,7 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                 {
                     id : id,
@@ -61,12 +59,12 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                     {
                         id : id,
                         planHours:planhours
-                    }
+                }
             }
         ).done(
             function () {
@@ -82,12 +80,12 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                     {
                         id : id,
                         dateToFinish:date
-                    }
+                }
             }
         ).done(
             function () {
@@ -103,12 +101,12 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                     {
                         id : id,
                         editFrom:date
-                    }
+                }
             }
         ).done(
             function () {
@@ -124,12 +122,12 @@ leantime.ticketsRepository = (function () {
         jQuery.ajax(
             {
                 type: 'PATCH',
-                url: leantime.appUrl+'/api/tickets',
+                url: leantime.appUrl + '/api/tickets',
                 data:
                     {
                         id : id,
                         editTo:date
-                    }
+                }
             }
         ).done(
             function () {
