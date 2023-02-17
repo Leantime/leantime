@@ -425,6 +425,17 @@ min-width: 1200px
         padding: 0 5px;
         line-height:60px;
         text-align:center;
+
+    }
+
+    .userloggedinfo .userinfo a.profileHandler {
+        line-height:60px;
+        height:60px;
+        margin-right: 0px;
+    }
+
+    .header .userloggedinfo img {
+        margin-top:15px;
     }
 
     .headmenu > li > a .head-icon {
@@ -720,6 +731,10 @@ min-width: 1200px
 
     .stickyColumn {
         position:relative;
+    }
+
+    .userinfo .fa-caret-down {
+        display:none;
     }
 }
 

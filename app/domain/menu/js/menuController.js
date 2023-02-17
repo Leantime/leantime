@@ -51,6 +51,11 @@ leantime.menuController = (function () {
 
     var _initLeftMenuHamburgerButton = function () {
 
+
+        if(window.innerWidth < 576) {
+            jQuery('.barmenu').removeClass('open')
+        }
+
         if (jQuery('.barmenu').hasClass('open')) {
             jQuery('.rightpanel').css({marginLeft: '240px'});
             jQuery('.header').css({marginLeft: '240px', width:'calc(100%-240px)'});
