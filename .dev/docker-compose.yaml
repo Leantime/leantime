@@ -4,6 +4,8 @@ networks:
     external: false
 volumes:
   mysql:
+  s3ninja-data:
+
 services:
   leantime-dev:
     build: .
@@ -13,6 +15,7 @@ services:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
+     - ".env:/var/www/html/config/.env"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -28,3 +31,31 @@ services:
       - leantime
     volumes:
       - mysql:/var/lib/mysql:rw
+  maildev:
+    image: maildev/maildev
+    environment:
+      - MAILDEV_SMTP_PORT=465
+      - MAILDEV_WEB_PORT=8081
+    ports:
+      - 8081:8081
+    networks: 
+      - leantime  
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 8082:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    networks:
+      - leantime
+  s3ninja:
+    image: scireum/s3-ninja
+    ports:
+      - 8083:9000 
+    networks:
+      - leantime
+    volumes:
+      - s3ninja-data:/home/sirius/data
+
+

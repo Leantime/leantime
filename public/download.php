@@ -142,18 +142,13 @@ function getFileFromS3(){
         // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
         $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
-        $cmd = $s3Client->getCommand('GetObject', [
+        $result = $s3Client->getObject([
             'Bucket' => $config->s3Bucket,
             'Key' => $fileName,
-            'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
+            'Body'   => 'this is the body!'
         ]);
 
-        $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
-        $presignedUrl = (string)$request->getUri();
-
-        header("Location:".$presignedUrl);
-
-        exit();
+        echo($result['Body']);
 
 
 
