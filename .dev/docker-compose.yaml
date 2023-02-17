@@ -4,6 +4,8 @@ networks:
     external: false
 volumes:
   mysql:
+  s3ninja-data:
+
 services:
   leantime-dev:
     build: .
@@ -47,3 +49,13 @@ services:
       - PMA_PORT=3306
     networks:
       - leantime
+  s3ninja:
+    image: scireum/s3-ninja
+    ports:
+      - 8083:9000 
+    networks:
+      - leantime
+    volumes:
+      - s3ninja-data:/home/sirius/data
+
+
