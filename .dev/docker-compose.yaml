@@ -1,0 +1,30 @@
+version: "3.9"
+networks:
+  leantime:
+    external: false
+volumes:
+  mysql:
+services:
+  leantime-dev:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+     - "../:/var/www/html"
+     - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
+     - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - leantime
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=leantime
+      - MYSQL_USER=leantime
+      - MYSQL_PASSWORD=leantime
+      - MYSQL_DATABASE=leantime
+    networks:
+      - leantime
+    volumes:
+      - mysql:/var/lib/mysql:rw
