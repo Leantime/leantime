@@ -582,7 +582,7 @@ namespace leantime\domain\services {
                 'headline' => $values['headline'],
                 'type' => $values['type'],
                 'description' => $values['description'],
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
