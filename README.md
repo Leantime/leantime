@@ -110,7 +110,7 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 ### Running Locally
 
 For development, we use a dockerized development environment. You will need to have
-``docker``, ``docker-compose``, ``make``, ``composer`` and ``npm`` installed. to run the application for development, in the root of this repository, run a primer with
+``docker``, ``docker compose``, ``make``, ``composer`` and ``npm`` installed. to run the application for development, in the root of this repository, run a primer with
 
 ```make clean build```
 
