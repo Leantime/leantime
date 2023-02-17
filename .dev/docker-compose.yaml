@@ -13,6 +13,7 @@ services:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
+     - ".env:/var/www/html/config/.env"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -28,3 +29,12 @@ services:
       - leantime
     volumes:
       - mysql:/var/lib/mysql:rw
+  maildev:
+    image: maildev/maildev
+    environment:
+      - MAILDEV_SMTP_PORT=465
+      - MAILDEV_WEB_PORT=8081
+    ports:
+      - 8081:8081
+    networks: 
+      - leantime  

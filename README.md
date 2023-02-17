@@ -106,6 +106,23 @@ You can set any of the config variables in `config/configuration.php` when runni
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
 
+
+### Running Locally
+
+For development, we use a dockerized development environment. You will need to have
+``docker``, ``docker-compose``, ``make``, ``composer`` and ``npm`` installed. to run the application for development, in the root of this repository, run a primer with
+
+```make clean build```
+
+afterwards, run 
+
+```make run-dev```
+
+this will start the development server on port 8080. XDebug is enabled, but you may have to modify your 
+IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE).
+
+The dev environment also provides a mysql server and mail server and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to edit the environment for all users**
+
 ### Update ###
 
 * Make sure to take a backup of your database and files
