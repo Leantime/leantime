@@ -3469,7 +3469,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent {
-    background:var(--col-content-bg);
+    background:var(--col-title-bg);
     border-radius:var(--box-radius);
     width:100%;
     padding:12px 15px;
@@ -3768,3 +3768,48 @@ a.titleInsertLink:hover {
 h3.todaysDate {
     font-weight:normal;
 }
+
+.ui-resizable-handle.ui-resizable-w {
+    width:15px;
+    height:100%;
+    border-left:1px dashed var(--main-border-color);
+    cursor:ew-resize;
+    position:absolute;
+    background:var(--secondary-background);
+    z-index:5 !important;
+}
+
+
+.resizable {
+
+    background: var(--secondary-background);
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    padding-left:15px;
+    margin-left:25px;
+}
+
+.flexParent{
+    display:flex;
+}
+
+.box {
+    display: flex;
+    flex: 1 1;
+    position:relative;
+
+}
+
+#ticketContent {
+    margin-left:10px;
+    padding-left:30px;
+    border-left:1px dashed var(--main-border-color);
+    padding-top:15px;
+    height:100%;
+    min-height:600px;
+}
+
+

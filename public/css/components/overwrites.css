@@ -263,6 +263,7 @@ body .widgettitle.title-light {
 	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 	font-size:var(--font-size-l);
+    box-shadow: none;
 
 }
 

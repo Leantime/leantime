@@ -617,6 +617,10 @@ min-width: 1200px
         display:block!important;
     }
 
+    .hidden-sm {
+        display:none;
+    }
+
     body {
         line-height: 18px;
     }
@@ -720,6 +724,10 @@ min-width: 1200px
 }
 
 @media (min-width: 576px) and (max-width:1200px) {
+
+    .hidden-sm {
+        display:none;
+    }
 
     .hidden-phone {
         display: none!important;

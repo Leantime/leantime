@@ -141,6 +141,9 @@ $moduleId = $_GET['id'] ?? '';
 
 <script>
 
+    if (typeof uppy === 'undefined') {
+
+
     const uppy = new Uppy.Uppy({
             debug: false,
             autoProceed: true,
@@ -291,6 +294,8 @@ $moduleId = $_GET['id'] ?? '';
 
 
     });
+
+    }
 
 </script>
 

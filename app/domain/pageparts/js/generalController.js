@@ -204,7 +204,9 @@ leantime.generalController = (function () {
 
     var initComplexEditor = function () {
 
-        jQuery('textarea.complexEditor').tinymce(
+            var entityId = jQuery("input[name=id]").val();
+
+            jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
                 width: "100%",
@@ -213,7 +215,7 @@ leantime.generalController = (function () {
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "imagetools,autosave,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention,slashcommands",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample",
-                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-',
+                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
                 autosave_restore_when_empty: true,
                 autosave_retention: '120m',
                 autosave_interval: '10s',
@@ -221,6 +223,7 @@ leantime.generalController = (function () {
                 branding: false,
                 statusbar: false,
                 convert_urls: true,
+                placeholder: "Whaa?",
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,

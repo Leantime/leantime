@@ -1041,6 +1041,18 @@ leantime.ticketsController = (function () {
 
         jQuery(document).ready(function () {
 
+            var url = window.location.hash.substring(1);
+            var urlParts = url.split("/");
+            var activeTab='';
+            var activeTabIndex = 0;
+            console.log(urlParts);
+            if(urlParts.length>2) {
+
+                activeTab= "#" + urlParts[2];
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
+                console.log(activeTabIndex);
+            }
+
             jQuery('.ticketTabs').tabs({
                 create: function ( event, ui ) {
                     jQuery('.ticketTabs').css("visibility", "visible");
@@ -1048,13 +1060,19 @@ leantime.ticketsController = (function () {
                 },
                 activate: function (event, ui) {
 
-                    window.location.hash = ui.newPanel.selector;
+                    window.location.hash = "/tab/"+ui.newPanel.selector.substring(1);
                 },
                 load: function () {
 
-                }
+                },
+                enable: function(){
+
+                },
+                active: activeTabIndex
 
             });
+
+
         });
 
     };
@@ -1527,6 +1545,8 @@ leantime.ticketsController = (function () {
             });
 
 
+
+
             var asc = true;
             if (groupBy != "") {
                 jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
@@ -1733,6 +1753,66 @@ leantime.ticketsController = (function () {
         });
     };
 
+    var loadTicketToContainer = function(id, element) {
+
+        if(jQuery('textarea.complexEditor').length > 0) {
+            jQuery('textarea.complexEditor').tinymce().save();
+            jQuery('textarea.complexEditor').tinymce().remove();
+            console.log("removing tiny");
+        }
+
+        jQuery(".ticketRows").removeClass("active");
+        jQuery("#row-"+id).addClass("active");
+
+        jQuery( element ).html( "<div class='center'><img src='"+leantime.appUrl+"/images/svg/loading-animation.svg' width='100px' /></div>");
+
+        function formSubmitHandler(element) {
+
+            jQuery( element ).find("form").each(function(){
+
+                jQuery(this).on("submit", function(e){
+
+                    e.preventDefault();
+
+                    if(jQuery('textarea.complexEditor').length > 0) {
+                        jQuery('textarea.complexEditor').tinymce().save();
+                        jQuery('textarea.complexEditor').tinymce().remove();
+                    }
+
+                    jQuery( element ).html( "<div class='center'><img src='"+leantime.appUrl+"/images/svg/loading-animation.svg' width='100px'/></div>");
+
+                    var data = jQuery(this).serialize();
+
+                    jQuery.ajax({
+                        url: jQuery(this).attr("action"),
+                        data: data,
+                        type: "post",
+                        success: function(data) {
+
+                            jQuery( element ).html( data );
+                            formSubmitHandler(element);
+
+                        },
+                        error: function() {
+
+                        }
+                    });
+            });
+
+            });
+        }
+
+
+
+        jQuery.get( leantime.appUrl + '/tickets/showTicket/'+id, function( data ) {
+
+            jQuery( element ).html( data );
+            formSubmitHandler(element);
+
+        });
+
+    };
+
     var initTagsInput = function ( ) {
         jQuery("#tags").tagsInput({
             'autocomplete_url': leantime.appUrl + '/api/tags',
@@ -1783,6 +1863,8 @@ leantime.ticketsController = (function () {
         addCommentTimesheetContent:addCommentTimesheetContent,
         initMilestoneTable:initMilestoneTable,
         initMilestoneDates:_initMilestoneDates,
-        initTicketsList:initTicketsList
+        initTicketsList:initTicketsList,
+        loadTicketToContainer:loadTicketToContainer
+
     };
 })();

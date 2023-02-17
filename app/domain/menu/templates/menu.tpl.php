@@ -45,7 +45,9 @@ if (is_array($currentLink)) {
                                 if ($this->get('currentProject') == $projectRow["id"]) {
                                     echo " active ";
                                 }
-                                echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</a></li>";
+
+                                $redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL);
+                                echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=".$redirectUrl."'>" . $this->escape($projectRow["name"]) . "</a></li>";
                             }
                         } else {
                             echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";

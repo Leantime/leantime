@@ -23,7 +23,7 @@ namespace leantime\domain\repositories {
 
                 10 => ['type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
                     'submenu' => [
-                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
+                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
                          60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
 
                         20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
