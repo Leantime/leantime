@@ -168,7 +168,7 @@ leantime.ticketsController = (function () {
 
 
 
-                                var popUpHTML = '<div class="details-container"> ' +
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ' +
                                     '<small>' + task.type + ' #' + task.id + ' </small>';
 
                                 if (task.type === 'milestone') {
@@ -191,7 +191,7 @@ leantime.ticketsController = (function () {
                             },
                             on_date_change: function (task, start, end) {
 
-                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
+                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
                                 _initModals();
 
                             },

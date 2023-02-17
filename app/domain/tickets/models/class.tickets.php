@@ -12,6 +12,7 @@ namespace leantime\domain\models {
         public $editorId;
         public $userId;
         public $priority;
+        public $sortIndex;
 
         public $date;
         public $dateToFinish;

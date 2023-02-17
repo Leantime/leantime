@@ -117,7 +117,7 @@
                                         echo $_SESSION['lastFilterdTicketListView'];
                                     } else {
                                         echo BASE_URL . "/tickets/showList";
-                                    } ?>" class="active"><?=$this->__("links.list") ?></a></li>
+                                    } ?>" class="active"><?=$this->__("links.list_view") ?></a></li>
                             </ul>
                         </div>
 

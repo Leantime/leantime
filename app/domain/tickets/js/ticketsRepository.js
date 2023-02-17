@@ -11,7 +11,7 @@ leantime.ticketsRepository = (function () {
 
     //Functions
 
-    var updateMilestoneDates = function (id, start, end) {
+    var updateMilestoneDates = function (id, start, end, sortIndex) {
 
         jQuery.ajax(
             {
@@ -21,7 +21,8 @@ leantime.ticketsRepository = (function () {
                 {
                     id : id,
                     editFrom:start,
-                    editTo:end
+                    editTo:end,
+                    sortIndex: sortIndex
                 }
             }
         ).done(

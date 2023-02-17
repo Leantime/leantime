@@ -36,7 +36,7 @@ namespace leantime\domain\repositories {
 
                     'submenu' => [
 
-                        30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards', 'active' => ['showBoards']],
+                        30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '', 'hrefFunction' => 'getIdeaMenu', 'active' => ['showBoards', 'advancedBoards']],
                         50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
 
 
@@ -241,6 +241,20 @@ namespace leantime\domain\repositories {
             //Removing base URL from here since it is being added in the menu for loop in the template
             $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
+        }
+
+        public function getIdeaMenu()
+        {
+            $url = "/ideas/showBoards";
+            if(isset($_SESSION['lastIdeaView'])){
+
+                if($_SESSION['lastIdeaView'] == 'kanban'){
+                    $url = "/ideas/advancedBoards";
+                }
+
+            }
+
+            return $url;
         }
     }
 
