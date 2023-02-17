@@ -24,6 +24,9 @@ namespace leantime\domain\controllers {
 
             $this->ideaRepo = new repositories\ideas();
             $this->projectService = new services\projects();
+
+            $_SESSION['lastPage'] = CURRENT_URL;
+            $_SESSION['lastIdeaView'] = "board";
         }
 
         /**

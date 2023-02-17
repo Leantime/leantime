@@ -159,7 +159,7 @@
                                         echo $_SESSION['lastFilterdTicketListView'];
                                     } else {
                                         echo BASE_URL . "/tickets/showList";
-                                    } ?>"><?=$this->__("links.list") ?></a></li>
+                                    } ?>"><?=$this->__("links.list_view") ?></a></li>
                             </ul>
                         </div>
 

@@ -503,6 +503,7 @@ table td{
 
 .maincontentinner .table.listStyleTable tr:hover {
     box-shadow: none;
+    cursor:pointer;
 }
 
 .maincontentinner .table.listStyleTable tr.active td {
