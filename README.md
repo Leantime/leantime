@@ -121,7 +121,7 @@ afterwards, run
 this will start the development server on port 8080. XDebug is enabled, but you may have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE).
 
-The dev environment also provides a mysql server and mail server and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to edit the environment for all users**. the applicaitions you get are as follows
+The dev environment also provides a mysql server and mail server and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to edit the environment for all users**. the applications you get are as follows
 
 * [http://localhost:8080](http://localhost:8080) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev(no auth)
