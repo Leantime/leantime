@@ -10,7 +10,7 @@
  */
 
 ?>
-<h4 class="widgettitle title-primary center">
+<h4 class="widgettitle title-primary">
     <?php if (isset($canvasTypes[$elementName]['icon'])) {
         echo '<i class="fas ' . $canvasTypes[$elementName]['icon'] . '"></i> ';
     }
