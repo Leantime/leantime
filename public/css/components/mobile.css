@@ -39,6 +39,24 @@ min-width: 1200px
         margin-bottom:5px;
     }
 
+    .maincontentinner .simpleButtons .btn,
+    .maincontentinner .simpleButtons .btn-group{
+        width:auto;
+    }
+
+    .maincontentinner .simpleButtons {
+        width:auto;
+    }
+
+
+    .col-md-4 > .pull-right,
+    .col-md-5 > .pull-right,
+    .col-md-6 > .pull-right {
+        width:100%;
+    }
+
+
+
     .currentSprint {
         margin:0px;
     }
@@ -150,12 +168,11 @@ min-width: 1200px
 
     /* table */
     .dataTable th, .dataTable td {
-        font-size: 11px;
         padding: 5px;
     }
 
     .dataTable th:nth-child(2), .dataTable td:nth-child(2) {
-        display: none;
+
     }
 
     .dataTables_paginate {
@@ -600,8 +617,11 @@ min-width: 1200px
         display:block!important;
     }
 
+    .hidden-sm {
+        display:none;
+    }
+
     body {
-        font-size: 11px;
         line-height: 18px;
     }
 
@@ -704,6 +724,10 @@ min-width: 1200px
 }
 
 @media (min-width: 576px) and (max-width:1200px) {
+
+    .hidden-sm {
+        display:none;
+    }
 
     .hidden-phone {
         display: none!important;

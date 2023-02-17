@@ -11,7 +11,7 @@ namespace leantime\domain\controllers {
     class tags extends controller
     {
 
-        private services\Tags $tagService;
+        private services\tags $tagService;
 
         /**
          * init - initialize private variables
@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
          */
         public function init()
         {
-            $this->tagService = new services\Tags();
+            $this->tagService = new services\tags();
 
         }
 

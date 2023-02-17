@@ -1,7 +1,7 @@
 RewriteEngine On
 
 #Uncomment and update if Leantime runs in a subfolder
-#RewriteBase /leantime/
+RewriteBase /leantime/
 
 RewriteRule ^/?$ index.php?act=dashboard.show
 RewriteRule ^([^/\.]+)/?$ index.php?act=$1 [QSA]

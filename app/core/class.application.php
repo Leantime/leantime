@@ -120,7 +120,7 @@ class application
 
         //Not logged in and controller is not public. Redirect to auth
         } else {
-            $this->redirectWithOrigin("auth.login", $this->incomingRequest->getRequestURI());
+            $this->redirectWithOrigin("auth.login", $this->incomingRequest->getRequestURI(BASE_URL));
         }
 
         //Wait for telemetry if it was sent

@@ -27,8 +27,8 @@ function openModal() {
     var url = window.location.hash.substring(1);
     var urlParts = url.split("/");
 
-    if(urlParts.length>2) {
-        jQuery.nmManual(url, modalOptions);
+    if(urlParts.length>2 && urlParts[1] !== "tab") {
+        jQuery.nmManual(leantime.appUrl+"/"+url, modalOptions);
     }
 }
 
