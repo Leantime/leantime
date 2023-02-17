@@ -762,6 +762,7 @@ namespace leantime\domain\repositories {
 						zp_tickets.url,
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
+						zp_tickets.sortIndex,
 						zp_tickets.dependingTicketId,
 						zp_projects.name AS projectName,
 						zp_clients.name AS clientName,
