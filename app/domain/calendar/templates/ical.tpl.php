@@ -2,6 +2,8 @@
 
 $calendars = $this->get('calendar');
 $eol = "\r\n";
+$env=\leantime\core\environment::getInstance();
+$timezone = $env->defaultTimezone;
 
 $this->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
 
@@ -28,8 +30,8 @@ if ($calendars) {
             echo "BEGIN:VEVENT" . $eol;
             echo "DTSTAMP:" . date('Ymd\THis\Z') . "" . $eol;
             echo "UID:" . hash('sha1', $calendar['id']) . "@" . BASE_URL . "" . $eol;
-            echo "DTSTART:" . $calendar['dateFrom']['ical'] . "" . $eol;
-            echo "DTEND:" . $calendar['dateTo']['ical'] . "" . $eol;
+            echo "DTSTART;TZID=".$timezone.":" . $calendar['dateFrom']['ical'] . "" . $eol;
+            echo "DTEND;TZID=".$timezone.":" . $calendar['dateTo']['ical'] . "" . $eol;
             echo "SUMMARY:" . substr(htmlspecialchars($calendar['title']), 0, 74) . "" . $eol;
             echo "URL;VALUE=URI:" . $url . "" . $eol;
             echo "END:VEVENT" . $eol;

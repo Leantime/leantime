@@ -89,6 +89,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
+
+
+
             $newValues = array();
             foreach ($values as $value) {
                 $dateFrom     = strtotime($value['dateFrom']);
@@ -103,7 +106,7 @@ namespace leantime\domain\repositories {
                         'd' => date('d', $dateFrom),
                         'h' => date('H', $dateFrom),
                         'i' => date('i', $dateFrom),
-                        'ical' => date('Ymd\THis\Z', $dateFrom)
+                    'ical' => date('Ymd\THis', $dateFrom)
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
@@ -111,7 +114,7 @@ namespace leantime\domain\repositories {
                         'd' => date('d', $dateTo),
                         'h' => date('H', $dateTo),
                         'i' => date('i', $dateTo),
-                        'ical' => date('Ymd\THis\Z', $dateTo)
+                        'ical' => date('Ymd\THis', $dateTo)
                     ),
                     'id' => $value['id'],
                     'projectId' => '',
@@ -143,7 +146,7 @@ namespace leantime\domain\repositories {
                             'd' => date('d', $dateFrom),
                             'h' => date('H', $dateFrom),
                             'i' => date('i', $dateFrom),
-                            'ical' => date('Ymd\THis\Z', $dateFrom)
+                            'ical' => date('Ymd\THis', $dateFrom)
                         ),
                         'dateTo' => array(
                             'y' => date('Y', $dateTo),
@@ -151,7 +154,7 @@ namespace leantime\domain\repositories {
                             'd' => date('d', $dateTo),
                             'h' => date('H', $dateTo),
                             'i' => date('i', $dateTo),
-                            'ical' => date('Ymd\THis\Z', $dateTo)
+                            'ical' => date('Ymd\THis', $dateTo)
                         ),
                         'id' => $ticket['id'],
                         'projectId' => $ticket['projectId'],
