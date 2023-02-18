@@ -13,9 +13,11 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-    class integrations extends controller
+    class integration extends controller
     {
 
+
+        private services\connector\providers $providerService;
 
         /**
          * constructor - initialize private variables
@@ -27,7 +29,7 @@ namespace leantime\domain\controllers {
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-
+            $this->providerService = new services\connector\providers();
 
         }
 
@@ -41,7 +43,45 @@ namespace leantime\domain\controllers {
         {
 
 
-            $this->tpl->displayPartial('connectors.providers');
+            if(isset($params["provider"])) {
+            //New integration with provider
+                //Get the provider
+                $provider = $this->providerService->getProvider($params["provider"]);
+
+                //Initiate connection
+                if(isset($params["step"])  && $params["step"] == "connect") {
+                    $provider->connect();
+                }
+
+                //Choose Entities to sync
+                if(isset($params["step"])  && $params["step"] == "entity") {
+                    $provider->getEntities();
+                    //TODO UI to show entity picker/mapper
+                }
+
+                //Choose fields to map
+                //Choose Entities to sync
+                if(isset($params["step"])  && $params["step"] == "fields") {
+                    $provider->getFields();
+                    //TODO UI to show field picker/mapper
+                }
+
+                if(isset($params["step"])  && $params["step"] == "sync"){
+                    //TODO UI to show sync schedule/options
+                }
+
+                if(isset($params["step"])  && $params["step"] == "confirm"){
+                    //confirm and store in DB
+
+                }
+
+            }else if(isset($params["integration"])) {
+            //Edit existing integration
+
+
+            }
+
+            $this->tpl->displayPartial('connectors.integration');
         }
 
         /**

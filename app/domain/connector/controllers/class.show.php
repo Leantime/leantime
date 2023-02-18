@@ -13,7 +13,7 @@ namespace leantime\domain\controllers {
     use DateInterval;
     use leantime\domain\services\auth;
 
-    class integrations extends controller
+    class show extends controller
     {
 
 
@@ -26,7 +26,7 @@ namespace leantime\domain\controllers {
         public function init()
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
-
+            $this->providerService = new services\connector\providers();
 
 
         }
@@ -41,7 +41,11 @@ namespace leantime\domain\controllers {
         {
 
 
-            $this->tpl->displayPartial('connectors.providers');
+            $providers = $this->providerService->getProviders();
+
+            $this->tpl->assign("providers", $providers);
+
+            $this->tpl->display('connector.show');
         }
 
         /**
@@ -52,7 +56,7 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-            $this->tpl->displayPartial('connectors.providers');
+            //Redirect.
         }
 
 

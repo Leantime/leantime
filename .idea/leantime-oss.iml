@@ -58,6 +58,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-string-script-language" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initials" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/oauth-subscriber" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kamermans/guzzle-oauth2-subscriber" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

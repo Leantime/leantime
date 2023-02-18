@@ -1,5 +1,7 @@
 <?php
 
+namespace leantime\domain\services\connector;
+
 use leantime\domain\models\connector\entity;
 
 interface providerIntegration

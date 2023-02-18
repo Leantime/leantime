@@ -18,7 +18,28 @@
 
         <?php echo $this->displayNotification(); ?>
         <h3>Sync Leantime with your external applications</h3>
+        <p>Available providers</p>
+        <div class="row">
+            <?php foreach($this->get("providers") as $provider) { ?>
+                <div class="col-md-3">
+                    <div class="profileBox">
+                        <div class="commentImage">
+                            <img src="<?=BASE_URL ?>/<?=$provider->image ?>"/>
+                        </div>
+                        <span class="userName">
+                            <?=$provider->name ?>
+                            <br /><small>Things you can sync: <?=implode(", ", $provider->entities); ?></small>
+                            <br /><small>Available methods: <?=implode(", ", $provider->methods); ?></small>
+                        </span>
+                        <br />
+                        <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
 
+                        <div class="clearall"></div>
+                    </div>
+                </div>
+
+            <?php } ?>
+        </div>
 
     </div>
 
