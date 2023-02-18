@@ -7,13 +7,15 @@ namespace leantime\plugins\repositories {
 
     class motivationalQuotes
     {
-        public function __construct() {
+        public function __construct()
+        {
             //Get DB Instance
             //$this->db = core\db::getInstance();
         }
 
 
-        public function getAllQuotes() {
+        public function getAllQuotes()
+        {
 
             //Results could be fetched from the db here.
             $quotes = array(
@@ -35,9 +37,7 @@ namespace leantime\plugins\repositories {
             );
 
             return $quotes;
-
         }
-
     }
 
 }

@@ -11,13 +11,11 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-
         public function init()
         {
 
             $this->userRepo =  new repositories\users();
             $this->ldapService = new services\ldap();
-
         }
 
         public function get()
@@ -28,12 +26,10 @@ namespace leantime\domain\controllers {
 
 
             //Only Admins
-            if(auth::userIsAtLeast(roles::$admin)) {
-
-                if(auth::userIsAtLeast(roles::$admin)) {
+            if (auth::userIsAtLeast(roles::$admin)) {
+                if (auth::userIsAtLeast(roles::$admin)) {
                     $this->tpl->assign('allUsers', $this->userRepo->getAll());
-
-                }else{
+                } else {
                     $this->tpl->assign('allUsers', $this->userRepo->getAllClientUsers(auth::getUserClientId()));
                 }
 
@@ -41,19 +37,14 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('roles', roles::getRoles());
 
                 $this->tpl->display('users.showAll');
-
-            }else{
-
+            } else {
                 $this->tpl->display('errors.error403');
-
             }
-
         }
 
-        public function post($params) {
-
+        public function post($params)
+        {
         }
-
     }
 
 }

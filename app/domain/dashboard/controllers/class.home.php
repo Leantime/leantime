@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class home extends controller
     {
-
         private $projectsService;
         private services\tickets $ticketsService;
         private $usersService;
@@ -24,9 +23,9 @@ namespace leantime\domain\controllers {
             $this->usersService = new services\users();
             $this->timesheetsService = new services\timesheets();
             $this->reportsService = new services\reports();
-            $this->settingRepo= new repositories\setting();
+            $this->settingRepo = new repositories\setting();
 
-            $_SESSION['lastPage'] = BASE_URL."/dashboard/home";
+            $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
         }
 
         /**
@@ -36,11 +35,11 @@ namespace leantime\domain\controllers {
         {
 
             $projectFilter = "";
-            if(isset($_SESSION['userHomeProjectFilter'])) {
+            if (isset($_SESSION['userHomeProjectFilter'])) {
                 $projectFilter = $_SESSION['userHomeProjectFilter'];
             }
 
-            if(isset($_GET['projectFilter'])){
+            if (isset($_GET['projectFilter'])) {
                 $projectFilter = $_GET['projectFilter'];
                 $_SESSION['userHomeProjectFilter'] = $projectFilter;
             }
@@ -51,18 +50,18 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $groupBy = "time";
-            if(isset($_SESSION['userHomeGroupBy'])) {
+            if (isset($_SESSION['userHomeGroupBy'])) {
                 $groupBy = $_SESSION['userHomeGroupBy'];
             }
 
-            if(isset($_GET['groupBy'])) {
+            if (isset($_GET['groupBy'])) {
                 $groupBy = $_GET['groupBy'];
                 $_SESSION['userHomeGroupBy'] = $groupBy;
             }
 
-            if($groupBy == "time") {
+            if ($groupBy == "time") {
                 $tickets = $this->ticketsService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
-            }else if($groupBy == "project") {
+            } elseif ($groupBy == "project") {
                 $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
             }
 
@@ -74,7 +73,7 @@ namespace leantime\domain\controllers {
 
             $clientId = "";
 
-            if(is_array($allprojects)) {
+            if (is_array($allprojects)) {
                 foreach ($allprojects as $project) {
                     if (!array_key_exists($project["clientId"], $clients)) {
                         $clients[$project["clientId"]] = $project['clientName'];
@@ -117,8 +116,7 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
-
+            if (services\auth::userHasRole([roles::$owner, roles::$manager, roles::$editor, roles::$commenter])) {
                 if (isset($params['quickadd']) == true) {
                     $result = $this->ticketsService->quickAddTicket($params);
 
@@ -133,7 +131,6 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->redirect(BASE_URL . "/dashboard/home");
-
         }
     }
 }

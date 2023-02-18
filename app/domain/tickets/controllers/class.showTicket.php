@@ -188,6 +188,7 @@ namespace leantime\domain\controllers {
 
                 //Save Ticket
                 if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {
+                    $params["projectId"] = $ticket->projectId;
                     $result = $this->ticketService->updateTicket($id, $params);
 
                     if ($result === true) {

@@ -61,7 +61,7 @@ body {
 
 .col {
     -webkit-flex-basis: 0;
-    flex-basis: 0;
+    flex-basis: 200px;
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
     flex-grow: 1;
@@ -378,8 +378,10 @@ a, a:hover, a:link, a:active, a:focus {
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+body a:hover {
+    text-decoration: none;
+    color:var(--primary-font-color);
+    transition: color 0.25s;
 }
 
 label, input, textarea, select, button {
@@ -393,7 +395,7 @@ h1, h2, h3, h4, h5 {
 
 h1 { font-size:var(--font-size-xxl);}
 h2 { font-size:var(--font-size-xl);}
-h3 { font-size:var(--font-size-l);}
+h3 { font-size:var(--font-size-xl); font-weight:bold;}
 h4 { font-size:var(--base-font-size); font-weight:bold;}
 h5 { font-size:var(--base-font-size); font-weight:bold;}
 
@@ -936,16 +938,6 @@ a .label-default:after, a .label-primary:after {
 }
 
 
-.header .userloggedinfo img {
-    background-color: #fff;
-    width: auto !important;
-    max-height: 30px;
-    max-width: 30px;
-    border-radius: 50%;
-    border: 1px solid white;
-    margin-top:10px;
-    margin-right: 5px;
-}
 
 .viewmore a {
     font-size: var(--base-font-size);
@@ -978,184 +970,7 @@ a .label-default:after, a .label-primary:after {
     line-height: normal;
 }
 
-.userloggedinfo {
-    color: #fff;
-    float: right;
-    position:relative;
-}
 
-.userloggedinfo img {
-    height: 40px;
-    float: left;
-}
-
-.userloggedinfo .userinfo {
-    float: left;
-}
-
-.userloggedinfo .userinfo a.profileHandler {
-    color: #fff;
-    padding:0px 5px 0px 10px;
-    height:50px;
-    line-height:50px;
-    display: block;
-    margin-right:15px;
-}
-
-.userloggedinfo .userinfo small {
-    font-size: var(--base-font-size);
-    opacity: 0.6;
-    color: #fff;
-    font-style: italic;
-}
-
-.userloggedinfo .dropdown-menu
- {
-    right:14px;
-    left:auto;
-}
-
-.userloggedinfo .dropdown-menu::after{
-    position: absolute;
-    top: -6px;
-    right: 45px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
-    border-left: 6px solid transparent;
-    content: '';
-}
-
-.appsDropdown .dropdown-menu {
-    right:-10px;
-    left:auto;
-}
-
-.appsDropdown .dropdown-menu:after {
-    right:30px;
-    top:-6px;
-    left:auto;
-}
-
-.notificationDropdown .dropdown-menu {
-    right: -10px;
-    left: auto;
-    min-width:300px;
-}
-
-.notificationDropdown .dropdown-menu:after {
-    right:30px;
-    top:-6px;
-    left:auto;
-}
-
-.notificationDropdown span.notificationCounter {
-    position: absolute;
-    top: 10px;
-    right: 5px;
-    height: 15px;
-    width: 15px;
-    background: var(--dark-red);
-    border-radius: 10px;
-    line-height: 15px;
-    text-align: center;
-    font-size: var(--font-size-xs);
-}
-
-.userloggedinfo ul {
-    list-style: none;
-    margin-top:-1px;
-}
-
-.notificationDropdown .dropdown-menu li.new {
-    border-left:5px solid var(--primary-color);
-    font-weight:bold;
-}
-
-.notificationDropdown .dropdown-menu li {
-    padding:10px;
-    margin-bottom:1px;
-    list-style-type:none;
-}
-
-.notificationDropdown .dropdown-menu li:hover {
-    cursor:pointer;
-    background:var(--dropdown-link-hover-bg);
-}
-
-.notificationDropdown .dropdown-menu li .notificationProfileImage img {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    border: 1px solid var(--main-border-color);
-    float:left;
-    margin-right:10px;
-    margin-top: 5px;
-}
-
-.notificationDropdown .dropdown-menu li .notificationTitle {
-    font-size:var(--base-font-size);
-    display:block;
-}
-
-.notificationDropdown .dropdown-menu li .notificationDate {
-    font-size:var(--font-size-s);
-    font-style: italic;
-}
-
-.notificationDropdown .notifcationTabs.active{
-    font-weight:bold;
-
-}
-
-
-
-.userloggedinfo ul li,
-.appsDropdown ul li{
-    font-size: var(--base-font-size);
-    line-height: normal;
-    margin-bottom: 1px;
-}
-
-.userloggedinfo ul li a,
-.appsDropdown ul li a{
-    line-height: normal;
-    padding:10px 20px;
-}
-
-.userloggedinfo ul li.border,
-.appsDropdown ul li.border{
-    border-top:1px solid var(--neutral);
-}
-
-.userloggedinfo ul li.nav-header,
-.appsDropdown ul li.nav-header{
-    padding:10px;
-}
-
-.userloggedinfo ul li a span,
-.appsDropdown ul li a span{
-    margin-right: 5px;
-}
-
-.userloggedinfo ul li a:hover,
-.appsDropdown ul li a:hover{
-    text-decoration: none;
-
-}
-
-.userloggedinfo a,
-.appsDropdown a{
-    color: var(--secondary-action-color);
-}
-
-
-
-.userloggedinfo a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    text-decoration: none;
-}
 
 /*** LEFT ***/
 
@@ -1340,12 +1155,12 @@ a .label-default:after, a .label-primary:after {
     line-height:38px;
     border-bottom:2px solid transparent;
     border-top:0px solid #fff;
-    padding:0px 20px;
+    padding:0px 15px;
     color:var(--main-action-bg);
+    font-weight:bold;
 }
 
 body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
-    background:var(--main-menu-link-hover-bg);
     border-bottom:2px solid var(--main-action-bg);
     color:var(--main-menu-link-hover-color);
 }
@@ -2110,6 +1925,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 .listfile > li a {
     display: block;
+    text-align:center;
 }
 
 .listfile > li a:hover {
@@ -3616,6 +3432,8 @@ body .widgettitle .editHeadline:hover {
 
 .svgContainer {
     margin:auto;
+    max-width:200px;
+    margin-bottom:20px;
 }
 
 .svgContainer svg {
@@ -3626,7 +3444,7 @@ body .widgettitle .editHeadline:hover {
 .loading {
     width:100%;
     text-align:center;
-    background:url(../../images/ajaxLoader.gif) center center no-repeat;
+    background:url(../../images/svg/loading-animation.svg) center center no-repeat;
     min-height:31px;
     background-size:31px 31px;
     display:none;
@@ -3651,7 +3469,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent {
-    background:var(--col-content-bg);
+    background:var(--col-title-bg);
     border-radius:var(--box-radius);
     width:100%;
     padding:12px 15px;
@@ -3941,3 +3759,57 @@ a.titleInsertLink:hover {
 .projectBox .lastStatus [class*="commentStatus-"]{
     padding-left:10px;
 }
+
+.stickyColumn {
+    position:sticky;
+    top:60px
+}
+
+h3.todaysDate {
+    font-weight:normal;
+}
+
+.ui-resizable-handle.ui-resizable-w {
+    width:15px;
+    height:100%;
+    border-left:1px dashed var(--main-border-color);
+    cursor:ew-resize;
+    position:absolute;
+    background:var(--secondary-background);
+    z-index:5 !important;
+}
+
+
+.resizable {
+
+    background: var(--secondary-background);
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    padding-left:15px;
+    margin-left:25px;
+}
+
+.flexParent{
+    display:flex;
+}
+
+.box {
+    display: flex;
+    flex: 1 1;
+    position:relative;
+
+}
+
+#ticketContent {
+    margin-left:10px;
+    padding-left:30px;
+    border-left:1px dashed var(--main-border-color);
+    padding-top:15px;
+    height:100%;
+    min-height:600px;
+}
+
+

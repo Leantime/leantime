@@ -11,35 +11,55 @@ namespace leantime\domain\repositories {
     use leantime\domain\services;
     use leantime\domain\models\auth\roles;
 
-    class menu {
-
+    class menu
+    {
         // Default menu
         public const DEFAULT_MENU = 'default';
 
         // Menu structures
         private array $menuStructures = [
             'default' => [
-                10 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
-                15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                30 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas'],
-                40 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '/ideas/showBoards'],
-                50 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
-                60 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
-                70 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
-                80 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['strategy']]
-            ]
-            ,
+                5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
+
+                10 => ['type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
+                    'submenu' => [
+                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
+                         60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
+
+                        20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
+
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas', 'active' => ['showCanvas']],
+
+                    ]],
+
+                30 => ['type' => 'submenu', 'id' => 'understand', 'title' => 'menu.think', 'visual' => 'open',
+
+                    'submenu' => [
+
+                        30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'href' => '', 'hrefFunction' => 'getIdeaMenu', 'active' => ['showBoards', 'advancedBoards']],
+                        50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
+
+
+
+                        70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
+                        80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
+                ]],
+            ],
             //Display all menu items
             'full_menu' => [
-                11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
-                21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                50 => ['type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'open',
+                10 => ['type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
+                    'submenu' => [
+                        11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
+                        21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
+                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas']
+                    ]],
+
+                50 => ['type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
                     'submenu' => [
                         51 => ['type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas'],
                         52 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards']]],
-                60 => ['type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'open',
+                60 => ['type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'closed',
                     'submenu' => [
                         61 => ['type' => 'header', 'title' => 'menu.dts.observe'],
                         62 => ['type' => 'item', 'module' => 'sbcanvas', 'title' => 'menu.sbcanvas', 'href' => '/sbcanvas/showCanvas'],
@@ -59,26 +79,34 @@ namespace leantime\domain\repositories {
                         83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor']]]]
         ];
 
+        public function __construct(){
+
+            if(isset($_SESSION['submenuToggle']) === false){
+                $setting = new setting();
+                $_SESSION['submenuToggle'] = unserialize($setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle"));
+            }
+
+        }
+
         /**
          * getMenuTypes - Return an array of a currently supported menu types
          *
          * @access public
          * @return array  Array of supported menu types
          */
-        public function getMenuTypes(): array {
+        public function getMenuTypes(): array
+        {
 
             $language = core\language::getInstance();
             $config = \leantime\core\environment::getInstance();
 
             if (!isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
-
                 return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
             }
 
             $menuTypes = [];
 
             foreach ($this->menuStructures as $key => $menu) {
-
                 $menuTypes[$key] = $language->__("label.menu_type.$key");
             }
 
@@ -92,9 +120,12 @@ namespace leantime\domain\repositories {
          * @param  string $submenu Submenu identifier
          * @param  string $state   New state (open / closed)
          */
-        public function setSubmenuState(string $submenu, string $state): void {
+        public function setSubmenuState(string $submenu, string $state): void
+        {
 
             $_SESSION['submenuToggle'][$submenu] = $state;
+            $setting = new setting();
+            $setting->saveSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle", serialize($_SESSION['submenuToggle']));
         }
 
         /**
@@ -104,37 +135,34 @@ namespace leantime\domain\repositories {
          * @param  string $menuType Menu type to return
          * @return array  Array of menu structrue
          */
-        public function getMenuStructure(string $menuType = ''): array {
+        public function getMenuStructure(string $menuType = ''): array
+        {
 
             $language = core\language::getInstance();
 
             if (!isset($this->menuStructures[$menuType]) || empty($menuType)) {
-
                 $menuType = self::DEFAULT_MENU;
             }
 
             $menuStructure = $this->menuStructures[$menuType];
 
             foreach ($menuStructure as $key => $element) {
-
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 
                 switch ($element['type']) {
-
                     case 'header':
+                        break;
 
+                    case 'separator':
                         break;
 
                     case 'item':
-
                         //TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
                         $this->processMenuItem($element, $menuStructure[$key]);
                         break;
 
                     case 'submenu':
-
                         if (isset($element['submenuFunction'])) {
-
                             if (method_exists($this, $this->{$element['submenuFunction']})) {
                                 $menuStructure[$key]['submenu'] = $this->{$element['submenuFunction']}();
                             }
@@ -142,10 +170,8 @@ namespace leantime\domain\repositories {
 
                         // Update menu toggle
                         if ($element['visual'] == 'always') {
-
                             $menuStructure[$key]['visual'] = 'open';
                         } else {
-
                             $submenuState = $_SESSION['submenuToggle'][$element['id']] ?? $element['visual'];
                             $_SESSION['submenuToggle'][$element['id']] = $submenuState;
                         }
@@ -153,7 +179,6 @@ namespace leantime\domain\repositories {
 
                         // Parse submenu
                         foreach ($element['submenu'] as $subkey => $subelement) {
-
                             $menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
 
                             switch ($subelement['type']) {
@@ -161,8 +186,7 @@ namespace leantime\domain\repositories {
                                     break;
 
                                 case 'item':
-
-                                    $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey][$key]);
+                                    $this->processMenuItem($subelement, $menuStructure[$key]['submenu'][$subkey]);
                                     break;
 
                                 default:
@@ -177,31 +201,30 @@ namespace leantime\domain\repositories {
                 }
             }
 
+            //TODO: Add menu filter here!
+
             return $menuStructure;
         }
 
-        public function processMenuItem($element, &$structure) {
+        public function processMenuItem($element, &$structure)
+        {
 
             //ModuleManager Check
             if (false) {
-
                 $structure['type'] = 'disabled';
                 return;
             }
 
             // Update security
             if (isset($element['role'])) {
-
                 $accessGranted = services\auth::userIsAtLeast($element['role'], true);
 
                 if (!$accessGranted) {
-
                     $structure['type'] = 'disabled';
                 }
             }
 
             if (isset($element['hrefFunction'])) {
-
                 if (method_exists($this, $element['hrefFunction'])) {
                     $structure['href'] = $this->{$element['hrefFunction']}();
                 }
@@ -210,7 +233,8 @@ namespace leantime\domain\repositories {
             return;
         }
 
-        public function getTicketMenu() {
+        public function getTicketMenu()
+        {
 
             $ticketService = new services\tickets();
 
@@ -219,6 +243,19 @@ namespace leantime\domain\repositories {
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
+        public function getIdeaMenu()
+        {
+            $url = "/ideas/showBoards";
+            if(isset($_SESSION['lastIdeaView'])){
+
+                if($_SESSION['lastIdeaView'] == 'kanban'){
+                    $url = "/ideas/advancedBoards";
+                }
+
+            }
+
+            return $url;
+        }
     }
 
 }

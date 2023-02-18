@@ -41,14 +41,14 @@ leantime.generalController = (function () {
             }
 
         },
-        highlighter: function(text) {
+        highlighter: function (text) {
             //make matched block italic
             return text.replace(new RegExp('(' + this.query + ')', 'ig'), function ($1, match) {
                 return '<strong>' + match + '</strong>';
             });
         },
         insert: function (item) {
-            return '<a class="userMention" data-tagged-user-id="'+ item.id +'" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage='+ item.id +'" alt="' + item.name + ' Image"/>' + item.name + '</a>';
+            return '<a class="userMention" data-tagged-user-id="' + item.id + '" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage=' + item.id + '" alt="' + item.name + ' Image"/>' + item.name.trim() + '</a>&nbsp;';
         }
     };
 
@@ -88,8 +88,13 @@ leantime.generalController = (function () {
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention,slashcommands",
+                plugins : "imagetools,autosave,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention,slashcommands",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
+                autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
+                autosave_restore_when_empty: true,
+                autosave_retention: '120m',
+                autosave_interval: '10s',
+                autosave_ask_before_unload: false,
                 branding: false,
                 statusbar: false,
                 convert_urls: true,
@@ -151,29 +156,44 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
                 },
-                setup: function(editor) {
+                setup: function (editor) {
                     editor.on('init', function (e) {
 
                         var confettiElement = editor.getDoc().getElementsByClassName("confetti");
 
-                        if(confettiElement && confettiElement.length>0){
-                            confettiElement[0].addEventListener("click", function(){
+                        if (confettiElement && confettiElement.length > 0) {
+                            confettiElement[0].addEventListener("click", function () {
                                 confetti.start();
                             });
                         }
 
-                        if (editor.getContent() === ''){
-                            editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                        //Autosave content?
+                        if (editor.getContent() === '' && !editor.plugins.autosave.hasDraft()) {
+                            editor.setContent("<p id='tinyPlaceholder-"+editor.id+"'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
                     });
 
-
                     //and remove it on focus
-                    editor.on('focus',function(){
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if(placeholder){
+                    editor.on('focus',function () {
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
+                        if (placeholder) {
                             placeholder.remove();
+                            editor.setContent("<p></p>");
+                        }
+
+                    });
+
+                    editor.on("submit", function(e){
+
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
+
+
+                        if (placeholder) {
+                            placeholder.remove();
+                            editor.save();
+
+
                         }
 
                     });
@@ -184,18 +204,26 @@ leantime.generalController = (function () {
 
     var initComplexEditor = function () {
 
-        jQuery('textarea.complexEditor').tinymce(
+            var entityId = jQuery("input[name=id]").val();
+
+            jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention,slashcommands",
+                plugins : "imagetools,autosave,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention,slashcommands",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample",
+                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+                autosave_restore_when_empty: true,
+                autosave_retention: '120m',
+                autosave_interval: '10s',
+                autosave_ask_before_unload: false,
                 branding: false,
                 statusbar: false,
                 convert_urls: true,
+                placeholder: "Whaa?",
                 menubar:false,
                 resizable: true,
                 paste_data_images: true,
@@ -273,18 +301,19 @@ leantime.generalController = (function () {
                     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 
                 },
-                setup: function(editor) {
+                setup: function (editor) {
                     editor.on('init', function (e) {
 
                         var confettiElement = editor.getDoc().getElementsByClassName("confetti");
 
-                        if(confettiElement && confettiElement.length>0){
-                            confettiElement[0].addEventListener("click", function(){
+                        if (confettiElement && confettiElement.length > 0) {
+                            confettiElement[0].addEventListener("click", function () {
                                 confetti.start();
                             });
                         }
 
-                        if (editor.getContent() === ''){
+
+                        if (editor.getContent() === '' && !editor.plugins.autosave.hasDraft()) {
                             editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
@@ -292,12 +321,24 @@ leantime.generalController = (function () {
 
 
                     //and remove it on focus
-                    editor.on('focus',function(){
+                    editor.on('focus',function () {
                         var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if(placeholder){
+                        if (placeholder) {
                             placeholder.remove();
+                            editor.setContent("<p></p>");
                         }
 
+                    });
+
+
+
+                    editor.on("submit", function(){
+
+                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
+                        if (placeholder) {
+                            placeholder.remove();
+                            editor.save();
+                        }
                     });
                 }
             }
@@ -319,7 +360,7 @@ leantime.generalController = (function () {
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
+                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table",
                 branding: false,
                 statusbar: true,

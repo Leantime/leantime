@@ -1,33 +1,33 @@
 <?php
 
-defined( 'RESTRICTED' ) or die( 'Restricted access' );
+defined('RESTRICTED') or die('Restricted access');
 ?>
 <script type="text/javascript">
 
-	jQuery(document).ready(function(){
+    jQuery(document).ready(function(){
 
-	    jQuery("#checkAllEmpl").change(function(){
-	    	jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
-	    	if(jQuery(this).prop("checked") == true){
-	    		jQuery(".invoicedEmpl").attr("checked", "checked");
-	    		jQuery(".invoicedEmpl").parent().addClass("checked");
-	    	}else{
-	    		jQuery(".invoicedEmpl").removeAttr("checked");
-	    		jQuery(".invoicedEmpl").parent().removeClass("checked");
-	    	}
+        jQuery("#checkAllEmpl").change(function(){
+            jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
+            if(jQuery(this).prop("checked") == true){
+                jQuery(".invoicedEmpl").attr("checked", "checked");
+                jQuery(".invoicedEmpl").parent().addClass("checked");
+            }else{
+                jQuery(".invoicedEmpl").removeAttr("checked");
+                jQuery(".invoicedEmpl").parent().removeClass("checked");
+            }
 
-	    });
+        });
 
-	    jQuery("#checkAllComp").change(function(){
-	    	jQuery(".invoicedComp").prop('checked', jQuery(this).prop("checked"));
-	    	if(jQuery(this).prop("checked") == true){
-	    		jQuery(".invoicedComp").attr("checked", "checked");
-	    		jQuery(".invoicedComp").parent().addClass("checked");
-	    	}else{
-	    		jQuery(".invoicedComp").removeAttr("checked");
-	    		jQuery(".invoicedComp").parent().removeClass("checked");
-	    	}
-	    });
+        jQuery("#checkAllComp").change(function(){
+            jQuery(".invoicedComp").prop('checked', jQuery(this).prop("checked"));
+            if(jQuery(this).prop("checked") == true){
+                jQuery(".invoicedComp").attr("checked", "checked");
+                jQuery(".invoicedComp").parent().addClass("checked");
+            }else{
+                jQuery(".invoicedComp").removeAttr("checked");
+                jQuery(".invoicedComp").parent().removeClass("checked");
+            }
+        });
 
         jQuery("#checkAllPaid").change(function(){
             jQuery(".paid").prop('checked', jQuery(this).prop("checked"));
@@ -40,7 +40,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
             }
         });
 
-	    leantime.timesheetsController.initTimesheetsTable();
+        leantime.timesheetsController.initTimesheetsTable();
 
         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
             leantime.timesheetsController.initEditTimeModal();
@@ -62,7 +62,7 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
             weekHeader: leantime.i18n.__("language.weekHeader"),
             firstDay: leantime.i18n.__("language.firstDayOfWeek"),
         });
-	});
+    });
 
 
 </script>
@@ -92,190 +92,210 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
     <div class="clearfix"></div>
     <div class="headtitle" style="">
 
-	<table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
+    <table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
 
-		<tr>
+        <tr>
             <td>
                 <label for="projects"><?php echo $this->__('label.project'); ?></label>
                 <select name="project">
-                    <option value=""><?php echo strip_tags($this->__("menu.all_projects")) ?></option>
-                    <?php foreach($this->get('allProjects') as $project) {?>
+                    <option value="-1"><?php echo strip_tags($this->__("menu.all_projects")) ?></option>
+                    <?php foreach ($this->get('allProjects') as $project) {?>
                         <option value="<?=$project['id'] ?>"
-                            <?php if($this->get('projectFilter') == $project['id']) echo "selected='selected'" ?>><?=$this->escape($project['name'])?></option>
+                            <?php if ($this->get('projectFilter') == $project['id']) {
+                                echo "selected='selected'";
+                            } ?>><?=$this->escape($project['name'])?></option>
                     <?php } ?>
                 </select>
             </td>
-			<td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
+            <td><label for="dateFrom"><?php echo $this->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-				value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
-			<td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
+                value="<?php echo $this->getFormattedDateString($this->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
+            <td><label for="dateTo"><?php echo $this->__('label.date_to'); ?></label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-				value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
-			<td>
-			<label for="userId"><?php echo $this->__("label.employee"); ?></label>
-			<select name="userId" id="userId" onchange="submit();">
-				<option value="all"><?php echo $this->__("label.all_employees"); ?></option>
+                value="<?php echo $this->getFormattedDateString($this->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
+            <td>
+            <label for="userId"><?php echo $this->__("label.employee"); ?></label>
+            <select name="userId" id="userId" onchange="submit();">
+                <option value="all"><?php echo $this->__("label.all_employees"); ?></option>
 
-				<?php foreach($this->get('employees') as $row) {
-					echo'<option value="'.$row['id'].'"';
-					if($row['id'] == $this->get('employeeFilter')) echo' selected="selected" ';
-					echo'>'.sprintf( $this->__('text.full_name') , $this->escape($row['firstname']), $this->escape($row['lastname'])).'</option>';
-				}
-				?>
-			</select>
+                <?php foreach ($this->get('employees') as $row) {
+                    echo'<option value="' . $row['id'] . '"';
+                    if ($row['id'] == $this->get('employeeFilter')) {
+                        echo' selected="selected" ';
+                    }
+                    echo'>' . sprintf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])) . '</option>';
+                }
+                ?>
+            </select>
             </td>
             <td>
-			<label for="kind"><?php echo $this->__("label.type")?></label>
-			<select id="kind" name="kind" onchange="submit();">
-				<option value="all"><?php echo $this->__("label.all_types"); ?></option>
-				<?php foreach($this->get('kind') as $key => $row){
-					echo'<option value="'.$key.'"';
-					if($key == $this->get('actKind')) echo ' selected="selected"';
-					echo'>'.$this->__($row).'</option>';
+            <label for="kind"><?php echo $this->__("label.type")?></label>
+            <select id="kind" name="kind" onchange="submit();">
+                <option value="all"><?php echo $this->__("label.all_types"); ?></option>
+                <?php foreach ($this->get('kind') as $key => $row) {
+                    echo'<option value="' . $key . '"';
+                    if ($key == $this->get('actKind')) {
+                        echo ' selected="selected"';
+                    }
+                    echo'>' . $this->__($row) . '</option>';
+                }
+                ?>
 
-				}
-				?>
-
-			</select> </td>
-			<td>
-
-			<input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
-				<?php
-				if($this->get('invEmpl') == '1') echo ' checked="checked"';
-				?>
-			/><label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label></td>
+            </select> </td>
             <td>
 
-			<input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
-				<?php
-				if($this->get('invComp') == '1') echo ' checked="checked"';
-				?>
-			/><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
-			</td>
+            <input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
+                <?php
+                if ($this->get('invEmpl') == '1') {
+                    echo ' checked="checked"';
+                }
+                ?>
+            /><label for="invEmpl"><?php echo $this->__("label.invoiced"); ?></label></td>
+            <td>
+
+            <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
+                <?php
+                if ($this->get('invComp') == '1') {
+                    echo ' checked="checked"';
+                }
+                ?>
+            /><label for="invEmpl"><?php echo $this->__("label.invoiced_comp"); ?></label>
+            </td>
 
             <td>
 
                 <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
                     <?php
-                    if($this->get('paid') == '1') echo ' checked="checked"';
+                    if ($this->get('paid') == '1') {
+                        echo ' checked="checked"';
+                    }
                     ?>
                 /><label for="paid"><?php echo $this->__("label.paid"); ?></label>
             </td>
-			<td>
+            <td>
                 <input type="hidden" name='filterSubmit' value="1"/>
                 <input type="submit" value="<?php echo $this->__('buttons.search')?>" class="reload" />
-			</td>
-		</tr>
+            </td>
+        </tr>
 
 </table>
 
 </div>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
-	<colgroup>
-      	  <col class="con0" width="100px"/>
+    <colgroup>
+          <col class="con0" width="100px"/>
           <col class="con1" />
-      	  <col class="con0"/>
+          <col class="con0"/>
           <col class="con1" />
-      	  <col class="con0"/>
+          <col class="con0"/>
           <col class="con1" />
-      	  <col class="con0"/>
+          <col class="con0"/>
           <col class="con1" />
-      	  <col class="con0"/>
+          <col class="con0"/>
           <col class="con1" />
-      	  <col class="con0"/>
+          <col class="con0"/>
           <col class="con1"/>
           <col class="con0"/>
-	</colgroup>
-	<thead>
-		<tr>
+    </colgroup>
+    <thead>
+        <tr>
             <th><?php echo $this->__('label.id'); ?></th>
-			<th><?php echo $this->__('label.date'); ?></th>
-			<th><?php echo $this->__('label.hours'); ?></th>
-			<th><?php echo $this->__('label.plan_hours'); ?></th>
-			<th><?php echo $this->__('label.difference'); ?></th>
-			<th><?php echo $this->__('label.ticket'); ?></th>
-			<th><?php echo $this->__('label.project'); ?></th>
-			<th><?php echo $this->__('label.employee'); ?></th>
-			<th><?php echo $this->__("label.type")?></th>
-			<th><?php echo $this->__('label.description'); ?></th>
-			<th><?php echo $this->__('label.invoiced'); ?></th>
-			<th><?php echo $this->__('label.invoiced_comp'); ?></th>
+            <th><?php echo $this->__('label.date'); ?></th>
+            <th><?php echo $this->__('label.hours'); ?></th>
+            <th><?php echo $this->__('label.plan_hours'); ?></th>
+            <th><?php echo $this->__('label.difference'); ?></th>
+            <th><?php echo $this->__('label.ticket'); ?></th>
+            <th><?php echo $this->__('label.project'); ?></th>
+            <th><?php echo $this->__('label.employee'); ?></th>
+            <th><?php echo $this->__("label.type")?></th>
+            <th><?php echo $this->__('label.description'); ?></th>
+            <th><?php echo $this->__('label.invoiced'); ?></th>
+            <th><?php echo $this->__('label.invoiced_comp'); ?></th>
             <th><?php echo $this->__('label.paid'); ?></th>
-		</tr>
+        </tr>
 
-	</thead>
-	<tbody>
+    </thead>
+    <tbody>
 
-	<?php
+    <?php
 
-	$sum = 0;
-	$billableSum = 0;
+    $sum = 0;
+    $billableSum = 0;
 
-	foreach($this->get('allTimesheets') as $row) {
-		$sum = $sum + $row['hours'];?>
-		<tr>
+    foreach ($this->get('allTimesheets') as $row) {
+        $sum = $sum + $row['hours'];?>
+        <tr>
             <td data-order="<?=$this->e($row['id']); ?>">
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                    <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id']." - ".$this->__('label.edit'); ?> </a>
-                <?php }else{ ?>
+                    <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $this->__('label.edit'); ?> </a>
+                <?php } else { ?>
                     #<?=$row['id']?>
                 <?php } ?>
             </td>
             <td data-order="<?=$this->escape($row['workDate']); ?>>">
                 <?php echo$this->getFormattedDateString($row['workDate']); ?>
             </td>
-			<td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
-			<td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
-			<?php $diff = $row['planHours']-$row['hours']; ?>
-			<td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
-			<td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
+            <td data-order="<?php $this->e($row['hours']); ?>"><?php $this->e($row['hours']); ?></td>
+            <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours']); ?></td>
+            <?php $diff = $row['planHours'] - $row['hours']; ?>
+            <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
+            <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
-			<td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
-			<td><?php printf( $this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])); ?></td>
-			<td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
-			<td><?php $this->e($row['description']); ?></td>
-			<td data-order="<?php if($row['invoicedEmpl'] == '1'){ echo $this->getFormattedDateString($row['invoicedEmplDate']); }?>"><?php if($row['invoicedEmpl'] == '1'){?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
-			<?php }else{ ?>
-                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+            <td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
+            <td><?php printf($this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row['lastname'])); ?></td>
+            <td><?php echo $this->__($this->get('kind')[$row['kind']]); ?></td>
+            <td><?php $this->e($row['description']); ?></td>
+            <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
+                echo $this->getFormattedDateString($row['invoicedEmplDate']);
+                            }?>"><?php if ($row['invoicedEmpl'] == '1') {
+    ?> <?php echo $this->getFormattedDateString($row['invoicedEmplDate']); ?>
+                            <?php } else { ?>
+                                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
-				value="<?php echo $row['id']; ?>" /> <?php } ?><?php } ?></td>
-			<td data-order="<?php if($row['invoicedComp'] == '1'){ echo $this->getFormattedDateString($row['invoicedCompDate']); }?>">
+                value="<?php echo $row['id']; ?>" /> <?php
+                                } ?><?php
+                            } ?></td>
+            <td data-order="<?php if ($row['invoicedComp'] == '1') {
+                echo $this->getFormattedDateString($row['invoicedCompDate']);
+                            }?>">
 
-                <?php if($row['invoicedComp'] == '1'){?>
+                <?php if ($row['invoicedComp'] == '1') {?>
                     <?php echo $this->getFormattedDateString($row['invoicedCompDate']); ?>
-			    <?php }else{ ?>
+                <?php } else { ?>
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
                     <?php } ?>
-                    <?php } ?>
+                <?php } ?>
             </td>
-            <td data-order="<?php if($row['paid'] == '1'){ echo $this->getFormattedDateString($row['paidDate']); }?>">
+            <td data-order="<?php if ($row['paid'] == '1') {
+                echo $this->getFormattedDateString($row['paidDate']);
+                            }?>">
 
-                <?php if($row['paid'] == '1'){?>
+                <?php if ($row['paid'] == '1') {?>
                     <?php echo $this->getFormattedDateString($row['paidDate']); ?>
-                <?php }else{ ?>
+                <?php } else { ?>
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <input type="checkbox" name="paid[]" class="paid" value="<?php echo $row['id']; ?>" />
                     <?php } ?>
                 <?php } ?>
             </td>
-		</tr>
-		<?php } ?>
-	</tbody>
-	<tfoot>
-		<tr>
-			<td colspan="2"><strong><?php echo $this->__("label.total_hours")?></strong></td>
-			<td colspan="7"><strong><?php echo $sum; ?></strong></td>
+        </tr>
+    <?php } ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2"><strong><?php echo $this->__("label.total_hours")?></strong></td>
+            <td colspan="7"><strong><?php echo $sum; ?></strong></td>
 
-			<td>
+            <td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-				<input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
+                <input type="submit" class="button" value="<?php echo $this->__('buttons.save'); ?>" name="saveInvoice" />
                 <?php } ?>
             </td>
-			<td>
+            <td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?></td>
-            <?php } ?>
+                <?php } ?>
             <td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                 <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?>
@@ -286,12 +306,12 @@ defined( 'RESTRICTED' ) or die( 'Restricted access' );
                     <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> <?php echo $this->__('label.select_all')?>
                 <?php } ?>
             </td>
-		</tr>
-	</tfoot>
+        </tr>
+    </tfoot>
 </table>
 
 </form>
 
 
-			</div>
-		</div>
+            </div>
+        </div>

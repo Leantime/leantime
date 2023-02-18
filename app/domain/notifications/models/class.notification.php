@@ -12,5 +12,4 @@ class notification
     public bool|array $url;
     public mixed $entity;
     public string $module;
-
 }

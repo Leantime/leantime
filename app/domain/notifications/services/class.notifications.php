@@ -38,10 +38,14 @@ namespace leantime\domain\services {
             return $this->notificationsRepo->addNotifications($notifications);
         }
 
-        public function markNotificationRead($id)
+        public function markNotificationRead($id, $userId)
         {
 
-            return $this->notificationsRepo->markNotificationRead($id);
+            if($id == "all") {
+                return $this->notificationsRepo->markAllNotificationRead($userId);
+            }else {
+                return $this->notificationsRepo->markAllNotificationRead($id);
+            }
         }
 
         public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
@@ -72,7 +76,6 @@ namespace leantime\domain\services {
                     );
 
                     if ($userMentions === false || (is_array($userMentions) && count($userMentions) == 0)) {
-
                         $notification = array(
                             "userId" => $taggedUser,
                             "read" => '0',

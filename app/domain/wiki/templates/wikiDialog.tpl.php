@@ -2,19 +2,20 @@
   $currentWiki = $this->get('wiki');
 ?>
 
-<h4 class="widgettitle title-light"><i class="fa fa-book"></i> <?=$this->__('label.wiki') ?> <?php echo $currentWiki->title?></h4>
+<h4 class="widgettitle title-light"><i class="fa fa-book"></i> <?=$this->__('label.wiki') ?> <?php echo $this->escape($currentWiki->title) ?></h4>
 
 <?php echo $this->displayNotification();
 
 $id = "";
-if(isset($currentWiki->id)) {$id = $currentWiki->id;
+if (isset($currentWiki->id)) {
+    $id = $currentWiki->id;
 }
 ?>
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/wikiModal/<?php echo $id;?>">
 
     <label><?=$this->__('label.wiki_title') ?></label>
-    <input type="text" name="title" id="wikiTitle" value="<?php echo $currentWiki->title?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>"/><br />
+    <input type="text" name="title" id="wikiTitle" value="<?php echo $this->escape($currentWiki->title) ?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>"/><br />
 
     <br />
 
@@ -34,7 +35,7 @@ if(isset($currentWiki->id)) {$id = $currentWiki->id;
 <script>
     jQuery(document).ready(function(){
 
-        <?php if(isset($_GET['closeModal'])){ ?>
+        <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>
 

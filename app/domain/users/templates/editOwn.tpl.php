@@ -81,8 +81,8 @@ $user = $this->get('user');
                         <h4 class="widgettitle title-light">
                             <?=$this->__('headlines.change_password'); ?>
                         </h4>
-                        <?php if($_SESSION['userdata']['isLdap']){
-                            echo "<strong>".$this->__("text.account_managed_ldap")."</strong><br /><br />";
+                        <?php if ($_SESSION['userdata']['isLdap']) {
+                            echo "<strong>" . $this->__("text.account_managed_ldap") . "</strong><br /><br />";
                         } ?>
                         <form method="post">
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
@@ -110,14 +110,14 @@ $user = $this->get('user');
                                     <span class='field span6'>
                                         <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                id="confirmPassword"/><br/>
-                                        <?php if(!$_SESSION['userdata']['isLdap']){?>
+                                        <?php if (!$_SESSION['userdata']['isLdap']) {?>
                                         <small><?=$this->__('label.passwordRequirements') ?></small>
                                         <?php } ?>
                                     </span>
 
                                 </div>
                             </div>
-                            <?php if(!$_SESSION['userdata']['isLdap']){?>
+                            <?php if (!$_SESSION['userdata']['isLdap']) {?>
                             <input type="hidden" name="savepw" value="1" />
                             <input type="submit" name="save" id="savePw" value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
                             <?php }?>
@@ -142,8 +142,10 @@ $user = $this->get('user');
                                     <label for="language" class="span3"><?php echo $this->__('label.language') ?></label>
                                     <span class='field span6'>
                                         <select name="language" id="language" style="width: 220px">
-                                            <?php foreach($this->get("languageList") as $languagKey => $languageValue){?>
-                                                <option value="<?=$languagKey?>" <?php if($this->get('userLang') == $languagKey) echo "selected='selected'" ?>><?=$languageValue?></option>
+                                            <?php foreach ($this->get("languageList") as $languagKey => $languageValue) {?>
+                                                <option value="<?=$languagKey?>" <?php if ($this->get('userLang') == $languagKey) {
+                                                    echo "selected='selected'";
+                                                               } ?>><?=$languageValue?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -155,9 +157,11 @@ $user = $this->get('user');
                                             <?php
                                             $themeCore = new \leantime\core\theme();
                                             $themeAll = $themeCore->getAll();
-                                            foreach($themeAll as $key => $name) {
+                                            foreach ($themeAll as $key => $name) {
                                                 ?>
-                                                <option value="<?=$key ?>" <?php if($this->get('userTheme') == $key) echo "selected='selected'" ?>><?=$this->__($name) ?></option>
+                                                <option value="<?=$key ?>" <?php if ($this->get('userTheme') == $key) {
+                                                    echo "selected='selected'";
+                                                               } ?>><?=$this->__($name) ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -176,7 +180,9 @@ $user = $this->get('user');
                                     <label for="notifications" class="span3"><?php echo $this->__('label.receive_notifications') ?></label>
                                     <span class='field span6'>
                                         <input type="checkbox" value="" name="notifications" class="input"
-                                               id="notifications" <?php if ($values['notifications'] == "1") echo " checked='checked' "; ?>/> <br/>
+                                               id="notifications" <?php if ($values['notifications'] == "1") {
+                                                    echo " checked='checked' ";
+                                                                  } ?>/> <br/>
                                     </span>
                                 </div>
                                 <div class="form-group">
@@ -184,16 +190,36 @@ $user = $this->get('user');
                                     <span class='field span6'>
                                         <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
-                                            <option value="300" <?php if ($values['messagesfrequency'] == "300") echo " selected "; ?>><?php echo $this->__('label.5min') ?></option>
-                                            <option value="900" <?php if ($values['messagesfrequency'] == "900") echo " selected "; ?>><?php echo $this->__('label.15min') ?></option>
-                                            <option value="1800" <?php if ($values['messagesfrequency'] == "1800") echo " selected "; ?>><?php echo $this->__('label.30min') ?></option>
-                                            <option value="3600" <?php if ($values['messagesfrequency'] == "3600") echo " selected "; ?>><?php echo $this->__('label.1h') ?></option>
-                                            <option value="10800" <?php if ($values['messagesfrequency'] == "10800") echo " selected "; ?>><?php echo $this->__('label.3h') ?></option>
-                                            <option value="36000" <?php if ($values['messagesfrequency'] == "36000") echo " selected "; ?>><?php echo $this->__('label.6h') ?></option>
-                                            <option value="43200" <?php if ($values['messagesfrequency'] == "43200") echo " selected "; ?>><?php echo $this->__('label.12h') ?></option>
-                                            <option value="86400" <?php if ($values['messagesfrequency'] == "86400") echo " selected "; ?>><?php echo $this->__('label.24h') ?></option>
-                                            <option value="172800" <?php if ($values['messagesfrequency'] == "172800") echo " selected "; ?>><?php echo $this->__('label.48h') ?></option>
-                                            <option value="604800" <?php if ($values['messagesfrequency'] == "604800") echo " selected "; ?>><?php echo $this->__('label.1w') ?></option>
+                                            <option value="300" <?php if ($values['messagesfrequency'] == "300") {
+                                                echo " selected ";
+                                                                } ?>><?php echo $this->__('label.5min') ?></option>
+                                            <option value="900" <?php if ($values['messagesfrequency'] == "900") {
+                                                echo " selected ";
+                                                                } ?>><?php echo $this->__('label.15min') ?></option>
+                                            <option value="1800" <?php if ($values['messagesfrequency'] == "1800") {
+                                                echo " selected ";
+                                                                 } ?>><?php echo $this->__('label.30min') ?></option>
+                                            <option value="3600" <?php if ($values['messagesfrequency'] == "3600") {
+                                                echo " selected ";
+                                                                 } ?>><?php echo $this->__('label.1h') ?></option>
+                                            <option value="10800" <?php if ($values['messagesfrequency'] == "10800") {
+                                                echo " selected ";
+                                                                  } ?>><?php echo $this->__('label.3h') ?></option>
+                                            <option value="36000" <?php if ($values['messagesfrequency'] == "36000") {
+                                                echo " selected ";
+                                                                  } ?>><?php echo $this->__('label.6h') ?></option>
+                                            <option value="43200" <?php if ($values['messagesfrequency'] == "43200") {
+                                                echo " selected ";
+                                                                  } ?>><?php echo $this->__('label.12h') ?></option>
+                                            <option value="86400" <?php if ($values['messagesfrequency'] == "86400") {
+                                                echo " selected ";
+                                                                  } ?>><?php echo $this->__('label.24h') ?></option>
+                                            <option value="172800" <?php if ($values['messagesfrequency'] == "172800") {
+                                                echo " selected ";
+                                                                   } ?>><?php echo $this->__('label.48h') ?></option>
+                                            <option value="604800" <?php if ($values['messagesfrequency'] == "604800") {
+                                                echo " selected ";
+                                                                   } ?>><?php echo $this->__('label.1w') ?></option>
                                         </select> <br/>
                                     </span>
                                 </div>
@@ -225,7 +251,7 @@ $user = $this->get('user');
                             <span class="btn btn-file">
                                         <span class="fileupload-new"><?php echo $this->__('buttons.select_file') ?></span>
                                         <span class='fileupload-exists'><?php echo $this->__('buttons.change') ?></span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)"/>
+                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
                                     </span>
 
                             <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?php echo $this->__('buttons.remove') ?></a>

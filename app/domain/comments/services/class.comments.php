@@ -9,7 +9,6 @@ namespace leantime\domain\services {
 
     class comments
     {
-
         private $commentRepository;
         private $projectService;
         private $language;
@@ -21,19 +20,18 @@ namespace leantime\domain\services {
             $this->commentRepository = new repositories\comments();
             $this->projectService = new services\projects();
             $this->language = core\language::getInstance();
-
         }
 
-        public function getComments($module, $entityId,$commentOrder=0)
+        public function getComments($module, $entityId, $commentOrder = 0)
         {
-            return $this->commentRepository->getComments($module, $entityId,"",$commentOrder);
+            return $this->commentRepository->getComments($module, $entityId, "", $commentOrder);
         }
 
-        public function addComment($values, $module, $entityId, $entity) {
+        public function addComment($values, $module, $entityId, $entity)
+        {
 
 
-            if(isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)){
-
+            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
                 $mapper = array(
                     'text' => $values['text'],
                     'date' => date("Y-m-d H:i:s"),
@@ -45,13 +43,12 @@ namespace leantime\domain\services {
 
                 $comment = $this->commentRepository->addComment($mapper, $module);
 
-                if($comment) {
-
+                if ($comment) {
                     $mapper['id'] = $comment;
 
                     $currentUrl = CURRENT_URL;
 
-                    switch($module) {
+                    switch ($module) {
                         case "ticket":
                             $subject = sprintf($this->language->__("email_notifications.new_comment_todo_subject"), $entity->id, $entity->headline);
                             $message = sprintf($this->language->__("email_notifications.new_comment_todo_message"), $_SESSION["userdata"]["name"], $entity->headline, $values['text']);
@@ -72,7 +69,7 @@ namespace leantime\domain\services {
 
                     $notification = new notification();
                     $notification->url = array(
-                        "url" => $currentUrl,
+                        "url" => $currentUrl."&projectId=".$_SESSION['currentProject'],
                         "text" => $linkLabel
                     );
 
@@ -87,17 +84,16 @@ namespace leantime\domain\services {
 
                     return true;
                 }
-
             }
 
             return false;
         }
 
-        public function deleteComment($commentId){
+        public function deleteComment($commentId)
+        {
 
             return $this->commentRepository->deleteComment($commentId);
         }
-
     }
 
 }

@@ -22,9 +22,10 @@ $values = $this->get('values');
     <div class="maincontentinner">
 
 
-        <div class="fail"><?php if ($this->get('info') != '') { ?> <span
+        <div class="fail"><?php if ($this->get('info') != '') {
+            ?> <span
                     class="info"><?php echo $this->displayNotification() ?></span> <?php
-            } ?>
+                          } ?>
 
         </div>
 
@@ -88,7 +89,6 @@ $values = $this->get('values');
                                         echo ' selected="selected"';
                                     }
                                     echo '>' . $this->__($row) . '</option>';
-
                                 } ?>
 
                             </select><br/>
@@ -116,7 +116,8 @@ $values = $this->get('values');
                                                                           size="7"/><br/>
 
 
-                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?> <br/>
+                            <?php if ($login::userIsAtLeast($roles::$manager)) {
+                                ?> <br/>
                                 <label for="invoicedComp"><?php echo $this->__('INVOICED_COMP') ?></label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
                                     <?php if ($values['invoicedComp'] == '1') {

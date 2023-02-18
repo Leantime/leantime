@@ -29,10 +29,10 @@
     --col-content-bg: #333333;
     --col-hover-bg: #222222;
 
-    --kanban-col-bg: #242424;
+    --kanban-col-bg: #333333;
     --kanban-col-title-bg:  #1d1d1d;
     --kanban-col-title-color:var(--primary-font-color);
-    --kanban-card-bg: #333333;
+    --kanban-card-bg: #242424;
     --kanban-card-hover: #1d1d1d;
 
 
@@ -49,8 +49,8 @@
     --main-action-hover-bg: var(--accent1-hover);
     --main-action-hover-color: var(--accent1-color);
 
-    --secondary-action-bg: var(--accent2);
-    --secondary-action-color: var(--accent2-color);
+    --secondary-action-bg: var(--primary-background);
+    --secondary-action-color: var(--primary-font-color);
     --secondary-action-hover-bg: var(--accent2-hover);
     --secondary-action-hover-color: var(--accent2-color);
 
@@ -416,3 +416,5 @@ body .ticketDropdown ul::after {
 .articleBody table td {
     border:1px solid var(--neutral);
 }
+
+

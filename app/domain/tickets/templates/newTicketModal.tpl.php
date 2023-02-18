@@ -1,8 +1,8 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-	$ticket = $this->get('ticket');
-	$projectData = $this->get('projectData');
+    $ticket = $this->get('ticket');
+    $projectData = $this->get('projectData');
     $todoTypeIcons  = $this->get("ticketTypeIcons");
 
 ?>

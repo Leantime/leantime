@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class delEvent extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -38,35 +36,23 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
 
                 $msgKey = '';
 
                 if (isset($_POST['del']) === true) {
-
-                    if($this->calendarRepo->delPersonalEvent($id) == true) {
-
+                    if ($this->calendarRepo->delPersonalEvent($id) == true) {
                         $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-
-                    }else{
-
+                    } else {
                         $this->tpl->setNotification('notification.could_not_delete_event', 'success');
-
                     }
-
                 }
 
                 $this->tpl->display('calendar.delEvent');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 
 }

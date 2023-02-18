@@ -10,15 +10,10 @@ namespace leantime\core {
 
     class appSettings
     {
-        /**
-         * @access private
-         * @var string - 1 debugmodus
-         */
-        public $debug = 1;
 
-        public $appVersion = "2.3.5";
+        public $appVersion = "2.3.13";
 
-        public $dbVersion = "2.1.13";
+        public $dbVersion = "2.1.14";
 
         /**
          * __construct
@@ -32,17 +27,16 @@ namespace leantime\core {
          * loadSettings - load all appSettings and set ini
          *
          */
-        public function loadSettings($timezone, $debug = 0)
+        public function loadSettings($timezone, $debug, $logPath)
         {
+
             if ($timezone != '') {
                 date_default_timezone_set($timezone);
             } else {
                 date_default_timezone_set('America/Los_Angeles');
             }
 
-            $this->debug = $debug;
-
-            if ($this->debug === 1) {
+            if ($debug === 1 || $debug === true) {
                 error_reporting(E_ALL);
                 ini_set('display_errors', 1);
             } else {
@@ -58,28 +52,13 @@ namespace leantime\core {
             }
 
             ini_set("log_errors", 1);
-            ini_set('error_log', ROOT . '/../logs/error.log');
-        }
 
-        public function getBaseURL()
-        {
-            if (
-                (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-                || $_SERVER['SERVER_PORT'] == 443
-                || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-            ) {
-                $protocol = "https://";
-            } else {
-                $protocol = "http://";
+            if($logPath != '') {
+                ini_set('error_log', $logPath);
+            }else{
+                ini_set('error_log', APP_ROOT."/logs/error.log");
             }
 
-            $domainName = $_SERVER['HTTP_HOST'] . '';
-            return $protocol . $domainName;
-        }
-
-        public function getFullURL()
-        {
-            return $this->getBaseURL() . rtrim($this->getRequestURI(), "/");
         }
 
         public function getRequestURI($baseURL = "")
@@ -104,5 +83,7 @@ namespace leantime\core {
 
             return $_SERVER['REQUEST_URI'];
         }
+
+
     }
 }

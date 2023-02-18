@@ -12,6 +12,7 @@ namespace leantime\domain\models {
         public $editorId;
         public $userId;
         public $priority;
+        public $sortIndex;
 
         public $date;
         public $dateToFinish;
@@ -39,7 +40,7 @@ namespace leantime\domain\models {
         public function __construct($values = false)
         {
 
-            if($values !== false) {
+            if ($values !== false) {
                 $this->id = $values["id"] ?? '';
                 $this->headline = $values["headline"] ?? '';
                 $this->type = $values["type"] ?? '';
@@ -69,7 +70,6 @@ namespace leantime\domain\models {
                 $this->editorFirstname = $values["editorFirstname"] ?? '';
                 $this->editorLastname = $values["editorLastname"] ?? '';
             }
-
         }
     }
 

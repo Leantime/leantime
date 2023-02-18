@@ -4,6 +4,7 @@
  * Client class - All data access for clients
  *
  */
+
 namespace leantime\domain\repositories {
 
     use leantime\core;
@@ -11,7 +12,6 @@ namespace leantime\domain\repositories {
 
     class clients
     {
-
         /**
          * @access public
          * @var    string
@@ -28,7 +28,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    object
          */
-        private $db='';
+        private $db = '';
 
         /**
          * __construct - get database connection
@@ -39,7 +39,6 @@ namespace leantime\domain\repositories {
         {
 
             $this->db = core\db::getInstance();
-
         }
 
         /**
@@ -82,16 +81,15 @@ namespace leantime\domain\repositories {
             $row = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(count($row) > 0) {
+            if (count($row) > 0) {
                 $this->name = $row['name'];
 
                 $this->id = $row['id'];
 
                 return $row;
-            }else{
+            } else {
                 return false;
             }
-
         }
 
         /**
@@ -125,7 +123,6 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getNumberOfClients()
@@ -139,9 +136,9 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if(isset($values['clientCount']) === true) {
+            if (isset($values['clientCount']) === true) {
                 return $values['clientCount'];
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -180,7 +177,8 @@ namespace leantime\domain\repositories {
 					zp_user.profileId,
 					zp_user.phone,
                     zp_user.status
-                    FROM zp_user WHERE clientId = :clientId";
+                    FROM zp_user WHERE clientId = :clientId
+                    AND !(source <=> 'api') ";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
@@ -300,15 +298,11 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             if (count($values) > 0) {
-
                 return true;
             } else {
-
                 return false;
             }
-
         }
-
     }
 
 }

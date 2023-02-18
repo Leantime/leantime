@@ -58,9 +58,9 @@ $roles = $this->get('roles');
                         <td><?=$this->__("label.roles." . $roles[$row['role']]); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
                             echo $this->__('label.active');
-                            } else if (strtolower($row['status']) == 'i') {
+                            } elseif (strtolower($row['status']) == 'i') {
                                 echo $this->__('label.invited');
-                            }else{
+                            } else {
                                 echo $this->__('label.deactivated');
                             } ?></td>
                         <td><?php if ($row['twoFAEnabled']) {

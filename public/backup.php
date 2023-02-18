@@ -5,18 +5,19 @@
  * Can use CronJob for run 0 5 * * * wget http://yourleantimeurl.com/backup.php
  *
  */
+define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
+define('APP_ROOT', dirname(__FILE__, 2));
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 
-require_once '../app/core/class.autoload.php';
-require_once '../config/configuration.php';
-require_once '../config/appSettings.php';
+require_once APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT . '/config/appSettings.php';
 
 $config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone);
+$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
 
 function runBackup($backupFile, $config){
 
@@ -27,7 +28,7 @@ function runBackup($backupFile, $config){
     switch ($worked) {
         case 0:
             return array('type'=>'success','msg'=> 'The Database ' .$config->dbDatabase .' is save in the path '.getcwd().'/' .$backupPath );
-            chmod(ROOT.'/'.$config->userFilePath,0755);
+            chmod(APP_ROOT.'/'.$config->userFilePath,0755);
             break;
         case 1:
 

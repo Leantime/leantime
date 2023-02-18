@@ -10,7 +10,5 @@ namespace leantime\domain\services {
 
     class install
     {
-
-
     }
 }

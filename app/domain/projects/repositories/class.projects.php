@@ -161,7 +161,12 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            if($userId == ''){
+                $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+            }else{
+                $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
+            }
+
             if ($clientId != "") {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
@@ -344,7 +349,8 @@ namespace leantime\domain\repositories {
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND zp_user.id IS NOT NULL
+				WHERE zp_relationuserproject.projectId = :projectId AND
+                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
 				ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
@@ -502,14 +508,12 @@ namespace leantime\domain\repositories {
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
-
-              foreach ($values['assignedUsers'] as $user) {
-                  if(is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
-                      $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
-                  }
-              }
-
-              }
+                foreach ($values['assignedUsers'] as $user) {
+                    if (is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
+                        $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                    }
+                }
+            }
 
             return $projectId;
         }
@@ -669,7 +673,8 @@ namespace leantime\domain\repositories {
             $user = $userRepo->getUser($userId);
 
             //admins owners and managers can access everything
-            if (roles::getRoles()[$user['role']] == roles::$admin || roles::getRoles()[$user['role']] == roles::$owner || roles::getRoles()[$user['role']] == roles::$manager) {
+            if (in_array(roles::getRoleString($user['role']), array(roles::$admin, roles::$owner, roles::$manager)))
+            {
                 return true;
             }
 
@@ -750,7 +755,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return bool
          */
         public function editUserProjectRelations($id, $projects)
         {
@@ -788,6 +793,8 @@ namespace leantime\domain\repositories {
                     }
                 }
             }
+
+            return true;
         }
 
         public function deleteProjectRelation($userId, $projectId)

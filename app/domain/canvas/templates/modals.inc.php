@@ -1,7 +1,9 @@
 <?php
+
 /**
  * modals.inc template - Generic template for create / edit / clone modals
  */
+
 ?>
 <!-- Modals -->
 <div class="modal fade bs-example-modal-lg" id="addCanvas">
@@ -79,21 +81,20 @@
         <div class="modal-body" style="height: calc(95px + <?php echo 45 * count($allCanvas);?>px)">
           <label><?=$this->__("label.title_merge") ?></label>
           <select name="canvasid" id="mergeCanvasSelect" style="width: 100%; margin-top:5px">
-          <?php if(count($allCanvas) > 0) {
-            foreach($this->get('allCanvas') as $canvasRow){ 
-
-                echo "<option value='".$canvasRow["id"]."'";
-                if($this->get('currentCanvas') == $canvasRow["id"]) {
-                    $canvasTitle= $canvasRow["title"];
-                    echo " selected='selected' ";
+          <?php if (count($allCanvas) > 0) {
+                foreach ($this->get('allCanvas') as $canvasRow) {
+                    echo "<option value='" . $canvasRow["id"] . "'";
+                    if ($this->get('currentCanvas') == $canvasRow["id"]) {
+                        $canvasTitle = $canvasRow["title"];
+                        echo " selected='selected' ";
+                    }
+                    echo ">" .$this->escape($canvasRow["title"]) . "</option>";
                 }
-                echo ">".$canvasRow["title"]."</option>";
-            }
           } ?>
           </select>
         </div>
         <div class="modal-footer">
-          <?php if(count($allCanvas) > 0) {?>
+          <?php if (count($allCanvas) > 0) {?>
               <input type="submit"  class="btn btn-default" value="<?=$this->__('buttons.merge') ?>" name="mergeCanvas" />
           <?php } ?>
           <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->__('buttons.close') ?></button>
@@ -106,7 +107,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function() { new SlimSelect({ select: '#mergeCanvasSelect' }); });
 </script>
-      
+
 <div class="modal fade bs-example-modal-lg" id="importCanvas">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

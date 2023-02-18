@@ -10,9 +10,7 @@ class ldap
     private $ldapConnection;
     private $host;
     private $port;
-    private $baseDn; //Base DN for domain
     private $ldapDn; //DN where users are located (including baseDn)
-    public $userDomain;
     private $ldapKeys = array(
         "username" => "uid",
         "groups" => "memberof",
@@ -58,11 +56,9 @@ class ldap
 
             //Prepare and map in case we want to get the config from somewhere else in the future
             $this->host = $this->config->ldapHost;
-            $this->baseDn = $this->config->baseDn;
             $this->ldapDn = $this->config->ldapDn;
             $this->defaultRoleKey = $this->config->ldapDefaultRoleKey;
             $this->port = $this->config->ldapPort;
-            $this->userDomain = $this->config->ldapUserDomain;
             $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
@@ -200,11 +196,8 @@ class ldap
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
         if ($this->config->debug) {
-
             error_log("LEANTIME: Testing the logging\n");
 
-            //$uname = $this->extractLdapFromUsername($username)."".$this->userDomain;
-            //$uname = str_replace("@","AT", $uname);
             error_log("LEANTIME: >>>Attributes Begin>>>>>>\n");
             error_log("LEANTIME: fn $firstname", 0);
             error_log("LEANTIME: sn $lastname", 0);

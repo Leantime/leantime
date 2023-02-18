@@ -55,6 +55,12 @@ namespace leantime\core {
 
         /**
          * @access public
+         * @var    IncomingRequest
+         */
+        public $incomingRequest = '';
+
+        /**
+         * @access public
          * @var    object
          */
         public $language = '';
@@ -85,7 +91,8 @@ namespace leantime\core {
         {
             $this->theme = new theme();
             $this->language = language::getInstance();
-            $this->frontcontroller = frontcontroller::getInstance(ROOT);
+            $this->frontcontroller = frontcontroller::getInstance();
+            $this->incomingRequest = new IncomingRequest();
         }
 
         /**
@@ -193,6 +200,7 @@ namespace leantime\core {
             $settings = new appSettings();
             $login = services\auth::getInstance();
             $roles = new roles();
+
 
             $language = $this->language;
 

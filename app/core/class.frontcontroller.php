@@ -37,6 +37,8 @@ namespace leantime\core {
          */
         private static string $fullAction = '';
 
+        private IncomingRequest $incomingRequest;
+
         private array $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
 
         /**
@@ -44,9 +46,10 @@ namespace leantime\core {
          *
          * @param $rootPath
          */
-        private function __construct(string $rootPath)
+        private function __construct(string $rootPath, IncomingRequest $incomingRequest)
         {
             $this->rootPath = $rootPath;
+            $this->incomingRequest = $incomingRequest;
         }
 
         /**
@@ -56,7 +59,7 @@ namespace leantime\core {
          * @param  $rootPath
          * @return object (instance)
          */
-        public static function getInstance($rootPath = null)
+        public static function getInstance(string $rootPath = null, IncomingRequest $incomingRequest = null)
         {
 
             if (is_object(self::$instance) === false) {
@@ -64,7 +67,7 @@ namespace leantime\core {
                     throw new Exception('No root path');
                 }
 
-                self::$instance = new frontcontroller($rootPath);
+                self::$instance = new frontcontroller($rootPath, $incomingRequest);
             }
 
             return self::$instance;
@@ -156,7 +159,7 @@ namespace leantime\core {
             }
 
             if (!$routeExists) {
-                self::dispatch("errors.error404", 404);
+                self::redirect(BASE_URL."/errors/error404", 404);
                 return;
             }
 
@@ -182,11 +185,11 @@ namespace leantime\core {
                         $action->run();
                     }
                 }
-            } catch (Exception $e) {
-                error_log($e, 0);
 
-                //This will catch most errors in php including db issues
-                self::dispatch("errors.error500");
+            } catch (Exception $e) {
+
+                error_log($e, 0);
+                self::redirect(BASE_URL."/errors/error500", 500);
 
                 return;
             }
@@ -217,7 +220,8 @@ namespace leantime\core {
                 case 'get':
                     return $_GET;
                 default:
-                    throw(new Exception("Unexpected HTTP Method: " . $method));
+                    error_log("Unexpected HTTP Method: ".$method);
+                    return $_REQUEST;
             }
         }
 
@@ -265,7 +269,7 @@ namespace leantime\core {
         public static function getModuleName($completeName)
         {
 
-            if($completeName == '') {
+            if ($completeName == '') {
                 $completeName = self::getCurrentRoute();
             }
 

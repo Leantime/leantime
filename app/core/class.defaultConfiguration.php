@@ -2,7 +2,8 @@
 
 namespace leantime\core;
 
-class config {
+class config
+{
     /* General */
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
@@ -62,11 +63,7 @@ class config {
     public $ldapType = 'OL';                              //Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
     public $ldapHost = '';                                //FQDN
     public $ldapPort = 389;                               //Default Port
-    public $baseDn = '';                                  //Base DN, example: DC=example,DC=com
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
-    public $ldapUserDomain = '';                          //Domain after ldap, example @example.com
-    public $bindUser = '';                                //ldap user that can search directory. (Should be read only)
-    public $bindPassword = '';
     //Default ldap keys in your directory.
     //Works for OL
     public $ldapKeys = '{
@@ -118,5 +115,4 @@ class config {
           }
         }';
     public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
-
 }

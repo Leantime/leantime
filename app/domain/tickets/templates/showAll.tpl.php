@@ -117,9 +117,9 @@
                         <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?> (<?=$this->get('numOfFilters') ?>)</a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (".$this->get('numOfFilters').")" : "" ?></a>
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.group_by") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa fa-object-group"></span></button>
                             <ul class="dropdown-menu">
                                 <?php foreach ($groupBy as $input) : ?>
                                     <li>
@@ -143,7 +143,7 @@
                         </div>
 
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class="fa fa-table"></i></button>
                             <ul class="dropdown-menu">
                                 <li><a href="<?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
                                     echo $_SESSION['lastFilterdTicketKanbanView'];
@@ -155,6 +155,11 @@
                                              } else {
                                                  echo BASE_URL . "/tickets/showAll";
                                              } ?>" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
+                                        echo $_SESSION['lastFilterdTicketListView'];
+                                    } else {
+                                        echo BASE_URL . "/tickets/showList";
+                                    } ?>"><?=$this->__("links.list_view") ?></a></li>
                             </ul>
                         </div>
 
@@ -303,6 +308,7 @@
                 <col class="con0">
                 <col class="con1">
                 <col class="con0">
+                <col class="con1">
             </colgroup>
             <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
             <thead>
@@ -320,6 +326,7 @@
                     <th class="planned-hours-col"><?= $this->__("label.planned_hours"); ?></th>
                     <th class="remaining-hours-col"><?= $this->__("label.estimated_hours_remaining"); ?></th>
                     <th class="booked-hours-col"><?= $this->__("label.booked_hours"); ?></th>
+                    <th class="no-sort"></th>
                 </tr>
                 <?php $this->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
             </thead>
@@ -329,7 +336,8 @@
                 <?php foreach ($allTickets as $rowNum => $row) {?>
                     <tr>
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$this->e($row['headline']); ?>">
+                            <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
                         <td class="dropdown-cell" data-order="<?=$statusLabels[$row['status']]["name"]?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -500,7 +508,7 @@
                             $date = $date->format($this->__("language.dateformat"));
                         }
                         ?>
-                        <td data-order="<?=$date?>" >
+                        <td data-order="<?=$row['dateToFinish'] ?>" >
                             <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                         </td>
                         <td data-order="<?=$this->e($row['planHours']); ?>">
@@ -521,6 +529,42 @@
                             } else {
                                 echo $row['bookedHours'];
                             }?>
+                        </td>
+                        <td>
+                            <?php if ($login::userIsAtLeast($roles::$editor)) {
+                                $clockedIn = $this->get("onTheClock");
+
+                                ?>
+                                <div class="inlineDropDownContainer">
+
+                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
+                                        <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                        <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
+                                        <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
+                                            <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
+                                                echo"style='display:none;'";
+                                            }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                            <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
+                                                echo"style='display:none;'";
+                                            }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
+                                                    echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
+                                                } else {
+                                                    echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
+                                                }?></a>
+                                            <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
+                                                echo"style='display:none;'";
+                                            }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            <?php } ?>
+
                         </td>
                         <?php $this->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                     </tr>
@@ -562,13 +606,6 @@
 
 
         leantime.ticketsController.initTicketsTable("<?=$searchCriteria["groupBy"] ?>");
-
-        <?php if (isset($_SESSION['userdata']['settings']["modals"]["backlog"]) === false || $_SESSION['userdata']['settings']["modals"]["backlog"] == 0) {     ?>
-        leantime.helperController.showHelperModal("backlog");
-            <?php
-        //Only show once per session
-            $_SESSION['userdata']['settings']["modals"]["backlog"] = 1;
-        } ?>
 
         <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 

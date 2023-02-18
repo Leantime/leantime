@@ -12,6 +12,8 @@ Leantime is a lean open source project management system for startups and innova
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
+  ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
+
 
 </div>
 <br /><br />
@@ -26,21 +28,24 @@ Leantime is a lean open source project management system for startups and innova
 * Retrospectives
 * Project dashboards
 * Project reports
+* Wikis with the ability to embed documents
 * Multiple user roles
 * Two-Factor Authentication
 * LDAP integration
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Adjust color scheme and logo
 * Available in 19 languages
 
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/Dashboard.png "Dashboard")    | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+| ![alt text](public/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 |---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/ToDoView.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/images/Screenshots/Calendar.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/images/Screenshots/Confetti.png "Confetti")                                                                     |
 
 ### System Requirements ###
 
@@ -53,9 +58,9 @@ Leantime is a lean open source project management system for startups and innova
 * Download latest release package
 * Create an empty MySQL database
 * Upload entire directory to your server 
-* Point your domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
-* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Point your domain root to the `public/` directory
+* Rename `config/.env.sample` to `config/.env`
+* Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
@@ -85,7 +90,7 @@ to load Javascript dependencies and finally run the grunt task to create the com
 ### Installation via Docker ###
 
 We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
-To run the image enter your MySQL credentials and execute
+To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
 docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
@@ -100,6 +105,31 @@ docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 You can set any of the config variables in `config/configuration.php` when running the docker command.
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
+
+
+### Running Locally
+
+For development, we use a dockerized development environment. You will need to have
+``docker``, ``docker compose``, ``make``, ``composer`` and ``npm`` installed. to run the application for development, in the root of this repository, run a primer with
+
+```make clean build```
+
+afterwards, run 
+
+```make run-dev```
+
+this will start the development server on port 8080.
+
+The dev environment  provides a mysql server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
+
+* [http://localhost:8080](http://localhost:8080) : leantime
+* [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
+* [http://localhost:8082](http://localhost:8082) : phpmyadmin(authentication ``leantime:leantime``) to check the DB schema and data
+* [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
+
+Additionally, XDebug is enabled, but you will have to modify your 
+IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
+
 
 ### Update ###
 

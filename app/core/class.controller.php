@@ -6,8 +6,8 @@ use leantime\core\template;
 use leantime\core\events;
 use leantime\core\language;
 
-abstract class controller {
-
+abstract class controller
+{
     use eventhelpers;
 
     protected template $tpl;
@@ -73,7 +73,6 @@ abstract class controller {
      */
     protected function init()
     {
-
     }
 
     /**
@@ -85,7 +84,5 @@ abstract class controller {
      */
     protected function run()
     {
-
     }
-
 }

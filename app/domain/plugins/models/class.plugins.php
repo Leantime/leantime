@@ -13,6 +13,5 @@ namespace leantime\domain\models {
         public $foldername;
         public $homepage;
         public $authors;
-
     }
 }

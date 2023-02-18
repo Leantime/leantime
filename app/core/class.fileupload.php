@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\core;
 
 use leantime\core\eventhelpers;
@@ -13,7 +14,6 @@ use Exception;
  */
 class fileupload
 {
-
     use eventhelpers;
 
     /**
@@ -104,15 +104,56 @@ class fileupload
                     ]
                 ]
             );
-
         } else {
             //Can discuss whether we want to allow local uploads again at some point...
             return false;
-
         }
 
         return false;
+    }
 
+    /**
+     * This function returns the maximum files size that can be uploaded
+     * in PHP
+     * @returns int File size in bytes
+     **/
+    public static function getMaximumFileUploadSize()
+    {
+        return min(self::convertPHPSizeToBytes(ini_get('post_max_size')), self::convertPHPSizeToBytes(ini_get('upload_max_filesize')));
+    }
+
+    /**
+     * This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
+     *
+     * @param string $sSize
+     * @return integer The value in bytes
+     */
+    private static function convertPHPSizeToBytes($sSize)
+    {
+        //
+        $sSuffix = strtoupper(substr($sSize, -1));
+        if (!in_array($sSuffix,array('P','T','G','M','K'))){
+            return (int)$sSize;
+        }
+        $iValue = substr($sSize, 0, -1);
+        switch ($sSuffix) {
+            case 'P':
+                $iValue *= 1024;
+            // Fallthrough intended
+            case 'T':
+                $iValue *= 1024;
+            // Fallthrough intended
+            case 'G':
+                $iValue *= 1024;
+            // Fallthrough intended
+            case 'M':
+                $iValue *= 1024;
+            // Fallthrough intended
+            case 'K':
+                $iValue *= 1024;
+                break;
+        }
+        return (int)$iValue;
     }
 
     /**
@@ -190,7 +231,6 @@ class fileupload
         $this->real_name = $this->file_name;
 
         if ($name != '') {
-
             if (isset($this->path_parts['extension'])) {
                 $this->file_name = $name . '.' . $this->path_parts['extension'];
             } else {
@@ -198,13 +238,9 @@ class fileupload
             }
 
             return true;
-
         } else {
-
             return false;
-
         }
-
     }
 
     /**
@@ -220,22 +256,19 @@ class fileupload
             //S3 upload
             return $this->uplodToS3();
         } else {
-
             //Local upload
             return $this->uploadLocal();
         }
-
     }
 
     public function uploadPublic()
     {
 
         if ($this->config->useS3 == true) {
-
             try {
                 // Upload data.
 
-                if($this->file_tmp_name == null || $this->file_tmp_name == ''){
+                if ($this->file_tmp_name == null || $this->file_tmp_name == '') {
                     return false;
                 }
 
@@ -248,32 +281,22 @@ class fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
-
             } catch (S3Exception $e) {
-
                 error_log($e, 0);
                 return false;
-
             }
-
         } else {
-
             try {
-
                 if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
                     return "/userfiles/" . $this->file_name;
                 }
-
             } catch (Exception $e) {
-
                 error_log($e, 0);
                 return false;
             }
-
         }
 
         return false;
-
     }
 
     private function uplodToS3()
@@ -289,35 +312,24 @@ class fileupload
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
-
         } catch (S3Exception $e) {
-
             error_log($e, 0);
             return false;
-
         }
-
     }
 
     private function uploadLocal()
     {
 
         try {
-
             if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath() . "/" . $this->file_name)) {
                 return true;
             }
-
         } catch (Exception $e) {
-
             error_log($e, 0);
             return false;
         }
 
         return false;
-
     }
-
-
 }
-

@@ -10,7 +10,7 @@ leantime.ticketsController = (function () {
         resizable: true,
         autoSizable: true,
         callbacks: {
-            beforeShowCont: function() {
+            beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
             },
             afterShowCont: function () {
@@ -37,11 +37,11 @@ leantime.ticketsController = (function () {
         resizable: true,
         autoSizable: true,
         callbacks: {
-            beforePostSubmit: function() {
+            beforePostSubmit: function () {
                 jQuery(".showDialogOnLoad").show();
                 jQuery('textarea.complexEditor').tinymce().save();
             },
-            beforeShowCont: function() {
+            beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
                 console.log("jquery beforeShow?");
 
@@ -77,10 +77,11 @@ leantime.ticketsController = (function () {
     })();
 
     //Functions
-    function countTickets () {
+    function countTickets()
+    {
 
-        jQuery("#sortableTicketKanban .column").each(function(){
-            var counting= jQuery(this).find('.moveable').length;
+        jQuery("#sortableTicketKanban .column").each(function () {
+            var counting = jQuery(this).find('.moveable').length;
             jQuery(this).find(' .count').text(counting);
         });
 
@@ -90,7 +91,9 @@ leantime.ticketsController = (function () {
     var updateRemainingHours = function (element, id) {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updateRemainingHours(
-            id, value, function () {
+            id,
+            value,
+            function () {
                 jQuery.growl({message: leantime.i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
             }
         );
@@ -100,7 +103,9 @@ leantime.ticketsController = (function () {
     var updatePlannedHours = function (element, id) {
         var value = jQuery(element).val();
         leantime.ticketsRepository.updatePlannedHours(
-            id, value, function () {
+            id,
+            value,
+            function () {
                 jQuery.growl({message: leantime.i18n.__("short_notifications.planned_hours_updated"), style: "success"});
             }
         );
@@ -108,7 +113,7 @@ leantime.ticketsController = (function () {
     };
 
     var triggerMilestoneModal = function (id) {
-        jQuery.nmManual(leantime.appUrl+'/tickets/editMilestone/'+id, milestoneModalConfig);
+        jQuery.nmManual(leantime.appUrl + '/tickets/editMilestone/' + id, milestoneModalConfig);
 
     };
 
@@ -127,17 +132,19 @@ leantime.ticketsController = (function () {
 
     var initGanttChart = function (tasks, viewMode, readonly) {
 
-        function htmlEntities(str) {
+        function htmlEntities(str)
+        {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         jQuery(document).ready(
             function () {
 
-                if(readonly == false) {
-
+                if (readonly == false) {
                     var gantt_chart = new Gantt(
-                        "#gantt", tasks, {
+                        "#gantt",
+                        tasks,
+                        {
                             header_height: 55,
                             column_width: 20,
                             step: 24,
@@ -161,21 +168,19 @@ leantime.ticketsController = (function () {
 
 
 
-                                var popUpHTML= '<div class="details-container"> ' +
-                                    '<small>'+ task.type +' #' + task.id +' </small>';
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ' +
+                                    '<small>' + task.type + ' #' + task.id + ' </small>';
 
-                             if(task.type === 'milestone') {
-                                 popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                if (task.type === 'milestone') {
+                                    popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
                                      '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
                                      '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
-                             }else{
-
-                                 popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                } else {
+                                    popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
-
-                             }
+                                }
 
                                  popUpHTML += '</div>';
 
@@ -186,7 +191,7 @@ leantime.ticketsController = (function () {
                             },
                             on_date_change: function (task, start, end) {
 
-                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end);
+                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
                                 _initModals();
 
                             },
@@ -199,15 +204,17 @@ leantime.ticketsController = (function () {
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
                                 _initModals();
                             },
-                            on_popup_show: function(task) {
-                               console.log("jo");
+                            on_popup_show: function (task) {
+                                console.log("jo");
                                 _initModals();
                             }
                         }
                     );
-                }else{
+                } else {
                     var gantt_chart = new Gantt(
-                        "#gantt", tasks, {
+                        "#gantt",
+                        tasks,
+                        {
                             readonlyGantt: true,
                             resizing: false,
                             progress: false,
@@ -245,9 +252,11 @@ leantime.ticketsController = (function () {
                 }
 
                 jQuery("#ganttTimeControl").on(
-                    "click", "a", function () {
+                    "click",
+                    "a",
+                    function () {
 
-                        var $btn =jQuery(this);
+                        var $btn = jQuery(this);
                         var mode = $btn.attr("data-value");
                         gantt_chart.change_view_mode(mode);
                         $btn.parent().parent().find('a').removeClass('active');
@@ -297,7 +306,8 @@ leantime.ticketsController = (function () {
         };
         jQuery.datepicker.setDefaults(
             { beforeShow: function (i) {
-                if (jQuery(i).attr('readonly')) { return false; } } }
+                if (jQuery(i).attr('readonly')) {
+                    return false; } } }
         );
 
         var dateFormat = leantime.i18n.__("language.jsdateformat"),
@@ -322,7 +332,8 @@ leantime.ticketsController = (function () {
                     }
                 )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
                         to.datepicker("option", "minDate", getDate(this));
                         var newEndDate = getDate(this).addDays(13);
                         to.datepicker('setDate', newEndDate); //set date
@@ -350,7 +361,8 @@ leantime.ticketsController = (function () {
                 }
             )
             .on(
-                "change", function () {
+                "change",
+                function () {
                     from.datepicker("option", "maxDate", getDate(this));
                 }
             );
@@ -360,7 +372,7 @@ leantime.ticketsController = (function () {
             var date;
             try {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
-            } catch( error ) {
+            } catch ( error ) {
                 date = null;
                 console.log(error);
             }
@@ -391,7 +403,8 @@ leantime.ticketsController = (function () {
                     }
                 )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
                         to.datepicker("option", "minDate", getDate(this));
                     }
                 ),
@@ -415,7 +428,8 @@ leantime.ticketsController = (function () {
                 }
             )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
                         from.datepicker("option", "maxDate", getDate(this));
                     }
                 );
@@ -425,7 +439,7 @@ leantime.ticketsController = (function () {
             var date;
             try {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
-            } catch( error ) {
+            } catch ( error ) {
                 date = null;
                 console.log(error);
             }
@@ -457,27 +471,28 @@ leantime.ticketsController = (function () {
                     }
                 )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
 
                         var date = jQuery(this).val();
                         var id = jQuery(this).attr("data-id");
 
-                        var toDatePicker = jQuery(".toDateTicket-"+id);
+                        var toDatePicker = jQuery(".toDateTicket-" + id);
                         toDatePicker.datepicker("option", "minDate", getDate(this));
 
                         var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
 
                         var newDate = dateTime;
-                        leantime.ticketsRepository.updateEditFromDates(id, newDate, function() {
+                        leantime.ticketsRepository.updateEditFromDates(id, newDate, function () {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
-                        var dateTo = jQuery(".toDateTicket-"+id).val();
+                        var dateTo = jQuery(".toDateTicket-" + id).val();
 
                         var dateTimeTo = moment(dateTo, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
                         var newDateTo = dateTimeTo;
 
-                        leantime.ticketsRepository.updateEditToDates(id, newDateTo, function() {
+                        leantime.ticketsRepository.updateEditToDates(id, newDateTo, function () {
 
                         });
                     }
@@ -502,10 +517,11 @@ leantime.ticketsController = (function () {
                 }
             )
                 .on(
-                    "change", function () {
+                    "change",
+                    function () {
 
                         var id = jQuery(this).attr("data-id");
-                        var fromDateTicket = jQuery(".fromDateTicket-"+id);
+                        var fromDateTicket = jQuery(".fromDateTicket-" + id);
                         fromDateTicket.datepicker("option", "maxDate", getDate(this));
 
                         var date = jQuery(this).val();
@@ -513,15 +529,15 @@ leantime.ticketsController = (function () {
                         var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
 
                         var newDate = dateTime;
-                        leantime.ticketsRepository.updateEditToDates(id, newDate, function() {
+                        leantime.ticketsRepository.updateEditToDates(id, newDate, function () {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
-                        var dateFrom = jQuery(".fromDateTicket-"+id).val();
+                        var dateFrom = jQuery(".fromDateTicket-" + id).val();
 
                         var dateTimeFrom = moment(dateFrom, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
                         var newDateFrom = dateTimeFrom;
-                        leantime.ticketsRepository.updateEditFromDates(id, newDateFrom, function() {
+                        leantime.ticketsRepository.updateEditFromDates(id, newDateFrom, function () {
 
                         });
 
@@ -534,7 +550,7 @@ leantime.ticketsController = (function () {
             var date;
             try {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
-            } catch( error ) {
+            } catch ( error ) {
                 date = null;
                 console.log(error);
             }
@@ -607,7 +623,7 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: leantime.appUrl+'/api/tickets',
+                        url: leantime.appUrl + '/api/tickets',
                         data:
                         {
                             id : ticket[1],
@@ -620,11 +636,10 @@ leantime.ticketsController = (function () {
                     }
                 );
 
-            }
-        );
+        });
     };
 
-    var initEffortDropdown = function() {
+    var initEffortDropdown = function () {
 
         var storyPointLabels = {
             '1': 'XS',
@@ -640,19 +655,18 @@ leantime.ticketsController = (function () {
             var dataValue = jQuery(this).attr("data-value").split("_");
 
             if (dataValue.length === 2) {
-
                 var ticketId = dataValue[0];
                 var effortId = dataValue[1];
 
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: leantime.appUrl+'/api/tickets',
+                        url: leantime.appUrl + '/api/tickets',
                         data:
                             {
                                 id: ticketId,
                                 storypoints: effortId
-                            }
+                        }
                     }
                 ).done(
                     function () {
@@ -661,15 +675,14 @@ leantime.ticketsController = (function () {
 
                     }
                 );
-
-            }else{
+            } else {
                 console.log("Ticket Controller: Effort data value not set correctly");
             }
         });
 
     };
 
-    var initPriorityDropdown = function() {
+    var initPriorityDropdown = function () {
         // '1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low'
         var priorityLabels = {
             '1': 'Critical',
@@ -684,36 +697,34 @@ leantime.ticketsController = (function () {
             var dataValue = jQuery(this).attr("data-value").split("_");
 
             if (dataValue.length === 2) {
-
                 var ticketId = dataValue[0];
                 var priorityId = dataValue[1];
 
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: leantime.appUrl+'/api/tickets',
+                        url: leantime.appUrl + '/api/tickets',
                         data:
                             {
                                 id: ticketId,
                                 priority: priorityId
-                            }
+                        }
                     }
                 ).done(
                     function () {
                         jQuery("#priorityDropdownMenuLink" + ticketId + " span.text").text(priorityLabels[priorityId]);
                         jQuery("#priorityDropdownMenuLink" + ticketId + "").removeClass("priority-bg-1 priority-bg-2 priority-bg-3 priority-bg-4 priority-bg-5");
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").addClass("priority-bg-"+priorityId);
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").addClass("priority-bg-" + priorityId);
 
                         jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").removeClass("priority-border-1 priority-border-2 priority-border-3 priority-border-4 priority-border-5");
-                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-"+priorityId);
+                        jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-" + priorityId);
 
 
                         jQuery.growl({message: leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
 
                     }
                 );
-
-            }else{
+            } else {
                 console.log("Ticket Controller: Priority data value not set correctly");
             }
         });
@@ -727,35 +738,32 @@ leantime.ticketsController = (function () {
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
-                if (dataValue.length === 3) {
+            if (dataValue.length === 3) {
+                var ticketId = dataValue[0];
+                var milestoneId = dataValue[1];
+                var color = dataValue[2];
 
-                    var ticketId = dataValue[0];
-                    var milestoneId = dataValue[1];
-                    var color = dataValue[2];
+                jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").append(" ...");
 
-                    jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").append(" ...");
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl+'/api/tickets',
-                            data:
-                                {
-                                    id : ticketId,
-                                    dependingTicketId:milestoneId
-                                }
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                dependingTicketId:milestoneId
                         }
-                    ).done(
-                        function () {
-                            jQuery("#milestoneDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
-                            jQuery("#milestoneDropdownMenuLink"+ticketId).css("backgroundColor", color);
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
                         }
-                    );
-
-                }
+                ).done(
+                    function () {
+                        jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
+                    }
+                );
             }
-        );
+        });
     };
 
     var initStatusDropdown = function () {
@@ -765,34 +773,31 @@ leantime.ticketsController = (function () {
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
-                if (dataValue.length == 3) {
+            if (dataValue.length == 3) {
+                var ticketId = dataValue[0];
+                var statusId = dataValue[1];
+                var className = dataValue[2];
 
-                    var ticketId = dataValue[0];
-                    var statusId = dataValue[1];
-                    var className = dataValue[2];
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl+'/api/tickets',
-                            data:
-                                {
-                                    id : ticketId,
-                                    status:statusId
-                                }
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                status:statusId
                         }
-                    ).done(
-                        function () {
-                            jQuery("#statusDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
-                            jQuery("#statusDropdownMenuLink"+ticketId).removeClass().addClass(className+" dropdown-toggle f-left status ");
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
-
                         }
-                    );
+                ).done(
+                    function () {
+                        jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
 
-                }
+                    }
+                );
             }
-        );
+        });
 
     };
 
@@ -803,41 +808,38 @@ leantime.ticketsController = (function () {
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
-                if (dataValue.length === 3) {
+            if (dataValue.length === 3) {
+                var ticketId = dataValue[0];
+                var userId = dataValue[1];
+                var profileImageId = dataValue[2];
 
-                    var ticketId = dataValue[0];
-                    var userId = dataValue[1];
-                    var profileImageId = dataValue[2];
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl+'/api/tickets',
-                            data:
-                                {
-                                    id : ticketId,
-                                    editorId:userId
-                                }
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                editorId:userId
                         }
-                    ).done(
-                        function () {
-                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#userImage"+ticketId+" img").attr("src", leantime.appUrl+"/api/users?profileImage="+userId);
-                            jQuery("#userDropdownMenuLink"+ticketId+" span.text span#user"+ticketId).text(dataLabel);
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                         }
-                    );
-
-                }
+                ).done(
+                    function () {
+                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", leantime.appUrl + "/api/users?profileImage=" + userId);
+                        jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.user_updated"), style: "success"});
+                    }
+                );
             }
-        );
+        });
     };
 
-    var initAsyncInputChange = function() {
+    var initAsyncInputChange = function () {
 
-        jQuery(".asyncInputUpdate").on("change", function(){
+        jQuery(".asyncInputUpdate").on("change", function () {
             var dataLabel = jQuery(this).attr('data-label').split("-");
 
-            if(dataLabel.length == 2){
+            if (dataLabel.length == 2) {
                 var fieldName = dataLabel[0];
                 var entityId = dataLabel[1];
                 var value = jQuery(this).val();
@@ -845,20 +847,19 @@ leantime.ticketsController = (function () {
                 jQuery.ajax(
                     {
                         type: 'PATCH',
-                        url: leantime.appUrl+'/api/tickets',
+                        url: leantime.appUrl + '/api/tickets',
                         data:
                             {
                                 id : entityId,
                                 [fieldName]:value,
 
-                            }
+                        }
                     }
                 ).done(
                     function () {
                         jQuery.growl({message: leantime.i18n.__("notifications.subtask_saved"), style: "success"});
                     }
                 );
-
             }
 
         });
@@ -871,31 +872,28 @@ leantime.ticketsController = (function () {
                 var dataValue = jQuery(this).attr("data-value").split("_");
                 var dataLabel = jQuery(this).attr('data-label');
 
-                if (dataValue.length == 2) {
+            if (dataValue.length == 2) {
+                var ticketId = dataValue[0];
+                var sprintId = dataValue[1];
 
-                    var ticketId = dataValue[0];
-                    var sprintId = dataValue[1];
-
-                    jQuery.ajax(
-                        {
-                            type: 'PATCH',
-                            url: leantime.appUrl+'/api/tickets',
-                            data:
-                                {
-                                    id : ticketId,
-                                    sprint:sprintId
-                                }
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data:
+                            {
+                                id : ticketId,
+                                sprint:sprintId
                         }
-                    ).done(
-                        function () {
-                            jQuery("#sprintDropdownMenuLink"+ticketId+" span.text").text(dataLabel);
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
                         }
-                    );
-
-                }
+                ).done(
+                    function () {
+                        jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
+                        jQuery.growl({message: leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
+                    }
+                );
             }
-        );
+        });
     };
 
     var _initSimpleColorPicker = function () {
@@ -910,9 +908,9 @@ leantime.ticketsController = (function () {
 
             var currentColor = jQuery('input.simpleColorPicker').val();
 
-            if(currentColor != ''){
-                jQuery('input.simpleColorPicker').css('background', currentColor);
-            }
+        if (currentColor != '') {
+            jQuery('input.simpleColorPicker').css('background', currentColor);
+        }
 
 
     };
@@ -934,11 +932,11 @@ leantime.ticketsController = (function () {
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
                 firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-                onClose: function(date) {
+                onClose: function (date) {
 
                     var newDate = "";
 
-                    if(date == "") {
+                    if (date == "") {
                         jQuery(this).val(leantime.i18n.__("text.anytime"));
                     }
 
@@ -947,7 +945,7 @@ leantime.ticketsController = (function () {
                     var id = jQuery(this).attr("data-id");
                     newDate = dateTime;
 
-                    leantime.ticketsRepository.updateDueDates(id, newDate, function() {
+                    leantime.ticketsRepository.updateDueDates(id, newDate, function () {
                         jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
                     });
 
@@ -974,7 +972,7 @@ leantime.ticketsController = (function () {
                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor:'rgb(54, 162, 235)',
                         data:d3
-                    }]
+                }]
             },
             options: {
                 scales: {
@@ -1004,42 +1002,31 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var colorTicketBoxes = function (currentBox){
+    var colorTicketBoxes = function (currentBox) {
 
         var color = "#fff";
-        jQuery(".ticketBox").each(function(index){
+        jQuery(".ticketBox").each(function (index) {
 
             var value = jQuery(this).find(".statusDropdown > a").attr("class");
 
-            if(value != undefined) {
+            if (value != undefined) {
                 if (value.indexOf("important") > -1) {
-
                     color = "#b94a48";
-
-                }else if (value.indexOf("info") > -1) {
-
+                } else if (value.indexOf("info") > -1) {
                         color = "#2d6987";
-
                 } else if (value.indexOf("warning") > -1) {
-
                     color = "#f89406";
-
                 } else if (value.indexOf("success") > -1) {
-
                     color = "#468847";
-
                 } else if (value.indexOf("default") > -1) {
-
                     color = "#999999";
-                }else{
-
+                } else {
                     color = "#999999";
-
                 }
 
                 jQuery(this).css("borderLeft", "5px solid " + color);
 
-                if(currentBox != null) {
+                if (currentBox != null) {
                     if (jQuery(this).attr("data-val") == currentBox) {
                         jQuery("#ticket_" + currentBox + " .ticketBox").animate({backgroundColor: color}, 'fast').animate({backgroundColor: "#fff"}, 'slow');
                     }
@@ -1050,31 +1037,49 @@ leantime.ticketsController = (function () {
 
     };
 
-    var initTicketTabs = function(){
+    var initTicketTabs = function () {
 
         jQuery(document).ready(function () {
 
+            var url = window.location.hash.substring(1);
+            var urlParts = url.split("/");
+            var activeTab='';
+            var activeTabIndex = 0;
+            console.log(urlParts);
+            if(urlParts.length>2) {
+
+                activeTab= "#" + urlParts[2];
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
+                console.log(activeTabIndex);
+            }
+
             jQuery('.ticketTabs').tabs({
-                create: function( event, ui ) {
+                create: function ( event, ui ) {
                     jQuery('.ticketTabs').css("visibility", "visible");
 
                 },
-                activate: function(event, ui) {
+                activate: function (event, ui) {
 
-                    window.location.hash = ui.newPanel.selector;
+                    window.location.hash = "/tab/"+ui.newPanel.selector.substring(1);
                 },
-                load: function() {
+                load: function () {
 
-                }
+                },
+                enable: function(){
+
+                },
+                active: activeTabIndex
 
             });
+
+
         });
 
     };
 
     var initTicketSearchSubmit = function (url) {
 
-        jQuery("#ticketSearch").on('submit', function(e) {
+        jQuery("#ticketSearch").on('submit', function (e) {
             e.preventDefault();
 
             var project = jQuery("#projectIdInput").val();
@@ -1089,16 +1094,26 @@ leantime.ticketsController = (function () {
             var groupBy = jQuery("input[name='groupBy']:checked").val();
 
             var query = "?search=true";
-            if(project != "" && project != undefined) {query = query + "&projectId=" + project}
-            if(users != "" && users != undefined) {query = query + "&users=" + users}
-            if(milestones != ""  && milestones != undefined) {query = query + "&milestone=" + milestones}
-            if(term != ""  && term != undefined) {query = query + "&term=" + term;}
-            if(sprints != ""  && sprints != undefined) {query = query + "&sprint=" + sprints;}
-            if(types != "" && types != undefined) {query = query + "&type=" + types;}
-            if(priority != "" && priority != undefined) {query = query + "&priority=" + priority;}
-            if(status != "" && status != undefined) {query = query + "&status=" + status;}
-            if(sort != "" && sort != undefined) {query = query + "&sort=" + sort;}
-            if(groupBy != "" && groupBy != undefined) {query = query + "&groupBy=" + groupBy;}
+            if (project != "" && project != undefined) {
+                query = query + "&projectId=" + project}
+            if (users != "" && users != undefined) {
+                query = query + "&users=" + users}
+            if (milestones != ""  && milestones != undefined) {
+                query = query + "&milestone=" + milestones}
+            if (term != ""  && term != undefined) {
+                query = query + "&term=" + term;}
+            if (sprints != ""  && sprints != undefined) {
+                query = query + "&sprint=" + sprints;}
+            if (types != "" && types != undefined) {
+                query = query + "&type=" + types;}
+            if (priority != "" && priority != undefined) {
+                query = query + "&priority=" + priority;}
+            if (status != "" && status != undefined) {
+                query = query + "&status=" + status;}
+            if (sort != "" && sort != undefined) {
+                query = query + "&sort=" + sort;}
+            if (groupBy != "" && groupBy != undefined) {
+                query = query + "&groupBy=" + groupBy;}
 
             var rediredirectUrl = url + query;
 
@@ -1114,7 +1129,14 @@ leantime.ticketsController = (function () {
             countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
-            var height = jQuery("html").height()-250;
+            var height = jQuery("html").height() - 250;
+
+            jQuery("#sortableTicketKanban .column .contentInner").each(function(){
+               if(jQuery(this).height() > height){
+                   height = jQuery(this).height();
+               }
+            });
+            height = height + 50;
             jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
@@ -1123,9 +1145,9 @@ leantime.ticketsController = (function () {
 
     var initTicketKanban = function (ticketStatusList) {
 
-        jQuery("#sortableTicketKanban .ticketBox").hover(function(){
+        jQuery("#sortableTicketKanban .ticketBox").hover(function () {
             jQuery(this).css("background", "var(--kanban-card-hover)");
-        },function(){
+        },function () {
             jQuery(this).css("background", "var(--kanban-card-bg)");
         });
 
@@ -1158,7 +1180,6 @@ leantime.ticketsController = (function () {
                 };
 
                 for (var i = 0; i < ticketStatusList.length; i++) {
-
                     if (jQuery(".contentInner.status_" + ticketStatusList[i]).length) {
                         statusPostData.payload[ticketStatusList[i]] = jQuery(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
                     }
@@ -1175,7 +1196,8 @@ leantime.ticketsController = (function () {
             }
         });
 
-        function tilt_direction(item) {
+        function tilt_direction(item)
+        {
             var left_pos = item.position().left,
                 move_handler = function (e) {
                     if (e.pageX >= left_pos) {
@@ -1191,16 +1213,16 @@ leantime.ticketsController = (function () {
             item.data("move_handler", move_handler);
         }
 
-        jQuery( ".portlet" )
-            .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-            .find( ".portlet-header" )
-            .addClass( "ui-widget-header ui-corner-all" )
-            .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+        jQuery(".portlet")
+            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+            .find(".portlet-header")
+            .addClass("ui-widget-header ui-corner-all")
+            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
 
-        jQuery( ".portlet-toggle" ).click(function() {
-            var icon = jQuery( this );
-            icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-            icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+        jQuery(".portlet-toggle").click(function () {
+            var icon = jQuery(this);
+            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
+            icon.closest(".portlet").find(".portlet-content").toggle();
         });
 
     };
@@ -1219,12 +1241,12 @@ leantime.ticketsController = (function () {
 
     var initTicketsTable = function (groupBy) {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
             var columnIndex = false;
 
-            if(groupBy != "") {
+            if (groupBy != "") {
                 columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
             }
 
@@ -1237,8 +1259,7 @@ leantime.ticketsController = (function () {
             var orderFixedOption = false;
             var defaultOrder = [];
 
-            if(columnIndex !== false) {
-
+            if (columnIndex !== false) {
                 rowGroupOption = {
                     startRender: function (rows, group) {
 
@@ -1271,29 +1292,29 @@ leantime.ticketsController = (function () {
 
 
                         var totalColumns = jQuery("#allTicketsTable thead th").length;
-                        if(visiblePlannedHoursIndex > -1) {
+                        if (visiblePlannedHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        if(visibleRemainingHoursIndex > -1) {
+                        if (visibleRemainingHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        if(visibleLoggedHoursIndex > -1) {
+                        if (visibleLoggedHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        var groupOutput = jQuery('<tr/>').append('<td colspan="'+totalColumns+'">' + group + ' ('+rows.count()+')</td>');
+                        var groupOutput = jQuery('<tr/>').append('<td colspan="' + totalColumns + '">' + group + ' (' + rows.count() + ')</td>');
 
-                        if(visiblePlannedHoursIndex > -1) {
+                        if (visiblePlannedHoursIndex > -1) {
                             groupOutput.append('<td>' + sumPlanned + '</td>');
                         }
 
-                        if(visibleRemainingHoursIndex > -1) {
+                        if (visibleRemainingHoursIndex > -1) {
                             groupOutput.append('<td>' + sumRemaining + '</td>');
                         }
 
-                        if(visibleLoggedHoursIndex > -1) {
+                        if (visibleLoggedHoursIndex > -1) {
                             groupOutput.append('<td>' + sumLogged + '</td>');
                         }
 
@@ -1311,47 +1332,48 @@ leantime.ticketsController = (function () {
             }
 
             var allTickets = jQuery("#allTicketsTable").DataTable({
-                    "language": {
-                        "decimal":        leantime.i18n.__("datatables.decimal"),
-                        "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
-                        "info":           leantime.i18n.__("datatables.info"),
-                        "infoEmpty":      leantime.i18n.__("datatables.infoEmpty"),
-                        "infoFiltered":   leantime.i18n.__("datatables.infoFiltered"),
-                        "infoPostFix":    leantime.i18n.__("datatables.infoPostFix"),
-                        "thousands":      leantime.i18n.__("datatables.thousands"),
-                        "lengthMenu":     leantime.i18n.__("datatables.lengthMenu"),
-                        "loadingRecords": leantime.i18n.__("datatables.loadingRecords"),
-                        "processing":     leantime.i18n.__("datatables.processing"),
-                        "search":         leantime.i18n.__("datatables.search"),
-                        "zeroRecords":    leantime.i18n.__("datatables.zeroRecords"),
-                        "paginate": {
-                            "first":      leantime.i18n.__("datatables.first"),
-                            "last":       leantime.i18n.__("datatables.last"),
-                            "next":       leantime.i18n.__("datatables.next"),
-                            "previous":   leantime.i18n.__("datatables.previous"),
-                        },
-                        "aria": {
-                            "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
-                            "sortDescending":leantime.i18n.__("datatables.sortDescending"),
-                        },
-                        "buttons": {
-                            colvis: leantime.i18n.__("datatables.buttons.colvis"),
-                            csv: leantime.i18n.__("datatables.buttons.download")
-                        }
-
+                "language": {
+                    "decimal":        leantime.i18n.__("datatables.decimal"),
+                    "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
+                    "info":           leantime.i18n.__("datatables.info"),
+                    "infoEmpty":      leantime.i18n.__("datatables.infoEmpty"),
+                    "infoFiltered":   leantime.i18n.__("datatables.infoFiltered"),
+                    "infoPostFix":    leantime.i18n.__("datatables.infoPostFix"),
+                    "thousands":      leantime.i18n.__("datatables.thousands"),
+                    "lengthMenu":     leantime.i18n.__("datatables.lengthMenu"),
+                    "loadingRecords": leantime.i18n.__("datatables.loadingRecords"),
+                    "processing":     leantime.i18n.__("datatables.processing"),
+                    "search":         leantime.i18n.__("datatables.search"),
+                    "zeroRecords":    leantime.i18n.__("datatables.zeroRecords"),
+                    "paginate": {
+                        "first":      leantime.i18n.__("datatables.first"),
+                        "last":       leantime.i18n.__("datatables.last"),
+                        "next":       leantime.i18n.__("datatables.next"),
+                        "previous":   leantime.i18n.__("datatables.previous"),
                     },
-                    "dom": '<"top">rt<"bottom"ilp><"clear">',
-                    "searching": false,
-                    "stateSave": true,
-                    "displayLength":100,
-                    "orderFixed": orderFixedOption,
-                    "order": defaultOrder,
-                    "rowGroup": rowGroupOption,
-                    "columnDefs": [
+                    "aria": {
+                        "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
+                        "sortDescending":leantime.i18n.__("datatables.sortDescending"),
+                    },
+                    "buttons": {
+                        colvis: leantime.i18n.__("datatables.buttons.colvis"),
+                        csv: leantime.i18n.__("datatables.buttons.download")
+                    }
+
+                },
+                "dom": '<"top">rt<"bottom"ilp><"clear">',
+                "searching": false,
+                "stateSave": true,
+                "displayLength":100,
+                "orderFixed": orderFixedOption,
+                "order": defaultOrder,
+                "rowGroup": rowGroupOption,
+                "columnDefs": [
                         { "visible": false, "targets": 6 },
                         { "visible": false, "targets": 7 },
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
+                        { "target": "no-sort", "orderable": false},
                     ]
 
             });
@@ -1367,26 +1389,26 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if( typeof jQuery(node).data('order') !== 'undefined'){
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         data = jQuery(node).data('order');
                                     }
                                     return data;
                                 }
                             }
                         }
-                    },
+                },
                     {
                         extend: 'colvis',
                         columns: ':not(.noVis)'
-                    }
+                }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            jQuery('#allTicketsTable').on( 'column-visibility.dt', function ( e, settings, column, state ) {
+            jQuery('#allTicketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTickets.draw(false);
-            } );
+            });
 
-            jQuery('#allTicketsTable input').on( 'change', function ( e, settings, column, state ) {
+            jQuery('#allTicketsTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();
@@ -1394,10 +1416,10 @@ leantime.ticketsController = (function () {
             });
 
             var asc = true;
-            if(groupBy != "") {
+            if (groupBy != "") {
                 jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
                     asc = !asc;
-                    var orderFixed= {"pre":[[columnIndex, asc === true? 'asc' : 'desc']]};
+                    var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
                     allTickets.order.fixed(orderFixed).draw();
                 });
             }
@@ -1406,14 +1428,152 @@ leantime.ticketsController = (function () {
         });
     };
 
+    var initTicketsList = function (groupBy) {
+
+        jQuery(document).ready(function () {
+
+            var size = 50;
+            var columnIndex = false;
+            var collapsedGroups = {};
+
+            if (groupBy != "") {
+                columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
+            }
+
+
+            var rowGroupOption = false;
+            var orderFixedOption = false;
+            var defaultOrder = [];
+
+            if (columnIndex !== false) {
+                rowGroupOption = {
+                    startRender: function (rows, group) {
+
+                        var collapsed = !!collapsedGroups[group];
+
+                        rows.nodes().each(function (r) {
+                            r.style.display = '';
+
+                                if (collapsed) {
+                                r.style.display = 'none';
+                        }});
+
+                        var totalColumns = jQuery("#allTicketsTable thead tr:first-child th").length;
+
+
+
+                        var link = '<h5 class="accordionTitle" id="accordion_link_' + columnIndex + '">' +
+                            '<a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_' + columnIndex + '">';
+
+                        if (collapsed) {
+                            link += '<i class="fa fa-angle-right"></i> ' + group + ' (' + rows.count() + ')';
+                        }else{
+                            link += '<i class="fa fa-angle-down"></i> ' + group + ' (' + rows.count() + ')';
+                        }
+                        link += '</a></h5>';
+
+                        var groupOutput = jQuery('<tr/>').append('<td colspan="' + totalColumns + '">' + link + '</td>').attr('data-name', group);
+
+
+                        return groupOutput;
+
+
+                    },
+                    dataSrc: function (row) {
+                        console.log(row);
+                        return row[columnIndex]["@data-search"];
+                    }
+                };
+
+                orderFixedOption = {"pre":[[columnIndex, 'asc']]};
+                defaultOrder = [[columnIndex, 'asc']];
+            }
+
+            var allTickets = jQuery("#allTicketsTable").DataTable({
+                "language": {
+                    "decimal":        leantime.i18n.__("datatables.decimal"),
+                    "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
+                    "info":           leantime.i18n.__("datatables.info"),
+                    "infoEmpty":      leantime.i18n.__("datatables.infoEmpty"),
+                    "infoFiltered":   leantime.i18n.__("datatables.infoFiltered"),
+                    "infoPostFix":    leantime.i18n.__("datatables.infoPostFix"),
+                    "thousands":      leantime.i18n.__("datatables.thousands"),
+                    "lengthMenu":     leantime.i18n.__("datatables.lengthMenu"),
+                    "loadingRecords": leantime.i18n.__("datatables.loadingRecords"),
+                    "processing":     leantime.i18n.__("datatables.processing"),
+                    "search":         leantime.i18n.__("datatables.search"),
+                    "zeroRecords":    leantime.i18n.__("datatables.zeroRecords"),
+                    "paginate": {
+                        "first":      leantime.i18n.__("datatables.first"),
+                        "last":       leantime.i18n.__("datatables.last"),
+                        "next":       leantime.i18n.__("datatables.next"),
+                        "previous":   leantime.i18n.__("datatables.previous"),
+                    },
+                    "aria": {
+                        "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
+                        "sortDescending":leantime.i18n.__("datatables.sortDescending"),
+                    },
+                    "buttons": {
+                        colvis: leantime.i18n.__("datatables.buttons.colvis"),
+                        csv: leantime.i18n.__("datatables.buttons.download")
+                    }
+
+                },
+                "dom": '<"top">rt<"bottom"<"center"p>><"clear">',
+                "searching": false,
+                "stateSave": true,
+                "displayLength":25,
+                "orderFixed": orderFixedOption,
+                "order": defaultOrder,
+                "rowGroup": rowGroupOption,
+                "columnDefs": [
+                    { "visible": false, "targets": 2, "orderable": true },
+                    { "visible": false, "targets": 3, "orderable": true },
+                    { "visible": false, "targets": 4, "orderable": true },
+                    { "visible": false, "targets": 5, "orderable": true },
+                    { "visible": false, "targets": 6, "orderable": true }
+                ],
+                "fnDrawCallback": function(oSettings) {
+
+                    if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                        jQuery(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                    } else {
+                        jQuery(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                    }
+
+                }
+            });
+
+
+
+
+            var asc = true;
+            if (groupBy != "") {
+                jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
+                    asc = !asc;
+                    var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
+                    allTickets.order.fixed(orderFixed).draw();
+                });
+            }
+
+            jQuery('#allTicketsTable tbody').on('click', 'tr.dtrg-start', function() {
+                var name = jQuery(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name];
+                allTickets.draw(false);
+            });
+
+
+        });
+    };
+
     var initMilestoneTable = function (groupBy) {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
 
             var size = 100;
             var columnIndex = false;
 
-            if(groupBy != "") {
+            if (groupBy != "") {
                 columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
             }
 
@@ -1426,8 +1586,7 @@ leantime.ticketsController = (function () {
             var orderFixedOption = false;
             var defaultOrder = [];
 
-            if(columnIndex !== false) {
-
+            if (columnIndex !== false) {
                 rowGroupOption = {
                     startRender: function (rows, group) {
 
@@ -1460,29 +1619,29 @@ leantime.ticketsController = (function () {
 
 
                         var totalColumns = jQuery("#allTicketsTable thead th").length;
-                        if(visiblePlannedHoursIndex > -1) {
+                        if (visiblePlannedHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        if(visibleRemainingHoursIndex > -1) {
+                        if (visibleRemainingHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        if(visibleLoggedHoursIndex > -1) {
+                        if (visibleLoggedHoursIndex > -1) {
                             totalColumns--;
                         }
 
-                        var groupOutput = jQuery('<tr/>').append('<td colspan="'+totalColumns+'">' + group + ' ('+rows.count()+')</td>');
+                        var groupOutput = jQuery('<tr/>').append('<td colspan="' + totalColumns + '">' + group + ' (' + rows.count() + ')</td>');
 
-                        if(visiblePlannedHoursIndex > -1) {
+                        if (visiblePlannedHoursIndex > -1) {
                             groupOutput.append('<td>' + sumPlanned + '</td>');
                         }
 
-                        if(visibleRemainingHoursIndex > -1) {
+                        if (visibleRemainingHoursIndex > -1) {
                             groupOutput.append('<td>' + sumRemaining + '</td>');
                         }
 
-                        if(visibleLoggedHoursIndex > -1) {
+                        if (visibleLoggedHoursIndex > -1) {
                             groupOutput.append('<td>' + sumLogged + '</td>');
                         }
 
@@ -1539,7 +1698,7 @@ leantime.ticketsController = (function () {
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
-
+                    { "target": "no-sort", "orderable": false},
                 ]
 
             });
@@ -1555,26 +1714,26 @@ leantime.ticketsController = (function () {
                             format: {
                                 body: function ( data, row, column, node ) {
 
-                                    if( typeof jQuery(node).data('order') !== 'undefined'){
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
                                         data = jQuery(node).data('order');
                                     }
                                     return data;
                                 }
                             }
                         }
-                    },
+                },
                     {
                         extend: 'colvis',
                         columns: ':not(.noVis)'
-                    }
+                }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            jQuery('#allTicketsTable').on( 'column-visibility.dt', function ( e, settings, column, state ) {
+            jQuery('#allTicketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTickets.draw(false);
-            } );
+            });
 
-            jQuery('#allTicketsTable input').on( 'change', function ( e, settings, column, state ) {
+            jQuery('#allTicketsTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();
@@ -1582,10 +1741,10 @@ leantime.ticketsController = (function () {
             });
 
             var asc = true;
-            if(groupBy != "") {
+            if (groupBy != "") {
                 jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
                     asc = !asc;
-                    var orderFixed= {"pre":[[columnIndex, asc === true? 'asc' : 'desc']]};
+                    var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
                     allTickets.order.fixed(orderFixed).draw();
                 });
             }
@@ -1594,14 +1753,76 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var initTagsInput = function( ) {
-        jQuery("#tags").tagsInput();
+    var loadTicketToContainer = function(id, element) {
+
+        if(jQuery('textarea.complexEditor').length > 0) {
+            jQuery('textarea.complexEditor').tinymce().save();
+            jQuery('textarea.complexEditor').tinymce().remove();
+            console.log("removing tiny");
+        }
+
+        jQuery(".ticketRows").removeClass("active");
+        jQuery("#row-"+id).addClass("active");
+
+        jQuery( element ).html( "<div class='center'><img src='"+leantime.appUrl+"/images/svg/loading-animation.svg' width='100px' /></div>");
+
+        function formSubmitHandler(element) {
+
+            jQuery( element ).find("form").each(function(){
+
+                jQuery(this).on("submit", function(e){
+
+                    e.preventDefault();
+
+                    if(jQuery('textarea.complexEditor').length > 0) {
+                        jQuery('textarea.complexEditor').tinymce().save();
+                        jQuery('textarea.complexEditor').tinymce().remove();
+                    }
+
+                    jQuery( element ).html( "<div class='center'><img src='"+leantime.appUrl+"/images/svg/loading-animation.svg' width='100px'/></div>");
+
+                    var data = jQuery(this).serialize();
+
+                    jQuery.ajax({
+                        url: jQuery(this).attr("action"),
+                        data: data,
+                        type: "post",
+                        success: function(data) {
+
+                            jQuery( element ).html( data );
+                            formSubmitHandler(element);
+
+                        },
+                        error: function() {
+
+                        }
+                    });
+            });
+
+            });
+        }
+
+
+
+        jQuery.get( leantime.appUrl + '/tickets/showTicket/'+id, function( data ) {
+
+            jQuery( element ).html( data );
+            formSubmitHandler(element);
+
+        });
+
     };
 
-    var addCommentTimesheetContent = function(commentId, taskId) {
-        var content = "Discussion on To-Do #"+taskId+":"
-        +"\n\r"
-        +jQuery("#commentText-"+commentId).text();
+    var initTagsInput = function ( ) {
+        jQuery("#tags").tagsInput({
+            'autocomplete_url': leantime.appUrl + '/api/tags',
+        });
+    };
+
+    var addCommentTimesheetContent = function (commentId, taskId) {
+        var content = "Discussion on To-Do #" + taskId + ":"
+        + "\n\r"
+        + jQuery("#commentText-" + commentId).text();
 
         jQuery('li a[href*="timesheet"]').click();
 
@@ -1641,6 +1862,9 @@ leantime.ticketsController = (function () {
         setUpKanbanColumns:setUpKanbanColumns,
         addCommentTimesheetContent:addCommentTimesheetContent,
         initMilestoneTable:initMilestoneTable,
-        initMilestoneDates:_initMilestoneDates
+        initMilestoneDates:_initMilestoneDates,
+        initTicketsList:initTicketsList,
+        loadTicketToContainer:loadTicketToContainer
+
     };
 })();

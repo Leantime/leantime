@@ -1,4 +1,5 @@
 <?php
+
 namespace leantime\domain\controllers {
 
     use leantime\core;
@@ -7,14 +8,12 @@ namespace leantime\domain\controllers {
 
     class headMenu extends controller
     {
-
         private $timesheets;
 
         public function init()
         {
 
             $this->timesheets = new services\timesheets();
-
         }
 
         public function run()
@@ -25,7 +24,7 @@ namespace leantime\domain\controllers {
             $newnotificationCount = $notificationService->getAllNotifications($_SESSION['userdata']['id'], true);
             $nCount = '';
 
-            if(is_array($newnotificationCount)){
+            if (is_array($newnotificationCount)) {
                 $nCount = count($newnotificationCount);
             }
 
@@ -34,9 +33,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->displayPartial("menu.headMenu");
-
         }
-
     }
 
 }

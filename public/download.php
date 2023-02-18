@@ -5,15 +5,17 @@
  */
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
+define('APP_ROOT', dirname(__FILE__, 2));
 
-require_once '../app/core/class.autoload.php';
-require_once '../config/configuration.php';
-require_once '../config/appSettings.php';
+require_once APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT . '/config/appSettings.php';
 
-$login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
 $config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone);
+$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
+
+$login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
+
 
 if ($login->logged_in()!==true) {
 
@@ -140,18 +142,13 @@ function getFileFromS3(){
         // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
         $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
-        $cmd = $s3Client->getCommand('GetObject', [
+        $result = $s3Client->getObject([
             'Bucket' => $config->s3Bucket,
             'Key' => $fileName,
-            'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
+            'Body'   => 'this is the body!'
         ]);
 
-        $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
-        $presignedUrl = (string)$request->getUri();
-
-        header("Location:".$presignedUrl);
-
-        exit();
+        echo($result['Body']);
 
 
 

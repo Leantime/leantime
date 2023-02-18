@@ -10,7 +10,6 @@ namespace leantime\domain\services {
 
     class wiki
     {
-
         private $projectRepository;
         private $wikiRepository;
         private $ticketRepository;
@@ -27,41 +26,40 @@ namespace leantime\domain\services {
             $this->language = core\language::getInstance();
         }
 
-        public function getArticle($id, $projectId=null)
+        public function getArticle($id, $projectId = null)
         {
 
-            if(!is_null($id)){
-
+            if (!is_null($id)) {
                 $article = $this->wikiRepository->getArticle($id, $projectId);
 
-                if(!$article){
+                if (!$article) {
                     $article = $this->wikiRepository->getArticle(-1, $projectId);
                 }
-
-            }else{
-
+            } else {
                 $article = $this->wikiRepository->getArticle(-1, $projectId);
-
             }
 
 
             return $article;
-
         }
 
-        public function getAllProjectWikis($projectId) {
+        public function getAllProjectWikis($projectId)
+        {
             return $this->wikiRepository->getAllProjectWikis($projectId);
         }
 
-        public function getAllWikiHeadlines($wikiId, $userId) {
+        public function getAllWikiHeadlines($wikiId, $userId)
+        {
             return $this->wikiRepository->getAllWikiHeadlines($wikiId, $userId);
         }
 
-        public function getWiki($id) {
+        public function getWiki($id)
+        {
             return $this->wikiRepository->getWiki($id);
         }
 
-        public function createWiki(\leantime\domain\models\wiki $wiki) {
+        public function createWiki(\leantime\domain\models\wiki $wiki)
+        {
             return $this->wikiRepository->createWiki($wiki);
         }
 
@@ -70,18 +68,15 @@ namespace leantime\domain\services {
             return $this->wikiRepository->updateWiki($wiki, $wikiId);
         }
 
-        public function createArticle(\leantime\domain\models\wiki\article $article) {
+        public function createArticle(\leantime\domain\models\wiki\article $article)
+        {
             return $this->wikiRepository->createArticle($article);
         }
 
-        public function updateArticle(\leantime\domain\models\wiki\article $article) {
+        public function updateArticle(\leantime\domain\models\wiki\article $article)
+        {
             return $this->wikiRepository->updateArticle($article);
         }
-
-
-
-
-
     }
 
 }

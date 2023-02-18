@@ -5,8 +5,8 @@ namespace leantime\core {
     use leantime\core\events;
     use function leantime\core\getLeantimeClassPath;
 
-    trait eventhelpers {
-
+    trait eventhelpers
+    {
         private static $event_context = '';
 
         /**
@@ -101,6 +101,5 @@ namespace leantime\core {
 
             return $function;
         }
-
     }
 }

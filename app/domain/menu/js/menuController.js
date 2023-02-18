@@ -16,41 +16,45 @@ leantime.menuController = (function () {
 
     //Functions
 
-	var toggleSubmenu = function (submenuName) {
-		
-		var submenuDisplay = jQuery('#submenu-'+submenuName).css('display');
-		var submenuStatee = '';
-		
-		if(submenuDisplay == 'none') {
-			jQuery('#submenu-'+submenuName).css('display', 'block');
-			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-up');
-			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-down');
-			submenuState = 'open';
-		}
-		else {
-			jQuery('#submenu-'+submenuName).css('display', 'none');
-			jQuery('#submenu-icon-'+submenuName).removeClass('fa-angle-down');
-			jQuery('#submenu-icon-'+submenuName).addClass('fa-angle-up');
-			submenuState = 'closed';
-		}
+    var toggleSubmenu = function (submenuName) {
 
-        jQuery.ajax( { 
+        var submenuDisplay = jQuery('#submenu-' + submenuName).css('display');
+        var submenuStatee = '';
+
+        if (submenuDisplay == 'none') {
+            jQuery('#submenu-' + submenuName).css('display', 'block');
+            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-right');
+            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-down');
+            submenuState = 'open';
+        } else {
+            jQuery('#submenu-' + submenuName).css('display', 'none');
+            jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-down');
+            jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-right');
+            submenuState = 'closed';
+        }
+
+        jQuery.ajax({
             type : 'PATCH',
-            url  : leantime.appUrl+'/api/submenu',
+            url  : leantime.appUrl + '/api/submenu',
             data : {
                 submenu : submenuName,
-				state   : submenuState
+                state   : submenuState
             }
-		} );
-	}
-	
+        });
+    }
+
     var _initProjectSelector = function () {
 
         jQuery(".project-select").chosen();
 
     };
 
-    var _initLeftMenuHamburgerButton = function (){
+    var _initLeftMenuHamburgerButton = function () {
+
+
+        if(window.innerWidth < 576) {
+            jQuery('.barmenu').removeClass('open')
+        }
 
         if (jQuery('.barmenu').hasClass('open')) {
             jQuery('.rightpanel').css({marginLeft: '240px'});
@@ -70,20 +74,18 @@ leantime.menuController = (function () {
 
 
             if (!jQuery(this).hasClass('open')) {
-
                 jQuery('.header').animate({marginLeft: '240px', width:'-=240px'}, 'fast');
 
                 jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
 
-                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function(){
+                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
                     jQuery('.barmenu').addClass('open');
                 });
 
 
                 leantime.menuRepository.updateUserMenuSettings("open");
             } else {
-
-                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function() {
+                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function () {
                     jQuery('.barmenu').removeClass('open');
                 });
 
@@ -91,7 +93,6 @@ leantime.menuController = (function () {
                 jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '240px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");
-
             }
         });
 
@@ -105,14 +106,14 @@ leantime.menuController = (function () {
 
     };
 
-    var toggleClientList = function  (id, element) {
+    var toggleClientList = function (id, element) {
 
-        jQuery(".client_"+id).toggle("fast");
+        jQuery(".client_" + id).toggle("fast");
 
-        if(jQuery(element).find("i").hasClass("fa-angle-down")){
+        if (jQuery(element).find("i").hasClass("fa-angle-down")) {
             jQuery(element).find("i").removeClass("fa-angle-down");
             jQuery(element).find("i").addClass("fa-angle-up");
-        }else{
+        } else {
             jQuery(element).find("i").removeClass("fa-angle-up");
             jQuery(element).find("i").addClass("fa-angle-down");
         }
@@ -122,7 +123,7 @@ leantime.menuController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleClientList:toggleClientList,
-		toggleSubmenu:toggleSubmenu
+        toggleSubmenu:toggleSubmenu
     };
 
 })();

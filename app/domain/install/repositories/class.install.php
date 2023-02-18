@@ -10,8 +10,8 @@ namespace leantime\domain\repositories {
     use PDOException;
     use leantime\core;
 
-    class install {
-
+    class install
+    {
         /**
          * @access public
          * @var string
@@ -79,7 +79,8 @@ namespace leantime\domain\repositories {
             20110,
             20111,
             20112,
-            20113
+            20113,
+            20114
         );
 
         /**
@@ -101,7 +102,8 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct() {
+        public function __construct()
+        {
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
@@ -115,13 +117,15 @@ namespace leantime\domain\repositories {
             $this->port = $this->config->dbPort ?? 3306;
 
             try {
-
                 $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
-                $this->database = new PDO('mysql:host=' . $this->host . ';port=' . $this->port, $this->user, $this->password,
-                        $driver_options);
+                $this->database = new PDO(
+                    'mysql:host=' . $this->host . ';port=' . $this->port,
+                    $this->user,
+                    $this->password,
+                    $driver_options
+                );
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-
                 error_log($e);
                 echo $e->getMessage();
             }
@@ -133,7 +137,8 @@ namespace leantime\domain\repositories {
          * @access public
          * @return bool
          */
-        public function checkIfInstalled() {
+        public function checkIfInstalled()
+        {
 
             try {
                 $this->database->query("Use `" . $this->config->dbDatabase . "`;");
@@ -147,7 +152,6 @@ namespace leantime\domain\repositories {
 
                 return true;
             } catch (PDOException $e) {
-
                 return false;
             }
         }
@@ -159,13 +163,13 @@ namespace leantime\domain\repositories {
          * @access public
          * @return bool | string
          */
-        public function setupDB(array $values) {
+        public function setupDB(array $values)
+        {
 
 
             $sql = $this->sqlPrep();
 
             try {
-
                 $this->database->query("Use `" . $this->config->dbDatabase . "`;");
 
                 $stmn = $this->database->prepare($sql);
@@ -197,7 +201,8 @@ namespace leantime\domain\repositories {
          * @access public
          * @return bool|array
          */
-        public function updateDB() {
+        public function updateDB()
+        {
 
             $errors = array();
 
@@ -205,7 +210,6 @@ namespace leantime\domain\repositories {
 
             $versionArray = explode(".", $this->settings->dbVersion);
             if (is_array($versionArray) && count($versionArray) == 3) {
-
                 $major = $versionArray[0];
                 $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
                 $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
@@ -223,7 +227,6 @@ namespace leantime\domain\repositories {
             if ($dbVersion != false) {
                 $versionArray = explode(".", $dbVersion);
                 if (is_array($versionArray) && count($versionArray) == 3) {
-
                     $major = $versionArray[0];
                     $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
                     $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
@@ -240,18 +243,14 @@ namespace leantime\domain\repositories {
 
             //Find all update functions that need to be executed
             foreach ($this->dbUpdates as $updateVersion) {
-
                 if ($currentDBVersion < $updateVersion) {
-
                     $functionName = "update_sql_" . $updateVersion;
 
                     $result = $this->$functionName();
 
                     if ($result !== true) {
-
                         $errors = array_merge($errors, $result);
                     } else {
-
                         //Update version number in db
                         try {
                             $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '" . $this->settings->dbVersion . "') ON DUPLICATE KEY UPDATE `value` = '" . $this->settings->dbVersion . "'");
@@ -259,7 +258,6 @@ namespace leantime\domain\repositories {
 
                             $currentDBVersion = $updateVersion;
                         } catch (PDOException $e) {
-
                             error_log($e);
                             error_log($e->getTraceAsString());
                             return array("There was a problem updating the database");
@@ -281,7 +279,8 @@ namespace leantime\domain\repositories {
          * @access private
          * @return string
          */
-        private function sqlPrep() {
+        private function sqlPrep()
+        {
 
             $sql = "
                 CREATE TABLE `zp_calendar` (
@@ -413,6 +412,11 @@ namespace leantime\domain\repositories {
                   `active` int(11) DEFAULT NULL,
 				  `menuType` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
+                   `type` VARCHAR(45) NULL,
+                   `start` DATETIME NULL,
+                   `end` DATETIME NULL,
+                    `created` DATETIME NULL,
+                    `modified` DATETIME NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -679,7 +683,8 @@ namespace leantime\domain\repositories {
          * @access public
          * @return bool|array
          */
-        private function update_sql_20004() {
+        private function update_sql_20004()
+        {
 
             $errors = array();
 
@@ -721,9 +726,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -739,7 +742,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20100() {
+        private function update_sql_20100()
+        {
 
             $errors = array();
 
@@ -751,9 +755,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -768,7 +770,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20101() {
+        private function update_sql_20101()
+        {
 
 
             $errors = array();
@@ -803,9 +806,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -820,7 +821,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20102() {
+        private function update_sql_20102()
+        {
             $errors = array();
 
             $sql = array(
@@ -829,9 +831,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -846,7 +846,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20103() {
+        private function update_sql_20103()
+        {
             $errors = array();
 
             $sql = array(
@@ -855,9 +856,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -872,7 +871,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20104() {
+        private function update_sql_20104()
+        {
             $errors = array();
 
             $sql = array(
@@ -884,9 +884,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -901,7 +899,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20105() {
+        private function update_sql_20105()
+        {
             $errors = array();
 
             $sql = array(
@@ -909,9 +908,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -926,7 +923,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20106() {
+        private function update_sql_20106()
+        {
             $errors = array();
 
             $sql = array(
@@ -934,9 +932,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -951,7 +947,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20107() {
+        private function update_sql_20107()
+        {
             $errors = array();
 
             $sql = array(
@@ -959,9 +956,7 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
@@ -976,7 +971,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20108() {
+        private function update_sql_20108()
+        {
             $errors = array();
 
             $sql = array(
@@ -1001,7 +997,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20109() {
+        private function update_sql_20109()
+        {
 
             $errors = array();
 
@@ -1020,13 +1017,10 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
@@ -1038,7 +1032,8 @@ namespace leantime\domain\repositories {
             }
         }
 
-        private function update_sql_20110() {
+        private function update_sql_20110()
+        {
 
             $errors = array();
 
@@ -1063,13 +1058,10 @@ namespace leantime\domain\repositories {
             );
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
@@ -1088,7 +1080,8 @@ namespace leantime\domain\repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
-        private function update_sql_20111(): bool|array {
+        private function update_sql_20111(): bool|array
+        {
 
             $errors = array();
 
@@ -1106,13 +1099,10 @@ namespace leantime\domain\repositories {
             ];
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
@@ -1131,7 +1121,8 @@ namespace leantime\domain\repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
-        private function update_sql_20112(): bool|array {
+        private function update_sql_20112(): bool|array
+        {
 
             $errors = array();
 
@@ -1169,13 +1160,10 @@ namespace leantime\domain\repositories {
             ];
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
@@ -1194,7 +1182,8 @@ namespace leantime\domain\repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
-        private function update_sql_20113(): bool|array {
+        private function update_sql_20113(): bool|array
+        {
 
             $errors = array();
 
@@ -1203,13 +1192,10 @@ namespace leantime\domain\repositories {
             ];
 
             foreach ($sql as $statement) {
-
                 try {
-
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-
                     array_push($errors, $statement . " Failed:" . $e->getMessage());
                 }
             }
@@ -1220,6 +1206,39 @@ namespace leantime\domain\repositories {
                 return true;
             }
         }
+
+
+        public function update_sql_20114(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `type` VARCHAR(45) NULL,
+                ADD COLUMN `start` DATETIME NULL,
+                ADD COLUMN `end` DATETIME NULL,
+                ADD COLUMN `created` DATETIME NULL,
+                ADD COLUMN `modified` DATETIME NULL"
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
 
     }
 

@@ -41,8 +41,7 @@ div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
 
 
 
-.loginpanelinner,
-.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
+.loginpanelinner {
 	background-color: var(--primary-color) !important;
 	color:var(--main-action-color);
 }
@@ -264,6 +263,7 @@ body .widgettitle.title-light {
 	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 	font-size:var(--font-size-l);
+    box-shadow: none;
 
 }
 
@@ -274,10 +274,6 @@ body .widgettitle.title-light {
 
 div.tagsinput {
 	border:1px solid var(--main-border-color);
-}
-
-.gantt-container a:hover {
-    text-decoration:underline !important;
 }
 
 
@@ -371,3 +367,39 @@ div.growl.growl-medium {
 }
 
 /* Playing with header */
+
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+    background: var(--kanban-col-bg);
+}
+
+code[class*=language-], pre[class*=language-] {
+    text-shadow:0px 1px var(--secondary-background);
+}
+
+
+element.style {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+body hr {
+    margin: 20px 0;
+    border: 0;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+/* tippy overrides
+ */
+
+.tippy-content {
+    font-size:var(--font-size-s);
+    color: var(--secondary-action-hover-color);
+}
+
+.tippy-box {
+    background: var(--secondary-action-hover-bg);
+}
+
+.tippy-arrow {
+    color:var(--secondary-action-hover-bg);
+}

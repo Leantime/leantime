@@ -27,6 +27,9 @@ jQuery(document).on('click', function (e) {
     });
 });
 
+//Run Prism code highlighting centrally
+
+
 
 leantime.replaceSVGColors = function () {
 
@@ -60,6 +63,8 @@ jQuery(document).ready(function(){
     jQuery(".confetti").click(function(){
         confetti.start();
     });
+
+    tippy('[data-tippy-content]');
 });
 
 

@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class setting extends controller
     {
-
         private $settingService;
 
         /**
@@ -23,8 +22,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->settingService = new services\setting();
-
-
         }
 
 
@@ -36,7 +33,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -50,7 +46,6 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-
                 $_FILES['file']['name'] = "logo.png";
 
                 $this->settingService->setLogo($_FILES);
@@ -70,7 +65,6 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-
         }
 
         /**
@@ -81,9 +75,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

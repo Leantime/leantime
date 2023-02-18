@@ -15,13 +15,14 @@
         <div class="row-fluid">
             <div class="span12">
 
-                <div class="widget">
-                    <h4 class="widgettitle"><?php echo $this->__('label.twoFA_setup'); ?></h4>
-                    <div class="widgetcontent">
-                        <?php if(!$this->get('twoFAEnabled')) { ?>
-                            <h5>1. <?php echo $this->__('text.twoFA_qr'); ?></h5>
-                            <img src="<?php echo $this->get("qrData"); ?>"/>
+                    <h3><?php echo $this->__('label.twoFA_setup'); ?></h3>
+                <br />
+                        <div class="center">
 
+                        <?php if (!$this->get('twoFAEnabled')) { ?>
+                            <h5>1. <?php echo $this->__('text.twoFA_qr'); ?></h5>
+                            <img src="<?php echo $this->get("qrData"); ?>"/><br />
+                            Secret: <p><?php echo $this->get("secret"); ?></p>
                             <form action="" method="post" class='stdform'>
                                 <h5>2. <?php echo $this->__('text.twoFA_verify_code'); ?></h5>
                                 <p>
@@ -30,7 +31,7 @@
                                 </p>
 
                                 <input type="hidden" name="secret" value="<?php echo $this->get("secret"); ?>" />
-
+                                <br/>
                                 <p class='stdformbutton'>
                                     <input type="submit" name="save" id="save"
                                            value="<?php echo $this->__('buttons.save'); ?>" class="button"/>
@@ -47,8 +48,7 @@
                                 </p>
                             </form>
                         <?php } ?>
-                    </div>
-                </div>
+                        </div>
 
             </div>
         </div>

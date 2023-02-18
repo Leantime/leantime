@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class ideation extends controller
     {
-
         private $projects;
 
         /**
@@ -24,7 +23,6 @@ namespace leantime\domain\controllers {
 
             $this->projects = new repositories\projects();
             $this->ideationAPIRepo = new repositories\ideation();
-
         }
 
 
@@ -36,7 +34,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
         }
 
         /**
@@ -48,43 +45,27 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            if(isset($params['action']) && $params['action'] == "ideationSort" && isset($params["payload"]) === true) {
-
+            if (isset($params['action']) && $params['action'] == "ideationSort" && isset($params["payload"]) === true) {
                 $sortOrder = $params["payload"];
 
                 $results = $this->ideationAPIRepo->updateIdeationSorting($sortOrder);
 
                 if ($results === true) {
-
                     echo "{status:ok}";
-
                 } else {
-
                     echo "{status:failure}";
-
                 }
-
-            }elseif(isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true){
-
-
+            } elseif (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
                 $results = $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]);
 
-                if($results === true) {
-
+                if ($results === true) {
                     echo "{status:ok}";
-
-                }else{
-
+                } else {
                     echo "{status:failure}";
-
                 }
-
-            }else{
-
+            } else {
                 echo "{status:failure}";
-
             }
-
         }
 
         /**
@@ -97,9 +78,9 @@ namespace leantime\domain\controllers {
         {
             $results = $this->ideationAPIRepo->patchCanvasItem($params['id'], $params);
 
-            if($results === true) {
+            if ($results === true) {
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{status:failure}";
             }
         }
@@ -112,9 +93,7 @@ namespace leantime\domain\controllers {
          */
         public function delete($params)
         {
-
         }
-
     }
 
 }

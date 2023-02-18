@@ -234,7 +234,6 @@ namespace leantime\domain\services {
             }
 
             if ($contentToCheck != '') {
-
                 $this->notificationService->processMentions(
                     $contentToCheck,
                     $notification->module,
@@ -488,7 +487,7 @@ namespace leantime\domain\services {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                 foreach ($projectUsers as $user) {
-                    $copyProject['assignedUsers'][] = array("id" =>$user['id'], "projectRole" =>$user['projectRole']);
+                    $copyProject['assignedUsers'][] = array("id" => $user['id'], "projectRole" => $user['projectRole']);
                 }
             }
 

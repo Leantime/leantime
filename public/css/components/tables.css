@@ -171,7 +171,8 @@
     color:var(--primary-font-color);
 }
 
-.maincontentinner .table {
+.maincontentinner .table,
+.maincontentinner table{
     border:1px solid var(--col-content-bg);
 
 }
@@ -182,6 +183,8 @@
 }
 
 .maincontentinner .table th,
+.maincontentinner table th,
+.maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
@@ -203,8 +206,12 @@
 }
 
 .maincontentinner .table th,
-.maincontentinner .table.table-bordered th {
-    background:var(--col-content-bg);
+.maincontentinner table thead td,
+.maincontentinner .table.table-bordered th,
+.maincontentinner table th {
+    background:var(--col-title-bg);
+    padding: 10px 10px;
+    font-weight:bold;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -239,7 +246,8 @@
     margin-top:10px;
 }
 
-.maincontentinner .table td {
+.maincontentinner .table td,
+.maincontentinner table td{
     padding:5px 10px 3px 10px;
     vertical-align: middle;
     min-height:17px;
@@ -255,7 +263,7 @@
 }
 
 .dataTable tr:hover td {
-    background:var(--col-content-bg);
+    background:var(--col-title-bg);
 
 }
 
@@ -418,8 +426,10 @@
     margin-top:0px;
 }
 
-.table th, .table td {
-    border-top:1px solid var(--col-content-bg);
+.table th,
+.table td,
+table td{
+    border-top:1px solid var(--col-title-bg);
 }
 
 
@@ -466,3 +476,65 @@
     top:35px;
 }
 
+.listStyleTable td {
+
+}
+
+.maincontentinner .table.listStyleTable {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable td {
+    padding:5px 10px 5px 10px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell {
+    padding:0px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell .dropdown > a {
+    padding:0px 10px 0px 10px !important;
+
+}
+
+.maincontentinner .table.listStyleTable .dtrg-group td {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable tr:hover {
+    box-shadow: none;
+    cursor:pointer;
+}
+
+.maincontentinner .table.listStyleTable tr.active td {
+    background: var(--col-title-bg);
+}
+
+
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
+    border-radius: 15px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+}
+
+.maincontentinner .dataTables_wrapper .center .dataTables_paginate {
+    left: auto;
+    right: auto;
+
+    text-align: center;
+    width: 100%;
+}
+
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .f-left {
+    float:none !important;
+}
+
+.maincontentinner .table.listStyleTable .dtrg-start:first-child td{
+    padding-top:0px
+}

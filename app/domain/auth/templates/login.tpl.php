@@ -14,7 +14,7 @@
 
 <div class="regcontent">
     <?php $this->dispatchTplEvent('afterRegcontentOpen'); ?>
-    <form id="login" action="<?=BASE_URL."/auth/login"?>" method="post">
+    <form id="login" action="<?=BASE_URL . "/auth/login"?>" method="post">
         <?php $this->dispatchTplEvent('afterFormOpen'); ?>
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
 

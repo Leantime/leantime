@@ -15,7 +15,6 @@ namespace leantime\domain\controllers {
 
     class editEvent extends controller
     {
-
         private $calendarRepo;
 
         /**
@@ -25,7 +24,6 @@ namespace leantime\domain\controllers {
         {
 
             $this->calendarRepo = new repositories\calendar();
-
         }
 
         /**
@@ -38,7 +36,6 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             if (isset($_GET['id']) === true) {
-
                 $id = ($_GET['id']);
 
                 $row = $this->calendarRepo->getEvent($id);
@@ -52,15 +49,10 @@ namespace leantime\domain\controllers {
 
 
                 if (isset($_POST['save']) === true) {
-
                     if (isset($_POST['allDay']) === true) {
-
                         $allDay = 'true';
-
                     } else {
-
                         $allDay = 'false';
-
                     }
 
                     $dateFrom = null;
@@ -81,30 +73,20 @@ namespace leantime\domain\controllers {
                     );
 
                     if ($values['description'] !== '') {
-
                         $this->calendarRepo->editEvent($values, $id);
 
                         $this->tpl->setNotification('notification.event_edited_successfully', 'success');
-
                     } else {
-
                         $this->tpl->setNotification('notification.please_enter_title', 'error');
-
                     }
-
                 }
 
                 $this->tpl->assign('values', $values);
                 $this->tpl->display('calendar.editEvent');
-
             } else {
-
                 $this->tpl->display('errors.error403');
-
             }
-
         }
-
     }
 
 }
