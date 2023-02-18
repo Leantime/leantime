@@ -50,13 +50,19 @@ namespace leantime\domain\controllers {
 
                 //Initiate connection
                 if(isset($params["step"])  && $params["step"] == "connect") {
+
+                    //This should handle connection UI
                     $provider->connect();
+
+                    //Not sure if this is needed at all if connect handles the connection.
+                    //$this->tpl->display('connectors.integrationConnect');
                 }
 
                 //Choose Entities to sync
                 if(isset($params["step"])  && $params["step"] == "entity") {
                     $provider->getEntities();
                     //TODO UI to show entity picker/mapper
+                    $this->tpl->display('connectors.integrationEntity');
                 }
 
                 //Choose fields to map
@@ -64,16 +70,21 @@ namespace leantime\domain\controllers {
                 if(isset($params["step"])  && $params["step"] == "fields") {
                     $provider->getFields();
                     //TODO UI to show field picker/mapper
+                    $this->tpl->display('connectors.integrationFields');
                 }
 
                 if(isset($params["step"])  && $params["step"] == "sync"){
                     //TODO UI to show sync schedule/options
+                    $this->tpl->display('connectors.integrationSync');
                 }
 
                 if(isset($params["step"])  && $params["step"] == "confirm"){
                     //confirm and store in DB
+                    $this->tpl->display('connectors.integrationConfirm');
 
                 }
+
+                
 
             }else if(isset($params["integration"])) {
             //Edit existing integration
@@ -81,7 +92,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->displayPartial('connectors.integration');
+            $this->tpl->display('connectors.integration');
         }
 
         /**
