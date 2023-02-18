@@ -31,7 +31,7 @@ class mockIntegrationProvider extends provider implements providerIntegration {
     //Logic to connect to provider goes here.
     //Needs to manage new connection as well as existing connections.
     //Should return bool so we can drive logic in the frontend
-    public function connect($name, $var) {
+    public function connect() {
 
 
         //Connection done. Send to next step.

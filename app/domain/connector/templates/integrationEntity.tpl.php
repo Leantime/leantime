@@ -18,10 +18,8 @@
 
         <?php echo $this->displayNotification(); ?>
 
-        <h3>New Integration</h3>
+        <h3>Map Entity Here</h3>
         <?=$provider->name ?><br />
-
-        <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id?>&step=connect">Click Here to Connect</a>
 
     </div>
 </div>
