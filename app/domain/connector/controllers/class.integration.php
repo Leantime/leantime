@@ -47,6 +47,7 @@ namespace leantime\domain\controllers {
             //New integration with provider
                 //Get the provider
                 $provider = $this->providerService->getProvider($params["provider"]);
+                $this->tpl->assign("provider", $provider);
 
                 //Initiate connection
                 if(isset($params["step"])  && $params["step"] == "connect") {
@@ -62,7 +63,7 @@ namespace leantime\domain\controllers {
                 if(isset($params["step"])  && $params["step"] == "entity") {
                     $provider->getEntities();
                     //TODO UI to show entity picker/mapper
-                    $this->tpl->display('connectors.integrationEntity');
+                    $this->tpl->display('connector.integrationEntity');
                 }
 
                 //Choose fields to map
@@ -70,21 +71,26 @@ namespace leantime\domain\controllers {
                 if(isset($params["step"])  && $params["step"] == "fields") {
                     $provider->getFields();
                     //TODO UI to show field picker/mapper
-                    $this->tpl->display('connectors.integrationFields');
+                    $this->tpl->display('connector.integrationFields');
                 }
 
                 if(isset($params["step"])  && $params["step"] == "sync"){
                     //TODO UI to show sync schedule/options
-                    $this->tpl->display('connectors.integrationSync');
+                    $this->tpl->display('connector.integrationSync');
                 }
 
                 if(isset($params["step"])  && $params["step"] == "confirm"){
                     //confirm and store in DB
-                    $this->tpl->display('connectors.integrationConfirm');
+                    $this->tpl->display('connector.integrationConfirm');
 
                 }
 
-                
+                if(!isset($params["step"])) {
+
+                    $this->tpl->display('connector.newIntegration');
+
+                }
+
 
             }else if(isset($params["integration"])) {
             //Edit existing integration
@@ -92,7 +98,7 @@ namespace leantime\domain\controllers {
 
             }
 
-            $this->tpl->display('connectors.integration');
+
         }
 
         /**

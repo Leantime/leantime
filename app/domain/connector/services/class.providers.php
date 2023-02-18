@@ -33,7 +33,7 @@ namespace leantime\domain\services\connector {
             return $this->providers;
        }
 
-       public function getProvider($providerId):\providerIntegration
+       public function getProvider($providerId): provider
        {
            if (isset($this->providers[$providerId])) {
                return $this->providers[$providerId];
