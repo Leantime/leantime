@@ -43,6 +43,8 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+            self::dispatch_event('beforeAuth', $params);
+            
             $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
