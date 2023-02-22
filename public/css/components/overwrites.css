@@ -263,6 +263,7 @@ body .widgettitle.title-light {
 	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 	font-size:var(--font-size-l);
+    box-shadow: none;
 
 }
 
@@ -385,4 +386,20 @@ body hr {
     margin: 20px 0;
     border: 0;
     border-bottom: 1px solid var(--main-border-color);
+}
+
+/* tippy overrides
+ */
+
+.tippy-content {
+    font-size:var(--font-size-s);
+    color: var(--secondary-action-hover-color);
+}
+
+.tippy-box {
+    background: var(--secondary-action-hover-bg);
+}
+
+.tippy-arrow {
+    color:var(--secondary-action-hover-bg);
 }

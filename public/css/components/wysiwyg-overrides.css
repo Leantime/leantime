@@ -171,11 +171,10 @@ body.mce-content-body {
 .mce-content-body table thead td {
 
     padding: 7px 10px 5px 10px;
-    font-weight: normal;
+    font-weight: bold;
     text-transform:none;
     font-size: var(--base-font-size);
-    font-weight: normal;
-    background:var(--col-content-bg);
+    background:var(--col-title-bg);
 }
 
 .mce-content-body table tr:hover {
@@ -183,7 +182,7 @@ body.mce-content-body {
 }
 
 .mce-content-body table tr:hover td {
-    background:var(--col-content-bg);
+    background:var(--col-title-bg);
 
 }
 

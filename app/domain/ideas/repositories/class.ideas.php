@@ -526,5 +526,6 @@ namespace leantime\domain\repositories {
 
             return true;
         }
+
     }
 }

@@ -181,6 +181,10 @@ namespace leantime\domain\services {
                 $searchCriteria["groupBy"] = $searchParams["groupBy"];
             }
 
+            if (isset($searchParams["orderBy"]) === true) {
+                $searchCriteria["orderBy"] = $searchParams["orderBy"];
+            }
+
             if (isset($searchParams["priority"]) === true) {
                 $searchCriteria["priority"] = $searchParams["priority"];
             }
@@ -578,7 +582,7 @@ namespace leantime\domain\services {
                 'headline' => $values['headline'],
                 'type' => $values['type'],
                 'description' => $values['description'],
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'],
                 'date' => date('Y-m-d  H:i:s'),
                 'dateToFinish' => $values['dateToFinish'],
@@ -860,12 +864,17 @@ namespace leantime\domain\services {
             $url = BASE_URL . "/tickets/showKanban";
 
             if (isset($_SESSION['lastTicketView']) && $_SESSION['lastTicketView'] != "") {
+
                 if ($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
                     return $_SESSION['lastFilterdTicketKanbanView'];
                 }
 
                 if ($_SESSION['lastTicketView'] == "table" && isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") {
                     return $_SESSION['lastFilterdTicketTableView'];
+                }
+
+                if ($_SESSION['lastTicketView'] == "list" && isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
+                    return $_SESSION['lastFilterdTicketListView'];
                 }
 
                 return $url;
@@ -886,6 +895,11 @@ namespace leantime\domain\services {
                     'id' => 'groupByStatusLink',
                     'status' => 'status',
                     'label' => 'todo_status'
+                ],
+                [
+                    'id' => 'groupByPriorityLink',
+                    'status' => 'priority',
+                    'label' => 'priority'
                 ],
                 [
                     'id' => 'groupByMilestoneLink',

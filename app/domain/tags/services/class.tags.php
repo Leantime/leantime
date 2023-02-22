@@ -8,7 +8,7 @@ namespace leantime\domain\services {
     use DateTime;
     use DateInterval;
 
-    class Tags
+    class tags
     {
         private $projectRepository;
         private $ticketRepository;

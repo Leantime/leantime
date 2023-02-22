@@ -101,9 +101,9 @@ if ($numberofColumns > 0) {
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default"><?=$this->__("links.filter") ?> (<?=$this->get('numOfFilters') ?>)</a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (".$this->get('numOfFilters').")" : "" ?></a>
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.kanban") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                             <ul class="dropdown-menu">
                                 <li><a href="<?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
                                     echo $_SESSION['lastFilterdTicketKanbanView'];
@@ -115,6 +115,11 @@ if ($numberofColumns > 0) {
                                              } else {
                                                  echo BASE_URL . "/tickets/showAll";
                                              } ?>" ><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
+                                        echo $_SESSION['lastFilterdTicketListView'];
+                                    } else {
+                                        echo BASE_URL . "/tickets/showList";
+                                    } ?>" ><?=$this->__("links.list_view") ?></a></li>
                             </ul>
                         </div>
 

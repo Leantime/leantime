@@ -4,7 +4,6 @@ body .gantt-container {
 
 .gantt-wrapper {
     margin-top:10px;
-    border:1px solid var(--col-content-bg);
     border-radius: var(--box-radius);
     overflow: auto;
 }
@@ -21,7 +20,7 @@ body .gantt .upper-text {
 }
 
 body .gantt .upper-text {
-    fill:var(--kanban-col-title-color);
+    fill:var(--col-title-bg);
     opacity:0.7;
 }
 
@@ -64,13 +63,13 @@ body .gantt #details .details-container {
 }
 
 .gantt .grid-header {
-    fill:var(--col-content-bg) !important;
+    fill:var(--col-title-bg) !important;
     stroke:none;
     filter: drop-shadow(var(--regular-shadow));
 }
 
 .gantt .grid-row:nth-child(even) {
-    fill:var(--col-content-bg);
+    fill:var(--col-title-bg);
 }
 
 .gantt .handle {

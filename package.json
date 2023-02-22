@@ -1,11 +1,12 @@
 {
   "name": "leantime",
-  "version": "2.3.9",
+  "version": "2.3.13",
   "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
     "@fortawesome/fontawesome-free": "^6.2.0",
+    "@popperjs/core": "^2.11.6",
     "chart.js": "^3.8.0",
     "chartjs-adapter-moment": "^1.0.0",
     "composer": "^4.1.0",
@@ -29,6 +30,7 @@
     "tether-shepherd": "^1.8.1",
     "tinymce": "^5.10.7",
     "tinymce-mention": "^4.0.2",
+    "tippy.js": "^6.3.7",
     "uppy": "^2.13.3"
   },
   "devDependencies": {

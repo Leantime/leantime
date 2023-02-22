@@ -796,3 +796,16 @@ input.secretInput:active {
     background:var(--dropdown-link-hover-bg);
 }
 
+/* Assumes buttons are just an icon, so everything is inline*/
+.simpleButtons {
+}
+
+.simpleButtons.right {
+    text-align:right;
+    float:right;
+}
+
+.simpleButtons.left {
+    text-align:left;
+    float:left;
+}

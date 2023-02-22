@@ -32,6 +32,14 @@ namespace leantime\domain\controllers {
                     if ($project !== false) {
                         $this->projectService->changeCurrentSessionProject($id);
 
+                        if(isset($params['redirect'])){
+                            $redirect = strip_tags($params['redirect']);
+                            $urlParts = explode("/", $redirect);
+                            if(count($urlParts) >2) {
+                                $this->tpl->redirect(BASE_URL . "/" . $urlParts[1] ."/".$urlParts[2]);
+                            }
+                        }
+
                         $this->tpl->redirect(BASE_URL . "/dashboard/show");
                     } else {
                         $this->tpl->redirect(BASE_URL . "/errors/error404");

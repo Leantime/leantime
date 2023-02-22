@@ -197,6 +197,7 @@
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <div class="pull-right">
                             <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-users"></i> <?=$this->__('links.manage_team') ?></a>
+
                         </div>
                     <?php } ?>
                     <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
@@ -228,6 +229,23 @@
                                 </div>
                             </div>
                         <?php } ?>
+
+                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                        <div class="col-md-3">
+                            <div class="profileBox">
+                                <div class="commentImage">
+                                    <i class="fa fa-user-plus"></i>
+                                </div>
+                                <span class="userName">
+                                         <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$this->__('links.invite_user'); ?></a>
+                                    <br />&nbsp;
+                                </span>
+
+                                <div class="clearall"></div>
+                            </div>
+                        </div>
+                        <?php } ?>
+
                     </div>
                 </div>
 
@@ -541,6 +559,7 @@
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initStatusDropdown();
             leantime.ticketsController.initDueDateTimePickers();
+            leantime.usersController.initUserEditModal();
 
         <?php } else { ?>
             leantime.generalController.makeInputReadonly(".maincontentinner");
