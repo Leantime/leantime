@@ -1,5 +1,7 @@
 VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
 TARGET_DIR:= ./target/leantime
+DOCS_DIR:= ./builddocs
+DOCS_REPO:= git@github.com:Leantime/docs.git
 install-deps:
 	npm install
 	composer install --no-dev --optimize-autoloader
@@ -51,6 +53,12 @@ build: install-deps build-js
 
         #removing uncompiled js files
 	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
+
+builddocs:
+	mkdir -p $(DOCS_DIR)
+    phpdoc
+    git clone
+    rm -rf $(DOCS_DIR)
 
 package:
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
