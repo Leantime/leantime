@@ -6,14 +6,75 @@ class environment
 {
     private static $instance = null;
 
-    public static function getInstance()
+    public static function getInstance(): static
     {
 
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
+
+    public \Dotenv\Dotenv $dotenv;
+
+    public ?object $yaml;
+
+    public string $sitename;
+    public string $language;
+    public string $logoPath;
+    public string $printLogoURL;
+    public string $appUrl;
+    public string $defaultTheme;
+    public string $primarycolor;
+    public string $secondarycolor;
+    public int $debug;
+    public string $defaultTimezone;
+    public bool $enableMenuType;
+    public bool $keepTheme;
+    public string $logPath;
+
+    public string $appUrlRoot;
+
+
+    public string $dbHost;
+    public string $dbUser;
+    public string $dbPassword;
+    public string $dbDatabase;
+    public int $dbPort;
+
+    public string $userFilePath;
+    public bool $useS3;
+    public string $s3EndPoint;
+    public string $s3Key;
+    public string $s3Secret;
+    public string $s3Bucket;
+    public string $s3UsePathStyleEndpoint;
+    public string $s3Region;
+    public string $s3FolderName;
+
+    public string $sessionpassword;
+    public int $sessionExpiration;
+
+    public string $email;
+    public bool $useSMTP;
+    public string $smtpHosts;
+    public string $smtpAuth;
+    public string $smtpUsername;
+    public string $smtpPassword;
+    public bool $smtpAutoTLS;
+    public string $smtpSecure;
+    public int $smtpPort;
+    public bool $smtpSSLNoverify;
+
+    public bool $useLdap;
+    public string $ldapType;
+    public string $ldapHost;
+    public int $ldapPort;
+    public string $ldapDn;
+    public string $ldapKeys;
+    public string $ldapLtGroupAssignments;
+    public string $ldapDefaultRoleKey;
 
     private function __construct()
     {
@@ -41,7 +102,7 @@ class environment
         $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone ?? 'America/Los_Angeles');
         $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType ?? false);
         $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme ?? true);
-        $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", $defaultConfiguration->logPath ?? APP_ROOT.'/logs/error.log');
+        $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", APP_ROOT.'/logs/error.log');
 
 
         //TODO this variables needs to be removed and generated programmatically.

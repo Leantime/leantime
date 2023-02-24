@@ -103,6 +103,9 @@ namespace leantime\domain\repositories {
          */
         private $db = '';
 
+
+        private core\language $language;
+
         /**
          * __construct - get db connection
          *
