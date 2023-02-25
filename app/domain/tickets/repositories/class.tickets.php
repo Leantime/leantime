@@ -23,7 +23,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    object
          */
-        private $db = '';
+        private core\db $db;
 
         /**
          * @access public

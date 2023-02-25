@@ -15,6 +15,7 @@ namespace leantime\domain\controllers {
         private $usersService;
         private $timesheetsService;
         private $reportsService;
+        private repositories\setting $settingRepo;
 
         public function init()
         {

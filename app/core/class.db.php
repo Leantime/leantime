@@ -43,7 +43,7 @@ class db
     private $port = '3306';
 
 
-    public $database = '';
+    public PDO $database;
     /**
      * @access private
      * @var    pdo object

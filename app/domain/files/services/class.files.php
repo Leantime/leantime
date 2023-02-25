@@ -11,7 +11,7 @@ namespace leantime\domain\services {
     {
         private $fileRepository;
         private $projectService;
-        private $language;
+        private core\language $language;
 
 
         public function __construct()
