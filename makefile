@@ -54,11 +54,26 @@ build: install-deps build-js
         #removing uncompiled js files
 	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
-builddocs:
+gendocs:
+	# Make a temporary directory for docs
 	mkdir -p $(DOCS_DIR)
-    phpdoc
-    git clone
-    rm -rf $(DOCS_DIR)
+
+	# Clone the docs
+	git clone $(DOCS_REPO) $(DOCS_DIR)
+
+	# Generate the docs
+	phpDocumentor
+	leantime-documentor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md
+
+	# create pull request
+    cd $(DOCS_DIR)
+	git switch -c "release/new-docs"
+	git add -A
+	git commit -m "New release generated docs"
+	git request-pull master https://github.com/leantime/docs release/new-docs
+
+	# Delete the temporary docs directory
+	rm -rf $(DOCS_DIR)
 
 package:
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
@@ -67,7 +82,7 @@ package:
 clean:
 	rm -rf $(TARGET_DIR)
 
-run-dev: 
+run-dev:
 	cd .dev && docker-compose up --build --remove-orphans
 
 .PHONY: install-deps build-js build package clean run-dev
