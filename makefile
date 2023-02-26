@@ -51,7 +51,7 @@ build: install-deps build-js
 	#removing js directories
 	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
-        #removing uncompiled js files
+    #removing uncompiled js files
 	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
 gendocs:
@@ -66,11 +66,10 @@ gendocs:
 	leantime-documentor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md
 
 	# create pull request
-	cd $(DOCS_DIR)
-	git switch -c "release/new-docs"
-	git add -A
-	git commit -m "New release generated docs"
-	git request-pull master https://github.com/leantime/docs release/new-docs
+	cd $(DOCS_DIR) && git switch -c "release/new-docs"
+	cd $(DOCS_DIR) && git add -A
+	cd $(DOCS_DIR) && git commit -m "New release generated docs"
+	cd $(DOCS_DIR) && git request-pull master https://github.com/leantime/docs release/new-docs
 
 	# Delete the temporary docs directory
 	rm -rf $(DOCS_DIR)
