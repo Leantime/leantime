@@ -66,7 +66,7 @@ gendocs:
 	leantime-documentor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md
 
 	# create pull request
-    cd $(DOCS_DIR)
+	cd $(DOCS_DIR)
 	git switch -c "release/new-docs"
 	git add -A
 	git commit -m "New release generated docs"
