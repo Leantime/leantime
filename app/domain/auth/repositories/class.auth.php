@@ -131,6 +131,8 @@ namespace leantime\domain\repositories {
         public $pwResetLimit = 5;
 
         private $config;
+        private services\users $userService;
+        private repositories\users $userRepo;
 
         public function __construct()
         {

@@ -15,6 +15,8 @@ namespace leantime\domain\models {
         public $sortIndex;
 
         public $date;
+        public string $timelineDate;
+        public string $timelineDateToFinish;
         public $dateToFinish;
         public $timeToFinish;
         public $status;
@@ -24,6 +26,7 @@ namespace leantime\domain\models {
         public $sprint;
         public $acceptanceCriteria;
         public $tags;
+        public $url;
         public $editFrom;
         public $editTo;
         public $dependingTicketId;

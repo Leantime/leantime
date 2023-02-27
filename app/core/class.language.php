@@ -60,6 +60,10 @@ namespace leantime\core {
          */
         private static $instance = null;
 
+        public \leantime\core\environment $config;
+        public theme $themeCore;
+        public string $theme;
+
         /**
          * __construct - Check standard language otherwise get language from browser
          *
@@ -151,7 +155,7 @@ namespace leantime\core {
          * @access public
          * @return object
          */
-        public static function getInstance()
+        public static function getInstance(): static
         {
 
             if (self::$instance === null) {

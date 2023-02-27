@@ -16,6 +16,7 @@ class application
     private services\projects $projectService;
     private repositories\setting $settingsRepo;
     private services\reports $reportService;
+    private services\api $apiService;
 
     private IncomingRequest $incomingRequest;
 
@@ -165,7 +166,7 @@ class application
 
 
         foreach ($headers as $key => $value) {
-            header("${key}: ${value}");
+            header($key . ': ' . $value);
         }
     }
 

@@ -11,6 +11,8 @@ namespace leantime\domain\repositories {
 
         private $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
 
+        private core\db $db;
+
         public function __construct()
         {
 

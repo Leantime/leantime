@@ -14,6 +14,31 @@ namespace leantime\domain\services {
         private $sprintRepository;
         private $ticketRepository;
         private $reportRepository;
+        private core\template $tpl;
+        private repositories\setting $settings;
+        private core\appSettings $appSettings;
+
+        private repositories\ideas $ideaRepository;
+        private repositories\users $userRepository;
+        private repositories\clients $clientRepository;
+        private repositories\comments $commentsRepository;
+        private repositories\timesheets $timesheetRepo;
+        private \leantime\core\environment $config;
+        
+        private repositories\cpcanvas $cpCanvasRepo;
+        private repositories\dbmcanvas $dbmCanvasRepo;
+        private repositories\eacanvas $eaCanvasRepo;
+        private repositories\emcanvas $emCanvasRepo;
+        private repositories\insightscanvas $insightsCanvasRepo;
+        private repositories\lbmcanvas $lbmCanvasRepo;
+        private repositories\leancanvas $leanCanvasRepo;
+        private repositories\obmcanvas $obmCanvasRepo;
+        private repositories\retroscanvas $retrosCanvasRepo;
+        private repositories\riskscanvas $risksCanvasRepo;
+        private repositories\sbcanvas $sbCanvasRepo;
+        private repositories\smcanvas $smCanvasRepo;
+        private repositories\sqcanvas $sqCanvasRepo;
+        private repositories\swotcanvas $swotCanvasRepo;
 
         public function __construct()
         {
