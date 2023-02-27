@@ -9,6 +9,8 @@ namespace leantime\domain\repositories {
 
     class notifications
     {
+        private core\db $db;
+
         /**
          * __construct - get database connection
          *

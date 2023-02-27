@@ -36,6 +36,8 @@ namespace leantime\domain\repositories {
 
         public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
+        private core\language $language;
+        
         /**
          * __construct - get db connection
          *

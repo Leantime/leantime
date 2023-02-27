@@ -141,6 +141,11 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     $color = $mlst->tags;
                 }
 
+                $sortIndex = 0;
+                if($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)){
+                    $sortIndex = $mlst->sortIndex;
+                }
+
                 echo"{
                     id :'" . $mlst->id . "',
                     name :" . json_encode($headline) .",
@@ -152,7 +157,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     type: '" . strtolower($mlst->type) . "',
                     bg_color: '" . $color . "',
                     thumbnail: '" . BASE_URL . "/api/users?profileImage=" . $mlst->editorId . "',
-                    sortIndex: ".$mlst->sortIndex."
+                    sortIndex: ".$sortIndex."
 
                 },";
             }

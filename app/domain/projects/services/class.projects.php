@@ -26,6 +26,7 @@ namespace leantime\domain\services {
         private core\language $language;
         private messengers $messengerService;
         private notifications $notificationService;
+        private repositories\files $filesRepository;
 
         public function __construct()
         {

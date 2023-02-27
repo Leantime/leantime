@@ -74,8 +74,8 @@ class fileupload
      * @access public
      * @var    object configuration object
      */
-    public $config;
-
+    public \leantime\core\environment $config;
+    
     /**
      * @var S3Client|string
      */
