@@ -16,16 +16,8 @@
     ],
     "repositories": [
         {
-            "type": "package",
-            "package": {
-                "name": "leantime/leantime-documentor",
-                "version": "master",
-                "source": {
-                    "url": "https://github.com/leantime/leantime-documentor.git",
-                    "type": "git",
-                    "reference": "main"
-                }
-            }
+            "type": "vcs",
+            "url": "https://github.com/leantime/leantime-documentor.git"
         }
     ],
     "require": {
@@ -51,7 +43,7 @@
         "codeception/codeception": "^5.0",
         "codeception/module-phpbrowser": "*",
         "codeception/module-asserts": "*",
-        "leantime/leantime-documentor": "dev-master"
+        "leantime/leantime-documentor": "dev-main"
     },
     "extra": {
         "installer-paths": {

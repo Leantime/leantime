@@ -381,14 +381,15 @@ namespace leantime\core {
             $notification = '';
             $note = $this->getNotification();
             $language = $this->language;
+            $message_id = $note['msg'];
 
             $message = self::dispatch_filter(
                 'message',
-                $language->__($note['msg'], false),
+                $language->__($message_id, false),
                 $note
             );
             $message = self::dispatch_filter(
-                "message_{$note['msg']}",
+                "message_{$message_id}",
                 $message,
                 $note
             );
@@ -411,14 +412,15 @@ namespace leantime\core {
             $notification = '';
             $note = $this->getNotification();
             $language = $this->language;
+            $message_id = $note['msg'];
 
             $message = self::dispatch_filter(
                 'message',
-                $language->__($note['msg'], false),
+                $language->__($message_id, false),
                 $note
             );
             $message = self::dispatch_filter(
-                "message_{$note['msg']}",
+                "message_{$message_id}",
                 $message,
                 $note
             );
