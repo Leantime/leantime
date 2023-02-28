@@ -388,8 +388,8 @@ namespace leantime\core {
                 $note
             );
             $message = self::dispatch_filter(
-                $filter,
                 "message_{$note['msg']}",
+                $message,
                 $note
             );
 
@@ -418,8 +418,8 @@ namespace leantime\core {
                 $note
             );
             $message = self::dispatch_filter(
-                $filter,
                 "message_{$note['msg']}",
+                $message,
                 $note
             );
 
