@@ -204,28 +204,16 @@ namespace leantime\core {
 
             $language = $this->language;
 
-            foreach (
-                [
-                'template',
-                "template.$template"
-                ] as $tplfilter
-            ) {
-                $template = self::dispatch_filter($tplfilter, $template);
-            }
+            $template = self::dispatch_filter('template', $template);
+            $template = self::dispatch_filter("template.$template", $template);
 
             $this->template = $template;
 
             //Load Layout file
             $layout = htmlspecialchars($layout);
 
-            foreach (
-                [
-                'layout',
-                "layout.$template"
-                ] as $tplfilter
-            ) {
-                $layout = self::dispatch_filter($tplfilter, $layout);
-            }
+            $layout = self::dispatch_filter('layout', $layout);
+            $layout = self::dispatch_filter("layout.$template", $layout);
 
             $layoutFilename = $this->theme->getLayoutFilename($layout . '.php', $template);
 
@@ -243,14 +231,8 @@ namespace leantime\core {
 
             $layoutContent = ob_get_clean();
 
-            foreach (
-                [
-                'layoutContent',
-                "layoutContent.$template"
-                ] as $tplfilter
-            ) {
-                $layoutContent = self::dispatch_filter($tplfilter, $layoutContent);
-            }
+            $layoutContent = self::dispatch_filter('layoutContent', $layoutContent);
+            $layoutContent = self::dispatch_filter("layoutContent.$template", $layoutContent);
 
             //Load Template
             //frontcontroller splits the name (actionname.modulename)
@@ -272,26 +254,14 @@ namespace leantime\core {
 
             $content = ob_get_clean();
 
-            foreach (
-                [
-                'content',
-                "content.$template"
-                ] as $tplfilter
-            ) {
-                $content = self::dispatch_filter($tplfilter, $content);
-            }
+            $content = self::dispatch_filter('content', $content);
+            $content = self::dispatch_filter("content.$template", $content);
 
             //Load template content into layout content
             $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
 
-            foreach (
-                [
-                'render',
-                "render.$template"
-                ] as $filter
-            ) {
-                $render = self::dispatch_filter($filter, $render);
-            }
+            $render = self::dispatch_filter('render', $render);
+            $render = self::dispatch_filter("render.$template", $render);
 
             echo $render;
         }
@@ -412,18 +382,16 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            foreach (
-                [
+            $message = self::dispatch_filter(
                 'message',
-                "message_{$note['msg']}"
-                ] as $filter
-            ) {
-                $message = self::dispatch_filter(
-                    $filter,
-                    $language->__($note['msg'], false),
-                    $note
-                );
-            }
+                $language->__($note['msg'], false),
+                $note
+            );
+            $message = self::dispatch_filter(
+                $filter,
+                "message_{$note['msg']}",
+                $note
+            );
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
                 $notification = '<script type="text/javascript">
@@ -444,18 +412,16 @@ namespace leantime\core {
             $note = $this->getNotification();
             $language = $this->language;
 
-            foreach (
-                [
+            $message = self::dispatch_filter(
                 'message',
-                "message_{$note['msg']}"
-                ] as $filter
-            ) {
-                $message = self::dispatch_filter(
-                    $filter,
-                    $language->__($note['msg'], false),
-                    $note
-                );
-            }
+                $language->__($note['msg'], false),
+                $note
+            );
+            $message = self::dispatch_filter(
+                $filter,
+                "message_{$note['msg']}",
+                $note
+            );
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
                 $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "'>

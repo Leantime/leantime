@@ -16,8 +16,16 @@
     ],
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/digitaljoeco/leantime-documentor.git"
+            "type": "package",
+            "package": {
+                "name": "leantime/leantime-documentor",
+                "version": "master",
+                "source": {
+                    "url": "https://github.com/leantime/leantime-documentor.git",
+                    "type": "git",
+                    "reference": "main"
+                }
+            }
         }
     ],
     "require": {
@@ -43,7 +51,7 @@
         "codeception/codeception": "^5.0",
         "codeception/module-phpbrowser": "*",
         "codeception/module-asserts": "*",
-        "digitaljoeco/leantime-documentor": "dev-main"
+        "leantime/leantime-documentor": "dev-master"
     },
     "extra": {
         "installer-paths": {

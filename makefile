@@ -51,10 +51,13 @@ build: install-deps build-js
 	#removing js directories
 	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
-    #removing uncompiled js files
+	#removing uncompiled js files
 	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
-gendocs:
+gendocs: # Requires github CLI (brew install gh)
+	# Delete the temporary docs directory if exists
+	rm -rf $(DOCS_DIR)
+
 	# Make a temporary directory for docs
 	mkdir -p $(DOCS_DIR)
 
@@ -63,13 +66,14 @@ gendocs:
 
 	# Generate the docs
 	phpDocumentor
-	leantime-documentor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md
+	vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
 
 	# create pull request
-	cd $(DOCS_DIR) && git switch -c "release/new-docs"
+	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)
 	cd $(DOCS_DIR) && git add -A
-	cd $(DOCS_DIR) && git commit -m "New release generated docs"
-	cd $(DOCS_DIR) && git request-pull master https://github.com/leantime/docs release/new-docs
+	cd $(DOCS_DIR) && git commit -m "Generated docs release $(VERSION)
+	cd $(DOCS_DIR) && git push --set-upstream origin "release/$(VERSION)
+	cd $(DOCS_DIR) && gh pr create --title "release/$(VERSION) --body ""
 
 	# Delete the temporary docs directory
 	rm -rf $(DOCS_DIR)

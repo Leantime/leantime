@@ -18,6 +18,9 @@
                 <path>public</path>
                 <path>tests</path>
             </source>
+            <ignore>
+                <path>app/plugins</path>
+            </ignore>
         </api>
     </version>
     <!-- Templates & Theming -->
