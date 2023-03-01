@@ -29,7 +29,9 @@ class application
         "errors.error404",
         "errors.error500",
         "api.i18n",
-        "calendar.ical"
+        "calendar.ical",
+        "oidc.login",
+        "oidc.callback"
     );
 
     /**
