@@ -82,6 +82,8 @@ namespace leantime\core {
             'default' => 'fa-off'
         );
 
+        private theme $theme;
+
         /**
          * __construct - get instance of frontcontroller
          *

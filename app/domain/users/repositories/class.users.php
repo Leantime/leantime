@@ -55,6 +55,8 @@ namespace leantime\domain\repositories {
          */
         private $db;
 
+        public \leantime\core\environment $config;
+
         /**
          * __construct - neu db connection
          *

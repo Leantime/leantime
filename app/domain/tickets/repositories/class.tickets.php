@@ -23,7 +23,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    object
          */
-        private $db = '';
+        private core\db $db;
 
         /**
          * @access public
@@ -134,7 +134,7 @@ namespace leantime\domain\repositories {
          */
         public $sortBy = 'date';
 
-        private $language = "";
+        private core\language $language;
 
         /**
          * __construct - get db connection

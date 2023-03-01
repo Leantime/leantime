@@ -20,6 +20,7 @@ namespace leantime\domain\repositories {
         private $userId = null;
 
         private $config;
+        private core\db $db;
 
         public function __construct()
         {

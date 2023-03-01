@@ -9,6 +9,7 @@ namespace leantime\domain\services {
     {
         private $userRepo;
         private $tpl;
+        private repositories\setting $settingsRepo;
 
         public function __construct()
         {
