@@ -2,14 +2,10 @@
 
 namespace leantime\domain\repositories {
 
-    use Exception;
-    use leantime\domain\services\ldap;
     use PDO;
     use leantime\domain\repositories;
     use leantime\domain\services;
-    use PDOException;
     use leantime\core;
-    use RobThree\Auth\TwoFactorAuth;
 
     class auth
     {
