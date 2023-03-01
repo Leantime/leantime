@@ -10,10 +10,12 @@ require_once __DIR__ . '/../config/appSettings.php';
 use leantime\command\migrateCommand;
 use leantime\command\addUserCommand;
 use leantime\command\saveSettingCommand;
+use leantime\command\testEmailCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 $application->add(new addUserCommand());
 $application->add(new migrateCommand());
 $application->add(new saveSettingCommand());
+$application->add(new testEmailCommand());
 $application->run();
