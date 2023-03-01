@@ -103,7 +103,7 @@ namespace leantime\core {
          * @param $name
          * @param $value
          */
-        public function assign($name, $value)
+        public function assign($name, $value): void
         {
 
             $value = self::dispatch_filter("var.$name", $value);
@@ -118,7 +118,7 @@ namespace leantime\core {
          * @param  $type
          * @return string
          */
-        public function setNotification($msg, $type)
+        public function setNotification($msg, $type): void
         {
 
             $_SESSION['notification'] = $msg;
