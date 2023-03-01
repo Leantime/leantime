@@ -76,6 +76,11 @@ class environment
     public string $ldapLtGroupAssignments;
     public string $ldapDefaultRoleKey;
 
+    public bool $OidcEnable;
+    public string $OidcProviderUrl;
+    public string $OidcClientId;
+    public string $OidcClientSecret;
+
     private function __construct()
     {
 
@@ -157,9 +162,27 @@ class environment
             $this->ldapLtGroupAssignments = $this->environmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $defaultConfiguration->ldapLtGroupAssignments ?? '') ;
             $this->ldapDefaultRoleKey = $this->environmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $defaultConfiguration->ldapDefaultRoleKey ?? '');
         }
+
+        /* OIDC */
+        $this->OidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
+        if($this->OidcEnable) {
+            $this->OidcProviderUrl = $this->getString('LEAN_OIDC_PROVIDER_URL', '');
+            $this->OidcClientId = $this->getString('LEAN_OIDC_CLIEND_ID', '');
+            $this->OidcClientSecret = $this->getString('LEAN_OIDC_CLIEND_SECRET', '');
+        }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string")
+    private function getBool(string $envVar, bool $default): bool
+    {
+        return $this->environmentHelper($envVar, $default, 'boolean');
+    }
+
+    private function getString(string $envVar, string $default): string
+    {
+        return $this->environmentHelper($envVar, $default, 'string');
+    }
+
+    private function environmentHelper(string $envVar, $default, $dataType = "string")
     {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {
