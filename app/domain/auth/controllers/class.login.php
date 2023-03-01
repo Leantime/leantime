@@ -6,8 +6,6 @@ namespace leantime\domain\controllers {
     use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
-    use leantime\domain\models;
-    use leantime\core\eventhelpers;
 
     class login extends controller
     {
@@ -59,6 +57,11 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email");
             }
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
+
+            if($config->OidcEnable) {
+                $this->tpl->assign('oidcUrl', services\oidc::getInstance()->buildLoginUrl());
+            }
+
             $this->tpl->display('auth.login', 'entry');
         }
 
