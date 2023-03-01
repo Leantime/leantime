@@ -1,7 +1,7 @@
 <?php
 
 // Semaphone part is meant to prevent concurrent execution
-// I dropped the idea of using real semaphores because a lot of 
+// I dropped the idea of using real semaphores because a lot of
 // providers don't allow it.
 // TODO : Maybe create a semaphore class with a fallback on file locks
 // TODO : Ensure no locks remain there for long (would block cron)
@@ -12,26 +12,26 @@
 $fp  = '';
 
 // If semaphore can not be created, exit
-if(is_writable("../resources/logs/")) {
-    $fp = fopen("../resources/logs/cronlock.txt", "w+");
+if(is_writable("../logs/")) {
+    $fp = fopen("../logs/cronlock.txt", "w+");
 }else{
-    error_log("Can't write to logs directory. Cron won't be executed");
+    error_log("Can't write to /logs directory. Cron won't be executed");
     exit();
 }
 
-define('RESTRICTED', FALSE);
+define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
+define('APP_ROOT', dirname(__FILE__, 2));
 
-include_once '../config/configuration.php';
-include_once '../config/appSettings.php';
-include_once '../src/core/class.autoload.php';
+require_once APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT . '/config/appSettings.php';
 
 use leantime\domain\repositories;
 use leantime\domain\services;
 
-$config = new leantime\core\config();
+$config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone);
+$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
 
 // NEW Audit system
 $audit = new leantime\domain\repositories\audit();
@@ -59,12 +59,14 @@ $audit->storeEvent("cron", "Cron started");
 // TODO  check if using the session class in cron is a better idea
 //session_start();
 
+$incomingRequest = new leantime\core\IncomingRequest();
+
 if(isset($config->appUrl) && $config->appUrl != ""){
     define('BASE_URL', $config->appUrl);
     define('CURRENT_URL', $config->appUrl.$settings->getRequestURI($config->appUrl));
 } else{
-    define('BASE_URL', $settings->getBaseURL());
-    define('CURRENT_URL', $settings->getFullURL());
+    define('BASE_URL', $incomingRequest->getBaseURL());
+    define('CURRENT_URL', $incomingRequest->getFullURL());
 }
 
 ob_start();

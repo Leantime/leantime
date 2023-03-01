@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+define('ROOT', dirname(__FILE__));
+
+require __DIR__ . '/../app/core/class.autoload.php';
+require_once __DIR__ . '/../config/configuration.php';
+require_once __DIR__ . '/../config/appSettings.php';
+
+use leantime\command\migrateCommand;
+use leantime\command\addUserCommand;
+use leantime\command\saveSettingCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new addUserCommand());
+$application->add(new migrateCommand());
+$application->add(new saveSettingCommand());
+$application->run();

@@ -1,11 +1,11 @@
 .table th {
     font-weight: normal;
     text-transform: uppercase;
-    font-size: var(--base-font-size);
+    font-size: var(--font-size-s);
     border-top: 0;
-
     color: var(--kanban-col-title-color);
-    background:var(--kanban-col-title-bg);
+    background:var(--col-content-bg);
+
 }
 
 .table th.centeralign, .table td.centeralign {
@@ -22,13 +22,13 @@
 }
 
 .table .con1 {
-    background: var(--kanban-col-bg);
 }
 
 .table-bordered th,
 .table-bordered td {
-    border-right: 1px solid var(--neutral);
+    border-right: 0px solid var(--neutral);
     border-left:0px;
+    box-shadow: 0px 1px 1px var(--neutral);
 }
 
 .table-bordered th:last-child,
@@ -41,20 +41,21 @@
     margin-bottom: 0;
 }
 
-.dataTable th, .dataTable td {
+.dataTable th,
+.dataTable td {
     font-size: var(--base-font-size);
 }
 
 .dataTables_wrapper {
     position: relative;
     overflow-x:auto;
+    padding-bottom: 150px;
 }
 
 .dataTables_length, .dataTables_info {
-    background: var(--kanban-col-title-bg);
     padding: 10px;
     font-size: var(--font-size-s);
-    border: 1px solid var(--neutral);
+    border: 0px solid var(--neutral);
 }
 
 .dataTables_length {
@@ -86,9 +87,8 @@
 .dataTables_paginate .first, .dataTables_paginate .previous, .dataTables_paginate .paginate_active,
 .dataTables_paginate .paginate_button, .dataTables_paginate .next, .dataTables_paginate .last {
     padding: 5px 10px;
-    border: 1px solid var(--neutral);
+    border: 0px solid var(--neutral);
     font-size: var(--font-size-s);
-    background: var(--kanban-col-title-bg);
     cursor: pointer;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .dataTables_paginate .first {
-    border-left: 1px solid var(--neutral);
+    border-left: 0px solid var(--neutral);
 }
 
 .dataTables_paginate .paginate_active {
@@ -146,28 +146,35 @@
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: var(--col-hover-bg);
+    background: var(--col-content-bg);
+
 }
 
 .dataTable thead th.sorting:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
+    color:var(--neutral);
+    font-size:var(--font-size-s);
 }
 
 .dataTable thead th.sorting_asc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0de";
+    color:var(--primary-font-color);
+
 }
 
 .dataTable thead th.sorting_desc:after {
     font-family: FontAwesome;
 
     content: "\00a0\00a0\f0dd";
-
+    color:var(--primary-font-color);
 }
 
-.maincontentinner .table {
-    border:1px solid var(--neutral);
+.maincontentinner .table,
+.maincontentinner table{
+    border:1px solid var(--col-content-bg);
+
 }
 
 .table-bordered {
@@ -176,6 +183,8 @@
 }
 
 .maincontentinner .table th,
+.maincontentinner table th,
+.maincontentinner table thead td,
 .maincontentinner .table.table-bordered th,
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
@@ -185,15 +194,24 @@
 
     font-weight: normal;
     text-rendering: optimizelegibility;
-    padding: 10px;
+    padding: 7px 10px 5px 10px;
 
     border:0px;
-    border-right:1px solid var(--neutral);
+    border-right:0px solid var(--neutral);
     border-color:var(--neutral);
     line-height: 17px;
 
     color: var(--kanban-col-title-color);
+    background:var(--secondary-background);
+}
+
+.maincontentinner .table th,
+.maincontentinner table thead td,
+.maincontentinner .table.table-bordered th,
+.maincontentinner table th {
     background:var(--col-title-bg);
+    padding: 10px 10px;
+    font-weight:bold;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -213,32 +231,40 @@
 .maincontentinner .table th.sorting_desc,
 .maincontentinner .table th.sorting_asc {
     color: var(--primary-font-color);
-    background:var(--col-hover-bg);
+    background:var(--col-content-bg);
 }
 
 
 .maincontentinner .table tr.dtrg-group td {
-    background:var(--col-hover-bg);
     color: var(--kanban-col-title-color);
     padding: 5px 10px;
+    padding-top:25px;
+    font-weight: bold;
 }
 
 .maincontentinner .table {
     margin-top:10px;
 }
 
-.maincontentinner .table td {
-    padding:3px 5px 1px 10px;
+.maincontentinner .table td,
+.maincontentinner table td{
+    padding:5px 10px 3px 10px;
     vertical-align: middle;
     min-height:17px;
+    border-right:1px solid var(--secondary-background);
 }
 
 .maincontentinner .table td input {
     margin-bottom:0px;
 }
 
-.maincontentinner .table td .ticketDropdown {
-    margin-top:2px;
+.dataTable tr:hover {
+    box-shadow:var(--regular-shadow);
+}
+
+.dataTable tr:hover td {
+    background:var(--col-title-bg);
+
 }
 
 .maincontentinner .table td .small-input {
@@ -247,8 +273,7 @@
 
 .maincontentinner .dataTables_wrapper  .bottom {
     position:relative;
-    background:var(--kanban-col-title-bg);
-    border: 1px solid var(--main-border-color);
+    border: 0px solid var(--main-border-color);
     border-top:0px;
     height:60px;
 }
@@ -268,7 +293,12 @@
     margin-left:-65px;
     border:0px;
     padding:5px;
-    font-size:12px;
+    font-size:var(--font-size-s);
+}
+
+.maincontentinner .dataTables_wrapper  .dataTables_length label,
+.maincontentinner .dataTables_wrapper  .dataTables_length select {
+    font-size:var(--font-size-s);
 }
 
 .maincontentinner .dataTables_wrapper .dataTables_paginate{
@@ -315,13 +345,22 @@
     padding: 5px 10px;
     border:0px;
     text-align:left;
-    text-decoration: line-through;
+}
 
+.maincontentinner .dt-buttons .dt-button-collection button:before {
+    font-family: "Font Awesome 6 Free";
+    content: "\f0c8";
+    margin-right:5px;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button.active{
     text-decoration: none;
-    color: var(--primary-font-color);
+}
+
+.maincontentinner .dt-buttons .dt-button-collection button.active:before {
+    font-family: "Font Awesome 6 Free";
+    content: " \f14a";
+
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,
@@ -387,9 +426,115 @@
     margin-top:0px;
 }
 
-.table th, .table td {
-    border-top:1px solid var(--neutral);
+.table th,
+.table td,
+table td{
+    border-top:1px solid var(--col-title-bg);
+}
+
+
+.articleBody table thead td{
+    background:var(--neutral);
+}
+
+.articleBody table td {
+    border:1px solid var(--neutral);
+}
+
+.table td.dropdown-cell {
+    padding:0px;
+    font-weight: 400;
+}
+
+.table td.dropdown-cell .dropdown {
+    width:100%;
+    height:100%;
+    border-radius:0px !important;
+    display:block;
+
+}
+
+.table td.dropdown-cell .dropdown > a {
+    width:100%;
+    height:100%;
+    border-radius:0px !important;
+    padding: 0px 10px 0px 10px !important;
+    line-height:37px;
+    font-size:var(--base-font-size);
+    box-shadow:none;
+    display:inline-block;
+}
+
+.table td.dropdown-cell .dropdown > a .text {
+}
+.table td.dropdown-cell .dropdown > a i {
+    float:right;
+    line-height:37px;
+}
+
+.table td.dropdown-cell .dropdown.ticketDropdown ul {
+    top:35px;
+}
+
+.listStyleTable td {
+
+}
+
+.maincontentinner .table.listStyleTable {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable td {
+    padding:5px 10px 5px 10px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell {
+    padding:0px;
+}
+
+.maincontentinner .table.listStyleTable td.dropdown-cell .dropdown > a {
+    padding:0px 10px 0px 10px !important;
+
+}
+
+.maincontentinner .table.listStyleTable .dtrg-group td {
+    border:0px;
+}
+
+.maincontentinner .table.listStyleTable tr:hover {
+    box-shadow: none;
+    cursor:pointer;
+}
+
+.maincontentinner .table.listStyleTable tr.active td {
+    background: var(--col-title-bg);
 }
 
 
 
+.maincontentinner .table.listStyleTable td.roundStatusBtn .statusDropdown > a {
+    border-radius: 15px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+}
+
+.maincontentinner .dataTables_wrapper .center .dataTables_paginate {
+    left: auto;
+    right: auto;
+
+    text-align: center;
+    width: 100%;
+}
+
+
+.maincontentinner .table.listStyleTable td.roundStatusBtn .f-left {
+    float:none !important;
+}
+
+.maincontentinner .table.listStyleTable .dtrg-start:first-child td{
+    padding-top:0px
+}

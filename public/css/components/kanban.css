@@ -1,3 +1,8 @@
+.kanbanBoard {
+    margin-top:10px;
+    margin-bottom:40px;
+}
+
 .tilt.right {
     transform: rotate(3deg);
     -moz-transform: rotate(3deg);
@@ -26,8 +31,8 @@
 
 .column .contentInner {
     background:var(--kanban-col-bg);
-    border:1px solid var(--neutral);
-    padding:7px;
+    border:0px solid var(--neutral);
+    padding: 5px 2px;
     min-height:45px;
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
@@ -50,7 +55,7 @@
 }
 
 .column .contentInner .ui-state-highlight {
-    background:#ddd;
+    background:var(--col-title-bg);
     border: 2px dotted var(--neutral);
     visibility:visible;
     display:block;
@@ -84,31 +89,79 @@
 
 .titleBorderColor1,
 .title-border-label-important {
-    border-bottom:5px solid #b94a48;
+    border-bottom:5px solid var(--red);
+}
+
+.title-border-label-danger {
+    border-bottom:5px solid var(--dark-red);
 }
 
 .titleBorderColor3,
 .title-border-label-info{
-    border-bottom:5px solid #2d6987;
+    border-bottom:5px solid var(--dark-blue);
 }
 
 .titleBorderColor4,
 .title-border-label-warning{
-    border-bottom:5px solid #f89406;
+    border-bottom:5px solid var(--yellow);
 }
 
 .titleBorderColor2{
-    border-bottom:5px solid #f89406;
+    border-bottom:5px solid var(--yellow);
 }
 
 .titleBorderColor0,
 .title-border-label-success{
-    border-bottom:5px solid #468847;
+    border-bottom:5px solid var(--green)
 }
 
 .titleBorderColor-1,
 .title-border-label-default{
-    border-bottom:5px solid #999999;
+    border-bottom:5px solid var(--grey);
+}
+
+.title-border-label-purple{
+    border-bottom:5px solid var(--purple);
+}
+
+.title-border-label-pink{
+    border-bottom:5px solid var(--pink);
+}
+
+.title-border-label-brown{
+    border-bottom:5px solid var(--brown);
+}
+
+.title-border-label-blue{
+    border-bottom:5px solid var(--blue);
+}
+
+.title-border-label-dark-blue{
+    border-bottom:5px solid var(--dark-blue);
+}
+
+.title-border-label-darker-blue{
+    border-bottom:5px solid var(--darker-blue);
+}
+
+.title-border-label-green{
+    border-bottom:5px solid var(--green);
+}
+
+.title-border-dark-green{
+    border-bottom:5px solid var(--dark-green);
+}
+
+.title-border-red{
+    border-bottom:5px solid var(--red);
+}
+
+.title-border-dark-red{
+    border-bottom:5px solid var(--dark-red);
+}
+
+.title-border-grey{
+    border-bottom:5px solid var(--grey);
 }
 
 .sortableTicketList li{
@@ -122,12 +175,13 @@
 
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
-    border:1px solid var(--main-border-color);
+    border:0px solid var(--main-border-color);
     padding:10px 15px;
     padding-bottom:10px;
-    margin-bottom:5px;
+    margin-bottom:10px;
     cursor:move;
     border-radius:var(--box-radius);
+    box-shadow: var(--regular-shadow);
 }
 
 .sortableTicketList.disabled .ticketBox {
@@ -161,7 +215,7 @@
 
 .sortableTicketList li .ticketBox h3,
 .sortableTicketList li .ticketBox h3 a{
-    font-size:18px;
+    font-size:var(--font-size-l);
 }
 
 .sortableTicketList li .ticketBox .label-important,
@@ -189,52 +243,56 @@
 
 body .maincontent .priority-border-1,
 body .maincontent .commentStatus-red{
-    border-left: 3px solid #B92F2FFF;
+    border-left: 3px solid var(--dark-red)
 }
 
 body .maincontent .priority-border-2 {
-    border-left: 3px solid #EF371DFF;
+    border-left: 3px solid var(--red);
 }
 
 body .maincontent .priority-border-3,
 body .maincontent .commentStatus-yellow{
-    border-left: 3px solid #FFB325FF;
+    border-left: 3px solid var(--yellow)
 }
 
 body .maincontent .priority-border-4,
 body .maincontent .commentStatus-green{
-    border-left: 3px solid #aae268;
+    border-left: 3px solid var(--green);
 }
 
 body .maincontent .priority-border-5 {
-    bborder-left: 3px solid #707070;
+    border-left: 3px solid var(--dark-grey);
 }
 
-body .maincontent .priority-bg-1 {
-    background:#B92F2FFF;
-    color:#fff;
+body .maincontent .priority-bg-1,
+body .maincontent .ticketDropdown .priority-bg-1{
+    background:var(--dark-red);
+    color:var(--dark-red-text-color);
 }
 
-body .maincontent .priority-bg-2 {
-    background: #EF371DFF;
-    color:#fff;
+body .maincontent .priority-bg-2,
+body .maincontent .ticketDropdown .priority-bg-2{
+    background: var(--red);
+    color:var(--red-text-color);
 }
 
-body .maincontent .priority-bg-3 {
-    background: #FFB325FF;
-    color:#fff;
+body .maincontent .priority-bg-3,
+body .maincontent .ticketDropdown .priority-bg-3{
+    background: var(--yellow);
+    color:var(--yellow-text-color);
 }
 
-body .maincontent .priority-bg-4 {
-    background:#aae268;
-    color:#fff;
+body .maincontent .priority-bg-4,
+body .maincontent .ticketDropdown .priority-bg-4{
+    background:var(--green);
+    color:var(--green-text-color);
 }
 
-body .maincontent .priority-bg-5 {
-    background:#707070;
-    color:#fff;
+body .maincontent .priority-bg-5,
+body .maincontent .ticketDropdown .priority-bg-5{
+    background:var(--dark-grey);
+    color:var(--dark-grey-text-color);
 }
-
 
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
@@ -243,12 +301,10 @@ body .maincontent .priority-bg-5 {
     font-size: var(--base-font-size);
     line-height:17px;
     font-weight: bold;
-    border-left: 1px solid var(--main-border-color) !important;
-    border-top: 1px solid var(--main-border-color) !important;
-    border-right: 1px solid var(--main-border-color) !important;
-    border-bottom:0px solid var(--kanban-col-title-bg) !important;
-    border-top-left-radius: var(--box-radius-small);
-    border-top-right-radius: var(--box-radius-small);
+    border-bottom-width:3px;
+    border-top-left-radius: var(--box-radius);
+    border-top-right-radius: var(--box-radius);
+    box-shadow: var(--regular-shadow)
 }
 
 .widgettitle span {
@@ -261,6 +317,7 @@ body .maincontent .priority-bg-5 {
     width:100%;
     display:flex;
     overflow-x:auto;
+    padding-bottom: 130px;
 }
 
 .widgettitle strong {
@@ -280,5 +337,5 @@ body .maincontent .priority-bg-5 {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, var(--kanban-card-bg) 70% 100%);
+    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
 }

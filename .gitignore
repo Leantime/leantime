@@ -11,12 +11,16 @@ resources/logs/*
 node_modules/*
 vendor/*
 release/*
+logs/*
+target/*
 public/js/compiled-app.min.js
 public/js/compiled-base-libs.min.js
+public/js/compiled-footer.min.js
 public/js/compiled-extended-libs.min.js
 public/js/jsSourceMapAPP.map
 public/js/jsSourceMapAppSrc.map
 public/js/jsSourceMapBaseLib.map
+public/js/jsSourceMapFooterSrc.map
 public/js/jsSourceMapExtendedSrc.map
 public/css/main.css
 public/css/main.css.map
@@ -99,3 +103,19 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+# Lock files
+.github/workflows/phpmd.yml
+
+# Ignore logging files
+logs/*
+
+# Ignore all customization files
+app/custom/domain/
+app/custom/plugin/
+app/custom/language/
+public/theme/*/css/custom.css
+public/theme/dts/
+nbproject
+config/config.yaml
+config/.env

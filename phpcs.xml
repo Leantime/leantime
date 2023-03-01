@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <description>PHP_CodeSniffer configuration</description>
+    <rule ref="PSR12">
+        <exclude name="Squiz.Classes.ValidClassName" />
+        <exclude name="Generic.Files.LineLength" />
+
+    </rule>
+    <!-- Keeping this in here for future use
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="180"/>
+            <property name="absoluteLineLimit" value="210"/>
+        </properties>
+    </rule>
+    -->
+</ruleset>

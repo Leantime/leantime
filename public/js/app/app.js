@@ -10,6 +10,13 @@ leantime.theme = theme;
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
 leantime.appUrl = appURL;
 
+//Backwards compatibility for some jQuery libs
+jQuery(function() {
+    jQuery.fn.size = function() {
+        return this.length;
+    };
+});
+
 jQuery(document).on('click', function (e) {
     jQuery('[data-toggle="popover"],[data-original-title]').each(function () {
         //the 'is' for buttons that trigger popups
@@ -17,9 +24,11 @@ jQuery(document).on('click', function (e) {
         if (!jQuery(this).is(e.target) && jQuery(this).has(e.target).length === 0 && jQuery('.popover').has(e.target).length === 0) {
             ((jQuery(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false;  // fix for BS 3.3.6
         }
-
     });
 });
+
+//Run Prism code highlighting centrally
+
 
 
 leantime.replaceSVGColors = function () {
@@ -48,6 +57,15 @@ jQuery(document).on('focusin', function(e) {
 
 //Set moment locale early in app creation
 moment.locale(leantime.i18n.__("language.code"));
+
+
+jQuery(document).ready(function(){
+    jQuery(".confetti").click(function(){
+        confetti.start();
+    });
+
+    tippy('[data-tippy-content]');
+});
 
 
 

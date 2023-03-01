@@ -5,21 +5,26 @@
  */
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
+define('APP_ROOT', dirname(__FILE__, 2));
 
-include_once '../config/appSettings.php';
-include_once '../src/core/class.autoload.php';
-include_once '../config/configuration.php';
+require_once APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT . '/config/appSettings.php';
 
-
+$config = \leantime\core\environment::getInstance();
+$settings = new leantime\core\appSettings();
+$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
 
 $login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
-$config = new leantime\core\config();
-$settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone);
-
 
 
 if ($login->logged_in()!==true) {
+
+    header('Content-Type: image/jpeg');
+    header('Cache-Control: no-cache');
+
+    ob_end_clean();
+    clearstatcache();
+    readfile(__DIR__.'/images/leantime-no-access.jpg');
 
     exit();
 
@@ -39,7 +44,7 @@ if ($login->logged_in()!==true) {
 
 function getFileLocally(){
 
-	$config = new leantime\core\config();
+	$config = \leantime\core\environment::getInstance();
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -110,7 +115,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = new leantime\core\config();
+    $config = \leantime\core\environment::getInstance();
 
     $mimes = array
     (
@@ -134,21 +139,16 @@ function getFileFromS3(){
     ]);
 
     try {
-        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
         $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
-        $cmd = $s3Client->getCommand('GetObject', [
+        $result = $s3Client->getObject([
             'Bucket' => $config->s3Bucket,
             'Key' => $fileName,
-            'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
+            'Body'   => 'this is the body!'
         ]);
 
-        $request = $s3Client->createPresignedRequest($cmd, '5 minutes');
-        $presignedUrl = (string)$request->getUri();
-
-        header("Location:".$presignedUrl);
-
-        exit();
+        echo($result['Body']);
 
 
 

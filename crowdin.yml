@@ -1,0 +1,3 @@
+files:
+  - source: /app/language/en-US.ini
+    translation: /app/language/%locale%.ini

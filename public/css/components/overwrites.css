@@ -36,14 +36,12 @@ body.loginpage,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
 .fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice,
-div.tagsinput span.tag, .chzn-container .chzn-results .highlighted,
-.label-primary, .leftmenu .nav-tabs.nav-stacked
+div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
 { background-color: var(--primary-color) }
 
 
 
-.loginpanelinner,
-.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
+.loginpanelinner {
 	background-color: var(--primary-color) !important;
 	color:var(--main-action-color);
 }
@@ -68,7 +66,7 @@ a,a:hover,a:link,a:active,a:focus,
 .wizard .tabbedmenu li a.done,
 .tabbable > .nav-tabs > li.active > a,
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
 .btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover,
@@ -81,7 +79,6 @@ a,a:hover,a:link,a:active,a:focus,
 .optionLink,
 .inlineDropDownContainer .ticketDropDown:hover,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
-input.secretInput,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
 .viewDropDown .dropdown-menu li a.active,
@@ -96,11 +93,11 @@ button,
 .paginate_button.current
 { background-color:  var(--main-action-bg);  }
 
-input[type='submit']:hover, 
+input[type='submit']:hover,
 button:hover {
 	background-color:  var(--main-action-hover-bg);
 	color:#fff;
-} 	
+}
 
 .chzn-container-multi .chzn-choices .search-choice {
 	color:#fff;
@@ -114,7 +111,7 @@ span.btn-white:hover{
 	background:#fff;
 }
 
-	
+
 /* border color */
 .widgetcontent,
 .messagemenu ul li.active,
@@ -132,7 +129,7 @@ span.btn-white:hover{
 .tabbable > .tab-content,
 .nav-tabs.nav-stacked > li > a:focus,
 .btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active, 
+.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
 .btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .nav-tabs,
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus,
@@ -165,16 +162,11 @@ div.tagsinput span.tag
 .leftmenu .nav-tabs.nav-stacked > li > a { border-color: var(--main-border-color) !important; }
 .leftmenu .nav-tabs.nav-stacked > li.active > a { border-color: var(--main-border-color) !important; }
 
-/* ie fix */
-
-.no-rgba .headmenu > li { border-right: 1px solid #ca5f46; }
-.no-rgba .headmenu > li:first-child { border-left: 1px solid #ca5f46; }
-
 
 @media screen and (max-width: 480px) {
- 
+
  .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
- 
+
   .userloggedinfo .userinfo,
   .wizard .hormenu li,
   .messageright { border-color: var(--main-border-color); }
@@ -182,7 +174,7 @@ div.tagsinput span.tag
 }
 
 .timesheetTable {
-	
+
 }
 
 .timesheetTable input {
@@ -218,19 +210,23 @@ div.tagsinput span.tag
 }
 
 .filterBar {
-	
-	border:1px solid var(--main-border-color);
+
+	border:0px solid var(--main-border-color);
 	padding:10px;
 	margin-bottom:5px;
-	background:var(--kanban-col-bg);
 	padding-top:5px;
 	margin-top: 10px;
+    background:var(--primary-background);
     border-radius:var(--box-radius);
+    z-index: 99;
+    position: absolute;
+    right: 10px;
+    box-shadow: var(--large-shadow);
 }
 
 .headtitle {
 	background:var(--kanban-col-bg);
-	border:1px solid var(--main-border-color);
+	border:0px solid var(--main-border-color);
 	border-radius:var(--box-radius);
 }
 
@@ -248,7 +244,7 @@ div.tagsinput span.tag
 label.inline {
 	float:left;
 	margin-right:5px;
-	padding-top:6px;	
+	padding-top:6px;
 }
 
 .loading {
@@ -267,6 +263,7 @@ body .widgettitle.title-light {
 	border-bottom:0px solid #ccc;
 	margin-bottom:15px;
 	font-size:var(--font-size-l);
+    box-shadow: none;
 
 }
 
@@ -277,10 +274,6 @@ body .widgettitle.title-light {
 
 div.tagsinput {
 	border:1px solid var(--main-border-color);
-}
-
-.gantt-container a:hover {
-    text-decoration:underline !important;
 }
 
 
@@ -311,7 +304,7 @@ body .tox .tox-toolbar-overlord{
 	text-align: center;
 	padding: 5px;
 	color: #fff;
-	background: #0866c6;
+	background: var(--primary-color);
 	text-transform: uppercase;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -322,8 +315,9 @@ body .tox .tox-toolbar-overlord{
 }
 
 
-div.jGrowl div.jGrowl-notification,
-div.jGrowl div.jGrowl-closer {
+div.growl,
+div.growl.growl-default,
+div.growl div.growl-closer {
 	background:var(--secondary-background);
 	color:var(--primary-font-color);
 	padding:20px;
@@ -336,22 +330,76 @@ div.jGrowl div.jGrowl-closer {
 
 }
 
-div.jGrowl div.jGrowl-notification div.jGrowl-close {
+div.growl growl-close {
 	color:var(--primary-font-color);
 	font-size:var(--base-font-size);
 }
 
-div.jGrowl div.jGrowl-notification.success {
-	border-left:5px solid #86D628;
+div.growl.growl-default,
+div.growl.growl-success{
+	border-left:5px solid var(--green);
 }
 
-div.jGrowl div.jGrowl-notification.info {
-	border-left:5px solid #71B8EE;
+div.growl.growl-notice {
+	border-left:5px solid var(--blue);
 }
 
-div.jGrowl div.jGrowl-notification.error {
-	border-left:5px solid  #dd0000;
+div.growl.growl-error {
+	border-left:5px solid var(--dark-red);
 }
 
+div.growl .growl-title {
+    font-size: 18px;
+    line-height: 24px;
+    display:none;
+}
+
+div.growl .growl-message {
+    font-size: var(--base-font-size);
+    line-height: 18px;
+    font-family: var(--primary-font-family);
+}
+
+div.growl.growl-medium {
+    width: 250px;
+    padding: 20px;
+    margin: 10px;
+}
 
 /* Playing with header */
+
+
+:not(pre)>code[class*=language-], pre[class*=language-] {
+    background: var(--kanban-col-bg);
+}
+
+code[class*=language-], pre[class*=language-] {
+    text-shadow:0px 1px var(--secondary-background);
+}
+
+
+element.style {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+body hr {
+    margin: 20px 0;
+    border: 0;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+/* tippy overrides
+ */
+
+.tippy-content {
+    font-size:var(--font-size-s);
+    color: var(--secondary-action-hover-color);
+}
+
+.tippy-box {
+    background: var(--secondary-action-hover-bg);
+}
+
+.tippy-arrow {
+    color:var(--secondary-action-hover-bg);
+}
