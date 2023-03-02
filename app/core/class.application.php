@@ -16,6 +16,7 @@ class application
     private services\projects $projectService;
     private repositories\setting $settingsRepo;
     private services\reports $reportService;
+    private services\api $apiService;
 
     private IncomingRequest $incomingRequest;
 
@@ -66,12 +67,15 @@ class application
 
         events::discover_listeners();
 
+        /**
+         * The beginning of the application
+         *
+         * @param leantime\core\application $application The application object.
+         */
         self::dispatch_event("beginning", ['application' => $this]);
 
         //Filter to add additional public pages that don't require a login
         $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions);
-
-
 
         //Dispatch public controllers
         if (in_array(frontController::getCurrentRoute(), $this->publicActions)) {
@@ -165,7 +169,7 @@ class application
 
 
         foreach ($headers as $key => $value) {
-            header("${key}: ${value}");
+            header($key . ': ' . $value);
         }
     }
 

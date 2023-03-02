@@ -14,7 +14,9 @@ namespace leantime\domain\services {
         private $ticketRepository;
         private $projectService;
         private $timesheetsRepo;
-        private $language;
+        private core\language $language;
+        private core\template $tpl;
+        private repositories\setting $settingsRepo;
 
         public function __construct()
         {

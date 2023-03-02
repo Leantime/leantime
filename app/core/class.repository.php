@@ -3,6 +3,7 @@
 namespace leantime\core;
 
 use PDO;
+use PDOStatement;
 
 abstract class repository
 {
@@ -11,6 +12,9 @@ abstract class repository
     protected function dbcall(array $args)
     {
         return new class ($args, $this) {
+    
+            private PDOStatement $stmn;
+
             /**
              * @var array
              * @access private

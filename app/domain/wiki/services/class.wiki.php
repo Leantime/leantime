@@ -14,6 +14,8 @@ namespace leantime\domain\services {
         private $wikiRepository;
         private $ticketRepository;
         private $reportRepository;
+        private core\language $language;
+        private core\template $tpl;
 
         public function __construct()
         {

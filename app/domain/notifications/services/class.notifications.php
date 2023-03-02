@@ -10,6 +10,12 @@ namespace leantime\domain\services {
 
     class notifications
     {
+
+        private core\db $db;
+        private repositories\notifications $notificationsRepo;
+        private repositories\users $userRepository;
+        private core\language $language;
+
         /**
          * __construct - get database connection
          *

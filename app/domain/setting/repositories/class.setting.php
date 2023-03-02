@@ -7,7 +7,7 @@ namespace leantime\domain\repositories {
 
     class setting
     {
-        private $db;
+        private core\db $db;
 
         public $applications = array(
             'general' => 'General'

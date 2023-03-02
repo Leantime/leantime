@@ -11,6 +11,7 @@ namespace leantime\domain\services {
     class timesheets
     {
         private $timesheetsRepo;
+        private core\language $language;
 
 
         public function __construct()

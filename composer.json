@@ -14,6 +14,12 @@
             "email": "marcel@leantime.io"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/leantime/leantime-documentor.git"
+        }
+    ],
     "require": {
         "php": "^8.0",
         "ext-ldap": "*",
@@ -36,7 +42,8 @@
         "squizlabs/php_codesniffer": "^3.7",
         "codeception/codeception": "^5.0",
         "codeception/module-phpbrowser": "*",
-        "codeception/module-asserts": "*"
+        "codeception/module-asserts": "*",
+        "leantime/leantime-documentor": "dev-main"
     },
     "extra": {
         "installer-paths": {
