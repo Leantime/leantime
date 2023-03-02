@@ -6,12 +6,16 @@ namespace leantime\domain\services;
 
 use leantime\core\environment;
 use GuzzleHttp\Client;
+use leantime\core\frontcontroller;
+use leantime\domain\services;
 
 class oidc {
 
     private static ?self $instance = null;
 
     private environment $config;
+    private services\auth $authService;
+    private services\users $usersService;
 
     private string $providerUrl;
     private string $clientId;
@@ -37,6 +41,8 @@ class oidc {
         $this->providerUrl = $this->trimTrailingSlash($this->config->OidcProviderUrl);
         $this->clientId = $this->config->OidcClientId;
         $this->clientSecret = $this->config->OidcClientSecret;
+        $this->authService = services\auth::getInstance();
+        $this->usersService = new services\users();
     }
 
     private function trimTrailingSlash(string $str): string {
@@ -66,8 +72,45 @@ class oidc {
         $tokens = $this->requestTokens($code);
         $idToken = $this->decodeJWT($tokens['id_token']);
         if($idToken != null) {
-            //login / register
+            //echo '<pre>' . print_r($idToken, true) . '</pre>';
+            $this->login($idToken);
         }
+    }
+
+    private function login(array $idToken): void {
+        $userName = $idToken['preferred_username'];
+        $user = $this->authService->authRepo->getUserByEmail($userName);
+        $addUser = false;
+        if($user === false) {
+            $addUser = true;
+            $user = [
+                'id' => 0,
+                'user' => $userName,
+                'role' => 5,
+                'phone' => '',
+                'pwReset' => '',
+                'clientId' => 0,
+                'password' => '',
+                'status' => 'A'
+            ];
+        } else {
+            $user = [];
+        }
+        $user['firstname'] = $idToken['given_name'];
+        $user['lastname'] = $idToken['family_name'];
+
+        if($addUser) {
+            $this->usersService->addUser($user);
+            $user = $this->authService->authRepo->getUserByEmail($userName);
+        } else {
+            echo '<pre>';
+            var_dump($user);
+            echo '</pre>';
+            $this->usersService->editUser($user, $user['id']);
+        }
+
+        $this->authService->setUserSession($user);
+        frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
     private function requestTokens(string $code) {
@@ -81,7 +124,6 @@ class oidc {
                 'client_secret' => $this->clientSecret
             ]
         ]);
-        echo '<pre>' . print_r($code, true) . '</pre>';
         return json_decode($response->getBody()->getContents(), true);
     }
 
