@@ -33,10 +33,10 @@
         <div class="">
             <input type="submit" name="login" value="<?php echo $this->language->__("buttons.login"); ?>" class="btn btn-primary"/>
         </div>
-        <?php if($this->get('oidcUrl')) { ?>
+        <?php if($this->get('oidcEnabled')) { ?>
             <?php $this->dispatchTplEvent('beforeOidcButton'); ?>
             <div class="">
-                <a href="<?php echo htmlentities($this->get('oidcUrl')); ?>" class="btn btn-primary">
+                <a href="<?=BASE_URL ?>/oidc/login" class="btn btn-primary">
                     <?php echo $this->language->__("buttons.oidclogin"); ?>
                 </a>
             </div>
