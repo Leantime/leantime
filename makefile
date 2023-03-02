@@ -1,5 +1,7 @@
 VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
 TARGET_DIR:= ./target/leantime
+DOCS_DIR:= ./builddocs
+DOCS_REPO:= git@github.com:Leantime/docs.git
 install-deps:
 	npm install
 	composer install --no-dev --optimize-autoloader
@@ -49,8 +51,32 @@ build: install-deps build-js
 	#removing js directories
 	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
-        #removing uncompiled js files
+	#removing uncompiled js files
 	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
+
+gendocs: # Requires github CLI (brew install gh)
+	# Delete the temporary docs directory if exists
+	rm -rf $(DOCS_DIR)
+
+	# Make a temporary directory for docs
+	mkdir -p $(DOCS_DIR)
+
+	# Clone the docs
+	git clone $(DOCS_REPO) $(DOCS_DIR)
+
+	# Generate the docs
+	phpDocumentor
+	vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
+
+	# create pull request
+	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)
+	cd $(DOCS_DIR) && git add -A
+	cd $(DOCS_DIR) && git commit -m "Generated docs release $(VERSION)
+	cd $(DOCS_DIR) && git push --set-upstream origin "release/$(VERSION)
+	cd $(DOCS_DIR) && gh pr create --title "release/$(VERSION) --body ""
+
+	# Delete the temporary docs directory
+	rm -rf $(DOCS_DIR)
 
 package:
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
@@ -59,7 +85,7 @@ package:
 clean:
 	rm -rf $(TARGET_DIR)
 
-run-dev: 
+run-dev:
 	cd .dev && docker-compose up --build --remove-orphans
 
 .PHONY: install-deps build-js build package clean run-dev
