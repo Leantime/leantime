@@ -20,6 +20,7 @@ class oidc {
     private bool $configLoaded = false;
     private string $authUrl;
     private string $tokenUrl;
+    private string $jwksUrl;
 
     public static function getInstance($sessionid = ""): static
         {
@@ -63,10 +64,10 @@ class oidc {
 
     public function callback(string $code) {
         $tokens = $this->requestTokens($code);
-        $accessToken = $this->decodeJWT($tokens['access_token']);
-        echo '<pre>' . print_r($accessToken, true) . '</pre>';
         $idToken = $this->decodeJWT($tokens['id_token']);
-        echo '<pre>' . print_r($idToken, true) . '</pre>';
+        if($idToken != null) {
+            //login / register
+        }
     }
 
     private function requestTokens(string $code) {
@@ -93,7 +94,38 @@ class oidc {
             return null;
         }
 
-        return $tokenData;
+        $key = $this->getPublicKey();
+
+        if($key === false) {
+            return null;
+        }
+
+        $data = $header . '.' . $content;
+
+        if(openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
+            return $tokenData;
+        }
+        return null;
+    }
+
+    private function getAlgorythm(string $header): int {
+        $algorythmName = json_decode($this->decodeBase64Url($header), true)['alg'];
+        $map = [
+            'RS256' => OPENSSL_ALGO_SHA256
+        ];
+        return $map[$algorythmName];
+    }
+
+    private function getPublicKey(): \OpenSSLAsymmetricKey|false {
+        $httpClient = new Client();
+        $response = $httpClient->get($this->getJwksUrl());
+        $keys = json_decode($response->getBody()->getContents(), true)['keys'];
+        return openssl_pkey_get_public('-----BEGIN CERTIFICATE-----' . PHP_EOL . implode(PHP_EOL, str_split($keys[0]['x5c'][0], 64)) . PHP_EOL . '-----END CERTIFICATE-----');
+    }
+
+    private function getJwksUrl(): string {
+        $this->loadEndpoints();
+        return $this->jwksUrl;
     }
 
     private function getTokenUrl(): string {
@@ -110,6 +142,7 @@ class oidc {
         $endpoints = json_decode($response->getBody()->getContents(), true);
         $this->authUrl = $endpoints['authorization_endpoint'];
         $this->tokenUrl = $endpoints['token_endpoint'];
+        $this->jwksUrl = $endpoints['jwks_uri'];
     }
 
     private function buildRedirectUrl(): string {
