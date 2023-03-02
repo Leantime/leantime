@@ -12,11 +12,11 @@ namespace leantime\domain\controllers {
     class newProject extends controller
     {
         private repositories\projects $projectRepo;
-        private $menuRepo;
-        private $userRepo;
-        private $clientsRepo;
-        private $queueRepo;
-        private $projectService;
+        private repositories\menu $menuRepo;
+        private repositories\users $userRepo;
+        private repositories\clients $clientsRepo;
+        private repositories\queue $queueRepo;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
@@ -85,7 +85,7 @@ namespace leantime\domain\controllers {
                     'clientId' => $_POST['clientId'],
                     'hourBudget' => $hourBudget,
                     'assignedUsers' => $assignedUsers,
-                    'dollarBudget' => $_POST['dollarBudget'],
+                    'dollarBudget' => $_POST['dollarBudget'] ?? 0,
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
                     'menuType' => $_POST['menuType']

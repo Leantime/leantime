@@ -9,6 +9,7 @@ namespace leantime\domain\repositories {
     {
 
         private core\db $db;
+        private users $users;
         
         public function __construct()
         {

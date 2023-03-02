@@ -12,6 +12,10 @@ namespace leantime\domain\controllers {
 
     class articleDialog extends controller
     {
+
+        private services\wiki $wikiService;
+        private services\tickets $ticketService;
+
         public function init()
         {
 

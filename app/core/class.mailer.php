@@ -52,6 +52,10 @@ namespace leantime\core {
         private $emailDomain;
         private $language;
 
+        private string $logo;
+        private string $companyColor;
+        private string $html;
+
         /**
          * __construct - get configurations
          *
@@ -181,7 +185,7 @@ namespace leantime\core {
             $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
         }
 
-        private function dispatchMailerFilter($hookname, $payload, $additional_params)
+        private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
         {
             return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
         }
