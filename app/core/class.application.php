@@ -67,12 +67,15 @@ class application
 
         events::discover_listeners();
 
+        /**
+         * The beginning of the application
+         *
+         * @param leantime\core\application $application The application object.
+         */
         self::dispatch_event("beginning", ['application' => $this]);
 
         //Filter to add additional public pages that don't require a login
         $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions);
-
-
 
         //Dispatch public controllers
         if (in_array(frontController::getCurrentRoute(), $this->publicActions)) {
