@@ -186,7 +186,7 @@ namespace leantime\domain\repositories {
          * @param  $password
          * @return bool
          */
-        public function getUserByLogin($username, $password): array|bool
+        public function getUserByLogin($username, $password): array|false
         {
 
             $user = $this->userRepo->getUserByEmail($username);
@@ -196,6 +196,10 @@ namespace leantime\domain\repositories {
             }
 
             return false;
+        }
+
+        public function getUserByEmail($username): array|false {
+            return $this->userRepo->getUserByEmail($username);
         }
 
         /**
