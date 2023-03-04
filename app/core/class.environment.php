@@ -76,10 +76,13 @@ class environment
     public string $ldapLtGroupAssignments;
     public string $ldapDefaultRoleKey;
 
-    public bool $OidcEnable;
-    public string $OidcProviderUrl;
-    public string $OidcClientId;
-    public string $OidcClientSecret;
+    public bool $oidcEnable;
+    public string $oidcProviderUrl;
+    public string $oidcClientId;
+    public string $oidcClientSecret;
+    public string $oidcAuthUrl;
+    public string $oidcTokenUrl;
+    public string $oidcJwksUrl;
 
     private function __construct()
     {
@@ -164,11 +167,16 @@ class environment
         }
 
         /* OIDC */
-        $this->OidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
-        if($this->OidcEnable) {
-            $this->OidcProviderUrl = $this->getString('LEAN_OIDC_PROVIDER_URL', '');
-            $this->OidcClientId = $this->getString('LEAN_OIDC_CLIEND_ID', '');
-            $this->OidcClientSecret = $this->getString('LEAN_OIDC_CLIEND_SECRET', '');
+        $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
+        if($this->oidcEnable) {
+            $this->oidcProviderUrl = $this->getString('LEAN_OIDC_PROVIDER_URL', '');
+            $this->oidcClientId = $this->getString('LEAN_OIDC_CLIEND_ID', '');
+            $this->oidcClientSecret = $this->getString('LEAN_OIDC_CLIEND_SECRET', '');
+
+            //These are optional and will override the well-known configuration
+            $this->oidcAuthUrl = $this->getString('LEAN_OIDC_AUTH_URL_OVERRIDE', '');
+            $this->oidcTokenUrl = $this->getString('LEAN_OIDC_TOKEN_URL_OVERRIDE', '');
+            $this->oidcJwksUrl = $this->getString('LEAN_OIDC_JWKS_URL_OVERRIDE', '');
         }
     }
 

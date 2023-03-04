@@ -39,9 +39,14 @@ class oidc {
 
     public function __construct() {
         $this->config = environment::getInstance();
-        $this->providerUrl = $this->trimTrailingSlash($this->config->OidcProviderUrl);
-        $this->clientId = $this->config->OidcClientId;
-        $this->clientSecret = $this->config->OidcClientSecret;
+        $this->providerUrl = $this->trimTrailingSlash($this->config->oidcProviderUrl);
+        $this->clientId = $this->config->oidcClientId;
+        $this->clientSecret = $this->config->oidcClientSecret;
+        $this->authUrl = $this->config->oidcAuthUrl;
+        $this->tokenUrl = $this->config->oidcTokenUrl;
+        $this->jwksUrl = $this->config->oidcJwksUrl;
+
+
         $this->authService = services\auth::getInstance();
         $this->userRepo = new repositories\users();
     }
@@ -121,7 +126,7 @@ class oidc {
     }
 
     private function getUserRole(array $idToken, array $user = []): string {
-        return $user['role'] ?? '';
+        return $user['role'] ?? 'reader';
     }
 
     private function requestTokens(string $code) {
@@ -193,9 +198,20 @@ class oidc {
         $httpClient = new Client();
         $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
         $endpoints = json_decode($response->getBody()->getContents(), true);
-        $this->authUrl = $endpoints['authorization_endpoint'];
-        $this->tokenUrl = $endpoints['token_endpoint'];
-        $this->jwksUrl = $endpoints['jwks_uri'];
+
+        //load all not yet defined endpoints from well-known configuration
+
+        if(!$this->authUrl) {
+            $this->authUrl = $endpoints['authorization_endpoint'];
+        }
+
+        if(!$this->tokenUrl) {
+            $this->tokenUrl = $endpoints['token_endpoint'];
+        }
+
+        if(!$this->jwksUrl) {
+            $this->jwksUrl = $endpoints['jwks_uri'];
+        }
     }
 
     private function buildRedirectUrl(): string {
