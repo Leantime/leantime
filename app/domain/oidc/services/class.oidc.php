@@ -8,6 +8,7 @@ use leantime\core\environment;
 use GuzzleHttp\Client;
 use leantime\core\frontcontroller;
 use leantime\domain\services;
+use leantime\domain\repositories;
 
 class oidc {
 
@@ -15,7 +16,7 @@ class oidc {
 
     private environment $config;
     private services\auth $authService;
-    private services\users $usersService;
+    public repositories\users $userRepo;
 
     private string $providerUrl;
     private string $clientId;
@@ -42,7 +43,7 @@ class oidc {
         $this->clientId = $this->config->OidcClientId;
         $this->clientSecret = $this->config->OidcClientSecret;
         $this->authService = services\auth::getInstance();
-        $this->usersService = new services\users();
+        $this->userRepo = new repositories\users();
     }
 
     private function trimTrailingSlash(string $str): string {
@@ -72,45 +73,55 @@ class oidc {
         $tokens = $this->requestTokens($code);
         $idToken = $this->decodeJWT($tokens['id_token']);
         if($idToken != null) {
-            //echo '<pre>' . print_r($idToken, true) . '</pre>';
             $this->login($idToken);
+        } else {
+            //TODO: invalid token
         }
     }
 
     private function login(array $idToken): void {
-        $userName = $idToken['preferred_username'];
-        $user = $this->authService->authRepo->getUserByEmail($userName);
-        $addUser = false;
+        // echo '<pre>' . print_r($idToken, true) . '</pre>';
+        // return;
+        $userName = $idToken['email'];
+        $user = $this->userRepo->getUserByEmail($userName);
+
         if($user === false) {
-            $addUser = true;
-            $user = [
-                'id' => 0,
-                'user' => $userName,
-                'role' => 5,
+            //create user if it doesn't exist yet
+            $userArray = [
+                'firstname' => $idToken['given_name'],
+                'lastname' => $idToken['family_name'],
                 'phone' => '',
-                'pwReset' => '',
-                'clientId' => 0,
+                'user' => $userName,
+                'role' => $this->getUserRole($idToken),
                 'password' => '',
-                'status' => 'A'
+                'clientId' => '',
+                'source' => 'oidc',
+                'status' => 'a'
             ];
-        } else {
-            $user = [];
-        }
-        $user['firstname'] = $idToken['given_name'];
-        $user['lastname'] = $idToken['family_name'];
+            $userId = $this->userRepo->addUser($userArray);
 
-        if($addUser) {
-            $this->usersService->addUser($user);
-            $user = $this->authService->authRepo->getUserByEmail($userName);
+            if ($userId !== false) {
+                $user = $this->userRepo->getUserByEmail($userName);
+            } else {
+                error_log("OIDC user creation failed.");
+                return;
+            }
         } else {
-            echo '<pre>';
-            var_dump($user);
-            echo '</pre>';
-            $this->usersService->editUser($user, $user['id']);
+            //update user if it exists
+            $user['firstname'] = $idToken['given_name'];
+            $user['lastname'] = $idToken['family_name'];
+            $user['role'] = $this->getUserRole($idToken, $user);
+
+            $this->userRepo->editUser($user, $user['id']);
         }
 
-        $this->authService->setUserSession($user);
+        $this->authService->setUserSession($user, false);
+
         frontcontroller::redirect(BASE_URL . "/dashboard/home");
+    }
+
+    private function getUserRole(array $idToken, array $user = []): string {
+        return $user['role'] ?? '';
     }
 
     private function requestTokens(string $code) {
