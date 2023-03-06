@@ -7,6 +7,7 @@ namespace leantime\domain\services;
 use leantime\core\environment;
 use GuzzleHttp\Client;
 use leantime\core\frontcontroller;
+use leantime\core\language;
 use leantime\domain\services;
 use leantime\domain\repositories;
 
@@ -27,6 +28,8 @@ class oidc {
     private string $tokenUrl;
     private string $jwksUrl;
 
+    private language $language;
+
     public static function getInstance($sessionid = ""): static
         {
 
@@ -39,6 +42,7 @@ class oidc {
 
     public function __construct() {
         $this->config = environment::getInstance();
+        $this->language = language::getInstance();
         $this->providerUrl = $this->trimTrailingSlash($this->config->oidcProviderUrl);
         $this->clientId = $this->config->oidcClientId;
         $this->clientSecret = $this->config->oidcClientSecret;
@@ -80,6 +84,7 @@ class oidc {
         if($idToken != null) {
             $this->login($idToken);
         } else {
+            $this->displayError('oidc.error.invalidToken');
             //TODO: invalid token
         }
     }
@@ -94,7 +99,7 @@ class oidc {
             //create user if it doesn't exist yet
             $userArray = [
                 'firstname' => $idToken['given_name'],
-                'lastname' => $idToken['family_name'],
+                'lastname' => $idToken['family_name'] ?? '',
                 'phone' => '',
                 'user' => $userName,
                 'role' => $this->getUserRole($idToken),
@@ -114,7 +119,7 @@ class oidc {
         } else {
             //update user if it exists
             $user['firstname'] = $idToken['given_name'];
-            $user['lastname'] = $idToken['family_name'];
+            $user['lastname'] = $idToken['family_name'] ?? '';
             $user['role'] = $this->getUserRole($idToken, $user);
 
             $this->userRepo->editUser($user, $user['id']);
@@ -149,10 +154,13 @@ class oidc {
         $tokenData = json_decode($this->decodeBase64Url($content), true);
 
         if($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
-            return null;
+            $this->displayError('oidc.error.providerMismatch', $tokenData['iss'], $this->providerUrl);
         }
 
-        $key = $this->getPublicKey();
+        $headerData = json_decode($this->decodeBase64Url($header), true);
+
+
+        $key = $this->getPublicKey($headerData['kid']);
 
         if($key === false) {
             return null;
@@ -168,17 +176,52 @@ class oidc {
 
     private function getAlgorythm(string $header): int {
         $algorythmName = json_decode($this->decodeBase64Url($header), true)['alg'];
+
         $map = [
             'RS256' => OPENSSL_ALGO_SHA256
         ];
+
+        if(!isset($map[$algorythmName])) {
+            $this->displayError("oidc.error.unsupportedAlgorythm", $algorythmName);
+        }
+
+        
         return $map[$algorythmName];
     }
 
-    private function getPublicKey(): \OpenSSLAsymmetricKey|false {
+    private function getPublicKey(string $kid): \OpenSSLAsymmetricKey {
         $httpClient = new Client();
         $response = $httpClient->get($this->getJwksUrl());
-        $keys = json_decode($response->getBody()->getContents(), true)['keys'];
-        return openssl_pkey_get_public('-----BEGIN CERTIFICATE-----' . PHP_EOL . implode(PHP_EOL, str_split($keys[0]['x5c'][0], 64)) . PHP_EOL . '-----END CERTIFICATE-----');
+        $keys = json_decode($response->getBody()->getContents(), true);
+        if(isset($keys['keys'])) {
+            $keys = $keys['keys'];
+        }
+
+        foreach($keys as $possibleKid => $key) {
+            $keySource = '';
+
+            if(is_string($possibleKid)) {
+                //old format like https://www.googleapis.com/oauth2/v1/certs
+                if($possibleKid == $kid) {
+                    $keySource = $key;
+                }
+            }
+            else if(!isset($kid[0]) || $kid == $key['kid']) {
+                $keySource = '';
+                if(isset($key['x5c'])) {
+                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split( $key['x5c'][0], 64, PHP_EOL) . PHP_EOL . '-----END CERTIFICATE-----';
+                }
+                else if(isset($key['n'])) {
+                    $this->displayError('oidc.error.unsupportedKeyFormat');
+                }
+            }
+
+            if($keySource) {
+                return openssl_pkey_get_public($keySource);
+            }
+        }
+
+        return false;
     }
 
     private function getJwksUrl(): string {
@@ -192,9 +235,17 @@ class oidc {
     }
 
     private function loadEndpoints(): void {
+
+        
         if($this->configLoaded) {
             return;
         }
+
+        if($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
+            $this->configLoaded = true;
+            return;
+        }
+
         $httpClient = new Client();
         $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
         $endpoints = json_decode($response->getBody()->getContents(), true);
@@ -233,5 +284,9 @@ class oidc {
 
     private function decodeBase64Url(string $value): string {
         return base64_decode(strtr($value, '-_', '+/'));
+    }
+
+    private function displayError(string $translationKey, string ...$values): void {
+        die(sprintf($this->language->__($translationKey), ...$values));
     }
 }
