@@ -48,9 +48,7 @@ namespace leantime\domain\controllers {
             }
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
 
-            if($this->config->OidcEnable) {
-                $this->tpl->assign('oidcEnabled', $this->config->OidcEnable);
-            }
+            $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
 
             $this->tpl->display('auth.login', 'entry');
         }
