@@ -6,6 +6,7 @@ namespace leantime\domain\services;
 
 use leantime\core\environment;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use leantime\core\frontcontroller;
 use leantime\core\language;
 use leantime\domain\services;
@@ -27,6 +28,7 @@ class oidc {
     private string $authUrl;
     private string $tokenUrl;
     private string $jwksUrl;
+    private string $userInfoUrl;
 
     private language $language;
 
@@ -49,6 +51,7 @@ class oidc {
         $this->authUrl = $this->config->oidcAuthUrl;
         $this->tokenUrl = $this->config->oidcTokenUrl;
         $this->jwksUrl = $this->config->oidcJwksUrl;
+        $this->userInfoUrl = $this->config->oidcUserInfoUrl;
 
 
         $this->authService = services\auth::getInstance();
@@ -80,29 +83,55 @@ class oidc {
 
     public function callback(string $code) {
         $tokens = $this->requestTokens($code);
-        $idToken = $this->decodeJWT($tokens['id_token']);
-        if($idToken != null) {
-            $this->login($idToken);
+
+        $userInfo = null;
+        echo '<pre>' . print_r($tokens, true) . '</pre>';
+        if(isset($tokens['id_token'])) {
+            $userInfo = $this->decodeJWT($tokens['id_token']);
+        } else if (isset($tokens['access_token'])) {
+            //falback to OAuth userinfo endpoint
+            $userInfo = $this->pollUserInfo($tokens['access_token']);
+
+            echo '<pre>' . print_r($userInfo, true) . '</pre>';
+            die();
+        } else {
+            $this->displayError("oidc.error.unsupportedToken");
+        }
+        
+        if($userInfo != null) {
+            $this->login($userInfo);
         } else {
             $this->displayError('oidc.error.invalidToken');
             //TODO: invalid token
         }
     }
 
-    private function login(array $idToken): void {
+    private function pollUserInfo(string $token): array {
+        $httpClient = new Client();
+        $response = $httpClient->get($this->userInfoUrl,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    private function login(array $userInfo): void {
         // echo '<pre>' . print_r($idToken, true) . '</pre>';
         // return;
-        $userName = $idToken['email'];
+        $userName = $userInfo['email'];
         $user = $this->userRepo->getUserByEmail($userName);
 
         if($user === false) {
             //create user if it doesn't exist yet
             $userArray = [
-                'firstname' => $idToken['given_name'],
-                'lastname' => $idToken['family_name'] ?? '',
+                'firstname' => $userInfo['given_name'],
+                'lastname' => $userInfo['family_name'] ?? '',
                 'phone' => '',
                 'user' => $userName,
-                'role' => $this->getUserRole($idToken),
+                'role' => $this->getUserRole($userInfo),
                 'password' => '',
                 'clientId' => '',
                 'source' => 'oidc',
@@ -118,9 +147,9 @@ class oidc {
             }
         } else {
             //update user if it exists
-            $user['firstname'] = $idToken['given_name'];
-            $user['lastname'] = $idToken['family_name'] ?? '';
-            $user['role'] = $this->getUserRole($idToken, $user);
+            $user['firstname'] = $userInfo['given_name'];
+            $user['lastname'] = $userInfo['family_name'] ?? '';
+            $user['role'] = $this->getUserRole($userInfo, $user);
 
             $this->userRepo->editUser($user, $user['id']);
         }
@@ -130,11 +159,11 @@ class oidc {
         frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
-    private function getUserRole(array $idToken, array $user = []): string {
+    private function getUserRole(array $userInfo, array $user = []): string {
         return $user['role'] ?? 'reader';
     }
 
-    private function requestTokens(string $code) {
+    private function requestTokens(string $code): array {
         $httpClient = new Client();
         $response = $httpClient->post($this->getTokenUrl(), [
             'form_params' => [
@@ -145,13 +174,27 @@ class oidc {
                 'client_secret' => $this->clientSecret
             ]
         ]);
-        return json_decode($response->getBody()->getContents(), true);
+        $contentType = $response->getHeaders()['Content-Type'][0];
+        switch($contentType) {
+            case 'application/x-www-form-urlencoded; charset=utf-8':
+            case 'application/x-www-form-urlencoded':
+                $result = [];
+                parse_str($response->getBody()->getContents(), $result);
+                return $result;
+
+            case 'application/json':
+                return json_decode($response->getBody()->getContents(), true);
+        }
+        
     }
 
     private function decodeJWT(string $jwt): array|null {
         list($header, $content, $signature) = explode('.', $jwt);
 
         $tokenData = json_decode($this->decodeBase64Url($content), true);
+
+        echo '<pre>' . print_r($tokenData, true) . '</pre>';
+        die();
 
         if($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
             $this->displayError('oidc.error.providerMismatch', $tokenData['iss'], $this->providerUrl);
@@ -262,6 +305,10 @@ class oidc {
 
         if(!$this->jwksUrl) {
             $this->jwksUrl = $endpoints['jwks_uri'];
+        }
+
+        if(!$this->userInfoUrl) {
+            $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
     }
 

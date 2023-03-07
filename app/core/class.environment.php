@@ -83,6 +83,7 @@ class environment
     public string $oidcAuthUrl;
     public string $oidcTokenUrl;
     public string $oidcJwksUrl;
+    public string $oidcUserInfoUrl;
 
     private function __construct()
     {
@@ -177,6 +178,7 @@ class environment
             $this->oidcAuthUrl = $this->getString('LEAN_OIDC_AUTH_URL_OVERRIDE', '');
             $this->oidcTokenUrl = $this->getString('LEAN_OIDC_TOKEN_URL_OVERRIDE', '');
             $this->oidcJwksUrl = $this->getString('LEAN_OIDC_JWKS_URL_OVERRIDE', '');
+            $this->oidcUserInfoUrl = $this->getString('LEAN_OIDC_USERINFO_URL_OVERRIDE', '');
         }
     }
 
