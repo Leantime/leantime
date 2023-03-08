@@ -30,6 +30,15 @@ class oidc {
     private string $jwksUrl;
     private string $userInfoUrl;
 
+    private string $certificateString;
+    private string $certificateFile;
+
+    private string $scopes;
+
+    private string $fieldEmail;
+    private string $fieldFirstName;
+    private string $fieldLastName;
+
     private language $language;
 
     public static function getInstance($sessionid = ""): static
@@ -52,6 +61,12 @@ class oidc {
         $this->tokenUrl = $this->config->oidcTokenUrl;
         $this->jwksUrl = $this->config->oidcJwksUrl;
         $this->userInfoUrl = $this->config->oidcUserInfoUrl;
+        $this->certificateString = $this->config->oidcCertificateString;
+        $this->certificateFile = $this->config->oidcCertificateFile;
+        $this->scopes = $this->config->oidcScopes;
+        $this->fieldEmail = $this->config->oidcFieldEmail;
+        $this->fieldFirstName = $this->config->oidcFieldFirstName;
+        $this->fieldLastName = $this->config->oidcFieldLastName;
 
 
         $this->authService = services\auth::getInstance();
@@ -71,7 +86,7 @@ class oidc {
             'client_id' => $this->clientId,
             'redirect_uri' => $this->buildRedirectUrl(),
             'response_type' => 'code',
-            'scope' => 'openid profile email',
+            'scope' => $this->scopes,
             'state' => $this->generateState()
         ]);
     }
@@ -81,11 +96,15 @@ class oidc {
         return $this->authUrl;
     }
 
-    public function callback(string $code) {
+    public function callback(string $code, string $state) {
+        if(!$this->verifyState($state)) {
+            $this->displayError('oidc.error.invalidState');
+        }
+
         $tokens = $this->requestTokens($code);
 
         $userInfo = null;
-        echo '<pre>' . print_r($tokens, true) . '</pre>';
+        //echo '<pre>' . print_r($tokens, true) . '</pre>';
         if(isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
         } else if (isset($tokens['access_token'])) {
@@ -93,7 +112,6 @@ class oidc {
             $userInfo = $this->pollUserInfo($tokens['access_token']);
 
             echo '<pre>' . print_r($userInfo, true) . '</pre>';
-            die();
         } else {
             $this->displayError("oidc.error.unsupportedToken");
         }
@@ -121,14 +139,19 @@ class oidc {
     private function login(array $userInfo): void {
         // echo '<pre>' . print_r($idToken, true) . '</pre>';
         // return;
-        $userName = $userInfo['email'];
+        $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
+
+        if(!$userName) {
+            $this->displayError('oidc.error.emailUnavailable');
+        }
+
         $user = $this->userRepo->getUserByEmail($userName);
 
         if($user === false) {
             //create user if it doesn't exist yet
             $userArray = [
-                'firstname' => $userInfo['given_name'],
-                'lastname' => $userInfo['family_name'] ?? '',
+                'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
+                'lastname' => $this->readMultilayerKey($userInfo, $this->fieldLastName),
                 'phone' => '',
                 'user' => $userName,
                 'role' => $this->getUserRole($userInfo),
@@ -147,8 +170,8 @@ class oidc {
             }
         } else {
             //update user if it exists
-            $user['firstname'] = $userInfo['given_name'];
-            $user['lastname'] = $userInfo['family_name'] ?? '';
+            $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName);
+            $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName);
             $user['role'] = $this->getUserRole($userInfo, $user);
 
             $this->userRepo->editUser($user, $user['id']);
@@ -186,6 +209,18 @@ class oidc {
                 return json_decode($response->getBody()->getContents(), true);
         }
         
+    }
+
+    private function readMultilayerKey(array $topic, string $key): string {
+        $keyList = explode('.', $key);
+        $layer = $topic;
+        foreach($keyList as $layerKey) {
+            if(!isset($layer[$layerKey])) {
+                return '';
+            }
+            $layer = $layer[$layerKey];
+        }
+        return $layer;
     }
 
     private function decodeJWT(string $jwt): array|null {
@@ -233,6 +268,15 @@ class oidc {
     }
 
     private function getPublicKey(string $kid): \OpenSSLAsymmetricKey {
+        if($this->certificateString) {
+            return openssl_pkey_get_public($this->certificateString);
+        }
+        if($this->certificateFile) {
+            return openssl_pkey_get_public(file_get_contents($this->certificateFile));
+        }
+
+
+
         $httpClient = new Client();
         $response = $httpClient->get($this->getJwksUrl());
         $keys = json_decode($response->getBody()->getContents(), true);

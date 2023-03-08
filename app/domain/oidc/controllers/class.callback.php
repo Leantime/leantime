@@ -18,8 +18,9 @@ class callback extends controller {
     public function get($params)
     {
         $code = $_GET['code'];
+        $state = $_GET['state'];
         try {
-            $this->oidc->callback($code);
+            $this->oidc->callback($code, $state);
         } catch(Exception $ex) {
             echo '<pre>';
             echo $ex->getMessage();

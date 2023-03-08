@@ -84,6 +84,12 @@ class environment
     public string $oidcTokenUrl;
     public string $oidcJwksUrl;
     public string $oidcUserInfoUrl;
+    public string $oidcCertificateString;
+    public string $oidcCertificateFile;
+    public string $oidcScopes;
+    public string $oidcFieldEmail;
+    public string $oidcFieldFirstName;
+    public string $oidcFieldLastName;
 
     private function __construct()
     {
@@ -179,6 +185,12 @@ class environment
             $this->oidcTokenUrl = $this->getString('LEAN_OIDC_TOKEN_URL_OVERRIDE', '');
             $this->oidcJwksUrl = $this->getString('LEAN_OIDC_JWKS_URL_OVERRIDE', '');
             $this->oidcUserInfoUrl = $this->getString('LEAN_OIDC_USERINFO_URL_OVERRIDE', '');
+            $this->oidcCertificateString = $this->getString('LEAN_OIDC_CERTIFICATE_STRING', '');
+            $this->oidcCertificateFile = $this->getString('LEAN_OIDC_CERTIFICATE_FILE', '');
+            $this->oidcScopes = $this->getString('LEAN_OIDC_SCOPES', 'openid profile email');
+            $this->oidcFieldEmail = $this->getString('LEAN_OIDC_FIELD_EMAIL', 'email');
+            $this->oidcFieldFirstName = $this->getString('LEAN_OIDC_FIELD_FIRSTNAME', 'given_name');
+            $this->oidcFieldLastName = $this->getString('LEAN_OIDC_FIELD_LASTNAME', 'family_name');
         }
     }
 
