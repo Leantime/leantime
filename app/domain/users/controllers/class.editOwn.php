@@ -10,6 +10,13 @@ namespace leantime\domain\controllers {
     class editOwn extends controller
     {
         private $userId;
+
+        private \leantime\domain\services\setting $settingsService;
+        private repositories\users $userRepo;
+        private \leantime\domain\repositories\setting $settingsRepo;
+        private \leantime\core\theme $themeCore;
+        private \leantime\domain\services\users $userService;
+
         /**
          * init - initialize private variables
          *
