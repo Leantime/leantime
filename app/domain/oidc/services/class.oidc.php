@@ -110,8 +110,6 @@ class oidc {
         } else if (isset($tokens['access_token'])) {
             //falback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
-
-            echo '<pre>' . print_r($userInfo, true) . '</pre>';
         } else {
             $this->displayError("oidc.error.unsupportedToken");
         }
@@ -125,15 +123,7 @@ class oidc {
     }
 
     private function pollUserInfo(string $token): array {
-        $httpClient = new Client();
-        $response = $httpClient->get($this->userInfoUrl,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $token
-                ]
-            ]
-        );
-        return json_decode($response->getBody()->getContents(), true);
+        return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
     private function login(array $userInfo): void {
@@ -146,6 +136,7 @@ class oidc {
         }
 
         $user = $this->userRepo->getUserByEmail($userName);
+
 
         if($user === false) {
             //create user if it doesn't exist yet
@@ -170,6 +161,7 @@ class oidc {
             }
         } else {
             //update user if it exists
+            $user['user'] = $user['username'];
             $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName);
             $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName);
             $user['role'] = $this->getUserRole($userInfo, $user);
@@ -228,7 +220,6 @@ class oidc {
 
         $tokenData = json_decode($this->decodeBase64Url($content), true);
 
-        echo '<pre>' . print_r($tokenData, true) . '</pre>';
         die();
 
         if($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
@@ -354,6 +345,30 @@ class oidc {
         if(!$this->userInfoUrl) {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
+    }
+
+    private function getMultiUrl(string $urls, string $token = ''): array {
+        $urlList = explode(',', $urls);
+        $httpClient = new Client();
+        $combinedArray = [];
+
+        $options = [];
+        if($token) {
+            $options = [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ];
+        }
+
+        foreach ($urlList as $url) {
+            $response = $httpClient->get($url, $options);
+            $urlData = json_decode($response->getBody()->getContents(), true);
+            if(is_array($urlData)) {
+                $combinedArray = array_merge_recursive($combinedArray, $urlData);
+            }
+        }
+        return $combinedArray;
     }
 
     private function buildRedirectUrl(): string {
