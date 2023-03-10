@@ -10,11 +10,11 @@ use leantime\domain\models\connector\provider;
  */
 
 //Create function for the event
-class addMockProvider {
+class addCSVImportProvider {
 
     public function handle($payload){
 
-        $provider = new \leantime\plugins\services\mockIntegrationProvider();
+        $provider = new \leantime\plugins\services\csvImport();
         $payload[$provider->id] = $provider;
 
         return $payload;
@@ -23,4 +23,4 @@ class addMockProvider {
 }
 
 //Register event listener
-\leantime\core\events::add_filter_listener("domain.connector.services.providers.loadProviders.providerList", new addMockProvider());
+\leantime\core\events::add_filter_listener("domain.connector.services.providers.loadProviders.providerList", new addCSVImportProvider());

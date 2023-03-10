@@ -1,6 +1,6 @@
 {
-    "name": "leantime/mockIntegrationProvider",
-    "description": "Mocks single integration provider",
+    "name": "leantime/csvImport",
+    "description": "CSV Importer",
     "version": "0.1",
     "screenshot": "/images/screenshot.png",
     "authors": [

@@ -1,7 +1,8 @@
 <?php
-    $providerEntities = $this->get("providerEntities");
+    $providerEntities = $this->get("providerFields");
     $provider = $this->get("provider");
-    $leantimeEntities = $this->get("leantimeEntities");
+    $leantimeEntities = $this->get("leantimeFields");
+    $numberOfFields = $this->get("maxFields");
 ?>
 
 <div class="pageheader">
@@ -20,7 +21,7 @@
 
         <?php echo $this->displayNotification(); ?>
 
-        <h3>Map Entity Here</h3>
+        <h3>Map and Convert Fields Entity Here</h3>
         <?=$provider->name ?><br />
 
         <p>What entities to you want to map</p>

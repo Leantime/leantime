@@ -670,6 +670,37 @@ namespace leantime\domain\repositories {
                   INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
                   INDEX `userId,read` (`userId` ASC, `read` DESC)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+                  CREATE TABLE `zp_entity_relationship` (
+                  `id` INT NOT NULL AUTO_INCREMENT,
+                  `enitityA` INT NULL,
+                  `entityAType` VARCHAR(45) NULL,
+                  `entityB` INT NULL,
+                  `entityBType` VARCHAR(45) NULL,
+                  `relationship` VARCHAR(45) NULL,
+                  `createdOn` DATETIME NULL,
+                  `createdBy` INT NULL,
+                  `meta` TEXT NULL,
+                  PRIMARY KEY (`id`),
+                  INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
+                  INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                  CREATE TABLE `zp_integration` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `providerId` VARCHAR(45) NULL,
+                      `method` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `fields` TEXT NULL,
+                      `schedule` VARCHAR(45) NULL,
+                      `notes` VARCHAR(45) NULL,
+                      `auth` TEXT NULL,
+                      `meta` VARCHAR(45) NULL,
+                      `createdOn` DATETIME NULL,
+                      `createdBy` INT NULL,
+                      PRIMARY KEY (`id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
             return $sql;
@@ -1207,7 +1238,6 @@ namespace leantime\domain\repositories {
             }
         }
 
-
         public function update_sql_20114(): bool|array
         {
 
@@ -1220,6 +1250,60 @@ namespace leantime\domain\repositories {
                 ADD COLUMN `end` DATETIME NULL,
                 ADD COLUMN `created` DATETIME NULL,
                 ADD COLUMN `modified` DATETIME NULL"
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20115(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                    " CREATE TABLE `zp_entity_relationship` (
+                        `id` INT NOT NULL AUTO_INCREMENT,
+                        `enitityA` INT NULL,
+                        `entityAType` VARCHAR(45) NULL,
+                        `entityB` INT NULL,
+                        `entityBType` VARCHAR(45) NULL,
+                        `relationship` VARCHAR(45) NULL,
+                        `createdOn` DATETIME NULL,
+                        `createdBy` INT NULL,
+                        `meta` TEXT NULL,
+                        PRIMARY KEY (`id`),
+                        INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
+                        INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ",
+                "CREATE TABLE `zp_integration` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `providerId` VARCHAR(45) NULL,
+                      `method` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `fields` TEXT NULL,
+                      `schedule` VARCHAR(45) NULL,
+                      `notes` VARCHAR(45) NULL,
+                      `auth` TEXT NULL,
+                      `meta` VARCHAR(45) NULL,
+                      `createdOn` DATETIME NULL,
+                      `createdBy` INT NULL,
+                      PRIMARY KEY (`id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
             ];
 
             foreach ($sql as $statement) {

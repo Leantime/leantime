@@ -15,9 +15,8 @@ namespace leantime\domain\controllers {
 
     class integration extends controller
     {
-
-
         private services\connector\providers $providerService;
+        private repositories\connector\leantimeEntities $leantimeEntities;
 
         /**
          * constructor - initialize private variables
@@ -30,7 +29,7 @@ namespace leantime\domain\controllers {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             $this->providerService = new services\connector\providers();
-
+            $this->leantimeEntities = new repositories\connector\leantimeEntities();
         }
 
         /**
@@ -43,62 +42,59 @@ namespace leantime\domain\controllers {
         {
 
 
-            if(isset($params["provider"])) {
+            if (isset($params["provider"])) {
             //New integration with provider
                 //Get the provider
                 $provider = $this->providerService->getProvider($params["provider"]);
                 $this->tpl->assign("provider", $provider);
 
                 //Initiate connection
-                if(isset($params["step"])  && $params["step"] == "connect") {
-
+                if (isset($params["step"])  && $params["step"] == "connect") {
                     //This should handle connection UI
                     $provider->connect();
-
-                    //Not sure if this is needed at all if connect handles the connection.
-                    //$this->tpl->display('connectors.integrationConnect');
                 }
 
                 //Choose Entities to sync
-                if(isset($params["step"])  && $params["step"] == "entity") {
-                    $provider->getEntities();
+                if (isset($params["step"])  && $params["step"] == "entity") {
+                    $this->tpl->assign("providerEntities", $provider->getEntities());
+                    $this->tpl->assign("leantimeEntities", $this->leantimeEntities->availableLeantimeEntities);
+
+
                     //TODO UI to show entity picker/mapper
                     $this->tpl->display('connector.integrationEntity');
                 }
 
                 //Choose fields to map
                 //Choose Entities to sync
-                if(isset($params["step"])  && $params["step"] == "fields") {
+                if (isset($params["step"])  && $params["step"] == "fields") {
                     $provider->getFields();
                     //TODO UI to show field picker/mapper
                     $this->tpl->display('connector.integrationFields');
                 }
 
-                if(isset($params["step"])  && $params["step"] == "sync"){
+                if (isset($params["step"])  && $params["step"] == "sync") {
                     //TODO UI to show sync schedule/options
+
                     $this->tpl->display('connector.integrationSync');
                 }
 
-                if(isset($params["step"])  && $params["step"] == "confirm"){
+                if (isset($params["step"])  && $params["step"] == "import") {
+                    //TODO UI to show sync schedule/options
+
+                    $this->tpl->display('connector.integrationSync');
+                }
+
+                if (isset($params["step"])  && $params["step"] == "confirm") {
                     //confirm and store in DB
                     $this->tpl->display('connector.integrationConfirm');
-
                 }
 
-                if(!isset($params["step"])) {
-
+                if (!isset($params["step"])) {
                     $this->tpl->display('connector.newIntegration');
-
                 }
-
-
-            }else if(isset($params["integration"])) {
+            } elseif (isset($params["integration"])) {
             //Edit existing integration
-
-
             }
-
-
         }
 
         /**
@@ -111,8 +107,6 @@ namespace leantime\domain\controllers {
         {
             $this->tpl->displayPartial('connectors.providers');
         }
-
-
     }
 
 }
