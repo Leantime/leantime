@@ -22,9 +22,7 @@ class callback extends controller {
         try {
             $this->oidc->callback($code, $state);
         } catch(Exception $ex) {
-            echo '<pre>';
-            echo $ex->getMessage();
-            echo $ex->getTraceAsString();
+            error_log($ex);
         }
     }
 
