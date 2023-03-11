@@ -68,6 +68,9 @@
 <script type="text/javascript">
 
     jQuery(function(){
+
+
+
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
         <?php } ?>

@@ -278,5 +278,6 @@
 
 <script>
     leantime.generalController.initComplexEditor();
+    
 </script>
 
