@@ -9,7 +9,14 @@ namespace leantime\domain\controllers {
 
     class editOwn extends controller
     {
-        private $userId;
+        private int $userId;
+        private \leantime\domain\services\users $userService;
+        private \leantime\core\theme $themeCore;
+        private \leantime\domain\repositories\setting $settingsRepo;
+        private repositories\users $userRepo;
+        private \leantime\domain\services\setting $settingsService;
+        protected core\language $language;
+
         /**
          * init - initialize private variables
          *
@@ -107,13 +114,13 @@ namespace leantime\domain\controllers {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                             if ($changedEmail == 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
-                                    $this->userRepo->editOwn($values, $this->userId);
+                                    $this->userService->editOwn($values, $this->userId);
                                     $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
                                 } else {
                                     $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                                 }
                             } else {
-                                $this->userRepo->editOwn($values, $this->userId);
+                                $this->userService->editOwn($values, $this->userId);
                                 $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
                             }
                         } else {
