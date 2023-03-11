@@ -41,13 +41,13 @@ namespace leantime\domain\controllers {
 
             $row = $this->userRepo->getUser($this->userId);
 
-            $userLang = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".language");
+            $userLang = $this->settingsService->getSetting("usersettings." . $this->userId . ".language");
 
             if ($userLang == false) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
-            $userTheme = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".theme");
+            $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
             //Build values array
             $values = array(
@@ -58,11 +58,11 @@ namespace leantime\domain\controllers {
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
-                'messagesfrequency' => $this->settingsRepo->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
+                'messagesfrequency' => $this->settingsService->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
             );
 
             if ($values['messagesfrequency'] == false) {
-                $values['messagesfrequency'] = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+                $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
