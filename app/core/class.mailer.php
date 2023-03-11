@@ -227,8 +227,8 @@ namespace leantime\core {
 
             $this->dispatchMailerEvent('beforeSendMail', []);
 
-            $to = $this->dispatchMailerFilter('sendMailTo', $to);
-            $from = $this->dispatchMailerFilter('sendMailFrom', $from);
+            $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
+            $from = $this->dispatchMailerFilter('sendMailFrom', $from, []);
 
             $this->mailAgent->isHTML(true); // Set email format to HTML
 
