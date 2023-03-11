@@ -5,6 +5,12 @@
     $module = '';
     $action = '';
 
+    $redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL);
+    //Don't redirect if redirect goes to showProject.
+    if(str_contains($redirectUrl, "showProject")) {
+        $redirectUrl = "/dashboard/show";
+    }
+
 if (is_array($currentLink)) {
     $module = $currentLink[0] ?? '';
     $action = $currentLink[1] ?? '';
@@ -46,7 +52,7 @@ if (is_array($currentLink)) {
                                     echo " active ";
                                 }
 
-                                $redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL);
+
                                 echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=".$redirectUrl."'>" . $this->escape($projectRow["name"]) . "</a></li>";
                             }
                         } else {
