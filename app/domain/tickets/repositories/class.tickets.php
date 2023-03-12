@@ -804,7 +804,7 @@ namespace leantime\domain\repositories {
 						zp_tickets.projectId = :projectId";
 
             if ($includeTasks === true) {
-                $query .= " AND zp_tickets.type <> 'subtasks' ";
+                $query .= "";
             } else {
                 $query .= " AND zp_tickets.type = 'milestone' ";
             }
