@@ -167,35 +167,36 @@ leantime.generalController = (function () {
                             });
                         }
 
-                        //Autosave content?
-                        if (editor.getContent() === '' && !editor.plugins.autosave.hasDraft()) {
-                            editor.setContent("<p id='tinyPlaceholder-"+editor.id+"'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+
+                        //&& !editor.plugins.autosave.hasDraft()
+                        if (editor.getContent() === '' ) {
+                            editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
+
 
                     });
 
                     //and remove it on focus
                     editor.on('focus',function () {
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
-                        if (placeholder) {
-                            placeholder.remove();
-                            editor.setContent("<p></p>");
+                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                        if (placeholder.length > 0) {
+
+                            while(placeholder[0]) {
+                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                            }
                         }
 
                     });
 
-                    editor.on("submit", function(e){
+                    editor.on("submit", function(){
 
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder-'+editor.id);
+                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                        if (placeholder.length > 0) {
 
-
-                        if (placeholder) {
-                            placeholder.remove();
-                            editor.save();
-
-
+                            while(placeholder[0]) {
+                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                            }
                         }
-
                     });
                 }
             }
@@ -311,9 +312,9 @@ leantime.generalController = (function () {
                             });
                         }
 
-
-                        if (editor.getContent() === '' && !editor.plugins.autosave.hasDraft()) {
-                            editor.setContent("<p id='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                        //&& !editor.plugins.autosave.hasDraft()
+                        if (editor.getContent() === '' ) {
+                            editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
                         }
 
                     });
@@ -321,22 +322,24 @@ leantime.generalController = (function () {
 
                     //and remove it on focus
                     editor.on('focus',function () {
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if (placeholder) {
-                            placeholder.remove();
-                            editor.setContent("<p></p>");
+                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                        if (placeholder.length > 0) {
+
+                            while(placeholder[0]) {
+                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                            }
                         }
 
                     });
 
-
-
                     editor.on("submit", function(){
 
-                        var placeholder = editor.getDoc().getElementById('tinyPlaceholder');
-                        if (placeholder) {
-                            placeholder.remove();
-                            editor.save();
+                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                        if (placeholder.length > 0) {
+
+                            while(placeholder[0]) {
+                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                            }
                         }
                     });
                 }

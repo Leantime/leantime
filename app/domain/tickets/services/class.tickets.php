@@ -772,6 +772,18 @@ namespace leantime\domain\services {
             return true;
         }
 
+        public function updateTicketSorting($params) {
+
+            //ticketId: sortIndex
+            foreach ($params as $id => $sortKey) {
+
+                if ($this->ticketRepository->patchTicket($id, ["sortIndex"=>$sortKey*100]) === false) {
+                    return false;
+                }
+
+            }
+        }
+
         public function updateTicketStatusAndSorting($params, $handler = null)
         {
 
