@@ -53,6 +53,7 @@ namespace leantime\domain\controllers {
                     if (isset($params["handler"]) == true) {
                         $handler = $params["handler"];
                     }
+
                     $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
                     if ($results === true) {
@@ -73,7 +74,6 @@ namespace leantime\domain\controllers {
                     }
 
                 }
-
 
             } else {
                 echo "{status:failure}";

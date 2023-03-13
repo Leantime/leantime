@@ -1116,8 +1116,13 @@ a .label-default:after, a .label-primary:after {
     color: var(--primary-font-color);
     margin-bottom: 5px;
 }
+
+.tab-primary.ui-tabs {
+    background:transparent;
+}
+
 .tab-primary.ui-tabs .ui-tabs-nav {
-    background:var(--secondary-background);
+    background:transparent;
     border-bottom-width: 1px;
     border-bottom-color: var(--main-border-color);
     border-bottom-style: solid;

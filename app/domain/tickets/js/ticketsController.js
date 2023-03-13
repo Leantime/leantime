@@ -4,7 +4,7 @@ leantime.ticketsController = (function () {
 
     var milestoneModalConfig = {
         sizes: {
-            minW: 800,
+            minW: 900,
             minH: 750
         },
         resizable: true,
@@ -31,7 +31,7 @@ leantime.ticketsController = (function () {
 
     var ticketModalConfig = {
         sizes: {
-            minW:  1200,
+            minW:  1600,
             minH: 1000
         },
         resizable: true,
@@ -49,7 +49,7 @@ leantime.ticketsController = (function () {
                 jQuery('textarea.complexEditor').tinymce().save();
                 jQuery('textarea.complexEditor').tinymce().remove();
                 leantime.generalController.initComplexEditor();
-                jQuery("#commentForm, .deleteComment, form.ticketModal").nyroModal(ticketModalConfig);
+                jQuery("#commentForm, .deleteComment, .ticketModal, .formModal").nyroModal(ticketModalConfig);
 
 
 
