@@ -47,11 +47,13 @@ namespace leantime\domain\controllers {
         {
 
             if (services\auth::userIsAtLeast(roles::$editor)) {
+
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {
                         $handler = $params["handler"];
                     }
+
                     $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
                     if ($results === true) {
@@ -59,9 +61,20 @@ namespace leantime\domain\controllers {
                     } else {
                         echo "{status:failure}";
                     }
-                } else {
-                    echo "{status:failure}";
                 }
+
+                if (isset($params['action']) && $params['action'] == "ganttSort") {
+
+                    $results = $this->ticketsApiService->updateTicketSorting($params["payload"]);
+
+                    if ($results === true) {
+                        echo "{status:ok}";
+                    } else {
+                        echo "{status:failure}";
+                    }
+
+                }
+
             } else {
                 echo "{status:failure}";
             }

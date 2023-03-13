@@ -4,7 +4,7 @@ leantime.ticketsController = (function () {
 
     var milestoneModalConfig = {
         sizes: {
-            minW: 800,
+            minW: 900,
             minH: 750
         },
         resizable: true,
@@ -31,7 +31,7 @@ leantime.ticketsController = (function () {
 
     var ticketModalConfig = {
         sizes: {
-            minW:  1200,
+            minW:  1600,
             minH: 1000
         },
         resizable: true,
@@ -43,15 +43,14 @@ leantime.ticketsController = (function () {
             },
             beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
-                console.log("jquery beforeShow?");
 
             },
             afterShowCont: function () {
                 jQuery('textarea.complexEditor').tinymce().save();
                 jQuery('textarea.complexEditor').tinymce().remove();
                 leantime.generalController.initComplexEditor();
-                jQuery("#commentForm, .deleteComment, form.ticketModal").nyroModal(ticketModalConfig);
-                console.log("jquery afterShow?");
+                jQuery("#commentForm, .deleteComment, .ticketModal, .formModal").nyroModal(ticketModalConfig);
+
 
 
             },
@@ -195,6 +194,27 @@ leantime.ticketsController = (function () {
                                 _initModals();
 
                             },
+                            on_sort_change: function (tasks) {
+
+                                var statusPostData = {
+                                    action: "ganttSort",
+                                    payload: {}
+                                };
+
+                                for (var i = 0; i < tasks.length; i++) {
+
+                                        statusPostData.payload[tasks[i].id] = tasks[i]._index;
+
+                                }
+
+                                // POST to server using $.post or $.ajax
+                                jQuery.ajax({
+                                    type: 'POST',
+                                    url: leantime.appUrl + '/api/tickets',
+                                    data: statusPostData
+
+                                });
+                            },
                             on_progress_change: function (task, progress) {
 
                                 //_initModals();
@@ -205,7 +225,6 @@ leantime.ticketsController = (function () {
                                 _initModals();
                             },
                             on_popup_show: function (task) {
-                                console.log("jo");
                                 _initModals();
                             }
                         }
@@ -1045,12 +1064,12 @@ leantime.ticketsController = (function () {
             var urlParts = url.split("/");
             var activeTab='';
             var activeTabIndex = 0;
-            console.log(urlParts);
+
             if(urlParts.length>2) {
 
                 activeTab= "#" + urlParts[2];
                 activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
-                console.log(activeTabIndex);
+
             }
 
             jQuery('.ticketTabs').tabs({
@@ -1480,7 +1499,7 @@ leantime.ticketsController = (function () {
 
                     },
                     dataSrc: function (row) {
-                        console.log(row);
+
                         return row[columnIndex]["@data-search"];
                     }
                 };
@@ -1758,7 +1777,7 @@ leantime.ticketsController = (function () {
         if(jQuery('textarea.complexEditor').length > 0) {
             jQuery('textarea.complexEditor').tinymce().save();
             jQuery('textarea.complexEditor').tinymce().remove();
-            console.log("removing tiny");
+
         }
 
         jQuery(".ticketRows").removeClass("active");

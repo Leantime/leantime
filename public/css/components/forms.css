@@ -50,6 +50,7 @@ input:disabled,
 body div.tagsinput {
     background-color: var(--secondary-background);
     color:var(--primary-font-color);
+    font-family: var(--primary-font-family);
     width:100% !important;
     height:35px !important;
     border-radius:var(--element-radius);
@@ -62,6 +63,7 @@ body div.tagsinput input {
     color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
+    font-family: var(--primary-font-family);
 }
 
 body div.tagsinput span.tag {
@@ -808,4 +810,14 @@ input.secretInput:active {
 .simpleButtons.left {
     text-align:left;
     float:left;
+}
+
+.viewDescription {
+    border-radius:var(--box-radius);
+    padding:5px;
+    border:1px solid transparent;
+}
+
+.viewDescription:hover {
+    border:1px solid var(--main-border-color);
 }

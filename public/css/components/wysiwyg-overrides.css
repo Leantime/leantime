@@ -2,6 +2,11 @@
     font-size:var(--base-font-size);
 }
 
+.tox .tox-tbtn svg {
+    display: block;
+    fill: var(--primary-font-color);
+}
+
 .tox .tox-dialog,
 .tox .tox-dialog .tox-dialog__title,
 .tox .tox-dialog .tox-button{
@@ -301,5 +306,10 @@ body .tox .tox-dialog-wrap__backdrop {
 
 :not(pre)>code[class*=language-], pre[class*=language-] {
     background: #f5f6f7;
+}
+
+.maincontentinner .tinyPlaceholder,
+.commentContent .tinyPlaceholder{
+    display:none;
 }
 
