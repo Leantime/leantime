@@ -303,7 +303,7 @@ if ($numberofColumns > 0) {
                                                                                                                           }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
                                                                 <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
                                                                     echo"style='display:none;'";
-                                                                                                                           }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
+                                                                                                                           }?>><span class="fa fa-stop"></span> <?php if (is_array($clockedIn) == true) {
                                                                                                                            echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
                                                                                                                            } else {
                                                                                                                                echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));

@@ -119,6 +119,8 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('numFiles', count($files));
                 $this->tpl->assign('files', $files);
 
+                $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
+
                 $this->tpl->assign("timesheetValues", array("kind" => "", "date" => date($this->language->__("language.dateformat")), "hours" => "", "description" => ""));
 
                 //TODO: Refactor thumbnail generation in file manager

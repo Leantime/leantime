@@ -2,6 +2,11 @@
     font-size:var(--base-font-size);
 }
 
+.tox .tox-tbtn svg {
+    display: block;
+    fill: var(--primary-font-color);
+}
+
 .tox .tox-dialog,
 .tox .tox-dialog .tox-dialog__title,
 .tox .tox-dialog .tox-button{

@@ -42,8 +42,10 @@ namespace leantime\domain\services {
         private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
         {
             foreach ($dbTagValues as $tagGroup) {
-                $tagArray = explode(",", $tagGroup["tags"]);
-                $mergeInto = array_merge($tagArray, $mergeInto);
+                if(isset($tagGroup["tags"]) && $tagGroup["tags"] != null) {
+                    $tagArray = explode(",", $tagGroup["tags"]);
+                    $mergeInto = array_merge($tagArray, $mergeInto);
+                }
             }
 
             return $mergeInto;

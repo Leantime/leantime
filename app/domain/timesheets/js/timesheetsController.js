@@ -208,7 +208,8 @@ leantime.timesheetsController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable:initTimesheetsTable,
-        initEditTimeModal:initEditTimeModal
+        initEditTimeModal:initEditTimeModal,
+        _initTicketTimers:_initTicketTimers
 
     };
 })();
