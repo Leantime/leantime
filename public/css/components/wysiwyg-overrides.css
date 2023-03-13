@@ -308,3 +308,8 @@ body .tox .tox-dialog-wrap__backdrop {
     background: #f5f6f7;
 }
 
+.maincontentinner .tinyPlaceholder,
+.commentContent .tinyPlaceholder{
+    display:none;
+}
+
