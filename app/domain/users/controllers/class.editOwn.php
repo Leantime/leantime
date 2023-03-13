@@ -34,13 +34,13 @@ namespace leantime\domain\controllers {
 
             $row = $this->userRepo->getUser($this->userId);
 
-            $userLang = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".language");
+            $userLang = $this->settingsService->getSettingsRepo()->getSetting("usersettings." . $this->userId . ".language");
 
             if ($userLang == false) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
-            $userTheme = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".theme");
+            $userTheme = $this->settingsService->getSettingsRepo()->getSetting("usersettings." . $this->userId . ".theme");
 
             //Build values array
             $values = array(
@@ -175,8 +175,8 @@ namespace leantime\domain\controllers {
                     $postLang = htmlentities($_POST['language']);
                     $postTheme = htmlentities($_POST['theme']);
 
-                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
-                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".language", $postLang);
+                    $this->settingsService->getSettingsRepo()->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
+                    $this->settingsService->getSettingsRepo()->saveSetting("usersettings." . $this->userId . ".language", $postLang);
 
                     unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);

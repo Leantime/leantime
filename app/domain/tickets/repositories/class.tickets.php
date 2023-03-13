@@ -799,10 +799,12 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
-						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
-					WHERE
-						zp_tickets.projectId = :projectId";
+						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId 
+						WHERE 1 = 1 ";
 
+            if($projectId !== 0){
+                $query .= " AND zp_tickets.projectId = :projectId";
+            }
             if ($includeTasks === true) {
                 $query .= " AND zp_tickets.type <> 'subtasks' ";
             } else {
@@ -827,7 +829,9 @@ namespace leantime\domain\repositories {
 
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            if($projectId !== 0){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'leantime\domain\models\tickets');

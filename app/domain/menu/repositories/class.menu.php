@@ -27,6 +27,7 @@ namespace leantime\domain\repositories {
                          60 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
 
                         20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
+                        30 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestonesAll', 'href' => '/tickets/roadmapAll', 'active' => ['roadmapAll']],
 
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas', 'active' => ['showCanvas']],
 

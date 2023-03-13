@@ -367,6 +367,11 @@ namespace leantime\domain\services {
             return false;
         }
 
+        public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false)
+        {
+            return $this->ticketRepository->getAllMilestones(0, $includeArchived, $sortBy, $includeTasks);
+        }
+
         public function getAllMilestonesByUserProjects($userId)
         {
 
