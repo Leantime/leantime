@@ -191,11 +191,18 @@ leantime.generalController = (function () {
                     editor.on("submit", function(){
 
                         var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+
+                        console.log(placeholder);
+
                         if (placeholder.length > 0) {
 
                             while(placeholder[0]) {
-                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                                console.log(placeholder[0]);
+                                placeholder[0].remove();
                             }
+                            editor.save();
+
+                            console.log(editor.getDoc());
                         }
                     });
                 }
@@ -328,6 +335,7 @@ leantime.generalController = (function () {
                             while(placeholder[0]) {
                                 placeholder[0].parentNode.removeChild(placeholder[0]);
                             }
+
                         }
 
                     });
@@ -340,6 +348,7 @@ leantime.generalController = (function () {
                             while(placeholder[0]) {
                                 placeholder[0].parentNode.removeChild(placeholder[0]);
                             }
+                            editor.save();
                         }
                     });
                 }

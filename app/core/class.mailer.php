@@ -298,7 +298,8 @@ namespace leantime\core {
 
             $altBody = $this->dispatchMailerFilter(
                 'altBody',
-                $this->text
+                $this->text,
+                []
             );
 
             $this->mailAgent->AltBody = $altBody;
