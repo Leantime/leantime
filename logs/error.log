@@ -1,9 +1,0 @@
-[07-Feb-2023 14:21:40 America/Los_Angeles] 2 Invalid address:  (to): 1
-[07-Feb-2023 14:23:04 America/Los_Angeles] 2 Invalid address:  (to): 1
-[12-Mar-2023 19:14:55 Europe/Paris] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function leantime\core\mailer::dispatchMailerFilter(), 2 passed in /Users/marcel/Sites/leantime-oss/app/core/class.mailer.php on line 301 and exactly 3 expected in /Users/marcel/Sites/leantime-oss/app/core/class.mailer.php:184
-Stack trace:
-#0 /Users/marcel/Sites/leantime-oss/app/core/class.mailer.php(301): leantime\core\mailer->dispatchMailerFilter('altBody', '')
-#1 /Users/marcel/Sites/leantime-oss/app/domain/queue/services/class.queue.php(114): leantime\core\mailer->sendMail(Array, 'Leantime System')
-#2 /Users/marcel/Sites/leantime-oss/public/cron.php(135): leantime\domain\services\queue->processQueue()
-#3 {main}
-  thrown in /Users/marcel/Sites/leantime-oss/app/core/class.mailer.php on line 184
