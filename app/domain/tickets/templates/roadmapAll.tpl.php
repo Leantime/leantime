@@ -2,10 +2,20 @@
 defined('RESTRICTED') or die('Restricted access');
 
 $milestones = $this->get('milestones');
+$clients = $this->get('clients');
 
-?>
+$clientNameSelected = $this->__("headline.all_clients");
+$htmlDropdownClients = '';
+foreach ($clients as $client) {
+    $href = BASE_URL . "/tickets/roadmapAll?clientId=" . $client['id'];
+    $labelActive = '';
+    if (isset($_GET['clientId']) && $_GET['clientId'] == $client['id']) {
+        $labelActive = ' class="active"';
+        $clientNameSelected = $client['name'];
+    }
+    $htmlDropdownClients .= "<li><a href='$href' $labelActive> {$client['name']} </a></li>";
+}
 
-<?php
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
 } else {
@@ -31,6 +41,14 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
+
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("label.roles.client") ?>: <span class="viewText"><?=$clientNameSelected?></span><span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href=<?=BASE_URL . "/tickets/roadmapAll"?> <?= empty($labelActive) ? "class='active'" : '' ?> > <?=$this->__("headline.all_clients") ?> </a></li>
+                            <?=$htmlDropdownClients?>
+                        </ul>
+                    </div>
 
                     <div class="btn-group dropRight">
 

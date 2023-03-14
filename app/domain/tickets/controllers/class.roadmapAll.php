@@ -13,6 +13,7 @@ namespace leantime\domain\controllers {
         private $projectsRepo;
         private $sprintService;
         private services\tickets $ticketService;
+        private $clientRepo;
 
         /**
          * init - initialize private variables
@@ -26,6 +27,7 @@ namespace leantime\domain\controllers {
             $this->projectsRepo = new repositories\projects();
             $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
+            $this->clientRepo = new repositories\clients();
         }
 
         /**
@@ -52,10 +54,22 @@ namespace leantime\domain\controllers {
                 $_SESSION["usersettings.showMilestoneTasks"] = false;
             }
 
-            $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, "date", $includeTasks);
+
+            if (isset($_GET['clientId']) && $_GET['clientId'] !== '') {
+                $clientId = $_GET['clientId'];
+            }
+            else{
+                $clientId = false;
+            }
+
+
+            $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, "date", $includeTasks, $clientId);
+
+            $allClients = $this->clientRepo->getAll();
 
             $this->tpl->assign("includeTasks", $includeTasks);
             $this->tpl->assign('milestones', $allProjectMilestones);
+            $this->tpl->assign('clients', $allClients);
             $this->tpl->display('tickets.roadmapAll');
         }
 
