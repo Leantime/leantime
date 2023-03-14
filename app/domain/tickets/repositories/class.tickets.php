@@ -731,7 +731,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "headline", $includeTasks = false)
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "headline", $includeTasks = false, $clientId = false)
         {
 
             $statusGroups = $this->getStatusListGroupedByType($projectId);
@@ -815,6 +815,10 @@ namespace leantime\domain\repositories {
                 $query .= " AND zp_tickets.status > -1 ";
             }
 
+            if($clientId !== false && $clientId !== 0){
+                $query .= "AND zp_clients.id = :clientId";
+            }
+
                 $query .= "	GROUP BY
 						zp_tickets.id, progressTickets.dependingTicketId";
 
@@ -831,6 +835,10 @@ namespace leantime\domain\repositories {
             $stmn = $this->db->database->prepare($query);
             if($projectId !== 0){
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            if($clientId !== false && $clientId !== 0){
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
             }
 
             $stmn->execute();

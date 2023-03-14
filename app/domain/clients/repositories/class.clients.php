@@ -125,6 +125,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
+
         public function getNumberOfClients()
         {
 
