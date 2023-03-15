@@ -77,7 +77,7 @@ namespace leantime\domain\controllers {
                 }else{
                     $redirectUrl = "";
                 }
-                
+
                 $username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
                 $password = $_POST['password'];
 
