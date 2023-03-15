@@ -44,7 +44,7 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
             self::dispatch_event('beforeAuth', $params);
-            
+
             $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
@@ -71,7 +71,13 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
-                $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
+
+                if(isset($_POST['redirectUrl'])) {
+                    $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
+                }else{
+                    $redirectUrl = "";
+                }
+                
                 $username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
                 $password = $_POST['password'];
 
