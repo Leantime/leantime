@@ -28,7 +28,8 @@ namespace leantime\domain\models {
         public $tags;
         public $url;
         public $editFrom;
-        public $editTo;
+        public $timeFrom;
+        public $timeTo;
         public $dependingTicketId;
 
         public $projectName;

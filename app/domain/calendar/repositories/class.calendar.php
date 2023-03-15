@@ -129,37 +129,64 @@ namespace leantime\domain\repositories {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
                         $context = $this->language->__("label.due_todo");
-                    } else {
+
+                        $newValues[] = array(
+                            'title'  => $context . $ticket['headline'],
+                            'allDay' => false,
+                            'dateFrom' => array(
+                                'y' => date('Y', $dateFrom),
+                                'm' => date('m', $dateFrom),
+                                'd' => date('d', $dateFrom),
+                                'h' => date('H', $dateFrom),
+                                'i' => date('i', $dateFrom),
+                                'ical' => date('Ymd\THis', $dateFrom)
+                            ),
+                            'dateTo' => array(
+                                'y' => date('Y', $dateTo),
+                                'm' => date('m', $dateTo),
+                                'd' => date('d', $dateTo),
+                                'h' => date('H', $dateTo),
+                                'i' => date('i', $dateTo),
+                                'ical' => date('Ymd\THis', $dateTo)
+                            ),
+                            'id' => $ticket['id'],
+                            'projectId' => $ticket['projectId'],
+                            'eventType' => "ticket"
+                        );
+
+                    }
+
+                    if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
+
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                         $context =  $this->language->__("label.planned_edit");
+
+                        $newValues[] = array(
+                            'title'  => $context . $ticket['headline'],
+                            'allDay' => false,
+                            'dateFrom' => array(
+                                'y' => date('Y', $dateFrom),
+                                'm' => date('m', $dateFrom),
+                                'd' => date('d', $dateFrom),
+                                'h' => date('H', $dateFrom),
+                                'i' => date('i', $dateFrom),
+                                'ical' => date('Ymd\THis', $dateFrom)
+                            ),
+                            'dateTo' => array(
+                                'y' => date('Y', $dateTo),
+                                'm' => date('m', $dateTo),
+                                'd' => date('d', $dateTo),
+                                'h' => date('H', $dateTo),
+                                'i' => date('i', $dateTo),
+                                'ical' => date('Ymd\THis', $dateTo)
+                            ),
+                            'id' => $ticket['id'],
+                            'projectId' => $ticket['projectId'],
+                            'eventType' => "ticket"
+                        );
                     }
-
-
-
-                    $newValues[] = array(
-                        'title'  => $context . $ticket['headline'],
-                        'allDay' => false,
-                        'dateFrom' => array(
-                            'y' => date('Y', $dateFrom),
-                            'm' => date('m', $dateFrom),
-                            'd' => date('d', $dateFrom),
-                            'h' => date('H', $dateFrom),
-                            'i' => date('i', $dateFrom),
-                            'ical' => date('Ymd\THis', $dateFrom)
-                        ),
-                        'dateTo' => array(
-                            'y' => date('Y', $dateTo),
-                            'm' => date('m', $dateTo),
-                            'd' => date('d', $dateTo),
-                            'h' => date('H', $dateTo),
-                            'i' => date('i', $dateTo),
-                            'ical' => date('Ymd\THis', $dateTo)
-                        ),
-                        'id' => $ticket['id'],
-                        'projectId' => $ticket['projectId'],
-                        'eventType' => "ticket"
-                    );
+                    
                 }
             }
 
