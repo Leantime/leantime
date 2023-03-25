@@ -2,19 +2,17 @@
 
 namespace leantime\domain\controllers {
 
-    use leantime\core;
     use leantime\core\controller;
-    use leantime\domain\models\auth\roles;
     use leantime\domain\models\wiki;
-    use leantime\domain\repositories;
     use leantime\domain\services;
-    use leantime\domain\services\auth;
 
     class wikiModal extends controller
     {
+
+        private services\wiki $wikiService;
+
         public function init()
         {
-
             $this->wikiService = new services\wiki();
         }
 

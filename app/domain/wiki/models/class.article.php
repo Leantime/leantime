@@ -10,19 +10,25 @@ namespace leantime\domain\models\wiki {
         public $canvasId;
         public $parent;
         public $tags;
+        public $data;
         public $status;
         public $created;
         public $modified;
         public $author;
+        public $milestoneId;
         public $firstname;
         public $lastname;
         public $profileId;
-        public $milestoneId;
+        public $sortindex;
+        public $projectId;
         public $milestoneHeadline;
         public $milestoneEditTo;
-        public $sortindex;
+        public $doneTickets;
+        public $openTicketsEffort;
+        public $doneTicketsEffort;
+        public $allTicketsEffort;
+        public $allTickets;
         public $percentDone;
-        public $data;
 
         public function __construct()
         {
