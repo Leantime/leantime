@@ -14,6 +14,8 @@ namespace leantime\domain\services;
     {
         use eventhelpers;
 
+        private repositories\api $apiRepository;
+        private repositories\users $userRepo;
 
         /**
          * __construct

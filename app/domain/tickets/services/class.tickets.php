@@ -30,14 +30,27 @@ namespace leantime\domain\services {
             $this->settingsRepo = new repositories\setting();
         }
 
-        //GET Properties
-        public function getStatusLabels()
+        /**
+         * getStatusLabels - Gets all status labels for the current set project
+         *
+         * @access public
+         * @return array
+         */
+        public function getStatusLabels(): array
         {
 
             return $this->ticketRepository->getStateLabels();
         }
 
-        public function getAllStatusLabelsByUserId($userId)
+        /**
+         * getAllStatusLabelsByUserId - Gets all the status labels a specific user might encounter and groups them by project.
+         * Used to get all the status dropdowns for user home dashboards
+         *
+         * @access public
+         * @params int $userId User Id
+         * @return array
+         */
+        public function getAllStatusLabelsByUserId($userId): array
         {
 
             $statusLabelsByProject = array();
@@ -68,7 +81,14 @@ namespace leantime\domain\services {
             return $statusLabelsByProject;
         }
 
-        public function saveStatusLabels($params)
+        /**
+         * saveStatusLabels - Saves the description/label of a status
+         *
+         * @access public
+         * @params array $params label information
+         * @return bool
+         */
+        public function saveStatusLabels($params): bool
         {
             if (isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0) {
                 $statusArray = array();

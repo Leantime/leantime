@@ -9,6 +9,10 @@ namespace leantime\domain\controllers {
 
     class changeCurrentProject extends controller
     {
+
+        private services\projects $projectService;
+        private services\setting $settingService;
+
         public function init()
         {
 

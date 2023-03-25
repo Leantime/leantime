@@ -29,7 +29,9 @@ class application
         "errors.error404",
         "errors.error500",
         "api.i18n",
-        "calendar.ical"
+        "calendar.ical",
+        "oidc.login",
+        "oidc.callback"
     );
 
     /**
@@ -98,10 +100,11 @@ class application
 
             $this->projectService->setCurrentProject();
 
-            if(str_starts_with(frontController::getCurrentRoute(), "api.jsonRPC")){
+            if(str_starts_with(strtolower(frontController::getCurrentRoute()), strtolower("api.jsonrpc"))){
                 $this->frontController::dispatch();
             }else{
-                echo "{success}";
+                echo json_encode("{error:API endpoint not valid}");
+                exit();
             }
 
 

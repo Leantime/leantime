@@ -9,6 +9,12 @@ namespace leantime\domain\controllers {
 
     class showMy extends controller
     {
+
+        private services\projects $projectService;
+        private services\tickets $ticketService;
+        private services\reports $reportService;
+        private services\comments $commentService;
+
         public function init()
         {
 

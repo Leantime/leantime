@@ -12,6 +12,10 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
+
+        private services\wiki $wikiService;
+        private services\comments $commentService;
+
         public function init()
         {
 
