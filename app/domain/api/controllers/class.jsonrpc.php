@@ -11,6 +11,11 @@ use leantime\core\controller;
 class jsonrpc extends controller
 {
     /**
+     * @var array $json_data - holds json data from request body
+     */
+    private array $json_data = [];
+
+    /**
      * init - initialize private variables or events to happen before route execution
      *
      * @return void
