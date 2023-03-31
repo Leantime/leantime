@@ -48,9 +48,9 @@ namespace leantime\domain\controllers {
                     }
                 }
 
-                $this->tpl->display('calendar.delEvent');
+                $this->tpl->displayPartial('calendar.delEvent');
             } else {
-                $this->tpl->display('errors.error403');
+                $this->tpl->displayPartial('errors.error403');
             }
         }
     }

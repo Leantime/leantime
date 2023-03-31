@@ -1060,16 +1060,13 @@ leantime.ticketsController = (function () {
 
         jQuery(document).ready(function () {
 
-            var url = window.location.hash.substring(1);
-            var urlParts = url.split("/");
-            var activeTab='';
-            var activeTabIndex = 0;
 
-            if(urlParts.length>2) {
+            let url = new URL(window.location.href);
+            const tab = url.searchParams.get("tab");
 
-                activeTab= "#" + urlParts[2];
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
-
+            let activeTabIndex = 0;
+            if(tab) {
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
             }
 
             jQuery('.ticketTabs').tabs({
@@ -1079,7 +1076,10 @@ leantime.ticketsController = (function () {
                 },
                 activate: function (event, ui) {
 
-                    window.location.hash = "/tab/"+ui.newPanel.selector.substring(1);
+                    url = new URL(window.location.href);
+                    url.searchParams.set('tab', ui.newPanel.selector.substring(1));
+                    window.history.replaceState(null, null, url);
+
                 },
                 load: function () {
 

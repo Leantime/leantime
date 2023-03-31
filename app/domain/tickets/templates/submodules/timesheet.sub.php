@@ -16,7 +16,7 @@ if ($remainingHours < 0) {
                 <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $this->__('headline.add_time_entry', false); ?></h4>
                 <br />
 
-                <form method="post" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . ""?>#timesheet" class="ticketModal">
+                <form method="post" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . ""?>#timesheet" class="formModal">
 
                     <label for="kind"><?php echo $this->__('label.timesheet_kind') ?></label>
                     <span class="field">
