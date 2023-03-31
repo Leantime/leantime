@@ -11,6 +11,11 @@ use leantime\core\controller;
 class jsonrpc extends controller
 {
     /**
+     * @var array $json_data - holds json data from request body
+     */
+    private array $json_data = [];
+
+    /**
      * init - initialize private variables or events to happen before route execution
      *
      * @return void
@@ -18,6 +23,10 @@ class jsonrpc extends controller
     public function init()
     {
         header('Content-Type: application/json; charset=utf-8');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST)) {
+            $this->json_data = json_decode(file_get_contents('php://input'), JSON_OBJECT_AS_ARRAY);
+        }
     }
 
     /**
@@ -29,12 +38,17 @@ class jsonrpc extends controller
      */
     public function post(array $params): void
     {
+        if (empty($params)) {
+            $params = $this->json_data;
+        }
+
         //params['params'] could be array (single value) or json object
-        if(isset($params['params'])){
-            if(!is_array($params['params'])){
+        if (isset($params['params'])) {
+            if (!is_array($params['params'])) {
                 $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
             }
         }
+
         /**
          * batch requests
          *
@@ -67,16 +81,18 @@ class jsonrpc extends controller
             $this->returnInvalidRequest("Method name required");
         }
 
-
-        //Decode Get params
-        //https://www.jsonrpc.org/historical/json-rpc-over-http.html#get
-        if(isset($params['params'])){
+        /**
+         * Decode params
+         *
+         * @see https://www.jsonrpc.org/historical/json-rpc-over-http.html#get
+         */
+        if (isset($params['params'])) {
             $paramsDecoded = base64_decode(urldecode($params['params']));
-        }else{
+        } else {
             $paramsDecoded = array();
         }
 
-        $params= array(
+        $params = array(
             "method" => $params['method'],
             "params" => $paramsDecoded,
             "id" => $params["id"] ?? null,
@@ -168,11 +184,7 @@ class jsonrpc extends controller
 
         // can be null
         try {
-
-            //$method_response = (new $serviceName())->$methodName($preparedParams);
-            $classCall = new $serviceName();
-            $method_response = call_user_func_array(array($classCall, $methodName), $preparedParams);
-
+            $method_response = (new $serviceName())->$methodName(...$preparedParams);
         } catch (Error $e) {
             $this->returnServerError($e);
         }

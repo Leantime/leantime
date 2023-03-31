@@ -12,6 +12,7 @@ namespace leantime\domain\controllers {
     {
         private $userRepo;
         private $projectsRepo;
+        private services\users $userService;
 
         /**
          * init - initialize private variables

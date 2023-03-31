@@ -76,6 +76,21 @@ class environment
     public string $ldapLtGroupAssignments;
     public string $ldapDefaultRoleKey;
 
+    public bool $oidcEnable;
+    public string $oidcProviderUrl;
+    public string $oidcClientId;
+    public string $oidcClientSecret;
+    public string $oidcAuthUrl;
+    public string $oidcTokenUrl;
+    public string $oidcJwksUrl;
+    public string $oidcUserInfoUrl;
+    public string $oidcCertificateString;
+    public string $oidcCertificateFile;
+    public string $oidcScopes;
+    public string $oidcFieldEmail;
+    public string $oidcFieldFirstName;
+    public string $oidcFieldLastName;
+
     private function __construct()
     {
 
@@ -157,9 +172,39 @@ class environment
             $this->ldapLtGroupAssignments = $this->environmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $defaultConfiguration->ldapLtGroupAssignments ?? '') ;
             $this->ldapDefaultRoleKey = $this->environmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $defaultConfiguration->ldapDefaultRoleKey ?? '');
         }
+
+        /* OIDC */
+        $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
+        if($this->oidcEnable) {
+            $this->oidcProviderUrl = $this->getString('LEAN_OIDC_PROVIDER_URL', '');
+            $this->oidcClientId = $this->getString('LEAN_OIDC_CLIEND_ID', '');
+            $this->oidcClientSecret = $this->getString('LEAN_OIDC_CLIEND_SECRET', '');
+
+            //These are optional and will override the well-known configuration
+            $this->oidcAuthUrl = $this->getString('LEAN_OIDC_AUTH_URL_OVERRIDE', '');
+            $this->oidcTokenUrl = $this->getString('LEAN_OIDC_TOKEN_URL_OVERRIDE', '');
+            $this->oidcJwksUrl = $this->getString('LEAN_OIDC_JWKS_URL_OVERRIDE', '');
+            $this->oidcUserInfoUrl = $this->getString('LEAN_OIDC_USERINFO_URL_OVERRIDE', '');
+            $this->oidcCertificateString = $this->getString('LEAN_OIDC_CERTIFICATE_STRING', '');
+            $this->oidcCertificateFile = $this->getString('LEAN_OIDC_CERTIFICATE_FILE', '');
+            $this->oidcScopes = $this->getString('LEAN_OIDC_SCOPES', 'openid profile email');
+            $this->oidcFieldEmail = $this->getString('LEAN_OIDC_FIELD_EMAIL', 'email');
+            $this->oidcFieldFirstName = $this->getString('LEAN_OIDC_FIELD_FIRSTNAME', 'given_name');
+            $this->oidcFieldLastName = $this->getString('LEAN_OIDC_FIELD_LASTNAME', 'family_name');
+        }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string")
+    private function getBool(string $envVar, bool $default): bool
+    {
+        return $this->environmentHelper($envVar, $default, 'boolean');
+    }
+
+    private function getString(string $envVar, string $default): string
+    {
+        return $this->environmentHelper($envVar, $default, 'string');
+    }
+
+    private function environmentHelper(string $envVar, $default, $dataType = "string")
     {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {

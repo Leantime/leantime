@@ -11,10 +11,14 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
+
+        private repositories\users $userRepo;
+        private services\ldap $ldapService;
+
         public function init()
         {
 
-            $this->userRepo =  new repositories\users();
+            $this->userRepo = new repositories\users();
             $this->ldapService = new services\ldap();
         }
 
