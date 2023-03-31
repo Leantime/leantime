@@ -35,6 +35,8 @@
         <div class="row-fluid">
             <input type="hidden" name="saveTicket" value="1" />
             <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
+
+
             <input type="submit" name="saveTicket" value="<?php echo $this->__('buttons.save'); ?>"/>
             <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
@@ -48,10 +50,10 @@
                     class="fa-solid fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="ticketModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "#comments");
+            $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
 
             $this->displaySubmodule('comments-generalComment') ;
             ?>

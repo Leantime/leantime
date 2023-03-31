@@ -79,7 +79,7 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->assign('values', $values);
-            $this->tpl->display('calendar.addEvent');
+            $this->tpl->displayPartial('calendar.addEvent');
         }
     }
 }

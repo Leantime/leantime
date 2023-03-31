@@ -5,7 +5,7 @@ namespace leantime\domain\repositories {
     use leantime\core;
     use pdo;
 
-    class calendar
+    class calendar extends core\repository
     {
         /**
          * @access public
@@ -25,6 +25,7 @@ namespace leantime\domain\repositories {
 
             $this->db = core\db::getInstance();
             $this->language = core\language::getInstance();
+            $this->entity = "calendar";
         }
 
         public function getAllDates($dateFrom, $dateTo)
@@ -97,28 +98,31 @@ namespace leantime\domain\repositories {
                 $dateFrom     = strtotime($value['dateFrom']);
                 $dateTo     = strtotime($value['dateTo']);
 
+                $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
                 $newValues[] = array(
                     'title'  => $value['description'],
-                    'allDay' => $value['allDay'],
+                    'allDay' => $allDay,
                     'dateFrom' => array(
                         'y' => date('Y', $dateFrom),
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
-                        'h' => date('H', $dateFrom),
-                        'i' => date('i', $dateFrom),
+                        'h' => $allDay == true ? "00" : date('H', $dateFrom),
+                        'i' => $allDay == true ? "00" : date('i', $dateFrom),
                     'ical' => date('Ymd\THis', $dateFrom)
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
-                        'd' => date('d', $dateTo),
-                        'h' => date('H', $dateTo),
-                        'i' => date('i', $dateTo),
+                        'd' => $allDay == true ? date('d', ($dateFrom+(60*60*24))) : date('d', $dateTo),
+                        'h' => $allDay == true ? "00" : date('H', $dateTo),
+                        'i' => $allDay == true ? "00" : date('i', $dateTo),
                         'ical' => date('Ymd\THis', $dateTo)
                     ),
                     'id' => $value['id'],
                     'projectId' => '',
-                    'eventType' => "calendar"
+                    'eventType' => "calendar",
+                    'dateContext' => 'plan'
                 );
             }
 
@@ -128,7 +132,7 @@ namespace leantime\domain\repositories {
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
-                        $context = $this->language->__("label.due_todo");
+                        $context = '❕ '.$this->language->__("label.due_todo");
 
                         $newValues[] = array(
                             'title'  => $context . $ticket['headline'],
@@ -151,7 +155,8 @@ namespace leantime\domain\repositories {
                             ),
                             'id' => $ticket['id'],
                             'projectId' => $ticket['projectId'],
-                            'eventType' => "ticket"
+                            'eventType' => "ticket",
+                            'dateContext' => 'due'
                         );
 
                     }
@@ -183,10 +188,11 @@ namespace leantime\domain\repositories {
                             ),
                             'id' => $ticket['id'],
                             'projectId' => $ticket['projectId'],
-                            'eventType' => "ticket"
+                            'eventType' => "ticket",
+                            'dateContext' => 'plan'
                         );
                     }
-                    
+
                 }
             }
 
@@ -197,7 +203,6 @@ namespace leantime\domain\repositories {
         {
 
             //get user
-
             $userRepo = new \leantime\domain\repositories\users();
             $user = $userRepo->getUserBySha($userHash);
 
@@ -511,5 +516,6 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $stmn->closeCursor();
         }
+
     }
 }
