@@ -15,7 +15,7 @@
     }
 </script>
 
-<div style="min-width:80%">
+<div style="min-width:90%">
 
     <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
 
@@ -65,7 +65,7 @@
         </ul>
 
         <div id="ticketdetails">
-            <form class="ticketModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
+            <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                 <?php $this->displaySubmodule('tickets-ticketDetails') ?>
             </form>
 

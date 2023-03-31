@@ -266,13 +266,19 @@ namespace leantime\domain\services {
 
             //Check if user is allowed to see ticket
             if ($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
+
                 //Fix date conversion
-                //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
+
                 $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
+
+                $ticket->timeFrom = $this->language->extractTime($ticket->editFrom);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
+
+                $ticket->timeTo = $this->language->extractTime($ticket->editTo);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
+
 
                 return $ticket;
             }
@@ -385,6 +391,11 @@ namespace leantime\domain\services {
             }
 
             return false;
+        }
+
+        public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
+        {
+            return $this->ticketRepository->getAllMilestones(0, $includeArchived, $sortBy, $includeTasks, $clientId);
         }
 
         public function getAllMilestonesByUserProjects($userId)
@@ -540,7 +551,9 @@ namespace leantime\domain\services {
                 'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
+                'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
+                'timeTo' => $values['timeTo'],
                 'dependingTicketId' => $values['dependingTicketId']
             );
 
@@ -562,10 +575,18 @@ namespace leantime\domain\services {
 
                 if ($values['editFrom'] != "" && $values['editFrom'] != null) {
                     $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+
+                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
+                    }
                 }
 
                 if ($values['editTo'] != "" && $values['editTo'] != null) {
                     $values['editTo'] = $this->language->getISODateString($values['editTo']);
+
+                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
+                    }
                 }
 
                 //Update Ticket
@@ -618,7 +639,9 @@ namespace leantime\domain\services {
                 'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
+                'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
+                'timeTo' => $values['timeTo'],
                 'dependingTicketId' => $values['dependingTicketId']
             );
 
@@ -640,11 +663,20 @@ namespace leantime\domain\services {
 
                 if ($values['editFrom'] != "" && $values['editFrom'] != null) {
                     $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+
+                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
+                    }
                 }
 
                 if ($values['editTo'] != "" && $values['editTo'] != null) {
                     $values['editTo'] = $this->language->getISODateString($values['editTo']);
+
+                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
+                    }
                 }
+
                 //Update Ticket
                 if ($this->ticketRepository->updateTicket($values, $id) === true) {
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);

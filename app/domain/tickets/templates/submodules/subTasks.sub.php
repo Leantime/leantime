@@ -14,7 +14,7 @@
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
-            <form method="post" class="form-group ticketModal" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . "#substasks"; ?>">
+            <form method="post" class="form-group formModal" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . "#substasks"; ?>">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
@@ -57,7 +57,7 @@ foreach ($this->get('allSubTasks') as $subticket) {
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete modal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
 
                             </ul>
                         </div>

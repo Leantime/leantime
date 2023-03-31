@@ -515,12 +515,6 @@ a .label-default:after, a .label-primary:after {
     font-size: var(--base-font-size);
 }
 
-/* calendar */
-.fc-event {
-    color: #fff !important;
-    font-size: var(--base-font-size) !important;
-}
-
 /* widgets */
 #notes .note {
     margin: 15px 0;

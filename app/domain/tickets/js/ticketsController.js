@@ -155,7 +155,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            language: 'it', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 
@@ -167,8 +167,12 @@ leantime.ticketsController = (function () {
 
 
 
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ' +
-                                    '<small>' + task.type + ' #' + task.id + ' </small>';
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
+
+                                if(task.projectName !== undefined){
+                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                }
+                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
 
                                 if (task.type === 'milestone') {
                                     popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
@@ -243,6 +247,7 @@ leantime.ticketsController = (function () {
                                 // dates and progress value
                                 var end_date = task._end;
                                 return '<div class="details-container"> ' +
+                                    '<small><b>' + task.projectName + '</b></small>' +
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
@@ -1060,16 +1065,13 @@ leantime.ticketsController = (function () {
 
         jQuery(document).ready(function () {
 
-            var url = window.location.hash.substring(1);
-            var urlParts = url.split("/");
-            var activeTab='';
-            var activeTabIndex = 0;
 
-            if(urlParts.length>2) {
+            let url = new URL(window.location.href);
+            const tab = url.searchParams.get("tab");
 
-                activeTab= "#" + urlParts[2];
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
-
+            let activeTabIndex = 0;
+            if(tab) {
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
             }
 
             jQuery('.ticketTabs').tabs({
@@ -1079,7 +1081,10 @@ leantime.ticketsController = (function () {
                 },
                 activate: function (event, ui) {
 
-                    window.location.hash = "/tab/"+ui.newPanel.selector.substring(1);
+                    url = new URL(window.location.href);
+                    url.searchParams.set('tab', ui.newPanel.selector.substring(1));
+                    window.history.replaceState(null, null, url);
+
                 },
                 load: function () {
 

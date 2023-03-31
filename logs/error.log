@@ -1,0 +1,807 @@
+[15-Mar-2023 09:56:27 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/milestoneDialog.tpl.php on line 32
+[15-Mar-2023 09:56:27 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/milestoneDialog.tpl.php on line 32
+[15-Mar-2023 11:26:24 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showAll.tpl.php on line 341
+[15-Mar-2023 11:26:24 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showAll.tpl.php on line 341
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 290
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 290
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 290
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 290
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 305
+[15-Mar-2023 11:26:42 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showList.tpl.php on line 305
+[15-Mar-2023 19:32:49 Europe/Paris] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[15-Mar-2023 19:32:49 Europe/Paris] 3 Connection: opened
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-5M86ZVBIM ry9JWL9DlPcU61iymCpr"
+[15-Mar-2023 19:32:49 Europe/Paris] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-5M86ZVBIM ry9JWL9DlPcU61iymCpr
+
+[15-Mar-2023 19:32:49 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[15-Mar-2023 19:32:49 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[15-Mar-2023 19:32:49 Europe/Paris] 1 CLIENT -> SERVER: STARTTLS
+
+[15-Mar-2023 19:32:49 Europe/Paris] 4 SMTP INBOUND: "220 Ready to start TLS"
+[15-Mar-2023 19:32:49 Europe/Paris] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[15-Mar-2023 19:32:49 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 Auth method requested: UNSPECIFIED
+[15-Mar-2023 19:32:50 Europe/Paris] 4 Auth methods available on the server: PLAIN,LOGIN
+[15-Mar-2023 19:32:50 Europe/Paris] 4 Requested auth method not available: 
+[15-Mar-2023 19:32:50 Europe/Paris] 4 Auth method selected: LOGIN
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "235 Authentication successful."
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: RCPT TO:<marcel@leantime.io>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: DATA
+
+[15-Mar-2023 19:32:50 Europe/Paris] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[15-Mar-2023 19:32:50 Europe/Paris] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: Date: Wed, 15 Mar 2023 19:32:49 +0100
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: To: marcel@leantime.io
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: Subject: Leantime - Latest updates
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: Message-ID: <tv57rPpH0n7XK2hTKlrOYVZyO1bbOGbvplwXV0@localhost>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		<table width="100%" style="background:#eeeeee; padding:15px; ">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		<tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 			<td align="center" valign="top">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 					<tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 						<td style="padding:3px 10px;">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							<table>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 								<tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 								<td width="150"><img alt="Logo" src="https://localhost/leantime/userfiles/14d53a15303175052275e3362406654e.png" width="150" style="width:150px;"></td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 								<td></td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							</tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							</table>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 						</td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 					</tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 					<tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							Hi, 
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							<br /><br />
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							News from your Leantime projects<br/><br />
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: <div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style="margin: 0px; padding: 0px; float : right">2023-03-15 11:20:50</div><div><p><em>One of your To-Dos was updated [17] - test</em></p>Marcel123 updated the To-Do: 'test' <a href='https://localhost/leantime/tickets/showTicket/17'>Click here to see it</a></div></div><div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style="margin: 0px; padding: 0px; float : right">2023-03-15 11:27:52</div><div><p><em>One of your To-Dos was updated [17] - test</em></p>Marcel123 updated the To-Do: 'test' <a href='https://localhost/leantime/tickets/showTicket/17'>Click here to see it</a></div></div>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 							<br /><br />
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 						</td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 					</tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 				</table>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 			</td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		</tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		<tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 			<td align="center">
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 			To <a href='https://localhost/leantime/users/editOwn/'>unsubscribe</a> from these types of notifications please login and edit your notifications settings
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 			</td>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		</tr>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 		</table>
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[15-Mar-2023 19:32:50 Europe/Paris] 1 CLIENT -> SERVER: .
+
+[15-Mar-2023 19:32:51 Europe/Paris] 4 SMTP INBOUND: "250 Ok 01010186e68bdc02-acfdb8e0-82c0-4285-88ad-4fc87b72ee5e-000000"
+[15-Mar-2023 19:32:51 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok 01010186e68bdc02-acfdb8e0-82c0-4285-88ad-4fc87b72ee5e-000000
+
+[15-Mar-2023 19:32:51 Europe/Paris] 1 CLIENT -> SERVER: QUIT
+
+[15-Mar-2023 19:32:51 Europe/Paris] 4 SMTP INBOUND: "221 Bye"
+[15-Mar-2023 19:32:51 Europe/Paris] 2 SERVER -> CLIENT: 221 Bye
+
+[15-Mar-2023 19:32:51 Europe/Paris] 3 Connection: closed
+[15-Mar-2023 14:29:30 America/Los_Angeles] PHP Warning:  Undefined array key 3 in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showAll.tpl.php on line 341
+[15-Mar-2023 14:29:30 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showAll.tpl.php on line 341
+[16-Mar-2023 07:00:07 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:73
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(73): PDO->__construct('mysql:host=loca...', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(98): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('7f05a12d59081e2...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(43): leantime\domain\services\auth::getInstance('7f05a12d59081e2...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[16-Mar-2023 07:03:49 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:73
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(73): PDO->__construct('mysql:host=loca...', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(98): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('7f05a12d59081e2...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(43): leantime\domain\services\auth::getInstance('7f05a12d59081e2...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[16-Mar-2023 07:04:13 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[16-Mar-2023 07:04:13 America/Los_Angeles] Invalid DN syntax
+[16-Mar-2023 07:04:13 America/Los_Angeles] invalid DN
+[16-Mar-2023 07:04:19 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[16-Mar-2023 07:04:19 America/Los_Angeles] Invalid DN syntax
+[16-Mar-2023 07:04:19 America/Los_Angeles] invalid DN
+[25-Mar-2023 13:24:30 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[25-Mar-2023 13:24:30 America/Los_Angeles] Invalid DN syntax
+[25-Mar-2023 13:24:30 America/Los_Angeles] invalid DN
+[25-Mar-2023 21:48:30 Europe/Paris] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[25-Mar-2023 21:48:31 Europe/Paris] 3 Connection: opened
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-JEKRW9NNM UyL8RzeLMVCn7ic4eLkU"
+[25-Mar-2023 21:48:31 Europe/Paris] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-JEKRW9NNM UyL8RzeLMVCn7ic4eLkU
+
+[25-Mar-2023 21:48:31 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 21:48:31 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[25-Mar-2023 21:48:31 Europe/Paris] 1 CLIENT -> SERVER: STARTTLS
+
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "220 Ready to start TLS"
+[25-Mar-2023 21:48:31 Europe/Paris] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[25-Mar-2023 21:48:31 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 21:48:31 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[25-Mar-2023 21:48:31 Europe/Paris] 4 Auth method requested: UNSPECIFIED
+[25-Mar-2023 21:48:31 Europe/Paris] 4 Auth methods available on the server: PLAIN,LOGIN
+[25-Mar-2023 21:48:31 Europe/Paris] 4 Requested auth method not available: 
+[25-Mar-2023 21:48:31 Europe/Paris] 4 Auth method selected: LOGIN
+[25-Mar-2023 21:48:31 Europe/Paris] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[25-Mar-2023 21:48:31 Europe/Paris] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[25-Mar-2023 21:48:31 Europe/Paris] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[25-Mar-2023 21:48:31 Europe/Paris] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "235 Authentication successful."
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: RCPT TO:<marcel@leantime.io>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: DATA
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: Date: Sat, 25 Mar 2023 21:48:30 +0100
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: To: marcel@leantime.io
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: Subject: Leantime - Latest updates
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: Message-ID: <1UBxflbqHA1REe4F6zvDkjEGSkIOnkrNxhCwhe0E@localhost>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =0A=09=09<table width=3D"100%" style=3D"background:#eeeeee; padding:15px; "=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: >=0A=09=09<tr>=0A=09=09=09<td align=3D"center" valign=3D"top">=0A=09=09=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09<table width=3D"600"  style=3D"width:600px; background-color:#ffffff; bo=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: rder:1px solid #ccc;">=0A=09=09=09=09=09<tr>=0A=09=09=09=09=09=09<td style=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =3D"padding:3px 10px;">=0A=09=09=09=09=09=09=09<table>=0A=09=09=09=09=09=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09<tr>=0A=09=09=09=09=09=09=09=09<td width=3D"150"><img alt=3D"Logo" sr=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: c=3D"https://localhost/leantime/userfiles/14d53a15303175052275e3362406654e.=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: png" width=3D"150" style=3D"width:150px;"></td>=0A=09=09=09=09=09=09=09=09<=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: td></td>=0A=09=09=09=09=09=09=09</tr>=0A=09=09=09=09=09=09=09</table>=0A=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09=09</td>=0A=09=09=09=09=09</tr>=0A=09=09=09=09=09<tr>=0A=09=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09<td style=3D"padding:10px; font-family:Arial; color:#666; font-=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: size:14px; line-height:1.7;">=0A=09=09=09=09=09=09=09Hi, =0A=09=09=09=09=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09<br /><br />=0A=09=09=09=09=09=09=09News from your Leantime projects<=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: br/><br />=0A<div style=3D"border-top: 1px solid #ddd; margin: 3px; padding=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: : 3px;"><div style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 =
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: 13:43:25</div><div><p><em>New comment in To-Do [22] - I need it faster</em>=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: </p>Marcel123 added a new comment to the To-Do 'I need it faster':<br/><br/=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: ><i><p>test</p></i><br/><br/> <a href=3D'https://localhost/leantime/tickets=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: /showTicket/22&projectId=3D3'>Click here to open the conversation</a></div>=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: </div><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: ><div style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 13:43:2=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: 5</div><div><p><em>One of your To-Dos was updated [22] - I need it faster</=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: em></p>Marcel123 updated the To-Do: 'I need it faster' <a href=3D'https://l=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: ocalhost/leantime/tickets/showTicket/22'>Click here to see it</a></div></di=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: v><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><di=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: v style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 13:46:43</d=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: iv><div><p><em>One of your To-Dos was updated [22] - I need it faster</em><=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: /p>Marcel123 updated the To-Do: 'I need it faster' <a href=3D'https://local=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: host/leantime/tickets/showTicket/22'>Click here to see it</a></div></div><d=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: iv style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div st=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: yle=3D"margin: 0px; padding: 0px; float : right">2023-03-25 13:46:52</div><=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: div><p><em>New comment in To-Do [22] - I need it faster</em></p>Marcel123 a=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: dded a new comment to the To-Do 'I need it faster':<br/><br/><i><p>test</p>=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: </i><br/><br/> <a href=3D'https://localhost/leantime/tickets/showTicket/22&=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: projectId=3D3'>Click here to open the conversation</a></div></div><div styl=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: e=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style=3D"=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: margin: 0px; padding: 0px; float : right">2023-03-25 13:46:52</div><div><p>=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: <em>One of your To-Dos was updated [22] - I need it faster</em></p>Marcel12=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: 3 updated the To-Do: 'I need it faster' <a href=3D'https://localhost/leanti=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: me/tickets/showTicket/22'>Click here to see it</a></div></div>=0A=09=09=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09<br /><br />=0A=09=09=09=09=09=09</td>=0A=09=09=09=09=09</tr>=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =0A=09=09=09=09</table>=0A=09=09=09</td>=0A=09=09</tr>=0A=09=09<tr>=0A=09=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: =09=09<td align=3D"center">=0A=09=09=09To <a href=3D'https://localhost/lean=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: time/users/editOwn/'>unsubscribe</a> from these types of notifications plea=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: se login and edit your notifications settings=0A=09=09=09</td>=0A=09=09</tr=
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: >=0A=09=09</table>
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: .
+
+[25-Mar-2023 21:48:32 Europe/Paris] 4 SMTP INBOUND: "250 Ok 010101871a87afe4-2417b44a-03d2-4bfd-aa96-6059b9d60476-000000"
+[25-Mar-2023 21:48:32 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok 010101871a87afe4-2417b44a-03d2-4bfd-aa96-6059b9d60476-000000
+
+[25-Mar-2023 21:48:32 Europe/Paris] 1 CLIENT -> SERVER: QUIT
+
+[25-Mar-2023 21:48:33 Europe/Paris] 4 SMTP INBOUND: "221 Bye"
+[25-Mar-2023 21:48:33 Europe/Paris] 2 SERVER -> CLIENT: 221 Bye
+
+[25-Mar-2023 21:48:33 Europe/Paris] 3 Connection: closed
+[25-Mar-2023 22:52:52 Europe/Paris] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[25-Mar-2023 22:52:52 Europe/Paris] 3 Connection: opened
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-JEKRW9NNM SJTb3CrGWu7jysaDVrJR"
+[25-Mar-2023 22:52:52 Europe/Paris] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-JEKRW9NNM SJTb3CrGWu7jysaDVrJR
+
+[25-Mar-2023 22:52:52 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 22:52:52 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[25-Mar-2023 22:52:52 Europe/Paris] 1 CLIENT -> SERVER: STARTTLS
+
+[25-Mar-2023 22:52:52 Europe/Paris] 4 SMTP INBOUND: "220 Ready to start TLS"
+[25-Mar-2023 22:52:52 Europe/Paris] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 Auth method requested: UNSPECIFIED
+[25-Mar-2023 22:52:53 Europe/Paris] 4 Auth methods available on the server: PLAIN,LOGIN
+[25-Mar-2023 22:52:53 Europe/Paris] 4 Requested auth method not available: 
+[25-Mar-2023 22:52:53 Europe/Paris] 4 Auth method selected: LOGIN
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "235 Authentication successful."
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: RCPT TO:<marcel@leantime.io>
+
+[25-Mar-2023 22:52:53 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[25-Mar-2023 22:52:53 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[25-Mar-2023 22:52:53 Europe/Paris] 1 CLIENT -> SERVER: DATA
+
+[25-Mar-2023 22:52:54 Europe/Paris] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[25-Mar-2023 22:52:54 Europe/Paris] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: Date: Sat, 25 Mar 2023 22:52:52 +0100
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: To: marcel@leantime.io
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: Subject: Leantime - Latest updates
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: Message-ID: <JccKASmcetj38aRsKfEQHTIn1Sr8by9ZszS3EQ8A8@localhost>
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =0A=09=09<table width=3D"100%" style=3D"background:#eeeeee; padding:15px; "=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: >=0A=09=09<tr>=0A=09=09=09<td align=3D"center" valign=3D"top">=0A=09=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09<table width=3D"600"  style=3D"width:600px; background-color:#ffffff; bo=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: rder:1px solid #ccc;">=0A=09=09=09=09=09<tr>=0A=09=09=09=09=09=09<td style=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =3D"padding:3px 10px;">=0A=09=09=09=09=09=09=09<table>=0A=09=09=09=09=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09=09<tr>=0A=09=09=09=09=09=09=09=09<td width=3D"150"><img alt=3D"Logo" sr=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: c=3D"https://localhost/leantime/userfiles/14d53a15303175052275e3362406654e.=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: png" width=3D"150" style=3D"width:150px;"></td>=0A=09=09=09=09=09=09=09=09<=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: td></td>=0A=09=09=09=09=09=09=09</tr>=0A=09=09=09=09=09=09=09</table>=0A=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09=09</td>=0A=09=09=09=09=09</tr>=0A=09=09=09=09=09<tr>=0A=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09<td style=3D"padding:10px; font-family:Arial; color:#666; font-=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: size:14px; line-height:1.7;">=0A=09=09=09=09=09=09=09Hi, =0A=09=09=09=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09=09<br /><br />=0A=09=09=09=09=09=09=09News from your Leantime projects<=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: br/><br />=0A<div style=3D"border-top: 1px solid #ddd; margin: 3px; padding=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: : 3px;"><div style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 =
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: 14:11:36</div><div><p><em>One of your To-Dos was updated [22] - I need it f=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: aster</em></p>Marcel123 updated the To-Do: 'I need it faster' <a href=3D'ht=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: tps://localhost/leantime/tickets/showTicket/22'>Click here to see it</a></d=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: iv></div><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3p=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: x;"><div style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 14:1=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: 2:24</div><div><p><em>One of your To-Dos was updated [22] - I need it faste=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: r</em></p>Marcel123 updated the To-Do: 'I need it faster' <a href=3D'https:=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: //localhost/leantime/tickets/showTicket/22'>Click here to see it</a></div><=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: /div><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;">=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: <div style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 14:41:23=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: </div><div><p><em>One of your To-Dos was updated [22] - I need it faster</e=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: m></p>Marcel123 updated the To-Do: 'I need it faster' <a href=3D'https://lo=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: calhost/leantime/tickets/showTicket/22'>Click here to see it</a></div></div=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: ><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER:  style=3D"margin: 0px; padding: 0px; float : right">2023-03-25 14:50:21</di=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: v><div><p><em>One of your To-Dos was updated [24] - And me</em></p>Marcel12=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: 3 updated the To-Do: 'And me' <a href=3D'https://localhost/leantime/tickets=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: /showTicket/24'>Click here to see it</a></div></div><div style=3D"border-to=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: p: 1px solid #ddd; margin: 3px; padding: 3px;"><div style=3D"margin: 0px; p=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: adding: 0px; float : right">2023-03-25 14:50:36</div><div><p><em>One of you=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: r To-Dos was updated [24] - And me</em></p>Marcel123 updated the To-Do: 'An=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: d me' <a href=3D'https://localhost/leantime/tickets/showTicket/24'>Click he=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: re to see it</a></div></div>=0A=09=09=09=09=09=09=09<br /><br />=0A=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09=09=09=09</td>=0A=09=09=09=09=09</tr>=0A=09=09=09=09</table>=0A=09=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: </td>=0A=09=09</tr>=0A=09=09<tr>=0A=09=09=09<td align=3D"center">=0A=09=09=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: =09To <a href=3D'https://localhost/leantime/users/editOwn/'>unsubscribe</a>=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER:  from these types of notifications please login and edit your notifications=
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER:  settings=0A=09=09=09</td>=0A=09=09</tr>=0A=09=09</table>
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: .
+
+[25-Mar-2023 22:52:54 Europe/Paris] 4 SMTP INBOUND: "250 Ok 010101871ac29c34-12c9493f-3106-413d-aed0-0be0c32afc3d-000000"
+[25-Mar-2023 22:52:54 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok 010101871ac29c34-12c9493f-3106-413d-aed0-0be0c32afc3d-000000
+
+[25-Mar-2023 22:52:54 Europe/Paris] 1 CLIENT -> SERVER: QUIT
+
+[25-Mar-2023 22:52:54 Europe/Paris] 4 SMTP INBOUND: "221 Bye"
+[25-Mar-2023 22:52:54 Europe/Paris] 2 SERVER -> CLIENT: 221 Bye
+
+[25-Mar-2023 22:52:54 Europe/Paris] 3 Connection: closed
+[26-Mar-2023 05:49:31 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[26-Mar-2023 05:49:31 America/Los_Angeles] Invalid DN syntax
+[26-Mar-2023 05:49:31 America/Los_Angeles] invalid DN
+[26-Mar-2023 14:49:32 Europe/Paris] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[26-Mar-2023 14:49:32 Europe/Paris] 3 Connection: opened
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-L4ZRHKNNM 0HEVtHlta6dnHj1mz9Ge"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-L4ZRHKNNM 0HEVtHlta6dnHj1mz9Ge
+
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: STARTTLS
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "220 Ready to start TLS"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: EHLO localhost
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-8BITMIME"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-STARTTLS"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 Auth method requested: UNSPECIFIED
+[26-Mar-2023 14:49:33 Europe/Paris] 4 Auth methods available on the server: PLAIN,LOGIN
+[26-Mar-2023 14:49:33 Europe/Paris] 4 Requested auth method not available: 
+[26-Mar-2023 14:49:33 Europe/Paris] 4 Auth method selected: LOGIN
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[26-Mar-2023 14:49:33 Europe/Paris] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[26-Mar-2023 14:49:33 Europe/Paris] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[26-Mar-2023 14:49:33 Europe/Paris] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "235 Authentication successful."
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: RCPT TO:<marcel@leantime.io>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "250 Ok"
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: DATA
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: Date: Sun, 26 Mar 2023 14:49:32 +0200
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: To: marcel@leantime.io
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: Subject: One of your To-Dos was updated [17] - test
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: Message-ID: <y39jBioot8gva4DKRdow5sDwts0RknbJjEulZP3yxjI@localhost>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		<table width="100%" style="background:#eeeeee; padding:15px; ">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		<tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 			<td align="center" valign="top">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 					<tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 						<td style="padding:3px 10px;">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							<table>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 								<tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 								<td width="150"><img alt="Logo" src="https://localhost/leantime/userfiles/14d53a15303175052275e3362406654e.png" width="150" style="width:150px;"></td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 								<td></td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							</tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							</table>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 						</td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 					</tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 					<tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							Hi, 
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							<br /><br />
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							News from your Leantime projects<br/><br />
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: <div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style="margin: 0px; padding: 0px; float : right">2023-03-25 18:51:27</div><div><p><em>One of your To-Dos was updated [17] - test</em></p>Marcel123 updated the To-Do: 'test' <a href='https://localhost/leantime/tickets/showTicket/17'>Click here to see it</a></div></div>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 							<br /><br />
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 						</td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 					</tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 				</table>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 			</td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		</tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		<tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 			<td align="center">
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 			To <a href='https://localhost/leantime/users/editOwn/'>unsubscribe</a> from these types of notifications please login and edit your notifications settings
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 			</td>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		</tr>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 		</table>
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: 
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: .
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "250 Ok 010101871df7894c-73b13c3f-b129-4d38-96c2-679e6e58d9ea-000000"
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 250 Ok 010101871df7894c-73b13c3f-b129-4d38-96c2-679e6e58d9ea-000000
+
+[26-Mar-2023 14:49:34 Europe/Paris] 1 CLIENT -> SERVER: QUIT
+
+[26-Mar-2023 14:49:34 Europe/Paris] 4 SMTP INBOUND: "221 Bye"
+[26-Mar-2023 14:49:34 Europe/Paris] 2 SERVER -> CLIENT: 221 Bye
+
+[26-Mar-2023 14:49:34 Europe/Paris] 3 Connection: closed
+[26-Mar-2023 06:31:20 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Typed property leantime\domain\services\calendar::$calendarRepo must not be accessed before initialization in /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php:31
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/api/controllers/class.calendar.php(64): leantime\domain\services\calendar->patch('1', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(61): leantime\domain\controllers\calendar->patch(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(33): leantime\core\controller->executeActions('patch', Array)
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(176): leantime\core\controller->__construct('patch', Array)
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(98): leantime\core\frontcontroller::executeAction('api.calendar', Array, 200)
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(124): leantime\core\frontcontroller::dispatch()
+#6 /Users/marcel/Sites/leantime-oss/public/index.php(26): leantime\core\application->start()
+#7 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php on line 31
+[26-Mar-2023 06:32:00 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Class "leantime\core\core\db" not found in /Users/marcel/Sites/leantime-oss/app/core/class.repository.php:155
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php(31): leantime\core\repository->patch(1, Array)
+#1 /Users/marcel/Sites/leantime-oss/app/domain/api/controllers/class.calendar.php(64): leantime\domain\services\calendar->patch('1', Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(61): leantime\domain\controllers\calendar->patch(Array)
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(33): leantime\core\controller->executeActions('patch', Array)
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(176): leantime\core\controller->__construct('patch', Array)
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(98): leantime\core\frontcontroller::executeAction('api.calendar', Array, 200)
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(124): leantime\core\frontcontroller::dispatch()
+#7 /Users/marcel/Sites/leantime-oss/public/index.php(26): leantime\core\application->start()
+#8 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/app/core/class.repository.php on line 155
+[31-Mar-2023 08:45:25 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[31-Mar-2023 08:45:25 America/Los_Angeles] Invalid DN syntax
+[31-Mar-2023 08:45:25 America/Los_Angeles] invalid DN
+[31-Mar-2023 08:59:03 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/editEvent.tpl.php on line 10
+[31-Mar-2023 08:59:10 America/Los_Angeles] PHP Warning:  Undefined array key "id" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/editEvent.tpl.php on line 10
+[31-Mar-2023 09:07:29 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ">" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/showMyCalendar.tpl.php on line 25
+[31-Mar-2023 09:29:57 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token "}" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/repositories/class.calendar.php on line 106
+[31-Mar-2023 09:58:22 America/Los_Angeles] PHP Warning:  A non-numeric value encountered in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php on line 29
+[31-Mar-2023 09:58:22 America/Los_Angeles] PHP Warning:  A non-numeric value encountered in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php on line 29
+[31-Mar-2023 10:01:01 America/Los_Angeles] PHP Parse error:  syntax error, unexpected variable "$to" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php on line 23
+[31-Mar-2023 10:17:27 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Attempt to assign property "DTSTART" on null in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php:58
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(251): require_once()
+#1 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.ical.php(51): leantime\core\template->display('calendar.ical', 'blank')
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(63): leantime\domain\controllers\ical->run()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(33): leantime\core\controller->executeActions('get', Array)
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(176): leantime\core\controller->__construct('get', Array)
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(98): leantime\core\frontcontroller::executeAction('calendar.ical', Array, 200)
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(83): leantime\core\frontcontroller::dispatch()
+#7 /Users/marcel/Sites/leantime-oss/public/index.php(26): leantime\core\application->start()
+#8 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php on line 58

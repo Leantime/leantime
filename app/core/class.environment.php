@@ -49,7 +49,7 @@ class environment
     public string $s3Key;
     public string $s3Secret;
     public string $s3Bucket;
-    public string $s3UsePathStyleEndpoint;
+    public bool $s3UsePathStyleEndpoint;
     public string $s3Region;
     public string $s3FolderName;
 
