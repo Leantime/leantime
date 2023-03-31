@@ -10,22 +10,11 @@ namespace leantime\domain\services {
 
     class wiki
     {
-        private $projectRepository;
         private $wikiRepository;
-        private $ticketRepository;
-        private $reportRepository;
-        private core\language $language;
-        private core\template $tpl;
 
         public function __construct()
         {
-
-            $this->tpl = new core\template();
-            $this->projectRepository = new repositories\projects();
             $this->wikiRepository = new repositories\wiki();
-            $this->reportRepository = new repositories\reports();
-            $this->ticketRepository = new repositories\tickets();
-            $this->language = core\language::getInstance();
         }
 
         public function getArticle($id, $projectId = null)

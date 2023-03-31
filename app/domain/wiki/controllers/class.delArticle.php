@@ -10,7 +10,7 @@ namespace leantime\domain\controllers {
 
     class delArticle extends controller
     {
-        private $wikiRepo;
+        private repositories\wiki $wikiRepo;
 
         /**
          * init - initialize private variables

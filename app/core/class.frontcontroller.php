@@ -59,7 +59,7 @@ namespace leantime\core {
          * @param  $rootPath
          * @return object (instance)
          */
-        public static function getInstance(string $rootPath = null, IncomingRequest $incomingRequest = null)
+        public static function getInstance(string $rootPath = null, IncomingRequest $incomingRequest = null): static
         {
 
             if (is_object(self::$instance) === false) {

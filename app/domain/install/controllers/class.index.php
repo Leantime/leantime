@@ -10,8 +10,7 @@ namespace leantime\domain\controllers {
 
     class index extends controller
     {
-        private $usersService;
-        private $redirectUrl;
+        private repositories\install $installRepo;
 
         /**
          * init - initialize private variables

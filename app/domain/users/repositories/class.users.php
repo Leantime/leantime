@@ -146,7 +146,7 @@ namespace leantime\domain\repositories {
          * @param  $id
          * @return array
          */
-        public function getUserByEmail($email)
+        public function getUserByEmail($email): array | false
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE username = :email AND status LIKE 'a' LIMIT 1";
@@ -161,7 +161,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getNumberOfUsers()
+        public function getNumberOfUsers(): int
         {
 
             $sql = "SELECT COUNT(id) AS userCount FROM `zp_user`";
@@ -299,7 +299,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function isAdmin($userId)
+        public function isAdmin($userId): bool
         {
 
             $sql = "SELECT role FROM zp_user WHERE id = :id LIMIT 1";
@@ -368,7 +368,7 @@ namespace leantime\domain\repositories {
          * @param  $userId
          * @return bool
          */
-        public function usernameExist($username, $userId = '')
+        public function usernameExist($username, $userId = ''): bool
         {
 
             if ($userId != '') {
