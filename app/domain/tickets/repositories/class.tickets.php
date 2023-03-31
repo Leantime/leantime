@@ -731,7 +731,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "headline", $includeTasks = false)
+        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "headline", $includeTasks = false, $clientId = false)
         {
 
             $statusGroups = $this->getStatusListGroupedByType($projectId);
@@ -799,10 +799,12 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
-						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
-					WHERE
-						zp_tickets.projectId = :projectId";
+						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId 
+						WHERE 1 = 1 ";
 
+            if($projectId !== 0){
+                $query .= " AND zp_tickets.projectId = :projectId";
+            }
             if ($includeTasks === true) {
                 $query .= "";
             } else {
@@ -811,6 +813,10 @@ namespace leantime\domain\repositories {
 
             if ($includeArchived === false) {
                 $query .= " AND zp_tickets.status > -1 ";
+            }
+
+            if($clientId !== false && $clientId !== 0){
+                $query .= "AND zp_clients.id = :clientId";
             }
 
                 $query .= "	GROUP BY
@@ -827,7 +833,13 @@ namespace leantime\domain\repositories {
 
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            if($projectId !== 0){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            if($clientId !== false && $clientId !== 0){
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'leantime\domain\models\tickets');
