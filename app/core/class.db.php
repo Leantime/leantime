@@ -61,6 +61,7 @@ class db
             //Get configuration-object for connection-details
             $config = \leantime\core\environment::getInstance();
 
+
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;
             $this->databaseName = $config->dbDatabase;

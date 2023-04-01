@@ -9,16 +9,6 @@
 //        + push here a json structure with information so that javascript call does not come back too often
 //        if there are a lot of people connected
 
-$fp  = '';
-
-// If semaphore can not be created, exit
-if(is_writable("../logs/")) {
-    $fp = fopen("../logs/cronlock.txt", "w+");
-}else{
-    error_log("Can't write to /logs directory. Cron won't be executed");
-    exit();
-}
-
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 define('APP_ROOT', dirname(__FILE__, 2));
@@ -140,9 +130,6 @@ debug_print( "cron end");
 // Cleaning old audit events
 $audit->pruneEvents();
 
-// Release the semaphore for next thread
-flock($fp, LOCK_UN);
-fclose($fp);
 
 if(ob_get_length() > 0) {
     ob_end_flush();

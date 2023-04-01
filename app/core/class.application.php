@@ -31,7 +31,8 @@ class application
         "api.i18n",
         "calendar.ical",
         "oidc.login",
-        "oidc.callback"
+        "oidc.callback",
+        "cron.run"
     );
 
     /**
