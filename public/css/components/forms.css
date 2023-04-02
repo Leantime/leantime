@@ -603,6 +603,7 @@ body input[type=text].main-title-input.main-title-input {
 body div.tagsinput {
     border:1px solid var(--secondary-background);
     margin-bottom:5px;
+    overflow:hidden;
 }
 
 body div.tagsinput:hover,

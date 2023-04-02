@@ -9,11 +9,12 @@ namespace leantime\domain\repositories {
     {
 
         private core\db $db;
-        
+
         public function __construct()
         {
 
             $this->db = core\db::getInstance();
+
         }
 
         public function storeEvent($action = "ping", $values = "", $entity = "", $entityId = 0, $userId = 0, $projectId = 0, $thedate = '')

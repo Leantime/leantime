@@ -49,7 +49,7 @@ class environment
     public string $s3Key;
     public string $s3Secret;
     public string $s3Bucket;
-    public bool $s3UsePathStyleEndpoint;
+    public ?bool $s3UsePathStyleEndpoint;
     public string $s3Region;
     public string $s3FolderName;
 
@@ -59,7 +59,7 @@ class environment
     public string $email;
     public bool $useSMTP;
     public string $smtpHosts;
-    public string $smtpAuth;
+    public bool $smtpAuth;
     public string $smtpUsername;
     public string $smtpPassword;
     public bool $smtpAutoTLS;
@@ -152,7 +152,7 @@ class environment
         $this->useSMTP = $this->environmentHelper("LEAN_EMAIL_USE_SMTP", $defaultConfiguration->useSMTP ?? false, "boolean");
         if ($this->useSMTP) {
             $this->smtpHosts = $this->environmentHelper("LEAN_EMAIL_SMTP_HOSTS", $defaultConfiguration->smtpHosts ?? '');
-            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? '', "boolean");
+            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? false, "boolean");
             $this->smtpUsername = $this->environmentHelper("LEAN_EMAIL_SMTP_USERNAME", $defaultConfiguration->smtpUsername ?? '');
             $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '');
             $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS ?? false, "boolean");

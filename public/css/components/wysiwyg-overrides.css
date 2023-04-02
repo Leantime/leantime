@@ -313,3 +313,6 @@ body .tox .tox-dialog-wrap__backdrop {
     display:none;
 }
 
+.mce-content-body ul {
+    padding-inline-start: 40px;
+}

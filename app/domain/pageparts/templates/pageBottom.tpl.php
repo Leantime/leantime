@@ -3,7 +3,7 @@
 <?php if (isset($_SESSION['do_cron'])) { ?>
     <script>
         var req = new XMLHttpRequest();
-        req.open("GET", "<?=BASE_URL?>/cron.php",true);
+        req.open("GET", "<?=BASE_URL?>/cron/run",true);
         req.send(null);
     </script>
 <?php } ?>

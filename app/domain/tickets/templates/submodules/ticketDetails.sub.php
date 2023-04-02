@@ -20,7 +20,7 @@
                     <input type="text" value="<?php $this->e($ticket->tags); ?>" name="tags" id="tags" />
                 </div>
 
-                <div class="viewDescription">
+                <div class="viewDescription mce-content-body">
                     <?=$this->__("label.description") ?><br /><br />
                     <?php echo $this->escapeMinimal($ticket->description); ?>
                 </div>
@@ -322,5 +322,8 @@
             jQuery('#descriptionEditor').show();
         }
     });
+
+    Prism.highlightAll();
+
 </script>
 
