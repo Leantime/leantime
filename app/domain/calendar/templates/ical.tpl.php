@@ -118,7 +118,7 @@ if ($calendars) {
             echo "UID:" . hash('sha1', $calendar['id'].$calendar['dateContext']) . "@" . BASE_URL . "" . $eol;
             echo "DTSTART;TZID=".$timezone.":" . $calendar['dateFrom']['ical'] . "" . $eol;
             echo "DTEND;TZID=".$timezone.":" . $calendar['dateTo']['ical'] . "" . $eol;
-            echo "SUMMARY:" . substr(htmlspecialchars($calendar['title']), 0, 74) . "" . $eol;
+            echo "SUMMARY:" . substr(($calendar['title']), 0, 74) . "" . $eol;
             echo "URL;VALUE=URI:" . $url . "" . $eol;
             echo "END:VEVENT" . $eol;
         }
