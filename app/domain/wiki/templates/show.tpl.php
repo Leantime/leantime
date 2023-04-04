@@ -47,8 +47,45 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
     <div class="pagetitle">
 
         <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
-        <h1><?php echo $this->__("headlines.documents"); ?></h1>
 
+        <?php if (count($wikis) > 0) {?>
+            <span class="dropdown dropdownWrapper headerEditDropdown">
+                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+                <ul class="dropdown-menu editCanvasDropdown">
+                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+
+                        <li><a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$this->__("link.edit_wiki") ?></a></li>
+                        <li><a class="delete wikiModal" href="<?=BASE_URL ?>/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$this->__('links.delete_wiki') ?></a></li>
+
+                    <?php } ?>
+                </ul>
+            </span>
+        <?php } ?>
+
+        <h1><?php echo $this->__("headlines.documents"); ?>
+
+         <?php if (count($wikis) > 0) {?>
+             //
+            <span class="dropdown dropdownWrapper">
+                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
+                    <?php $this->e($currentWiki->title) ?> <i class="fa fa-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+
+                    <li><a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/"><?=$this->__("link.new_wiki") ?></a></li>
+                    <li class='nav-header border'></li>
+                    <?php foreach ($wikis as $wiki) {?>
+                        <li>
+                            <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$this->escape($wiki->title)?></a>
+                        </li>
+                    <?php } ?>
+
+
+                </ul>
+            </span>
+        <?php } ?>
+        </h1>
     </div>
 
 </div>
@@ -83,13 +120,41 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
             <?php if ($wikis != false && count($wikis) > 0) {?>
 
 
-                <div class="col-lg-9">
+                <div class="col-lg-12">
                     <div class="maincontentinner">
                     <?php
 
                     if ($currentArticle && $currentArticle->id != null) { ?>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-3" >
+                            <div class="row">
+
+                                <div class="col-md-12" style="border-right:1px solid var(--neutral);">
+
+
+                                    <h5 class="subtitle">Contents</h5>
+                                    <div id="article-toc-wrapper">
+
+
+                                        <?php
+
+                                        createTreeView($wikiHeadlines, 0, 0, -1, $this);
+                                        ?>
+
+                                        <?php /*
+
+                                   */?>
+                                    </div>
+                                    <?php if ($wikis != false && count($wikis) > 0) {?>
+                                        <div class="creationLinks">
+                                            <a class="articleModal inlineEdit" href="<?=BASE_URL ?>/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$this->__("link.create_article") ?></a>
+                                        </div>
+                                    <?php } ?>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
 
                             <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div class="right">
@@ -111,12 +176,18 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                 <?=$this->escape($currentArticle->title)?>
                             </h1>
                             <div class="articleMeta">
+                                <div class="metaContent">
                                 <?=sprintf($this->__('labels.createdBy_on'), $currentArticle->firstname, $currentArticle->lastname, $this->getFormattedDateString($currentArticle->created), $this->getFormattedDateString($currentArticle->modified)); ?>
                                 <br />
+                                </div>
                                 <div class="tagsinput readonly">
 
                                     <?php
                                     $tagsArray = explode(",", $currentArticle->tags);
+                                    if(count($tagsArray)>0){
+                                        echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
+                                    }
+
                                     foreach ($tagsArray as $tag) {
                                         echo"<span class='tag'><span>" . $this->escape($tag) . "</span></span>";
                                     }
@@ -195,67 +266,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                 </div>
                 </div>
 
-                <div class="col-lg-3" >
-                    <div class="maincontentinner stickyColumn">
-                        <div class="row">
-                            <div class="col-md-12">
 
-
-                                <h5 class="subtitle"><?=$this->__('label.current_wiki') ?></h5>
-                                <div class="form-group board-select wikiSelect">
-                                    <a href="javascript:void(0)" class="dropdown-toggle full-width-select" data-toggle="dropdown">
-                                        <?php $this->e($currentWiki->title) ?> <i class="fa fa-caret-down"></i>
-                                    </a>
-
-                                    <ul class="dropdown-menu">
-                                        <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                            <li>
-                                                <a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$this->__("link.edit_wiki") ?></a>
-                                                <a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/"><?=$this->__("link.new_wiki") ?></a>
-                                            </li>
-                                        <?php } ?>
-
-                                        <li class='nav-header border'></li>
-                                        <?php foreach ($wikis as $wiki) {?>
-                                            <li>
-                                                <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$this->escape($wiki->title)?></a>
-                                            </li>
-                                        <?php } ?>
-
-
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-12">
-
-                                <?php if ($wikis != false && count($wikis) > 0) {?>
-                                    <div class="creationLinks">
-                                        <a class="articleModal inlineEdit" href="<?=BASE_URL ?>/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$this->__("link.create_article") ?></a>
-                                    </div>
-                                <?php } ?>
-
-                                <div id="article-toc-wrapper">
-
-
-                                    <?php
-
-                                    createTreeView($wikiHeadlines, 0, 0, -1, $this);
-                                    ?>
-
-                                    <?php /*
-
-                                   */?>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             <?php } ?>
 

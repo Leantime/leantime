@@ -214,6 +214,10 @@ leantime.generalController = (function () {
 
             var entityId = jQuery("input[name=id]").val();
 
+            //modal is 50px from top. Always
+            //Then reduce headline, save button range padding from modal
+            var height = window.innerHeight - 50 - 205;
+
             jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
@@ -233,10 +237,12 @@ leantime.generalController = (function () {
                 convert_urls: true,
                 menubar:false,
                 resizable: true,
+
                 paste_data_images: true,
                 relative_urls : true,
                 document_base_url: leantime.appUrl + "/",
-                min_height: 400,
+                min_height: 200,
+                max_height: height,
                 default_link_target: '_blank',
                 codesample_global_prismjs: true,
                 codesample_languages: [

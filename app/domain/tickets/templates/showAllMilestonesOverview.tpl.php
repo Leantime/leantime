@@ -58,10 +58,11 @@
                         <div id="tableButtons" style="display:inline-block"></div>
 
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/roadmapAll" ><?=$this->__("links.gantt_view") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
+                                <li class="active"><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
                             </ul>
                         </div>
 

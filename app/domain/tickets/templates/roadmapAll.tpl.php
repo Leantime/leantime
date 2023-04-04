@@ -77,10 +77,11 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     </div>
 
                     <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.gantt_view") ?> <?=$this->__("links.view") ?></button>
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll" class="active"><?=$this->__("links.gantt_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview" ><?=$this->__("links.table") ?></a></li>
+                            <li class="active"><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
                         </ul>
                     </div>
 
