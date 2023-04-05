@@ -70,11 +70,12 @@ namespace leantime\domain\services {
                 // TODO : Update profile form to allow each user to edit his own messageFrequency option
                 $lastMessageDate = strtotime($this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".lastMessageDate"));
                 $nowDate = time();
+
                 // echo for DEBUG PURPOSE
-                debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
+                //debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
                 $timeSince = abs($nowDate - $lastMessageDate);
                 // echo for DEBUG PURPOSE
-                debug_print("Time elapsed since : " . $timeSince);
+                //debug_print("Time elapsed since : " . $timeSince);
 
                 $messageFrequency = $this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".messageFrequency");
 
@@ -88,11 +89,11 @@ namespace leantime\domain\services {
                     $messageFrequency = 3600;
                 }
                 // echo for DEBUG PURPOSE
-                debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
+                //debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
 
                 if ($timeSince < $messageFrequency) {
                     // echo for DEBUG PURPOSE
-                    debug_print("Elapsed time not enough for " . $recipient . " : skipping till " . date("Y-m-d H:i:s", $lastMessageDate + $messageFrequency));
+                    //debug_print("Elapsed time not enough for " . $recipient . " : skipping till " . date("Y-m-d H:i:s", $lastMessageDate + $messageFrequency));
                     continue;
                 }
 
@@ -116,7 +117,7 @@ namespace leantime\domain\services {
                 // Delete the corresponding messages from the queue when the mail is sent
                 // TODO here : only delete these if the send was successful
                 // echo for DEBUG PURPOSE
-                debug_print("Messages send (about to delete) :");
+                //debug_print("Messages send (about to delete) :");
 
                 $this->queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 

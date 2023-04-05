@@ -103,7 +103,7 @@ foreach ($this->get('allSubTasks') as $subticket) {
                         </div>
 
                         <?php
-                        
+
                         if(isset($statusLabels[$subticket['status']])){
                             $class=$statusLabels[$subticket['status']]["class"];
                             $name=$statusLabels[$subticket['status']]["name"];
