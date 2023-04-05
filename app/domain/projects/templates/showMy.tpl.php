@@ -8,15 +8,11 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-4">
-                <h5><?php $this->__("headlines.projects"); ?></h5>
-                <h1><?php echo $this->__("headlines.my_portfolio"); ?></h1>
-            </div>
-            <div class="col-lg-4" style="text-align:right;padding-top:15px">
 
-            </div>
-        </div>
+        <h5><?php $this->__("headlines.projects"); ?></h5>
+        <h1><?php echo $this->__("headlines.my_portfolio"); ?></h1>
+
+
     </div>
 </div>
 

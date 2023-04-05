@@ -23,10 +23,10 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 }
 ?>
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
+    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("label.all_milestones"); ?></h1>
+        <h1><?=$this->__("label.all_milestones_portfolio"); ?></h1>
     </div>
 </div><!--pageheader-->
 

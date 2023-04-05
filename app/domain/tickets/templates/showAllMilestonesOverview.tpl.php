@@ -19,7 +19,7 @@
 ?>
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
+    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.milestonesAll"); ?></h1>
@@ -157,11 +157,22 @@
                                 </div>
                             </td>
 
-                            <td class="dropdown-cell" data-order="<?=$statusLabels[$row->status]["name"]?>">
+                            <?php
+
+                            if(isset($statusLabels[$row->status])){
+                                $class=$statusLabels[$row->status]["class"];
+                                $name=$statusLabels[$row->status]["name"];
+                            }else{
+                                $class = 'label-important';
+                                $name = 'new';
+                            }
+
+                            ?>
+                            <td class="dropdown-cell" data-order="<?=$name?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle status <?=$class?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
-                                            <?php echo $statusLabels[$row->status]["name"]; ?>
+                                            <?php echo $name; ?>
                                         </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
