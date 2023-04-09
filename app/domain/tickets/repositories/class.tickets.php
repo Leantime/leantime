@@ -90,7 +90,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $efforts = array('1' => 'XS', '2' => 'S', 3 => "M", "5" => "L", 8 => "XL", 13 => "XXL");
+        public $efforts = array(1 => 'XS', 2 => 'S', 3 => "M", 5 => "L", 8 => "XL", 13 => "XXL");
 
         /**
          * @access public
@@ -799,7 +799,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
-						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId 
+						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 						WHERE 1 = 1 ";
 
             if($projectId !== 0){
