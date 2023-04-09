@@ -276,7 +276,7 @@ namespace leantime\core {
             }
 
             // Overwrite english language by non-english language
-            if (file_exists(ROOT . '/' . static::DEFAULT_LANG_FOLDER . $this->language . '.ini') && $this->language !== 'en-US') {
+            if (file_exists(static::DEFAULT_LANG_FOLDER . $this->language . '.ini') && $this->language !== 'en-US') {
                 $ini_overrides = parse_ini_file(static::DEFAULT_LANG_FOLDER . $this->language . '.ini', false, INI_SCANNER_RAW);
                 if (is_array($ini_overrides)) {
                     foreach ($ini_overrides as $languageKey => $languageValue) {
