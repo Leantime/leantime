@@ -88,7 +88,7 @@ leantime.generalController = (function () {
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,mention,slashcommands",
+                plugins : "imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 //autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
                 //autosave_restore_when_empty: true,
@@ -103,7 +103,7 @@ leantime.generalController = (function () {
                 relative_urls : true,
                 document_base_url : leantime.appUrl + "/",
                 default_link_target: '_blank',
-
+                table_appearance_options: false,
                 mentions: mentionsConfig,
                 images_upload_handler: function (blobInfo, success, failure) {
                     var xhr, formData;
@@ -218,15 +218,16 @@ leantime.generalController = (function () {
             //Then reduce headline, save button range padding from modal
             var height = window.innerHeight - 50 - 205;
 
+
             jQuery('textarea.complexEditor').tinymce(
             {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl + '/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
+                content_css: leantime.appUrl + '/css/components/style.default.css,'+leantime.appUrl + '/css/components/dropdowns.css,'+ leantime.appUrl + '/css/libs/bootstrap-grid.min.css,'+ leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,' + leantime.appUrl + '/css/libs/tinymceSkin/oxide/content.css,' + leantime.appUrl + '/css/components/wysiwyg-overrides.css,' + leantime.appUrl + '/css/libs/roboto.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention,slashcommands",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample",
+                plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
                 //autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
                 //autosave_restore_when_empty: true,
                 //autosave_retention: '120m',
@@ -237,10 +238,12 @@ leantime.generalController = (function () {
                 convert_urls: true,
                 menubar:false,
                 resizable: true,
-
+                templates : leantime.appUrl + "/wiki/templates",
+                body_class: 'mce-content-body',
                 paste_data_images: true,
                 relative_urls : true,
                 document_base_url: leantime.appUrl + "/",
+                table_appearance_options: false,
                 min_height: 200,
                 max_height: height,
                 default_link_target: '_blank',
@@ -377,7 +380,7 @@ leantime.generalController = (function () {
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist,codesample,mention",
+                plugins : "shortlink,checklist,table,bettertable,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,codesample,mention",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media emoticons | checklist bullist numlist | table",
                 branding: false,
                 statusbar: true,
