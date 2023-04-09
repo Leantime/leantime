@@ -63,7 +63,6 @@ if (is_array($currentLink)) {
                             <li class='nav-header border'></li>
                             <li><a href="<?=BASE_URL ?>/projects/newProject/"><?=$this->__("menu.create_project") ?></a></li>
                             <li><a href="<?=BASE_URL ?>/projects/showAll"><?=$this->__("menu.view_all_projects") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestonesAll") ?></a></li>
                         <?php } ?>
                         <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
                             <li><a href="<?=BASE_URL ?>/clients/showAll"><?=$this->__("menu.view_all_clients") ?></a></li>

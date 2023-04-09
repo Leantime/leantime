@@ -20,14 +20,14 @@ foreach ($this->get('allCanvas') as $canvasRow) {
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <?php if (count($allCanvas) > 0) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
-        <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-        <ul class="dropdown-menu editCanvasDropdown">
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></li>
-                <li><a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
-            <?php } ?>
-        </ul>
-        </span>
+                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+                <ul class="dropdown-menu editCanvasDropdown">
+                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                        <li><a href="javascript:void(0)" class="editCanvasLink "><?=$this->__("links.icon.edit") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/ideas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
+                    <?php } ?>
+                </ul>
+            </span>
         <?php } ?>
         <h1><?php echo $this->__("headlines.ideas") ?>
             //

@@ -19,7 +19,7 @@
 ?>
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
+    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
         <h1><?=$this->__("headline.milestonesAll"); ?></h1>
@@ -58,10 +58,11 @@
                         <div id="tableButtons" style="display:inline-block"></div>
 
                         <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.table") ?> <?=$this->__("links.view") ?></button>
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/roadmapAll" ><?=$this->__("links.gantt_view") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
+                                <li class="active"><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
                             </ul>
                         </div>
 
@@ -156,11 +157,22 @@
                                 </div>
                             </td>
 
-                            <td class="dropdown-cell" data-order="<?=$statusLabels[$row->status]["name"]?>">
+                            <?php
+
+                            if(isset($statusLabels[$row->status])){
+                                $class=$statusLabels[$row->status]["class"];
+                                $name=$statusLabels[$row->status]["name"];
+                            }else{
+                                $class = 'label-important';
+                                $name = 'new';
+                            }
+
+                            ?>
+                            <td class="dropdown-cell" data-order="<?=$name?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle status <?=$class?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
-                                            <?php echo $statusLabels[$row->status]["name"]; ?>
+                                            <?php echo $name; ?>
                                         </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
