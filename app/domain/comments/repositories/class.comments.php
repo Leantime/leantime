@@ -8,7 +8,7 @@ namespace leantime\domain\repositories {
 
     class comments
     {
-        private $db;
+        private core\db $db;
 
         public function __construct()
         {

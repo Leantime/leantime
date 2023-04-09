@@ -6,14 +6,90 @@ class environment
 {
     private static $instance = null;
 
-    public static function getInstance()
+    public static function getInstance(): static
     {
 
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
+
+    public \Dotenv\Dotenv $dotenv;
+
+    public ?object $yaml;
+
+    public string $sitename;
+    public string $language;
+    public string $logoPath;
+    public string $printLogoURL;
+    public string $appUrl;
+    public string $defaultTheme;
+    public string $primarycolor;
+    public string $secondarycolor;
+    public int $debug;
+    public string $defaultTimezone;
+    public bool $enableMenuType;
+    public bool $keepTheme;
+    public string $logPath;
+
+    public string $appUrlRoot;
+
+
+    public string $dbHost;
+    public string $dbUser;
+    public string $dbPassword;
+    public string $dbDatabase;
+    public int $dbPort;
+
+    public string $userFilePath;
+    public bool $useS3;
+    public string $s3EndPoint;
+    public string $s3Key;
+    public string $s3Secret;
+    public string $s3Bucket;
+    public ?bool $s3UsePathStyleEndpoint;
+    public string $s3Region;
+    public string $s3FolderName;
+
+    public string $sessionpassword;
+    public int $sessionExpiration;
+
+    public string $email;
+    public bool $useSMTP;
+    public string $smtpHosts;
+    public bool $smtpAuth;
+    public string $smtpUsername;
+    public string $smtpPassword;
+    public bool $smtpAutoTLS;
+    public string $smtpSecure;
+    public int $smtpPort;
+    public bool $smtpSSLNoverify;
+
+    public bool $useLdap;
+    public string $ldapType;
+    public string $ldapHost;
+    public int $ldapPort;
+    public string $ldapDn;
+    public string $ldapKeys;
+    public string $ldapLtGroupAssignments;
+    public string $ldapDefaultRoleKey;
+
+    public bool $oidcEnable;
+    public string $oidcProviderUrl;
+    public string $oidcClientId;
+    public string $oidcClientSecret;
+    public string $oidcAuthUrl;
+    public string $oidcTokenUrl;
+    public string $oidcJwksUrl;
+    public string $oidcUserInfoUrl;
+    public string $oidcCertificateString;
+    public string $oidcCertificateFile;
+    public string $oidcScopes;
+    public string $oidcFieldEmail;
+    public string $oidcFieldFirstName;
+    public string $oidcFieldLastName;
 
     private function __construct()
     {
@@ -41,7 +117,7 @@ class environment
         $this->defaultTimezone = $this->environmentHelper("LEAN_DEFAULT_TIMEZONE", $defaultConfiguration->defaultTimezone ?? 'America/Los_Angeles');
         $this->enableMenuType = $this->environmentHelper("LEAN_ENABLE_MENU_TYPE", $defaultConfiguration->enableMenuType ?? false);
         $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme ?? true);
-        $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", $defaultConfiguration->logPath ?? APP_ROOT.'/logs/error.log');
+        $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", APP_ROOT.'/logs/error.log');
 
 
         //TODO this variables needs to be removed and generated programmatically.
@@ -76,7 +152,7 @@ class environment
         $this->useSMTP = $this->environmentHelper("LEAN_EMAIL_USE_SMTP", $defaultConfiguration->useSMTP ?? false, "boolean");
         if ($this->useSMTP) {
             $this->smtpHosts = $this->environmentHelper("LEAN_EMAIL_SMTP_HOSTS", $defaultConfiguration->smtpHosts ?? '');
-            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? '', "boolean");
+            $this->smtpAuth = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTH", $defaultConfiguration->smtpAuth ?? false, "boolean");
             $this->smtpUsername = $this->environmentHelper("LEAN_EMAIL_SMTP_USERNAME", $defaultConfiguration->smtpUsername ?? '');
             $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '');
             $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS ?? false, "boolean");
@@ -96,9 +172,39 @@ class environment
             $this->ldapLtGroupAssignments = $this->environmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $defaultConfiguration->ldapLtGroupAssignments ?? '') ;
             $this->ldapDefaultRoleKey = $this->environmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $defaultConfiguration->ldapDefaultRoleKey ?? '');
         }
+
+        /* OIDC */
+        $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
+        if($this->oidcEnable) {
+            $this->oidcProviderUrl = $this->getString('LEAN_OIDC_PROVIDER_URL', '');
+            $this->oidcClientId = $this->getString('LEAN_OIDC_CLIEND_ID', '');
+            $this->oidcClientSecret = $this->getString('LEAN_OIDC_CLIEND_SECRET', '');
+
+            //These are optional and will override the well-known configuration
+            $this->oidcAuthUrl = $this->getString('LEAN_OIDC_AUTH_URL_OVERRIDE', '');
+            $this->oidcTokenUrl = $this->getString('LEAN_OIDC_TOKEN_URL_OVERRIDE', '');
+            $this->oidcJwksUrl = $this->getString('LEAN_OIDC_JWKS_URL_OVERRIDE', '');
+            $this->oidcUserInfoUrl = $this->getString('LEAN_OIDC_USERINFO_URL_OVERRIDE', '');
+            $this->oidcCertificateString = $this->getString('LEAN_OIDC_CERTIFICATE_STRING', '');
+            $this->oidcCertificateFile = $this->getString('LEAN_OIDC_CERTIFICATE_FILE', '');
+            $this->oidcScopes = $this->getString('LEAN_OIDC_SCOPES', 'openid profile email');
+            $this->oidcFieldEmail = $this->getString('LEAN_OIDC_FIELD_EMAIL', 'email');
+            $this->oidcFieldFirstName = $this->getString('LEAN_OIDC_FIELD_FIRSTNAME', 'given_name');
+            $this->oidcFieldLastName = $this->getString('LEAN_OIDC_FIELD_LASTNAME', 'family_name');
+        }
     }
 
-    private function environmentHelper($envVar, $default, $dataType = "string")
+    private function getBool(string $envVar, bool $default): bool
+    {
+        return $this->environmentHelper($envVar, $default, 'boolean');
+    }
+
+    private function getString(string $envVar, string $default): string
+    {
+        return $this->environmentHelper($envVar, $default, 'string');
+    }
+
+    private function environmentHelper(string $envVar, $default, $dataType = "string")
     {
 
         if (isset($_SESSION['mainconfig'][$envVar])) {

@@ -19,7 +19,12 @@
                 <div class="form-group">
                     <input type="text" value="<?php $this->e($ticket->tags); ?>" name="tags" id="tags" />
                 </div>
-                <div class="form-group">
+
+                <div class="viewDescription mce-content-body">
+                    <?=$this->__("label.description") ?><br /><br />
+                    <?php echo $this->escapeMinimal($ticket->description); ?>
+                </div>
+                <div class="form-group" id="descriptionEditor" style="display:none;">
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
                               class="complexEditor"><?php echo $ticket->description ?></textarea><br/>
                 </div>
@@ -28,17 +33,33 @@
             </div>
         </div>
         <div class="row-fluid">
-            <?php if (isset($ticket->id) && $ticket->id != '') : ?>
-                <div class="pull-right padding-top">
-                    <a href="<?=BASE_URL . "/tickets/delTicket/" . $ticket->id . ""?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete_todo')?></a>
-                </div>
-            <?php endif; ?>
             <input type="hidden" name="saveTicket" value="1" />
             <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
+
+
             <input type="submit" name="saveTicket" value="<?php echo $this->__('buttons.save'); ?>"/>
             <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
         </div>
+
+        <?php if ($ticket->id) {?>
+        <br />
+            <hr />
+
+            <h4 class="widgettitle title-light"><span
+                    class="fa-solid fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
+
+        <div class="row-fluid">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="ticketModal">
+            <input type="hidden" name="comment" value="1" />
+            <?php
+            $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
+
+            $this->displaySubmodule('comments-generalComment') ;
+            ?>
+        </form>
+        </div>
+        <?php } ?>
     </div>
     <div class="span4">
         <div class="row-fluid marginBottom">
@@ -217,8 +238,8 @@
                     <div class="span6">
                         <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
                                value="<?php echo $ticket->dateToFinish; ?>"
-                               name="dateToFinish"/>
-                        -
+                               name="dateToFinish" placeholder="<?=$this->__('language.dateformat') ?>"/>
+
                         <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
                                value="<?php echo $ticket->timeToFinish; ?>"
                                name="timeToFinish"/>
@@ -226,12 +247,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="span4 control-label"><?php echo $this->__('label.working_date_from_to'); ?></label>
+                    <label class="span4 control-label"><?php echo $this->__('label.working_date_from'); ?></label>
                     <div class="span6">
-                        <input type="text" class="dates" style="width:90px; float:left;" name="editFrom" autocomplete="off"
-                               value="<?php echo $ticket->editFrom; ?>"/> -
+                        <input type="text" class="dates" style="width:90px;" name="editFrom" autocomplete="off"
+                               value="<?php echo $ticket->editFrom; ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+                        <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
+                               value="<?php echo $ticket->timeFrom; ?>"
+                               name="timeFrom"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="span4 control-label"><?php echo $this->__('label.working_date_to'); ?></label>
+                    <div class="span6">
                         <input type="text" class="dates" style="width:90px;" name="editTo" autocomplete="off"
-                               value="<?php echo $ticket->editTo; ?>"/>
+                               value="<?php echo $ticket->editTo; ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+                        <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
+                               value="<?php echo $ticket->timeTo; ?>"
+                               name="timeTo"/>
                     </div>
                 </div>
 
@@ -278,5 +311,19 @@
 
 <script>
     leantime.generalController.initComplexEditor();
+
+    jQuery(".viewDescription").click(function(e){
+
+        console.log(jQuery(e.target).not("a"));
+
+        if(!jQuery(e.target).is("a")) {
+            e.stopPropagation();
+            jQuery(this).hide();
+            jQuery('#descriptionEditor').show();
+        }
+    });
+
+    Prism.highlightAll();
+
 </script>
 

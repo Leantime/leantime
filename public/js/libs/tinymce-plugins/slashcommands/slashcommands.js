@@ -36,6 +36,13 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             type: 'separator'
         },
         {
+            text: 'Table',
+            icon: 'table',
+            action: function () {
+                editor.execCommand('mceInsertTable', true);
+            }
+        },
+        {
             text: 'Checklist list',
             icon: 'checklist',
             action: function () {
@@ -51,6 +58,14 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
         },
         {
             type: 'separator'
+        },
+        {
+            text: 'Templates',
+            icon: 'template',
+            action: function () {
+                editor.execCommand('mceTemplate');
+
+            }
         },
         {
             text: 'Confetti',

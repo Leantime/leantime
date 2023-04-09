@@ -8,6 +8,9 @@ namespace leantime\domain\repositories {
 
     class wiki
     {
+
+        private core\db $db;
+        
         /**
          * __construct - get database connection
          *

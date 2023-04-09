@@ -4,7 +4,7 @@ leantime.ticketsController = (function () {
 
     var milestoneModalConfig = {
         sizes: {
-            minW: 800,
+            minW: 900,
             minH: 750
         },
         resizable: true,
@@ -31,7 +31,7 @@ leantime.ticketsController = (function () {
 
     var ticketModalConfig = {
         sizes: {
-            minW:  1200,
+            minW:  1600,
             minH: 1000
         },
         resizable: true,
@@ -43,15 +43,14 @@ leantime.ticketsController = (function () {
             },
             beforeShowCont: function () {
                 jQuery(".showDialogOnLoad").show();
-                console.log("jquery beforeShow?");
 
             },
             afterShowCont: function () {
                 jQuery('textarea.complexEditor').tinymce().save();
                 jQuery('textarea.complexEditor').tinymce().remove();
                 leantime.generalController.initComplexEditor();
-                jQuery("#commentForm, .deleteComment, form.ticketModal").nyroModal(ticketModalConfig);
-                console.log("jquery afterShow?");
+                jQuery("#commentForm, .deleteComment, .ticketModal, .formModal").nyroModal(ticketModalConfig);
+
 
 
             },
@@ -140,7 +139,7 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(
             function () {
 
-                if (readonly == false) {
+                if (readonly === false) {
                     var gantt_chart = new Gantt(
                         "#gantt",
                         tasks,
@@ -168,8 +167,12 @@ leantime.ticketsController = (function () {
 
 
 
-                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ' +
-                                    '<small>' + task.type + ' #' + task.id + ' </small>';
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
+
+                                if(task.projectName !== undefined){
+                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                }
+                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
 
                                 if (task.type === 'milestone') {
                                     popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
@@ -195,6 +198,27 @@ leantime.ticketsController = (function () {
                                 _initModals();
 
                             },
+                            on_sort_change: function (tasks) {
+
+                                var statusPostData = {
+                                    action: "ganttSort",
+                                    payload: {}
+                                };
+
+                                for (var i = 0; i < tasks.length; i++) {
+
+                                        statusPostData.payload[tasks[i].id] = tasks[i]._index;
+
+                                }
+
+                                // POST to server using $.post or $.ajax
+                                jQuery.ajax({
+                                    type: 'POST',
+                                    url: leantime.appUrl + '/api/tickets',
+                                    data: statusPostData
+
+                                });
+                            },
                             on_progress_change: function (task, progress) {
 
                                 //_initModals();
@@ -205,7 +229,6 @@ leantime.ticketsController = (function () {
                                 _initModals();
                             },
                             on_popup_show: function (task) {
-                                console.log("jo");
                                 _initModals();
                             }
                         }
@@ -224,6 +247,7 @@ leantime.ticketsController = (function () {
                                 // dates and progress value
                                 var end_date = task._end;
                                 return '<div class="details-container"> ' +
+                                    '<small><b>' + task.projectName + '</b></small>' +
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
@@ -1041,16 +1065,13 @@ leantime.ticketsController = (function () {
 
         jQuery(document).ready(function () {
 
-            var url = window.location.hash.substring(1);
-            var urlParts = url.split("/");
-            var activeTab='';
-            var activeTabIndex = 0;
-            console.log(urlParts);
-            if(urlParts.length>2) {
 
-                activeTab= "#" + urlParts[2];
-                activeTabIndex = jQuery('.ticketTabs').find('a[href="'+activeTab+'"]').parent().index();
-                console.log(activeTabIndex);
+            let url = new URL(window.location.href);
+            const tab = url.searchParams.get("tab");
+
+            let activeTabIndex = 0;
+            if(tab) {
+                activeTabIndex = jQuery('.ticketTabs').find('a[href="#' + tab + '"]').parent().index();
             }
 
             jQuery('.ticketTabs').tabs({
@@ -1060,7 +1081,10 @@ leantime.ticketsController = (function () {
                 },
                 activate: function (event, ui) {
 
-                    window.location.hash = "/tab/"+ui.newPanel.selector.substring(1);
+                    url = new URL(window.location.href);
+                    url.searchParams.set('tab', ui.newPanel.selector.substring(1));
+                    window.history.replaceState(null, null, url);
+
                 },
                 load: function () {
 
@@ -1480,7 +1504,7 @@ leantime.ticketsController = (function () {
 
                     },
                     dataSrc: function (row) {
-                        console.log(row);
+
                         return row[columnIndex]["@data-search"];
                     }
                 };
@@ -1758,7 +1782,7 @@ leantime.ticketsController = (function () {
         if(jQuery('textarea.complexEditor').length > 0) {
             jQuery('textarea.complexEditor').tinymce().save();
             jQuery('textarea.complexEditor').tinymce().remove();
-            console.log("removing tiny");
+
         }
 
         jQuery(".ticketRows").removeClass("active");

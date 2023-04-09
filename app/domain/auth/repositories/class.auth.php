@@ -2,14 +2,10 @@
 
 namespace leantime\domain\repositories {
 
-    use Exception;
-    use leantime\domain\services\ldap;
     use PDO;
     use leantime\domain\repositories;
     use leantime\domain\services;
-    use PDOException;
     use leantime\core;
-    use RobThree\Auth\TwoFactorAuth;
 
     class auth
     {
@@ -131,6 +127,8 @@ namespace leantime\domain\repositories {
         public $pwResetLimit = 5;
 
         private $config;
+        private services\users $userService;
+        private repositories\users $userRepo;
 
         public function __construct()
         {
@@ -188,7 +186,7 @@ namespace leantime\domain\repositories {
          * @param  $password
          * @return bool
          */
-        public function getUserByLogin($username, $password): array|bool
+        public function getUserByLogin($username, $password): array|false
         {
 
             $user = $this->userRepo->getUserByEmail($username);
@@ -198,6 +196,10 @@ namespace leantime\domain\repositories {
             }
 
             return false;
+        }
+
+        public function getUserByEmail($username): array|false {
+            return $this->userRepo->getUserByEmail($username);
         }
 
         /**

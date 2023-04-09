@@ -7,6 +7,9 @@ namespace leantime\domain\repositories {
 
     class read
     {
+
+        private core\db $db;
+        
         public function __construct()
         {
 

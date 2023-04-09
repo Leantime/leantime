@@ -233,5 +233,15 @@ namespace leantime\domain\services {
 
             return [];
         }
+
+        public function editOwn($values, $id)
+        {
+            $this->userRepo->editOwn($values, $id);
+
+            $user = $this->getUser($id);
+
+            auth::getInstance()->setUserSession($user);
+
+        }
     }
 }

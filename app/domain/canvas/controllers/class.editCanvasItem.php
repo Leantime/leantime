@@ -6,14 +6,10 @@
 
 namespace leantime\domain\controllers\canvas {
 
-    use leantime\core;
     use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
-
-    use DateTime;
-    use DateInterval;
 
     class editCanvasItem extends controller
     {
@@ -22,7 +18,10 @@ namespace leantime\domain\controllers\canvas {
          */
         protected const CANVAS_NAME = '??';
 
-        private $sprintService;
+        private $canvasRepo;
+        private services\tickets $ticketService;
+        private repositories\comments $commentsRepo;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
@@ -35,8 +34,6 @@ namespace leantime\domain\controllers\canvas {
 
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
-            $this->sprintService = new services\sprints();
-            $this->ticketRepo = new repositories\tickets();
             $this->ticketService = new services\tickets();
             $this->commentsRepo = new repositories\comments();
             $this->projectService = new services\projects();

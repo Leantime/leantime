@@ -7,6 +7,10 @@ namespace leantime\domain\repositories {
 
     class queue
     {
+
+        private core\db $db;
+        private users $users;
+        
         public function __construct()
         {
 

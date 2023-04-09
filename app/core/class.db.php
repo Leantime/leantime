@@ -43,7 +43,7 @@ class db
     private $port = '3306';
 
 
-    public $database = '';
+    public PDO $database;
     /**
      * @access private
      * @var    pdo object
@@ -60,6 +60,7 @@ class db
 
             //Get configuration-object for connection-details
             $config = \leantime\core\environment::getInstance();
+
 
             $this->user = $config->dbUser;
             $this->password = $config->dbPassword;

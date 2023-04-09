@@ -91,6 +91,8 @@
 
     jQuery(window).load(function () {
         jQuery(window).resize();
+
+
     });
 
 </script>

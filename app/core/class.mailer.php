@@ -52,6 +52,10 @@ namespace leantime\core {
         private $emailDomain;
         private $language;
 
+        private string $logo;
+        private string $companyColor;
+        private string $html;
+
         /**
          * __construct - get configurations
          *
@@ -72,11 +76,11 @@ namespace leantime\core {
             //PHPMailer
             $this->mailAgent = new PHPMailer(false);
 
-            $this->mailAgent->CharSet = 'UTF-8';                    //Ensure UTF-8 is used for emails
+            $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
             //Use SMTP or php mail().
             if ($config->useSMTP === true) {
                 if ($config->debug) {
-                    $this->mailAgent->SMTPDebug = 2;                                  // Enable verbose debug output
+                    $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                     $this->mailAgent->Debugoutput = function ($str, $level) {
 
                         error_log($level . ' ' . $str);
@@ -176,6 +180,16 @@ namespace leantime\core {
             $this->subject = $subject;
         }
 
+        private function dispatchMailerEvent($hookname, $payload, $additional_params = [])
+        {
+            $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
+        }
+
+        private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
+        {
+            return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
+        }
+
         private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
         {
 
@@ -215,10 +229,10 @@ namespace leantime\core {
         public function sendMail(array $to, $from)
         {
 
-            $this->dispatchMailerHook('event', 'beforeSendMail', []);
+            $this->dispatchMailerEvent('beforeSendMail', []);
 
-            $to = $this->dispatchMailerHook('filter', 'sendMailTo', $to);
-            $from = $this->dispatchMailerHook('filter', 'sendMailFrom', $from);
+            $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
+            $from = $this->dispatchMailerFilter('sendMailFrom', $from, []);
 
             $this->mailAgent->isHTML(true); // Set email format to HTML
 
@@ -270,8 +284,7 @@ namespace leantime\core {
 		</tr>
 		</table>';
 
-            $bodyTemplate = $this->dispatchMailerHook(
-                'filter',
+            $bodyTemplate = $this->dispatchMailerFilter(
                 'bodyTemplate',
                 $bodyTemplate,
                 [
@@ -287,10 +300,10 @@ namespace leantime\core {
 
             $this->mailAgent->Body = $bodyTemplate;
 
-            $altBody = $this->dispatchMailerHook(
-                'filter',
+            $altBody = $this->dispatchMailerFilter(
                 'altBody',
-                $this->text
+                $this->text,
+                []
             );
 
             $this->mailAgent->AltBody = $altBody;
@@ -311,7 +324,7 @@ namespace leantime\core {
                 }
             }
 
-            $this->dispatchMailerHook('event', 'afterSendMail', $to);
+            $this->dispatchMailerEvent('afterSendMail', $to);
         }
     }
 

@@ -16,6 +16,7 @@ class application
     private services\projects $projectService;
     private repositories\setting $settingsRepo;
     private services\reports $reportService;
+    private services\api $apiService;
 
     private IncomingRequest $incomingRequest;
 
@@ -28,7 +29,10 @@ class application
         "errors.error404",
         "errors.error500",
         "api.i18n",
-        "calendar.ical"
+        "calendar.ical",
+        "oidc.login",
+        "oidc.callback",
+        "cron.run"
     );
 
     /**
@@ -66,12 +70,15 @@ class application
 
         events::discover_listeners();
 
+        /**
+         * The beginning of the application
+         *
+         * @param leantime\core\application $application The application object.
+         */
         self::dispatch_event("beginning", ['application' => $this]);
 
         //Filter to add additional public pages that don't require a login
         $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions);
-
-
 
         //Dispatch public controllers
         if (in_array(frontController::getCurrentRoute(), $this->publicActions)) {
@@ -94,10 +101,11 @@ class application
 
             $this->projectService->setCurrentProject();
 
-            if(str_starts_with(frontController::getCurrentRoute(), "api.jsonRPC")){
+            if(str_starts_with(strtolower(frontController::getCurrentRoute()), strtolower("api.jsonrpc"))){
                 $this->frontController::dispatch();
             }else{
-                echo "{success}";
+                echo json_encode("{error:API endpoint not valid}");
+                exit();
             }
 
 
@@ -165,7 +173,7 @@ class application
 
 
         foreach ($headers as $key => $value) {
-            header("${key}: ${value}");
+            header($key . ': ' . $value);
         }
     }
 

@@ -14,7 +14,9 @@ namespace leantime\domain\services {
         private $ticketRepository;
         private $projectService;
         private $timesheetsRepo;
-        private $language;
+        private core\language $language;
+        private core\template $tpl;
+        private repositories\setting $settingsRepo;
 
         public function __construct()
         {
@@ -28,14 +30,27 @@ namespace leantime\domain\services {
             $this->settingsRepo = new repositories\setting();
         }
 
-        //GET Properties
-        public function getStatusLabels()
+        /**
+         * getStatusLabels - Gets all status labels for the current set project
+         *
+         * @access public
+         * @return array
+         */
+        public function getStatusLabels(): array
         {
 
             return $this->ticketRepository->getStateLabels();
         }
 
-        public function getAllStatusLabelsByUserId($userId)
+        /**
+         * getAllStatusLabelsByUserId - Gets all the status labels a specific user might encounter and groups them by project.
+         * Used to get all the status dropdowns for user home dashboards
+         *
+         * @access public
+         * @params int $userId User Id
+         * @return array
+         */
+        public function getAllStatusLabelsByUserId($userId): array
         {
 
             $statusLabelsByProject = array();
@@ -66,7 +81,14 @@ namespace leantime\domain\services {
             return $statusLabelsByProject;
         }
 
-        public function saveStatusLabels($params)
+        /**
+         * saveStatusLabels - Saves the description/label of a status
+         *
+         * @access public
+         * @params array $params label information
+         * @return bool
+         */
+        public function saveStatusLabels($params): bool
         {
             if (isset($params['labelKeys']) && is_array($params['labelKeys']) && count($params['labelKeys']) > 0) {
                 $statusArray = array();
@@ -244,13 +266,19 @@ namespace leantime\domain\services {
 
             //Check if user is allowed to see ticket
             if ($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
+
                 //Fix date conversion
-                //Todo: Move to views
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
+
                 $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
                 $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
+
+                $ticket->timeFrom = $this->language->extractTime($ticket->editFrom);
                 $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
+
+                $ticket->timeTo = $this->language->extractTime($ticket->editTo);
                 $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
+
 
                 return $ticket;
             }
@@ -363,6 +391,11 @@ namespace leantime\domain\services {
             }
 
             return false;
+        }
+
+        public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
+        {
+            return $this->ticketRepository->getAllMilestones(0, $includeArchived, $sortBy, $includeTasks, $clientId);
         }
 
         public function getAllMilestonesByUserProjects($userId)
@@ -518,7 +551,9 @@ namespace leantime\domain\services {
                 'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
+                'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
+                'timeTo' => $values['timeTo'],
                 'dependingTicketId' => $values['dependingTicketId']
             );
 
@@ -540,10 +575,18 @@ namespace leantime\domain\services {
 
                 if ($values['editFrom'] != "" && $values['editFrom'] != null) {
                     $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+
+                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
+                    }
                 }
 
                 if ($values['editTo'] != "" && $values['editTo'] != null) {
                     $values['editTo'] = $this->language->getISODateString($values['editTo']);
+
+                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
+                    }
                 }
 
                 //Update Ticket
@@ -596,7 +639,9 @@ namespace leantime\domain\services {
                 'priority' => $values['priority'],
                 'acceptanceCriteria' => $values['acceptanceCriteria'],
                 'editFrom' => $values['editFrom'],
+                'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
+                'timeTo' => $values['timeTo'],
                 'dependingTicketId' => $values['dependingTicketId']
             );
 
@@ -618,11 +663,20 @@ namespace leantime\domain\services {
 
                 if ($values['editFrom'] != "" && $values['editFrom'] != null) {
                     $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
+
+                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
+                    }
                 }
 
                 if ($values['editTo'] != "" && $values['editTo'] != null) {
                     $values['editTo'] = $this->language->getISODateString($values['editTo']);
+
+                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
+                    }
                 }
+
                 //Update Ticket
                 if ($this->ticketRepository->updateTicket($values, $id) === true) {
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
@@ -768,6 +822,18 @@ namespace leantime\domain\services {
             }
 
             return true;
+        }
+
+        public function updateTicketSorting($params) {
+
+            //ticketId: sortIndex
+            foreach ($params as $id => $sortKey) {
+
+                if ($this->ticketRepository->patchTicket($id, ["sortIndex"=>$sortKey*100]) === false) {
+                    return false;
+                }
+
+            }
         }
 
         public function updateTicketStatusAndSorting($params, $handler = null)

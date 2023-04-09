@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "leantime.fullname" . }}
+  labels:
+    {{- include "leantime.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "leantime.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "leantime.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "leantime.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - name: pubuserfiles
+            mountPath: "/var/www/html/public/userfiles"
+          - name: userfiles
+            mountPath: "/var/www/html/userfiles"
+          env:
+          - name: LEAN_DB_HOST
+            value: {{ .Release.Name }}-mariadb
+          - name: LEAN_DB_USER
+            value: {{ .Values.mariadb.auth.username }}
+          - name: LEAN_DB_PASSWORD
+            value: {{ .Values.mariadb.auth.password }}
+          - name: LEAN_DB_DATABASE
+            value: {{ .Values.mariadb.auth.database }}
+          - name: LEAN_SITENAME
+            value: {{ .Values.app.sitename }}
+          - name: LEAN_LANGUAGE
+            value: {{ .Values.app.language }}
+          - name: LEAN_DEFAULT_TIMEZONE
+            value: {{ .Values.app.defaultTimezone }}
+          {{- if .Values.app.s3.enabled }}
+          - name: LEAN_USE_S3
+            value: {{ .Values.app.s3.enabled }}
+          - name: LEAN_S3_END_POINT
+            value: {{ .Values.app.s3.endpoint }}
+          - name: LEAN_S3_KEY
+            value: {{ .Values.app.s3.key }}
+          - name: LEAN_S3_SECRET
+            value: {{ .Values.app.s3.secret }}
+          - name: LEAN_S3_BUCKET
+            value: {{ .Values.app.s3.bucket }}
+          - name: LEAN_S3_USE_PATH_STYLE_ENDPOINT
+            value: {{ .Values.app.s3.usePathStyleEndpoint }}
+          - name: LEAN_S3_REGION
+            value: {{ .Values.app.s3.region }}
+          - name: LEAN_S3_FOLDER_NAME
+            value: {{ .Values.app.s3.folderName }}
+          {{- end }}
+          - name: LEAN_SESSION_PASSWORD
+            value: {{ .Values.app.session.password }}
+          - name: LEAN_SESSION_EXPIRATION
+            value: {{ .Values.app.session.expiration | quote }}
+          {{- if .Values.app.email.enabled }}
+          - name: LEAN_EMAIL_USE_SMTP
+            value: {{ .Values.app.email.enabled | quote }}
+          - name: LEAN_EMAIL_RETURN
+            value: {{ .Values.app.email.return }}
+          - name: LEAN_EMAIL_SMTP_HOSTS
+            value: {{ .Values.app.email.smtp.hosts }}
+          - name: LEAN_EMAIL_SMTP_USERNAME
+            value: {{ .Values.app.email.smtp.username }}
+          - name: LEAN_EMAIL_SMTP_PASSWORD
+            value: {{ .Values.app.email.smtp.password }}
+          - name: LEAN_EMAIL_SMTP_AUTO_TLS
+            value: {{ .Values.app.email.smtp.autoTLS | quote }}
+          - name: LEAN_EMAIL_SMTP_SECURE
+            value: {{ .Values.app.email.smtp.secure }}
+          - name: LEAN_EMAIL_SMTP_PORT
+            value: {{ .Values.app.email.smtp.port | quote }}
+          {{- end }}
+          {{- if .Values.app.ldap.enabled }}
+          - name: LEAN_LDAP_USE_LDAP
+            value: {{ .Values.app.ldap.enabled | quote }}
+          - name: LEAN_LDAP_LDAP_TYPE
+            value: {{ .Values.app.ldap.type }}
+          - name: LEAN_LDAP_HOST
+            value: {{ .Values.app.ldap.host }}
+          - name: LEAN_LDAP_PORT
+            value: {{ .Values.app.ldap.port | quote }}
+          - name: LEAN_LDAP_BASE_DN
+            value: {{ .Values.app.ldap.baseDN }}
+          - name: LEAN_LDAP_DN
+            value: {{ .Values.app.ldap.DN }}
+          - name: LEAN_LDAP_USER_DOMAIN
+            value: {{ .Values.app.ldap.userDomain }}
+          - name: LEAN_LDAP_KEYS
+            value: {{ .Values.app.ldap.keys }}
+          - name: LEAN_LDAP_GROUP_ASSIGNMENT
+            value: {{ .Values.app.ldap.groupAssignment }}
+          - name: LEAN_LDAP_DEFAULT_ROLE_KEY
+            value: {{ .Values.app.ldap.defaultRoleKey }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: pubuserfiles
+        persistentVolumeClaim:
+          claimName: {{ include "leantime.fullname" . }}-publicuserfiles
+      - name: userfiles
+        persistentVolumeClaim:
+          claimName: {{ include "leantime.fullname" . }}-userfiles
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

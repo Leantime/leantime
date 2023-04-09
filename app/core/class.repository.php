@@ -3,14 +3,20 @@
 namespace leantime\core;
 
 use PDO;
+use PDOStatement;
 
 abstract class repository
 {
     use eventhelpers;
 
+    protected string $entity;
+
     protected function dbcall(array $args)
     {
         return new class ($args, $this) {
+
+            private PDOStatement $stmn;
+
             /**
              * @var array
              * @access private
@@ -134,5 +140,49 @@ abstract class repository
                 return $this->caller_class::dispatch_filter('return', $values, $this->getArgs(), 4);
             }
         };
+    }
+
+    public function patch(int $id, array $params): bool {
+
+        if($this->entity == ''){
+            error_log("Patch not implemented for this entity");
+            return false;
+        }
+
+        $sql = "UPDATE zp_".$this->entity." SET ";
+
+        foreach ($params as $key => $value) {
+            $sql .= "" . db::sanitizeToColumnString($key) . "=:" . db::sanitizeToColumnString($key) . ", ";
+        }
+
+        $sql .= "id=:id WHERE id=:id LIMIT 1";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($sql);
+
+        $call->bindValue(':id', $id, PDO::PARAM_STR);
+
+        foreach ($params as $key => $value) {
+            $call->bindValue(':' . db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+        }
+
+        return $call->execute();
+    }
+
+    public function create() {
+
+    }
+
+    public function delete($id) {
+
+    }
+
+    public function get($id) {
+
+    }
+
+    public function getAll($id) {
+
     }
 }

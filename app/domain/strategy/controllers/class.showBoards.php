@@ -2,25 +2,16 @@
 
 namespace leantime\domain\controllers {
 
-    use leantime\core;
     use leantime\core\controller;
-    use leantime\domain\repositories;
     use leantime\domain\services;
 
     class showBoards extends controller
     {
-        private $projectService;
-        private $ticketService;
-        private $menuRepo;
-        private $projectRepo;
+
+        private services\canvas $canvasService;
 
         public function init()
         {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->menuRepo = new repositories\menu();
-            $this->projectRepo = new repositories\projects();
             $this->canvasService = new services\canvas();
         }
 

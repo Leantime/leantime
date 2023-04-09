@@ -44,11 +44,13 @@ namespace leantime\domain\controllers {
                     'description' => $row['description'],
                     'dateFrom' => $row['dateFrom'],
                     'dateTo' => $row['dateTo'],
-                    'allDay' => $row['allDay']
+                    'allDay' => $row['allDay'],
+                    'id' => $row['id']
                 );
 
 
                 if (isset($_POST['save']) === true) {
+
                     if (isset($_POST['allDay']) === true) {
                         $allDay = 'true';
                     } else {
@@ -69,11 +71,22 @@ namespace leantime\domain\controllers {
                         'description' => ($_POST['description']),
                         'dateFrom' => $dateFrom,
                         'dateTo' => $dateTo,
-                        'allDay' => $allDay
+                        'allDay' => $allDay,
+                        'id' => $row['id']
                     );
 
                     if ($values['description'] !== '') {
                         $this->calendarRepo->editEvent($values, $id);
+
+                        $row = $this->calendarRepo->getEvent($id);
+
+                        $values = array(
+                            'description' => $row['description'],
+                            'dateFrom' => $row['dateFrom'],
+                            'dateTo' => $row['dateTo'],
+                            'allDay' => $row['allDay'],
+                            'id' => $row['id']
+                        );
 
                         $this->tpl->setNotification('notification.event_edited_successfully', 'success');
                     } else {
@@ -82,9 +95,9 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->assign('values', $values);
-                $this->tpl->display('calendar.editEvent');
+                $this->tpl->displayPartial('calendar.editEvent');
             } else {
-                $this->tpl->display('errors.error403');
+                $this->tpl->displayPartial('errors.error403');
             }
         }
     }

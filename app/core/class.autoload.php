@@ -2,7 +2,7 @@
 
 namespace leantime\core;
 
-require_once ROOT . '/../vendor/autoload.php';
+require_once APP_ROOT . '/vendor/autoload.php';
 
 spl_autoload_register(__NAMESPACE__ . "\\leantimeAutoloader", true, true);
 
@@ -51,8 +51,6 @@ function leantimeAutoloader($class)
         }
     }
 }
-
-require_once '../vendor/autoload.php';
 
 function getLeantimeClassPath($class)
 {

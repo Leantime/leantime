@@ -9,6 +9,9 @@ namespace leantime\domain\repositories {
 
     class plugins
     {
+
+        private core\db $db;
+        
         /**
          * __construct - get database connection
          *

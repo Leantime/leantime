@@ -8,15 +8,11 @@
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-4">
-                <h5><?php $this->__("headlines.projects"); ?></h5>
-                <h1><?php echo $this->__("headlines.my_portfolio"); ?></h1>
-            </div>
-            <div class="col-lg-4" style="text-align:right;padding-top:15px">
 
-            </div>
-        </div>
+        <h5><?php $this->__("headlines.projects"); ?></h5>
+        <h1><?php echo $this->__("headlines.my_portfolio"); ?></h1>
+
+
     </div>
 </div>
 
@@ -50,12 +46,23 @@
                 </div>
             </div>
             <div class="col-md-4">
-
+                <div class="pull-right">
+                    <div class="btn-group viewDropDown">
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
+                            <li class="active"><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <br />
+
+
+
             </div>
         </div>
 

@@ -44,6 +44,7 @@ namespace leantime\domain\repositories {
                         70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
                         80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor'],
                 ]],
+
             ],
             //Display all menu items
             'full_menu' => [

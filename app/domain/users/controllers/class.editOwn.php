@@ -9,7 +9,14 @@ namespace leantime\domain\controllers {
 
     class editOwn extends controller
     {
-        private $userId;
+        private int $userId;
+        private \leantime\domain\services\users $userService;
+        private \leantime\core\theme $themeCore;
+        private \leantime\domain\repositories\setting $settingsRepo;
+        private repositories\users $userRepo;
+        private \leantime\domain\services\setting $settingsService;
+        protected core\language $language;
+
         /**
          * init - initialize private variables
          *
@@ -34,13 +41,13 @@ namespace leantime\domain\controllers {
 
             $row = $this->userRepo->getUser($this->userId);
 
-            $userLang = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".language");
+            $userLang = $this->settingsService->getSetting("usersettings." . $this->userId . ".language");
 
             if ($userLang == false) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
-            $userTheme = $this->settingsService->settingsRepo->getSetting("usersettings." . $this->userId . ".theme");
+            $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
             //Build values array
             $values = array(
@@ -51,11 +58,11 @@ namespace leantime\domain\controllers {
                 'role' => $row['role'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
-                'messagesfrequency' => $this->settingsRepo->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
+                'messagesfrequency' => $this->settingsService->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
             );
 
             if ($values['messagesfrequency'] == false) {
-                $values['messagesfrequency'] = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+                $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -107,13 +114,13 @@ namespace leantime\domain\controllers {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                             if ($changedEmail == 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
-                                    $this->userRepo->editOwn($values, $this->userId);
+                                    $this->userService->editOwn($values, $this->userId);
                                     $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
                                 } else {
                                     $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                                 }
                             } else {
-                                $this->userRepo->editOwn($values, $this->userId);
+                                $this->userService->editOwn($values, $this->userId);
                                 $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
                             }
                         } else {
@@ -175,8 +182,8 @@ namespace leantime\domain\controllers {
                     $postLang = htmlentities($_POST['language']);
                     $postTheme = htmlentities($_POST['theme']);
 
-                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
-                    $this->settingsService->settingsRepo->saveSetting("usersettings." . $this->userId . ".language", $postLang);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".language", $postLang);
 
                     unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
@@ -216,7 +223,7 @@ namespace leantime\domain\controllers {
                     $this->userRepo->editOwn($values, $this->userId);
 
                     // Storing option messagefrequency
-                    $this->settingsRepo->saveSetting("usersettings." . $this->userId . ".messageFrequency", (int) $_POST['messagesfrequency']);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".messageFrequency", (int) $_POST['messagesfrequency']);
 
                     $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
                 }
@@ -227,161 +234,5 @@ namespace leantime\domain\controllers {
             //Redirect
             core\frontcontroller::redirect(BASE_URL . "/users/editOwn" . $tab);
         }
-
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-
-        public function run()
-        {
-
-
-
-
-
-            $infoKey = '';
-
-
-
-            //Save form
-            if (isset($_POST['save'])) {
-
-                if(isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
-                    $values = array(
-                        'firstname' => ($_POST['firstname']) ?? $row['firstname'],
-                        'lastname' => ($_POST['lastname']) ?? $row['lastname'],
-                        'user' => ($_POST['user']) ?? $row['username'],
-                        'phone' => ($_POST['phone']) ?? $row['phone'],
-                        'password' => (password_hash($_POST['newPassword'], PASSWORD_DEFAULT)),
-                        'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled'],
-                        'messagesfrequency' => $_POST['messagesfrequency'],
-                    );
-
-                    if (isset($_POST['notifications']) == true) {
-                        $values["notifications"] = 1;
-                    } else {
-                        $values["notifications"] = 0;
-                    }
-
-                    $changedEmail = 0;
-
-                    if ($row['username'] != $values['user']) {
-
-                        $changedEmail = 1;
-
-                    }
-
-                    //Validation
-                    if ($values['user'] !== '') {
-
-                        if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
-
-                            if ($_POST['newPassword'] == $_POST['confirmPassword']) {
-
-                                if ($_POST['newPassword'] == '') {
-
-                                    $values['password'] = '';
-
-                                } else {
-
-                                    $this->userRepo->editOwn($values, $userId);
-
-                                }
-
-                                if ($changedEmail == 1) {
-
-                                    if ($this->userRepo->usernameExist($values['user'], $userId) === false) {
-
-                                        $this->userRepo->editOwn($values, $userId);
-
-                                       // Storing option messagefrequency
-                                       $this->settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
-
-                                        $postLang = htmlentities($_POST['language']);
-                                        $postTheme = htmlentities($_POST['theme']);
-
-                                        $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
-                                        $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
-
-                                        $this->themeCore->setActive($postTheme);
-                                        $this->language->setLanguage($postLang);
-
-                                        $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
-
-                                    } else {
-
-
-
-                                    }
-
-                                } else {
-
-                                    $postLang = htmlentities($_POST['language']);
-                                    $postTheme = htmlentities($_POST['theme']);
-
-                                    $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".theme", $postTheme);
-                                    $this->settingsService->settingsRepo->saveSetting("usersettings.".$userId.".language", $postLang);
-
-                                    $this->themeCore->setActive($postTheme);
-                                    $this->language->setLanguage($postLang);
-
-                                    $this->userRepo->editOwn($values, $userId);
-
-                                    // Storing option messagefrequency
-                                    $this->settingsRepo->saveSetting("usersettings.".$userId.".messageFrequency", $values['messagesfrequency']);
-
-
-
-                                }
-
-
-                            } else {
-
-
-
-                            }
-
-                        } else {
-
-
-
-                        }
-
-                    } else {
-
-
-
-                    }
-
-                }else{
-
-                    $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
-
-                }
-            }
-
-            //Assign vars
-
-
-            //Sensitive Form, generate form tokens
-
-
-            $this->tpl->assign('profilePic', $users->getProfilePicture($_SESSION['userdata']['id']));
-            $this->tpl->assign('info', $infoKey);
-            $this->tpl->assign('values', $values);
-
-            $this->tpl->assign('userLang', $userLang);
-            $this->tpl->assign('userTheme', $userTheme);
-            $this->tpl->assign("languageList", $this->language->getLanguageList());
-
-            $this->tpl->assign('user', $row);
-
-            $this->tpl->display('users.editOwn');
-
-        }
-         * */
     }
 }

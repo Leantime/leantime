@@ -14,7 +14,7 @@
         <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.quick_add_todo"); ?></a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
-            <form method="post" class="form-group ticketModal" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . "#substasks"; ?>">
+            <form method="post" class="form-group formModal" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . "#substasks"; ?>">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <input name="headline" type="text" title="<?php echo $this->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $this->__("input.placeholders.what_are_you_working_on"); ?>" />
@@ -57,12 +57,12 @@ foreach ($this->get('allSubTasks') as $subticket) {
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete ticketModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete modal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
 
                             </ul>
                         </div>
                     <?php } ?>
-                    <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
+                    <input type="text" name="subtaskheadline" value="<?=$this->escape($subticket['headline'])?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
                 </div>
             </div>
             <div class="row">
@@ -102,10 +102,20 @@ foreach ($this->get('allSubTasks') as $subticket) {
                             </ul>
                         </div>
 
+                        <?php
+
+                        if(isset($statusLabels[$subticket['status']])){
+                            $class=$statusLabels[$subticket['status']]["class"];
+                            $name=$statusLabels[$subticket['status']]["name"];
+                        }else{
+                            $class = 'label-important';
+                            $name = 'new';
+                        }
+                        ?>
                         <div class="dropdown ticketDropdown statusDropdown colorized show">
-                            <a class="dropdown-toggle f-left status <?=$statusLabels[$subticket['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="dropdown-toggle f-left status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    echo $statusLabels[$subticket['status']]["name"];
+                                                                    echo $name;
                                                                 ?>
                                                                 </span>
                                 &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

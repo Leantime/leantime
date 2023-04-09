@@ -9,6 +9,7 @@ namespace leantime\domain\services {
     {
         private $userRepo;
         private $tpl;
+        public repositories\setting $settingsRepo;
 
         public function __construct()
         {
@@ -50,6 +51,24 @@ namespace leantime\domain\services {
         public function getSetting($key){
             return $this->settingsRepo->getSetting($key);
         }
+
+        /**
+         * @return repositories\setting
+         */
+        public function getSettingsRepo(): repositories\setting
+        {
+            return $this->settingsRepo;
+        }
+
+        /**
+         * @param repositories\setting $settingsRepo
+         */
+        public function setSettingsRepo(repositories\setting $settingsRepo): void
+        {
+            $this->settingsRepo = $settingsRepo;
+        }
+
+
     }
 
 }

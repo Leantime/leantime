@@ -62,7 +62,8 @@ module.exports = function (grunt) {
                     "public/js/libs/chosen.jquery.min.js",
                     "public/js/libs/jquery.form.js",
                     "public/js/libs/jquery.tagsinput.min.js",
-                    "public/js/libs/confetti/js/confetti.js"
+                    "public/js/libs/confetti/js/confetti.js",
+                    "node_modules/fullcalendar/index.global.min.js",
 
                 ],
                 dest: "public/js/compiled-base-libs.min.js"
@@ -110,7 +111,7 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/visualchars/plugin.js",
                     "node_modules/tinymce/plugins/emoticons/plugin.js",
                     "node_modules/tinymce/plugins/emoticons/js/emojis.min.js",
-                    "node_modules/tinymce/plugins/template/plugin.js",
+
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/tinymce/plugins/codesample/plugin.js",
@@ -129,17 +130,13 @@ module.exports = function (grunt) {
                     "public/js/libs/tinymce-plugins/embed/index.js",
                     "public/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
                     "public/js/libs/tinymce-plugins/mention/plugin.js",
-
-                    "public/js/libs/fullcalendar.min.js",
+                    "public/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
                     "public/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
                     "public/js/libs/simpleGantt/moment.min.js",
                     "public/js/libs/simpleGantt/snap.svg-min.js",
                     "public/js/libs/simpleGantt/frappe-gantt.min.js",
                     "public/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-
-
                     "public/js/libs/uppy/uppy.js",
-
 
                 ]
                 , dest: "public/js/compiled-extended-libs.min.js"

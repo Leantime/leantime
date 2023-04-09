@@ -6,10 +6,8 @@
 
 namespace leantime\domain\controllers\canvas {
 
-    use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
-    use leantime\domain\repositories;
     use leantime\domain\services\auth;
 
     class delCanvasItem extends controller

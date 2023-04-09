@@ -1,19 +1,28 @@
 #!/usr/bin/env php
 <?php
 
-define('ROOT', dirname(__FILE__));
+define('ROOT', dirname(__FILE__, 2)."/public");
+define('APP_ROOT', dirname(__FILE__, 2));
 
-require __DIR__ . '/../app/core/class.autoload.php';
-require_once __DIR__ . '/../config/configuration.php';
-require_once __DIR__ . '/../config/appSettings.php';
+require APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT. '/config/appSettings.php';
 
 use leantime\command\migrateCommand;
 use leantime\command\addUserCommand;
 use leantime\command\saveSettingCommand;
+use leantime\command\testEmailCommand;
+use leantime\command\runCronCommand;
+use leantime\core\environment;
 use Symfony\Component\Console\Application;
+
+$config = environment::getInstance();
+$settings = new leantime\core\appSettings();
+$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
 
 $application = new Application();
 $application->add(new addUserCommand());
 $application->add(new migrateCommand());
 $application->add(new saveSettingCommand());
+$application->add(new testEmailCommand());
+$application->add(new runCronCommand());
 $application->run();

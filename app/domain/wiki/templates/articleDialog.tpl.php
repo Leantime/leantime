@@ -169,7 +169,7 @@ if (isset($currentArticle->id)) {
             </div>
             <input type="hidden" class="articleIcon" value="<?=$currentArticle->data ?>" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="<?php echo $currentArticle->title?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>" style="width:80%"/>
+            <input type="text" name="title" class="main-title-input" value="<?=$this->escape($currentArticle->title) ?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>" style="width:80%"/>
 
             <br />
             <input type="text" value="<?php $this->e($currentArticle->tags); ?>" name="tags" id="tags" />

@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.3.13",
+  "version": "2.3.14",
   "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {
@@ -15,6 +15,7 @@
     "datatables.net-buttons": "^1.7.1",
     "datatables.net-rowgroup": "^1.2.0",
     "datatables.net-rowreorder": "^1.2.8",
+    "fullcalendar": "^6.1.4",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "3.6.1",

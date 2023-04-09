@@ -4,16 +4,14 @@ namespace leantime\domain\controllers {
 
     use leantime\core;
     use leantime\core\controller;
+    use leantime\core\environment;
     use leantime\domain\repositories;
     use leantime\domain\services;
-    use leantime\domain\models;
-    use leantime\core\eventhelpers;
 
     class login extends controller
     {
-        private $fileRepo;
-        private $authService;
-        private $redirectUrl;
+        private services\auth $authService;
+        private environment $config;
 
         /**
          * init - initialize private variables
@@ -23,16 +21,8 @@ namespace leantime\domain\controllers {
          */
         public function init()
         {
-
-            $this->fileRepo = new repositories\files();
-
             $this->authService = services\auth::getInstance();
-
-            $this->redirectUrl = BASE_URL . "/dashboard/home";
-
-            if ($_SERVER['REQUEST_URI'] != '' && isset($_GET['logout']) === false) {
-                $this->redirectUrl = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
-            }
+            $this->config = environment::getInstance();
         }
 
         /**
@@ -44,21 +34,22 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
             self::dispatch_event('beforeAuth', $params);
-            
+
             $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
                 $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
             }
 
-            $config = \leantime\core\environment::getInstance();
-
-            if ($config->useLdap) {
+            if ($this->config->useLdap) {
                 $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email_or_username");
             } else {
                 $this->tpl->assign("inputPlaceholder", "input.placeholders.enter_email");
             }
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
+
+            $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
+
             $this->tpl->display('auth.login', 'entry');
         }
 
@@ -71,7 +62,13 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
-                $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
+
+                if(isset($_POST['redirectUrl'])) {
+                    $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
+                }else{
+                    $redirectUrl = "";
+                }
+
                 $username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
                 $password = $_POST['password'];
 

@@ -124,6 +124,10 @@ namespace leantime\domain\services {
         public $pwResetLimit = 5;
 
         private $config;
+        public core\language $language;
+        public repositories\setting $settingsRepo;
+        public repositories\auth $authRepo;
+        public repositories\users $userRepo;
 
         /**
          * __construct - getInstance of session and get sessionId and refers to login if post is set
