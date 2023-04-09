@@ -62,7 +62,7 @@ foreach ($this->get('allSubTasks') as $subticket) {
                             </ul>
                         </div>
                     <?php } ?>
-                    <input type="text" name="subtaskheadline" value="<?=$subticket['headline']?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
+                    <input type="text" name="subtaskheadline" value="<?=$this->escape($subticket['headline'])?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
                 </div>
             </div>
             <div class="row">
@@ -102,10 +102,20 @@ foreach ($this->get('allSubTasks') as $subticket) {
                             </ul>
                         </div>
 
+                        <?php
+
+                        if(isset($statusLabels[$subticket['status']])){
+                            $class=$statusLabels[$subticket['status']]["class"];
+                            $name=$statusLabels[$subticket['status']]["name"];
+                        }else{
+                            $class = 'label-important';
+                            $name = 'new';
+                        }
+                        ?>
                         <div class="dropdown ticketDropdown statusDropdown colorized show">
-                            <a class="dropdown-toggle f-left status <?=$statusLabels[$subticket['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="dropdown-toggle f-left status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    echo $statusLabels[$subticket['status']]["name"];
+                                                                    echo $name;
                                                                 ?>
                                                                 </span>
                                 &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

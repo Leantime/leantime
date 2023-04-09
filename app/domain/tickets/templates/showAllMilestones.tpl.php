@@ -156,12 +156,24 @@
                                     </ul>
                                 </div>
                             </td>
+                            <?php
 
-                            <td class="dropdown-cell" data-order="<?=$statusLabels[$row->status]["name"]?>">
+                            if(isset($statusLabels[$row->status])){
+                                $class=$statusLabels[$row->status]["class"];
+                                $name=$statusLabels[$row->status]["name"];
+                                $sortKey = $statusLabels[$row->status]["sortKey"];
+                            }else{
+                                $class = 'label-important';
+                                $name = 'new';
+                                $sortKey = 0;
+                            }
+
+                            ?>
+                            <td class="dropdown-cell" data-order="<?=$sortKey?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle status <?=$statusLabels[$row->status]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle status <?=$class?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text">
-                                            <?php echo $statusLabels[$row->status]["name"]; ?>
+                                            <?php echo $name; ?>
                                         </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>

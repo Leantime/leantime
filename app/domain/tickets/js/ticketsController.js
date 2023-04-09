@@ -139,7 +139,7 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(
             function () {
 
-                if (readonly == false) {
+                if (readonly === false) {
                     var gantt_chart = new Gantt(
                         "#gantt",
                         tasks,
@@ -155,7 +155,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: 'it', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 

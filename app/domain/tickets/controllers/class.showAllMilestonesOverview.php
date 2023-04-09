@@ -9,7 +9,7 @@ namespace leantime\domain\controllers {
     class showAllMilestonesOverview extends controller
     {
         private $projectService;
-        private $ticketService;
+        private services\tickets $ticketService;
         private $sprintService;
         private $timesheetService;
         private $userService;
