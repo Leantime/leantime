@@ -805,3 +805,5 @@ Stack trace:
 #7 /Users/marcel/Sites/leantime-oss/public/index.php(26): leantime\core\application->start()
 #8 {main}
   thrown in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/ical.tpl.php on line 58
+[08-Apr-2023 20:04:26 America/Los_Angeles] cron start
+[08-Apr-2023 20:04:26 America/Los_Angeles] cron end
