@@ -12,7 +12,7 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 
     $prdTpl->title = $this->__("templates.prd.title");
     $prdTpl->description = $this->__("templates.prd.description");
-$prdTpl->category = "document";
+$prdTpl->category = $this->__("templates.documents");
     $prdTpl->content = '
 <h1><strong>'.$this->__("templates.prd.title_for_prd").'<br /></strong></h1>
 <p>'.$this->__("templates.author").' '.$author.'<br />
@@ -154,7 +154,7 @@ $templates[] = $prdTpl;
 //Project Outline
 $projectOutline = new \leantime\domain\models\wiki\template();
 $projectOutline->title = "Project Outline";
-$projectOutline->category = "document";
+$projectOutline->category = $this->__("templates.documents");
 $projectOutline->description = "";
 $projectOutline->content = '
 <h1><strong>Project Outline<br /></strong></h1>
@@ -256,7 +256,7 @@ $templates[] = $projectOutline;
 //User Story
 $userStoryTpl = new \leantime\domain\models\wiki\template();
 $userStoryTpl->title = "User Story";
-$userStoryTpl->category = "document";
+$userStoryTpl->category = $this->__("templates.documents");
 $userStoryTpl->description = "A template for an agile user story";
 $userStoryTpl->content = '
 <table style="border-collapse: collapse; width: 100.049%;" border="1">
@@ -289,9 +289,10 @@ $templates[] = $userStoryTpl;
 
 
 $layout48 = new \leantime\domain\models\wiki\template();
-$layout48->title = "Sidebar Left Layout";
-$layout48->category = "layout";
-$layout48->description = "A page layout with a left sidebar. (Dotted lines will not be visible in final layout)";
+$layout48->title = $this->__("templates.side_left");
+$layout48->category = $this->__("templates.layouts");
+$layout48->description = $this->__("templates.titles.side_left_description");
+
 $layout48->content = '
 <div class="row">
 <div class="col-md-4"><p>Sidebar Left</p></div>
@@ -300,9 +301,9 @@ $layout48->content = '
 $templates[] =$layout48;
 
 $layout84 = new \leantime\domain\models\wiki\template();
-$layout84->title = "Sidebar Right Layout";
-$layout84->category = "layout";
-$layout84->description = "A page layout with a right sidebar. (Dotted lines will not be visible in final layout)";
+$layout84->title = $this->__("templates.side_right");
+$layout84->category = $this->__("templates.layouts");
+$layout84->description = $this->__("templates.titles.side_right_description");
 $layout84->content = '
 <div class="row">
 <div class="col-md-8"><p>Content Left</p></div>
@@ -311,9 +312,9 @@ $layout84->content = '
 $templates[] =$layout84;
 
 $layout363 = new \leantime\domain\models\wiki\template();
-$layout363->title = "Sidebar Left & Right Layout";
-$layout363->category = "layout";
-$layout363->description = "A page layout with a left & right sidebar. (Dotted lines will not be visible in final layout)";
+$layout363->title = $this->__("templates.side_m_side");
+$layout363->category = $this->__("templates.layouts");
+$layout363->description = $this->__("templates.titles.side_m_side_description");
 $layout363->content = '
 <div class="row">
 <div class="col-md-3"><p>Sidebar Left</p></div>
@@ -324,9 +325,9 @@ $templates[] = $layout363;
 
 
 $layout66 = new \leantime\domain\models\wiki\template();
-$layout66->title = "2 Column Layout";
-$layout66->category = "layout";
-$layout66->description = "A page layout with 2 columns. (Dotted lines will not be visible in final layout)";
+$layout66->title = $this->__("templates.titles.2_col");
+$layout66->category = $this->__("templates.layouts");
+$layout66->description = $this->__("templates.titles.2_col_description");
 $layout66->content = '
 <div class="row">
 <div class="col-md-6"><p>Column 1</div>
@@ -335,9 +336,9 @@ $layout66->content = '
 $templates[] =$layout66;
 
 $layout444 = new \leantime\domain\models\wiki\template();
-$layout444->title = "3 Column Layout";
-$layout444->category = "layout";
-$layout444->description = "A page layout with 3 equal columns. (Dotted lines will not be visible in final layout)";
+$layout444->title = $this->__("templates.titles.3_col");
+$layout444->category = $this->__("templates.layouts");
+$layout444->description = $this->__("templates.titles.3_col_description");
 $layout444->content = '
 <div class="row">
 <div class="col-md-4"><p>Column 1</p></div>
@@ -347,9 +348,9 @@ $layout444->content = '
 $templates[] = $layout444;
 
 $layout3333 = new \leantime\domain\models\wiki\template();
-$layout3333->title = "4 Column Layout";
-$layout3333->category = "layout";
-$layout3333->description = "A page layout with 4 equal columns. (Dotted lines will not be visible in final layout)";
+$layout3333->title = $this->__("templates.titles.4_col");
+$layout3333->category = $this->__("templates.layouts");
+$layout3333->description = $this->__("templates.titles.4_col_description");
 $layout3333->content = '
 <div class="row">
 <div class="col-md-3"><p>Column 1</p></div>
@@ -360,30 +361,30 @@ $layout3333->content = '
 $templates[] = $layout3333;
 
 $labelGreen = new \leantime\domain\models\wiki\template();
-$labelGreen->title = "Green Status";
-$labelGreen->category = "element";
-$labelGreen->description = "A green status label";
+$labelGreen->title = $this->__("templates.titles.green_status");
+$labelGreen->category = $this->__("templates.elements");
+$labelGreen->description = $this->__("templates.titles.green_status_description");
 $labelGreen->content = '<label class="label-success">Green</label>';
 $templates[] = $labelGreen;
 
 $labelYellow = new \leantime\domain\models\wiki\template();
-$labelYellow->title = "Yellow Status";
-$labelYellow->category = "element";
-$labelYellow->description = "A green status label";
+$labelYellow->title = $this->__("templates.titles.yellow_status");
+$labelYellow->category = $this->__("templates.elements");
+$labelYellow->description = $this->__("templates.titles.yellow_status_description");
 $labelYellow->content = '<label class="label-warning">Yellow</label>';
 $templates[] = $labelYellow;
 
 $labelRed = new \leantime\domain\models\wiki\template();
-$labelRed->title = "Red Status";
-$labelRed->category = "element";
-$labelRed->description = "A red status label";
+$labelRed->title = $this->__("templates.titles.red_status");
+$labelRed->category = $this->__("templates.elements");
+$labelRed->description = $this->__("templates.titles.red_status_description");
 $labelRed->content = '<label class="label-danger">Red</label>';
 $templates[] = $labelRed;
 
 $labelGray = new \leantime\domain\models\wiki\template();
-$labelGray->title = "Gray Status";
-$labelGray->category = "element";
-$labelGray->description = "A gray status label";
+$labelGray->title = $this->__("templates.titles.gray_status");
+$labelGray->category = $this->__("templates.elements");
+$labelGray->description = $this->__("templates.titles.gray_status_description");
 $labelGray->content = '<label class="label-default">Gray</label>';
 $templates[] = $labelGray;
 
