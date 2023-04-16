@@ -1,5 +1,8 @@
 <?php
 
+
+use leantime\core\eventhelpers;
+
 $today = date($this->__('language.dateformat'));
 $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 
@@ -12,7 +15,7 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 
     $prdTpl->title = $this->__("templates.prd.title");
     $prdTpl->description = $this->__("templates.prd.description");
-$prdTpl->category = $this->__("templates.documents");
+    $prdTpl->category = $this->__("templates.documents");
     $prdTpl->content = '
 <h1><strong>'.$this->__("templates.prd.title_for_prd").'<br /></strong></h1>
 <p>'.$this->__("templates.author").' '.$author.'<br />
@@ -256,7 +259,7 @@ $templates[] = $projectOutline;
 //User Story
 $userStoryTpl = new \leantime\domain\models\wiki\template();
 $userStoryTpl->title = "User Story";
-$userStoryTpl->category = $this->__("templates.documents");
+$userStoryTpl->category = $this->__("templates.todos");
 $userStoryTpl->description = "A template for an agile user story";
 $userStoryTpl->content = '
 <table style="border-collapse: collapse; width: 100.049%;" border="1">
@@ -286,6 +289,78 @@ $userStoryTpl->content = '
 </table>';
 $templates[] = $userStoryTpl;
 
+
+$bugTpl = new \leantime\domain\models\wiki\template();
+$bugTpl->title = "Bug";
+$bugTpl->category = $this->__("templates.todos");
+$bugTpl->description = "A template for a bug report";
+$bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
+ <tbody>
+ <tr data-mce-active="1">
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+ <td style="width: 82.7562%;" data-mce-active="1">summarize the issue your are experiencing</td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
+ <td style="width: 82.7562%;">describe the environment under which the problem occured (hosted, production, staging etc)</td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Reproduction Steps</strong></span></td>
+ <td style="width: 82.7562%;">Describe the steps to reproduce the problem<br />
+ <ol>
+ <li>Step 1</li>
+ <li>Step 2</li>
+ </ol>
+ </td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Expected Outcome</strong></span></td>
+ <td style="width: 82.7562%;">describe what you expected would happen</td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Actual Outcome</strong></span></td>
+ <td style="width: 82.7562%;">describe what actually happened</td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Impact</strong></span></td>
+ <td style="width: 82.7562%;">describe how impactful this issue is to your workflow (eg can not work at all; delays my work; large inconvenience etc)</td>
+ </tr>
+ <tr>
+ <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+ <td style="width: 82.7562%;">Anything else you would like to mention</td>
+ </tr>
+ </tbody>
+ </table>';
+
+$templates[] = $bugTpl;
+
+
+$featureTpl = new \leantime\domain\models\wiki\template();
+$featureTpl->title = "Feature Request";
+$featureTpl->category = $this->__("templates.todos");
+$featureTpl->description = "A template for a feature request";
+$featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
+<tbody>
+<tr>
+<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+<td style="width: 82.7562%;">summarize the feature you would like</td>
+</tr>
+<tr>
+<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Target User</strong></span></td>
+<td style="width: 82.7562%;">describe who benefits most from this feature</td>
+</tr>
+<tr>
+<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Desired Timeline</strong></span></td>
+<td style="width: 82.7562%;">when would you like to see it implemented</td>
+</tr>
+<tr>
+<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+<td style="width: 82.7562%;">any additional details</td>
+</tr>
+</tbody>
+</table>';
+
+$templates[] = $featureTpl;
 
 
 $layout48 = new \leantime\domain\models\wiki\template();
@@ -387,6 +462,9 @@ $labelGray->category = $this->__("templates.elements");
 $labelGray->description = $this->__("templates.titles.gray_status_description");
 $labelGray->content = '<label class="label-default">Gray</label>';
 $templates[] = $labelGray;
+
+
+$templates = eventhelpers::dispatch_filter("documentTemplates", $templates);
 
 echo json_encode($templates);
 
