@@ -24,12 +24,9 @@ class csvImport extends provider implements providerIntegration {
         //CSVs can be anyting but are always one file.
         $this->entities = array(
             "default" => array(
-                "name" => "Default",
+                "name" => "Sheet",
                 "fields" => array())
         );
-
-
-        $_SESSION['csvImporter']['headers'];
 
     }
 
@@ -53,12 +50,13 @@ class csvImport extends provider implements providerIntegration {
 
     //Get available fields
     public function getFields(){
-        return $this->fields;
+        return $_SESSION['csvImporter']['headers'] ?? array();
     }
 
     public function setFields(array $fields){
-        $_SESSION['csvImporter']['headers'] = $fields;
-        $this->fields = $fields;
+
+        //$_SESSION['csvImporter']['headers'] = json_encode($fields);
+
     }
 
     //Get available entities

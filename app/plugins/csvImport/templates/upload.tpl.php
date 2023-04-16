@@ -107,9 +107,7 @@
 
             jQuery(".input-error").text('');
 
-            response = response.body;
-
-            window.location.href = "<?=BASE_URL?>/connector/integration?provider=1&step=entity";
+            window.location.href = "<?=BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
 
         });
 

@@ -2,6 +2,11 @@
     $providerEntities = $this->get("providerEntities");
     $provider = $this->get("provider");
     $leantimeEntities = $this->get("leantimeEntities");
+    $integrationId = $this->get("integrationId");
+    $urlAppend = '';
+    if(isset($integrationId) && is_numeric($integrationId)) {
+        $urlAppend = "&integrationId=".$integrationId;
+    }
 ?>
 
 <div class="pageheader">
@@ -20,12 +25,12 @@
 
         <?php echo $this->displayNotification(); ?>
 
-        <h3>Map Entity Here</h3>
+        <h3>Align Systems Here</h3>
         <?=$provider->name ?><br />
 
         <p>What entities to you want to map</p>
 
-        <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=fields">
+        <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=fields<?=$urlAppend ?>">
             Leantime
             <select name="leantimeEntities">
                 <?php foreach($leantimeEntities as $key => $entity){?>

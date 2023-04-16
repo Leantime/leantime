@@ -2,6 +2,7 @@
 
 namespace leantime\plugins\controllers {
 
+    use League\Csv\Statement;
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
@@ -44,19 +45,32 @@ namespace leantime\plugins\controllers {
         public function post($params)
         {
 
+
             $csv = Reader::createFromPath($_FILES['file']['tmp_name'], 'r');
 
             $csv->setHeaderOffset(0);
 
-            $header = $csv->getHeader(); //returns the CSV header record
+            $records = Statement::create()->process($csv);
+
+            $header = $records->getHeader();  //returns the CSV header record
             $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
 
+            $rows = array();
+            foreach ($records as $offset => $record) {
+                $rows[] = $record;
+            }
 
-            $this->providerService->setFields($header);
+            $integration = new models\connector\integration();
+            $integration->fields = implode(",", $header);
 
-            $_SESSION['csvImporter']['records'] =   $records;
+            //Temporarily store results in meta
+            $integration->meta = serialize($rows);
 
-            $this->tpl->displayPartial("csvImport.upload");
+            $integrationService = new services\connector\integrations();
+            $id = $integrationService->create($integration);
+
+            $this->tpl->displayJson(json_encode(array("id"=>$id)));
+
         }
 
     }

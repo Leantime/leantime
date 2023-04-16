@@ -1,7 +1,7 @@
 <?php
-    $providerEntities = $this->get("providerFields");
+    $providerFields = $this->get("providerFields");
     $provider = $this->get("provider");
-    $leantimeEntities = $this->get("leantimeFields");
+    $leantimeFields = $this->get("leantimeFields");
     $numberOfFields = $this->get("maxFields");
 ?>
 
@@ -24,22 +24,36 @@
         <h3>Map and Convert Fields Entity Here</h3>
         <?=$provider->name ?><br />
 
-        <p>What entities to you want to map</p>
+        <p>Please mape the fields from the CSV file to the leantime fields</p>
 
-        <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=fields">
-            Leantime
-            <select name="leantimeEntities">
-                <?php foreach($leantimeEntities as $key => $entity){?>
-                    <option value="<?=$key ?>"><?=$entity['name'] ?></option>
-                <?php } ?>
-            </select>
+        <table style="width:300px;">
+            <thead>
+            <tr>
+                <td>Source Field</td>
+                <td>Leantime Field</td>
+            </tr>
+            </thead>
+            <tbody>
+                <?php foreach($providerFields as $key => $entity){?>
+                    <tr>
+                        <td><?=$entity ?> </td>
+                        <td>
+                            <select name="field_<?=md5($entity)?>">
+                                <?php foreach($leantimeFields as $key => $fields){?>
+                                    <option value="<?=$key ?>"
+                                        <?php
+                                        if($entity == $fields['name']) echo" selected='selected' ";
+                                        ?>
+                                    ><?=$fields['name'] ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
 
-            <?=$provider->name ?>
-            <select name="providerEntities">
-                <?php foreach($providerEntities as $key => $entity){?>
-                    <option value="<?=$key?>"><?=$entity['name'] ?></option>
                 <?php } ?>
-            </select>
+            </tbody>
+
+        </table>
 
             <input type="submit" value="Next" class="btn"/>
         </form>

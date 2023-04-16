@@ -256,7 +256,7 @@ namespace leantime\domain\services {
         public function getAll($searchCriteria)
         {
 
-            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy']);
+            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
         public function getTicket($id)
